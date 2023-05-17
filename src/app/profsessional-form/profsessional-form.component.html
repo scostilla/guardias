@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-2">
-    <h1 id="form1">formulario 1</h1>
+    <h1 id="form1">Left Navbar</h1>
   </div>
   <div class="col-8">
     <form class="col-8 offset-1">
@@ -11,23 +11,45 @@
           <option value="paseSala">Pase de Sala</option>
           <option value="guardia">Guardia</option>
         </select>
-        <p>valor seleccionado: {{selectedService}}</p>
         <div [ngSwitch]="selectedService">
           <div *ngSwitchCase="'consultorio'">
-            <h1>consultorio</h1>
+            <p>valor seleccionado: {{selectedService}}</p>
           </div>
           <div *ngSwitchCase="'paseSala'">
-            <h1>pase de sala</h1>
+            <p>valor seleccionado: {{selectedService}}</p>
           </div>
           <div *ngSwitchCase="'guardia'">
-            <h1>guardia</h1>
+            <label for="GuardType">Tipo de Guardia</label>
+            <select name="guard" [(ngModel)]="selectedGuard" class="form-control" (change)="updateButtonState()">
+              <option value="extra">Guardia Extra</option>
+              <option value="contra">Contra Factura</option>
+              <option value="cargo">Cargo</option>
+              <option value="reagrupacion">Reagrupacion</option>
+            </select>
+            <div [ngSwitch]="selectedGuard">
+              <div *ngSwitchCase="'extra'">
+                <p>valor seleccionado: {{selectedGuard}}</p>
+              </div>
+              <div *ngSwitchCase="'contra'">
+                <p>valor seleccionado: {{selectedGuard}}</p>
+              </div>
+              <div *ngSwitchCase="'cargo'">
+                <p>valor seleccionado: {{selectedGuard}}</p>
+              </div>
+              <div *ngSwitchCase="'reagrupacion'">
+                <p>valor seleccionado: {{selectedGuard}}</p>
+              </div>
+            </div>
           </div>
+          <button name="btnSearch" mat-button (click)="openPopup()" class="btn btn-success" [disabled]="disableButton">Buscar Profesional</button>
         </div>
       </div>
+      <p></p>
+
       <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
   </div>
   <div class="col-2">
-    <h1 id="form3">formulario 3</h1>
+    <h1 id="form3">Rigth Navbar</h1>
   </div>
 </div>
