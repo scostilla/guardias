@@ -3,12 +3,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { ProfsessionalFormComponent } from './profsessional-form/profsessional-form.component';
-import { SearchPopupComponent } from './search-popup/search-popup.component';
+import { ProfsessionalFormComponent } from './components/profsessional-form/profsessional-form.component';
+import { SearchPopupComponent } from './components/search-popup/search-popup.component';
+import { LeftNavbarComponent  } from './components/left-navbar/left-navbar.component';
+import { RightNavbarComponent } from './components/right-navbar/right-navbar.component';
+import { CalendarComponent  } from './components/calendar/calendar.component';
 
 @NgModule({
   declarations: [
@@ -17,14 +22,20 @@ import { SearchPopupComponent } from './search-popup/search-popup.component';
     FooterComponent,
     ProfsessionalFormComponent,
     SearchPopupComponent,
+    LeftNavbarComponent,
+    RightNavbarComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,
+    BsDatepickerModule.forRoot(),
     MatDialogModule,
   ],
-  providers: [],
+  providers: [
+    DatePipe,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

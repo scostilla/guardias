@@ -1,8 +1,2 @@
-<dl-date-time-picker
-    startView="day"
-    maxView="year"
-    minView="minute"
-    minuteStep="5"
-    [(ngModel)]="selectedDate"
->
-</dl-date-time-picker>
+<label for="calendarCheckIn">Fecha de inicio</label>
+<input name="calendarCheckIn" type="text" placeholder="Selecciona una fecha" bsDatepicker [(bsValue)]="selectedDate">
