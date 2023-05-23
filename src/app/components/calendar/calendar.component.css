@@ -1,0 +1,30 @@
+.datepicker-custom .bs-datepicker-container {
+  background-color: antiquewhite;
+  /* Estilos personalizados para el contenedor del datepicker */
+}
+
+.datepicker-custom .bs-datepicker-head {
+  background-color: antiquewhite;
+  /* Estilos personalizados para el encabezado del datepicker */
+}
+
+.datepicker-custom .bs-datepicker-body {
+  background-color: antiquewhite;
+}
+
+.datepicker-custom .bs-datepicker-footer {
+  background-color: antiquewhite;
+  /* Estilos personalizados para el pie del datepicker */
+}
+
+.datepicker-custom .bs-datepicker-day {
+  background-color: antiquewhite;
+  /* Estilos personalizados para los días del datepicker */
+}
+
+.datepicker-custom .bs-datepicker-day:hover {
+  background-color: antiquewhite;
+  /* Estilos personalizados para los días del datepicker al pasar el mouse por encima */
+}
+
+/* Agrega más reglas de estilo según tus necesidades */
