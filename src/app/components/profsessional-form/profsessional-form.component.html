@@ -47,7 +47,18 @@
             [disabled]="disableButton">Buscar Profesional</button>
         </div>
       </div>
-      <p></p>
+      <div class="col-8">
+        <label for="dtpCheckIn">Ingreso</label>
+        <app-calendar></app-calendar>
+        <label for="dtpCheckIn"> Hora </label>
+        <app-time-picker></app-time-picker>
+      </div>
+      <div class="col-8">
+        <label for="dtpCheckIn">Egreso</label>
+        <app-calendar></app-calendar>
+        <label for="dtpCheckIn"> Hora </label>
+        <app-time-picker></app-time-picker>
+      </div>
 
       <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
