@@ -1,5 +1,5 @@
 <mat-form-field class="timePicker">
-  <input matInput [ngxMatTimepicker]="pickerB" placeholder="_ _:_ _  _ _" [formControl]="timeControl">
+  <input matInput [ngxMatTimepicker]="pickerB" [formControl]="timeControl">
   <mat-icon matSuffix (click)="pickerB.open()" />
   <ngx-mat-timepicker-toggle matSuffix [for]="pickerB"></ngx-mat-timepicker-toggle>
   <ngx-mat-timepicker #pickerB></ngx-mat-timepicker>

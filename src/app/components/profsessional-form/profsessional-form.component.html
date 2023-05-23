@@ -48,14 +48,14 @@
         </div>
       </div>
       <div class="col-8">
-        <label for="dtpCheckIn">Ingreso</label>
-        <app-calendar></app-calendar>
+        <label for="dtpCheckIn">Ingreso </label>
+        <app-calendar [isReadOnly]="true"></app-calendar>
         <label for="dtpCheckIn"> Hora </label>
         <app-time-picker></app-time-picker>
       </div>
       <div class="col-8">
-        <label for="dtpCheckIn">Egreso</label>
-        <app-calendar></app-calendar>
+        <label for="dtpCheckIn">Egreso </label>
+        <app-calendar [isReadOnly]="false"></app-calendar>
         <label for="dtpCheckIn"> Hora </label>
         <app-time-picker></app-time-picker>
       </div>
