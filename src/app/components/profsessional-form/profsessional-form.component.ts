@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { SearchPopupComponent } from '../search-popup/search-popup.component';
+import { PopupComponent } from '../popup/popup.component';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class ProfsessionalFormComponent {
   constructor(private dialog: MatDialog) {}
 
   openPopup() {
-    const dialogRef = this.dialog.open(SearchPopupComponent, {
+    const dialogRef = this.dialog.open(PopupComponent, {
       width: '400px',
     });
 

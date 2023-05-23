@@ -13,11 +13,12 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ProfsessionalFormComponent } from './components/profsessional-form/profsessional-form.component';
-import { SearchPopupComponent } from './components/search-popup/search-popup.component';
+import { PopupComponent } from './components/popup/popup.component';
 import { LeftNavbarComponent  } from './components/left-navbar/left-navbar.component';
 import { RightNavbarComponent } from './components/right-navbar/right-navbar.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
+import { SerachProfessionalComponent } from './components/serach-professional/serach-professional.component';
 
 @NgModule({
   declarations: [
@@ -25,11 +26,12 @@ import { TimePickerComponent } from './components/time-picker/time-picker.compon
     HeaderComponent,
     FooterComponent,
     ProfsessionalFormComponent,
-    SearchPopupComponent,
+    PopupComponent,
     LeftNavbarComponent,
     RightNavbarComponent,
     CalendarComponent,
     TimePickerComponent,
+    SerachProfessionalComponent,
 
   ],
   imports: [

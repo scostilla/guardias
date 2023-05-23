@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-12">
+      <h2>Profesionales Disponibles</h2>
+      <label  for="firstName">Nombre</label>
+      <input name="firstName" type="text" >
+      <p></p>
+      <label for="lastName">Apellido</label>
+      <input name="lastName" type="text" >
+      <p></p>
+      <label for="dni" >DNI</label>
+      <input name="dni" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+      <p></p>
+      <table class="table table-responsive table-hover">
+        <thead>
+            <tr>
+                <th>Apellido</th>
+                <th>Nombre</th>
+                <th>DNI</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John</td>
+                <td>Doe</td>
+                <td>32165478</td>
+            </tr>
+            <tr>
+                <td>Smith</td>
+                <td>Thomas</td>
+                <td>14725836</td>
+            </tr>
+            <tr>
+                <td>Merry</td>
+                <td>Jim</td>
+                <td>75321596</td>
+            </tr>
+        </tbody>
+    </table>
+      <div class="offset-2 d-flex justify-content-between">
+        <button mat-button (click)="close()" class="btn btn-success">Seleccionar</button>
+        <button mat-button (click)="close()" class="btn btn-danger">Cerrar</button>
+      </div>
+    </div>
+  </div>
+  

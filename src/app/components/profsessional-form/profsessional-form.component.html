@@ -47,13 +47,13 @@
             [disabled]="disableButton">Buscar Profesional</button>
         </div>
       </div>
-      <div class="col-8">
-        <label for="dtpCheckIn">Ingreso </label>
+      <div class="col-8 dateCheck">
+        <label for="dtpCheckIn" id="labelDateCheck">Ingreso </label>
         <app-calendar [isReadOnly]="true"></app-calendar>
-        <label for="dtpCheckIn"> Hora </label>
+        <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
         <app-time-picker></app-time-picker>
       </div>
-      <div class="col-8">
+      <div class="col-8 dateCheck">
         <label for="dtpCheckIn">Egreso </label>
         <app-calendar [isReadOnly]="false"></app-calendar>
         <label for="dtpCheckIn"> Hora </label>

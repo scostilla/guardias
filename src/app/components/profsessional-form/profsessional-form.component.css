@@ -5,3 +5,18 @@
 #form3{
   background-color: green;
 }
+
+.dateCheck{
+  display: flex;
+  align-items: center;
+}
+
+.dateCheck label,
+.dateCheck app-calendar,
+.dateCheck app-time-picker {
+  margin-right: 10px;
+}
+
+#labelDateCheck{
+  margin-right: 10px;
+}

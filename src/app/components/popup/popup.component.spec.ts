@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SearchPopupComponent } from './search-popup.component';
+import { PopupComponent } from './popup.component';
 
-describe('SearchPopupComponent', () => {
-  let component: SearchPopupComponent;
-  let fixture: ComponentFixture<SearchPopupComponent>;
+describe('PopupComponent', () => {
+  let component: PopupComponent;
+  let fixture: ComponentFixture<PopupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SearchPopupComponent ]
+      declarations: [ PopupComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SearchPopupComponent);
+    fixture = TestBed.createComponent(PopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
