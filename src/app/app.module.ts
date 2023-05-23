@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -27,6 +28,7 @@ import { RightNavbarComponent } from './components/right-navbar/right-navbar.com
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,
+    BsDatepickerModule.forRoot(),
     MatDialogModule,
   ],
   providers: [
