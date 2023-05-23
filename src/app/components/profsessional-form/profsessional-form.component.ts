@@ -27,8 +27,7 @@ export class ProfsessionalFormComponent {
 
   openPopup() {
     const dialogRef = this.dialog.open(SearchPopupComponent, {
-      width: '400px', // Ancho del popup
-      // Otras opciones de configuración, como 'data', 'height', 'position', etc.
+      width: '400px',
     });
 
     // Puedes suscribirte a eventos del diálogo, como 'afterClosed', para realizar acciones después de cerrarlo
