@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
-import { DatePipe } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -30,7 +29,6 @@ import { RightNavbarComponent } from './components/right-navbar/right-navbar.com
     MatDialogModule,
   ],
   providers: [
-    DatePipe,
   ],
   bootstrap: [AppComponent],
 })
