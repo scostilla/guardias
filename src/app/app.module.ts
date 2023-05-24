@@ -18,7 +18,7 @@ import { LeftNavbarComponent  } from './components/left-navbar/left-navbar.compo
 import { RightNavbarComponent } from './components/right-navbar/right-navbar.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
-import { SerachProfessionalComponent } from './components/serach-professional/serach-professional.component';
+import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +31,7 @@ import { SerachProfessionalComponent } from './components/serach-professional/se
     RightNavbarComponent,
     CalendarComponent,
     TimePickerComponent,
-    SerachProfessionalComponent,
+    SearchProfessionalComponent,
 
   ],
   imports: [
