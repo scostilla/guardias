@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./popup.component.css']
 })
 export class PopupComponent {
+  componentParameter: any;
 
 }

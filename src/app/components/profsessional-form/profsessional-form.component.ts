@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 
-
 @Component({
   selector: 'app-profsessional-form',
   templateUrl: './profsessional-form.component.html',
   styleUrls: ['./profsessional-form.component.css']
 })
+
 export class ProfsessionalFormComponent {
   selectedService: string = 'consultorio';
   selectedGuard: string = '';
@@ -16,24 +16,25 @@ export class ProfsessionalFormComponent {
   updateButtonState(): void {
     if (this.selectedGuard == '') {
       this.disableButton = true;
-      console.log("true option "+this.disableButton);
+      console.log('true option ' + this.disableButton);
     } else {
       this.disableButton = false;
-      console.log("false option "+this.disableButton);
+      console.log('false option ' + this.disableButton);
     }
   }
 
   constructor(private dialog: MatDialog) {}
 
-  openPopup() {
+  openPopup(componentParameter: any) {
     const dialogRef = this.dialog.open(PopupComponent, {
-      width: '400px',
+      width: '800px',
     });
 
+    dialogRef.componentInstance.componentParameter = componentParameter;
+
     // Puedes suscribirte a eventos del diálogo, como 'afterClosed', para realizar acciones después de cerrarlo
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log('El popup se ha cerrado');
     });
   }
-
 }
