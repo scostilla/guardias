@@ -19,6 +19,7 @@ import { RightNavbarComponent } from './components/right-navbar/right-navbar.com
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
+import { ProfessionalTableComponent } from './components/professional-table/professional-table.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { SearchProfessionalComponent } from './components/search-professional/se
     TimePickerComponent,
     SearchProfessionalComponent,
 
+
   ],
   imports: [
     BrowserModule,
@@ -44,6 +46,7 @@ import { SearchProfessionalComponent } from './components/search-professional/se
     MatFormFieldModule,
     MatInputModule,
     MatNativeDateModule,
+    ProfessionalTableComponent,
     NgxMatTimepickerModule
   ],
   providers: [
