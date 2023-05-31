@@ -1,9 +1,9 @@
-<mat-form-field>
+<mat-form-field  class="flex-fill">
   <mat-label>Fitrar</mat-label>
   <input matInput (keyup)="applyFilter($event)" #input>
 </mat-form-field>
 
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 table-container">
   <table mat-table [dataSource]="dataSource" matSort>
 
     <!-- ID Column -->
@@ -39,6 +39,6 @@
     </tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10]" aria-label="Select page of users"></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[5, 10, 15, 20]" aria-label="Select page of users"></mat-paginator>
 </div>
 

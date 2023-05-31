@@ -1,3 +1,13 @@
 .table {
   width: 100%;
 }
+
+.table-container {
+  height: 300px; /* Ajusta la altura según tus necesidades */
+  overflow: auto;
+}
+
+.flex-fill {
+  flex: auto;
+  width: 100%;
+}
