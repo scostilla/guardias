@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
+import { ProfessionalDataServiceService } from '../../services/professional-data-service.service';
 
 @Component({
   selector: 'app-profsessional-form',
@@ -23,7 +24,7 @@ export class ProfsessionalFormComponent {
     }
   }
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private professionalDataService: ProfessionalDataServiceService) {}
 
   openPopup(componentParameter: any) {
     const dialogRef = this.dialog.open(PopupComponent, {
@@ -36,5 +37,25 @@ export class ProfsessionalFormComponent {
     dialogRef.afterClosed().subscribe((result) => {
       console.log('El popup se ha cerrado');
     });
+  }
+  selectedId: string | undefined;
+  selectedCuil: string | undefined;
+  selectedNombre: string | undefined;
+  selectedApellido: string | undefined;
+  selectedProfesion: string | undefined;
+
+  ngOnInit() {
+    // Accede a los datos seleccionados del servicio y haz lo que necesites con ellos
+    console.log(this.professionalDataService.selectedId);
+    console.log(this.professionalDataService.selectedCuil);
+    console.log(this.professionalDataService.selectedNombre);
+    console.log(this.professionalDataService.selectedApellido);
+    console.log(this.professionalDataService.selectedProfesion);
+
+    this.selectedId = this.professionalDataService.selectedId;
+    this.selectedCuil = this.professionalDataService.selectedCuil;
+    this.selectedNombre = this.professionalDataService.selectedNombre;
+    this.selectedApellido = this.professionalDataService.selectedApellido;
+    this.selectedProfesion = this.professionalDataService.selectedProfesion;
   }
 }

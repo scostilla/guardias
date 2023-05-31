@@ -1,78 +1,65 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatSort, MatSortModule} from '@angular/material/sort';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
+import { ProfessionalDataServiceService } from '../../services/professional-data-service.service';
 
 export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  fruit: string;
+  id: number;
+  cuil: string;
+  apellido: string;
+  nombre: string;
+  profesion: string;
 }
-
-/** Constants used to fill up our data base. */
-const FRUITS: string[] = [
-  'blueberry',
-  'lychee',
-  'kiwi',
-  'mango',
-  'peach',
-  'lime',
-  'pomegranate',
-  'pineapple',
-];
-const NAMES: string[] = [
-  'Maia',
-  'Asher',
-  'Olivia',
-  'Atticus',
-  'Amelia',
-  'Jack',
-  'Charlotte',
-  'Theodore',
-  'Isla',
-  'Oliver',
-  'Isabella',
-  'Jasper',
-  'Cora',
-  'Levi',
-  'Violet',
-  'Arthur',
-  'Mia',
-  'Thomas',
-  'Elizabeth',
-];
 
 @Component({
   selector: 'app-professional-table',
   templateUrl: './professional-table.component.html',
   styleUrls: ['./professional-table.component.css'],
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+  ],
 })
-
-
 export class ProfessionalTableComponent implements AfterViewInit {
-  displayedColumns: string[] = ['id', 'name', 'progress', 'fruit'];
+  displayedColumns: string[] = [
+    'id',
+    'cuil',
+    'apellido',
+    'nombre',
+    'profesion',
+  ];
   dataSource: MatTableDataSource<UserData>;
 
-  @ViewChild(MatPaginator) paginator !: MatPaginator;
-  @ViewChild(MatSort) sort !: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private dialog: MatDialog) {
-    // Create 100 users
-    const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
-
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
+  constructor(
+    private http: HttpClient,
+    private professionalDataService: ProfessionalDataServiceService
+  ) {
+    this.dataSource = new MatTableDataSource<UserData>([]);
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  ngOnInit() {
+    this.http
+      .get<UserData[]>('../../../assets/jsonFiles/profesionales.json')
+      .subscribe((data) => {
+        this.dataSource.data = data;
+      });
   }
 
   applyFilter(event: Event) {
@@ -86,26 +73,15 @@ export class ProfessionalTableComponent implements AfterViewInit {
 
   onRowDoubleClick(row: any) {
     // Imprime los datos de la fila seleccionada en la consola
-    console.log('ID:', row.id);
-    console.log('Progress:', row.progress);
-    console.log('Name:', row.name);
-    console.log('Fruit:', row.fruit);
+    console.log('id:', row.id);
+    console.log('cuil:', row.cuil);
+    console.log('nombre:', row.nombre);
+    console.log('apellido:', row.apellido);
+    console.log('profesion:', row.profesion);
+    this.professionalDataService.selectedId = row.id;
+    this.professionalDataService.selectedCuil = row.cuil;
+    this.professionalDataService.selectedNombre = row.nombre;
+    this.professionalDataService.selectedApellido = row.apellido;
+    this.professionalDataService.selectedProfesion = row.profesion;
   }
-
-}
-
-/** Builds and returns a new User. */
-function createNewUser(id: number): UserData {
-  const name =
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))] +
-    ' ' +
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) +
-    '.';
-
-  return {
-    id: id.toString(),
-    name: name,
-    progress: Math.round(Math.random() * 100).toString(),
-    fruit: FRUITS[Math.round(Math.random() * (FRUITS.length - 1))],
-  };
 }

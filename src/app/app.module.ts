@@ -8,6 +8,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -20,6 +21,8 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { ProfessionalTableComponent } from './components/professional-table/professional-table.component';
+import { ProfessionalDataServiceService } from './services/professional-data-service.service';
+
 
 @NgModule({
   declarations: [
@@ -47,10 +50,12 @@ import { ProfessionalTableComponent } from './components/professional-table/prof
     MatInputModule,
     MatNativeDateModule,
     ProfessionalTableComponent,
-    NgxMatTimepickerModule
+    NgxMatTimepickerModule,
+    HttpClientModule
   ],
   providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+    ProfessionalDataServiceService
   ],
   bootstrap: [AppComponent],
 })
