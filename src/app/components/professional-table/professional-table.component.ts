@@ -4,6 +4,7 @@ import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface UserData {
   id: string;
@@ -52,6 +53,8 @@ const NAMES: string[] = [
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule],
 })
+
+
 export class ProfessionalTableComponent implements AfterViewInit {
   displayedColumns: string[] = ['id', 'name', 'progress', 'fruit'];
   dataSource: MatTableDataSource<UserData>;
@@ -59,7 +62,7 @@ export class ProfessionalTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
     // Create 100 users
     const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
 
@@ -80,6 +83,15 @@ export class ProfessionalTableComponent implements AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  onRowDoubleClick(row: any) {
+    // Imprime los datos de la fila seleccionada en la consola
+    console.log('ID:', row.id);
+    console.log('Progress:', row.progress);
+    console.log('Name:', row.name);
+    console.log('Fruit:', row.fruit);
+  }
+
 }
 
 /** Builds and returns a new User. */
