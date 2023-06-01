@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProfsessionalFormComponent } from './profsessional-form.component';
+import { ProfessionalFormComponent } from './professional-form.component';
 
 describe('ProfsessionalFormComponent', () => {
-  let component: ProfsessionalFormComponent;
-  let fixture: ComponentFixture<ProfsessionalFormComponent>;
+  let component: ProfessionalFormComponent;
+  let fixture: ComponentFixture<ProfessionalFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProfsessionalFormComponent ]
+      declarations: [ ProfessionalFormComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ProfsessionalFormComponent);
+    fixture = TestBed.createComponent(ProfessionalFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

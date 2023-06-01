@@ -4,12 +4,12 @@ import { PopupComponent } from '../popup/popup.component';
 import { ProfessionalDataServiceService } from '../../services/professional-data-service.service';
 
 @Component({
-  selector: 'app-profsessional-form',
-  templateUrl: './profsessional-form.component.html',
-  styleUrls: ['./profsessional-form.component.css']
+  selector: 'app-professional-form',
+  templateUrl: './professional-form.component.html',
+  styleUrls: ['./professional-form.component.css']
 })
 
-export class ProfsessionalFormComponent {
+export class ProfessionalFormComponent {
   selectedService: string = 'consultorio';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
@@ -33,9 +33,8 @@ export class ProfsessionalFormComponent {
 
     dialogRef.componentInstance.componentParameter = componentParameter;
 
-    // Puedes suscribirte a eventos del diálogo, como 'afterClosed', para realizar acciones después de cerrarlo
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('El popup se ha cerrado');
+      console.log('popup closed');
     });
   }
   selectedId: string | undefined;
@@ -45,12 +44,7 @@ export class ProfsessionalFormComponent {
   selectedProfesion: string | undefined;
 
   ngOnInit() {
-    // Accede a los datos seleccionados del servicio y haz lo que necesites con ellos
-    console.log(this.professionalDataService.selectedId);
-    console.log(this.professionalDataService.selectedCuil);
-    console.log(this.professionalDataService.selectedNombre);
-    console.log(this.professionalDataService.selectedApellido);
-    console.log(this.professionalDataService.selectedProfesion);
+
 
     this.selectedId = this.professionalDataService.selectedId;
     this.selectedCuil = this.professionalDataService.selectedCuil;

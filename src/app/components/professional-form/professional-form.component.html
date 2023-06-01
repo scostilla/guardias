@@ -43,18 +43,18 @@
               </div>
             </div>
           </div>
-          <button name="btnSearch" mat-button (click)="openPopup('SearchProfessionalComponent')"class="btn btn-success"
+          <button name="btnSearch" mat-button (click)="openPopup('SearchProfessionalComponent')" class="btn btn-success"
             [disabled]="disableButton">Buscar Profesional</button>
         </div>
       </div>
-        <div>
-          <h2>Detalles del Profesional</h2>
-          <p>ID: {{ selectedId }}</p>
-          <p>CUIL: {{ selectedCuil }}</p>
-          <p>Nombre: {{ selectedNombre }}</p>
-          <p>Apellido: {{ selectedApellido }}</p>
-          <p>Profesión: {{ selectedProfesion }}</p>
-        </div>
+      <div>
+        <h2>Detalles del Profesional</h2>
+        <p>ID: {{ selectedId }}</p>
+        <p>CUIL: {{ selectedCuil }}</p>
+        <p>Nombre: {{ selectedNombre }}</p>
+        <p>Apellido: {{ selectedApellido }}</p>
+        <p>Profesión: {{ selectedProfesion }}</p>
+      </div>
       <div class="col-8 dateCheck">
         <label for="dtpCheckIn" id="labelDateCheck">Ingreso </label>
         <app-calendar [isReadOnly]="true"></app-calendar>

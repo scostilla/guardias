@@ -9,35 +9,36 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { ProfsessionalFormComponent } from './components/profsessional-form/profsessional-form.component';
+import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { PopupComponent } from './components/popup/popup.component';
-import { LeftNavbarComponent  } from './components/left-navbar/left-navbar.component';
+import { LeftNavbarComponent } from './components/left-navbar/left-navbar.component';
 import { RightNavbarComponent } from './components/right-navbar/right-navbar.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { ProfessionalTableComponent } from './components/professional-table/professional-table.component';
 import { ProfessionalDataServiceService } from './services/professional-data-service.service';
-
+import { HomePageComponent } from './components/home-page/home-page.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    ProfsessionalFormComponent,
+    ProfessionalFormComponent,
     PopupComponent,
     LeftNavbarComponent,
     RightNavbarComponent,
     CalendarComponent,
     TimePickerComponent,
     SearchProfessionalComponent,
-
-
+    HomePageComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,11 +52,13 @@ import { ProfessionalDataServiceService } from './services/professional-data-ser
     MatNativeDateModule,
     ProfessionalTableComponent,
     NgxMatTimepickerModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule,
+    CommonModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-    ProfessionalDataServiceService
+    ProfessionalDataServiceService,
   ],
   bootstrap: [AppComponent],
 })
