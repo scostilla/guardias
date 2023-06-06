@@ -4,7 +4,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { ProfessionalDataServiceService } from '../../services/professional-data-service.service';
 
@@ -72,16 +71,12 @@ export class ProfessionalTableComponent implements AfterViewInit {
   }
 
   onRowDoubleClick(row: any) {
-    // Imprime los datos de la fila seleccionada en la consola
-    console.log('id:', row.id);
-    console.log('cuil:', row.cuil);
-    console.log('nombre:', row.nombre);
-    console.log('apellido:', row.apellido);
-    console.log('profesion:', row.profesion);
+    console.log('professional table id:', row.id);
     this.professionalDataService.selectedId = row.id;
     this.professionalDataService.selectedCuil = row.cuil;
     this.professionalDataService.selectedNombre = row.nombre;
     this.professionalDataService.selectedApellido = row.apellido;
     this.professionalDataService.selectedProfesion = row.profesion;
+    this.professionalDataService.dataUpdated.emit();
   }
 }

@@ -6,9 +6,8 @@ import { ProfessionalDataServiceService } from '../../services/professional-data
 @Component({
   selector: 'app-professional-form',
   templateUrl: './professional-form.component.html',
-  styleUrls: ['./professional-form.component.css']
+  styleUrls: ['./professional-form.component.css'],
 })
-
 export class ProfessionalFormComponent {
   selectedService: string = 'consultorio';
   selectedGuard: string = '';
@@ -24,7 +23,10 @@ export class ProfessionalFormComponent {
     }
   }
 
-  constructor(private dialog: MatDialog, private professionalDataService: ProfessionalDataServiceService) {}
+  constructor(
+    private dialog: MatDialog,
+    private professionalDataService: ProfessionalDataServiceService
+  ) {}
 
   openPopup(componentParameter: any) {
     const dialogRef = this.dialog.open(PopupComponent, {
@@ -45,11 +47,12 @@ export class ProfessionalFormComponent {
 
   ngOnInit() {
 
-
-    this.selectedId = this.professionalDataService.selectedId;
-    this.selectedCuil = this.professionalDataService.selectedCuil;
-    this.selectedNombre = this.professionalDataService.selectedNombre;
-    this.selectedApellido = this.professionalDataService.selectedApellido;
-    this.selectedProfesion = this.professionalDataService.selectedProfesion;
+    this.professionalDataService.dataUpdated.subscribe(() => {
+      this.selectedId = this.professionalDataService.selectedId;
+      this.selectedCuil = this.professionalDataService.selectedCuil;
+      this.selectedNombre = this.professionalDataService.selectedNombre;
+      this.selectedApellido = this.professionalDataService.selectedApellido;
+      this.selectedProfesion = this.professionalDataService.selectedProfesion;
+    });
   }
 }

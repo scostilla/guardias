@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter  } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +9,6 @@ export class ProfessionalDataServiceService {
   selectedNombre: any;
   selectedApellido: any;
   selectedProfesion: any;
-
+  dataUpdated: EventEmitter<void> = new EventEmitter<void>();
   constructor() {}
 }
