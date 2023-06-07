@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HttpClient } from '@angular/common/http';
 import { ProfessionalDataServiceService } from '../../services/professional-data-service.service';
+import { DialogServiceService } from 'src/app/services/DialogService/dialog-service.service';
 
 export interface UserData {
   id: number;
@@ -43,7 +44,7 @@ export class ProfessionalTableComponent implements AfterViewInit {
 
   constructor(
     private http: HttpClient,
-    private professionalDataService: ProfessionalDataServiceService
+    private professionalDataService: ProfessionalDataServiceService, private dialogService: DialogServiceService
   ) {
     this.dataSource = new MatTableDataSource<UserData>([]);
   }
@@ -78,5 +79,6 @@ export class ProfessionalTableComponent implements AfterViewInit {
     this.professionalDataService.selectedApellido = row.apellido;
     this.professionalDataService.selectedProfesion = row.profesion;
     this.professionalDataService.dataUpdated.emit();
+    this.dialogService.closeDialog();
   }
 }
