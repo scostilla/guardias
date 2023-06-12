@@ -25,6 +25,8 @@ import { ProfessionalTableComponent } from './components/professional-table/prof
 import { ProfessionalDataServiceService } from './services/professional-data-service.service';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { AppRoutingModule } from './app-routing.module';
+import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
+import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { AppRoutingModule } from './app-routing.module';
     TimePickerComponent,
     SearchProfessionalComponent,
     HomePageComponent,
+    DailyScheduleComponent,
+    ScheduleCardComponent,
   ],
   imports: [
     BrowserModule,

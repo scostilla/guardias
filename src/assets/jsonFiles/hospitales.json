@@ -1,0 +1,216 @@
+[
+ {
+  "id": 1,
+  "descripcion": "CALILEGUA",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 2",
+  "localidad": "CALILEGUA"
+ },
+ {
+  "id": 2,
+  "descripcion": "CEN - CENTRO DE ESPECIALIDADES NORTE",
+  "tipo": "CENTRO DE ESPECIALIDADES",
+  "complejidad": 1,
+  "region": "CENTRO",
+  "localidad": "SAN SALVADOR"
+ },
+ {
+  "id": 3,
+  "descripcion": "CENTRO REGIONAL DE HEMOTERAPIA",
+  "tipo": "BANCO DE SANGRE",
+  "complejidad": 1,
+  "region": "CENTRO",
+  "localidad": "SAN SALVADOR"
+ },
+ {
+  "id": 4,
+  "descripcion": "DR. PABLO SORIA",
+  "tipo": "HOSPITAL",
+  "complejidad": 3,
+  "region": "CENTRO",
+  "localidad": "SAN SALVADOR"
+ },
+ {
+  "id": 5,
+  "descripcion": "DR. ARTURO ZABALA",
+  "tipo": "HOSPITAL",
+  "complejidad": "1-2",
+  "region": "VALLE",
+  "localidad": "PERICO"
+ },
+ {
+  "id": 6,
+  "descripcion": "DR. GUILLERMO PATERSON",
+  "tipo": "HOSPITAL",
+  "complejidad": 2,
+  "region": "RAMAL 1",
+  "localidad": "SAN PEDRO"
+ },
+ {
+  "id": 7,
+  "descripcion": "DR. JORGE URO",
+  "tipo": "HOSPITAL",
+  "complejidad": 2,
+  "region": "PUNA",
+  "localidad": "LA QUIACA"
+ },
+ {
+  "id": 8,
+  "descripcion": "DR. MANUEL BELGRANO",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "QUEBRADA",
+  "localidad": "HUMAHUACA"
+ },
+ {
+  "id": 9,
+  "descripcion": "DR. MIGUEL MISKOFF",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "QUEBRADA",
+  "localidad": "MAIMARA"
+ },
+ {
+  "id": 10,
+  "descripcion": "DR. OSCAR ORIAS",
+  "tipo": "HOSPITAL",
+  "complejidad": 2,
+  "region": "RAMAL 2",
+  "localidad": "LEDESMA"
+ },
+ {
+  "id": 11,
+  "descripcion": "DRA. SALVADOR MAZZA",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "QUEBRADA",
+  "localidad": "TILCARA"
+ },
+ {
+  "id": 12,
+  "descripcion": "EL AGUILAR",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "QUEBRADA/PUNA",
+  "localidad": "EL AGUILAR"
+ },
+ {
+  "id": 13,
+  "descripcion": "ING. CARLOS SNOPEK",
+  "tipo": "HOSPITAL",
+  "complejidad": "1-2",
+  "region": "CENTRO",
+  "localidad": "SAN SALVADOR"
+ },
+ {
+  "id": 14,
+  "descripcion": "LA MENDIETA",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 1",
+  "localidad": "LA MENDIETA"
+ },
+ {
+  "id": 15,
+  "descripcion": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "tipo": "HOSPITAL",
+  "complejidad": 3,
+  "region": "CENTRO",
+  "localidad": "SAN SALVADOR"
+ },
+ {
+  "id": 16,
+  "descripcion": "NTRA. SRA. DEL PILAR",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 2",
+  "localidad": "EL TALAR"
+ },
+ {
+  "id": 17,
+  "descripcion": "NTRA. SRA. DEL ROSARIO",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "PUNA",
+  "localidad": "ABRA PAMPA"
+ },
+ {
+  "id": 18,
+  "descripcion": "NTRA. SRA. DEL VALLE",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 1",
+  "localidad": "PALMA SOLA"
+ },
+ {
+  "id": 19,
+  "descripcion": "NTRO. SR. DE LA BUENA ESPERANZA",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 1",
+  "localidad": "LA ESPERANZA"
+ },
+ {
+  "id": 20,
+  "descripcion": "NUESTRA SRA. DEL CARMEN",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "VALLE",
+  "localidad": "EL CARMEN"
+ },
+ {
+  "id": 21,
+  "descripcion": "PRESBITERO ESCOLASTICO ZEGADA",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 2",
+  "localidad": "FAILE PINTADO"
+ },
+ {
+  "id": 22,
+  "descripcion": "SAME 107",
+  "complejidad": 3,
+  "region": "CENTRO"
+ },
+ {
+  "id": 23,
+  "descripcion": "SAN ISIDRO LABRADOR",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "VALLE",
+  "localidad": "MONTERRICO"
+ },
+ {
+  "id": 24,
+  "descripcion": "SAN MIGUEL",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "RAMAL 2",
+  "localidad": "YUTO"
+ },
+ {
+  "id": 25,
+  "descripcion": "SAN ROQUE",
+  "tipo": "HOSPITAL",
+  "complejidad": 3,
+  "region": "CENTRO",
+  "localidad": "SAN SALVADOR"
+ },
+ {
+  "id": 26,
+  "descripcion": "SUSQUES",
+  "tipo": "HOSPITAL",
+  "complejidad": 1,
+  "region": "QUEBRADA",
+  "localidad": "SUSQUES"
+ },
+ {
+  "id": 27,
+  "descripcion": "WENCESLAO GALLARDO",
+  "tipo": "HOSPITAL",
+  "complejidad": "1-2",
+  "region": "VALLE",
+  "localidad": "PALPALA"
+ }
+]
