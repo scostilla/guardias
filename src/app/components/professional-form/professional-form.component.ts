@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
-import { ProfessionalDataServiceService } from '../../services/professional-data-service.service';
+import { ProfessionalDataServiceService } from '../../services/professionalDataService/professional-data-service.service';
 
 @Component({
   selector: 'app-professional-form',

@@ -22,7 +22,7 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { ProfessionalTableComponent } from './components/professional-table/professional-table.component';
-import { ProfessionalDataServiceService } from './services/professional-data-service.service';
+import { ProfessionalDataServiceService } from './services/professionalDataService/professional-data-service.service';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';

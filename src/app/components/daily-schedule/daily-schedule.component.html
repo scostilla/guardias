@@ -5,7 +5,7 @@
   </div>
   <div class="col-6">
     <label for="hospital">Efector </label>
-    <select name="service" class="form-control">
+    <select name="service" class="form-control" [(ngModel)]="selectedHospital" (change)="updateHospital()">
       <option *ngFor="let option of options" [value]="option.descripcion">{{option.complejidad}} - {{ option.descripcion
         }}</option>
     </select>
