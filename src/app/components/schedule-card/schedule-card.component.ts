@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-schedule-card',
@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./schedule-card.component.css']
 })
 export class ScheduleCardComponent {
+  @Input() service: string='';
+  @Input() professional: string='';
+  @Input() hours: string='';
 
 }
