@@ -9,7 +9,9 @@ import { DateServiceService } from '../../services/DateService/date-service.serv
   styleUrls: ['./daily-schedule.component.css'],
 })
 export class DailyScheduleComponent implements OnDestroy {
+  services: any[] | undefined;
   options: any[] | undefined;
+  professionalGroups: { service: string; professionals: any[] }[] = [];
   currentDate: Date | undefined;
   dateChangeSubscription: Subscription = new Subscription();
   selectedHospital: string = '';
@@ -36,9 +38,39 @@ export class DailyScheduleComponent implements OnDestroy {
       .subscribe((data) => {
         this.options = data;
       });
+    this.http
+      .get<any[]>('../assets/jsonFiles/servicios.json')
+      .subscribe((data) => {
+        this.services = data;
+      });
   }
 
   updateHospital() {
-    console.log(this.selectedHospital);
+    console.log('update hospital');
+    if (this.services) {
+      const filteredData = this.services.filter(
+        (item) => item.hospital === this.selectedHospital
+      );
+
+      const groupedData = this.groupBy(filteredData, 'servicio');
+
+      this.professionalGroups = Object.keys(groupedData).map((service) => ({
+        service,
+        professionals: groupedData[service],
+      }));
+    } else {
+      this.professionalGroups = [];
+    }
+  }
+
+  private groupBy(array: any[], property: string) {
+    return array.reduce((result, currentValue) => {
+      const key = currentValue[property];
+      if (!result[key]) {
+        result[key] = [];
+      }
+      result[key].push(currentValue);
+      return result;
+    }, {});
   }
 }
