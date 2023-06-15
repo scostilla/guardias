@@ -59,14 +59,14 @@ export class DailyScheduleComponent implements OnDestroy {
         professionals: groupedData[service].map((professional: any) => ({
           apellido: professional.apellido,
           nombre: professional.nombre,
-          hs: professional.hs || null, // Si hs es vacío, se asigna null en su lugar
+          hs: professional.hs || null,
+          type: professional.tipo,
         })),
       }));
     } else {
       this.professionalGroups = [];
     }
   }
-
 
   private groupBy(array: any[], property: string) {
     return array.reduce((result, currentValue) => {

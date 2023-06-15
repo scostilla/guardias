@@ -9,5 +9,6 @@ export class ScheduleCardComponent {
   @Input() service: string='';
   @Input() professional: string='';
   @Input() hours: string='';
+  @Input() type: string='';
 
 }
