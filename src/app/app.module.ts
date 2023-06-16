@@ -27,6 +27,8 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { ScheduleCardComponent } from './components/schedule-card/schedule-card.
     HomePageComponent,
     DailyScheduleComponent,
     ScheduleCardComponent,
+    HomeComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
