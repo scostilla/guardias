@@ -48,7 +48,7 @@ import { ProfessionalNewsComponent } from './components/professional-news/profes
     ScheduleCardComponent,
     ProfessionalCrudComponent,
     ScheduleDistributionComponent,
-    ProfessionaNwesComponent,
+    ProfessionalNewsComponent,
   ],
   imports: [
     BrowserModule,
