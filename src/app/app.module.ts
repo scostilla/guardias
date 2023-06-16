@@ -27,6 +27,9 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
+import { ProfessionalCrudComponent } from './components/professional-crud/professional-crud.component';
+import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
+import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +46,9 @@ import { ScheduleCardComponent } from './components/schedule-card/schedule-card.
     HomePageComponent,
     DailyScheduleComponent,
     ScheduleCardComponent,
+    ProfessionalCrudComponent,
+    ScheduleDistributionComponent,
+    ProfessionaNwesComponent,
   ],
   imports: [
     BrowserModule,
