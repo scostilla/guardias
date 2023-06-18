@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { AppRoutingModule } from './app-routing.module';
+import { SharedModule } from './components/shared/shared.module';
 
+//Components
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -24,7 +21,6 @@ import { SearchProfessionalComponent } from './components/search-professional/se
 import { ProfessionalTableComponent } from './components/professional-table/professional-table.component';
 import { ProfessionalDataServiceService } from './services/professionalDataService/professional-data-service.service';
 import { HomePageComponent } from './components/home-page/home-page.component';
-import { AppRoutingModule } from './app-routing.module';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { ProfessionalCrudComponent } from './components/professional-crud/professional-crud.component';
@@ -52,22 +48,15 @@ import { ProfessionalNewsComponent } from './components/professional-news/profes
   ],
   imports: [
     BrowserModule,
-    FormsModule,
     BrowserAnimationsModule,
-    MatDialogModule,
-    ReactiveFormsModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatNativeDateModule,
     ProfessionalTableComponent,
     NgxMatTimepickerModule,
     HttpClientModule,
     AppRoutingModule,
     CommonModule,
+    SharedModule,
   ],
   providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
     ProfessionalDataServiceService,
   ],
   bootstrap: [AppComponent],
