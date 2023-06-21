@@ -1,0 +1,111 @@
+<h2 mat-dialog-title>Agregar Profesional</h2>
+<mat-dialog-content>
+<div class="row">
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>Nombre</mat-label>
+      <input matInput placeholder="Ingresar Nombre" autocomplete="off">
+    </mat-form-field>
+  </div>
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>Apellido</mat-label>
+      <input matInput placeholder="Ingresar Apellido" autocomplete="off">
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>DNI</mat-label>
+      <input matInput placeholder="Ingresar DNI" autocomplete="off">
+    </mat-form-field>
+  </div>
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>CUIL</mat-label>
+      <input matInput placeholder="Ingresar CUIL" autocomplete="off">
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <mat-form-field>
+      <mat-label>Profesion</mat-label>
+      <mat-select [(value)]="selected">
+        <mat-option value="Medico">Medico</mat-option>
+        <mat-option value="Bioquimico">Bioquimico</mat-option>
+        <mat-option value="Odontologo">Odontologo</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>Especialidad</mat-label>
+      <input matInput placeholder="Ingresar Especialidad" autocomplete="off">
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4">
+    <mat-form-field appearance="fill">
+      <mat-label>Sit. Revista</mat-label>
+      <input matInput autocomplete="off">
+    </mat-form-field>
+  </div>
+  <div class="col-4">
+    <mat-form-field appearance="fill">
+      <mat-label>CAT</mat-label>
+      <input matInput autocomplete="off">
+    </mat-form-field>
+  </div>
+  <div class="col-4">
+    <mat-form-field appearance="fill">
+      <mat-label>Adicional</mat-label>
+      <input matInput autocomplete="off">
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+<div class="col">
+  <mat-form-field appearance="fill">
+    <mat-label>UDO</mat-label>
+    <input matInput placeholder="Seleccionar UDO" autocomplete="off">
+  </mat-form-field>
+</div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>Hospital</mat-label>
+      <input matInput placeholder="Seleccionar Hospital" autocomplete="off">
+    </mat-form-field>
+  </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col">
+      <mat-form-field appearance="fill">
+        <mat-label>Servicio</mat-label>
+        <input matInput placeholder="Ingresar Servicio" autocomplete="off">
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field appearance="fill">
+        <mat-label>Carga Horaria</mat-label>
+        <input matInput placeholder="Ingresar carga Horaria" autocomplete="off">
+      </mat-form-field>
+    </div>
+  </div>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-button cdkFocusInitial>Agregar</button>
+</mat-dialog-actions>

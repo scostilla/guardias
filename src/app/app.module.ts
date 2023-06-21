@@ -23,9 +23,10 @@ import { ProfessionalDataServiceService } from './services/professionalDataServi
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
-import { ProfessionalCrudComponent } from './components/professional-crud/professional-crud.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
+import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
+import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 
 @NgModule({
   declarations: [
@@ -42,9 +43,10 @@ import { ProfessionalNewsComponent } from './components/professional-news/profes
     HomePageComponent,
     DailyScheduleComponent,
     ScheduleCardComponent,
-    ProfessionalCrudComponent,
     ScheduleDistributionComponent,
     ProfessionalNewsComponent,
+    ProfessionalAbmComponent,
+    ProfessionalListComponent,
   ],
   imports: [
     BrowserModule,
