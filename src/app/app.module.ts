@@ -29,6 +29,7 @@ import { DailyScheduleComponent } from './components/daily-schedule/daily-schedu
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './components/login/login.component';
+import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { LoginComponent } from './components/login/login.component';
     ScheduleCardComponent,
     HomeComponent,
     LoginComponent,
+    RegistroDiarioComponent,
   ],
   imports: [
     BrowserModule,
