@@ -34,7 +34,7 @@
   <div class="col">
     <mat-form-field>
       <mat-label>Profesion</mat-label>
-      <mat-select [(value)]="selected">
+      <mat-select [(value)]="profesionSelected">
         <mat-option value="Medico">Medico</mat-option>
         <mat-option value="Bioquimico">Bioquimico</mat-option>
         <mat-option value="Odontologo">Odontologo</mat-option>
@@ -42,9 +42,13 @@
     </mat-form-field>
   </div>
   <div class="col">
-    <mat-form-field appearance="fill">
-      <mat-label>Especialidad</mat-label>
-      <input matInput placeholder="Ingresar Especialidad" autocomplete="off">
+    <mat-form-field>
+      <mat-label>Profesion</mat-label>
+      <mat-select [(value)]="specialtySelected">
+        <mat-option value="Medico">Medico</mat-option>
+        <mat-option value="Bioquimico">Bioquimico</mat-option>
+        <mat-option value="Odontologo">Odontologo</mat-option>
+      </mat-select>
     </mat-form-field>
   </div>
 </div>

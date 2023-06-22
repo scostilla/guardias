@@ -7,7 +7,8 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./professional-abm.component.css']
 })
 export class ProfessionalAbmComponent {
-  selected = 'Medico';
+  profesionSelected = 'Medico';
+  specialtySelected = '';
   constructor(
     public dialogRef:MatDialogRef<ProfessionalAbmComponent>
   ){}
