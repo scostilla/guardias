@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface Specialty {
   value: string;
@@ -18,11 +19,9 @@ interface Service {
   styleUrls: ['./professional-abm.component.css'],
 })
 export class ProfessionalAbmComponent {
-  profesionSelected = 'Medico';
-  specialtySelected = 'clinica';
-  serviceSelected = 'clinico';
+  professionalForm: FormGroup;
   options: any[] | undefined;
-  selectedHospital: string = '';
+
 
   services: Service[] = [
     { value: 'anestesiologia', viewValue: 'ANESTESIOLOGIA' },
@@ -84,8 +83,25 @@ export class ProfessionalAbmComponent {
 
   constructor(
     private http: HttpClient,
-    public dialogRef: MatDialogRef<ProfessionalAbmComponent>
-  ) {}
+    public dialogRef: MatDialogRef<ProfessionalAbmComponent>,
+    private fb: FormBuilder
+  ) {
+    this.professionalForm = this.fb.group({
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      dni: ['', Validators.required],
+      cuil: ['', Validators.required],
+      professional: ['', Validators.required],
+      specialty: ['', ],
+      revista: ['', Validators.required],
+      categoria: ['', Validators.required],
+      adicional: ['',],
+      udo: ['', Validators.required],
+      hospital: ['', Validators.required],
+      service: ['', Validators.required],
+      cargaHoraria: ['', Validators.required],
+    });
+  }
 
   ngOnInit() {
     this.http
@@ -94,6 +110,27 @@ export class ProfessionalAbmComponent {
         this.options = data;
       });
   }
+
+  addEditProfessional() {
+
+    if (this.professionalForm.valid) {
+      console.log('professional form valid');
+      const formData = this.professionalForm.value;
+      console.log(formData);
+    } else {
+      console.log('professional form not valid');
+      this.markFormGroupTouched(this.professionalForm);
+    }
+  }
+
+  markFormGroupTouched(formGroup: FormGroup) {
+    console.log('error list');
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });}
 
   cancel() {
     this.dialogRef.close();
