@@ -30,7 +30,7 @@ export class RegistroDiarioComponent {
 
   openPopup(componentParameter: any) {
     const dialogRef = this.dialog.open(PopupComponent, {
-      width: '800px',
+      width: '1000px',
     });
 
     dialogRef.componentInstance.componentParameter = componentParameter;

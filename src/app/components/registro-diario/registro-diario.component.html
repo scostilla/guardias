@@ -1,68 +1,99 @@
-<div class=" d-flex justify-content-center align-items-center ">
-    <form>
-        <div class="form-group">
-            <label for="serviceType">Tipo de Servicio</label>
-            <select name="service" [(ngModel)]="selectedService" class="form-control">
-                <option value="consultorio">Consultorio</option>
-                <option value="paseSala">Pase de Sala</option>
-                <option value="guardia">Guardia</option>
-            </select>
-            <div [ngSwitch]="selectedService">
-                <div *ngSwitchCase="'consultorio'">
-                    <p>valor seleccionado: {{selectedService}}</p>
+<div class="d-flex justify-content-center">
+    <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
+        <h1 class="d-flex justify-content-center fs-1 mb-5 fw-bold">NUEVO REGISTRO</h1>
+        <form action="">
+            <div class="mb-3" style="font-size: 1rem;">
+                <label for="serviceType" class="form-label">Tipo de servicio:</label>
+                <select class="form-select text-secondary" aria-label="Default select example" name="service"
+                    [(ngModel)]="selectedService">
+                    <option value="consultorio">Consultorio</option>
+                    <option value="paseSala">Pase de Sala</option>
+                    <option value="guardia">Guardia</option>
+                </select>
+                <div class="mt-4" [ngSwitch]="selectedService">
+                    <div *ngSwitchCase="'guardia'">
+                        <label for="GuardType" class="form-label">Tipo de guardia:</label>
+                        <select class="form-select text-secondary" aria-label="Default select example" name="guard"
+                            [(ngModel)]="selectedGuard">
+                            <option value="extra">Guardia Extra</option>
+                            <option value="contra">Contra Factura</option>
+                            <option value="cargo">Cargo</option>
+                            <option value="reagrupacion">Reagrupacion</option>
+                        </select>
+                    </div>
+                    <button class="btn w-100 mt-4 shadow p-2 mb-4 rounded " name="btnSearch" mat-button
+                        (click)="openPopup('SearchProfessionalComponent')">Buscar profesional</button>
                 </div>
-                <div *ngSwitchCase="'paseSala'">
-                    <p>valor seleccionado: {{selectedService}}</p>
+            </div>
+            <div class="border-bottom"></div>
+            <div class="d-flex justify-content-center fs-3 mb-4 mt-4 ">Detalle del profesional</div>
+            <div class="input-group mt-3 ">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label >ID</label>
                 </div>
-                <div *ngSwitchCase="'guardia'">
-                    <label for="GuardType">Tipo de Guardia</label>
-                    <select name="guard" [(ngModel)]="selectedGuard" class="form-control"
-                        (change)="updateButtonState()">
-                        <option value="extra">Guardia Extra</option>
-                        <option value="contra">Contra Factura</option>
-                        <option value="cargo">Cargo</option>
-                        <option value="reagrupacion">Reagrupacion</option>
-                    </select>
-                    <div [ngSwitch]="selectedGuard">
-                        <div *ngSwitchCase="'extra'">
-                            <p>valor seleccionado: {{selectedGuard}}</p>
-                        </div>
-                        <div *ngSwitchCase="'contra'">
-                            <p>valor seleccionado: {{selectedGuard}}</p>
-                        </div>
-                        <div *ngSwitchCase="'cargo'">
-                            <p>valor seleccionado: {{selectedGuard}}</p>
-                        </div>
-                        <div *ngSwitchCase="'reagrupacion'">
-                            <p>valor seleccionado: {{selectedGuard}}</p>
-                        </div>
+                <input class="form-control" type="text" placeholder="{{ selectedId }}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">CUIL</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{selectedCuil}}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Nombre</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedNombre }}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Apellido</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedApellido }}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center " style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Profesión</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedProfesion }}">
+            </div>
+            <div class="container mt-5 " style="font-size: 1rem;">
+                <div class="row dateCheck d-flex align-items-center">
+                    <div class="col">
+                        <label for="dtpCheckIn" id="labelDateCheck">Ingreso </label>
+                    </div>
+                    <div class="col">
+                        <app-calendar [isReadOnly]="true"></app-calendar>
+                    </div>
+                    <div class="col">
+                        <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
+                    </div>
+                    <div class="col">
+                        <app-time-picker></app-time-picker>
                     </div>
                 </div>
-                <button name="btnSearch" mat-button (click)="openPopup('SearchProfessionalComponent')"
-                    class="btn btn-success" [disabled]="disableButton">Buscar Profesional</button>
+                <div class="row dateCheck d-flex align-items-center">
+                    <div class="col">
+                        <label for="dtpCheckIn" id="labelDateCheck">Egreso</label>
+                    </div>
+                    <div class="col">
+                        <app-calendar [isReadOnly]="false"></app-calendar>
+                    </div>
+                    <div class="col">
+                        <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
+                    </div>
+                    <div class="col">
+                        <app-time-picker></app-time-picker>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div>
-            <h2>Detalles del Profesional</h2>
-            <p>ID: {{ selectedId }}</p>
-            <p>CUIL: {{ selectedCuil }}</p>
-            <p>Nombre: {{ selectedNombre }}</p>
-            <p>Apellido: {{ selectedApellido }}</p>
-            <p>Profesión: {{ selectedProfesion }}</p>
-        </div>
-        <div class="col-8 dateCheck">
-            <label for="dtpCheckIn" id="labelDateCheck">Ingreso </label>
-            <app-calendar [isReadOnly]="true"></app-calendar>
-            <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
-            <app-time-picker></app-time-picker>
-        </div>
-        <div class="col-8 dateCheck">
-            <label for="dtpCheckIn">Egreso </label>
-            <app-calendar [isReadOnly]="false"></app-calendar>
-            <label for="dtpCheckIn"> Hora </label>
-            <app-time-picker></app-time-picker>
-        </div>
+            <button type="submit" class="btn mt-5 shadow p-2 mb-5 rounded w-100">Guardar</button>
 
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
+        </form>
+    </div>
 </div>
