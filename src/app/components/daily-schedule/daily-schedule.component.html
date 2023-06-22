@@ -1,44 +1,70 @@
-
 <div class="row">
-  <label for="dtpDate">Fecha </label>
   <div class="col-6">
-    <app-calendar [isReadOnly]="false" style="margin-right: 10px"></app-calendar>
+    <mat-form-field class="example-full-width">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="picker">
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker">
+        <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
   </div>
   <div class="col-6">
-    <label for="hospital">Efector </label>
-    <select name="service" class="form-control">
-      <option *ngFor="let option of options" [value]="option.descripcion">{{option.complejidad}} - {{ option.descripcion
-        }}</option>
-    </select>
+    <mat-select placeholder="seleccione un efector"
+    [(ngModel)]="selectedHospital"
+      name="service"
+      class="form-control"
+      (selectionChange)="updateHospital()"
+    >
+      <mat-option *ngFor="let option of options" [value]="option.descripcion">
+        {{ option.complejidad }} - {{ option.descripcion }}
+      </mat-option>
+    </mat-select>
   </div>
 </div>
 
-<!-- SCHEDULE CARDS-->
-<div class="row">
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
-  </div>
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
-  </div>
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
-  </div>
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
+<div class="row row-cols-4">
+  <div
+    class="col"
+    *ngFor="
+      let professionalGroup of professionalGroups.slice(
+        0,
+        professionalGroups.length - (professionalGroups.length % 4 || 4)
+      )
+    "
+  >
+    <app-schedule-card
+      [service]="professionalGroup.service"
+    ></app-schedule-card>
+    <div *ngFor="let professional of professionalGroup.professionals">
+      <h5 [ngClass]="professional.type">
+        {{ professional.apellido }}, {{ professional.nombre }} ({{
+          professional.hs
+        }})
+      </h5>
+    </div>
   </div>
 </div>
-<div class="row">
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
-  </div>
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
-  </div>
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
-  </div>
-  <div class="col" style="margin: 5px;">
-    <app-schedule-card></app-schedule-card>
+
+<div class="row" *ngIf="professionalGroups.length % 4">
+  <div
+    class="col"
+    *ngFor="
+      let professionalGroup of professionalGroups.slice(
+        professionalGroups.length - (professionalGroups.length % 4)
+      )
+    "
+  >
+    <app-schedule-card
+      [service]="professionalGroup.service"
+    ></app-schedule-card>
+    <div *ngFor="let professional of professionalGroup.professionals">
+      <h5 [ngClass]="professional.type">
+        {{ professional.apellido }}, {{ professional.nombre
+        }}{{ professional.hs ? " (" + professional.hs + ")" : "" }}
+      </h5>
+    </div>
   </div>
 </div>
