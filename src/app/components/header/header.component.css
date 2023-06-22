@@ -1,13 +1,3 @@
-@font-face {
-    font-family: Archia;
-    src: url('src/assets/font/Archia-Regular.otf');
-}
 .navbar-custom {
     background-color: #37BBED;
-}
-
-h1 {
-    font-family: "archia";
-    font-size:300%;
-    
 }

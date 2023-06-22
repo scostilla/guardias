@@ -1,0 +1,1883 @@
+[
+ {
+  "id": 1,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "MARTINEZ",
+  "nombre": "YANINA VANESA G.",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 2,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "URBINA",
+  "nombre": "PEDRO SILVERIO",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 3,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "GUTIERREZ",
+  "nombre": "LUIS ARIEL",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 4,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "CALIZAYA",
+  "nombre": "MONICA DAMIANA",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 5,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "VOLPI",
+  "nombre": "BARBARA VERONICA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 6,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "MARTINEZ",
+  "nombre": "MARIA SUSANA",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 7,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "FLORES",
+  "nombre": "ROBERTO ARMANDO",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 8,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "GUEVARA RODRIGUEZ",
+  "nombre": "FERNANDO",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 9,
+  "hospital": "DR. MANUEL BELGRANO",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "HURTADO MERCANO",
+  "nombre": "WILFREDO JOSE",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 10,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "LANDAITA",
+  "nombre": "RUBEN ALBERTO",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 11,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "FERNANDEZ",
+  "nombre": "SILVIA SOFIA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 12,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "LIENDO",
+  "nombre": "MARIA HUILEN",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 13,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "MURILLO",
+  "nombre": "ERNESTO RAMON",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 166,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CLINICA MEDICA",
+  "apellido": "ROMERO",
+  "nombre": "OSCAR HUMBERTO",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 167,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CLINICA MEDICA",
+  "apellido": "TORRES",
+  "nombre": "ABRAHAN ORLANDO",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 168,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CLINICA MEDICA",
+  "apellido": "LUMETTO",
+  "nombre": "ROMINA ROSANA",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 169,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CLINICA MEDICA",
+  "apellido": "PIZARRO",
+  "nombre": "MONICA BEATRIZ",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 170,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CLINICA MEDICA",
+  "apellido": "GARCES MENDOZA",
+  "nombre": "MORAIMA ELENA",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 171,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CLINICA MEDICA",
+  "apellido": "CARRIZO",
+  "nombre": "ALICIA B.",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 172,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "INFECTOLOGÍA",
+  "apellido": "BEJARANO",
+  "nombre": "FERNANDO JOSE",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 173,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "NEUROCIRUGIA",
+  "apellido": "CONCHA LEDESMA",
+  "nombre": "RODOLFO OMAR",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 174,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TERAPIA INTENSIVA",
+  "apellido": "SUAREZ ZORRILLA",
+  "nombre": "PABLO LUIS",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 175,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TERAPIA INTENSIVA",
+  "apellido": "BARRIOS",
+  "nombre": "GABRIELA GISELA",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 176,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TERAPIA INTENSIVA",
+  "apellido": "BENEZRA",
+  "nombre": "MIGUEL GUSTAVO",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 177,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TERAPIA INTENSIVA",
+  "apellido": "SANCHEZ",
+  "nombre": "CARLOS ROBERTO",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 178,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TERAPIA INTENSIVA",
+  "apellido": "OTERO",
+  "nombre": "CLAUDIA FABIANA",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 179,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "ARMATA",
+  "nombre": "MARTIN IGNACIO",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 180,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "CALATAYUD GALINDO",
+  "nombre": "GALINDO, HUGO WILFREDO",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 181,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "JORDAN",
+  "nombre": "CECILIA CRISTINA",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 182,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "BRITO",
+  "nombre": "GERMAN MARCELO",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 183,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "GUERRERO",
+  "nombre": "MARIA PAULA",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 184,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "GOMEZ",
+  "nombre": "IGNACIO MANUEL",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 185,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "VALDIVIEZO",
+  "nombre": "RITA",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 186,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "GUERRERO",
+  "nombre": "FABIAN",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 187,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "PEDIATRÍA",
+  "apellido": "LLAMPA",
+  "nombre": "EDGAR RODLFO",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 188,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CIRUGIA INFANTIL",
+  "apellido": "MUÑOZ",
+  "nombre": "MIGUEL ANGEL",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 189,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TOCOGINECOLOGIA",
+  "apellido": "CABANA",
+  "nombre": "ROLANDO GABRIEL",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 190,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TOCOGINECOLOGIA",
+  "apellido": "GOMEZ",
+  "nombre": "IGNACIO MANUEL",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 191,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TOCOGINECOLOGIA",
+  "apellido": "FERNNADEZ",
+  "nombre": "YEIDI ESTEFANIA",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 192,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TOCOGINECOLOGIA",
+  "apellido": "LUNA",
+  "nombre": "MARIA EMILIA",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 193,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "VIDAURRE",
+  "nombre": "ZULMA ISABEL",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 194,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "ORTEGA",
+  "nombre": "MIRTA DELICIA",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 195,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "DIAZ",
+  "nombre": "JULIA SANDRA",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 196,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "VOLPI",
+  "nombre": "BARBARA VERONICA",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 197,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "BRITO",
+  "nombre": "GERMAN MARCELO",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 198,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "MAMANI",
+  "nombre": "CESAR",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 199,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "UROLOGÍA",
+  "apellido": "CARRIZO",
+  "nombre": "MARTIN FANCISCO",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 200,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CIRUGIA GENERAL",
+  "apellido": "GONZALEZ",
+  "nombre": "CARLOS E.",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 201,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CIRUGIA GENERAL",
+  "apellido": "PAREDES",
+  "nombre": "MARIO MELCHOR",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 202,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "CIRUGIA GENERAL",
+  "apellido": "BAREIRO MARTINEZ",
+  "nombre": "WILFRIDO",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 203,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TRAUMATOLOGÍA",
+  "apellido": "YURQUINA",
+  "nombre": "MARIO ALBERTO",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 204,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TRAUMATOLOGÍA",
+  "apellido": "LOPEZ ROJAS",
+  "nombre": "EUCLIDE",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 205,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "TRAUMATOLOGÍA",
+  "apellido": "MURILLO",
+  "nombre": "ERNESTO RAMON",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 206,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "ANESTESISTA",
+  "apellido": "SAYAGO",
+  "nombre": "JUAN CARLOS",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 207,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "ANESTESISTA",
+  "apellido": "MENICHETTI",
+  "nombre": "JUAN CARLOS",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 208,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "ANESTESISTA",
+  "apellido": "MONTERO",
+  "nombre": "EDUARDO ISMAEL",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 209,
+  "hospital": "DR. OSCAR ORIAS",
+  "servicio": "ANESTESISTA",
+  "apellido": "FERRERO RAIES",
+  "nombre": "ESTEBAN",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 20,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPA INTENSIVA",
+  "apellido": "GUTIERREZ",
+  "nombre": "SONIA IRENE",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 21,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPA INTENSIVA",
+  "apellido": "OVIEDO TORREZ",
+  "nombre": "CRISTINA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 22,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPA INTENSIVA",
+  "apellido": "FARFAN",
+  "nombre": "MARIO OSCAR",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 23,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPA INTENSIVA",
+  "apellido": "FLORES",
+  "nombre": "NADIA ALEJANDRA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 24,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPA INTENSIVA",
+  "apellido": "BAZO",
+  "nombre": "ANDREA ROSANA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 25,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPA INTENSIVA",
+  "apellido": "CASTRO",
+  "nombre": "LUIS",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 26,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "RIBONETTO",
+  "nombre": "MARIA ALEJANDRA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 27,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "SILVA",
+  "nombre": "ADRIANA BEATRIZ",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 28,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "NIEVA",
+  "nombre": "CAROLINA VANESA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 29,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "ABALOS",
+  "nombre": "SILVINA FERNANDA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 30,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "KNORR",
+  "nombre": "ELINA NOEMI",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 31,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "LOPEZ",
+  "nombre": "ALBERTO RENE",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 32,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "MARTINEZ",
+  "nombre": "FATIMA ROMINA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 33,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TERAPIA INTENSIVA PEDIATRICA",
+  "apellido": "PANTOJA",
+  "nombre": "DANIELA MARCELA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 34,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "MAMANI",
+  "nombre": "DANIELA VIVIANA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 35,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "RIVERA",
+  "nombre": "ISMAEL SANTIAGO",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 36,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "VILLA",
+  "nombre": "FLAVIA ALEJANDRA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 37,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "FIAD",
+  "nombre": "FACUNDO DALMACIO",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 38,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "ACOSTA",
+  "nombre": "MARIA AGUSTINA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 39,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CARI",
+  "nombre": "EUGENIO",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 40,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CAMPOS",
+  "nombre": "CARLOS ADRIAN",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 41,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "ALAVAR",
+  "nombre": "SONIA ELIZABETH",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 42,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "ALCORTA",
+  "nombre": "ADRIANA BEATRIZ",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 43,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CALISAYA",
+  "nombre": "LAURA MABEL",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 44,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CARLOS",
+  "nombre": "CLAUDIA SILVINA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 45,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CASTRO",
+  "nombre": "ANA LIA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 46,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "LEZCANO",
+  "nombre": "KARINA MERCEDES",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 47,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CARRAZANA",
+  "nombre": "MARIELA RAQUEL",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 48,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "QUINTEROS",
+  "nombre": "GABRIELA JORGELINA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 49,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "CELLINO",
+  "nombre": "NATALIA SOLEDAD",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 50,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "LOPEZ",
+  "nombre": "ADRIANA MARCELA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 51,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "TABORDA",
+  "nombre": "DIANA ELISETH",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 52,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "REYES",
+  "nombre": "ADELINA NATALIA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 53,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "ALVAREZ",
+  "nombre": "VIVIANA KARINA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 54,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "SEGOVIA",
+  "nombre": "GRISELDA VERONICA",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 55,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "TELL",
+  "nombre": "ANA LAURA",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 56,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "ARIAS",
+  "nombre": "RENE MANUEL",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 57,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "VILLARREAL",
+  "nombre": "ANDREA DANIELA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 58,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "REICH",
+  "nombre": "MARIA NATALIA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 59,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "BULIUBASICH",
+  "nombre": "JULIETA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 60,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "GONZALEZ BURGOS",
+  "nombre": "ANDREA MERCEDES",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 61,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "PANTOJA",
+  "nombre": "IRIS DEBORA",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 62,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "LOPEZ",
+  "nombre": "JORGE NAHUEL",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 63,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "SALINAS",
+  "nombre": "SILVANA BEATRIZ",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 64,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "RIVERO",
+  "nombre": "NATALIA ELIZABETH",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 65,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "NEONATOLOGIA",
+  "apellido": "ANDIA",
+  "nombre": "MARIA GLORIA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 66,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "TARCAYA",
+  "nombre": "DELIA HERMINIA",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 67,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "PASQUETI",
+  "nombre": "VIVIANA VERONICA",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 68,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "PALACIOS",
+  "nombre": "KARINA GABRIELA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 69,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ZERPA",
+  "nombre": "CLAUDIA ESTELA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 70,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ARGAÑARAZ",
+  "nombre": "CECILIA MARIANA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 71,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ZAPANA",
+  "nombre": "DANIEL ANTONIO",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 72,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "CALIZAYA",
+  "nombre": "CARMEN ROSA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 73,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "FALCO",
+  "nombre": "RODOLFO GUSTAVO",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 74,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "GARZON",
+  "nombre": "CLAUDIA MARIELA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 75,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "PRIETO",
+  "nombre": "MONICA ALEJANDRA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 76,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ROJAS",
+  "nombre": "MONICA PATRICIA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 77,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "CORIMAYO",
+  "nombre": "LORENA VANESA DEL CARMEN",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 78,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "CARDOZO",
+  "nombre": "BERTA",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 79,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "GONZALEZ",
+  "nombre": "NATALIA ANDREA",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 80,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ROMERO",
+  "nombre": "MONICA BEATRIZ",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 81,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ANZE",
+  "nombre": "JULIA SANDRA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 82,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "MENDEZ",
+  "nombre": "LUISA FABIANA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 83,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "PEÑALOZA",
+  "nombre": "PATRICIA BEATRIZ",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 84,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "VALDEZ LARA",
+  "nombre": "SILVIA RAQUEL",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 85,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "MEDINA",
+  "nombre": "YANINA BELEN",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 86,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "ALANCAY",
+  "nombre": "ANALIA ALEJANDRA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 87,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "PEDIATRIA",
+  "apellido": "CUEVAS",
+  "nombre": "SILVINA ASUNCION",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 88,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "REYNOSO",
+  "nombre": "MELINA ABIGAIL",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 89,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "GAYOSO LOPEZ",
+  "nombre": "CARLOS RAMON",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 90,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "VALDEZ",
+  "nombre": "GISELA VICTORIA",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 91,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "RODRIGUEZ GAUFFIN",
+  "nombre": "FACUNDO",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 92,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "VALLEJOS",
+  "nombre": "SILVIA NATALIA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 93,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "LAMAS",
+  "nombre": "LUCIANA VALERIA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 94,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "MEYER",
+  "nombre": "LAURA GABRIELA LOURDES",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 95,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "GIMENEZ",
+  "nombre": "SERGIO ANDRES",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 96,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "INTERNACION PEDIATRIA",
+  "apellido": "CUEVAS",
+  "nombre": "SILVINA ASUNCION",
+  "hs": 24,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 97,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "TENTOR",
+  "nombre": "VALERIA EVELINA",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 98,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "LOZANO",
+  "nombre": "PAULA ALEJANDRA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 99,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "GOMEZ",
+  "nombre": "MILAGROS VANINA ALEJANDRA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 100,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "COROMINAS ALVARADO",
+  "nombre": "MARIANO",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 101,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "MARCA",
+  "nombre": "DANIEL ALEJANDRO",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 102,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "VARGAS",
+  "nombre": "JUAN OMAR",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 103,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "CRUZ",
+  "nombre": "LUIS JUSTINO",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 104,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "DIAZ",
+  "nombre": "FABIANA LILIAN",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 105,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "TORRES",
+  "nombre": "WALDO DANIEL",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 106,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "VARGAS",
+  "nombre": "JOSE LUIS",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 107,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "MITA",
+  "nombre": "JUAN MARTIN",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 108,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "CALVO ELLIFF",
+  "nombre": "FERNANDO AGUSTIN",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 109,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "VLADISLAVIC",
+  "nombre": "FERNANDO AGUSTIN",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 110,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "COCIO",
+  "nombre": "JULIO CESAR",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 111,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "PASTORE",
+  "nombre": "SILVANA ANDREA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 112,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "LOPEZ BONFANTI",
+  "nombre": "JUAN JOSE",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 113,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "CRUZ",
+  "nombre": "ELINA NATALIA",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 114,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "INSAUSTI",
+  "nombre": "SERGIO ALEJANDRO",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 115,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "TABOADA",
+  "nombre": "ANALIA DANIELA",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 116,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "APAZA",
+  "nombre": "FRANCO JUAN",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 117,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "GUZMAN",
+  "nombre": "MABEL ANGELICA ANALIA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 118,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "CHOQUE",
+  "nombre": "GUILLERMO ALEJANDRO",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 119,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "MATERNIDAD",
+  "apellido": "FICOSECO",
+  "nombre": "RENATA ANTONELA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 120,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TRAUMATOLOGIA",
+  "apellido": "EBRECHT",
+  "nombre": "GUILLERMO FEDERICO",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 121,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TRAUMATOLOGIA",
+  "apellido": "ANZE",
+  "nombre": "JUAN CARLOS",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 122,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "TRAUMATOLOGIA",
+  "apellido": "GARECA",
+  "nombre": "PABLO LEONARDO",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 123,
+  "hospital": "MDR. MIGUEL MISKOFF",
+  "servicio": "TRAUMATOLOGIA",
+  "apellido": "ABRAHAM",
+  "nombre": "HECTOR GABRIEL",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 124,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TRAUMATOLOGIA",
+  "apellido": "OLGUERA",
+  "nombre": "MARCOS BAUTISTA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 125,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "TRAUMATOLOGIA",
+  "apellido": "POQUECHOQUE SEGOVIA",
+  "nombre": "ORLANDO A.",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 126,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "ALANIS",
+  "nombre": "CLAUDIA GISELA",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 127,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "GUTIERREZ",
+  "nombre": "HECTOR ORLANDO",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 128,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "SALAZAR",
+  "nombre": "RICARDO ANTONIO",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 129,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "SUAREZ",
+  "nombre": "VICENTE ARIEL",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 130,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "MUÑOZ",
+  "nombre": "MARCELO FERNANDO",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 131,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "SUAREZ",
+  "nombre": "RODOLFO WALTER",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 132,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "PEREYRA ROZAS",
+  "nombre": "ADOLFO",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 133,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "SOLIS",
+  "nombre": "LILIA IVANA",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 134,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "GRASSO",
+  "nombre": "SILVIA FERNANDA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 135,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "CARRAZANA",
+  "nombre": "JIMENA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 136,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA PEDIATRICA",
+  "apellido": "FLORES",
+  "nombre": "ARIADNA VALERIA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 137,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "ANESTESISTA PEDIATRICA",
+  "apellido": "TORRES",
+  "nombre": "LUIS SIMON",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 138,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "ANESTESISTA PEDIATRICA",
+  "apellido": "BOVERO",
+  "nombre": "MARCOS EDUARDO",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 139,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA PEDIATRICA",
+  "apellido": "CHAVEZ",
+  "nombre": "CRISTINA INES",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 140,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA PEDIATRICA",
+  "apellido": "REICH",
+  "nombre": "MONICA LILIANA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 141,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA PEDIATRICA",
+  "apellido": "FERNANDEZ BRUNO",
+  "nombre": "GONZALO",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 142,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA PEDIATRICA",
+  "apellido": "MERCADAL",
+  "nombre": "GUILLERMO",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 143,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA ADULTOS",
+  "apellido": "RIOJA",
+  "nombre": "FERNANDO OSCAR",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 144,
+  "hospital": "DR. MIGUEL MISKOFF",
+  "servicio": "ANESTESISTA ADULTOS",
+  "apellido": "MELGAR DECAROLI",
+  "nombre": "PAOLA MARINA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 145,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA ADULTOS",
+  "apellido": "ESPINOZA",
+  "nombre": "VERONICA CAROLINA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 146,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA ADULTOS",
+  "apellido": "VARGAS",
+  "nombre": "GISELA VANESA",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 147,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA ADULTOS",
+  "apellido": "PUCA LAJE",
+  "nombre": "MARIANO",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 148,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "ANESTESISTA ADULTOS",
+  "apellido": "CAYGUARA",
+  "nombre": "CECILIA CELESTE",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 149,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA MATERNA",
+  "apellido": "ALFARO",
+  "nombre": "ROMINA NATIVIDAD",
+  "hs": 12,
+  "tipo": "cargo"
+ },
+ {
+  "id": 150,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "CIRUGIA MATERNA",
+  "apellido": "CRUZ",
+  "nombre": "CRUZ, SERGIO RENAN",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 151,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "CARRAZANA",
+  "nombre": "DARIO FERNANDO",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 152,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "MARIN",
+  "nombre": "JORGE MARCELO",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 153,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "LOZANO",
+  "nombre": "LOZANO, ELENA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 154,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "ARIAS",
+  "nombre": "SILVIA GRACIELA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 155,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "GUEVARA",
+  "nombre": "MARIA DANIELA",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 156,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "GUERRA",
+  "nombre": "GLADIS MAGDALENA",
+  "hs": 24,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 157,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "LAMAS HERNANDEZ",
+  "nombre": "LIDIA GABRIELA",
+  "hs": 8,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 158,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "ESPADA",
+  "nombre": "MARIA TERESA",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 159,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "PONCE",
+  "nombre": "SANDRA LOURDES",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 160,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "VILCA TEJERINA",
+  "nombre": "ANALIA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 161,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "ARMELLA",
+  "nombre": "ROMINA TATIANA",
+  "hs": 12,
+  "tipo": "extra"
+ },
+ {
+  "id": 162,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "LOPEZ",
+  "nombre": "ALDO RAFAEL",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 163,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "CIFUENTES",
+  "nombre": "MARTIN",
+  "hs": 8,
+  "tipo": "extra"
+ },
+ {
+  "id": 164,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "ALTAMIRANO",
+  "nombre": "LORENA DAMIANA",
+  "hs": 8,
+  "tipo": "cargo"
+ },
+ {
+  "id": 165,
+  "hospital": "MATERNO INFAL - DR. HECTOR QUINTANA",
+  "servicio": "LABORATORIO CENTRAL",
+  "apellido": "MAMANI",
+  "nombre": "MARIANA VICTORIA",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 14,
+  "hospital": "SAN ISIDRO LABRADOR",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "CASTILLO",
+  "nombre": "SERGIO OSCAR",
+  "hs": 12,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 15,
+  "hospital": "SAN ISIDRO LABRADOR",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "VOLPI",
+  "nombre": "BARBARA VERONICA",
+  "hs": 24,
+  "tipo": "extra"
+ },
+ {
+  "id": 16,
+  "hospital": "SAN ISIDRO LABRADOR",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "REINALDES",
+  "nombre": "MARGARITA ROSA",
+  "hs": 24,
+  "tipo": "cargo"
+ },
+ {
+  "id": 17,
+  "hospital": "SAN ISIDRO LABRADOR",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "GARCIA",
+  "nombre": "JOSE MANUEL",
+  "hs": 12,
+  "tipo": "agrupacion"
+ },
+ {
+  "id": 18,
+  "hospital": "SAN ISIDRO LABRADOR",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "BRITO",
+  "nombre": "GERMAN MARCELO",
+  "hs": 8,
+  "tipo": "contrafactura"
+ },
+ {
+  "id": 19,
+  "hospital": "SAN ISIDRO LABRADOR",
+  "servicio": "GUARDIA CENTRAL",
+  "apellido": "OTERO",
+  "nombre": "CLAUDIA FABIANA",
+  "hs": 8,
+  "tipo": "extra"
+ }
+]
