@@ -8,10 +8,12 @@
 }
 .btnEdit, .btnRemove{
   cursor: pointer;
+  margin: 10px;
 }
 
 .btnEdit{
 color: green;
+margin-left: 0px;
 }
 
 .btnRemove{
