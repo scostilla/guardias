@@ -3,35 +3,47 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Professional } from 'src/app/interfaces/professinal';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
+import { HttpClient } from '@angular/common/http';
 
-const listProfessionals: Professional[] = [
-  {id: 1, cuil:'20-30442371-5',dni:30442371, name:'sebastian', lastName:'costilla', profession:'APU'},
-  {id: 2, cuil:'20-3214653-5',dni:3214653, name:'rodrigo', lastName:'rodriguez', profession:'medico'},
-  {id: 3, cuil:'20-9638524-5',dni:9638524, name:'javier', lastName:'capobianco', profession:'ing'},
-  {id: 3, cuil:'20-75395145-5',dni:75395145, name:'paula', lastName:'costilla capobianco', profession:'veterinario'},
-];
-
+export interface UserData {
+  dni: number;
+  cuil: string;
+  nombre: string;
+  apellido: string;
+  especialidad: string;
+}
 
 @Component({
   selector: 'app-professional-list',
   templateUrl: './professional-list.component.html',
-  styleUrls: ['./professional-list.component.css']
+  styleUrls: ['./professional-list.component.css'],
 })
-export class ProfessionalListComponent implements OnInit, AfterViewInit{
-
-  displayedColumns: string[] = ['cuil', 'name', 'lastName', 'dni','profession', 'actions'];
-  dataSource: MatTableDataSource<Professional>;
+export class ProfessionalListComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = [
+    'cuil',
+    'nombre',
+    'apellido',
+    'dni',
+    'especialidad',
+    'actions',
+  ];
+  dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(public dialog: MatDialog){
-    this.dataSource = new MatTableDataSource(listProfessionals);
+  constructor(private http: HttpClient, public dialog: MatDialog) {
+    this.dataSource = new MatTableDataSource<UserData>([]);
   }
 
-  ngOnInit():void {}
+  ngOnInit() {
+    this.http
+      .get<UserData[]>('../../../assets/jsonFiles/profesionales.json')
+      .subscribe((data) => {
+        this.dataSource.data = data;
+      });
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -47,16 +59,14 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit{
     }
   }
 
-  addEditProfessional(){
+  addEditProfessional() {
     const dialogRef = this.dialog.open(ProfessionalAbmComponent, {
       width: '600px',
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log('The dialog was closed');
     });
-
   }
-
 }
