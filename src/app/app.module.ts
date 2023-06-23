@@ -19,7 +19,6 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { ProfessionalTableComponent } from './components/professional-table/professional-table.component';
-import { ProfessionalDataServiceService } from './services/professionalDataService/professional-data-service.service';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
@@ -31,6 +30,7 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
+import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
 
 @NgModule({
   declarations: [
@@ -67,7 +67,8 @@ import { ProfessionalListComponent } from './components/professional-list/profes
     SharedModule,
   ],
   providers: [
-    ProfessionalDataServiceService,
+    ProfessionalDataServiceService
+    /*ProfessionalDataServiceService,*/
   ],
   bootstrap: [AppComponent],
 })

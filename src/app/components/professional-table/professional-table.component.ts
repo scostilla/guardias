@@ -5,8 +5,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HttpClient } from '@angular/common/http';
-import { ProfessionalDataServiceService } from '../../services/professionalDataService/professional-data-service.service';
 import { DialogServiceService } from 'src/app/services/DialogService/dialog-service.service';
+import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
 
 export interface UserData {
   id: number;

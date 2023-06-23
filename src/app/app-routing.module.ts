@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'daily-schedule', component: DailyScheduleComponent},
   {path:"home-page", component:HomePageComponent},
   {path:"registro-diario",component: RegistroDiarioComponent},
-  {path:"registro-actividades",component: RegistroActividadesComponent}
+  {path:"registro-actividades",component: RegistroActividadesComponent},
   { path: 'professional-list', component: ProfessionalListComponent},
   { path: 'professinal-news', component: ProfessionalNewsComponent},
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
