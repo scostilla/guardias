@@ -30,6 +30,7 @@ import { ScheduleCardComponent } from './components/schedule-card/schedule-card.
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
+import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { RegistroDiarioComponent } from './components/registro-diario/registro-d
     HomeComponent,
     LoginComponent,
     RegistroDiarioComponent,
+    RegistroActividadesComponent,
   ],
   imports: [
     BrowserModule,
