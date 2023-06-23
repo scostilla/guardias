@@ -6,6 +6,9 @@ import { DailyScheduleComponent } from './components/daily-schedule/daily-schedu
 import { LoginComponent } from './components/login/login.component';
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
 import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
+import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
+import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
+import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -14,6 +17,9 @@ const routes: Routes = [
   {path:"home-page", component:HomePageComponent},
   {path:"registro-diario",component: RegistroDiarioComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent}
+  { path: 'professional-list', component: ProfessionalListComponent},
+  { path: 'professinal-news', component: ProfessionalNewsComponent},
+  { path: 'schedule-distribution', component: ScheduleDistributionComponent},
 ];
 
 @NgModule({

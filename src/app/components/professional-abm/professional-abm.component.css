@@ -1,0 +1,13 @@
+mat-form-field{
+  align-items: center;
+  width: 100%;
+}
+
+.row{
+  display: flex;
+}
+
+.col{
+  flex:50%;
+  margin:0px,5px;
+}
