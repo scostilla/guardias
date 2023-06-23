@@ -4,5 +4,13 @@
 }
 
 .btn:hover{
-background-color: #00c4cc;
+background-color: #243c74;
+border: 2px;
+}
+
+.fuente{
+    
+        font-family: "archia";
+        
+
 }
