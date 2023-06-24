@@ -31,6 +31,7 @@ import { ProfessionalAbmComponent } from './components/professional-abm/professi
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { NovedadesFormComponent } from './components/novedades-form/novedades-fo
     ProfessionalAbmComponent,
     ProfessionalListComponent,
     NovedadesFormComponent,
+    DistHorariaComponent,
   ],
   imports: [
     BrowserModule,

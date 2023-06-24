@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./novedades-form.component.css']
 })
 export class NovedadesFormComponent {
+  selectedService:string='Compensatorio';
+  selectedGuard: string = '';
+  disableButton: boolean = this.selectedGuard == '';
 
 }
