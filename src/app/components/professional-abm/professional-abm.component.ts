@@ -22,7 +22,6 @@ export class ProfessionalAbmComponent {
   professionalForm: FormGroup;
   options: any[] | undefined;
 
-
   services: Service[] = [
     { value: 'anestesiologia', viewValue: 'ANESTESIOLOGIA' },
     { value: 'anestesiologia infantil', viewValue: 'ANESTESIOLOGIA INFANTIL' },
@@ -92,10 +91,10 @@ export class ProfessionalAbmComponent {
       dni: ['', Validators.required],
       cuil: ['', Validators.required],
       professional: ['Medico', Validators.required],
-      specialty: ['', ],
+      specialty: [''],
       revista: ['contratado', Validators.required],
       categoria: ['', Validators.required],
-      adicional: ['',],
+      adicional: [''],
       udo: ['', Validators.required],
       hospital: ['', Validators.required],
       service: ['', Validators.required],
@@ -112,7 +111,6 @@ export class ProfessionalAbmComponent {
   }
 
   addEditProfessional() {
-
     if (this.professionalForm.valid) {
       console.log('professional form valid');
       const formData = this.professionalForm.value;
@@ -125,12 +123,13 @@ export class ProfessionalAbmComponent {
 
   markFormGroupTouched(formGroup: FormGroup) {
     console.log('error list');
-    Object.values(formGroup.controls).forEach(control => {
+    Object.values(formGroup.controls).forEach((control) => {
       control.markAsTouched();
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }
-    });}
+    });
+  }
 
   cancel() {
     this.dialogRef.close();

@@ -69,4 +69,13 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       console.log('The dialog was closed');
     });
   }
+
+  removeProfessional(){
+    console.log('remove professional');
+  }
+
+  editProfessional(nombre: string){
+    console.log('edit Professional');
+  }
+
 }
