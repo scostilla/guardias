@@ -1,25 +1,35 @@
 <app-registro-actividades></app-registro-actividades>
 <div class="d-flex justify-content-center mt-5 mb-5 fuente">
     <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
-        <h1 class="d-flex justify-content-center fs-1 mb-5 fuente">REGISTRAR NOVEDAD</h1>
+        <h1 class="d-flex justify-content-center fs-1 mb-5 fuente">REGISTRAR NOVEDADES</h1>
         <form action="">
-            
+
             <div class="input-group mt-3 ">
-                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc;
                 color: #fff;">
                     <label >Hospital</label>
                 </div>
-                <input class="form-control" type="text">
+                <mat-form-field>
+                  <mat-label>Hospital</mat-label>
+                  <mat-select formControlName="hospital">
+                    <mat-option
+                      *ngFor="let option of options"
+                      [value]="option.descripcion"
+                    >
+                      {{ option.descripcion }} ({{option.region}})
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
             </div>
             <div class="input-group mt-3">
-                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc;
                 color: #fff;">
                     <label for="">Profesional</label>
                 </div>
                 <input class="form-control" type="text">
             </div>
             <div class="input-group mt-3">
-                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc;
                 color: #fff;">
                     <label for="">Novedad</label>
                 </div>
@@ -49,7 +59,7 @@
                         <app-calendar [isReadOnly]="false"></app-calendar>
                     </div>
                 </div>
-                
+
             </div>
             <button type="submit" class="btn mt-2 shadow p-2 mb-2 rounded w-100 text-secondary">Guardar</button>
         </form>
