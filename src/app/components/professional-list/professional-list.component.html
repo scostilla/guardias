@@ -1,13 +1,13 @@
 <div class="row">
   <div class="col 12">
-  <mat-form-field>
-    <mat-label>Filtro</mat-label>
-    <input matInput (keyup)="applyFilter($event)" #input>
-  </mat-form-field>
-</div>
-<div class="col 4">
-  <button mat-raised-button color="primary" (click)="addEditProfessional()">Agregar Profesional</button>
-</div>
+    <mat-form-field>
+      <mat-label>Filtro</mat-label>
+      <input matInput (keyup)="applyFilter($event)" #input>
+    </mat-form-field>
+  </div>
+  <div class="col 4">
+    <button mat-raised-button color="primary" (click)="addEditProfessional()">Agregar Profesional</button>
+  </div>
 </div>
 
 <div class="row">
@@ -41,8 +41,8 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </th>
       <td mat-cell *matCellDef="let element">
-        <mat-icon class="btnEdit" (click)="editProfessional(element.name)" matTooltip="Editar {{element.name}} {{element.lastName}}">edit</mat-icon>
-        <mat-icon class="btnRemove" (click)="removeProfessional()" matTooltip="Eliminar {{element.name}} {{element.lastName}}">person_remove</mat-icon>
+        <mat-icon class="btnEdit" (click)="editProfessional(element.id)" matTooltip="Editar {{element.name}} {{element.lastName}}">edit</mat-icon>
+        <mat-icon class="btnRemove" (click)="removeProfessional(element.id)" matTooltip="Eliminar {{element.name}} {{element.lastName}}">person_remove</mat-icon>
       </td>
     </ng-container>
 

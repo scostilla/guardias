@@ -7,6 +7,7 @@ import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.c
 import { HttpClient } from '@angular/common/http';
 
 export interface UserData {
+  id: number;
   dni: number;
   cuil: string;
   nombre: string;
@@ -66,16 +67,24 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
+      console.log('The dialog addEditProfessional was closed');
     });
   }
 
-  removeProfessional(){
-    console.log('remove professional');
+
+//removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA
+  removeProfessional(id: number){
+    console.log('remove Professional id: '+id);
+    const index = this.dataSource.data.findIndex((element) => element.id === id);
+    if (index > -1) {
+      this.dataSource.data.splice(index, 1);
+      this.dataSource._updateChangeSubscription();
+    }
   }
 
-  editProfessional(nombre: string){
-    console.log('edit Professional');
+  //removeProfessional POR AHORA SOLO EDITA EL ELEMENTO EN LA VISTA
+  editProfessional(id: number){
+    console.log('edit Professional id: '+id);
   }
 
 }
