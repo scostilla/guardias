@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
 import { HttpClient } from '@angular/common/http';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 export interface UserData {
   id: number;
@@ -73,13 +74,30 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
 
 
 //removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA
-  removeProfessional(id: number){
-    console.log('remove Professional id: '+id);
+  removeProfessional(id: number, nombre:string,apellido:string){
+    this.dialog
+    .open(ConfirmDialogComponent, {
+      data:{
+        message: 'Confirma la eliminación de ' + nombre + ' ' + apellido,
+        title: 'Eliminar',
+      }
+    })
+    .afterClosed()
+    .subscribe((confirm: Boolean) => {
+      if (confirm) {
+        console.log('remove Professional id: '+id);
     const index = this.dataSource.data.findIndex((element) => element.id === id);
     if (index > -1) {
       this.dataSource.data.splice(index, 1);
       this.dataSource._updateChangeSubscription();
     }
+      } else {
+        this.dialog.closeAll();
+      }
+    });
+
+
+
   }
 
   //removeProfessional POR AHORA SOLO EDITA EL ELEMENTO EN LA VISTA
