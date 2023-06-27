@@ -30,6 +30,8 @@ import { ProfessionalNewsComponent } from './components/professional-news/profes
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
+import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,8 @@ import { ProfessionalDataServiceService } from './services/ProfessionalDataServi
     ProfessionalNewsComponent,
     ProfessionalAbmComponent,
     ProfessionalListComponent,
+    NovedadesFormComponent,
+    DistHorariaComponent,
   ],
   imports: [
     BrowserModule,

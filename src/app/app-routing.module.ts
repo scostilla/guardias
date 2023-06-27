@@ -9,6 +9,8 @@ import { RegistroActividadesComponent } from './components/registro-actividades/
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
+import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -20,6 +22,8 @@ const routes: Routes = [
   { path: 'professional-list', component: ProfessionalListComponent},
   { path: 'professinal-news', component: ProfessionalNewsComponent},
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
+  {path: 'novedades-form', component: NovedadesFormComponent},
+  {path:'dist-horaria', component:DistHorariaComponent},
 ];
 
 @NgModule({

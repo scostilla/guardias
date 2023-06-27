@@ -1,6 +1,7 @@
-<div class="d-flex justify-content-center">
+<app-registro-actividades></app-registro-actividades>
+<div class="d-flex justify-content-center mt-5 mb-5 fuente">
     <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
-        <h1 class="d-flex justify-content-center fs-1 mb-5 fw-bold">NUEVO REGISTRO</h1>
+        <h1 class="d-flex justify-content-center fs-1 mb-5 fuente">NUEVO REGISTRO</h1>
         <form action="">
             <div class="mb-3" style="font-size: 1rem;">
                 <label for="serviceType" class="form-label">Tipo de servicio:</label>
@@ -63,21 +64,21 @@
                 <input class="form-control" type="text" placeholder="{{ selectedProfesion }}">
             </div>
             <div class="container mt-5 " style="font-size: 1rem;">
-                <div class="row dateCheck d-flex align-items-center">
-                    <div class="col">
+                <div class="row dateCheck">
+                    <div class="col d-flex justify-content-center">
                         <label for="dtpCheckIn" id="labelDateCheck">Ingreso </label>
                     </div>
-                    <div class="col">
+                    <div class="col d-flex justify-content-center">
                         <app-calendar [isReadOnly]="true"></app-calendar>
                     </div>
-                    <div class="col">
+                    <div class="col d-flex justify-content-center" >
                         <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
                     </div>
-                    <div class="col">
+                    <div class="col d-flex justify-content-center" >
                         <app-time-picker></app-time-picker>
                     </div>
                 </div>
-                <div class="row dateCheck d-flex align-items-center">
+                <div class="row dateCheck d-flex align-items-center" >
                     <div class="col">
                         <label for="dtpCheckIn" id="labelDateCheck">Egreso</label>
                     </div>
@@ -97,3 +98,4 @@
         </form>
     </div>
 </div>
+

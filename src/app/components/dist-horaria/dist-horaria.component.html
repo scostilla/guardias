@@ -1,0 +1,71 @@
+<app-registro-actividades></app-registro-actividades>
+<div class="d-flex justify-content-center mt-5 mb-5 fuente">
+    <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
+        <h1 class="d-flex justify-content-center fs-1 mb-5  fuente">REGISTRAR NOVEDAD</h1>
+        <form action="">
+            
+            <div class="input-group mt-3 ">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label >Hospital</label>
+                </div>
+                <input class="form-control" type="text">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Profesional</label>
+                </div>
+                <input class="form-control" type="text">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Tipo de Guardia</label>
+                </div>
+                <select class="form-select text-secondary" aria-label="Default select example" name="service"
+                    [(ngModel)]="selectedService">
+                    <option value="Cargo">Cargo</option>
+                    <option value="Reagrupacion de Hs.">Reagrupacion de Hs.</option>
+                    <option value="Extras">Extras</option>
+                    <option value="Contra factura">Contra factura</option>
+                </select>
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Dia</label>
+                </div>
+                <select class="form-select text-secondary" aria-label="Default select example" name="service"
+                    [(ngModel)]="selectedService">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miercoles">Miercoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sabado">Sabado</option>
+                    <option value="Domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Cantidad</label>
+                </div>
+                <input class="form-control" type="text">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Cons</label>
+                </div>
+                <select class="form-select text-secondary" aria-label="Default select example" name="service"
+                    [(ngModel)]="selectedService">
+                    <option value="Cons ext">Cons ext</option>
+                    <option value="Comis">Comis</option>
+                </select>
+            </div>
+            <button type="submit" class="btn mt-5 shadow p-2 mb-2 rounded w-100 text-secondary">Guardar</button>
+        </form>
+    </div>
+</div>
