@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
+import {MatMenuModule} from '@angular/material/menu';
 
 
 
@@ -38,6 +39,7 @@ import {MatSelectModule} from '@angular/material/select';
     MatTooltipModule,
     MatButtonModule,
     MatSelectModule,
+    MatMenuModule,
   ],
   exports: [
     MatDialogModule,
@@ -54,6 +56,7 @@ import {MatSelectModule} from '@angular/material/select';
     MatTooltipModule,
     MatButtonModule,
     MatSelectModule,
+    MatMenuModule,
   ], providers:[
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
   ]
