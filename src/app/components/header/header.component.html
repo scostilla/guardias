@@ -35,6 +35,9 @@
     </div>
   </div>
 </nav>
-<nav class="navbar navbar-expand-lg bg-celeste-argentina shadow">
-  <app-nav-bar></app-nav-bar>
-</nav>
+<div *ngIf="showNavBar">
+  <nav class="navbar navbar-expand-lg bg-celeste-argentina shadow">
+    <app-nav-bar></app-nav-bar>
+  </nav>
+</div>
+
