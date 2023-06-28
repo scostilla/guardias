@@ -6,8 +6,8 @@
   <div class="logo container mt-2 mb-2">
     <div class="align-items-right">
       <a href="http://salud.jujuy.gob.ar/" target="_blank">
-      <img src="assets/img/pnglogo1.png" width="170" height="100" />
-    </a>
+        <img src="assets/img/pnglogo1.png" width="170" height="100" />
+      </a>
     </div>
     <div class="collapse navbar-collapse">
       <div class="container">
@@ -15,21 +15,26 @@
           <h1 class="fw-bold">SISTEMA PROVINCIAL DE GUARDIAS</h1>
         </div>
       </div>
-      <!--
       <ul class="navbar-nav ms-3">
-        <li class="nav-item" style="width:100px;">
-          <button type="submit" class=" btn btn-outline-success" style="background-color: #243c74;font-family: achia ;">
+        <li class="nav-item" style="width: 100px">
+          <button [matMenuTriggerFor]="menu"
+            type="submit"
+            class="btn btn-outline-success"
+            style="background-color: #243c74; font-family: achia"
+          >
             <i class="fa-solid fa-user mt-2 mb-1 text-light"></i>
           </button>
           <mat-menu #menu="matMenu">
             <button mat-menu-item><span>Opciones</span></button>
             <div class="col" type="button" routerLink="/">
-            <button mat-menu-item><span>Salir</span></button>
-          </div>
+              <button mat-menu-item><span>Salir</span></button>
+            </div>
           </mat-menu>
         </li>
       </ul>
-      -->
     </div>
   </div>
+</nav>
+<nav class="navbar navbar-expand-lg bg-celeste-argentina shadow">
+  <app-nav-bar></app-nav-bar>
 </nav>
