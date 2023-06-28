@@ -2,3 +2,12 @@ h2{
     font-family: "archia";
     font-size:350%;
 }
+
+div.boton {
+    border: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
+    border-radius: 10px;
+    background-position:center center;
+}
