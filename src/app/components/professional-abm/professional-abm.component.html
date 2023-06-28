@@ -8,20 +8,13 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
-          <input
-            matInput
-            placeholder="Ingresar Nombre"
-            autocomplete="off"
-            formControlName="nombre"
-          />
+          <input matInput placeholder="Ingresar Nombre" autocomplete="off" formControlName="nombre" />
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('nombre')?.hasError('required') &&
               professionalForm.get('nombre')?.touched
-            "
-          >
+            ">
             <h5>El nombre es un campo requerido</h5>
           </span>
         </div>
@@ -30,20 +23,13 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Apellido</mat-label>
-          <input
-            matInput
-            placeholder="Ingresar Apellido"
-            autocomplete="off"
-            formControlName="apellido"
-          />
+          <input matInput placeholder="Ingresar Apellido" autocomplete="off" formControlName="apellido" />
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('apellido')?.hasError('required') &&
               professionalForm.get('apellido')?.touched
-            "
-          >
+            ">
             <h5>El apellido es un campo requerido</h5>
           </span>
         </div>
@@ -54,20 +40,13 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>DNI</mat-label>
-          <input
-            matInput
-            placeholder="Ingresar DNI"
-            autocomplete="off"
-            formControlName="dni"
-          />
+          <input matInput placeholder="Ingresar DNI" autocomplete="off" formControlName="dni" />
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('dni')?.hasError('required') &&
               professionalForm.get('dni')?.touched
-            "
-          >
+            ">
             <h5>El dni es un campo requerido</h5>
           </span>
         </div>
@@ -75,20 +54,13 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>CUIL</mat-label>
-          <input
-            matInput
-            placeholder="Ingresar CUIL"
-            autocomplete="off"
-            formControlName="cuil"
-          />
+          <input matInput placeholder="Ingresar CUIL" autocomplete="off" formControlName="cuil" />
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('cuil')?.hasError('required') &&
               professionalForm.get('cuil')?.touched
-            "
-          >
+            ">
             <h5>El cuil es un campo requerido</h5>
           </span>
         </div>
@@ -110,10 +82,7 @@
         <mat-form-field>
           <mat-label>Especialidad</mat-label>
           <mat-select formControlName="specialty">
-            <mat-option
-              *ngFor="let specialty of specialties"
-              [value]="specialty.value"
-            >
+            <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
               {{ specialty.viewValue }}
             </mat-option>
           </mat-select>
@@ -122,7 +91,7 @@
     </div>
 
     <div class="row">
-      <div class="col-4">
+      <div class="col">
         <mat-form-field>
           <mat-label>Sit. Revista</mat-label>
           <mat-select formControlName="revista">
@@ -133,7 +102,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="col-4">
+      <div class="col">
         <mat-form-field>
           <mat-label>Categoria</mat-label>
           <mat-select formControlName="categoria">
@@ -145,47 +114,56 @@
           </mat-select>
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('categoria')?.hasError('required') &&
               professionalForm.get('categoria')?.touched
-            "
-          >
+            ">
             <h5>El categoria es un campo requerido</h5>
           </span>
         </div>
       </div>
-      <div class="col-4">
-        <mat-form-field>
-          <mat-label>Adicional</mat-label>
-          <mat-select formControlName="adicional">
-            <mat-option value="j1">J-1</mat-option>
-            <mat-option value="j2">J-2</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
 
+    </div>
+<div class="row">
+  <div class="col">
+    <mat-form-field>
+      <mat-label>Adicional</mat-label>
+      <mat-select formControlName="adicional">
+        <mat-option value="j1">J-1</mat-option>
+        <mat-option value="j2">J-2</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="col">
+    <mat-form-field appearance="fill">
+      <mat-label>Carga Horaria</mat-label>
+      <input matInput placeholder="Ingresar carga Horaria" autocomplete="off" formControlName="cargaHoraria" />
+    </mat-form-field>
+    <div class="error">
+      <span *ngIf="
+          professionalForm.get('cargaHoraria')?.hasError('required') &&
+          professionalForm.get('cargaHoraria')?.touched
+        ">
+        <h5>El Carga Horaria es un campo requerido</h5>
+      </span>
+    </div>
+  </div>
+</div>
     <div class="row">
       <div class="col">
         <mat-form-field>
           <mat-label>U.d.O.</mat-label>
           <mat-select formControlName="udo">
-            <mat-option
-              *ngFor="let option of options"
-              [value]="option.descripcion"
-            >
-            {{ option.descripcion }} ({{option.region}})
+            <mat-option *ngFor="let option of options" [value]="option.descripcion">
+              {{ option.descripcion }} ({{option.region}})
             </mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('udo')?.hasError('required') &&
               professionalForm.get('udo')?.touched
-            "
-          >
+            ">
             <h5>El U.d.O. es un campo requerido</h5>
           </span>
         </div>
@@ -196,21 +174,16 @@
       <mat-form-field>
         <mat-label>Hospital</mat-label>
         <mat-select formControlName="hospital">
-          <mat-option
-            *ngFor="let option of options"
-            [value]="option.descripcion"
-          >
+          <mat-option *ngFor="let option of options" [value]="option.descripcion">
             {{ option.descripcion }} ({{option.region}})
           </mat-option>
         </mat-select>
       </mat-form-field>
       <div class="error">
-        <span
-          *ngIf="
+        <span *ngIf="
             professionalForm.get('hospital')?.hasError('required') &&
             professionalForm.get('hospital')?.touched
-          "
-        >
+          ">
           <h5>El hospital es un campo requerido</h5>
         </span>
       </div>
@@ -221,56 +194,26 @@
         <mat-form-field>
           <mat-label>Servicio</mat-label>
           <mat-select formControlName="service">
-            <mat-option
-              *ngFor="let service of services"
-              [value]="service.value"
-            >
+            <mat-option *ngFor="let service of services" [value]="service.value">
               {{ service.viewValue }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">
-          <span
-            *ngIf="
+          <span *ngIf="
               professionalForm.get('service')?.hasError('required') &&
               professionalForm.get('service')?.touched
-            "
-          >
+            ">
             <h5>El Servicio es un campo requerido</h5>
           </span>
         </div>
       </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Carga Horaria</mat-label>
-          <input
-            matInput
-            placeholder="Ingresar carga Horaria"
-            autocomplete="off"
-            formControlName="cargaHoraria"
-          />
-        </mat-form-field>
-        <div class="error">
-          <span
-            *ngIf="
-              professionalForm.get('cargaHoraria')?.hasError('required') &&
-              professionalForm.get('cargaHoraria')?.touched
-            "
-          >
-            <h5>El Carga Horaria es un campo requerido</h5>
-          </span>
-        </div>
-      </div>
+
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button type="button" mat-button (click)="cancel()">Cancelar</button>
-    <button
-      [disabled]="professionalForm.invalid"
-      type="submit"
-      mat-button
-      cdkFocusInitial
-    >
+    <button [disabled]="professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
       Agregar
     </button>
   </mat-dialog-actions>
