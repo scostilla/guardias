@@ -2,12 +2,50 @@
     font-family: Archia;
     src: url('src/assets/font/Archia-Regular.otf');
 }
-.navbar-custom {
+.bg-celeste-argentina {
     background-color: #37BBED;
 }
 
 h1 {
     font-family: "archia";
     font-size:300%;
-    
 }
+
+.navbar{
+    min-height: 72px;
+    margin: 0;
+    padding-left: 0px;
+}
+
+.logo{
+    padding-left: 0px;
+    margin-left: 80px;
+    margin-right: 80px;
+}
+
+/*
+
+.navbar-default{
+    position: relative;
+    border: 0;
+    box-shadow: none;
+    margin: 0;
+    z-index: 9;
+}
+
+.navbar-top{
+    border-radius: 0;
+}
+
+.navbar-brand{
+    padding: 10px 15px 10px 0;
+}
+
+.nav{
+    padding-left: 0;
+}
+
+.navbar-nav{
+    margin: 7.5px -15px;
+}
+*/
