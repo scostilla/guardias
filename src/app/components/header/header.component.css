@@ -23,6 +23,15 @@ h1 {
     margin-right: 80px;
 }
 
+.userLogged{
+  background-color: #243c74;
+  font-family: achia
+}
+
+mat-menu{
+  width: 50%;
+}
+
 /*
 
 .navbar-default{
