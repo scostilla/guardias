@@ -33,6 +33,7 @@ import { ProfessionalDataServiceService } from './services/ProfessionalDataServi
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { GuardiasViewComponent } from './guardias-view/guardias-view.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     NovedadesFormComponent,
     DistHorariaComponent,
     ConfirmDialogComponent,
+    GuardiasViewComponent,
   ],
   imports: [
     BrowserModule,
