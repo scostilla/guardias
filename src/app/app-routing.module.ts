@@ -11,6 +11,7 @@ import { ProfessionalNewsComponent } from './components/professional-news/profes
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
+import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
   {path: 'novedades-form', component: NovedadesFormComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
+  {path:'guardias-view', component: GuardiasViewComponent},
 ];
 
 @NgModule({

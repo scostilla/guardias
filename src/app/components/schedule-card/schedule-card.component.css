@@ -1,12 +1,16 @@
-.row h5{
+/*
+.row h3{
   margin-bottom: 5px;
   line-height: 0.8;
 }
-
-.row h1{
+*/
+.row h2{
   margin-bottom: 5px;
   margin-top: 10px
 }
 .row{
-  background-color: crimson;
+  background-color:rgba(190, 181, 181, 0.274);
+  text-align: center;
+  justify-content: center;
 }
+

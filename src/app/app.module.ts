@@ -28,12 +28,13 @@ import { RegistroActividadesComponent } from './components/registro-actividades/
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
-import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { GuardiasViewComponent } from './guardias-view/guardias-view.component';
+
+import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
+import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 
 @NgModule({
   declarations: [
