@@ -1,12 +1,15 @@
 <div class="row">
-  <div class="col 12">
+  <div class="col-1 offset-3">
+  <mat-label>Buscar</mat-label>
+  </div>
+    <div class="col-3">
     <mat-form-field>
-      <mat-label>Filtro</mat-label>
       <input matInput (keyup)="applyFilter($event)" #input>
     </mat-form-field>
   </div>
-  <div class="col 4">
-    <button mat-raised-button color="primary" (click)="addEditProfessional()">Agregar Profesional</button>
+
+  <div class="col-2">
+    <button mat-raised-button style="color: #243c74;" (click)="addEditProfessional()">Agregar Profesional</button>
   </div>
 </div>
 

@@ -1,3 +1,17 @@
-.nav-item{
-  width: 25%;
+
+h5{
+color: white;
+}
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 6vh; /* Ajusta la altura según tus necesidades */
+}
+
+.col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

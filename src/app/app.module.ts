@@ -13,8 +13,6 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { PopupComponent } from './components/popup/popup.component';
-import { LeftNavbarComponent } from './components/left-navbar/left-navbar.component';
-import { RightNavbarComponent } from './components/right-navbar/right-navbar.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
@@ -42,8 +40,6 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
     FooterComponent,
     ProfessionalFormComponent,
     PopupComponent,
-    LeftNavbarComponent,
-    RightNavbarComponent,
     CalendarComponent,
     TimePickerComponent,
     SearchProfessionalComponent,
