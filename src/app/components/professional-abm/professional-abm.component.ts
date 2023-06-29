@@ -8,11 +8,6 @@ interface Specialty {
   viewValue: string;
 }
 
-interface Service {
-  value: string;
-  viewValue: string;
-}
-
 @Component({
   selector: 'app-professional-abm',
   templateUrl: './professional-abm.component.html',
@@ -22,39 +17,8 @@ export class ProfessionalAbmComponent {
   professionalForm: FormGroup;
   options: any[] | undefined;
 
-  services: Service[] = [
-    { value: 'anestesiologia', viewValue: 'ANESTESIOLOGIA' },
-    { value: 'anestesiologia infantil', viewValue: 'ANESTESIOLOGIA INFANTIL' },
-    { value: 'cardiologia', viewValue: 'CARDIOLOGIA' },
-    { value: 'cirugia general', viewValue: 'CIRUGIA GENERAL' },
-    { value: 'cirugia infantil', viewValue: 'CIRUGIA INFANTIL' },
-    { value: 'clinico', viewValue: 'CLINICO' },
-    { value: 'ginecologia', viewValue: 'GINECOLOGIA' },
-    { value: 'guardia central', viewValue: 'GUARDIA CENTRAL' },
-    { value: 'hemoterapia', viewValue: 'HEMOTERAPIA' },
-    { value: 'laboratorio/ bioquimico', viewValue: 'LABORATORIO/ BIOQUIMICO' },
-    { value: 'neonatologia', viewValue: 'NEONATOLOGIA' },
-    { value: 'obstetricia/maternidad', viewValue: 'OBSTETRICIA/MATERNIDAD' },
-    { value: 'oncohematologia', viewValue: 'ONCOHEMATOLOGIA' },
-    { value: 'otro', viewValue: 'OTRO' },
-    { value: 'pediatria', viewValue: 'PEDIATRIA' },
-    {
-      value: 'terapia intensiva adulto',
-      viewValue: 'TERAPIA INTENSIVA ADULTO',
-    },
-    {
-      value: 'terapia intensiva infantil',
-      viewValue: 'TERAPIA INTENSIVA INFANTIL',
-    },
-    { value: 'terapia intermedia', viewValue: 'TERAPIA INTERMEDIA' },
-    { value: 'tocoginecologia', viewValue: 'TOCOGINECOLOGIA' },
-    { value: 'traumatologia', viewValue: 'TRAUMATOLOGIA' },
-    { value: 'urologia', viewValue: 'UROLOGIA' },
-  ];
-
   specialties: Specialty[] = [
     { value: 'anestesista', viewValue: 'ANESTESISTA' },
-    { value: 'bioquímico', viewValue: 'BIOQUÍMICO' },
     { value: 'cardiologia', viewValue: 'CARDIOLOGIA' },
     { value: 'cirugia', viewValue: 'CIRUGIA' },
     { value: 'cirugia infantil', viewValue: 'CIRUGIA INFANTIL' },
@@ -97,8 +61,6 @@ export class ProfessionalAbmComponent {
       adicional: [''],
       udo: ['', Validators.required],
       hospital: ['', Validators.required],
-      service: ['', Validators.required],
-      cargaHoraria: ['', Validators.required],
     });
   }
 

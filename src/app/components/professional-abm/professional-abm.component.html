@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  Agregar Profesional
+  AGREGAR PROFESIONAL
   <h5 style="color: red">*Campos Obligatorios</h5>
 </h2>
 <form [formGroup]="professionalForm" (ngSubmit)="addEditProfessional()">
@@ -99,18 +99,17 @@
             <mat-option value="planta">PLANTA PERMANENTE</mat-option>
             <mat-option value="contratado">CONTRATADO</mat-option>
             <mat-option value="afectado">AFECTADO</mat-option>
+            <mat-option value="afectado">INDEPENDIENTE</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field>
-          <mat-label>Categoria</mat-label>
+          <mat-label>Carga Horaria</mat-label>
           <mat-select formControlName="categoria">
-            <mat-option value="a">A</mat-option>
-            <mat-option value="b">B</mat-option>
-            <mat-option value="c">C</mat-option>
-            <mat-option value="d">D</mat-option>
-            <mat-option value="e">E</mat-option>
+            <mat-option value="24">24</mat-option>
+            <mat-option value="30">30</mat-option>
+            <mat-option value="40">40</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">
@@ -118,7 +117,7 @@
               professionalForm.get('categoria')?.hasError('required') &&
               professionalForm.get('categoria')?.touched
             ">
-            <h5>El categoria es un campo requerido</h5>
+            <h5>El carga horaria es un campo requerido</h5>
           </span>
         </div>
       </div>
@@ -135,16 +134,22 @@
     </mat-form-field>
   </div>
   <div class="col">
-    <mat-form-field appearance="fill">
-      <mat-label>Carga Horaria</mat-label>
-      <input matInput placeholder="Ingresar carga Horaria" autocomplete="off" formControlName="cargaHoraria" />
+    <mat-form-field>
+      <mat-label>Categoria</mat-label>
+      <mat-select formControlName="categoria">
+        <mat-option value="a">A</mat-option>
+        <mat-option value="b">B</mat-option>
+        <mat-option value="c">C</mat-option>
+        <mat-option value="d">D</mat-option>
+        <mat-option value="e">E</mat-option>
+      </mat-select>
     </mat-form-field>
     <div class="error">
       <span *ngIf="
-          professionalForm.get('cargaHoraria')?.hasError('required') &&
-          professionalForm.get('cargaHoraria')?.touched
+          professionalForm.get('categoria')?.hasError('required') &&
+          professionalForm.get('categoria')?.touched
         ">
-        <h5>El Carga Horaria es un campo requerido</h5>
+        <h5>El categoria es un campo requerido</h5>
       </span>
     </div>
   </div>
@@ -172,7 +177,7 @@
 
     <div class="row" style="margin-top: 20px">
       <mat-form-field>
-        <mat-label>Hospital</mat-label>
+        <mat-label>Hospital donde presta servicio</mat-label>
         <mat-select formControlName="hospital">
           <mat-option *ngFor="let option of options" [value]="option.descripcion">
             {{ option.descripcion }} ({{option.region}})
@@ -189,31 +194,10 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <mat-form-field>
-          <mat-label>Servicio</mat-label>
-          <mat-select formControlName="service">
-            <mat-option *ngFor="let service of services" [value]="service.value">
-              {{ service.viewValue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <div class="error">
-          <span *ngIf="
-              professionalForm.get('service')?.hasError('required') &&
-              professionalForm.get('service')?.touched
-            ">
-            <h5>El Servicio es un campo requerido</h5>
-          </span>
-        </div>
-      </div>
-
-    </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button type="button" mat-button (click)="cancel()">Cancelar</button>
-    <button [disabled]="professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
+    <button type="button" class="btnCancel" mat-button (click)="cancel()">Cancelar</button>
+    <button class="btnAdd" [disabled]="professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
       Agregar
     </button>
   </mat-dialog-actions>

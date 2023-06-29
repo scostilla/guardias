@@ -6,6 +6,10 @@
     background-color: #37BBED;
 }
 
+nav{
+  height: 20%;
+}
+
 h1 {
     font-family: "archia";
     font-size:300%;
