@@ -2,7 +2,6 @@ mat-form-field{
   align-items: center;
   width: 100%;
 }
-
 .mdc-dialog__title
 {
   background-color: #243c74;
@@ -11,6 +10,10 @@ mat-form-field{
 
 .btnAdd{
   color: #243c74;
+}
+
+.btnAdd[disabled]{
+  color: #87a4e9;
 }
 
 .btnCancel{

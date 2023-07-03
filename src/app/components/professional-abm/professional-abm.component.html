@@ -17,6 +17,12 @@
             ">
             <h5>El nombre es un campo requerido</h5>
           </span>
+          <span *ngIf="
+          professionalForm.get('nombre')?.hasError('pattern') &&
+          professionalForm.get('nombre')?.touched
+          ">
+            <h5>El nombre debe contener solo letras</h5>
+          </span>
         </div>
       </div>
 
@@ -31,6 +37,12 @@
               professionalForm.get('apellido')?.touched
             ">
             <h5>El apellido es un campo requerido</h5>
+          </span>
+          <span *ngIf="
+          professionalForm.get('apellido')?.hasError('pattern') &&
+          professionalForm.get('apellido')?.touched
+          ">
+            <h5>El apellido debe contener solo letras</h5>
           </span>
         </div>
       </div>
@@ -49,6 +61,12 @@
             ">
             <h5>El dni es un campo requerido</h5>
           </span>
+          <span *ngIf="
+          professionalForm.get('dni')?.hasError('pattern') &&
+          professionalForm.get('dni')?.touched
+          ">
+            <h5>El dni debe contener solo números</h5>
+          </span>
         </div>
       </div>
       <div class="col">
@@ -63,50 +81,56 @@
             ">
             <h5>El cuil es un campo requerido</h5>
           </span>
+          <span *ngIf="
+          professionalForm.get('cuil')?.hasError('pattern') &&
+          professionalForm.get('cuil')?.touched
+          ">
+            <h5>El cuil debe contener solo n</h5>
+          </span>
         </div>
       </div>
     </div>
 
     <div class="row" style="margin-top: 20px">
-      <div class="col">
-        <mat-form-field>
-          <mat-label>Profesion</mat-label>
-          <mat-select formControlName="professional">
-            <mat-option value="Medico">Medico</mat-option>
-            <mat-option value="Bioquimico">Bioquimico</mat-option>
-            <mat-option value="Odontologo">Odontologo</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field>
-          <mat-label>Especialidad</mat-label>
-          <mat-select formControlName="specialty">
-            <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
-              {{ specialty.viewValue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+        <div class="col">
+          <mat-form-field>
+            <mat-label>Profesión</mat-label>
+            <mat-select formControlName="professional" [(ngModel)]="selectedProfessional">
+              <mat-option value="Medico">Médico</mat-option>
+              <mat-option value="Bioquimico">Bioquímico</mat-option>
+              <mat-option value="Odontologo">Odontólogo</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <mat-label>Especialidad</mat-label>
+            <mat-select formControlName="specialty" [disabled]="selectedProfessional !== 'Medico'">
+              <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
+                {{ specialty.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
     </div>
 
     <div class="row">
       <div class="col">
         <mat-form-field>
           <mat-label>Sit. Revista</mat-label>
-          <mat-select formControlName="revista">
+          <mat-select formControlName="revista" [(ngModel)]="selectedRevista">
             <mat-option value="interino">INTERINO</mat-option>
             <mat-option value="planta">PLANTA PERMANENTE</mat-option>
             <mat-option value="contratado">CONTRATADO</mat-option>
             <mat-option value="afectado">AFECTADO</mat-option>
-            <mat-option value="afectado">INDEPENDIENTE</mat-option>
+            <mat-option value="independiente">INDEPENDIENTE</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
-          <mat-select formControlName="categoria">
+          <mat-select formControlName="cargaHoraria" [disabled]="selectedRevista == 'independiente'" [(ngModel)]="selectedCarga">
             <mat-option value="24">24</mat-option>
             <mat-option value="30">30</mat-option>
             <mat-option value="40">40</mat-option>
@@ -114,8 +138,8 @@
         </mat-form-field>
         <div class="error">
           <span *ngIf="
-              professionalForm.get('categoria')?.hasError('required') &&
-              professionalForm.get('categoria')?.touched
+              professionalForm.get('cargaHoraria')?.hasError('required') &&
+              professionalForm.get('cargaHoraria')?.touched
             ">
             <h5>El carga horaria es un campo requerido</h5>
           </span>
@@ -123,43 +147,43 @@
       </div>
 
     </div>
-<div class="row">
-  <div class="col">
-    <mat-form-field>
-      <mat-label>Adicional</mat-label>
-      <mat-select formControlName="adicional">
-        <mat-option value="j1">J-1</mat-option>
-        <mat-option value="j2">J-2</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div class="col">
-    <mat-form-field>
-      <mat-label>Categoria</mat-label>
-      <mat-select formControlName="categoria">
-        <mat-option value="a">A</mat-option>
-        <mat-option value="b">B</mat-option>
-        <mat-option value="c">C</mat-option>
-        <mat-option value="d">D</mat-option>
-        <mat-option value="e">E</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <div class="error">
-      <span *ngIf="
+    <div class="row">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Adicional</mat-label>
+          <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"  [disabled]="selectedRevista == 'independiente'">
+            <mat-option value="j1">J-1</mat-option>
+            <mat-option value="j2">J-2</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'">
+            <mat-option value="a">A</mat-option>
+            <mat-option value="b">B</mat-option>
+            <mat-option value="c">C</mat-option>
+            <mat-option value="d">D</mat-option>
+            <mat-option value="e">E</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="error">
+          <span *ngIf="
           professionalForm.get('categoria')?.hasError('required') &&
           professionalForm.get('categoria')?.touched
         ">
-        <h5>El categoria es un campo requerido</h5>
-      </span>
+            <h5>El categoria es un campo requerido</h5>
+          </span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
     <div class="row">
       <div class="col">
         <mat-form-field>
           <mat-label>U.d.O.</mat-label>
           <mat-select formControlName="udo">
-            <mat-option *ngFor="let option of options" [value]="option.descripcion">
+            <mat-option *ngFor="let option of options" [value]="option.descripcion" [disabled]="selectedRevista == 'independiente'">
               {{ option.descripcion }} ({{option.region}})
             </mat-option>
           </mat-select>
