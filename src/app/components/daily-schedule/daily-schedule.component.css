@@ -13,3 +13,20 @@
 .contrafactura {
   background-color: #A9D08F;
 }
+
+mat-label{
+  font-family: var(--mdc-typography-button-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+  font-size: var(--mdc-typography-button-font-size, 14px);
+  margin-left: 60px;
+  color: #243c74;
+  text-shadow: 0 0 black;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  text-align: right;
+}
+.mat-mdc-form-field {
+  width: 50%;
+  height: 80%;
+  margin-right: 10px;
+}
