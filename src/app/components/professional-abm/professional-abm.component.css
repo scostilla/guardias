@@ -3,6 +3,19 @@ mat-form-field{
   width: 100%;
 }
 
+.mdc-dialog__title
+{
+  background-color: #243c74;
+  color: white;
+}
+
+.btnAdd{
+  color: #243c74;
+}
+
+.btnCancel{
+  color: #9b0a0a;
+}
 .row{
   display: flex;
 }
@@ -15,4 +28,9 @@ mat-form-field{
 .error {
   color:red;
   margin-top: -20px;
+}
+
+
+mat-label{
+  color: #243c74;
 }
