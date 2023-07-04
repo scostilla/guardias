@@ -71,10 +71,10 @@ export class ProfessionalAbmComponent {
       professional: ['', Validators.required],
       specialty: [''],
       revista: ['', Validators.required],
-      categoria: ['', Validators.required],
-      cargaHoraria: ['', Validators.required],
+      categoria: ['', ],
+      cargaHoraria: ['',],
       adicional: [''],
-      udo: ['', Validators.required],
+      udo: ['', ],
       hospital: ['', Validators.required],
     });
   }

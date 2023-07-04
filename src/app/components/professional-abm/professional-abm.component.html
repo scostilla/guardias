@@ -130,7 +130,7 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
-          <mat-select formControlName="cargaHoraria" [disabled]="selectedRevista == 'independiente'"
+          <mat-select formControlName="cargaHoraria" [required]="selectedRevista !== 'independiente'" [disabled]="selectedRevista == 'independiente'"
             [(ngModel)]="selectedCarga">
             <mat-option value="24">24</mat-option>
             <mat-option value="30">30</mat-option>
@@ -153,7 +153,7 @@
         <mat-form-field>
           <mat-label>Adicional</mat-label>
           <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"
-            [disabled]="selectedRevista == 'independiente'">
+            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'" [required]="selectedRevista !== 'independiente'">
             <mat-option value="j1">J-1</mat-option>
             <mat-option value="j2">J-2</mat-option>
           </mat-select>
@@ -162,7 +162,7 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Categoria</mat-label>
-          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'">
+          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"  [required]="selectedRevista !== 'independiente'">
             <mat-option value="a">A</mat-option>
             <mat-option value="b">B</mat-option>
             <mat-option value="c">C</mat-option>
@@ -184,9 +184,9 @@
       <div class="col">
         <mat-form-field>
           <mat-label>U.d.O.</mat-label>
-          <mat-select formControlName="udo">
+          <mat-select formControlName="udo"  [required]="selectedRevista !== 'independiente'">
             <mat-option *ngFor="let option of options" [value]="option.descripcion"
-              [disabled]="selectedRevista == 'independiente'">
+               [disabled]="selectedRevista == 'independiente'" >
               {{ option.descripcion }} ({{option.region}})
             </mat-option>
           </mat-select>
