@@ -13,8 +13,6 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { PopupComponent } from './components/popup/popup.component';
-import { LeftNavbarComponent } from './components/left-navbar/left-navbar.component';
-import { RightNavbarComponent } from './components/right-navbar/right-navbar.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
@@ -32,6 +30,7 @@ import { ProfessionalDataServiceService } from './services/ProfessionalDataServi
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
@@ -43,8 +42,6 @@ import { GuardiasViewComponent } from './components/guardias-view/guardias-view.
     FooterComponent,
     ProfessionalFormComponent,
     PopupComponent,
-    LeftNavbarComponent,
-    RightNavbarComponent,
     CalendarComponent,
     TimePickerComponent,
     SearchProfessionalComponent,

@@ -6,6 +6,10 @@
     background-color: #37BBED;
 }
 
+nav{
+  height: 20%;
+}
+
 h1 {
     font-family: "archia";
     font-size:300%;
@@ -21,6 +25,27 @@ h1 {
     padding-left: 0px;
     margin-left: 80px;
     margin-right: 80px;
+}
+
+.userLogged{
+  background-color: #243c74;
+  font-family: achia
+}
+
+mat-menu{
+  width: 50%;
+}
+
+.title{
+  cursor: pointer;
+}
+
+.menuNavbar{
+  background-color: #243c74;
+  min-height: 30px;
+  height: 30px;
+  margin: 0;
+  padding-left: 0px;
 }
 
 /*
