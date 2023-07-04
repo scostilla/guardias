@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
@@ -30,10 +30,11 @@ import { ProfessionalDataServiceService } from './services/ProfessionalDataServi
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+/*import { NavBarComponent } from './components/nav-bar/nav-bar.component';*/
 
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { GuardiasViewComponent } from './components/guardias-view/guardias-view.
     DistHorariaComponent,
     ConfirmDialogComponent,
     GuardiasViewComponent,
+    NavBarComponent,
   ],
   imports: [
     BrowserModule,
