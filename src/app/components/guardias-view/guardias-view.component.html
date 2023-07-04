@@ -39,50 +39,11 @@
           </div>
         </div>
         <div class="col d-flex justify-content-center">
-          <div class="btn btn-info mt-5 shadow p-2 mb-5 rounded contrafactura text-white" style="width: 80%;">CONTRA FACTURA</div>
+          <div class="btn btn-info mt-5 shadow p-2 mb-5 rounded contrafactura text-white" style="width: 80%;">CONTRA
+            FACTURA</div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<div class=" d-flex justify-content-center mb-4 shadow" >
-  <div class="container rounded-5 " style="width: 85rem; height: rem;">
-    <div class="container mt-2" >
-      <div class="row justify-content-center ">
-        <!--Calendario-->
-        <div class="col-6">
-          <mat-form-field class="">
-            <mat-label>Fecha</mat-label>
-            <input matInput [matDatepicker]="picker">
-            <mat-datepicker-toggle matIconSuffix [for]="picker">
-              <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
-            </mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <!--Calendario-->
-      
-        <div class="col-6">
-          <mat-select placeholder="Seleccione un Hospital" [(ngModel)]="selectedHospital" name="service"
-            class="form-control" (selectionChange)="updateHospital()">
-            <mat-option *ngFor="let option of options" [value]="option.descripcion">
-              {{ option.descripcion }} ( {{option.region}} )
-            </mat-option>
-          </mat-select>
-        </div>
-      </div>
-      <div class="row container" *ngIf="professionalGroups.length % 4" >
-        <div class="col justify-content-center" *ngFor="let professionalGroup of professionalGroups.slice(professionalGroups.length - (professionalGroups.length % 4))">
-          <app-schedule-card [service]="professionalGroup.service"></app-schedule-card>
-          <div class="" *ngFor="let professional of professionalGroup.professionals" >
-            <h3 [ngClass]="professional.type">
-              {{ professional.apellido }}, {{ professional.nombre
-              }}{{ professional.hs ? " (" + professional.hs + ")" : "" }}
-            </h3>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<app-daily-schedule></app-daily-schedule>
