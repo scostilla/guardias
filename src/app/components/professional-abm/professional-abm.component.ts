@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+} from '@angular/forms';
 
 interface Specialty {
   value: string;
@@ -14,6 +19,9 @@ interface Specialty {
   styleUrls: ['./professional-abm.component.css'],
 })
 export class ProfessionalAbmComponent {
+  selectedProfessional: string = 'Medico';
+  selectedRevista: string = 'contratado';
+  selectedCarga: string = '40';
   professionalForm: FormGroup;
   options: any[] | undefined;
 
@@ -50,16 +58,23 @@ export class ProfessionalAbmComponent {
     private fb: FormBuilder
   ) {
     this.professionalForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      dni: ['', Validators.required],
-      cuil: ['', Validators.required],
-      professional: ['Medico', Validators.required],
+      nombre: [
+        '',
+        [Validators.required, Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*')],
+      ],
+      apellido: [
+        '',
+        [Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*'), Validators.required],
+      ],
+      dni: ['', [Validators.pattern('[0-9]*'), Validators.required]],
+      cuil: ['', [Validators.pattern('[0-9]*'), Validators.required]],
+      professional: ['', Validators.required],
       specialty: [''],
-      revista: ['contratado', Validators.required],
-      categoria: ['', Validators.required],
+      revista: ['', Validators.required],
+      categoria: ['', ],
+      cargaHoraria: ['',],
       adicional: [''],
-      udo: ['', Validators.required],
+      udo: ['', ],
       hospital: ['', Validators.required],
     });
   }

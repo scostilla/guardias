@@ -1,7 +1,9 @@
 <div class="row">
-  <div class="col-6">
+  <div class="col-1">
+  <mat-label>Fecha</mat-label>
+</div>
+  <div class="col-4">
     <mat-form-field class="example-full-width">
-      <mat-label>Fecha</mat-label>
       <input matInput [matDatepicker]="picker">
       <mat-datepicker-toggle matIconSuffix [for]="picker">
         <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
@@ -10,7 +12,7 @@
     </mat-form-field>
 
   </div>
-  <div class="col-6">
+  <div class="col-4 offset-2">
     <mat-select placeholder="seleccione un efector"
     [(ngModel)]="selectedHospital"
       name="service"
