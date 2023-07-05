@@ -1,0 +1,79 @@
+<app-registro-actividades></app-registro-actividades>
+<div class="d-flex justify-content-center mt-5 mb-5 fuente">
+    <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
+        <h1 class="d-flex justify-content-center fs-1 mb-5 fuente">NUEVO REGISTRO</h1>
+        <form action="">
+            <button class="btn w-100 mt-4 shadow p-2 mb-4 rounded text-white" style="width: 100px;background-color:#00c4cc;" name="btnSearch" mat-button
+                        (click)="openPopup('SearchProfessionalComponent')">Buscar profesional</button>
+            <div class="border-bottom"></div>
+            <div class="d-flex justify-content-center fs-3 mb-4 mt-4 ">Detalle del profesional</div>
+            <div class="input-group mt-3 ">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label>ID</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedId }}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">CUIL</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{selectedCuil}}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Nombre</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedNombre }}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Apellido</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedApellido }}">
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text justify-content-center " style="width: 100px;background-color:#00c4cc; 
+                color: #fff;">
+                    <label for="">Profesión</label>
+                </div>
+                <input class="form-control" type="text" placeholder="{{ selectedProfesion }}">
+            </div>
+            <div class="container mt-5 " style="font-size: 1rem;">
+                <div class="row dateCheck">
+                    <div class="col d-flex justify-content-center">
+                        <label for="dtpCheckIn" id="labelDateCheck">Ingreso </label>
+                    </div>
+                    <div class="col d-flex justify-content-center">
+                        <app-calendar [isReadOnly]="true"></app-calendar>
+                    </div>
+                    <div class="col d-flex justify-content-center">
+                        <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
+                    </div>
+                    <div class="col d-flex justify-content-center">
+                        <app-time-picker></app-time-picker>
+                    </div>
+                </div>
+                <div class="row dateCheck d-flex align-items-center">
+                    <div class="col">
+                        <label for="dtpCheckIn" id="labelDateCheck">Egreso</label>
+                    </div>
+                    <div class="col">
+                        <app-calendar [isReadOnly]="false"></app-calendar>
+                    </div>
+                    <div class="col">
+                        <label for="dtpCheckIn" id="labelDateCheck"> Hora </label>
+                    </div>
+                    <div class="col">
+                        <app-time-picker></app-time-picker>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn mt-5 shadow p-2 mb-5 rounded w-100">Guardar</button>
+
+        </form>
+    </div>
+</div>

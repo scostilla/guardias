@@ -35,6 +35,8 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
+import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,8 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
     ConfirmDialogComponent,
     GuardiasViewComponent,
     NavBarComponent,
+    GuardiaActivaComponent,
+    GuardiaPasivaComponent,
   ],
   imports: [
     BrowserModule,

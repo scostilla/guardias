@@ -12,6 +12,8 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
+import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
+import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -26,6 +28,8 @@ const routes: Routes = [
   {path: 'novedades-form', component: NovedadesFormComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'guardias-view', component: GuardiasViewComponent},
+  {path:'guardia-activa',component:GuardiaActivaComponent},
+  {path:'guardia-pasiva', component:GuardiaPasivaComponent},
 ];
 
 @NgModule({
