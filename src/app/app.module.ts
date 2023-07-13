@@ -37,6 +37,7 @@ import { GuardiasViewComponent } from './components/guardias-view/guardias-view.
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
+import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasi
     NavBarComponent,
     GuardiaActivaComponent,
     GuardiaPasivaComponent,
+    ProfessionalDetailComponent,
   ],
   imports: [
     BrowserModule,
