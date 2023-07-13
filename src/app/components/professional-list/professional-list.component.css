@@ -19,7 +19,7 @@ mat-label{
   height: 80%;
   margin-right: 10px;
 }
-.btnEdit, .btnRemove{
+.btnEdit, .btnRemove, .btnDetail{
   cursor: pointer;
   margin: 10px;
 }

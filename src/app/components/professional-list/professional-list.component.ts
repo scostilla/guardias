@@ -6,6 +6,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
 import { HttpClient } from '@angular/common/http';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+
 
 export interface UserData {
   id: number;
@@ -35,7 +37,11 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, public dialog: MatDialog) {
+  constructor(private http: HttpClient, public dialog: MatDialog, private paginatorLabels: MatPaginatorIntl) {
+    paginatorLabels.itemsPerPageLabel = "Items por pagina";
+    paginatorLabels.firstPageLabel = "Primera Pagina";
+    paginatorLabels.nextPageLabel = "Siguiente";
+    paginatorLabels.previousPageLabel = "Anterior";
     this.dataSource = new MatTableDataSource<UserData>([]);
   }
 
@@ -95,14 +101,15 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
         this.dialog.closeAll();
       }
     });
-
-
-
   }
 
   //removeProfessional POR AHORA SOLO EDITA EL ELEMENTO EN LA VISTA
   editProfessional(id: number){
     console.log('edit Professional id: '+id);
+  }
+
+  detailProfessional(id: number){
+    console.log('Details Professional id: '+id);
   }
 
 }
