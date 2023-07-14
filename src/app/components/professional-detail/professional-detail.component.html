@@ -1,1 +1,53 @@
-<h1>Professional Detail - ID: {{id}}</h1>
+  <div class="d-flex justify-content-center fs-1 mb-5 title">Datos del Profesional</div>
+
+
+<div class="container  col-5">
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">Nombre</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.nombre" readonly>
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">Apellido</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.apellido" readonly>
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">DNI</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.dni" readonly>
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">CUIL</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.cuil" readonly>
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">Profesión</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.profesion" readonly>
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">Especialidad</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.especialidad" readonly>
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-text justify-content-center detail">
+      <label for="" class="detail">Sti. Revista</label>
+    </div>
+    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.sitRevista" readonly>
+  </div>
+</div>

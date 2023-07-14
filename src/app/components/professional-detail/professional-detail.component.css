@@ -1,0 +1,21 @@
+.detail{
+  width: 130px;
+  background-color:#00c4cc;
+  color: #fff;
+}
+
+.readonly-input {
+  color: black;
+  background-color: white;
+}
+
+.input-group{
+  margin-bottom: 10px;
+}
+
+
+.title{
+  --bs-text-opacity: 1;
+    color: rgba(var(--bs-secondary-rgb),var(--bs-text-opacity))!important;
+    margin-top: 15px;
+}
