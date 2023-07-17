@@ -107,9 +107,4 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   editProfessional(id: number){
     console.log('edit Professional id: '+id);
   }
-
-  detailProfessional(id: number){
-    console.log('Details Professional id: '+id);
-  }
-
 }

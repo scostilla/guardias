@@ -1,53 +1,83 @@
-  <div class="d-flex justify-content-center fs-1 mb-5 title">Datos del Profesional</div>
+<div class="d-flex justify-content-center fs-1 mb-5 title">Datos del Profesional</div>
 
-
-<div class="container  col-5">
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">Nombre</label>
+<div class="container">
+  <div class="row">
+    <div class="col-1">
+      <div class="d-flex flex-column">
+        <div class="mb-3" type="button" routerLink="#">
+          <img class="img-fluid" src="/assets/img/btn-submenu-regAct/1reg-diario.png" alt="MDB Logo" loading="lazy"
+            width="100" />
+            <div class="col d-flex  justify-content-center" >
+              <div class="row fuente fs-5">Un boton</div>
+          </div>
+        </div>
+        <div class="mb-3" type="button" routerLink="#">
+          <img class="img-fluid d-flex align-items-center" src="/assets/img/btn-submenu-regAct/2novedades.png"
+            alt="MDB Logo" loading="lazy" width="100" />
+            <div class="col d-flex  justify-content-center" >
+              <div class="row fuente fs-5">otro boton</div>
+          </div>
+        </div>
+        <div class="mb-3" type="button" routerLink="#">
+          <img class="img-fluid" src="/assets/img/btn-submenu-regAct/3distib-horaria.png" alt="MDB Logo" loading="lazy"
+            width="100" />
+            <div class="col d-flex  justify-content-center" >
+              <div class="row fuente fs-5">otro más</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.nombre" readonly>
-  </div>
+    <div class="col-10">
+      <div class="container col-10">
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">Apellido</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.apellido" readonly>
+        </div>
 
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">Apellido</label>
-    </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.apellido" readonly>
-  </div>
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">Nombre</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.nombre" readonly>
+        </div>
 
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">DNI</label>
-    </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.dni" readonly>
-  </div>
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">DNI</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.dni" readonly>
+        </div>
 
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">CUIL</label>
-    </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.cuil" readonly>
-  </div>
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">CUIL</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.cuil" readonly>
+        </div>
 
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">Profesión</label>
-    </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.profesion" readonly>
-  </div>
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">Profesión</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.profesion" readonly>
+        </div>
 
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">Especialidad</label>
-    </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.especialidad" readonly>
-  </div>
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">Especialidad</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.especialidad" readonly>
+        </div>
 
-  <div class="input-group">
-    <div class="input-group-text justify-content-center detail">
-      <label for="" class="detail">Sti. Revista</label>
+        <div class="input-group">
+          <div class="input-group-text justify-content-center detail">
+            <label for="" class="detail">Sit. Revista</label>
+          </div>
+          <input class="form-control readonly-input" type="text" [(ngModel)]="persona.sitRevista" readonly>
+        </div>
+      </div>
     </div>
-    <input class="form-control readonly-input" type="text" [(ngModel)]="persona.sitRevista" readonly>
   </div>
 </div>
