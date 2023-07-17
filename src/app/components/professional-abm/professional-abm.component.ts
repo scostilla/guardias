@@ -1,12 +1,7 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormControl,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface Specialty {
   value: string;
@@ -24,38 +19,40 @@ export class ProfessionalAbmComponent {
   selectedCarga: string = '40';
   professionalForm: FormGroup;
   options: any[] | undefined;
+  person: any;
 
   specialties: Specialty[] = [
-    { value: 'anestesista', viewValue: 'ANESTESISTA' },
-    { value: 'cardiologia', viewValue: 'CARDIOLOGIA' },
-    { value: 'cirugia', viewValue: 'CIRUGIA' },
-    { value: 'cirugia infantil', viewValue: 'CIRUGIA INFANTIL' },
-    { value: 'cirugia materna', viewValue: 'CIRUGIA MATERNA' },
-    { value: 'clinica', viewValue: 'CLINICA' },
-    { value: 'ecografia', viewValue: 'ECOGRAFIA' },
-    { value: 'ginecólogia', viewValue: 'GINECÓLOGIA' },
-    { value: 'hemoterapia', viewValue: 'HEMOTERAPIA' },
-    { value: 'infectologia', viewValue: 'INFECTOLOGIA' },
-    { value: 'internacion pediatrica', viewValue: 'INTERNACION PEDIATRICA' },
-    { value: 'medicina general', viewValue: 'MEDICINA GENERAL' },
-    { value: 'neonatologia', viewValue: 'NEONATOLOGIA' },
-    { value: 'neurocirugia', viewValue: 'NEUROCIRUGIA' },
-    { value: 'obstetricia', viewValue: 'OBSTETRICIA' },
-    { value: 'pediatria', viewValue: 'PEDIATRIA' },
-    { value: 'terapia intensiva', viewValue: 'TERAPIA INTENSIVA' },
+    { value: 'ANESTESISTA', viewValue: 'ANESTESISTA' },
+    { value: 'CARDIOLOGIA', viewValue: 'CARDIOLOGIA' },
+    { value: 'CIRUGIA', viewValue: 'CIRUGIA' },
+    { value: 'CIRUGIA INFANTIL', viewValue: 'CIRUGIA INFANTIL' },
+    { value: 'CIRUGIA MATERNA', viewValue: 'CIRUGIA MATERNA' },
+    { value: 'CLINICA', viewValue: 'CLINICA' },
+    { value: 'ECOGRAFIA', viewValue: 'ECOGRAFIA' },
+    { value: 'GINECÓLOGIA', viewValue: 'GINECÓLOGIA' },
+    { value: 'HEMOTERAPIA', viewValue: 'HEMOTERAPIA' },
+    { value: 'INFECTOLOGIA', viewValue: 'INFECTOLOGIA' },
+    { value: 'INTERNACION PEDIATRICA', viewValue: 'INTERNACION PEDIATRICA' },
+    { value: 'MEDICINA GENERAL', viewValue: 'MEDICINA GENERAL' },
+    { value: 'NEONATOLOGIA', viewValue: 'NEONATOLOGIA' },
+    { value: 'NEUROCIRUGIA', viewValue: 'NEUROCIRUGIA' },
+    { value: 'OBSTETRICIA', viewValue: 'OBSTETRICIA' },
+    { value: 'PEDIATRIA', viewValue: 'PEDIATRIA' },
+    { value: 'TERAPIA INTENSIVA', viewValue: 'TERAPIA INTENSIVA' },
     {
-      value: 'terapia intensiva infantil',
+      value: 'TERAPIA INTENSIVA INFANTIL',
       viewValue: 'TERAPIA INTENSIVA INFANTIL',
     },
-    { value: 'tocoginecologia', viewValue: 'TOCOGINECOLOGIA' },
-    { value: 'traumatologia', viewValue: 'TRAUMATOLOGIA' },
-    { value: 'urologia', viewValue: 'UROLOGIA' },
+    { value: 'TOCOGINECOLOGIA', viewValue: 'TOCOGINECOLOGIA' },
+    { value: 'TRAUMATOLOGIA', viewValue: 'TRAUMATOLOGIA' },
+    { value: 'UROLOGIA', viewValue: 'UROLOGIA' },
   ];
 
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ProfessionalAbmComponent>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: { id: number }
   ) {
     this.professionalForm = this.fb.group({
       nombre: [
@@ -71,20 +68,51 @@ export class ProfessionalAbmComponent {
       professional: ['', Validators.required],
       specialty: [''],
       revista: ['', Validators.required],
-      categoria: ['', ],
-      cargaHoraria: ['',],
+      categoria: [''],
+      cargaHoraria: [''],
       adicional: [''],
-      udo: ['', ],
+      udo: [''],
       hospital: ['', Validators.required],
     });
+
+    if (this.data.id !== -1) {
+      this.http
+        .get<any[]>('../../../assets/jsonFiles/profesionales.json')
+        .subscribe((data: any[]) => {
+          this.person = data.find((item) => item.id === this.data.id);
+          if (this.person) {
+            console.log(this.person.nombre);
+            this.patchFormValues();
+          }
+        });
+    }
   }
 
   ngOnInit() {
+    console.log('Received id:', this.data.id);
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
         this.options = data;
       });
+  }
+
+  patchFormValues() {
+    this.professionalForm.patchValue({
+      nombre: this.person.nombre,
+      apellido: this.person.apellido,
+      dni: this.person.dni,
+      cuil: this.person.cuil,
+      professional: this.person.profesion,
+      specialty: this.person.especialidad,
+      revista: this.person.sitRevista,
+      categoria: this.person.cat,
+      cargaHoraria: this.person.cargHoraria,
+      adicional: this.person.adicional,
+      udo: this.person.udo,
+      hospital: this.person.hospital,
+    });
+    console.log(this.professionalForm)
   }
 
   addEditProfessional() {

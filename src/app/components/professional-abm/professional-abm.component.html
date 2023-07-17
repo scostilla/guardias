@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>
   AGREGAR PROFESIONAL
-  <h5 style="color: red">*Campos Obligatorios</h5>
+  <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 <form [formGroup]="professionalForm" (ngSubmit)="addEditProfessional()">
   <mat-dialog-content>
@@ -96,9 +96,9 @@
         <mat-form-field>
           <mat-label>Profesión</mat-label>
           <mat-select formControlName="professional" [(ngModel)]="selectedProfessional">
-            <mat-option value="Medico">Médico</mat-option>
-            <mat-option value="Bioquimico">Bioquímico</mat-option>
-            <mat-option value="Odontologo">Odontólogo</mat-option>
+            <mat-option value="MEDICO">Médico</mat-option>
+            <mat-option value="BIOQUIMICO">Bioquímico</mat-option>
+            <mat-option value="ODONTOLOGO">Odontólogo</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -119,22 +119,22 @@
         <mat-form-field>
           <mat-label>Sit. Revista</mat-label>
           <mat-select formControlName="revista" [(ngModel)]="selectedRevista">
-            <mat-option value="interino">INTERINO</mat-option>
-            <mat-option value="planta">PLANTA PERMANENTE</mat-option>
-            <mat-option value="contratado">CONTRATADO</mat-option>
-            <mat-option value="afectado">AFECTADO</mat-option>
-            <mat-option value="independiente">INDEPENDIENTE</mat-option>
+            <mat-option value="INTERINO">INTERINO</mat-option>
+            <mat-option value="PLANTA PERMANENTE">PLANTA PERMANENTE</mat-option>
+            <mat-option value="CONTRATADO">CONTRATADO</mat-option>
+            <mat-option value="AFECTADO">AFECTADO</mat-option>
+            <mat-option value="INDEPENDIENTE">INDEPENDIENTE</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
-          <mat-select formControlName="cargaHoraria" [required]="selectedRevista !== 'independiente'" [disabled]="selectedRevista == 'independiente'"
-            [(ngModel)]="selectedCarga">
-            <mat-option value="24">24</mat-option>
-            <mat-option value="30">30</mat-option>
-            <mat-option value="40">40</mat-option>
+          <mat-select formControlName="cargaHoraria" [required]="selectedRevista !== 'INDEPENDIENTE'"
+            [disabled]="selectedRevista == 'INDEPENDIENTE'" [(ngModel)]="selectedCarga">
+            <mat-option [value]="24">24</mat-option>
+            <mat-option [value]="30">30</mat-option>
+            <mat-option [value]="40">40</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">
@@ -153,21 +153,23 @@
         <mat-form-field>
           <mat-label>Adicional</mat-label>
           <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"
-            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'" [required]="selectedRevista !== 'independiente'">
-            <mat-option value="j1">J-1</mat-option>
-            <mat-option value="j2">J-2</mat-option>
+            [disabled]="selectedRevista == 'INDEPENDIENTE'" [required]="selectedCarga == '40'"
+            [required]="selectedRevista !== 'INDEPENDIENTE'">
+            <mat-option value="J1">J-1</mat-option>
+            <mat-option value="J2">J-2</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field>
           <mat-label>Categoria</mat-label>
-          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"  [required]="selectedRevista !== 'independiente'">
-            <mat-option value="a">A</mat-option>
-            <mat-option value="b">B</mat-option>
-            <mat-option value="c">C</mat-option>
-            <mat-option value="d">D</mat-option>
-            <mat-option value="e">E</mat-option>
+          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'INDEPENDIENTE'"
+            [required]="selectedRevista !== 'INDEPENDIENTE'">
+            <mat-option value="A">A</mat-option>
+            <mat-option value="B">B</mat-option>
+            <mat-option value="C">C</mat-option>
+            <mat-option value="D">D</mat-option>
+            <mat-option value="E">E</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">
@@ -184,9 +186,9 @@
       <div class="col">
         <mat-form-field>
           <mat-label>U.d.O.</mat-label>
-          <mat-select formControlName="udo"  [required]="selectedRevista !== 'independiente'">
+          <mat-select formControlName="udo" [required]="selectedRevista !== 'independiente'">
             <mat-option *ngFor="let option of options" [value]="option.descripcion"
-               [disabled]="selectedRevista == 'independiente'" >
+              [disabled]="selectedRevista == 'independiente'">
               {{ option.descripcion }} ({{option.region}})
             </mat-option>
           </mat-select>

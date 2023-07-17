@@ -9,23 +9,23 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ProfessionalDetailComponent implements OnInit {
   id: string | null | undefined;
-  persona: any;
+  person: any;
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     console.log('ID:', this.id);
-    this.cargarDatosPersona(parseInt(this.id ?? '', 10));
+    this.cargarDatosperson(parseInt(this.id ?? '', 10));
   }
 
-  cargarDatosPersona(id: number) {
+  cargarDatosperson(id: number) {
     this.http
       .get<any[]>('../../../assets/jsonFiles/profesionales.json')
       .subscribe((data: any[]) => {
-        this.persona = data.find((item) => item.id === id);
-        if (this.persona) {
-          console.log(this.persona);
+        this.person = data.find((item) => item.id === id);
+        if (this.person) {
+          console.log(this.person);
         }
       });
   }

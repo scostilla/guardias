@@ -10,7 +10,7 @@
   </div>
 
   <div class="col-2">
-    <button mat-raised-button style="color: #243c74;" (click)="addEditProfessional()">Agregar Profesional</button>
+    <button mat-raised-button style="color: #243c74;" (click)="addEditProfessional(-1)">Agregar Profesional</button>
   </div>
 </div>
 <div class="container">
@@ -48,9 +48,8 @@
 
         <mat-icon class="btnDetail" [routerLink]="['/professional-detail', element.id]" matTooltip="Mostrar {{element.nombre}} {{element.apellido}}">zoom_in</mat-icon>
         <mat-icon class="btnDetail" [routerLink]="['/professional-detail', element.id]" matTooltip="Dist. Horaria {{element.nombre}} {{element.apellido}}">calendar_month</mat-icon>
-        <mat-icon class="btnEdit" (click)="editProfessional(element.id)" matTooltip="Editar {{element.nombre}} {{element.apellido}}">edit</mat-icon>
+        <mat-icon class="btnEdit" (click)="addEditProfessional(element.id)" matTooltip="Editar {{element.nombre}} {{element.apellido}}">edit</mat-icon>
         <mat-icon class="btnRemove" (click)="removeProfessional(element.id, element.nombre, element.apellido)" matTooltip="Eliminar {{element.nombre}} {{element.apellido}}">person_remove</mat-icon>
-
       </td>
     </ng-container>
 

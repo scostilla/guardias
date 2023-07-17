@@ -67,10 +67,11 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  addEditProfessional() {
+  addEditProfessional(id: number) {
     const dialogRef = this.dialog.open(ProfessionalAbmComponent, {
       width: '600px',
       disableClose: true,
+      data: { id: id },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

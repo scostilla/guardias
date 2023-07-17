@@ -19,6 +19,10 @@ mat-form-field{
 .btnCancel{
   color: #9b0a0a;
 }
+
+.requiredField{
+  color: red;
+}
 .row{
   display: flex;
 }
