@@ -1,8 +1,11 @@
 @font-face {
-    font-family: Archia;
-    src: url('src/assets/font/Archia-Regular.otf');
+    font-family: Ubuntu;
+    src: url('src/assets/font/Ubuntu-Regular.ttf');
 }
 
 h3{
-    font-family: "archia";
+    font-family: "Ubuntu";
+    font-weight: bold; 
+    color: #243c74;
+    border-top: #37BBED 2px solid;
 }
