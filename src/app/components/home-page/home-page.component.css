@@ -1,13 +1,44 @@
 h2{
-    font-family: "archia";
+    font-family: "Ubuntu", sans-serif;
     font-size:350%;
 }
 
 div.boton {
-    border: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 0px;
-    border-radius: 10px;
-    background-position:center center;
+    width: 100%;
+	height: 200px;
+	margin: 2%;
+	float:left;
+	color:#333;
+	text-decoration:none;
+    -moz-border-radius: 3%;
+    -webkit-border-radius: 3%;
+    border-radius: 3%;
 }
+div.boton:hover {
+	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+    -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+    box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+}
+.icon1_boton, .icon2_boton, .icon3_boton, .icon4_boton, .icon5_boton, .icon6_boton {
+    -moz-border-radius: 3% 3% 0 0;
+    -webkit-border-radius: 3% 3% 0 0;
+    border-radius: 3% 3% 0 0;
+	width: 100%;
+	font-size: 1.2em;
+	font-weight:bold;
+text-align:center; color: #fff;
+padding:3%;
+}
+.icon1_boton {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
+.icon2_boton {background-color: #1B497B; border-bottom: 9px solid #123253;}
+.icon3_boton {background-color: #C0CF50; border-bottom: 9px solid #909b3c;}
+.icon4_boton {background-color: #F2953E; border-bottom: 9px solid #b8712e;}
+.icon5_boton {background-color: #EB428F; border-bottom: 9px solid #c73778;}
+.icon6_boton {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
+
+
+.text_boton {text-align: center;
+	font-size: 150%;
+	padding: 0 8% 8% 8%;
+	display:block;
+	}
