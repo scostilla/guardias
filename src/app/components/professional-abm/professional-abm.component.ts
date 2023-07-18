@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DataSharingService } from '../../services/DataSharing/data-sharing.service'
 
 interface Specialty {
   value: string;
@@ -52,7 +53,8 @@ export class ProfessionalAbmComponent {
     private http: HttpClient,
     public dialogRef: MatDialogRef<ProfessionalAbmComponent>,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number }
+    @Inject(MAT_DIALOG_DATA) public data: { id: number },
+    private dataSharingService: DataSharingService
   ) {
     this.professionalForm = this.fb.group({
       nombre: [
@@ -64,7 +66,7 @@ export class ProfessionalAbmComponent {
         [Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*'), Validators.required],
       ],
       dni: ['', [Validators.pattern('[0-9]*'), Validators.required]],
-      cuil: ['', [Validators.pattern('[0-9]*'), Validators.required]],
+      cuil: ['', [Validators.pattern('[0-9-]*'), Validators.required]],
       professional: ['', Validators.required],
       specialty: [''],
       revista: ['', Validators.required],
@@ -112,7 +114,7 @@ export class ProfessionalAbmComponent {
       udo: this.person.udo,
       hospital: this.person.hospital,
     });
-    console.log(this.professionalForm)
+    console.log(this.professionalForm.value);
   }
 
   addEditProfessional() {
@@ -120,10 +122,16 @@ export class ProfessionalAbmComponent {
       console.log('professional form valid');
       const formData = this.professionalForm.value;
       console.log(formData);
+      console.log(this.data.id);
+
+      //enviar el formData a professional-list
+      this.dataSharingService.setProfessionalFormData(formData);
+      this.dataSharingService.setProfessionalId(this.data.id);
     } else {
       console.log('professional form not valid');
       this.markFormGroupTouched(this.professionalForm);
     }
+    this.dialogRef.close();
   }
 
   markFormGroupTouched(formGroup: FormGroup) {
