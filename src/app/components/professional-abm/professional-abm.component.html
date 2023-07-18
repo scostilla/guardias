@@ -154,7 +154,7 @@
           <mat-label>Adicional</mat-label>
           <mat-select formControlName="adicional"
             [disabled]="selectedCarga != '40' || selectedRevista === 'INDEPENDIENTE'"
-            [required]="selectedCarga != '40' && selectedRevista !== 'INDEPENDIENTE'">
+            [required]="selectedCarga == '40' && selectedRevista !== 'INDEPENDIENTE'">
             <mat-option value="J1">J-1</mat-option>
             <mat-option value="J2">J-2</mat-option>
           </mat-select>
