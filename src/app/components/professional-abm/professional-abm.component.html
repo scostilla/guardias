@@ -96,16 +96,16 @@
         <mat-form-field>
           <mat-label>Profesión</mat-label>
           <mat-select formControlName="professional" [(ngModel)]="selectedProfessional">
-            <mat-option value="MEDICO">Médico</mat-option>
-            <mat-option value="BIOQUIMICO">Bioquímico</mat-option>
-            <mat-option value="ODONTOLOGO">Odontólogo</mat-option>
+            <mat-option value="MEDICO">MÉDICO</mat-option>
+            <mat-option value="BIOQUIMICO">BIOQUÍMICO</mat-option>
+            <mat-option value="ODONTOLOGO">ODONTÓLOGO</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field>
           <mat-label>Especialidad</mat-label>
-          <mat-select formControlName="specialty" [disabled]="selectedProfessional !== 'Medico'">
+          <mat-select formControlName="specialty" [disabled]="selectedProfessional !== 'MEDICO'">
             <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
               {{ specialty.viewValue }}
             </mat-option>
@@ -152,9 +152,9 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Adicional</mat-label>
-          <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"
-            [disabled]="selectedRevista == 'INDEPENDIENTE'" [required]="selectedCarga == '40'"
-            [required]="selectedRevista !== 'INDEPENDIENTE'">
+          <mat-select formControlName="adicional"
+            [disabled]="selectedCarga != '40' || selectedRevista === 'INDEPENDIENTE'"
+            [required]="selectedCarga != '40' && selectedRevista !== 'INDEPENDIENTE'">
             <mat-option value="J1">J-1</mat-option>
             <mat-option value="J2">J-2</mat-option>
           </mat-select>
