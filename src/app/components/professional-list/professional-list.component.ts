@@ -25,6 +25,7 @@ export interface UserData {
 })
 export class ProfessionalListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
+    'id',
     'cuil',
     'nombre',
     'apellido',

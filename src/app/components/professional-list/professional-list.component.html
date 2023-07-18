@@ -17,6 +17,13 @@
 <div class="row professionalList">
   <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> id </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+
     <ng-container matColumnDef="cuil">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Cuil </th>
       <td mat-cell *matCellDef="let element"> {{element.cuil}} </td>
