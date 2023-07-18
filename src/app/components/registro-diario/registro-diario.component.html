@@ -1,4 +1,153 @@
-<app-registro-actividades></app-registro-actividades>
+
+<h2 mat-dialog-title>
+    NUEVO REGISTRO
+    <h5 style="color: red">*Campos Obligatorios</h5>
+</h2>
+<form >
+    <mat-dialog-content>
+        <div class="row">
+            <div class="col">
+                <mat-form-field>
+                    <mat-label>Tipo de servicio:</mat-label>
+                    <mat-select formControlName="service" [(ngModel)]="selectedService">
+                        <mat-option value="consultorio">CONSULTORIO</mat-option>
+                        <mat-option value="pase">PASE</mat-option>
+                        <mat-option value="guardia">GUARDIA</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div  [ngSwitch]="selectedService">
+                <div *ngSwitchCase="'guardia'">
+                    <mat-form-field>
+                        <mat-label>Tipo de Guardia:</mat-label>
+                        <mat-select formControlName="guard" [(ngModel)]="selectedGuard">
+                            <mat-option value="extra">GUARDIA EXTRA</mat-option>
+                            <mat-option value="contra">CONTRA FACTURA</mat-option>
+                            <mat-option value="cargo">CARGO</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="mt-4" [ngSwitch]="selectedService">
+                    <div *ngSwitchCase="'guardia'">
+                        <label for="GuardType" class="form-label">Tipo de guardia:</label>
+                        <select class="form-select text-secondary" aria-label="Default select example" name="guard"
+                            [(ngModel)]="selectedGuard">
+                            <option value="extra">Guardia Extra</option>
+                            <option value="contra">Contra Factura</option>
+                            <option value="cargo">Cargo</option>
+                            <option value="reagrupacion">Reagrupacion</option>
+                        </select>
+                    </div>
+                    <button class="btn w-100 mt-4 shadow p-2 mb-4 rounded text-white" style="width: 100px;background-color:#00c4cc;" name="btnSearch" mat-button
+                        (click)="openPopup('SearchProfessionalComponent')">Buscar profesional</button>
+                </div>
+        <div class="row">        
+            <div class="col">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput placeholder="Ingresar Nombre" autocomplete="off" formControlName="nombre" />
+                </mat-form-field>
+                <div class="error">
+                    <span >
+                        <h5>El nombre es un campo requerido</h5>
+                    </span>
+                    <span >
+                        <h5>El nombre debe contener solo letras</h5>
+                    </span>
+                </div>
+            </div>
+            <div class="col">
+                <button class="btn w-100 mt-4 shadow p-2 mb-4 rounded text-white" style="width: 100px;background-color:#00c4cc;" name="btnSearch" mat-button
+                        (click)="openPopup('SearchProfessionalComponent')">Buscar profesional</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Apellido</mat-label>
+                    <input matInput placeholder="Ingresar Apellido" autocomplete="off" formControlName="apellido" />
+                </mat-form-field>
+                <div class="error">
+                    <span>
+                        <h5>El apellido es un campo requerido</h5>
+                    </span>
+                    <span>
+                        <h5>El apellido debe contener solo letras</h5>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 20px">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>DNI</mat-label>
+                    <input matInput placeholder="Ingresar DNI" autocomplete="off" formControlName="dni" />
+                </mat-form-field>
+                <div class="error">
+                    <span>
+                        <h5>El dni es un campo requerido</h5>
+                    </span>
+                    <span>
+                        <h5>El dni debe contener solo números</h5>
+                    </span>
+                </div>
+            </div>
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>CUIL</mat-label>
+                    <input matInput placeholder="Ingresar CUIL" autocomplete="off" formControlName="cuil" />
+                </mat-form-field>
+                <div class="error">
+                    <span >
+                        <h5>El cuil es un campo requerido</h5>
+                    </span>
+                    <span>
+                        <h5>El cuil debe contener solo n</h5>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <mat-form-field>
+                    <mat-label>Sit. Revista</mat-label>
+                    <mat-select formControlName="revista" [(ngModel)]="selectedRevista">
+                        <mat-option value="interino">INTERINO</mat-option>
+                        <mat-option value="planta">PLANTA PERMANENTE</mat-option>
+                        <mat-option value="contratado">CONTRATADO</mat-option>
+                        <mat-option value="afectado">AFECTADO</mat-option>
+                        <mat-option value="independiente">INDEPENDIENTE</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+        </div>
+       
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button type="button" class="btnCancel" mat-button (click)="cancel()">Cancelar</button>
+        <button type="submit" mat-button cdkFocusInitial>
+            Agregar
+        </button>
+    </mat-dialog-actions>
+</form>
+
+
+<!--
+ esto se modifica para las pruebas, tmb la vista de registro de actividades y su ts
+
+ <app-registro-actividades></app-registro-actividades>
+
 
 <div class="d-flex justify-content-center mt-5 mb-5 fuente">
     <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem;">

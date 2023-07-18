@@ -30,6 +30,7 @@ const routes: Routes = [
   {path:'guardias-view', component: GuardiasViewComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
+  
 ];
 
 @NgModule({

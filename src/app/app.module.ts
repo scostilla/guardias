@@ -30,13 +30,23 @@ import { ProfessionalDataServiceService } from './services/ProfessionalDataServi
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-/*import { NavBarComponent } from './components/nav-bar/nav-bar.component';*/
-
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
+import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import {MatSelectModule} from '@angular/material/select';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+
+
 
 @NgModule({
   declarations: [
@@ -66,7 +76,10 @@ import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasi
     NavBarComponent,
     GuardiaActivaComponent,
     GuardiaPasivaComponent,
+    RegDiarioComponent,
+    RegDiarioComponent,
   ],
+
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -76,6 +89,16 @@ import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasi
     AppRoutingModule,
     CommonModule,
     SharedModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
+    NgxMaterialTimepickerModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule
   ],
   providers: [
     ProfessionalDataServiceService
