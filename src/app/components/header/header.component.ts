@@ -10,11 +10,13 @@ import { Subscription } from 'rxjs';
 export class HeaderComponent implements OnDestroy {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
+  showButtons: boolean = true;
 
   constructor(private router: Router) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.showNavBar = !(event.url === '/' || event.url === '/home-page');
+        this.showButtons= !(event.url === '/');
       }
     });
   }

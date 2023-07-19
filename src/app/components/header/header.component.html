@@ -19,7 +19,7 @@
       </div>
       <button mat-fab [matMenuTriggerFor]="menu_admin"
         type="submit"
-        class="icon-material">
+        class="icon-material"  *ngIf="showButtons">
         <mat-icon>settings</mat-icon>
       </button>
         <mat-menu #menu_admin="matMenu">
@@ -30,7 +30,7 @@
         </mat-menu>
       <button mat-fab [matMenuTriggerFor]="menu"
       type="submit"
-      class="icon-material">
+      class="icon-material"  *ngIf="showButtons">
         <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
