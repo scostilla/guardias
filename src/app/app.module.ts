@@ -48,7 +48,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
 import {MatTableModule} from '@angular/material/table';
 import {NgFor} from '@angular/common';
-import {MatButtonToggleGroup, MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
@@ -112,7 +112,6 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
   ],
   providers: [
     ProfessionalDataServiceService
-    /*ProfessionalDataServiceService,*/
   ],
   bootstrap: [AppComponent],
 })
