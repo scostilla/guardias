@@ -13,10 +13,11 @@
     <div class="collapse navbar-collapse">
       <div class="container" routerLink="/home-page">
         <div class="input-group justify-content-center text-light">
-          <div id="titulo"><h3 class="fw-bold title">SISTEMAs PROVINCIAL DE</h3></div><br/>
+          <div id="titulo"><h3 class="fw-bold title">SISTEMA PROVINCIAL DE</h3></div><br/>
           <div id="titulo"><h1 class="fw-bold title">GUARDIAS</h1></div>
         </div>
       </div>
+      <div class="content-icon-header">
       <button mat-fab [matMenuTriggerFor]="menu_admin"
         type="submit"
         class="icon-material"  *ngIf="showButtons">
@@ -50,6 +51,7 @@
             <button mat-menu-item><mat-icon>exit_to_app</mat-icon><span>Salir</span></button>
           </div>
         </mat-menu>
+        </div>
     </div>
   </div>
  </nav>

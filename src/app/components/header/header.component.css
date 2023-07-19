@@ -69,6 +69,11 @@ mat-menu{
 }
 
 /* Botones header */
+.content-icon-header {
+  width: 20%; 
+  text-align: right; 
+  float: left; 
+}
 .icon-material {
   color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-right: 1.5%;
 }
