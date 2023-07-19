@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { ProfessionalDataServiceService } from '../../services/ProfessionalDataService/professional-data-service.service';
+
 
 @Component({
   selector: 'app-registro-diario',
@@ -12,6 +13,8 @@ export class RegistroDiarioComponent {
   selectedService:string='consultorio';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
+  selectedRevista: string = 'servicio';
+  selectedGuardia: string = 'revista';
 
   updateButtonState(): void {
     if (this.selectedGuard == '') {
@@ -25,7 +28,8 @@ export class RegistroDiarioComponent {
 
   constructor(
     private dialog: MatDialog,
-    private professionalDataService: ProfessionalDataServiceService
+    private professionalDataService: ProfessionalDataServiceService,
+    public dialogRef: MatDialogRef<RegistroDiarioComponent>,
   ) {}
 
   openPopup(componentParameter: any) {
@@ -54,5 +58,9 @@ export class RegistroDiarioComponent {
       this.selectedApellido = this.professionalDataService.selectedApellido;
       this.selectedProfesion = this.professionalDataService.selectedProfesion;
     });
+  }
+
+  cancel() {
+    this.dialogRef.close();
   }
 }

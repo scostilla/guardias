@@ -1,4 +1,44 @@
-<app-registro-actividades></app-registro-actividades>
+<div mat-dialog-title class="backgroud" align="center">
+    <h1 class="font">REGISTRAR D. H.</h1>
+</div>
+<div mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+        <mat-label>Hospital</mat-label>
+        <mat-select>
+            <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
+                {{hosp}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Profesional</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let prof of profesional" [value]="prof">{{prof}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Tipo de guardia</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Cantidad</mat-label>
+        <input matInput placeholder="Numero" value="">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Cons</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let co of cons" [value]="co"> {{co}}</mat-option>
+        </mat-select>
+    </mat-form-field>        
+</div>
+<div mat-dialog-actions class="action">
+    <button mat-raised-button class="btnupdate" type="button"
+        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
+</div>
+
+<!-- esto es la vista anterior
 <div class="d-flex justify-content-center mt-5 mb-5 fuente">
     <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
         <h1 class="d-flex justify-content-center fs-1 mb-5  fuente">REGISTRAR D. H.</h1>
@@ -7,17 +47,14 @@
             <div class="input-group mt-3 hospital">
                 <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc;
                 color: #fff;">
-                    <label >Hospital</label>
+                    <label>Hospital</label>
                 </div>
                 <mat-form-field>
-                  <mat-select formControlName="hospital">
-                    <mat-option
-                      *ngFor="let option of options"
-                      [value]="option.descripcion"
-                    >
-                      {{ option.descripcion }} ({{option.region}})
-                    </mat-option>
-                  </mat-select>
+                    <mat-select formControlName="hospital">
+                        <mat-option *ngFor="let option of options" [value]="option.descripcion">
+                            {{ option.descripcion }} ({{option.region}})
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div class="input-group mt-3">
@@ -78,3 +115,4 @@
         </form>
     </div>
 </div>
+-->

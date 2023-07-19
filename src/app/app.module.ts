@@ -30,13 +30,27 @@ import { ProfessionalDataServiceService } from './services/ProfessionalDataServi
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-/*import { NavBarComponent } from './components/nav-bar/nav-bar.component';*/
-
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
+import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import {MatSelectModule} from '@angular/material/select';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import {MatTableModule} from '@angular/material/table';
+import {NgFor} from '@angular/common';
+import {MatButtonToggleGroup, MatButtonToggleModule} from '@angular/material/button-toggle';
+
+
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 
 @NgModule({
@@ -67,8 +81,12 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     NavBarComponent,
     GuardiaActivaComponent,
     GuardiaPasivaComponent,
+    RegDiarioComponent,
+    RegDiarioComponent,
+    DdjjExtraComponent,
     ProfessionalDetailComponent,
   ],
+
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -78,6 +96,19 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     AppRoutingModule,
     CommonModule,
     SharedModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
+    NgxMaterialTimepickerModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    MatTableModule,
+    NgFor,
+    MatButtonToggleModule
   ],
   providers: [
     ProfessionalDataServiceService

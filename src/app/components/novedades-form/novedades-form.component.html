@@ -1,25 +1,74 @@
+<div mat-dialog-title class="backgroud" align="center">
+    <h1 class="font">REGISTRAR NOVEDADES</h1>
+</div>
+<div mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+        <mat-label>Hospital</mat-label>
+        <mat-select>
+            <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
+                {{hosp}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Profesional</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let prof of profesional" [value]="prof"> {{prof}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Novedad</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let noved of novedad" [value]="noved"> {{noved}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Ingreso</mat-label>
+                <input matInput [matDatepicker]="picker1">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Egreso</mat-label>
+                <input matInput [matDatepicker]="picker2">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="action">
+    <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
+</div>
+
+<!--esto es lo viejo
 <app-registro-actividades></app-registro-actividades>
 <div class="d-flex justify-content-center mt-5 mb-5 fuente">
     <div class="p-5 rounded-5 shadow text-secondary " style="width: 40rem">
         <h1 class="d-flex justify-content-center fs-1 mb-5 fuente">REGISTRAR NOVEDADES</h1>
         <form action="">
 
-          <div class="input-group mt-3 ">
-            <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc;
+            <div class="input-group mt-3 ">
+                <div class="input-group-text justify-content-center" style="width: 130px;background-color:#00c4cc;
             color: #fff;">
-                <label >Hospital</label>
+                    <label>Hospital</label>
+                </div>
+                <mat-form-field>
+                    <mat-select formControlName="hospital">
+                        <mat-option *ngFor="let option of options" [value]="option.descripcion">
+                            {{ option.descripcion }} ({{option.region}})
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
-            <mat-form-field>
-              <mat-select formControlName="hospital">
-                <mat-option
-                  *ngFor="let option of options"
-                  [value]="option.descripcion"
-                >
-                  {{ option.descripcion }} ({{option.region}})
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-        </div>
             <div class="input-group mt-3">
                 <div class="input-group-text justify-content-center" style="width: 100px;background-color:#00c4cc;
                 color: #fff;">
@@ -64,3 +113,4 @@
         </form>
     </div>
 </div>
+-->

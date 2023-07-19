@@ -1,0 +1,105 @@
+<div mat-dialog-title class="backgroud" align="center">
+    <h1 class="font">NUEVO REGISTRO</h1>
+</div>
+<div mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+        <mat-label>Tipo de servicio</mat-label>
+        <mat-select [(ngModel)]="defaultSelected">
+            <mat-option [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">
+                {{tipserv}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div [ngSwitch]="defaultSelected" appearance="outline">
+        <div *ngSwitchCase="'Guardia activa'">
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de guardia</mat-label>
+                <mat-select>
+                    <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Servicio</mat-label>
+                <mat-select>
+                    <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div mat-dialog-actions class="action">
+                <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
+                    color="primary" type="button">Buscar Profesional</button>
+            </div>
+        </div>
+        <div *ngSwitchCase="'Guardia pasiva'">
+            <mat-form-field appearance="outline">
+                <mat-label>Especialidad</mat-label>
+                <mat-select>
+                    <mat-option *ngFor="let esp of especialidad" [value]="esp"> {{esp}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div mat-dialog-subtitle align="center">
+        <h2>Detalle del profesional</h2>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput placeholder="{{selectedNombre}}">
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Apellido</mat-label>
+                <input matInput placeholder="{{selectedApellido}}">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>DNI</mat-label>
+                <input matInput placeholder="ingrese">
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Profesion</mat-label>
+                <input matInput placeholder="ingrese">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Ingreso</mat-label>
+                <input matInput [matDatepicker]="picker1">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <app-time-picker></app-time-picker>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Egreso</mat-label>
+                <input matInput [matDatepicker]="picker2">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <app-time-picker></app-time-picker>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="action">
+    <button mat-raised-button class="btnupdate" type="button"
+        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
+</div>
+

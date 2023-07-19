@@ -1,6 +1,33 @@
+
+.content{
+  padding-top: 10px; 
+  width: 550px; 
+}
+
+
 mat-form-field{
-  width: 75%;
-  height: 70px;
+  width: 100%;
+  margin-right: 12px;
+}
+
+
+
+.action{
+  padding: 0px 25px 20px;
+  }
+  
+.btnupdate{
+  flex: 1;
+}
+
+.backgroud{
+  background-color: #243c74;
+  color: white;
+}
+
+.font{
+  font-family: "archia";
+  font-size:170%;
 }
 
 
