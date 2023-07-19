@@ -13,29 +13,46 @@
     <div class="collapse navbar-collapse">
       <div class="container" routerLink="/home-page">
         <div class="input-group justify-content-center text-light">
-          <h1 class="fw-bold title">SISTEMA PROVINCIAL DE GUARDIAS</h1>
+          <div id="titulo"><h3 class="fw-bold title">SISTEMA PROVINCIAL DE</h3></div><br/>
+          <div id="titulo"><h1 class="fw-bold title">GUARDIAS</h1></div>
         </div>
       </div>
-      <ul class="navbar-nav ms-3">
-        <li class="nav-item" style="width: 100px">
-          <button [matMenuTriggerFor]="menu"
-            type="submit"
-            class="btn btn-outline-success"
-            style="background-color: #243c74; font-family: achia"
-          >
-            <i class="fa-solid fa-user mt-2 mb-1 text-light"></i>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item><span>Opciones</span></button>
+      <button mat-fab [matMenuTriggerFor]="menu_admin"
+        type="submit"
+        class="icon-material">
+        <mat-icon>settings</mat-icon>
+      </button>
+        <mat-menu #menu_admin="matMenu">
             <div class="col" type="button" routerLink="/">
-              <button mat-menu-item><span>Salir</span></button>
+            <button mat-menu-item><mat-icon>assessment</mat-icon><span>Estadisticas</span></button>
+            <button mat-menu-item><mat-icon>face</mat-icon><span>Agregar usuario</span></button>
+          </div>
+        </mat-menu>
+      <button mat-fab [matMenuTriggerFor]="menu"
+      type="submit"
+      class="icon-material">
+        <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <div class="perfil-content">
+            <div class="perfil-img">
+              <img src="assets/img/profile-user.jpg">
             </div>
-          </mat-menu>
-        </li>
-      </ul>
+            <div class="perfil-nom">
+              Nicolás Cruz
+            </div>
+            <div class="perfil-cargo">
+              Administrativo
+            </div>
+          </div>
+          <button mat-menu-item><mat-icon>build</mat-icon><span>Opciones</span></button>
+          <div class="col" type="button" routerLink="/">
+            <button mat-menu-item><mat-icon>exit_to_app</mat-icon><span>Salir</span></button>
+          </div>
+        </mat-menu>
     </div>
   </div>
-</nav>
+ </nav>
 <div *ngIf="showNavBar">
   <nav class="menuNavbar">
     <app-nav-bar></app-nav-bar>

@@ -1,18 +1,114 @@
-
-h5{
-color: white;
-font-family: "archia";
+@charset "utf-8";
+@font-face {
+    font-family: "Ubuntu", sans-serif;
+    src: url('src/assets/font/Ubuntu-Regular.ttf');
 }
-.row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 6vh; /* Ajusta la altura según tus necesidades */
+* {
+  box-sizing: border-box;
 }
 
-.col {
+.nav {
+  height: 30px;
+  width: 100%;
+  background-color: #243c74;
+  position: relative;
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
+
+}
+
+.nav > .nav-header {
+  display: inline;
+}
+
+.nav > .nav-header > {
+  display: inline-block;
+  font-size: 1.2em;
+  color: #fff;
+  padding: 5px;
+}
+
+.nav > .nav-btn {
+  display: none;
+}
+
+.nav > .nav-links {
+  display: inline;
+  float: right;
+  font-size: 100%;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.nav > .nav-links > a {
+  display: inline-block;
+  padding: 5px 40px;
+  text-decoration: none;
+  color: #efefef;
+}
+
+.nav > .nav-links > a:hover {
+  background-color: #37BBED;
+  color: #243c74;
+  font-weight:500;
+}
+
+.nav > #nav-check {
+  display: none;
+}
+
+@media (max-width:1200px) {
+  .nav > .nav-links > a {
+    display: inline-block;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #efefef;
+  }
+  
+}
+@media (max-width:600px) {
+  .nav > .nav-btn {
+    display: inline-block;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+  }
+  .nav > .nav-btn > label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    padding: 8px;
+  }
+  .nav > .nav-btn > label:hover,.nav  #nav-check:checked ~ .nav-btn > label {
+    background-color: #37BBED;
+  }
+  .nav > .nav-btn > label > span {
+    display: block;
+    width: 20px;
+    height: 6px;
+    border-top: 2px solid #eee;
+  }
+  .nav > .nav-links {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    background-color: #243c74;
+    height: 0px;
+    transition: all 0.3s ease-in;
+    overflow-y: hidden;
+    top: 30px;
+    left: 0px;
+  }
+  .nav > .nav-links > a {
+    display: block;
+    width: 100%;
+  }
+  .nav > #nav-check:not(:checked) ~ .nav-links {
+    height: 0px;
+  }
+  .nav > #nav-check:checked ~ .nav-links {
+    height: calc(100vh - 30px);
+    overflow-y: auto;
+  }
 }

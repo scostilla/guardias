@@ -1,6 +1,7 @@
+@charset "utf-8";
 @font-face {
-    font-family: Archia;
-    src: url('src/assets/font/Archia-Regular.otf');
+    font-family: "Ubuntu", sans-serif;
+    src: url('src/assets/font/Ubuntu-Regular.ttf');
 }
 .bg-celeste-argentina {
     background-color: #37BBED;
@@ -11,29 +12,48 @@ nav{
 }
 
 h1 {
-    font-family: "archia";
+    font-family: "Ubuntu", sans-serif;
     font-size:300%;
+    color: #f8f9fa;
+}
+h3 {
+  font-family: "Ubuntu", sans-serif;
+  font-size:120%;
+  color: #243c74;
+  margin-bottom: 0;
+}
+
+#titulo {  
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .navbar{
-    min-height: 72px;
-    margin: 0;
+    width: 100%;
+    height: 140px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right:auto;
+    margin-left: auto;
     padding-left: 0px;
 }
-
 .logo{
-    padding-left: 0px;
-    margin-left: 80px;
-    margin-right: 80px;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right:auto;
+  margin-left: auto;
 }
 
 .userLogged{
   background-color: #243c74;
-  font-family: achia
+  font-family: "Ubuntu", sans-serif;
 }
 
 mat-menu{
-  width: 50%;
+  width: 100%;
 }
 
 .title{
@@ -46,6 +66,53 @@ mat-menu{
   height: 30px;
   margin: 0;
   padding-left: 0px;
+}
+
+/* Botones header */
+.icon-material {
+  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-right: 1.5%;
+}
+.icon-material:hover {
+  color: #37BBED; background-color: #314981;
+}
+.perfil-content {
+  width: 100%;
+  background-color: #37BBED;
+  margin-top: 0;
+  padding-top: 12px;
+  padding-bottom: 10px;
+}
+.perfil-img {
+  width: 200px;
+  height: 180%;
+  margin-top: 0;
+  padding-bottom: 10px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.perfil-img img {
+  width:100px;
+  height:100px;
+  border-radius:100px;
+  border:6px solid #fff9f9;
+  -webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+  -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+  box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+}
+.perfil-nom {
+  font-weight: bold;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.perfil-cargo {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  font-size: 0.8em;
 }
 
 /*
