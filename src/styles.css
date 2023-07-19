@@ -1,7 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
+@charset "utf-8";
+@font-face {
+    font-family: Ubuntu;
+    src: url('src/assets/font/Ubuntu-Regular.ttf');
+}
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Ubuntu, sans-serif; }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Ubuntu, sans-serif; }
