@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-novedades-form',
@@ -7,6 +7,10 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./novedades-form.component.css'],
 })
 export class NovedadesFormComponent {
+  hospitales:string[]= ['CALILEGUA','CEN - CENTRO DE ESPECIALIDADES NORTE','DR. PABLO SORIA','DR. ARTURO ZABALA'];
+  profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
+  novedad:string[]=['Compensatorio','L.A.O','Maternidad','Parte de Enfermo','Familiar Enfermo']
+  /*
   selectedService: string = 'Compensatorio';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
@@ -20,4 +24,5 @@ export class NovedadesFormComponent {
         this.options = data;
       });
   }
+  */
 }

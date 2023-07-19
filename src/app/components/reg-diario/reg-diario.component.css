@@ -1,7 +1,7 @@
 
 .content{
     padding-top: 10px; 
-    width: '850px';   
+    
 }
 
 
@@ -41,8 +41,5 @@ mat-form-field{
     font-family: "archia";
     font-size:170%;
 }
-.mat-raised-button{
-    background-color: green;
-    color: white;
-}
+
 

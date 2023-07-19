@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RegistroDiarioComponent } from '../registro-diario/registro-diario.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
+import { NovedadesFormComponent } from '../novedades-form/novedades-form.component';
+import { DistHorariaComponent } from '../dist-horaria/dist-horaria.component';
 
 @Component({
   selector: 'app-registro-actividades',
@@ -10,12 +12,28 @@ import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
 })
 export class RegistroActividadesComponent {
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    public dialogReg: MatDialog,
+    public dialogNov: MatDialog,
+    public dialogDistrib: MatDialog,
+    ) {}
 
   openRegistroDiario(){
-    this.dialog.open(RegDiarioComponent)
+    this.dialogReg.open(RegDiarioComponent, {
+      height: '90%',
+            width: '50%'
+    })
   }
 
+  openNovedades(){
+    this.dialogNov.open(NovedadesFormComponent)
+  }
+
+  openDistribucion(){
+    this.dialogDistrib.open(DistHorariaComponent)
+  }
+  
+  /*
   addRegistro() {
     const dialogRef = this.dialog.open(RegistroDiarioComponent, {
       width: '600px',
@@ -26,5 +44,5 @@ export class RegistroActividadesComponent {
       console.log('The dialog addEditProfessional was closed');
     });
   }
-
+*/
 }

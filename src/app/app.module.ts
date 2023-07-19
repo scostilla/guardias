@@ -45,6 +45,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import {MatTableModule} from '@angular/material/table';
+import {NgFor} from '@angular/common';
+import {MatButtonToggleGroup, MatButtonToggleModule} from '@angular/material/button-toggle';
 
 
 
@@ -78,6 +82,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     GuardiaPasivaComponent,
     RegDiarioComponent,
     RegDiarioComponent,
+    DdjjExtraComponent,
   ],
 
   imports: [
@@ -98,7 +103,10 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    FormsModule
+    FormsModule,
+    MatTableModule,
+    NgFor, 
+    MatButtonToggleModule
   ],
   providers: [
     ProfessionalDataServiceService

@@ -14,6 +14,7 @@ import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.com
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
+import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -30,6 +31,7 @@ const routes: Routes = [
   {path:'guardias-view', component: GuardiasViewComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
+  {path:'ddjj-extra',component:DdjjExtraComponent},
   
 ];
 
