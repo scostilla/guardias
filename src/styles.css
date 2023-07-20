@@ -8,5 +8,50 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Ubuntu, sans-serif; }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Ubuntu, sans-serif; }
+.container-boton-ddjj {
+    position: relative;
+    width: 100%;
+    float: left;
+    margin: 0 0 10% 0;
+    cursor: pointer;
+}
+
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 20% 5%;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 94%;
+    width: 100%;
+    opacity: 0;
+    transition: .5s ease;
+    background-color: #37BBED;
+    border-radius: 20% 5%;
+}
+
+.container-boton-ddjj:hover .overlay {
+    opacity: 1;
+}
+
+.text {
+    color: white;
+    font-size: 100%;
+    font-family: "Ubuntu";
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    line-height: normal;
+}

@@ -1,83 +1,74 @@
 <div class="d-flex justify-content-center fs-1 mb-5 title">Datos del Profesional</div>
-
 <div class="container">
   <div class="row">
-    <div class="col-1">
-      <div class="d-flex flex-column">
-        <div class="mb-3" type="button" routerLink="#">
-          <img class="img-fluid" src="/assets/img/btn-submenu-regAct/1reg-diario.png" alt="MDB Logo" loading="lazy"
-            width="100" />
-            <div class="col d-flex  justify-content-center" >
-              <div class="row fuente fs-5">Un boton</div>
-          </div>
-        </div>
-        <div class="mb-3" type="button" routerLink="#">
-          <img class="img-fluid d-flex align-items-center" src="/assets/img/btn-submenu-regAct/2novedades.png"
-            alt="MDB Logo" loading="lazy" width="100" />
-            <div class="col d-flex  justify-content-center" >
-              <div class="row fuente fs-5">otro boton</div>
-          </div>
-        </div>
-        <div class="mb-3" type="button" routerLink="#">
-          <img class="img-fluid" src="/assets/img/btn-submenu-regAct/3distib-horaria.png" alt="MDB Logo" loading="lazy"
-            width="100" />
-            <div class="col d-flex  justify-content-center" >
-              <div class="row fuente fs-5">otro más</div>
-          </div>
+    <div class="col-2">
+      <div class="container-boton-ddjj" routerLink="#">
+        <img src="assets/img/btn-submenu-guardias/1ddjj-extra.png" alt="DDJJ" class="image">
+        <div class="overlay">
+          <div class="text">EXTRAS</div>
         </div>
       </div>
-    </div>
-    <div class="col-10">
-      <div class="container col-10">
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">Apellido</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.apellido" readonly>
-        </div>
-
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">Nombre</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.nombre" readonly>
-        </div>
-
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">DNI</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.dni" readonly>
-        </div>
-
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">CUIL</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.cuil" readonly>
-        </div>
-
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">Profesión</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.profesion" readonly>
-        </div>
-
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">Especialidad</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.especialidad" readonly>
-        </div>
-
-        <div class="input-group">
-          <div class="input-group-text justify-content-center detail">
-            <label for="" class="detail">Sit. Revista</label>
-          </div>
-          <input class="form-control readonly-input" type="text" [(ngModel)]="person.sitRevista" readonly>
+      <div class="container-boton-ddjj" routerLink="#">
+        <img src="assets/img/btn-submenu-guardias/2ddjj-ca.png" alt="DDJJ" class="image">
+        <div class="overlay">
+          <div class="text">CARGO Y AGRUPACION</div>
         </div>
       </div>
-    </div>
+      <div class="container-boton-ddjj" routerLink="#">
+        <img src="assets/img/btn-submenu-guardias/3ddjj-cf.png" alt="DDJJ" class="image">
+        <div class="overlay">
+          <div class="text">CONTRA FACTURA</div>
+        </div>
+      </div> 
   </div>
+    <div class="col-10">
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">Apellido</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.apellido" readonly>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">Nombre</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.nombre" readonly>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">DNI</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.dni" readonly>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">CUIL</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.cuil" readonly>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">Profesión</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.profesion" readonly>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">Especialidad</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.especialidad" readonly>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-text justify-content-center detail">
+        <label for="" class="detail">Sit. Revista</label>
+      </div>
+      <input class="form-control readonly-input" type="text" [(ngModel)]="person.sitRevista" readonly>
+    </div>  </div>
+ </div>
 </div>
