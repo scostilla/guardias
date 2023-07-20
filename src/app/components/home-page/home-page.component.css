@@ -3,6 +3,17 @@ h2{
     font-size:350%;
 }
 
+#container-title-hosp {
+	float: left;
+	width: 100%;
+	height: 302px;
+	background-image: url("/assets/img/fond_nom_hosp.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	margin-top: -2%;
+	margin-bottom: -3%;
+}
+
 div.boton {
     width: 100%;
 	height: 200px;
