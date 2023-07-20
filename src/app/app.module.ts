@@ -52,6 +52,8 @@ import {MatButtonToggleGroup, MatButtonToggleModule} from '@angular/material/but
 
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
+import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +87,8 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     RegDiarioComponent,
     DdjjExtraComponent,
     ProfessionalDetailComponent,
+    DdjjContrafacturaComponent,
+    DdjjCargoyagrupComponent,
   ],
 
   imports: [

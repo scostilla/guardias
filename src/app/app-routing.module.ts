@@ -16,6 +16,8 @@ import { GuardiaActivaComponent } from './components/guardia-activa/guardia-acti
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -34,7 +36,10 @@ const routes: Routes = [
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
   { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
   {path:'ddjj-extra',component:DdjjExtraComponent},
+  {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
+  {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
 
+  
 ];
 
 @NgModule({
