@@ -8,6 +8,13 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Ubuntu, sans-serif; }
 
+.title{
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-secondary-rgb),var(--bs-text-opacity))!important;
+    margin-top: 15px;
+    font-family: "Ubuntu";
+}
+
 .container-boton-ddjj {
     position: relative;
     width: 100%;
