@@ -37,27 +37,27 @@ div.boton {
     width: 100%;
 	height: 200px;
 	margin: 2%;
-	float:left;
 	color:#333;
 	text-decoration:none;
-    -moz-border-radius: 3%;
-    -webkit-border-radius: 3%;
-    border-radius: 3%;
-}
-div.boton:hover {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
 	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
     -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
     box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
 }
+div.boton:hover {
+	background-color: #EEE;
+}
 .icon1_boton, .icon2_boton, .icon3_boton, .icon4_boton, .icon5_boton, .icon6_boton {
-    -moz-border-radius: 3% 3% 0 0;
-    -webkit-border-radius: 3% 3% 0 0;
-    border-radius: 3% 3% 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
 	width: 100%;
 	font-size: 1.2em;
 	font-weight:bold;
-text-align:center; color: #fff;
-padding:3%;
+	text-align:center; 
+	padding:3%;
 }
 .icon1_boton {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
 .icon2_boton {background-color: #1B497B; border-bottom: 9px solid #123253;}
@@ -66,6 +66,9 @@ padding:3%;
 .icon5_boton {background-color: #EB428F; border-bottom: 9px solid #c73778;}
 .icon6_boton {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
 
+.icon1_boton:hover, .icon2_boton:hover, .icon3_boton:hover, .icon4_boton:hover, .icon5_boton:hover, .icon6_boton:hover {
+border-bottom: 0;
+}
 
 .text_boton {text-align: center;
 	font-size: 150%;
