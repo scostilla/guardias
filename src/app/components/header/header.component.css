@@ -70,7 +70,7 @@ mat-menu{
   float: left; 
 }
 .icon-material {
-  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-right: 1.5%;
+  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-left: 5%;
 }
 .icon-material:hover {
   color: #37BBED; background-color: #314981;
