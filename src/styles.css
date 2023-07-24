@@ -15,7 +15,7 @@ body { margin: 0; font-family: Ubuntu, sans-serif; }
     font-family: "Ubuntu";
 }
 
-.container-boton-ddjj {
+.container-boton {
     position: relative;
     width: 100%;
     float: left;
@@ -44,7 +44,7 @@ body { margin: 0; font-family: Ubuntu, sans-serif; }
     border-radius: 20% 5%;
 }
 
-.container-boton-ddjj:hover .overlay {
+.container-boton:hover .overlay {
     opacity: 1;
 }
 
@@ -61,4 +61,12 @@ body { margin: 0; font-family: Ubuntu, sans-serif; }
     transform: translate(-50%, -50%);
     text-align: center;
     line-height: normal;
+}
+@media (max-width:600px) {
+    .container-boton {
+        width: 130%;
+    }
+    .text {
+        font-size: 75%;
+    }
 }
