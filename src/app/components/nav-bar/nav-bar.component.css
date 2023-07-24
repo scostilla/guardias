@@ -106,6 +106,10 @@
     display: block;
     width: 100%;
   }
+  .nav > .nav-links > a:hover {
+    height: 30px;
+    border-radius: 0;
+  }
   .nav > #nav-check:not(:checked) ~ .nav-links {
     height: 0px;
   }
