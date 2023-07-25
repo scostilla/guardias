@@ -10,7 +10,7 @@ export interface PeriodicElement {
   weight: number;
   symbol: string;
 }
-const ELEMENT_DATA: PeriodicElement[] = [
+/* const ELEMENT_DATA: PeriodicElement[] = [
   {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
   {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
   {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
@@ -36,27 +36,27 @@ export class ApiComponent implements AfterViewInit {
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
 
-  constructor(private _liveAnnouncer: LiveAnnouncer) {}
+  constructor(private _liveAnnouncer: LiveAnnouncer) {} */
 
-  @ViewChild(MatSort) sort: MatSort;
+  /* @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
-
+ */
   /** Announce the change in sort state for assistive technology. */
-  announceSortChange(sortState: Sort) {
-    // This example uses English messages. If your application supports
+  /* announceSortChange(sortState: Sort) {
+   */  // This example uses English messages. If your application supports
     // multiple language, you would internationalize these strings.
     // Furthermore, you can customize the message to add additional
     // details about the values being sorted.
-    if (sortState.direction) {
+    /* if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
-    }
+    } 
   }
-  
+  */
 
   /* date = '2023-07-21T13:59:31.238Z'; */
 
@@ -75,5 +75,5 @@ export class ApiComponent implements AfterViewInit {
     {titulo:"Ju", name:"jueves"},
     {titulo:"Vi", name:"viernes"},
     {titulo:"Sa", name:"sabado"}
-  ] */
-}
+  ] 
+}*/

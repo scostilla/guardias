@@ -54,11 +54,12 @@ import {MatButtonToggleGroup, MatButtonToggleModule} from '@angular/material/but
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
-import { ApiComponent } from './components/api/api.component';
-
+/* import { ApiComponent } from './components/api/api.component';
+ */
 //Date Import
 import localePy from '@angular/common/locales/es-PY';
 import { TablaComponent } from './components/tabla/tabla.component';
+import { ArrayFecComponent } from './components/array-fec/array-fec.component';
 
 registerLocaleData(localePy,'es');
 
@@ -97,8 +98,9 @@ registerLocaleData(localePy,'es');
     ProfessionalDetailComponent,
     DdjjContrafacturaComponent,
     DdjjCargoyagrupComponent,
-    ApiComponent,
+   /*  ApiComponent, */
     TablaComponent,
+    ArrayFecComponent,
   ],
 
   imports: [
