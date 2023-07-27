@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
@@ -11,7 +11,7 @@ export class DdjjCargoyagrupComponent {
   
   today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
-  
+
   daysOfMonth: Array<Date> = new Array<Date>(); 
   
   constructor(){
