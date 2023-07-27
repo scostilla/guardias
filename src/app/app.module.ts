@@ -1,9 +1,9 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
 
@@ -52,6 +52,9 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
+import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+import { TentativoComponent } from './components/tentativo/tentativo.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +88,9 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     RegDiarioComponent,
     DdjjExtraComponent,
     ProfessionalDetailComponent,
+    DdjjContrafacturaComponent,
+    DdjjCargoyagrupComponent,
+    TentativoComponent,
   ],
 
   imports: [
@@ -111,7 +117,9 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     MatButtonToggleModule
   ],
   providers: [
-    ProfessionalDataServiceService
+    ProfessionalDataServiceService,
+    {provide: LOCALE_ID,useValue:'es'}
+    /*ProfessionalDataServiceService,*/
   ],
   bootstrap: [AppComponent],
 })

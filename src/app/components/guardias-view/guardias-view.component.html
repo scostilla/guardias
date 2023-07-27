@@ -1,33 +1,31 @@
-<div class=" d-flex justify-content-center mb-4 shadow">
-  <div class=" rounded-5 text-secondary " style="width: 95rem; height: rem;">
-    <!--<div class="text-center fs-1 fw-bold fw-bold fuente">ACTIVIDADES</div>-->
-    <div class="container mt-2">
-      <div class="container-box">
-      <div class="container-boton-ddjj" routerLink="/registro-diario">
+<div class="container">
+  <div class="row">
+    <div class="col-2">
+      <div class="container-boton" routerLink="#" mat-raised-button
+      matTooltipPosition="right"
+      matTooltip="Cargo y agrupación"
+      aria-label="Button that displays a tooltip when focused or hovered over">
         <img src="assets/img/btn-submenu-guardias/1ddjj-extra.png" alt="DDJJ" class="image">
         <div class="overlay">
           <div class="text">EXTRAS</div>
         </div>
       </div>
-      <div class="container-boton-ddjj" routerLink="/novedades-form">
+      <div class="container-boton" routerLink="#">
         <img src="assets/img/btn-submenu-guardias/2ddjj-ca.png" alt="DDJJ" class="image">
         <div class="overlay">
           <div class="text">CARGO Y AGRUPACION</div>
         </div>
       </div>
-      <div class="container-boton-ddjj" routerLink="/dist-horaria">
+      <div class="container-boton" routerLink="#">
         <img src="assets/img/btn-submenu-guardias/3ddjj-cf.png" alt="DDJJ" class="image">
         <div class="overlay">
           <div class="text">CONTRA FACTURA</div>
         </div>
       </div>
-      </div>
-
-      <div class="row ">
-        <div class="col d-flex justify-content-center ">
-          <div class="btn btn-primary mt-5 shadow mb-5 rounded cargo text-white" style="width: 80%;">CARGO</div>
-        </div>
+  </div>
+    <div class="col-10">
         <div class="col d-flex justify-content-center">
+          <div class="row">
           <div class="btn btn-primary mt-5 shadow p-2 mb-5 rounded agrupacion text-white" style="width: 80%;">
             AGRUPACION DE Hs.</div>
         </div>
@@ -39,8 +37,11 @@
           <div class="btn btn-primary mt-5 shadow p-2 mb-5 rounded contrafactura text-white" style="width: 80%;">CONTRA
             FACTURA</div>
         </div>
+        </div>
+        <app-daily-schedule></app-daily-schedule>
       </div>
-    </div>
-  </div>
-</div>
-<app-daily-schedule></app-daily-schedule>
+      </div>
+
+
+
+

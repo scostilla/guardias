@@ -16,6 +16,9 @@ import { GuardiaActivaComponent } from './components/guardia-activa/guardia-acti
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import { TentativoComponent } from './components/tentativo/tentativo.component';
+import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
