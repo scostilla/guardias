@@ -16,6 +16,7 @@ import { GuardiaActivaComponent } from './components/guardia-activa/guardia-acti
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import { TentativoComponent } from './components/tentativo/tentativo.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -34,7 +35,7 @@ const routes: Routes = [
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
   { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
   {path:'ddjj-extra',component:DdjjExtraComponent},
-
+  {path:'tentativo', component:TentativoComponent}
 ];
 
 @NgModule({

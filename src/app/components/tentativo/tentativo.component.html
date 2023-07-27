@@ -1,0 +1,10 @@
+<table>
+
+    <tr>
+        <td *ngFor="let day of numberOfMonth">{{ day }}</td>
+    </tr>
+    <tr>
+        <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
+    </tr>
+    </table>
+    
