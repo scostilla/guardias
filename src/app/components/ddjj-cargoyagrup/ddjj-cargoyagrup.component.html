@@ -1,12 +1,22 @@
+<div>
+    
+</div>
+
 <table>
 
-    <tr>
-        <td *ngFor="let day of numberOfMonth">{{ day }}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
-    </tr>
-    </table>
+<tr>
+    <td *ngFor="let day of numberOfMonth">{{ day }}</td>
+</tr>
+<tr>
+    <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
+</tr>
+</table>
+
+<!-- {{today | date:"EEEEEE":undefined:'es'|titlecase}}
+<br>
+{{today | date:"d"}}
+<br>
+{{today | date:"short"}} -->
 
 
 <div class="container">

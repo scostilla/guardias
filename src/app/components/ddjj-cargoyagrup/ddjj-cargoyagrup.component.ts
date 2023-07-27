@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
-  templateUrl: './ddjj-cargoyagrup.component.html',
+  templateUrl: './ddjj-cargoyagrup.component.html', 
   styleUrls: ['./ddjj-cargoyagrup.component.css']
 })
 export class DdjjCargoyagrupComponent {
@@ -27,4 +28,19 @@ export class DdjjCargoyagrupComponent {
       
     }
   }
+ 
+  /* today:number = new Date(2023,9,0).getDate();
+  dia:number = new Date().getDay();
+  numberOfMonth: Array<number> = new Array<number>();
+  daysOfMonth: Array<string> = new Array<string>(); */
+/*   constructor(){
+    for(let i=1;i<= this.today; i++)
+    {
+      this.numberOfMonth.push(i)
+    } */
+/* 
+    for(let i=1;i<= this.today; i++)
+    {
+      this.numberOfMonth.push(i)
+    } */
 }

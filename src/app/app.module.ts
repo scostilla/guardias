@@ -1,9 +1,9 @@
-import { Component, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
 
@@ -55,6 +55,18 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 
+
+
+//Date Import
+import localePy from '@angular/common/locales/es-PY';
+import { TablaComponent } from './components/tabla/tabla.component';
+import { ArrayFecComponent } from './components/array-fec/array-fec.component';
+import { MonthTableComponent } from './components/month-table/month-table.component';
+
+
+registerLocaleData(localePy,'es');
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -89,6 +101,11 @@ import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-car
     ProfessionalDetailComponent,
     DdjjContrafacturaComponent,
     DdjjCargoyagrupComponent,
+   /*  ApiComponent,  */
+    TablaComponent,
+    ArrayFecComponent,
+    MonthTableComponent,
+    
   ],
 
   imports: [
@@ -112,12 +129,14 @@ import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-car
     FormsModule,
     MatTableModule,
     NgFor,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    DatePipe,
   ],
   providers: [
-    ProfessionalDataServiceService
-    /*ProfessionalDataServiceService,*/
+    ProfessionalDataServiceService,
+    {provide: LOCALE_ID,useValue:'es'}
   ],
+  
   bootstrap: [AppComponent],
 })
 export class AppModule {}
