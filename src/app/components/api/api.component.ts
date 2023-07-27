@@ -30,9 +30,10 @@ export interface PeriodicElement {
   styleUrls: ['./api.component.css'],
   standalone: true,
   imports: [MatTableModule, MatSortModule],
-})
-export class ApiComponent implements AfterViewInit {
-
+}) */
+export class ApiComponent {
+  date = '2023-07-21T13:59:31.238Z'; }
+/*
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
 
@@ -58,7 +59,7 @@ export class ApiComponent implements AfterViewInit {
   }
   */
 
-  /* date = '2023-07-21T13:59:31.238Z'; */
+  
 
   /* esto deberia ser un array q tenga cargado todos las fechas de determinado mes */
 

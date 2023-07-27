@@ -18,8 +18,9 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
-/* import { ApiComponent } from './components/api/api.component';
- */
+import { MonthTableComponent } from './components/month-table/month-table.component';
+
+ 
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'professional-form', component: ProfessionalFormComponent },
@@ -39,8 +40,8 @@ const routes: Routes = [
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
-  /* {path:'api', component:ApiComponent}
-   */
+ /*  {path:'api', component:ApiComponent} */
+ {path:'MonthTableComponent',component:MonthTableComponent},
 ];
 
 @NgModule({
