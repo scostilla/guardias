@@ -33,6 +33,11 @@
   height: 200px;
 }
 
+.ref-calendar-dia__content {
+  color: #4e8792;
+  font-weight: bold;
+}
+
 .calendar-dia--icon{
   padding: 5px 0 5px 50px;
   height: 20%;
@@ -52,13 +57,29 @@
   background-color: #67c77c;
 }
 
+.ref-calendar-dia--hoy {
+  color: #67c77c;
+  font-weight: bold;
+}
+
 .calendar-dia-feriado .calendar-dia__content {
   background-color: #ab6381;
+}
+
+.ref-calendar-dia--feriado {
+  color: #ab6381;
+  font-weight: bold;
 }
 
 .calendar-dia-finde .calendar-dia__content {
   background-color: #d640b1;
 }
+
+.ref-calendar-dia--finde {
+  color: #d640b1;
+  font-weight: bold;
+}
+
 
 
 .calendar-dia__number {
