@@ -46,10 +46,31 @@ div.boton {
 	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
     -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
     box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+	transition: all 0.5s;
 }
-div.boton:hover {
-	background-color: #EEE;
-}
+div.boton span {
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+	transition: 0.5s;
+  }
+  div.boton span:after {
+	content: '\00bb';
+	position: absolute;
+	opacity: 0;
+	top: 0;
+	right: -20px;
+	transition: 0.5s;
+  }
+  
+  div.boton:hover span {
+	padding-right: 25px;
+  }
+  
+  div.boton:hover span:after {
+	opacity: 1;
+	right: 0;
+  }
 .icon1_boton, .icon2_boton, .icon3_boton, .icon4_boton, .icon5_boton, .icon6_boton {
     -moz-border-radius: 10px 10px 0 0;
     -webkit-border-radius: 10px 10px 0 0;
@@ -67,12 +88,10 @@ div.boton:hover {
 .icon5_boton {background-color: #EB428F; border-bottom: 9px solid #c73778;}
 .icon6_boton {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
 
-.icon1_boton:hover, .icon2_boton:hover, .icon3_boton:hover, .icon4_boton:hover, .icon5_boton:hover, .icon6_boton:hover {
-border-bottom: 0;
-}
-
 .text_boton {text-align: center;
 	font-size: 150%;
 	padding: 0 8% 8% 8%;
 	display:block;
 	}
+
+	  
