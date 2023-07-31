@@ -1,10 +1,17 @@
-<div>
-Julio, 2023
+<div class="text-center fs-1 fw-bold fw-bold">Julio, 2023</div>
+<div class="center">
+  <table style="margin: 20px; text-align: center;">
+    <tr>
+      <td style="width:300px">
+      <span class="ref-calendar-dia__content">Día hábil</span>
+      </td>
+      <td style="width:300px"><span class="circulo--finde"></span>&nbsp;<span class="ref-calendar-dia--finde">Fin de semana</span></td>
+      <td style="width:300px">&nbsp;<span class="ref-calendar-dia--feriado">Asueto/Feriado</span></td>
+    </tr>
+  </table>
 </div>
-<div>Detalle: <br/><span class="ref-calendar-dia__content">Día hábil</span><br/><span class="ref-calendar-dia--finde">Fin de semana</span><br/><span class="ref-calendar-dia--feriado">Asueto/Feriado</span></div>
-
 <ol class="calendar">
-    <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu" data-week="39">
+    <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu" data-week ="39">
       <span class="calendar-dia__number">26</span>
       <div class="calendar-dia__content"></div>
     </li>
@@ -31,8 +38,13 @@ Julio, 2023
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="39">
       <span class="calendar-dia__number">02</span>
       <div class="calendar-dia__content">
-        <div class="calendar-dia--icon"><mat-icon>cached</mat-icon><mat-icon>check_circle</mat-icon><mat-icon>done</mat-icon><mat-icon>clear</mat-icon></div>
-        <div class="calendar-dia--text">Dr. Candido</div>
+        <div class="calendar-dia--icon">
+          <mat-icon>check_circle</mat-icon>
+          <mat-icon>done</mat-icon>
+          <mat-icon>clear</mat-icon></div>
+        <div class="calendar-dia--text" matTooltip="Clínica">Dr. Candido Perez</div>
+        <div class="calendar-dia--text" matTooltip="Ginecología">Dra. María Paz Monteros</div>
+        <div class="calendar-dia--text" matTooltip="Ginecología">Dra. Juana Felicitas</div>
     </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="40">
@@ -49,7 +61,14 @@ Julio, 2023
     </li>
     <li class="calendar-dia" data-weekday="Ju" data-week="40">
       <span class="calendar-dia__number">06</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon>check_circle</mat-icon>
+          <mat-icon>done</mat-icon>
+          <mat-icon>clear</mat-icon></div>
+        <div class="calendar-dia--text" matTooltip="Clínica">Dra. Lucía Medina</div>
+        <div class="calendar-dia--text" matTooltip="Cardiología">Dr. Juan Quintero</div>
+      </div>
     </li>
     <li class="calendar-dia calendar-dia--today" data-weekday="Vi" data-week="40">
       <span class="calendar-dia__number">07</span>

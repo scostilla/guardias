@@ -3,18 +3,16 @@
   padding: 0;
   list-style: none;
   font-size: 1.4rem;
-  font-family: Ubuntu;
 }
 
 .calendar-dia {
   color: #fff;
   position: relative;
   box-sizing: border-box;
-  height: 200px;
 }
 
 .calendar-dia:hover {
-  opacity: .5;
+  opacity: .8;
 }
 
 .calendar-dia:nth-child(7n+1)::before {
@@ -32,6 +30,7 @@
 .calendar-dia__content {
   background: #4e8792;
   height: 200px;
+  border-radius: 10px;
 }
 
 .ref-calendar-dia__content {
@@ -40,14 +39,19 @@
 }
 
 .calendar-dia--icon{
-  padding: 5px 0 5px 50px;
+  padding: 5px 5px 5px 50px;
   height: 20%;
+  margin-bottom: 30px;
+  text-align: right;
 }
 
 .calendar-dia--text{
-  padding: 30px 0 10px 10px;
-  height: 60%;
-  font-size: 0.8em;
+  padding: 3px 12px;
+  margin: 5px 10px;
+  font-size: 0.7em;
+  background-color: #37BBED;
+  border-radius: 7px;
+  cursor: pointer;
 }
 
 .calendar-dia--otromes .calendar-dia__content {
@@ -81,12 +85,20 @@
   font-weight: bold;
 }
 
+.circulo--finde {
+  background: #d640b1;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  float: left;
+}
 
 
 .calendar-dia__number {
   position: absolute;
   top: .5rem;
   left: .5rem;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 40rem) {
