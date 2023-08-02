@@ -63,6 +63,7 @@ import { TablaComponent } from './components/tabla/tabla.component';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
+import { CronogramaComponent } from './components/cronograma/cronograma.component';
 
 
 registerLocaleData(localePy,'es');
@@ -107,6 +108,7 @@ registerLocaleData(localePy,'es');
     ArrayFecComponent,
     MonthTableComponent,
     PopupCalendarioComponent,
+    CronogramaComponent,
     
   ],
 
