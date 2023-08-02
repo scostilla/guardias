@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupCalendarioComponent} from '../popup-calendario/popup-calendario.component';
 
 
 @Component({
@@ -14,7 +16,9 @@ export class DdjjCargoyagrupComponent {
 
   daysOfMonth: Array<Date> = new Array<Date>(); 
   
-  constructor(){
+  constructor(
+    public dialogReg: MatDialog,
+  ){
     for (var dia = 1; dia <= this.today; dia++) {
       this.numberOfMonth.push(dia);
     }
@@ -28,7 +32,13 @@ export class DdjjCargoyagrupComponent {
       
     }
   }
- 
+  openPopupCalendario(){
+    this.dialogReg.open(PopupCalendarioComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
   /* today:number = new Date(2023,9,0).getDate();
   dia:number = new Date().getDay();
   numberOfMonth: Array<number> = new Array<number>();

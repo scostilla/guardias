@@ -19,6 +19,7 @@ import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
+import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 
  
 const routes: Routes = [
@@ -42,6 +43,7 @@ const routes: Routes = [
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
  /*  {path:'api', component:ApiComponent} */
  {path:'MonthTableComponent',component:MonthTableComponent},
+ {path: 'popup-calendario', component:PopupCalendarioComponent},
 ];
 
 @NgModule({
