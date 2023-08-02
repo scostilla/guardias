@@ -62,6 +62,8 @@ import localePy from '@angular/common/locales/es-PY';
 import { TablaComponent } from './components/tabla/tabla.component';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
+import { CronogramaDefinitivoComponent } from './components/cronograma-definitivo/cronograma-definitivo.component';
+import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
 
 
 registerLocaleData(localePy,'es');
@@ -105,6 +107,8 @@ registerLocaleData(localePy,'es');
     TablaComponent,
     ArrayFecComponent,
     MonthTableComponent,
+    CronogramaDefinitivoComponent,
+    CronogramaTentativoComponent,
     
   ],
 
