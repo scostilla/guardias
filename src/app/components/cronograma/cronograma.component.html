@@ -1,4 +1,4 @@
-<div class="titulo-calendario">Julio, 2023</div>
+<div class="titulo-calendario">Julio 2023</div>
 <div class="center-content">
     <span class="circulo--dia"></span>&nbsp;<span class="ref-calendar-dia__content">Día hábil</span>
     <span class="circulo--finde"></span>&nbsp;<span class="ref-calendar-dia--finde">Fin de semana</span>
@@ -199,9 +199,3 @@
         <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
     </tr>
     </table>
-    
-    <!-- {{today | date:"EEEEEE":undefined:'es'|titlecase}}
-    <br>
-    {{today | date:"d"}}
-    <br>
-    {{today | date:"short"}} -->
