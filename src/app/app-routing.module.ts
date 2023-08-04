@@ -21,8 +21,9 @@ import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-car
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
+import { DigestoComponent } from './components/digesto/digesto.component';
 
- 
+
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'professional-form', component: ProfessionalFormComponent },
@@ -46,6 +47,7 @@ const routes: Routes = [
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path: 'cronograma', component:CronogramaComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
+ {path: 'digesto', component:DigestoComponent},
 ];
 
 @NgModule({
