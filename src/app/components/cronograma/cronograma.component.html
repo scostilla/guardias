@@ -199,3 +199,10 @@
         <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
     </tr>
     </table>
+
+    <ol class="calendar">
+      <li class="calendar-dia" *ngFor="let d of daysOfMonth" data-weekday="{{d | date:'EEEEEE':undefined:'es'|titlecase}}">
+        <span *ngFor="let day of numberOfMonth" class="calendar-dia__number">{{ day }}</span>
+        <div class="calendar-dia__content"></div>
+      </li> 
+    </ol> 
