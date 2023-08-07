@@ -1,14 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupCalendarioComponent} from '../popup-calendario/popup-calendario.component';
 
-
 @Component({
-  selector: 'app-ddjj-cargoyagrup',
-  templateUrl: './ddjj-cargoyagrup.component.html', 
-  styleUrls: ['./ddjj-cargoyagrup.component.css']
+  selector: 'app-cronograma',
+  templateUrl: './cronograma.component.html',
+  styleUrls: ['./cronograma.component.css']
 })
-export class DdjjCargoyagrupComponent {
+export class CronogramaComponent {
   /* date = '2023-07-21T13:59:31.238Z';  */
   
   today:number = new Date(2023,7,0).getDate();//31
@@ -54,3 +53,4 @@ export class DdjjCargoyagrupComponent {
       this.numberOfMonth.push(i)
     } */
 }
+

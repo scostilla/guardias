@@ -1,14 +1,8 @@
-<div class="text-center fs-1 fw-bold fw-bold">Julio, 2023</div>
-<div class="center">
-  <table style="margin: 20px; text-align: center;">
-    <tr>
-      <td style="width:300px">
-      <span class="ref-calendar-dia__content">Día hábil</span>
-      </td>
-      <td style="width:300px"><span class="circulo--finde"></span>&nbsp;<span class="ref-calendar-dia--finde">Fin de semana</span></td>
-      <td style="width:300px">&nbsp;<span class="ref-calendar-dia--feriado">Asueto/Feriado</span></td>
-    </tr>
-  </table>
+<div class="titulo-calendario">Julio, 2023</div>
+<div class="center-content">
+    <span class="circulo--dia"></span>&nbsp;<span class="ref-calendar-dia__content">Día hábil</span>
+    <span class="circulo--finde"></span>&nbsp;<span class="ref-calendar-dia--finde">Fin de semana</span>
+    <span class="circulo--feriado"></span>&nbsp;<span class="ref-calendar-dia--feriado">Asueto/Feriado</span>
 </div>
 <ol class="calendar">
     <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu" data-week ="39">
@@ -154,7 +148,7 @@
       <span class="calendar-dia__number">27</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--hoy" data-weekday="Vi" data-week="43">
+    <li class="calendar-dia" data-weekday="Vi" data-week="43">
       <span class="calendar-dia__number">28</span>
       <div class="calendar-dia__content"></div>
     </li>
@@ -205,7 +199,7 @@
         <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
     </tr>
     </table>
-
+    
     <!-- {{today | date:"EEEEEE":undefined:'es'|titlecase}}
     <br>
     {{today | date:"d"}}

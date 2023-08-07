@@ -1,28 +1,30 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomePageComponent } from './components/home-page/home-page.component';
-import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
-import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
-import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
-import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
-import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
-import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
-import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
-import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
-import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
-import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
-import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
-import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
-import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
-import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
-import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
-import { MonthTableComponent } from './components/month-table/month-table.component';
 import { CronogramaDefinitivoComponent } from './components/cronograma-definitivo/cronograma-definitivo.component';
 import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
+import { CronogramaComponent } from './components/cronograma/cronograma.component';
+import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
+import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
+import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
+import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
+import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
+import { HomePageComponent } from './components/home-page/home-page.component';
+import { LoginComponent } from './components/login/login.component';
+import { MonthTableComponent } from './components/month-table/month-table.component';
+import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
+import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
+import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
+import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
+import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
+import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
+import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
+import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
+import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 
- 
+
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'professional-form', component: ProfessionalFormComponent },
@@ -46,6 +48,8 @@ const routes: Routes = [
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path:'cronograma-definitivo', component:CronogramaDefinitivoComponent},
  {path:'cronograma-tentativo', component:CronogramaTentativoComponent},
+ {path: 'cronograma', component:CronogramaComponent},
+ {path: 'popup-calendario', component:PopupCalendarioComponent},
 ];
 
 @NgModule({
