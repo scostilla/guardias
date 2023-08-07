@@ -65,6 +65,7 @@ import { MonthTableComponent } from './components/month-table/month-table.compon
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
+import { HistorialComponent } from './components/historial/historial.component';
 
 
 registerLocaleData(localePy,'es');
@@ -111,6 +112,7 @@ registerLocaleData(localePy,'es');
     PopupCalendarioComponent,
     CronogramaComponent,
     DigestoComponent,
+    HistorialComponent,
     
   ],
 

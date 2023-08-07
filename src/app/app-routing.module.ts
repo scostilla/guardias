@@ -22,6 +22,8 @@ import { MonthTableComponent } from './components/month-table/month-table.compon
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
+import { HistorialComponent } from './components/historial/historial.component';
+
 
 
 const routes: Routes = [
@@ -48,6 +50,7 @@ const routes: Routes = [
  {path: 'cronograma', component:CronogramaComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
+ {path: 'historial', component:HistorialComponent},
 ];
 
 @NgModule({

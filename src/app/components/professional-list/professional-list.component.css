@@ -24,6 +24,9 @@ mat-label{
   margin: 10px;
 }
 
+.mat-mdc-table tr.mat-mdc-row:hover {
+  background-color: #eee;
+}
 
 
 .btnEdit{

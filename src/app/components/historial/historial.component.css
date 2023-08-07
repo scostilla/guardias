@@ -10,3 +10,11 @@
     font-size: 14px;
     width: 100%;
   }
+
+.NgRow.even {
+    background: #eee;
+}
+
+.NgRow.odd {
+    background: #999;
+}
