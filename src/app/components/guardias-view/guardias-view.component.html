@@ -1,13 +1,10 @@
 <div class="container">
   <div class="row">
     <div class="col-2">
-      <div class="container-boton" routerLink="#" mat-raised-button
-      matTooltipPosition="right"
-      matTooltip="Cargo y agrupación"
-      aria-label="Button that displays a tooltip when focused or hovered over">
+      <div class="container-boton" routerLink="#" mat-raised-button>
         <img src="assets/img/btn-submenu-guardias/1ddjj-extra.png" alt="DDJJ" class="image">
         <div class="overlay">
-          <div class="text">EXTRAS - Nico</div>
+          <div class="text">EXTRAS</div>
         </div>
       </div>
       <div class="container-boton" routerLink="/ddjj-cargoyagrup">
@@ -24,19 +21,13 @@
       </div>
   </div>
     <div class="col-10">
+      <div class="center-content">
+        <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
+        <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
+        <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
+        <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
+      </div>
         <div class="col d-flex justify-content-center">
-          <div class="row">
-          <div class="btn btn-primary mt-5 shadow p-2 mb-5 rounded agrupacion text-white" style="width: 80%;">
-            AGRUPACION DE Hs.</div>
-        </div>
-        <div class="col d-flex justify-content-center">
-          <div class="btn btn-primary mt-5 shadow p-2 mb-5 rounded extra text-white" style="width: 80%;">EXTRAS
-          </div>
-        </div>
-        <div class="col d-flex justify-content-center">
-          <div class="btn btn-primary mt-5 shadow p-2 mb-5 rounded contrafactura text-white" style="width: 80%;">CONTRA
-            FACTURA</div>
-        </div>
         </div>
         <app-daily-schedule></app-daily-schedule>
       </div>

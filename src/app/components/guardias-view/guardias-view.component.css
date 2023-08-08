@@ -1,19 +1,31 @@
-.extra {
-    background-color: #FDD969;
-    border: 0;
+  .ref-extra {
+    color: #FDD969;
   }
   
-  .cargo {
-    background-color: #91A8DA;
-    border: 0;
+  .circulo--extra {
+    background: #FDD969;
+  }
+
+  .ref-cargo {
+    color: #91A8DA;
   }
   
-  .agrupacion {
-    background-color: #F4AF88;
-    border: 0;
+  .circulo--cargo {
+    background: #91A8DA;
+  }
+
+  .ref-agrupacion {
+    color: #F4AF88;
   }
   
-  .contrafactura {
-    background-color: #A9D08F;
-    border: 0;
+  .circulo--agrupacion {
+    background: #F4AF88;
+  }
+
+  .ref-contrafactura {
+    color: #A9D08F;
+  }
+  
+  .circulo--contrafactura {
+    background: #A9D08F;
   }

@@ -7,13 +7,6 @@
       text-align: center;
       font-weight: bolder;
   }
-.center-content{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 20px;
-  }
 
 .calendar {
     margin: 4rem;
@@ -52,18 +45,10 @@
   
   .ref-calendar-dia__content {
     color: #4e8792;
-    font-weight: bold;
-    float: left;
-    margin: 10px 30px 10px 3px;
   }
 
   .circulo--dia {
     background: #4e8792;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin: 10px 0 10px 0;
   }
 
   
@@ -93,7 +78,6 @@
   
   .ref-calendar-dia--hoy {
     color: #15d3ec;
-    font-weight: bold;
   }
   
   .calendar-dia-feriado .calendar-dia__content {
@@ -102,18 +86,10 @@
   
   .ref-calendar-dia--feriado {
     color: #67c77c;
-    font-weight: bold;
-    float: left;
-    margin: 10px 30px 10px 3px;
   }
 
   .circulo--feriado {
     background: #67c77c;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin: 10px 0 10px 0;
   }
 
   
@@ -123,18 +99,10 @@
   
   .ref-calendar-dia--finde {
     color: #caa8eb;
-    font-weight: bold;
-    float: left;
-    margin: 10px 30px 10px 3px;
   }
   
   .circulo--finde {
     background: #caa8eb;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin: 10px 0 10px 0;
   }
   
   

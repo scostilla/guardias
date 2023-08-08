@@ -14,6 +14,8 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     margin-top: 15px;
 }
 
+/* --botones-- */
+
 .container-boton {
     position: relative;
     width: 100%;
@@ -26,7 +28,8 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 20% 5%;
+    border-radius: 15px 15px;
+    border: #f8f4f4 solid 6px;
 }
 
 .overlay {
@@ -35,12 +38,12 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     bottom: 0;
     left: 0;
     right: 0;
-    height: 94%;
+    height: auto;
     width: 100%;
     opacity: 0;
     transition: .5s ease;
     background-color: #37BBED;
-    border-radius: 20% 5%;
+    border-radius: 15px 15px;
 }
 
 .container-boton:hover .overlay {
@@ -61,11 +64,32 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     text-align: center;
     line-height: normal;
 }
+
 @media (max-width:600px) {
-    .container-boton {
-        width: 130%;
-    }
     .text {
-        font-size: 75%;
+        font-size: 70%;
     }
 }
+
+/* --referencias-- */
+.center-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+.ref {
+    font-weight: bold;
+    float: left;
+    margin: 10px 30px 10px 3px;
+  }
+
+  .ref-circulo {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 10px 0 10px 0;
+  }

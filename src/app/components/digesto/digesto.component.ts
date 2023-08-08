@@ -7,12 +7,13 @@ export interface PeriodicElement {
     cat: string;
     position: number;
     detalle: string;
-    ver: any;
+    ver: string;
 }
 const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, cat: 'Guardias', detalle: 'Reglamentaciones estatales.', ver: ''},
-  {position: 2, cat: 'Guardias', detalle: 'Información general a nivel nacional.', ver: ''},
-  {position: 3, cat: 'Ley', detalle: 'Articulos de la provincia de Jujuy.', ver: ''},
+  {position: 1, cat: 'Circular', detalle: 'Circular N° 10: Rectificativa circular N° 2 - Guardias contra factura', ver: '/assets/digesto/CIRCULAR-10-2023.pdf'},
+  {position: 2, cat: 'Resolución conjunta', detalle: 'Resolución conjunta N° 114: necesidad de actualizar los valores del régimen de guardias brindadas en los establecimientos. Descongelamiento del valor de la Guardia Médica del Interior.', ver: '/assets/digesto/RESOL-CONJUNTA-114-SyHF-2023.pdf'},
+  {position: 3, cat: 'Circular', detalle: 'Circular N° 11: Ajustes guardias contra factura 1° y 2° corte - Mayo 2023', ver: '/assets/digesto/CIRCULAR-11-DPH-2023.pdf'},
+  {position: 4, cat: 'Resolución conjunta', detalle: 'Resolución conjunta N° 161: en referencia a la resolución conjunta N° 114, sobre el descongelamiento del valor de la Guardia Médica del Interior.', ver: '/assets/digesto/RESOL-CONJUNTA-161-S-2023.pdf'},
 ];
 
 
