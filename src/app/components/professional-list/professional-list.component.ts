@@ -1,13 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
-import { HttpClient } from '@angular/common/http';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import { ApiServiceService } from 'src/app/services/api-service.service';
+import { Profesional } from 'src/server/models/profesional';
 import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
 
 export interface UserData {
   id: number;
@@ -24,6 +25,8 @@ export interface UserData {
   styleUrls: ['./professional-list.component.css'],
 })
 export class ProfessionalListComponent implements OnInit, AfterViewInit {
+
+  profesionales?:Profesional[];
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -42,7 +45,8 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     private http: HttpClient,
     public dialog: MatDialog,
     private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService
+    private dataSharingService: DataSharingService,
+    private apiServiceService: ApiServiceService
   ) {
     paginatorLabels.itemsPerPageLabel = 'Items por pagina';
     paginatorLabels.firstPageLabel = 'Primera Pagina';
@@ -52,12 +56,21 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.getProfesionales();
     this.http
       .get<UserData[]>('../../../assets/jsonFiles/profesionales.json')
       .subscribe((data) => {
         this.dataSource.data = data;
       });
   }
+
+  private getProfesionales(){
+    this.apiServiceService.getProfesionales().subscribe(data =>{
+      this.profesionales = data;
+    console.log(data);
+    });
+  }
+
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;

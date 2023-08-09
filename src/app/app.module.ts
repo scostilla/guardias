@@ -48,7 +48,7 @@ import { ScheduleCardComponent } from './components/schedule-card/schedule-card.
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
-import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
+import { ProfessionalDataServiceService } from './services/ProfessionalDataService/Professional-data-service.service';
 
 
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';

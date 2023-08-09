@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/Professional-data-service.service';
 import { PopupComponent } from '../popup/popup.component';
-import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
 
 @Component({
   selector: 'app-reg-diario',
@@ -45,11 +45,11 @@ export class RegDiarioComponent {
       fec_egreso:'',
           })
       }
-  
+
   openDialog(componentParameter:any){
     const dialogRef = this.dialog.open(PopupComponent,{
       width:'800px'});
-    
+
       dialogRef.componentInstance.componentParameter=componentParameter;
       dialogRef.afterClosed().subscribe((result) => {
         console.log('popup closed');
@@ -78,12 +78,12 @@ export class RegDiarioComponent {
     const dialogRef = this.dialog.open(PopupComponent,{
       width:'1000px',
     });
-    
+
     dialogRef.componentInstance.componentParameter = componentParameter;
     dialogRef.afterClosed().subscribe((result) => {
       console.log('popup closed');
     })
-  } 
-  
+  }
+
 */
 

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ProfessionalDataServiceService } from './professional-data-service.service';
+import { ProfessionalDataServiceService } from './Professional-data-service.service';
 
 describe('ProfessionalDataServiceService', () => {
   let service: ProfessionalDataServiceService;
