@@ -8,9 +8,9 @@ export interface PeriodicElement {
   user: string;
 }
 const ELEMENT_DATA: PeriodicElement[] = [
-{date: '12/07/2023', acc: 'Modificacion', seccion: '/Cronograma', user: ''},
-{date: '01/08/2023', acc: 'Agregar', seccion: '/Cronograma ', user: ''},
-{date: '07/08/2023', acc: 'Solicitud', seccion: '/cambio-contrasena', user: ''},
+{date: '12/07/2023', acc: 'Agregaste profesional el 02/07/2023', seccion: '/cronograma', user: 'Actual'},
+{date: '01/08/2023', acc: 'Quitaste profesional el 13/07/2023', seccion: '/cronograma ', user: 'Actual'},
+{date: '07/08/2023', acc: 'Agregaste nuevo profesional', seccion: '/professional-list', user: 'Actual'},
 ];
 
 @Component({
