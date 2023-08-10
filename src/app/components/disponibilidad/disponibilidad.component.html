@@ -1,11 +1,11 @@
 <div class="row">
-  <div class="col-1">
-  </div>
-  <div class="col-7 justify-content-end">
-    <div class="titulos">.:: Cronograma</div>
-  </div>
+    <div class="col-1">
+    </div>
+    <div class="col-7 justify-content-end">
+      <div class="titulos">.:: Disponibilidad</div>
+    </div>
 </div>
-<div class="titulo-calendario">Julio 2023</div>
+    <div class="titulo-calendario">Julio 2023</div>
 <div class="center-content">
     <span class="ref-circulo circulo--dia"></span>&nbsp;<span class="ref ref-calendar-dia__content">Día hábil</span>
     <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
@@ -36,16 +36,16 @@
       <span class="calendar-dia__number">01</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="39" (click)="openPopupCalendario()">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="39" (click)="openPopupCalendarioDisp()">
       <span class="calendar-dia__number">02</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon">
           <mat-icon>check_circle</mat-icon>
           <mat-icon>done</mat-icon>
           <mat-icon>clear</mat-icon></div>
-        <div class="calendar-dia--text" matTooltip="Clínica, 8 hs">Dr. Candido Perez</div>
-        <div class="calendar-dia--text" matTooltip="Ginecología, 6 hs">Dra. María Paz Monteros</div>
-        <div class="calendar-dia--text" matTooltip="Ginecología, 14 hs">Dra. Juana Felicitas</div>
+        <div class="calendar-dia--text" matTooltip="Centro, 8 prof.">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text" matTooltip="Centro, 6 prof.">Materno Infantil</div>
+        <div class="calendar-dia--text" matTooltip="Centro, 4 prof.">San Roque</div>
     </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="40">
@@ -67,8 +67,6 @@
           <mat-icon>check_circle</mat-icon>
           <mat-icon>done</mat-icon>
           <mat-icon>clear</mat-icon></div>
-        <div class="calendar-dia--text" matTooltip="Clínica">Dra. Lucía Medina</div>
-        <div class="calendar-dia--text" matTooltip="Cardiología">Dr. Juan Quintero</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia--today" data-weekday="Vi" data-week="40">
@@ -196,15 +194,5 @@
       <div class="calendar-dia__content"></div>
     </li>
   </ol>
-
-<table>
-
-    <tr>
-        <td *ngFor="let day of numberOfMonth">{{ day }}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
-    </tr>
-    </table>
 
 

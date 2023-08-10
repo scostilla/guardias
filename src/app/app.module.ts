@@ -66,6 +66,8 @@ import { PopupCalendarioComponent } from './components/popup-calendario/popup-ca
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
+import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 
 
 registerLocaleData(localePy,'es');
@@ -113,6 +115,8 @@ registerLocaleData(localePy,'es');
     CronogramaComponent,
     DigestoComponent,
     HistorialComponent,
+    DisponibilidadComponent,
+    PopupCalendarioDispComponent,
     
   ],
 

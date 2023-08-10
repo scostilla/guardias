@@ -23,6 +23,9 @@ import { CronogramaComponent } from './components/cronograma/cronograma.componen
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
+import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
+
 
 
 
@@ -51,6 +54,8 @@ const routes: Routes = [
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'historial', component:HistorialComponent},
+ {path: 'disponibilidad', component:DisponibilidadComponent},
+ {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
 ];
 
 @NgModule({
