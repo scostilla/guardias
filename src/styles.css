@@ -21,6 +21,22 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     padding: 20px 20px 0 1.4%;
 }
 
+.mat-button-toggle {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 600;
+}
+
+.mat-button-toggle:hover {
+    background-color: #37BBED;
+    color: #FFF;
+}
+
+.mat-button-toggle-disabled:hover {
+    background-color: inherit;
+    color: #D3D3D3;
+    font-weight: initial;
+}
+
 /* --botones-- */
 
 .container-boton {

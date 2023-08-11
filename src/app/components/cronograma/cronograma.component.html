@@ -1,8 +1,15 @@
 <div class="row">
   <div class="col-1">
   </div>
-  <div class="col-7 justify-content-end">
-    <div class="titulos">.:: Cronograma</div>
+  <div class="col-8 justify-content-end">
+    <div class="titulos">.:: Cronograma tentativo</div>
+  </div>
+  <div class="col-3 justify-content-end">
+    <mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color">
+      <mat-button-toggle value="tentativo" disabled>Tentativo</mat-button-toggle>
+      <mat-button-toggle value="definitivo" routerLink="/">Definitivo</mat-button-toggle>
+      <mat-button-toggle value="regional" routerLink="/">Regional</mat-button-toggle>
+    </mat-button-toggle-group>
   </div>
 </div>
 <div class="titulo-calendario">Julio 2023</div>
@@ -206,5 +213,4 @@
         <td *ngFor="let d of daysOfMonth">{{d | date:"EEEEEE":undefined:'es'|titlecase}}</td>
     </tr>
     </table>
-
-
+    
