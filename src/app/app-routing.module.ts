@@ -20,12 +20,12 @@ import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
+import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
-
 
 
 
@@ -51,6 +51,7 @@ const routes: Routes = [
  /*  {path:'api', component:ApiComponent} */
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path: 'cronograma', component:CronogramaComponent},
+ {path: 'cronograma-def', component:CronogramaDefComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'historial', component:HistorialComponent},

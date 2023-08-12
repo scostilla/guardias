@@ -68,6 +68,8 @@ import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
+import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
+import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
 
 
 registerLocaleData(localePy,'es');
@@ -117,6 +119,8 @@ registerLocaleData(localePy,'es');
     HistorialComponent,
     DisponibilidadComponent,
     PopupCalendarioDispComponent,
+    CronogramaDefComponent,
+    PopupCalendarioVacioComponent,
     
   ],
 
