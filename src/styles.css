@@ -98,6 +98,42 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     }
 }
 
+/* --botones redondos-- */
+
+.container-boton-c {
+  position: relative;
+  width: 20%;
+  float: left;
+  margin: 0 0 0 2%;
+  cursor: pointer;
+}
+
+.image-c {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 50% 50%;
+  border: #f8f4f4 solid 6px;
+}
+
+.overlay-c {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: auto;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #37BBED;
+  border-radius: 50% 50%;
+}
+
+.container-boton-c:hover .overlay-c {
+  opacity: 1;
+}
+
 /* --referencias-- */
 .center-content{
     display: flex;

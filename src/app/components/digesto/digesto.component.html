@@ -24,6 +24,11 @@
           <th mat-header-cell *matHeaderCellDef> Categoría </th>
           <td mat-cell *matCellDef="let element"> {{element.cat}} </td>
         </ng-container>
+
+        <ng-container matColumnDef="act">
+          <th mat-header-cell *matHeaderCellDef> Actualización </th>
+          <td mat-cell *matCellDef="let element"> {{element.act}} </td>
+        </ng-container>
       
         <ng-container matColumnDef="detalle">
           <th mat-header-cell *matHeaderCellDef> Detalle </th>

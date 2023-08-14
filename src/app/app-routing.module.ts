@@ -21,6 +21,7 @@ import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-car
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
+import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
@@ -52,6 +53,7 @@ const routes: Routes = [
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path: 'cronograma', component:CronogramaComponent},
  {path: 'cronograma-def', component:CronogramaDefComponent},
+ {path: 'cronograma-reg', component:CronogramaRegComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'historial', component:HistorialComponent},

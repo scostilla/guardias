@@ -70,6 +70,7 @@ import { DisponibilidadComponent } from './components/disponibilidad/disponibili
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
 import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
+import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 
 
 registerLocaleData(localePy,'es');
@@ -121,6 +122,7 @@ registerLocaleData(localePy,'es');
     PopupCalendarioDispComponent,
     CronogramaDefComponent,
     PopupCalendarioVacioComponent,
+    CronogramaRegComponent,
     
   ],
 
