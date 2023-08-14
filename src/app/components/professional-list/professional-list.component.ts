@@ -25,8 +25,7 @@ export interface UserData {
   styleUrls: ['./professional-list.component.css'],
 })
 export class ProfessionalListComponent implements OnInit, AfterViewInit {
-
-  profesionales?:Profesional[];
+  profesionales?: Profesional[];
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -64,13 +63,12 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private getProfesionales(){
-    this.apiServiceService.getProfesionales().subscribe(data =>{
+  private getProfesionales() {
+    this.apiServiceService.getProfesionales().subscribe((data) => {
       this.profesionales = data;
-    console.log(data);
+      console.log(data);
     });
   }
-
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -95,8 +93,12 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(this.dataSharingService.getProfessionalFormData());
-      this.dataSource.data.push(this.dataSharingService.getProfessionalFormData());
-      console.log("id recibido: "+this.dataSharingService.getProfessionalId());
+      this.dataSource.data.push(
+        this.dataSharingService.getProfessionalFormData()
+      );
+      console.log(
+        'id recibido: ' + this.dataSharingService.getProfessionalId()
+      );
     });
   }
 
