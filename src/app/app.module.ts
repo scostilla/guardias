@@ -71,6 +71,7 @@ import { PopupCalendarioDispComponent } from './components/popup-calendario-disp
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
 import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
+import { PopupCalendarioDisp2Component } from './components/popup-calendario-disp2/popup-calendario-disp2.component';
 
 
 registerLocaleData(localePy,'es');
@@ -123,6 +124,7 @@ registerLocaleData(localePy,'es');
     CronogramaDefComponent,
     PopupCalendarioVacioComponent,
     CronogramaRegComponent,
+    PopupCalendarioDisp2Component,
     
   ],
 

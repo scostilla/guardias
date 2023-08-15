@@ -25,6 +25,15 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   color: #243c74;
 }
 
+.titulos-second-def {
+  color: #734db8;
+}
+
+.titulos-second-reg {
+  color: #ad643a;
+}
+
+
 .mat-button-toggle {
     font-family: "Ubuntu", sans-serif;
     font-weight: 600;
@@ -158,14 +167,25 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   }
 
 /* --Calendario-- */
-.titulo-calendario {
-    color: #243c74;
+.titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
     letter-spacing: .1em;
       font-family: "Ubuntu";
       font-size: 3.6em;
       padding: 40px 50px 20px 20px;
       text-align: center;
       font-weight: bolder;
+  }
+
+  .titulo-calendario {
+    color: #243c74;
+  }
+
+  .titulo-calendario-def {
+    color: #734db8;
+  }
+
+  .titulo-calendario-reg {
+    color: #ad643a;
   }
 
 .calendar {
