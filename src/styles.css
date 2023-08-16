@@ -166,6 +166,43 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     margin: 10px 0 10px 0;
   }
 
+/* -- colores guardias -- */
+.ref-extra {
+  color: #FDD969;
+}
+
+.circulo--extra {
+  background: #FDD969;
+}
+
+.ref-cargo {
+  color: #91A8DA;
+}
+
+.circulo--cargo {
+  background: #91A8DA;
+}
+
+.ref-agrupacion {
+  color: #F4AF88;
+}
+
+.circulo--agrupacion {
+  background: #F4AF88;
+}
+
+.ref-contrafactura {
+  color: #A9D08F;
+}
+
+.circulo--contrafactura {
+  background: #A9D08F;
+}
+
+.circulo--general {
+  background: #37BBED;
+}
+
 /* --Calendario-- */
 .titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
     letter-spacing: .1em;
@@ -257,7 +294,6 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     padding: 3px 12px;
     margin: 5px 10px;
     font-size: 0.6em;
-    background-color: #37BBED;
     border-radius: 7px;
     cursor: pointer;
   }
