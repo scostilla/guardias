@@ -139,6 +139,7 @@ registerLocaleData(localePy,'es');
     NgFor,
     MatButtonToggleModule,
     DatePipe,
+    HttpClientModule,
   ],
   providers: [
     ProfessionalDataServiceService,
