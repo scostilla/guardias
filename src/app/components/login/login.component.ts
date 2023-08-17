@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginuserService } from 'src/app/loginuser.service';
 import { Usuario } from 'src/app/usuario';
 
@@ -10,7 +11,10 @@ import { Usuario } from 'src/app/usuario';
 export class LoginComponent implements OnInit {
     
   user:Usuario= new Usuario();
-  constructor(private loginuserservice:LoginuserService){}
+
+  constructor(private loginuserservice:LoginuserService,
+    private router : Router
+    ){}
 
     ngOnInit(): void {
 
@@ -18,7 +22,8 @@ export class LoginComponent implements OnInit {
     userLogin(){
       //console.log(this.user)
       this.loginuserservice.loginUser(this.user).subscribe(data=>{
-        alert("Login successful")
-    },error=>alert("perdonn"));
+        //alert("Login successful")
+        this.router.navigate(['/home-page']);
+    },error=>alert("Usuario/contraseña inválido, ingrese nuevamente por favor"));
 }
 }

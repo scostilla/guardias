@@ -9,9 +9,11 @@ import { Usuario } from './usuario';
 export class LoginuserService {
 
   private baseUrl="http://localhost:8080/user/login"
+  
   constructor(private httpClient: HttpClient) { }
 
   loginUser(user: Usuario):Observable<object> {
+    console.log(user.usuario)
     console.log(user.contrasena)
     return this.httpClient.post(`${this.baseUrl}`,user);
   }
