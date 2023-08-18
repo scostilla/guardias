@@ -14,9 +14,15 @@ export class RegDiarioComponent {
   timeControl: FormControl = new FormControl();
   tipoServicio:string[]= ['Guardia activa','Guardia pasiva','Consultorio','Pase'];
   defaultSelected:string='';
+  pasiva:string='';
+  alert:string='';
   guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
   servicio:string[]=['Guardia central','Cardiología','Cirugia general','Cirugia infantil','Pediatria'];
-  especialidad:string[]=['Especialidad 1','Especialidad 2','Especialidad 3','Especialidad 4',];
+  hospital:string[]= ['Dn. Pablo Soria','San Roque','Materno Infantil'];
+  especialidad_ps:string[]=['Cirugía General','Cirugía Cardio Vascular o Vascular Periférica','Cirugía Reparadora','Nefrología','Oftalmología','Oncología','Hematología','Urología','Traumatología','UTI-UTIN','Neurocirugía'];
+  especialidad_sr:string[]=['Cirugía General','Cirugía Reparadora','Nefrología','Oncología','Hematología','Urología','Infectología','Traumatología','UTI-UTIN','Neumonología','Reumatología'];
+  especialidad_mi:string[]=['Cirugía General','Cirugía Cardio Vascular o Vascular Periférica','Cirugía Reparadora','Nefrología','Oftalmología','Oncología','Otorrinolaringología','Psiquiatría','Hematología','Urología','Gastroenterología','Traumatología','UTI-UTIN','Nutrición Infantil','Cardiología Infantil'];
+
 
   selectedId: string | undefined;
   selectedCuil: string | undefined;
@@ -33,6 +39,7 @@ export class RegDiarioComponent {
       {
         this.registroForm = this._fb.group(
           {
+      hospital:'',     
       servicio:'',
       tipo_guardia:'',
       nombre:'',

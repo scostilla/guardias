@@ -7,9 +7,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./dist-horaria.component.css'],
 })
 export class DistHorariaComponent {
-  hospitales:string[]= ['CALILEGUA','CEN - CENTRO DE ESPECIALIDADES NORTE','DR. PABLO SORIA','DR. ARTURO ZABALA'];
+  hospitales:string[]= ['DN. PABLO SORIA'];
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
-  guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
+  guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
   cons:string[]= ['Cons ext','Comis'];
 
