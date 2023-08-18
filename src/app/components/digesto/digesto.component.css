@@ -10,3 +10,20 @@
     font-size: 14px;
     width: 100%;
   }
+
+  .guardia-act, .guardia-pas {
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    float: left;
+    margin-left: -16px;
+  }
+
+  .guardia-act {
+    border-left: 15px solid coral;
+  }
+
+  .guardia-pas {
+    border-left: 15px solid darkorchid;
+  }

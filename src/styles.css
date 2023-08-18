@@ -203,6 +203,22 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   background: #37BBED;
 }
 
+.ref-circulo-act {
+  background-color: coral;
+}
+
+.ref-guardia-act {
+  color: coral;
+}
+
+.ref-circulo-pas{
+  background-color: darkorchid;
+}
+
+.ref-guardia-pas {
+  color: darkorchid;
+}
+
 /* --Calendario-- */
 .titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
     letter-spacing: .1em;
