@@ -88,7 +88,7 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 
 .text {
     color: white;
-    font-size: 100%;
+    font-size: 120%;
     font-family: "Ubuntu";
     font-weight: 900;
     position: absolute;
@@ -103,17 +103,17 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 
 @media (max-width:600px) {
     .text {
-        font-size: 70%;
+        font-size: 140%;
     }
 }
 
-/* --botones redondos-- */
+/* --botones circulares-- */
 
 .container-boton-c {
   position: relative;
-  width: 20%;
   float: left;
-  margin: 0 0 0 2%;
+  width: 20%;
+  margin: 0 0 0 10%;
   cursor: pointer;
 }
 
@@ -311,15 +311,15 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   }
   
   .calendar-dia-feriado .calendar-dia__content {
-    background-color: #67c77c;
+    background-color: #df7545;
   }
   
   .ref-calendar-dia--feriado {
-    color: #67c77c;
+    color: #df7545;
   }
 
   .circulo--feriado {
-    background: #67c77c;
+    background: #df7545;
   }
 
   

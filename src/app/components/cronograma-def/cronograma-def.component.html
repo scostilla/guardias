@@ -1,15 +1,18 @@
 <div class="row">
-    <div class="col-1">
-    </div>
-    <div class="col-8 justify-content-end">
+    <div class="col-8 offset-1 justify-content-end">
       <div class="titulos">.:: Cronograma <span class="titulos-second-def">definitivo</span></div>
     </div>
     <div class="col-3 justify-content-end">
-      <mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color">
+      <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
         <mat-button-toggle value="tentativo" routerLink="/cronograma">Tentativo</mat-button-toggle>
         <mat-button-toggle value="definitivo" disabled>Definitivo</mat-button-toggle>
         <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
       </mat-button-toggle-group>
+      <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Hospital San Roque (Centro)</button>
+        <button mat-menu-item>Materno Infantil (Centro)</button>
+      </mat-menu>
     </div>
   </div>
   <div class="titulo-calendario-def">Julio 2023</div>

@@ -1,15 +1,18 @@
 <div class="row">
-  <div class="col-1">
-  </div>
-  <div class="col-8 justify-content-end">
+  <div class="col-8 offset-1 justify-content-end">
     <div class="titulos">.:: Cronograma <span class="titulos-second">tentativo</span></div>
   </div>
   <div class="col-3 justify-content-end">
-    <mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color">
+    <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
       <mat-button-toggle value="tentativo" disabled>Tentativo</mat-button-toggle>
       <mat-button-toggle value="definitivo" routerLink="/cronograma-def">Definitivo</mat-button-toggle>
       <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
     </mat-button-toggle-group>
+    <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Hospital San Roque (Centro)</button>
+      <button mat-menu-item>Materno Infantil (Centro)</button>
+    </mat-menu>
   </div>
 </div>
 <div class="titulo-calendario">Julio 2023</div>
@@ -17,6 +20,13 @@
     <span class="ref-circulo circulo--dia"></span>&nbsp;<span class="ref ref-calendar-dia__content">Día hábil</span>
     <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
     <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
+</div>
+<div class="center-content" style="background-color: #f5f3f3; margin: 0 0 0 25%; width: 50%;">
+  <span class="titulos-second" style="font-weight: bold;">Guardias:&nbsp;</span> 
+  <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
+  <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
+  <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
+  <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
 </div>
 <ol class="calendar">
     <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu">
@@ -57,6 +67,7 @@
         <div class="calendar-dia--text circulo--extra" matTooltip="Clínica, 8 hs">Dr. Candido Perez</div>
         <div class="calendar-dia--text circulo--cargo" matTooltip="Ginecología, 6 hs">Dra. María Paz Monteros</div>
         <div class="calendar-dia--text circulo--agrupacion" matTooltip="Ginecología, 12 hs">Dra. Juana Felicitas</div>
+        <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Juliana Ramos</div>
         <div class="calendar-dia--icon-add">
           <mat-icon>add</mat-icon>
         </div>
