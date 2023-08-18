@@ -56,16 +56,24 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getProfesionales();
-    this.http
-      .get<UserData[]>('../../../assets/jsonFiles/profesionales.json')
-      .subscribe((data) => {
-        this.dataSource.data = data;
-      });
   }
 
   private getProfesionales() {
     this.apiServiceService.getProfesionales().subscribe((data) => {
       this.profesionales = data;
+
+      const userDataArray: UserData[] = data.map((profesional) => {
+        return {
+          id: profesional.idProfesional || 0,
+          dni: profesional.dni || 0,
+          cuil: profesional.cuil || '',
+          nombre: profesional.nombre || '',
+          apellido: profesional.apellido || '',
+          especialidad: profesional.especialidad || '',
+        };
+      });
+
+      this.dataSource.data = userDataArray;
       console.log(data);
     });
   }

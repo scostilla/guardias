@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { ApiServiceService } from 'src/app/services/api-service.service';
 
 @Component({
   selector: 'app-professional-detail',
@@ -11,7 +13,9 @@ export class ProfessionalDetailComponent implements OnInit {
   id: string | null | undefined;
   person: any;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(private route: ActivatedRoute, private http: HttpClient,
+    private apiServiceService: ApiServiceService,
+    @Inject(MAT_DIALOG_DATA) public data: { id: number }) {}
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
@@ -19,14 +23,12 @@ export class ProfessionalDetailComponent implements OnInit {
     this.cargarDatosperson(parseInt(this.id ?? '', 10));
   }
 
-  cargarDatosperson(id: number) {
-    this.http
-      .get<any[]>('../../../assets/jsonFiles/profesionales.json')
-      .subscribe((data: any[]) => {
-        this.person = data.find((item) => item.id === id);
-        if (this.person) {
-          console.log(this.person);
-        }
-      });
-  }
+    cargarDatosperson(id: number) {
+      this.apiServiceService.getProfesionales().subscribe((DBdata: any[]) => {
+        console.log(DBdata);
+        this.person = DBdata.find(
+          (item) => item.idProfesional === this.data.id
+        );
+      }
+    )}
 }

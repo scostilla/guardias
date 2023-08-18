@@ -1,8 +1,10 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DataSharingService } from '../../services/DataSharing/data-sharing.service'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ApiServiceService } from 'src/app/services/api-service.service';
+import { Profesional } from 'src/server/models/profesional';
+import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
 
 interface Specialty {
   value: string;
@@ -21,6 +23,7 @@ export class ProfessionalAbmComponent {
   professionalForm: FormGroup;
   options: any[] | undefined;
   person: any;
+  profesionales?: Profesional[];
 
   specialties: Specialty[] = [
     { value: 'ANESTESISTA', viewValue: 'ANESTESISTA' },
@@ -54,7 +57,8 @@ export class ProfessionalAbmComponent {
     public dialogRef: MatDialogRef<ProfessionalAbmComponent>,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { id: number },
-    private dataSharingService: DataSharingService
+    private dataSharingService: DataSharingService,
+    private apiServiceService: ApiServiceService
   ) {
     this.professionalForm = this.fb.group({
       nombre: [
@@ -78,15 +82,16 @@ export class ProfessionalAbmComponent {
     });
 
     if (this.data.id !== -1) {
-      this.http
-        .get<any[]>('../../../assets/jsonFiles/profesionales.json')
-        .subscribe((data: any[]) => {
-          this.person = data.find((item) => item.id === this.data.id);
-          if (this.person) {
-            console.log(this.person.nombre);
-            this.patchFormValues();
-          }
-        });
+      this.apiServiceService.getProfesionales().subscribe((DBdata: any[]) => {
+        console.log(DBdata);
+        this.person = DBdata.find(
+          (item) => item.idProfesional === this.data.id
+        );
+        if (this.person) {
+          console.log(this.person.nombre);
+          this.patchFormValues();
+        }
+      });
     }
   }
 

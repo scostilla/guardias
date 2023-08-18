@@ -1,5 +1,9 @@
 export class Profesional {
   idPersona?: number;
+  idProfesional?: number;
+  idDistribucionHoraria?: number;
+  idEspecialidad?: number;
+  idTipoGuardia?: number;
   nombre?: string;
   apellido?: string;
   dni?: number;
@@ -21,5 +25,4 @@ export class Profesional {
   matricula?: string;
   tipoGuardia?: string;
   cargaHoraria?: string;
-
 }
