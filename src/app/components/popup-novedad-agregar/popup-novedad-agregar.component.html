@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>
+    AGREGAR NOVEDAD
+    <h5 class="requiredField">Todos los campos son obligatorios</h5>
+  </h2>
+  <div class="row center-content">
+    <div class="col">
+  <mat-form-field appearance="fill">
+    <mat-label>Sección</mat-label>
+    <input matInput>
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Actualización</mat-label>
+  <input matInput>
+</mat-form-field>
+  <mat-form-field>
+    <mat-label>Detalle</mat-label>
+    <textarea matInput></textarea>
+  </mat-form-field>
+  <div mat-dialog-actions class="action">
+    <button mat-raised-button class="btnupdate" type="button"
+        [mat-dialog-close]="false">Cerrar</button>
+    <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar Novedad</button>
+</div>
+    </div>
+  </div>

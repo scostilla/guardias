@@ -24,10 +24,11 @@ import { CronogramaDefComponent } from './components/cronograma-def/cronograma-d
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
+import { NovedadesComponent } from './components/novedades/novedades.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
-
+import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 
 
 const routes: Routes = [
@@ -56,9 +57,11 @@ const routes: Routes = [
  {path: 'cronograma-reg', component:CronogramaRegComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
+ {path: 'novedades', component:NovedadesComponent}, 
  {path: 'historial', component:HistorialComponent},
  {path: 'disponibilidad', component:DisponibilidadComponent},
  {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
+ {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 ];
 
 @NgModule({

@@ -72,6 +72,8 @@ import { CronogramaDefComponent } from './components/cronograma-def/cronograma-d
 import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { PopupCalendarioDisp2Component } from './components/popup-calendario-disp2/popup-calendario-disp2.component';
+import { NovedadesComponent } from './components/novedades/novedades.component';
+import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 
 
 registerLocaleData(localePy,'es');
@@ -125,6 +127,8 @@ registerLocaleData(localePy,'es');
     PopupCalendarioVacioComponent,
     CronogramaRegComponent,
     PopupCalendarioDisp2Component,
+    NovedadesComponent,
+    PopupNovedadAgregarComponent,
     
   ],
 

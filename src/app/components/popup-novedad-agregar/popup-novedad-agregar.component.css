@@ -1,0 +1,24 @@
+
+  mat-form-field{
+    align-items: center;
+    width: 100%;
+  }
+
+  .mdc-dialog__title
+{
+  background-color: #243c74;
+  color: white;
+}
+
+.row{
+    display: flex;
+  }
+
+.col{
+    flex:90%;
+    margin:20px;
+  }
+
+  .requiredField{
+    color: red;
+  }
