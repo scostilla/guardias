@@ -4,22 +4,39 @@
   </h2>
   <div class="row center-content">
     <div class="col">
-  <mat-form-field appearance="fill">
-    <mat-label>Sección</mat-label>
-    <input matInput>
-</mat-form-field>
-<mat-form-field>
-  <mat-label>Actualización</mat-label>
-  <input matInput>
-</mat-form-field>
+        <mat-form-field>
+            <mat-label>Región</mat-label>
+            <mat-select>
+              <mat-option value="one">Centro</mat-option>
+              <mat-option value="two">Valles</mat-option>
+              <mat-option value="two">Puna</mat-option>
+              <mat-option value="two">Quebrada</mat-option>
+            </mat-select>
+          </mat-form-field>
+        <mat-form-field>
+            <mat-label>Establecimiento</mat-label>
+            <mat-select>
+              <mat-option value="one">Hospital Pablo Soria</mat-option>
+              <mat-option value="two">Hospital San Roque</mat-option>
+              <mat-option value="two">Hospital Materno Infantil</mat-option>
+            </mat-select>
+          </mat-form-field>
+    <mat-form-field>
+        <mat-label>Sección</mat-label>
+        <input matInput>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Actualización</mat-label>
+        <input matInput>
+    </mat-form-field>
   <mat-form-field>
     <mat-label>Detalle</mat-label>
     <textarea matInput></textarea>
   </mat-form-field>
-  <div mat-dialog-actions class="action">
+    <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cerrar</button>
+        [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar Novedad</button>
-</div>
     </div>
-  </div>
+</div>
+</div>
