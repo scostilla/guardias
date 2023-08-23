@@ -16,7 +16,7 @@ import { Profesional } from 'src/server/models/profesional';
 export class ApiServiceService {
 
   //URL del back
-  private baseUrl = "http://localhost:8080/api/V1/profesionales";
+  private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
 
   constructor(private http: HttpClient) { }
 
