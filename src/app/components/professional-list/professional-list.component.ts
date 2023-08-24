@@ -5,7 +5,7 @@ import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiServiceService } from 'src/app/services/api-service.service';
-import { Profesional } from 'src/server/models/profesional';
+import Profesional from 'src/server/models/ProfesionalLista';
 import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';

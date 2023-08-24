@@ -1,4 +1,4 @@
-export class Profesional {
+export default class ProfesionalLista {
   idPersona?: number;
   idProfesional?: number;
   idDistribucionHoraria?: number;

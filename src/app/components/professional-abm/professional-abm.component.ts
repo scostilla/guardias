@@ -3,7 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ApiServiceService } from 'src/app/services/api-service.service';
-import { Profesional } from 'src/server/models/profesional';
+import Profesional from 'src/server/models/ProfesionalLista';
 import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
 
 interface Specialty {
