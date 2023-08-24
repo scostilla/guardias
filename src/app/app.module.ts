@@ -77,6 +77,7 @@ import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar
 import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
 import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
+import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 
 
 registerLocaleData(localePy,'es');
@@ -135,6 +136,7 @@ registerLocaleData(localePy,'es');
     CronogramaPComponent,
     CronogramaPDefComponent,
     CronogramaPHosComponent,
+    GuardiasViewPComponent,
     
   ],
 

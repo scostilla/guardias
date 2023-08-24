@@ -12,6 +12,7 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
+import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
@@ -47,6 +48,7 @@ const routes: Routes = [
   {path: 'novedades-form', component: NovedadesFormComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'guardias-view', component: GuardiasViewComponent},
+  {path:'guardias-view-p', component: GuardiasViewPComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
   { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
