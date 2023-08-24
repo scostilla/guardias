@@ -22,6 +22,9 @@ import { MonthTableComponent } from './components/month-table/month-table.compon
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
+import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
+import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
+import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
@@ -55,6 +58,9 @@ const routes: Routes = [
  {path: 'cronograma', component:CronogramaComponent},
  {path: 'cronograma-def', component:CronogramaDefComponent},
  {path: 'cronograma-reg', component:CronogramaRegComponent},
+ {path: 'cronograma-p', component:CronogramaPComponent},
+ {path: 'cronograma-p-def', component:CronogramaPDefComponent},
+ {path: 'cronograma-p-hos', component:CronogramaPHosComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'novedades', component:NovedadesComponent}, 

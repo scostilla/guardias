@@ -1,6 +1,17 @@
 <div class="row">
   <div class="col-8 offset-1 justify-content-end">
-    <div class="titulos">.:: Cronograma <span class="titulos-second">tentativo</span></div>
+    <div class="row">
+      <div class="titulos">.:: Cronograma <span class="titulos-second">tentativo</span>
+    </div>
+    <div class="row"> 
+      <div class="col offset-1">
+    <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
+    <mat-menu #menug="matMenu">
+      <button mat-menu-item routerLink="/cronograma-p">Guardias Pasivas</button>
+    </mat-menu>
+  </div>
+    </div>
+    </div>
   </div>
   <div class="col-3 justify-content-end">
     <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">

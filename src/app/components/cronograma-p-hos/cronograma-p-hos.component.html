@@ -3,18 +3,18 @@
       <div class="titulos">.:: Cronograma <span class="titulos-second-reg">regional</span></div>
       <div class="row"> 
         <div class="col offset-1">
-      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
+      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Pasivas</button>
       <mat-menu #menug="matMenu">
-        <button mat-menu-item routerLink="/cronograma-p-hos">Guardias Pasivas Hospitales</button>
+        <button mat-menu-item routerLink="/cronograma-reg">Guardias Activas Regionales</button>
       </mat-menu>
     </div>
       </div>  
     </div>
     <div class="col-3 align-items-end">
       <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
-        <mat-button-toggle value="tentativo" routerLink="/cronograma">Tentativo</mat-button-toggle>
-        <mat-button-toggle value="definitivo" routerLink="/cronograma-def">Definitivo</mat-button-toggle>
-        <mat-button-toggle value="regional" disabled>Regional</mat-button-toggle>
+        <mat-button-toggle value="tentativo" routerLink="/cronograma-p">Tentativo</mat-button-toggle>
+        <mat-button-toggle value="definitivo" routerLink="/cronograma-p-def">Definitivo</mat-button-toggle>
+        <mat-button-toggle value="regional" disabled>Hospitales</mat-button-toggle>
       </mat-button-toggle-group>
       <button mat-button [matMenuTriggerFor]="menu">» Estas viendo: Región Centro</button>
       <mat-menu #menu="matMenu">
@@ -24,7 +24,7 @@
       </mat-menu>
     </div>
   </div>
-  <div class="titulo-calendario-reg">Julio 2023</div>
+  <div class="titulo-calendario-g">Julio 2023</div>
   <div class="center-content">
       <span class="ref-circulo circulo--dia"></span>&nbsp;<span class="ref ref-calendar-dia__content">Día hábil</span>
       <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
@@ -300,4 +300,5 @@
         <div class="calendar-dia__content"></div>
       </li>
     </ol>
+
 
