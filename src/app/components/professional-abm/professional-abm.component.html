@@ -96,9 +96,9 @@
         <mat-form-field>
           <mat-label>Profesión</mat-label>
           <mat-select formControlName="profesion" [(ngModel)]="selectedProfesion">
-            <mat-option value="MEDICO">MEDICO</mat-option>
-            <mat-option value="BIOQUIMICO">BIOQUÍMICO</mat-option>
-            <mat-option value="ODONTOLOGO">ODONTÓLOGO</mat-option>
+            <mat-option value="medico">MEDICO</mat-option>
+            <mat-option value="bioquimico">BIOQUÍMICO</mat-option>
+            <mat-option value="odontologo">ODONTÓLOGO</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -119,11 +119,11 @@
         <mat-form-field>
           <mat-label>Sit. Revista</mat-label>
           <mat-select formControlName="revista" [(ngModel)]="selectedRevista">
-            <mat-option value="INTERINO">INTERINO</mat-option>
-            <mat-option value="PLANTA PERMANENTE">PLANTA PERMANENTE</mat-option>
-            <mat-option value="CONTRATADO">CONTRATADO</mat-option>
-            <mat-option value="AFECTADO">AFECTADO</mat-option>
-            <mat-option value="INDEPENDIENTE">INDEPENDIENTE</mat-option>
+            <mat-option value="interino">INTERINO</mat-option>
+            <mat-option value="planta">PLANTA PERMANENTE</mat-option>
+            <mat-option value="contratado">CONTRATADO</mat-option>
+            <mat-option value="afectado">AFECTADO</mat-option>
+            <mat-option value="independiente">INDEPENDIENTE</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -156,6 +156,7 @@
             [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'" [required]="selectedRevista !== 'independiente'">
             <mat-option value="j1">J-1</mat-option>
             <mat-option value="j2">J-2</mat-option>
+            <mat-option value="no">Sin Adicional</mat-option>
           </mat-select>
         </mat-form-field>
       </div>

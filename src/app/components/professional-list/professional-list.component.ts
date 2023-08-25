@@ -5,10 +5,11 @@ import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiServiceService } from 'src/app/services/api-service.service';
-import Profesional from 'src/server/models/ConsultaProfesional';
+import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
+
 
 export interface UserData {
   id: number;
@@ -25,9 +26,9 @@ export interface UserData {
   styleUrls: ['./professional-list.component.css'],
 })
 export class ProfessionalListComponent implements OnInit, AfterViewInit {
-  profesionales?: Profesional[]  | undefined;
-  profesional?: Profesional;
-  profesionalEncontrado?: Profesional;
+  profesionales?: ConsultaProfesional[]  | undefined;
+  profesional?: ConsultaProfesional;
+  profesionalEncontrado?: ConsultaProfesional;
   displayedColumns: string[] = [
     'id',
     'cuil',
