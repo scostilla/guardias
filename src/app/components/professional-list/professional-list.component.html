@@ -58,7 +58,7 @@
       <td mat-cell *matCellDef="let element">
 
         <mat-icon class="btnDetail" [routerLink]="['/professional-detail', element.id]" matTooltip="Mostrar {{element.nombre}} {{element.apellido}}">zoom_in</mat-icon>
-        <mat-icon class="btnDetail" [routerLink]="['/professional-detail', element.id]" matTooltip="Dist. Horaria {{element.nombre}} {{element.apellido}}">calendar_month</mat-icon>
+        <mat-icon class="btnDh" [routerLink]="['/professional-dh', element.id]" matTooltip="Dist. Horaria {{element.nombre}} {{element.apellido}}">calendar_month</mat-icon>
         <mat-icon class="btnEdit" (click)="addEditProfessional(element.id)" matTooltip="Editar {{element.nombre}} {{element.apellido}}">edit</mat-icon>
         <mat-icon class="btnRemove" (click)="removeProfessional(element.id, element.nombre, element.apellido)" matTooltip="Eliminar {{element.nombre}} {{element.apellido}}">person_remove</mat-icon>
       </td>

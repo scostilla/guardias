@@ -16,7 +16,7 @@
   background-color: #eee;
 }
 
-.btnEdit, .btnRemove, .btnDetail{
+.btnEdit, .btnRemove, .btnDetail, .btnDh {
   cursor: pointer;
   margin: 10px;
 }

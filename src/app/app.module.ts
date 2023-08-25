@@ -78,6 +78,7 @@ import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.com
 import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
+import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 
 
 registerLocaleData(localePy,'es');
@@ -137,6 +138,7 @@ registerLocaleData(localePy,'es');
     CronogramaPDefComponent,
     CronogramaPHosComponent,
     GuardiasViewPComponent,
+    ProfessionalDhComponent,
     
   ],
 
