@@ -17,7 +17,7 @@ interface Specialty {
   styleUrls: ['./professional-abm.component.css'],
 })
 export class ProfessionalAbmComponent {
-  selectedProfessional: string = 'Medico';
+  selectedProfesion: string = 'Medico';
   selectedRevista: string = 'contratado';
   selectedCarga: string = '40';
   professionalForm: FormGroup;
@@ -71,7 +71,7 @@ export class ProfessionalAbmComponent {
       ],
       dni: ['', [Validators.pattern('[0-9]*'), Validators.required]],
       cuil: ['', [Validators.pattern('[0-9-]*'), Validators.required]],
-      professional: ['', Validators.required],
+      profesion: ['', Validators.required],
       especialidad: [''],
       revista: ['', Validators.required],
       categoria: [''],
@@ -88,7 +88,6 @@ export class ProfessionalAbmComponent {
           (item) => item.idProfesional === this.data.id
         );
         if (this.person) {
-          console.log(this.person.nombre);
           this.patchFormValues();
         }
       });
@@ -110,7 +109,7 @@ export class ProfessionalAbmComponent {
       apellido: this.person.apellido,
       dni: this.person.dni,
       cuil: this.person.cuil,
-      professional: this.person.profesion,
+      profesion: this.person.profesion,
       especialidad: this.person.especialidad,
       revista: this.person.sitRevista,
       categoria: this.person.cat,
@@ -124,7 +123,6 @@ export class ProfessionalAbmComponent {
 
   addEditProfessional() {
     if (this.professionalForm.valid) {
-      console.log('professional form valid');
       const formData = this.professionalForm.value;
       console.log(formData);
       console.log(this.data.id);
