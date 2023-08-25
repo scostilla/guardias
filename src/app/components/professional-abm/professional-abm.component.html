@@ -95,7 +95,7 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Profesión</mat-label>
-          <mat-select formControlName="professional" [(ngModel)]="selectedProfessional">
+          <mat-select formControlName="profesion" [(ngModel)]="selectedProfesion">
             <mat-option value="MEDICO">MEDICO</mat-option>
             <mat-option value="BIOQUIMICO">BIOQUÍMICO</mat-option>
             <mat-option value="ODONTOLOGO">ODONTÓLOGO</mat-option>
@@ -105,7 +105,7 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Especialidad</mat-label>
-          <mat-select formControlName="especialidad" [disabled]="selectedProfessional !== 'MEDICO'">
+          <mat-select formControlName="especialidad" [disabled]="selectedProfesion !== 'MEDICO'">
             <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
               {{ specialty.viewValue }}
             </mat-option>

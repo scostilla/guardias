@@ -25,7 +25,9 @@ export interface UserData {
   styleUrls: ['./professional-list.component.css'],
 })
 export class ProfessionalListComponent implements OnInit, AfterViewInit {
-  profesionales?: Profesional[];
+  profesionales?: Profesional[]  | undefined;
+  profesional?: Profesional;
+  profesionalEncontrado?: Profesional;
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -69,12 +71,20 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           cuil: profesional.cuil || '',
           nombre: profesional.nombre || '',
           apellido: profesional.apellido || '',
+          profesion: profesional.profesion ||'',
           especialidad: profesional.especialidad || '',
+          sitRevista: profesional.sitRevista || '',
+          cargaHoraria: profesional.cargaHoraria || '',
+          adicional: profesional.adicional || '',
+          categoria: profesional.categoria || '',
+          udo: profesional.udo || '',
+          hospital: profesional.hospital || '',
+          idHospital: profesional.idHospital || 0,
         };
       });
 
       this.dataSource.data = userDataArray;
-      console.log(data);
+      console.log(this.profesionales);
     });
   }
 
@@ -100,7 +110,13 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getProfessionalFormData());
+      this.profesional = this.dataSharingService.getProfessionalFormData();
+      console.log(this.profesional);
+      if (this.profesionales) {
+      this.profesionalEncontrado = this.profesionales.find(profesional => profesional.idProfesional === id);
+      console.log("profesional encontrado: ");
+      console.log(this.profesionalEncontrado);
+      }
       this.dataSource.data.push(
         this.dataSharingService.getProfessionalFormData()
       );

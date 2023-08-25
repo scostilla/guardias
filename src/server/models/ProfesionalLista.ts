@@ -4,6 +4,12 @@ export default class ProfesionalLista {
   idDistribucionHoraria?: number;
   idEspecialidad?: number;
   idTipoGuardia?: number;
+  idLegajo?: number;
+  idUsuario?: number;
+  idHospital?: number;
+  idCargo?: number;
+  idProfesion?: number;
+
   nombre?: string;
   apellido?: string;
   dni?: number;
@@ -14,14 +20,12 @@ export default class ProfesionalLista {
   email?: string;
   idUdo?: number;
   udo?: string;
-  idLegajo?: number;
-  idUsuario?: number;
-  idHospital?: number;
   hospital?: string;
-  idCargo?: number;
-  idProfesion?: number;
   profesion?: string;
   especialidad?: string;
+  sitRevista?: string;
+  adicional?: string;
+  categoria?: string;
   matricula?: string;
   tipoGuardia?: string;
   cargaHoraria?: string;
