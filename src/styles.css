@@ -263,6 +263,15 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     position: relative;
     box-sizing: border-box;
   }
+
+  .calendar-dia--text{
+    padding: 3px 12px;
+    margin: 5px 10px;
+    font-size: 0.6em;
+    background-color: #37BBED;
+    border-radius: 7px;
+    cursor: pointer;
+  }
   
   .calendar-dia:hover {
     opacity: .8;

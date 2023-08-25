@@ -5,6 +5,16 @@
       <div class="titulos">.:: Disponibilidad</div>
     </div>
 </div>
+<div class="row"> 
+  <div class="col-9 offset-1 mx-auto">
+<button mat-button [matMenuTriggerFor]="menu" style="font-weight: bold;">» Región Centro</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>Región Valles</button>
+  <button mat-menu-item>Región Puna</button>
+  <button mat-menu-item>Región Quebrada</button>
+</mat-menu>
+</div>
+</div>
     <div class="titulo-calendario">Julio 2023</div>
 <div class="center-content">
     <span class="ref-circulo circulo--dia"></span>&nbsp;<span class="ref ref-calendar-dia__content">Día hábil</span>

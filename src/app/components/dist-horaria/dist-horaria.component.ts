@@ -11,7 +11,8 @@ export class DistHorariaComponent {
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
   guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-  cons:string[]= ['Cons ext','Comis'];
+  cons:string[]= ['Consultorio externo','Comisión'];
+  turno:string[]= ['Mañana','Tarde'];
 
   selectedService: string = 'Cargo';
   selectedGuard: string = '';
