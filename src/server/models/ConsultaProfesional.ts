@@ -5,7 +5,7 @@ export default class ConsultaProfesional {
   idEspecialidad?: number;
   idTipoGuardia?: number;
   idLegajo?: number;
-  idUsuario?: number;
+  idUdo?: number;
   idHospital?: number;
   idCargo?: number;
   idProfesion?: number;
@@ -14,19 +14,16 @@ export default class ConsultaProfesional {
   apellido?: string;
   dni?: number;
   cuil?: string;
-  sexo?: string;
-  direccion?: string;
-  telefono?: string;
-  email?: string;
-  idUdo?: number;
+
   udo?: string;
   hospital?: string;
   profesion?: string;
+  matricula?: string;
+
   especialidad?: string;
   sitRevista?: string;
   adicional?: string;
   categoria?: string;
-  matricula?: string;
   tipoGuardia?: string;
   cargaHoraria?: string;
 }
