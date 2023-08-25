@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import ProfesionalLista from 'src/server/models/ProfesionalLista';
+import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +20,8 @@ export class ApiServiceService {
 
   constructor(private http: HttpClient) { }
 
-  getProfesionales():Observable<ProfesionalLista[]>{
-    return this.http.get<ProfesionalLista[]>(`${this.baseUrl}`);
+  getProfesionales():Observable<ConsultaProfesional[]>{
+    return this.http.get<ConsultaProfesional[]>(`${this.baseUrl}`);
   }
 
   get(url: string): Observable<any> {
