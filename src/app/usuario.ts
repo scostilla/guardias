@@ -1,5 +1,8 @@
 export class Usuario {
-    idUsuario!:string;
+    /* idUsuario!:string;
     contrasena!:string;
+    usuario!:string; */
+    nombreUsuario!:string;
+    password!:string;
     usuario!:string;
 }

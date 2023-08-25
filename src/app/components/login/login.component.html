@@ -26,11 +26,11 @@
   <form (ngSubmit)="userLogin()">
     <div class="mb-3">
       <label for="exampleFormControlInput1" class="form-label">Usuario</label>
-      <input type="text" [(ngModel)]="user.usuario" class="form-control" id="usuario" name="usuario" >
+      <input type="text" [(ngModel)]="user.nombreUsuario" class="form-control" id="usuario" name="usuario" >
     </div>
     <div class="mb-3">
       <label for="exampleFormControlInput1" class="form-label">Contraseña</label>
-      <input type="password" [(ngModel)]="user.contrasena" class="form-control" id="contrasena" name="contrasena" >
+      <input type="password" [(ngModel)]="user.password" class="form-control" id="contrasena" name="contrasena" >
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
   </form>

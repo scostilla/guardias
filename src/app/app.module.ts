@@ -66,6 +66,7 @@ import { PopupCalendarioComponent } from './components/popup-calendario/popup-ca
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
+import { RegistroComponent } from './auth/registro.component';
 
 
 registerLocaleData(localePy,'es');
@@ -113,6 +114,7 @@ registerLocaleData(localePy,'es');
     CronogramaComponent,
     DigestoComponent,
     HistorialComponent,
+    RegistroComponent,
     
   ],
 
