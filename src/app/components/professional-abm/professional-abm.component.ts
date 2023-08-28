@@ -147,6 +147,10 @@ export class ProfessionalAbmComponent {
     });
   }
 
+  isFormDirty() {
+    return this.professionalForm.dirty;
+  }
+
   cancel() {
     this.dialogRef.close();
   }

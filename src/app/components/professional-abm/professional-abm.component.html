@@ -225,7 +225,7 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button type="button" class="btnCancel" mat-button (click)="cancel()">Cancelar</button>
-    <button class="btnAdd" [disabled]="professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
+    <button class="btnAdd" [disabled]="!isFormDirty() || professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
       Agregar
     </button>
   </mat-dialog-actions>

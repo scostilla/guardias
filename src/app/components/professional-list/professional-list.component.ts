@@ -10,7 +10,6 @@ import { DataSharingService } from '../../services/DataSharing/data-sharing.serv
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
 
-
 export interface UserData {
   id: number;
   dni: number;
@@ -26,7 +25,7 @@ export interface UserData {
   styleUrls: ['./professional-list.component.css'],
 })
 export class ProfessionalListComponent implements OnInit, AfterViewInit {
-  profesionales?: ConsultaProfesional[]  | undefined;
+  profesionales?: ConsultaProfesional[] | undefined;
   profesional?: ConsultaProfesional;
   profesionalEncontrado?: ConsultaProfesional;
   displayedColumns: string[] = [
@@ -72,7 +71,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           cuil: profesional.cuil || '',
           nombre: profesional.nombre || '',
           apellido: profesional.apellido || '',
-          profesion: profesional.profesion ||'',
+          profesion: profesional.profesion || '',
           especialidad: profesional.especialidad || '',
           sitRevista: profesional.sitRevista || '',
           cargaHoraria: profesional.cargaHoraria || '',
@@ -114,16 +113,21 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.profesional = this.dataSharingService.getProfessionalFormData();
       console.log(this.profesional);
       if (this.profesionales) {
-      this.profesionalEncontrado = this.profesionales.find(profesional => profesional.idProfesional === id);
-      console.log("profesional encontrado: ");
-      console.log(this.profesionalEncontrado);
+        this.profesionalEncontrado = this.profesionales.find(
+          (profesional) => profesional.idProfesional === id
+        );
+        console.log('profesional encontrado: ');
+        console.log(this.profesionalEncontrado);
       }
-      this.dataSource.data.push(
-        this.dataSharingService.getProfessionalFormData()
-      );
-      console.log(
-        'id recibido: ' + this.dataSharingService.getProfessionalId()
-      );
+
+      if (this.dataSharingService.getProfessionalId() === -1) {
+        //nuevo profesional
+        this.dataSource.data.push(
+          this.dataSharingService.getProfessionalFormData()
+        );
+      } else {
+        //modificar profesional
+      }
     });
   }
 
