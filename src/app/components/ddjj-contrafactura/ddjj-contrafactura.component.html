@@ -1,82 +1,143 @@
-<div class="container">
+<div class="tabla-center">
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-8">
+          <button mat-fab extended color="primary" routerLink="/guardias-view">
+            <mat-icon>arrow_back_ios</mat-icon>
+            Volver
+          </button>
+        </div>
+        <div class="col-4 justify-content-end">
+          <button mat-fab extended color="basic" [matMenuTriggerFor]="menu">
+            <mat-icon>get_app</mat-icon>
+            Descargar
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>PDF</button>
+            <button mat-menu-item>XLS</button>
+          </mat-menu>
+        </div>
+    </div>
     <div class="row">
-        <div class="col">
-            <p><a class="link-opacity-50-hover" href="/guardias-view">Volver</a></p>
-            <table class="table table-sm  table-borderless ">
+        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA</span>
+      </div>
+  
+    <div class="row">
+      <div class="col-sm">
+          <table class="table table-sm  table-borderless">
                 <thead>
                     <tr>
-                        <th colspan="7">DECLARACION JURADA GUARDIAS ACTIVAS DEL CONTRA FACTURA</th>
+                        <th colspan="7">DECLARACION JURADA GUARDIAS ACTIVAS CONTRA FACTURA</th>
                     </tr>
                     <tr>
-                        <th colspan="7">ABRIL 2023</th>
+                        <th colspan="7">Julio 2023</th>
                     </tr>
                     <tr>
                         <th colspan="7" style="text-align: left;">MINISTERIO DE SALUD</th>
                     </tr>
                     <tr>
-                        <th colspan="7" style="text-align: left;">"NUESTRA SEÑORA DEL ROSARIO"</th>
+                        <th colspan="7" style="text-align: left;">"DN. PABLO SORIA"</th>
                     </tr>
                     <tr>
-                        <th colspan="7" style="text-align: left;">REGION: PUNA</th>
+                        <th colspan="7" style="text-align: left;">REGION: CENTRO</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="7">
+                        <td colspan="16">
                             <table class="table table-hover table-bordered table-sm caption-top">
                                 <thead class="table-light">
-                                    <tr>
-
-                                        <th>NRO. DE ORDEN</th>
-                                        <th>SERVICIO</th>
-                                        <th>APELLIDO Y NOMBRE</th>
-                                        <th>CUIL</th>
-                                        <th>VINCULO LABORAL</th>
-                                        <th>CATEGORIA</th>
-                                        <th>NOVEDADES</th>
-                                    </tr>
+                                  <tr>
+                                    <th rowspan="2">N° ORDEN</th>
+                                    <th rowspan="2">APELLIDO Y NOMBRE</th>
+                                    <th rowspan="2">CUIL</th>
+                                    <th colspan="5">COMPROBANTE</th>
+                                    <th rowspan="2">ESPECIALIDAD</th>
+                                    <th colspan="2">DÍA DE GUARDIA</th>
+                                    <th colspan="2">CANTIDAD DE HS.</th>
+                                    <th colspan="2">MONTO</th>
+                                    <th colspan="2">TOTAL HS. A LIQUIDAR</th>
+                                    <th rowspan="2">TOTAL</th>
+                                  </tr>
+                                  <tr>
+                                    <td>Contribuyente</td>
+                                    <td>Factura</td>
+                                    <td>Punto de venta</td>
+                                    <td>Número</td>
+                                    <td>Fecha de emisión</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                  </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>clinica</td>
-                                        <td>HUERTAS CLEMENTE</td>
-                                        <td>20-45368456-5</td>
-                                        <td>PTA. PTE.</td>
-                                        <td>E(J-1)</td>
-                                        <td>L.A.O. Del 24 al 31-04-23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>clinica</td>
-                                        <td>HUERTAS CLEMENTE</td>
-                                        <td>20-45368456-5</td>
-                                        <td>PTA. PTE.</td>
-                                        <td>E(J-1)</td>
-                                        <td>L.A.O. Del 24 al 31-04-23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>clinica</td>
-                                        <td>HUERTAS CLEMENTE</td>
-                                        <td>20-45368456-5</td>
-                                        <td>PTA. PTE.</td>
-                                        <td>E(J-1)</td>
-                                        <td>L.A.O. Del 24 al 31-04-23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>clinica</td>
-                                        <td>HUERTAS CLEMENTE</td>
-                                        <td>20-45368456-5</td>
-                                        <td>PTA. PTE.</td>
-                                        <td>E(J-1)</td>
-                                        <td>L.A.O. Del 24 al 31-04-23</td>
-                                    </tr>
+                                  <tr>
+                                    <td>1</td>
+                                    <td>HUERTAS CLEMENTE</td>
+                                    <td>20-45368456-5</td>
+                                    <td>MONOTRIBUTISTA</td>
+                                    <td>C</td>
+                                    <td>00002</td>
+                                    <td>000054</td>
+                                    <td>4/4/2023</td>
+                                    <td>GENERALISTA</td>
+                                    <td>27/7/2023</td>
+                                    <td></td>
+                                    <td>24</td>
+                                    <td></td>
+                                    <td>$ 38.090,94</td>
+                                    <td></td>
+                                    <td>$ 38.090,94</td>
+                                    <td></td>
+                                    <td style="background-color: #eee;">$ 38.090,94</td>
+                                  <tr>
+                                    <td>2</td>
+                                    <td>ARRAYA PEDRO ADEMIR</td>
+                                    <td>20-20675037-3</td>
+                                    <td>RESPONSABLE INSCRIPTO</td>
+                                    <td>B</td>
+                                    <td>00002</td>
+                                    <td>000045</td>
+                                    <td>3/4/2023</td>
+                                    <td>GENERALISTA</td>
+                                    <td></td>
+                                    <td>1/3/2023</td>
+                                    <td></td>
+                                    <td>21</td>
+                                    <td></td>
+                                    <td>$ 33.329,57</td>
+                                    <td></td>
+                                    <td>$ 33.329,57</td>
+                                    <td style="background-color: #eee;">$ 33.329,57</td>
+                                  </tr>
+                                  <tr>
+                                    <td>3</td>
+                                    <td>MORALES RICARDO</td>
+                                    <td>20-20479956-3</td>
+                                    <td>RESPONSABLE INSCRIPTO</td>
+                                    <td>C</td>
+                                    <td>00002</td>
+                                    <td>000054</td>
+                                    <td>4/4/2023</td>
+                                    <td>GENERALISTA</td>
+                                    <td>14/3/2023</td>
+                                    <td></td>
+                                    <td>24</td>
+                                    <td></td>
+                                    <td>$ 38.090,94</td>
+                                    <td></td>
+                                    <td>$ 38.090,94</td>
+                                    <td></td>
+                                    <td style="background-color: #eee;">$ 38.090,94</td>
+                                  </tr>
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td>OBSERVACIONES:</td>
+                                        <td>OBSERV.:</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -87,96 +148,3 @@
         </div>
     </div>
 </div>
-
-
-<!-- <div class="container">
-    <div class="row">
-        <div class="col">
-            <table class="table table-sm  table-borderless ">
-                <thead>
-                    <tr>
-                        <th colspan="7">DECLARACION JURADA GUARDIAS ACTIVAS DE CONTRA FACTURA</th>
-                    </tr>
-                    <tr>
-                        <th colspan="7">ABRIL 2023</th>
-                    </tr>
-                    <tr>
-                        <th colspan="7" style="text-align: left;">MINISTERIO DE SALUD</th>
-                    </tr>
-                    <tr>
-                        <th colspan="7" style="text-align: left;">"NUESTRA SEÑORA DEL ROSARIO"</th>
-                    </tr>
-                    <tr>
-                        <th colspan="7" style="text-align: left;">REGION: PUNA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   <tr>
-                    <td colspan="7">
-                        <table class="table table-hover table-bordered table-sm caption-top">
-                            <thead class="table-light">
-                                <tr>
-                              
-                                    <th>NRO. DE ORDEN</th>
-                                    <th>SERVICIO</th>
-                                    <th>APELLIDO Y NOMBRE</th>
-                                    <th>CUIL</th>
-                                    <th>VINCULO LABORAL</th>
-                                    <th>CATEGORIA</th>
-                                    <th>NOVEDADES</th>
-                                    <th>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>clinica</td>
-                                    <td>HUERTAS CLEMENTE</td>
-                                    <td>20-45368456-5</td>
-                                    <td>PTA. PTE.</td>
-                                    <td>E(J-1)</td>
-                                    <td>L.A.O. Del 24 al 31-04-23</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>clinica</td>
-                                    <td>HUERTAS CLEMENTE</td>
-                                    <td>20-45368456-5</td>
-                                    <td>PTA. PTE.</td>
-                                    <td>E(J-1)</td>
-                                    <td>L.A.O. Del 24 al 31-04-23</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>clinica</td>
-                                    <td>HUERTAS CLEMENTE</td>
-                                    <td>20-45368456-5</td>
-                                    <td>PTA. PTE.</td>
-                                    <td>E(J-1)</td>
-                                    <td>L.A.O. Del 24 al 31-04-23</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>clinica</td>
-                                    <td>HUERTAS CLEMENTE</td>
-                                    <td>20-45368456-5</td>
-                                    <td>PTA. PTE.</td>
-                                    <td>E(J-1)</td>
-                                    <td>L.A.O. Del 24 al 31-04-23</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td>OBSERVACIONES:</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </td>
-                   </tr> 
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
- -->
