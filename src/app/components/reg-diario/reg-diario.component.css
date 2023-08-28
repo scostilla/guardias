@@ -7,17 +7,12 @@
 
 .row {
     display: flex;
-    gap:10px;
-    
-    mat-form-field{
-        width: 100%;
-    }
 }
 
 
 mat-form-field{
     width: 100%;
-    margin-right: 12px;
+    margin-bottom: 10px;
 }
 
 

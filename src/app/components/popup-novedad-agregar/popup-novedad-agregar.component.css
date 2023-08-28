@@ -22,3 +22,14 @@
   .requiredField{
     color: red;
   }
+  label {
+    display: block;
+    font:
+      1rem 'Ubuntu',
+      sans-serif;
+  }
+  
+  input,
+  label {
+    margin: 0.4rem 0;
+  }

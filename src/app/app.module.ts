@@ -49,6 +49,7 @@ import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component
 import {MatTableModule} from '@angular/material/table';
 import {NgFor} from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatBadgeModule} from '@angular/material/badge';
 
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
@@ -165,6 +166,7 @@ registerLocaleData(localePy,'es');
     NgFor,
     MatButtonToggleModule,
     DatePipe,
+    MatBadgeModule,
   ],
   providers: [
     ProfessionalDataServiceService,

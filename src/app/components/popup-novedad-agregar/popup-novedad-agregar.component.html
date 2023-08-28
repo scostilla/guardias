@@ -7,33 +7,38 @@
         <mat-form-field>
             <mat-label>Región</mat-label>
             <mat-select>
-              <mat-option value="one">Centro</mat-option>
-              <mat-option value="two">Valles</mat-option>
-              <mat-option value="two">Puna</mat-option>
-              <mat-option value="two">Quebrada</mat-option>
+              <mat-option value="0">Todas</mat-option>
+              <mat-option value="1">Centro</mat-option>
+              <mat-option value="2">Valles</mat-option>
+              <mat-option value="3">Puna</mat-option>
+              <mat-option value="4">Quebrada</mat-option>
             </mat-select>
           </mat-form-field>
         <mat-form-field>
-            <mat-label>Establecimiento</mat-label>
+            <mat-label>Efectores de Salud</mat-label>
             <mat-select>
-              <mat-option value="one">Hospital Pablo Soria</mat-option>
-              <mat-option value="two">Hospital San Roque</mat-option>
-              <mat-option value="two">Hospital Materno Infantil</mat-option>
+              <mat-option value="0">Hospital Pablo Soria</mat-option>
+              <mat-option value="1">Hospital San Roque</mat-option>
+              <mat-option value="2">Hospital Materno Infantil</mat-option>
+              <mat-option value="3">CEN - Centro Especialiodades Norte</mat-option>
+              <mat-option value="4">CES - Centro de Especialidades Sur</mat-option>            
             </mat-select>
           </mat-form-field>
-    <mat-form-field>
-        <mat-label>Sección</mat-label>
-        <input matInput>
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>Actualización</mat-label>
-        <input matInput>
-    </mat-form-field>
+          <mat-form-field>
+            <mat-label>Sección</mat-label>
+            <mat-select>
+              <mat-option value="0">Digesto</mat-option>
+              <mat-option value="1">Novedad</mat-option>
+            </mat-select>
+          </mat-form-field>
+  <label for="avatar">Sube un archivo PDF, Word o Excel:</label>
+  <input type="file" id="avatar" name="avatar" accept=".pdf, .xls, .xlsx, .docx, .doc" />
   <mat-form-field>
     <mat-label>Detalle</mat-label>
     <textarea matInput></textarea>
   </mat-form-field>
-    <div mat-dialog-actions class="action">
+
+  <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button"
         [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar Novedad</button>

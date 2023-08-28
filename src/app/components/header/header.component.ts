@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
+
 export class HeaderComponent implements OnDestroy {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
