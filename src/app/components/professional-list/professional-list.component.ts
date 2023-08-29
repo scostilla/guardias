@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
+import Persona from 'src/server/models/Persona';
 import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
@@ -28,6 +29,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   profesionales?: ConsultaProfesional[] | undefined;
   profesional?: ConsultaProfesional;
   profesionalEncontrado?: ConsultaProfesional;
+  persona!: Persona;
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -121,14 +123,33 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       }
 
       if (this.dataSharingService.getProfessionalId() === -1) {
-        //nuevo profesional
-        this.dataSource.data.push(
-          this.dataSharingService.getProfessionalFormData()
-        );
+        this.savePersona();
       } else {
         //modificar profesional
       }
     });
+  }
+
+  public savePersona() {
+    this.persona = {};
+    if (this.profesional) {
+      this.persona.nombre = this.profesional.nombre;
+      this.persona.apellido = this.profesional.apellido;
+      this.persona.dni = this.profesional.dni;
+      this.persona.cuil = this.profesional.cuil;
+      this.persona.direccion = '';
+      this.persona.email = '';
+      this.persona.sexo = '';
+      this.persona.telefono = '';
+      this.persona.idUdo = this.profesional.idUdo;
+      this.persona.idHospital = this.profesional.idHospital;
+      this.persona.estado = 1;
+      this.persona.idCargo = this.profesional.idCargo;
+      this.persona.idProfesion = this.profesional.idProfesion;
+    }
+    this.http.post('http://localhost:8080/api/V1/personas/', this.persona);
+    console.log(this.persona);
+
   }
 
   //removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA

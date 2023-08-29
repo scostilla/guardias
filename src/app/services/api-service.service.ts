@@ -16,7 +16,12 @@ import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 export class ApiServiceService {
 
   //URL del back
-  private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
+private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
+  private personaUrl = "http://127.0.0.1:8080/api/V1/persona/";
+/*
+  public getPersonaUrl(): string {
+    return this.personaUrl;
+  }*/
 
   constructor(private http: HttpClient) { }
 
@@ -29,7 +34,9 @@ export class ApiServiceService {
   }
 
   post(url: string, data: any): Observable<any> {
-    return this.http.post(this.baseUrl + url, data);
+    console.log("url: "+ url);
+    console.log("data: "+data);
+    return this.http.post(url, data);
   }
 
   put(url: string, data: any): Observable<any> {
