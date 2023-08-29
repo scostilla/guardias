@@ -39,7 +39,6 @@ import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'professional-form', component: ProfessionalFormComponent },
-  { path: 'professional-dh', component: ProfessionalDhComponent },
   { path: 'daily-schedule', component: DailyScheduleComponent},
   {path:"home-page", component:HomePageComponent},
   {path:"registro-diario",component: RegistroDiarioComponent},
@@ -54,6 +53,7 @@ const routes: Routes = [
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
   { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
+  { path: 'professional-dh/:id', component: ProfessionalDhComponent },
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},

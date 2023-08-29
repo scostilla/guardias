@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './professional-dh.component.html',
   styleUrls: ['./professional-dh.component.css']
 })
-export class ProfessionalDhComponent {
+export class ProfessionalDhComponent implements OnInit {
   id: string | null | undefined;
   person: any;
 
@@ -29,6 +29,4 @@ export class ProfessionalDhComponent {
         }
       });
   }
-
-
 }
