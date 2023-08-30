@@ -147,9 +147,16 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.idCargo = this.profesional.idCargo;
       this.persona.idProfesion = this.profesional.idProfesion;
     }
-    this.http.post('http://localhost:8080/api/V1/personas/', this.persona);
-    console.log(this.persona);
+    this.apiServiceService.savePersona(this.persona).subscribe(
+      (resp) => {
+        console.log(this.persona);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
 
+    //this.http.post('http://localhost:8080/api/V1/personas/', this.persona);
   }
 
   //removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA

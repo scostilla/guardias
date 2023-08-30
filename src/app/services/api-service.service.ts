@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
+import Persona from 'src/server/models/Persona';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,7 @@ export class ApiServiceService {
 
   //URL del back
 private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
-  private personaUrl = "http://127.0.0.1:8080/api/V1/persona/";
-/*
-  public getPersonaUrl(): string {
-    return this.personaUrl;
-  }*/
+  private personaUrl = "http://localhost:8080/api/V1/personas";
 
   constructor(private http: HttpClient) { }
 
@@ -37,6 +34,12 @@ private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
     console.log("url: "+ url);
     console.log("data: "+data);
     return this.http.post(url, data);
+  }
+
+  public savePersona (persona:Persona): Observable<Persona>{
+    console.log("url: "+ this.personaUrl);
+    console.log("data: "+persona);
+    return this.http.post(this.personaUrl,persona);
   }
 
   put(url: string, data: any): Observable<any> {
