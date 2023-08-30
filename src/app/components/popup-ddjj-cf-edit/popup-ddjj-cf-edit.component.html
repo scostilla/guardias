@@ -1,0 +1,32 @@
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">MODIFICAR FACTURA</h1>
+</div>
+<div mat-dialog-content class="content">
+    <div class="row mt-3">
+        <p>Para: HUERTAS CLEMENTE</p>
+        <p>CUIL: 20-45368456-5</p>
+    </div>    
+    <mat-form-field appearance="outline">
+        <mat-label>Contribuyente</mat-label>
+        <mat-select value="1">
+            <mat-option value="0">Monotributista</mat-option>
+            <mat-option value="1">Responsable inscripto</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>N° Factura</mat-label>
+        <input matInput value="B-2-56">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker1">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions class="action">
+    <button mat-raised-button class="btnupdate" type="button"
+        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" color="primary" type="submit">Modificar</button>
+</div>

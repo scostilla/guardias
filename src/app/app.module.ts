@@ -80,6 +80,8 @@ import { CronogramaPDefComponent } from './components/cronograma-p-def/cronogram
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
+import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -140,6 +142,8 @@ registerLocaleData(localePy,'es');
     CronogramaPHosComponent,
     GuardiasViewPComponent,
     ProfessionalDhComponent,
+    PopupDdjjCfComponent,
+    PopupDdjjCfEditComponent,
     
   ],
 

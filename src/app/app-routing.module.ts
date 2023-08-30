@@ -34,6 +34,9 @@ import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
+import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
+import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
+
 
 
 const routes: Routes = [
@@ -72,6 +75,8 @@ const routes: Routes = [
  {path: 'disponibilidad', component:DisponibilidadComponent},
  {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+ {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
+ {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
 ];
 
 @NgModule({
