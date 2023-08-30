@@ -18,7 +18,7 @@ export class ApiServiceService {
 
   //URL del back
 private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
-  private personaUrl = "http://localhost:8080/api/V1/personas";
+  private personaUrl = "http://localhost:8080/api/V1/personas/";
 
   constructor(private http: HttpClient) { }
 
