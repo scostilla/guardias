@@ -1,93 +1,40 @@
-<div class="d-flex justify-content-center fs-1 mb-5 title">Distribución horaria del Profesional</div>
-<div class="container">
-  <div class="row">
-    <div class="col-2">
-      <div class="container-boton" routerLink="#">
-        <img src="assets/img/btn-submenu-guardias/1ddjj-extra.png" alt="DDJJ" class="image">
-        <div class="overlay">
-          <div class="text">EXTRAS</div>
-        </div>
-      </div>
-      <div class="container-boton" routerLink="#">
-        <img src="assets/img/btn-submenu-guardias/2ddjj-ca.png" alt="DDJJ" class="image">
-        <div class="overlay">
-          <div class="text">CARGO Y AGRUPACION</div>
-        </div>
-      </div>
-      <div class="container-boton" routerLink="#">
-        <img src="assets/img/btn-submenu-guardias/3ddjj-cf.png" alt="DDJJ" class="image">
-        <div class="overlay">
-          <div class="text">CONTRA FACTURA</div>
-        </div>
-      </div> 
-  </div>
-    <div class="col-10">
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">Apellido</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.apellido" readonly>
+<div class="row tabla-center">
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col">
+      <button mat-fab extended color="primary" routerLink="/professional-list">
+        <mat-icon>arrow_back_ios</mat-icon>
+        Volver
+      </button>
     </div>
-
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">Nombre</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.nombre" readonly>
+    <div class="col d-flex justify-content-end">
+      <button mat-fab extended color="basic" [matMenuTriggerFor]="menu">
+        <mat-icon>get_app</mat-icon>
+        Descargar
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>PDF</button>
+        <button mat-menu-item>XLS</button>
+      </mat-menu>
     </div>
-
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">DNI</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.dni" readonly>
-    </div>
-
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">CUIL</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.cuil" readonly>
-    </div>
-
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">Profesión</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.profesion" readonly>
-    </div>
-
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">Especialidad</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.especialidad" readonly>
-    </div>
-
-    <div class="input-group">
-      <div class="input-group-text justify-content-center detail">
-        <label for="" class="detail">Sit. Revista</label>
-      </div>
-      <input class="form-control readonly-input" type="text" [(ngModel)]="person.sitRevista" readonly>
-    </div>  </div>
- </div>
 </div>
 
-<div class="row">
   <div class="col-sm">
       <table class="table table-sm  table-borderless">
-            <thead>
+            <thead class="table-light col-center">
+              <tr>
+                <th style="background-color: black; color: #fff;">DISTRIBUCION HORARIA PROFESIONALES</th>
+            </tr>
                 <tr>
-                    <th colspan="7">Julio 2023</th>
+                    <th>Julio 2023</th>
                 </tr>
                 <tr>
-                    <th colspan="7" style="text-align: left;">MINISTERIO DE SALUD</th>
+                    <th>MINISTERIO DE SALUD</th>
                 </tr>
                 <tr>
-                    <th colspan="7" style="text-align: left;">"DN. PABLO SORIA"</th>
+                    <th>"DN. PABLO SORIA"</th>
                 </tr>
                 <tr>
-                    <th colspan="7" style="text-align: left;">REGION: CENTRO</th>
+                    <th>REGION: CENTRO</th>
                 </tr>
             </thead>
             <tbody>
@@ -110,46 +57,74 @@
                                 <td colspan="2">Vi</td>
                               </tr>
                               <tr>
-                                <td style="background-color: #eee;">M</td>
-                                <td style="background-color: #eee;">T</td>
-                                <td style="background-color: #eee;">M</td>
-                                <td style="background-color: #eee;">T</td>
-                                <td>M</td>
-                                <td>T</td>
-                                <td>M</td>
-                                <td>T</td>
-                                <td>M</td>
-                                <td>T</td>
-                                <td>M</td>
-                                <td>T</td>
-                                <td>M</td>
-                                <td>T</td>
+                                <td style="background-color: #eee;">Mañana</td>
+                                <td style="background-color: #eee;">Tarde</td>
+                                <td style="background-color: #eee;">Mañana</td>
+                                <td style="background-color: #eee;">Tarde</td>
+                                <td>Mañana</td>
+                                <td>Tarde</td>
+                                <td>Mañana</td>
+                                <td>Tarde</td>
+                                <td>Mañana</td>
+                                <td>Tarde</td>
+                                <td>Mañana</td>
+                                <td>Tarde</td>
+                                <td>Mañana</td>
+                                <td>Tarde</td>
                               </tr>
-                                                </thead>
+                            </thead>
                             <tbody>
                               <tr>
                                 <td>
-                                  <tr>HUERTAS CLEMENTE</tr>
-                                  <tr>CUIL</tr>
-                                  <tr>Especialidad</tr>
-                                  <tr>UDO</tr>
-                                  <tr>Situación de revista</tr>
+                                    <tr>
+                                      <td>Apellido y nombre: </td>
+                                      <td style="font-weight: bold;">{{person.apellido}}, {{person.nombre}}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>CUIL: </td>
+                                      <td style="font-weight: bold;">{{person.cuil}}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Especialidad: </td>
+                                      <td style="font-weight: bold;">{{person.especialidad}} </td>
+                                    </tr>
+                                    <tr>
+                                      <td>U.D.O: </td>
+                                      <td style="font-weight: bold;">HOSPITAL PABLO SORIA</td>
+                                      
+                                    </tr>
+                                    <tr>
+                                      <td>Situación de revista: </td>
+                                      <td style="font-weight: bold;">{{person.sitRevista}}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Categoria: </td>
+                                      <td style="font-weight: bold;">E(J-1)</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Carga horaria: </td>
+                                      <td style="font-weight: bold;">40 </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Adicional: </td>
+                                      <td style="font-weight: bold;">J-2</td>
+                                    </tr>
                                 </td>
-                                <td>4</td>
-                                <td>8</td>
-                                <td>4</td>
-                                <td>8</td>
-                                <td>4</td>
-                                <td>8</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>4</td>
-                                <td>8</td>
-                                <td>4</td>
-                                <td>8</td>
-                                <td>4</td>
-                                <td>8</td>
-                                <td>40</td>
+                                <td>CE (8 hs.)</td>
+                                <td>-</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>CE (6 hs.)</td>
+                                <td>CE (6 hs.)</td>
+                                <td  style="font-weight: bold;">40</td>
                               </tr>
                             </tbody>
                             <tfoot>
@@ -162,5 +137,8 @@
                 </tr>
             </tbody>
         </table>
+          <div class="alert alert-success" role="alert">
+          El total de horas semanales cargadas coincide con la carga horaria informada (40).
+          </div> 
     </div>
 </div>

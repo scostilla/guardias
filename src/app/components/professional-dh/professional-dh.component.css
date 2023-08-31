@@ -1,15 +1,6 @@
-.detail{
-    width: 130px;
-    background-color:#00c4cc;
-    color: #fff;
-  }
-  
-  .readonly-input {
-    color: black;
-    background-color: white;
-  }
-  
-  .input-group{
-    margin-bottom: 10px;
-  }
-  
+.tabla-center {
+  margin-left: 2%; margin-right: 2%;
+}
+.col-center {
+  text-align: center;
+}
