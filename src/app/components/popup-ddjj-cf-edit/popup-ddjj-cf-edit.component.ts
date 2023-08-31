@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./popup-ddjj-cf-edit.component.css']
 })
 export class PopupDdjjCfEditComponent {
-
+  alert:any='79990.97';
 }

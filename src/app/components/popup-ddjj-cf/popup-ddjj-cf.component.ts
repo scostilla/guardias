@@ -6,5 +6,18 @@ import { Component } from '@angular/core';
   styleUrls: ['./popup-ddjj-cf.component.css']
 })
 export class PopupDdjjCfComponent {
-
+  alert:any;
+  
+  constructor() { 
+     this.alert=79990;
+ } 
+ esDiferente():boolean {
+         
+     if(this.alert!=79990) {
+             return true;
+     }
+      else { 
+         return false;
+     } 
+ }
 }
