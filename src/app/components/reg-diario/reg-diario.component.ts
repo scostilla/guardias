@@ -3,6 +3,9 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
+import { ServicioService } from 'src/app/services/Servicio/servicio.service';
+import { ToastrService } from 'ngx-toastr';
+import { Servicio } from 'src/app/models/servicio';
 
 @Component({
   selector: 'app-reg-diario',
@@ -12,7 +15,7 @@ import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDat
 export class RegDiarioComponent {
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
-  tipoServicio:string[]= ['Guardia activa','Guardia pasiva','Consultorio','Pase'];
+  //tipoServicio:string[]= ['Guardia activa','Guardia pasiva','Consultorio','Pase'];
   defaultSelected:string='';
   pasiva:string='';
   alert:string='';
@@ -30,11 +33,15 @@ export class RegDiarioComponent {
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
 
+  servicios: Servicio[] = [];
+
   constructor(
     private _fb:FormBuilder,
     private dialog: MatDialog,
     private professionalDataService: ProfessionalDataServiceService,
     public dialogRef: MatDialogRef<RegDiarioComponent>,
+    private servicioService: ServicioService,
+    private toastr: ToastrService
     )
       {
         this.registroForm = this._fb.group(
@@ -64,7 +71,7 @@ export class RegDiarioComponent {
   }
 
   ngOnInit() {
-
+    this.cargarServicio();
     this.professionalDataService.dataUpdated.subscribe(() => {
       this.selectedId = this.professionalDataService.selectedId;
       this.selectedCuil = this.professionalDataService.selectedCuil;
@@ -76,6 +83,17 @@ export class RegDiarioComponent {
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  cargarServicio(): void {
+    this.servicioService.lista().subscribe(
+      data => {
+        this.servicios = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
 }

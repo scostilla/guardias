@@ -1,6 +1,6 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
@@ -80,6 +80,11 @@ import { CronogramaPDefComponent } from './components/cronograma-p-def/cronogram
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+
+//external
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+
 
 
 registerLocaleData(localePy,'es');
@@ -167,6 +172,8 @@ registerLocaleData(localePy,'es');
     MatButtonToggleModule,
     DatePipe,
     MatBadgeModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
   ],
   providers: [
     ProfessionalDataServiceService,

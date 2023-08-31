@@ -5,8 +5,8 @@
     <mat-form-field appearance="outline">
         <mat-label>Tipo de servicio</mat-label>
         <mat-select [(ngModel)]="defaultSelected">
-            <mat-option [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">
-                {{tipserv}}</mat-option>
+            <mat-option [value]="servicio" *ngFor="let servicio of servicios" [value]="servicio">
+                {{servicio.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
     <div [ngSwitch]="defaultSelected" appearance="outline">
