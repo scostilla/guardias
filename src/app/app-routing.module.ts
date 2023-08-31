@@ -72,6 +72,7 @@ const routes: Routes = [
  {path: 'disponibilidad', component:DisponibilidadComponent},
  {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+ {path:'**', redirectTo:'home-page',pathMatch:'full'}//si tecleamos una direccion erronea redirige a raiz
 ];
 
 @NgModule({

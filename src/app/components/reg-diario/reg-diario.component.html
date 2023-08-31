@@ -1,6 +1,29 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Nuevo Registro</h1>
 </div>
+<!-- 
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col">Editar</th>
+        <th scope="col">Borrar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let servicio of servicios" >
+        <td>{{servicio.id}}</td>
+        <td>{{servicio.descripcion}}</td>
+        <td><button class="btn btn-outline-warning" routerLink="/editar/{{servicio.id}}">Editar</button></td>
+        <td><button class="btn btn-outline-danger" ng-click="Borrar(servicio.id)">Eliminar</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+    esto es el original -->
+
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Tipo de servicio</mat-label>

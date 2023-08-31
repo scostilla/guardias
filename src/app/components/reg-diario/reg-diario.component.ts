@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PopupComponent } from '../popup/popup.component';
-import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
-import { ServicioService } from 'src/app/services/Servicio/servicio.service';
 import { ToastrService } from 'ngx-toastr';
 import { Servicio } from 'src/app/models/servicio';
+import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
+import { ServicioService } from 'src/app/services/Servicio/servicio.service';
+import { PopupComponent } from '../popup/popup.component';
 
 @Component({
   selector: 'app-reg-diario',
@@ -96,6 +96,10 @@ export class RegDiarioComponent {
     );
   }
 
+  /* borrar(id: number){
+    alert('borrar el' + id);
+  }
+ */
 }
 
 /* no abre el popup a pesar de tener el mismo codigo que el metodo openDialog
