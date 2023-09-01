@@ -17,7 +17,7 @@ export class ServicioService {
         return this.httpClient.get<Servicio[]>(this.servicioURL + 'lista');
     }
 
-   /*  public detail(id:number): Observable<Servicio> {
+    public detail(id:number): Observable<Servicio> {
         return this.httpClient.get<Servicio>(this.servicioURL + `detail/${id}`);
     }
 
@@ -35,7 +35,7 @@ export class ServicioService {
 
     public delete(id:number): Observable<any> {
         return this.httpClient.delete<any>(this.servicioURL + `delete/${id}`);
-    } */
+    }
 
 
 }

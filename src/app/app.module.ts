@@ -84,6 +84,11 @@ import { ProfessionalDhComponent } from './components/professional-dh/profession
 //external
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { ListaServicioComponent } from './servicio/lista-servicio.component';
+import { DetalleServicioComponent } from './servicio/detalle-servicio.component';
+import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
+import { EditarServicioComponent } from './servicio/editar-servicio.component';
+import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
 
 
 
@@ -145,6 +150,11 @@ registerLocaleData(localePy,'es');
     CronogramaPHosComponent,
     GuardiasViewPComponent,
     ProfessionalDhComponent,
+    ListaServicioComponent,
+    DetalleServicioComponent,
+    NuevoServicioComponent,
+    EditarServicioComponent,
+    EliminarServicioComponent,
     
   ],
 

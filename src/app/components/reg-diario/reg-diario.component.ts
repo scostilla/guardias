@@ -96,10 +96,23 @@ export class RegDiarioComponent {
     );
   }
 
-  /* borrar(id: number){
-    alert('borrar el' + id);
+  borrarServicio(id: any) {
+    this.servicioService.delete(id).subscribe(
+      data => {
+        
+        this.toastr.success('Producto Eliminado', 'OK', {
+          timeOut: 3000, positionClass: 'toast-top-center'
+        });
+        this.cargarServicio();
+      },
+      err => {
+        this.toastr.error(err.error.mensaje, 'Fail', {
+          timeOut: 3000,  positionClass: 'toast-top-center',
+        });
+      }
+    );
   }
- */
+
 }
 
 /* no abre el popup a pesar de tener el mismo codigo que el metodo openDialog

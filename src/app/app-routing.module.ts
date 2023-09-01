@@ -34,6 +34,11 @@ import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
+import { ListaServicioComponent } from './servicio/lista-servicio.component';
+import { DetalleServicioComponent } from './servicio/detalle-servicio.component';
+import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
+import { EditarServicioComponent } from './servicio/editar-servicio.component';
+import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
 
 
 const routes: Routes = [
@@ -72,7 +77,17 @@ const routes: Routes = [
  {path: 'disponibilidad', component:DisponibilidadComponent},
  {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
- {path:'**', redirectTo:'home-page',pathMatch:'full'}//si tecleamos una direccion erronea redirige a raiz
+
+ //prueba CRUD
+ //{path:'',component:ListaServicioComponent},
+ {path:'detalle/:id',component:DetalleServicioComponent},
+ {path:'nuevo',component:NuevoServicioComponent},
+ {path:'editar/:id',component:EditarServicioComponent},
+ {path:'eliminar/:id',component:EliminarServicioComponent},
+ {path:'**',redirectTo:'',pathMatch:'full'}
+
+
+ //si tecleamos una direccion erronea redirige a raiz
 ];
 
 @NgModule({

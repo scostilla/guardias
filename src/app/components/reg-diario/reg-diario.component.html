@@ -1,7 +1,7 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Nuevo Registro</h1>
 </div>
-<!-- 
+
 <table class="table">
     <thead>
       <tr>
@@ -16,13 +16,13 @@
         <td>{{servicio.id}}</td>
         <td>{{servicio.descripcion}}</td>
         <td><button class="btn btn-outline-warning" routerLink="/editar/{{servicio.id}}">Editar</button></td>
-        <td><button class="btn btn-outline-danger" ng-click="Borrar(servicio.id)">Eliminar</button></td>
+        <td><button class="btn btn-outline-danger" (click)="borrarServicio(servicio.id)">Eliminar</button></td>
       </tr>
     </tbody>
   </table>
 
 
-    esto es el original -->
+    <!-- esto es el original
 
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
@@ -159,3 +159,4 @@
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
 </div>
 
+ -->
