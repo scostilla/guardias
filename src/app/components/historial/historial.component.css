@@ -1,0 +1,20 @@
+.mat-mdc-table tr.mat-mdc-row:hover {
+    background-color: #eee;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  .mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+
+.NgRow.even {
+    background: #eee;
+}
+
+.NgRow.odd {
+    background: #999;
+}

@@ -1,190 +1,365 @@
-<div class="titulo-calendario">Julio, 2023</div>
+<div class="row">
+  <div class="col-8 offset-1 justify-content-end">
+    <div class="row">
+      <div class="titulos">.:: Cronograma <span class="titulos-second">tentativo</span>
+    </div>
+    <div class="row"> 
+      <div class="col offset-1">
+    <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
+    <mat-menu #menug="matMenu">
+      <button mat-menu-item routerLink="/cronograma-p">Guardias Pasivas</button>
+    </mat-menu>
+  </div>
+    </div>
+    </div>
+  </div>
+  <div class="col-3 justify-content-end">
+    <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
+      <mat-button-toggle value="tentativo" disabled>Tentativo</mat-button-toggle>
+      <mat-button-toggle value="definitivo" routerLink="/cronograma-def">Definitivo</mat-button-toggle>
+      <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Hospital San Roque (Centro)</button>
+      <button mat-menu-item>Materno Infantil (Centro)</button>
+    </mat-menu>
+  </div>
+</div>
+<div class="titulo-calendario">Julio 2023</div>
 <div class="center-content">
-    <span class="circulo--dia"></span>&nbsp;<span class="ref-calendar-dia__content">Día hábil</span>
-    <span class="circulo--finde"></span>&nbsp;<span class="ref-calendar-dia--finde">Fin de semana</span>
-    <span class="circulo--feriado"></span>&nbsp;<span class="ref-calendar-dia--feriado">Asueto/Feriado</span>
+    <span class="ref-circulo circulo--dia"></span>&nbsp;<span class="ref ref-calendar-dia__content">Día hábil</span>
+    <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
+    <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
+</div>
+<div class="center-content" style="background-color: #f5f3f3; margin: 0 0 0 25%; width: 50%;">
+  <span class="titulos-second" style="font-weight: bold;">Guardias:&nbsp;</span> 
+  <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
+  <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
+  <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
+  <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
 </div>
 <ol class="calendar">
-    <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu" data-week ="39">
+    <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu">
       <span class="calendar-dia__number">26</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma" data-week="39">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma">
       <span class="calendar-dia__number">27</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Mi" data-week="39">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Mi">
       <span class="calendar-dia__number">28</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ju" data-week="39">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ju">
       <span class="calendar-dia__number">29</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Vi" data-week="39">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Vi">
       <span class="calendar-dia__number">30</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="39">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">01</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="39" (click)="openPopupCalendario()">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendario()">
       <span class="calendar-dia__number">02</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon">
-          <mat-icon>check_circle</mat-icon>
-          <mat-icon>done</mat-icon>
-          <mat-icon>clear</mat-icon></div>
-        <div class="calendar-dia--text" matTooltip="Clínica, 8 hs">Dr. Candido Perez</div>
-        <div class="calendar-dia--text" matTooltip="Ginecología, 6 hs">Dra. María Paz Monteros</div>
-        <div class="calendar-dia--text" matTooltip="Ginecología, 14 hs">Dra. Juana Felicitas</div>
+          <mat-icon class="icon-verde" matTooltip="carga completa">check_circle</mat-icon>
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+        <div class="calendar-dia--text circulo--extra" matTooltip="Clínica, 8 hs">Dr. Candido Perez</div>
+        <div class="calendar-dia--text circulo--cargo" matTooltip="Ginecología, 6 hs">Dra. María Paz Monteros</div>
+        <div class="calendar-dia--text circulo--agrupacion" matTooltip="Ginecología, 12 hs">Dra. Juana Felicitas</div>
+        <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Juliana Ramos</div>
+        <div class="calendar-dia--icon-add">
+          <mat-icon>add</mat-icon>
+        </div>
     </div>
     </li>
-    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="40">
+    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">03</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Ma" data-week="40">
+    <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">04</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Mi" data-week="40">
+    <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">05</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Ju" data-week="40">
+    <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioDisp2()">
       <span class="calendar-dia__number">06</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon">
-          <mat-icon>check_circle</mat-icon>
-          <mat-icon>done</mat-icon>
-          <mat-icon>clear</mat-icon></div>
-        <div class="calendar-dia--text" matTooltip="Clínica">Dra. Lucía Medina</div>
-        <div class="calendar-dia--text" matTooltip="Cardiología">Dr. Juan Quintero</div>
+          <mat-icon matTooltip="al menos una carga">check_circle</mat-icon>
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+        <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Lucía Medina</div>
+        <div class="calendar-dia--text circulo--cargo" matTooltip="Cardiología, 8 hs">Dr. Juan Quintero</div>
+        <div class="calendar-dia--icon-add">
+          <mat-icon>add</mat-icon>
+        </div> 
       </div>
     </li>
-    <li class="calendar-dia calendar-dia--today" data-weekday="Vi" data-week="40">
+    <li class="calendar-dia calendar-dia--today" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">07</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="40">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">08</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="40">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">09</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="41">
+    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">10</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Ma" data-week="41">
+    <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">11</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Mi" data-week="41">
+    <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">12</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Ju" data-week="41">
+    <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">13</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Vi" data-week="41">
+    <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">14</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="41">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">15</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="41">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">16</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="42">
+    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">17</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia" data-weekday="Ma" data-week="42">
+    <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">18</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Mi" data-week="42">
+    <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">19</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-feriado" data-weekday="Ju" data-week="42">
+    <li class="calendar-dia calendar-dia-feriado" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">20</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Vi" data-week="42">
+    <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">21</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="42">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">22</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="42">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">23</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="43">
+    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">24</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Ma" data-week="43">
+    <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">25</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Mi" data-week="43">
+    <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">26</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Ju" data-week="43">
+    <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">27</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia" data-weekday="Vi" data-week="43">
+    <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">28</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="43">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">29</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="43">
+    <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">30</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="44">
+    <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">31</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon">
+          <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon></div> 
+      </div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma" data-week="44">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">01</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Mi" data-week="44">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">02</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ju" data-week="44">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">03</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Vi" data-week="44">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">04</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Sa" data-week="44">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">05</span>
       <div class="calendar-dia__content"></div>
     </li>
-    <li class="calendar-dia calendar-dia--otromes" data-weekday="Do" data-week="44">
+    <li class="calendar-dia calendar-dia--otromes" data-weekday="Do" (click)="openPopupCalendarioVacio()">
       <span class="calendar-dia__number">06</span>
       <div class="calendar-dia__content"></div>
     </li>
@@ -200,8 +375,3 @@
     </tr>
     </table>
     
-    <!-- {{today | date:"EEEEEE":undefined:'es'|titlecase}}
-    <br>
-    {{today | date:"d"}}
-    <br>
-    {{today | date:"short"}} -->

@@ -1,5 +1,5 @@
-<div mat-dialog-title class="backgroud" align="center">
-    <h1 class="font">REGISTRAR NOVEDADES</h1>
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">Novedades de Profesionales</h1>
 </div>
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
@@ -26,7 +26,7 @@
     <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Ingreso</mat-label>
+                <mat-label>Fecha inicio</mat-label>
                 <input matInput [matDatepicker]="picker1">
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -35,7 +35,7 @@
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Egreso</mat-label>
+                <mat-label>Fecha fin</mat-label>
                 <input matInput [matDatepicker]="picker2">
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>

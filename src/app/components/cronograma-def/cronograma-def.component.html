@@ -1,0 +1,286 @@
+<div style="margin-left: 4%; margin-right: 4%;">
+<div class="row">
+    <div class="col-8 offset-1 justify-content-end">
+      <div class="titulos">.:: Cronograma <span class="titulos-second-def">definitivo</span></div>
+      <div class="row"> 
+        <div class="col offset-1">
+      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
+      <mat-menu #menug="matMenu">
+        <button mat-menu-item routerLink="/cronograma-p-def">Guardias Pasivas</button>
+      </mat-menu>
+    </div>
+      </div>  
+    </div>
+    <div class="col-3 justify-content-end">
+      <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
+        <mat-button-toggle value="tentativo" routerLink="/cronograma">Tentativo</mat-button-toggle>
+        <mat-button-toggle value="definitivo" disabled>Definitivo</mat-button-toggle>
+        <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
+      </mat-button-toggle-group>
+      <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Hospital San Roque (Centro)</button>
+        <button mat-menu-item>Materno Infantil (Centro)</button>
+      </mat-menu>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm">
+        <table class="table table-sm  table-borderless caption-top">
+              <thead class="table-light">
+                <tr>
+                  <th class="col-center" style="background-color: black; color: #fff;">CRONOGRAMA DEFINITIVO GUARDIAS ACTIVAS</th>
+              </tr>
+                <tr>
+                      <th class="col-center">Julio 2023</th>
+                  </tr>
+                  <tr>
+                      <th class="col-center">MINISTERIO DE SALUD</th>
+                  </tr>
+                  <tr>
+                      <th class="col-center">"DN. PABLO SORIA"</th>
+                  </tr>
+                  <tr>
+                      <th class="col-center">REGION: CENTRO</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>
+                          <table class="table table-hover table-bordered table-sm caption-top">
+                              <thead style="background-color: #bbb9b9;">
+                                <tr>
+                                  <th rowspan="3">N° ORDEN</th>
+                                  <th rowspan="3">TIPO DE GUARDIA</th>
+                                  <th rowspan="3">SERVICIO</th>
+                                  <th rowspan="3">APELLIDO Y NOMBRE</th>
+                                  <th rowspan="3">CUIL</th>
+                                  <th rowspan="3">VINCULO LABORAL</th>
+                                  <th rowspan="3">CATEGORIA</th>
+                                  <th rowspan="3">ESPECIALIDAD</th>
+                                  <th colspan="31">GUARDIAS ACTIVAS</th>
+                                </tr>
+                                <tr>
+                                  <td style="background-color: #caa8eb;">Sa</td>
+                                  <td style="background-color: #caa8eb;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #caa8eb;">Sa</td>
+                                  <td style="background-color: #caa8eb;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #caa8eb;">Sa</td>
+                                  <td style="background-color: #caa8eb;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #caa8eb;">Sa</td>
+                                  <td style="background-color: #caa8eb;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #caa8eb;">Sa</td>
+                                  <td style="background-color: #caa8eb;">Do</td>
+                                  <td>Lu</td>
+                                </tr>
+                                <tr>
+                                  <td style="background-color: #caa8eb;">1</td>
+                                  <td style="background-color: #caa8eb;">2</td>
+                                  <td>3</td>
+                                  <td>4</td>
+                                  <td>5</td>
+                                  <td>6</td>
+                                  <td>7</td>
+                                  <td style="background-color: #caa8eb;">8</td>
+                                  <td style="background-color: #df7545;">9</td>
+                                  <td>10</td>
+                                  <td>11</td>
+                                  <td>12</td>
+                                  <td>13</td>
+                                  <td>14</td>
+                                  <td style="background-color: #caa8eb;">15</td>
+                                  <td style="background-color: #caa8eb;">16</td>
+                                  <td>17</td>
+                                  <td>18</td>
+                                  <td>19</td>
+                                  <td>20</td>
+                                  <td>21</td>
+                                  <td style="background-color: #caa8eb;">22</td>
+                                  <td style="background-color: #caa8eb;">23</td>
+                                  <td>24</td>
+                                  <td>25</td>
+                                  <td>26</td>
+                                  <td>27</td>
+                                  <td>28</td>
+                                  <td style="background-color: #caa8eb;">29</td>
+                                  <td style="background-color: #caa8eb;">30</td>
+                                  <td>31</td>
+                                </tr>
+                                                  </thead>
+                              <tbody>
+                                <tr>
+                                  <td>1</td>
+                                  <td style="background-color: #527edb; font-weight: bold;">CARGO Y AGRUPACIÓN</td>
+                                  <td>clinica</td>
+                                  <td>HUERTAS CLEMENTE</td>
+                                  <td>20-45368456-5</td>
+                                  <td>Planta Permanente</td>
+                                  <td>A (J-2)</td>
+                                  <td>Clínico</td>
+                                  <td style="background-color: #caa8eb; color: #527edb; font-weight: bold;">8</td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="color: #527edb; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #df7545;"></td>
+                                  <td style="color: #527edb; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="color: #527edb; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td style="color: #527edb; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td>2</td>
+                                  <td style="background-color: #f3be1f; font-weight: bold;">EXTRAS</td>
+                                  <td>terapia intensiva</td>
+                                  <td>ARRAYA PEDRO ADEMIR</td>
+                                  <td>20-20675037-3</td>
+                                  <td>Interino (Hospital San Roque)</td>
+                                  <td>A (J-2)</td>
+                                  <td>Médico terapista</td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="color: #f3be1f; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #df7545;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="color: #f3be1f; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="color: #f3be1f; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td>3</td>
+                                  <td style="background-color: #709b54; font-weight: bold;">CONTRAFACTURA</td>
+                                  <td>laboratorio</td>
+                                  <td>MORALES RICARDO</td>
+                                  <td>20-20479956-3</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td>Bioquímico</td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #df7545;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="color: #709b54; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="color: #709b54; font-weight: bold;">8</td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb; color: #709b54; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="color: #709b54; font-weight: bold;">8</td>
+                                  <td></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td style="background-color: #caa8eb;"></td>
+                                  <td></td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                  <tr>
+                                      <td>OBSERV.:</td>
+                                  </tr>
+                              </tfoot>
+                          </table>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col offset-1">
+      <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
+      <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
+  </div>
+  <div class="col offset-6">
+    <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2">
+      <mat-icon>get_app</mat-icon>
+      Descargar
+    </button>
+    <mat-menu #menu2="matMenu">
+      <button mat-menu-item>PDF</button>
+      <button mat-menu-item>XLS</button>
+    </mat-menu>
+
+  </div>
+</div>

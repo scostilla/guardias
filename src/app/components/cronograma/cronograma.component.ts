@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupCalendarioComponent} from '../popup-calendario/popup-calendario.component';
+import { PopupCalendarioDisp2Component} from '../popup-calendario-disp2/popup-calendario-disp2.component';
+import { PopupCalendarioVacioComponent} from '../popup-calendario-vacio/popup-calendario-vacio.component';
+
 
 @Component({
   selector: 'app-cronograma',
@@ -37,20 +40,18 @@ export class CronogramaComponent {
       disableClose: true,
     })
   }
-
-  /* today:number = new Date(2023,9,0).getDate();
-  dia:number = new Date().getDay();
-  numberOfMonth: Array<number> = new Array<number>();
-  daysOfMonth: Array<string> = new Array<string>(); */
-/*   constructor(){
-    for(let i=1;i<= this.today; i++)
-    {
-      this.numberOfMonth.push(i)
-    } */
-/* 
-    for(let i=1;i<= this.today; i++)
-    {
-      this.numberOfMonth.push(i)
-    } */
+  openPopupCalendarioDisp2(){
+    this.dialogReg.open(PopupCalendarioDisp2Component, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+    openPopupCalendarioVacio(){
+      this.dialogReg.open(PopupCalendarioVacioComponent, {
+        width: '600px',
+        disableClose: true,
+      }) 
+  }
 }
+
 

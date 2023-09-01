@@ -10,6 +10,7 @@ import { SharedModule } from './components/shared/shared.module';
 //Components
 import { NgFor } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -60,11 +61,29 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
 //Date Import
 import localePy from '@angular/common/locales/es-PY';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
+import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
 import { CronogramaDefinitivoComponent } from './components/cronograma-definitivo/cronograma-definitivo.component';
+import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
+import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
+import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
+import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
+import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
+import { DigestoComponent } from './components/digesto/digesto.component';
+import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
+import { HistorialComponent } from './components/historial/historial.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
+import { NovedadesComponent } from './components/novedades/novedades.component';
+import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
+import { PopupCalendarioDisp2Component } from './components/popup-calendario-disp2/popup-calendario-disp2.component';
+import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
+import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
+import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
+import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
+import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { TablaComponent } from './components/tabla/tabla.component';
 
 
@@ -113,6 +132,24 @@ registerLocaleData(localePy,'es');
     CronogramaTentativoComponent,
     PopupCalendarioComponent,
     CronogramaComponent,
+    DigestoComponent,
+    HistorialComponent,
+    DisponibilidadComponent,
+    PopupCalendarioDispComponent,
+    CronogramaDefComponent,
+    PopupCalendarioVacioComponent,
+    CronogramaRegComponent,
+    PopupCalendarioDisp2Component,
+    NovedadesComponent,
+    PopupNovedadAgregarComponent,
+    CronogramaPComponent,
+    CronogramaPDefComponent,
+    CronogramaPHosComponent,
+    GuardiasViewPComponent,
+    ProfessionalDhComponent,
+    PopupDdjjCfComponent,
+    PopupDdjjCfEditComponent,
+    CronogramaPDefTotComponent,
 
   ],
 
@@ -139,6 +176,7 @@ registerLocaleData(localePy,'es');
     NgFor,
     MatButtonToggleModule,
     DatePipe,
+    MatBadgeModule,
   ],
   providers: [
     ProfessionalDataServiceService,
