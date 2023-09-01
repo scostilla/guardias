@@ -26,6 +26,7 @@ import { CronogramaDefComponent } from './components/cronograma-def/cronograma-d
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
 import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
+import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
@@ -67,6 +68,7 @@ const routes: Routes = [
  {path: 'cronograma-reg', component:CronogramaRegComponent},
  {path: 'cronograma-p', component:CronogramaPComponent},
  {path: 'cronograma-p-def', component:CronogramaPDefComponent},
+ {path: 'cronograma-p-def-tot', component:CronogramaPDefTotComponent},
  {path: 'cronograma-p-hos', component:CronogramaPHosComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},

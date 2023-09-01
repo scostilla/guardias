@@ -273,7 +273,7 @@
         <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
     </div>
     <div class="col offset-6">
-      <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2">
+      <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
         <mat-icon>get_app</mat-icon>
         Descargar
       </button>
@@ -281,6 +281,9 @@
         <button mat-menu-item>PDF</button>
         <button mat-menu-item>XLS</button>
       </mat-menu>
-  
+        <button mat-fab extended color="warn" routerLink="/cronograma-p-def-tot">
+        <mat-icon>assignment_turned_in</mat-icon>
+        Pase a DPH
+      </button>
     </div>
   </div>

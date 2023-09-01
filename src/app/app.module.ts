@@ -82,6 +82,7 @@ import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-vi
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
+import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
 
 
 registerLocaleData(localePy,'es');
@@ -144,6 +145,7 @@ registerLocaleData(localePy,'es');
     ProfessionalDhComponent,
     PopupDdjjCfComponent,
     PopupDdjjCfEditComponent,
+    CronogramaPDefTotComponent,
     
   ],
 

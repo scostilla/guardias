@@ -9,7 +9,7 @@ export class PopupDdjjCfComponent {
   alert:any;
   
   constructor() { 
-     this.alert=79990;
+     this.alert='';
  } 
  esDiferente():boolean {
          
