@@ -1,0 +1,27 @@
+[
+  {
+   "id_tipo_guardia": 1,
+   "nombre": "cf",
+   "descripcion": "guardia contra factura"
+  },
+  {
+   "id_tipo_guardia": 2,
+   "nombre": "cargo",
+   "descripcion": "guardia del cargo"
+  },
+  {
+   "id_tipo_guardia": 3,
+   "nombre": "extra",
+   "descripcion": "guardia extra"
+  },
+  {
+   "id_tipo_guardia": 4,
+   "nombre": "agrupacion",
+   "descripcion": "guardia de agrupacion"
+  },
+  {
+   "id_tipo_guardia": 5,
+   "nombre": "pasiva",
+   "descripcion": "guardia pasiva"
+  }
+ ]

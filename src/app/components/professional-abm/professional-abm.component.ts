@@ -22,35 +22,12 @@ export class ProfessionalAbmComponent {
   selectedCarga: string = '40';
   professionalForm: FormGroup;
   options: any[] | undefined;
+  specialties: any[] | undefined;
+  cargos: any[] | undefined;
+  guardias: any[] | undefined;
+  profesionList: any[] | undefined;
   person: any;
   profesionales?: Profesional[];
-
-  specialties: Specialty[] = [
-    { value: 'ANESTESISTA', viewValue: 'ANESTESISTA' },
-    { value: 'CARDIOLOGIA', viewValue: 'CARDIOLOGIA' },
-    { value: 'CIRUGIA', viewValue: 'CIRUGIA' },
-    { value: 'CIRUGIA INFANTIL', viewValue: 'CIRUGIA INFANTIL' },
-    { value: 'CIRUGIA MATERNA', viewValue: 'CIRUGIA MATERNA' },
-    { value: 'CLINICA', viewValue: 'CLINICA' },
-    { value: 'ECOGRAFIA', viewValue: 'ECOGRAFIA' },
-    { value: 'GINECÓLOGIA', viewValue: 'GINECÓLOGIA' },
-    { value: 'HEMOTERAPIA', viewValue: 'HEMOTERAPIA' },
-    { value: 'INFECTOLOGIA', viewValue: 'INFECTOLOGIA' },
-    { value: 'INTERNACION PEDIATRICA', viewValue: 'INTERNACION PEDIATRICA' },
-    { value: 'MEDICINA GENERAL', viewValue: 'MEDICINA GENERAL' },
-    { value: 'NEONATOLOGIA', viewValue: 'NEONATOLOGIA' },
-    { value: 'NEUROCIRUGIA', viewValue: 'NEUROCIRUGIA' },
-    { value: 'OBSTETRICIA', viewValue: 'OBSTETRICIA' },
-    { value: 'PEDIATRIA', viewValue: 'PEDIATRIA' },
-    { value: 'TERAPIA INTENSIVA', viewValue: 'TERAPIA INTENSIVA' },
-    {
-      value: 'TERAPIA INTENSIVA INFANTIL',
-      viewValue: 'TERAPIA INTENSIVA INFANTIL',
-    },
-    { value: 'TOCOGINECOLOGIA', viewValue: 'TOCOGINECOLOGIA' },
-    { value: 'TRAUMATOLOGIA', viewValue: 'TRAUMATOLOGIA' },
-    { value: 'UROLOGIA', viewValue: 'UROLOGIA' },
-  ];
 
   constructor(
     private http: HttpClient,
@@ -79,6 +56,10 @@ export class ProfessionalAbmComponent {
       adicional: [''],
       udo: [''],
       hospital: ['', Validators.required],
+      tipoGuardia: [''],
+      mp: [''],
+      cargo: [''],
+      profesionList: [''],
     });
 
     if (this.data.id !== -1) {
@@ -101,6 +82,30 @@ export class ProfessionalAbmComponent {
       .subscribe((data) => {
         this.options = data;
       });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/especialidades.json')
+      .subscribe((data) => {
+        this.specialties = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/cargo.json')
+      .subscribe((data) => {
+        this.cargos = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/tipoGuardia.json')
+      .subscribe((data) => {
+        this.guardias = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/profesion.json')
+      .subscribe((data) => {
+        this.profesionList = data;
+      });
   }
 
   patchFormValues() {
@@ -117,8 +122,8 @@ export class ProfessionalAbmComponent {
       adicional: this.person.adicional,
       udo: this.person.udo,
       hospital: this.person.hospital,
+      cargo: this.person.idCargo,
     });
-    console.log(this.professionalForm.value);
   }
 
   addEditProfessional() {

@@ -1,0 +1,42 @@
+[
+  {
+    "id_profesion": 1,
+    "descripcion": "MEDICO",
+    "asistencial": 1
+  },
+  {
+    "id_profesion": 2,
+    "descripcion": "ODONTOLOGO",
+    "asistencial": 1
+  },
+  {
+    "id_profesion": 3,
+    "descripcion": "BIOQUIMICO",
+    "asistencial": 1
+  },
+  {
+    "id_profesion": 4,
+    "descripcion": "PSICOLOGO",
+    "asistencial": 1
+  },
+  {
+    "id_profesion": 5,
+    "descripcion": "NO ASISTENCIAL",
+    "asistencial": 1
+  },
+  {
+    "id_profesion": 6,
+    "descripcion": "ASISTENCIAL",
+    "asistencial": 0
+  },
+  {
+    "id_profesion": 7,
+    "descripcion": "VETERINARIO",
+    "asistencial": 1
+  },
+  {
+    "id_profesion": 8,
+    "descripcion": "ADMINISTRATIVO",
+    "asistencial": 1
+  }
+]

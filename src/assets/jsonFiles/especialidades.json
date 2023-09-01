@@ -1,0 +1,107 @@
+[
+  {
+   "idEspecialidad": 1,
+   "descripcion": "ANESTESISTA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 2,
+   "descripcion": "CARDIOLOGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 3,
+   "descripcion": "CIRUGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 4,
+   "descripcion": "CIRUGIA INFANTIL",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 5,
+   "descripcion": "CIRUGIA MATERNA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 6,
+   "descripcion": "CLINICA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 7,
+   "descripcion": "ECOGRAFIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 8,
+   "descripcion": "GINECOLOGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 9,
+   "descripcion": "HEMOTERAPIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 10,
+   "descripcion": "INFECTOLOGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 11,
+   "descripcion": "INTERNACION PEDIATRICA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 12,
+   "descripcion": "MEDICINA GENERAL",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 13,
+   "descripcion": "NEONATOLOGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 14,
+   "descripcion": "NEUROCIRUGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 15,
+   "descripcion": "OBSTETRICIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 16,
+   "descripcion": "PEDIATRIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 17,
+   "descripcion": "TERAPIA INTENSIVA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 18,
+   "descripcion": "TERAPIA INTENSIVA INFANTIL",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 19,
+   "descripcion": "TOCOGINECOLOGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 20,
+   "descripcion": "TRAUMATOLOGIA",
+   "idProfesion": 1
+  },
+  {
+   "idEspecialidad": 21,
+   "descripcion": "UROLOGIA",
+   "idProfesion": 1
+  }
+ ]

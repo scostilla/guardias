@@ -95,26 +95,61 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Profesión</mat-label>
-          <mat-select formControlName="profesion" [(ngModel)]="selectedProfesion">
-            <mat-option value="medico">MEDICO</mat-option>
-            <mat-option value="bioquimico">BIOQUÍMICO</mat-option>
-            <mat-option value="odontologo">ODONTÓLOGO</mat-option>
+          <mat-select formControlName="profesion">
+            <mat-option *ngFor="let option of profesionList" [value]="option.id">
+              {{ option.descripcion }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field>
           <mat-label>Especialidad</mat-label>
-          <mat-select formControlName="especialidad" [disabled]="selectedProfesion !== 'MEDICO'">
-            <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
-              {{ specialty.viewValue }}
+          <mat-select formControlName="especialidad">
+            <mat-option *ngFor="let specialty of specialties" [value]="specialty.descripcion">
+              {{ specialty.descripcion }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
     </div>
 
+
+
     <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>MP</mat-label>
+          <input matInput placeholder="Matricula Profesional" autocomplete="off" formControlName="mp" />
+        </mat-form-field>
+        <div class="error">
+          <span *ngIf="
+              professionalForm.get('mp')?.hasError('required') &&
+              professionalForm.get('mp')?.touched
+            ">
+            <h5>El dni es un campo requerido</h5>
+          </span>
+          <span *ngIf="
+          professionalForm.get('mp')?.hasError('pattern') &&
+          professionalForm.get('mp')?.touched
+          ">
+            <h5>La mtricula debe contener solo números</h5>
+          </span>
+        </div>
+      </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>CARGO</mat-label>
+          <mat-select formControlName="cargo">
+            <mat-option *ngFor="let option of cargos" [value]="option.descripcion">
+              {{ option.descripcion }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row"  >
       <div class="col">
         <mat-form-field>
           <mat-label>Sit. Revista</mat-label>
@@ -153,7 +188,8 @@
         <mat-form-field>
           <mat-label>Adicional</mat-label>
           <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"
-            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'" [required]="selectedRevista !== 'independiente'">
+            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'"
+            [required]="selectedRevista !== 'independiente'">
             <mat-option value="j1">J-1</mat-option>
             <mat-option value="j2">J-2</mat-option>
             <mat-option value="no">Sin Adicional</mat-option>
@@ -163,7 +199,8 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Categoria</mat-label>
-          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"  [required]="selectedRevista !== 'independiente'">
+          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"
+            [required]="selectedRevista !== 'independiente'">
             <mat-option value="a">A</mat-option>
             <mat-option value="b">B</mat-option>
             <mat-option value="c">C</mat-option>
@@ -181,6 +218,21 @@
         </div>
       </div>
     </div>
+
+
+    <div class="row">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Tipo de Guardia</mat-label>
+          <mat-select formControlName="tipoGuardia">
+            <mat-option *ngFor="let option of guardias" [value]="option.descripcion">
+              {{ option.descripcion }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col">
         <mat-form-field>
@@ -225,7 +277,8 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button type="button" class="btnCancel" mat-button (click)="cancel()">Cancelar</button>
-    <button class="btnAdd" [disabled]="!isFormDirty() || professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
+    <button class="btnAdd" [disabled]="!isFormDirty() || professionalForm.invalid" type="submit" mat-button
+      cdkFocusInitial>
       Agregar
     </button>
   </mat-dialog-actions>

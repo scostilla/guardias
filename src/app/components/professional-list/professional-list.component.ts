@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Observable, map } from 'rxjs';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 import Persona from 'src/server/models/Persona';
@@ -141,12 +142,44 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.email = '';
       this.persona.sexo = '';
       this.persona.telefono = '';
-      this.persona.idUdo = this.profesional.idUdo;
-      this.persona.idHospital = this.profesional.idHospital;
+
+
+      if(this.profesional.hospital){
+        this.buscarId(this.profesional.hospital, '../assets/jsonFiles/hospital.json').subscribe(idEncontrado => {
+          this.persona.idHospital = idEncontrado;
+        });
+      }
+
+      if(this.profesional.udo){
+        this.buscarId(this.profesional.udo, '../assets/jsonFiles/hospital.json').subscribe(idEncontrado => {
+          this.persona.idUdo = idEncontrado;
+        });
+      }
+
+      if(this.profesional.profesion){
+        this.buscarId(this.profesional.profesion, '../assets/jsonFiles/profesion.json').subscribe(idEncontrado => {
+          this.persona.idUdo = idEncontrado;
+        });
+      }
+
+        this.http
+        .get<any[]>('../assets/jsonFiles/cargo.json')
+        .pipe(
+          map(data => data.find(item => item.id === this.profesional?.idCargo))
+        )
+        .subscribe(elementoEncontrado => {
+          if (elementoEncontrado) {
+            this.persona.idCargo = elementoEncontrado.id;
+          } else {
+            this.persona.idCargo = -1;
+          }
+        });
+
       this.persona.estado = 1;
-      this.persona.idCargo = this.profesional.idCargo;
-      this.persona.idProfesion = this.profesional.idProfesion;
+      this.persona.idLegajo = 20;
+
     }
+    console.log(this.persona);
     this.apiServiceService.savePersona(this.persona).subscribe(
       (resp) => {
         console.log(this.persona);
@@ -183,5 +216,14 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           this.dialog.closeAll();
         }
       });
+  }
+
+  buscarId(valor: string, json: string): Observable<number> {
+    return this.http.get<any[]>(json).pipe(
+      map(data => {
+        const elementoEncontrado = data.find(item => item.descripcion === valor);
+        return elementoEncontrado ? elementoEncontrado.id : -1;
+      })
+    );
   }
 }

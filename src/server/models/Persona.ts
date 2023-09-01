@@ -10,7 +10,9 @@ export default class Persona {
   telefono?: string;
   idUdo?: number;
   idHospital?: number;
+  idLegajo?: number;
   estado?: number;
   idCargo?: number;
   idProfesion?: number;
+
 }
