@@ -143,43 +143,70 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.sexo = '';
       this.persona.telefono = '';
 
+      //this.persona.idHospital=-1;
+      //this.persona.idUdo = -2;
+      this.persona.idCargo = -3;
+      this.persona.estado = 1;
+      this.persona.idLegajo = -4;
 
-      if(this.profesional.hospital){
-        this.buscarId(this.profesional.hospital, '../assets/jsonFiles/hospital.json').subscribe(idEncontrado => {
+      // if(this.profesional.hospital){
+      //   this.buscarId(this.profesional.hospital, '../assets/jsonFiles/hospitales.json').subscribe(idEncontrado => {
+      //     if(idEncontrado){
+      //     this.persona.idHospital = idEncontrado;
+      //     }else{
+      //       this.persona.idHospital=-1;
+      //     }
+      //   });
+      //   console.log("id hospital"+this.persona.idHospital);
+      // }
+
+      if (this.profesional.hospital) {
+        this.buscarId(
+          this.profesional.hospital,
+          '../assets/jsonFiles/hospitales.json'
+        ).subscribe((idEncontrado) => {
           this.persona.idHospital = idEncontrado;
+          console.log('idHospital: ' + this.persona.idHospital);
         });
       }
 
-      if(this.profesional.udo){
-        this.buscarId(this.profesional.udo, '../assets/jsonFiles/hospital.json').subscribe(idEncontrado => {
+      if (this.profesional.udo) {
+        this.buscarId(
+          this.profesional.udo,
+          '../assets/jsonFiles/hospitales.json'
+        ).subscribe((idEncontrado) => {
           this.persona.idUdo = idEncontrado;
+          console.log('udo: ' + this.persona.idUdo);
         });
       }
 
-      if(this.profesional.profesion){
-        this.buscarId(this.profesional.profesion, '../assets/jsonFiles/profesion.json').subscribe(idEncontrado => {
-          this.persona.idUdo = idEncontrado;
+      if (this.profesional.profesion) {
+        this.buscarId(
+          this.profesional.profesion,
+          '../assets/jsonFiles/profesion.json'
+        ).subscribe((idEncontrado) => {
+          this.persona.idProfesion = idEncontrado;
+          console.log('profesion: ' + this.persona.idProfesion);
         });
       }
 
-        this.http
+      this.http
         .get<any[]>('../assets/jsonFiles/cargo.json')
         .pipe(
-          map(data => data.find(item => item.id === this.profesional?.idCargo))
+          map((data) =>
+            data.find((item) => item.id === this.profesional?.idCargo)
+          )
         )
-        .subscribe(elementoEncontrado => {
+        .subscribe((elementoEncontrado) => {
           if (elementoEncontrado) {
             this.persona.idCargo = elementoEncontrado.id;
           } else {
             this.persona.idCargo = -1;
           }
+          console.log(this.persona);
         });
-
-      this.persona.estado = 1;
-      this.persona.idLegajo = 20;
-
     }
-    console.log(this.persona);
+
     this.apiServiceService.savePersona(this.persona).subscribe(
       (resp) => {
         console.log(this.persona);
@@ -188,8 +215,6 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
         console.log(error);
       }
     );
-
-    //this.http.post('http://localhost:8080/api/V1/personas/', this.persona);
   }
 
   //removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA
@@ -218,10 +243,12 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       });
   }
 
-  buscarId(valor: string, json: string): Observable<number> {
-    return this.http.get<any[]>(json).pipe(
-      map(data => {
-        const elementoEncontrado = data.find(item => item.descripcion === valor);
+  buscarId(valor: string, jsonUrl: string): Observable<number> {
+    return this.http.get<any[]>(jsonUrl).pipe(
+      map((data) => {
+        const elementoEncontrado = data.find(
+          (item) => item.descripcion === valor
+        );
         return elementoEncontrado ? elementoEncontrado.id : -1;
       })
     );

@@ -96,7 +96,7 @@
         <mat-form-field>
           <mat-label>Profesión</mat-label>
           <mat-select formControlName="profesion">
-            <mat-option *ngFor="let option of profesionList" [value]="option.id">
+            <mat-option *ngFor="let option of profesionList" [value]="option.descripcion">
               {{ option.descripcion }}
             </mat-option>
           </mat-select>

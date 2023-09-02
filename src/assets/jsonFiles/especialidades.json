@@ -1,106 +1,106 @@
 [
   {
-   "idEspecialidad": 1,
+   "id": 1,
    "descripcion": "ANESTESISTA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 2,
+   "id": 2,
    "descripcion": "CARDIOLOGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 3,
+   "id": 3,
    "descripcion": "CIRUGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 4,
+   "id": 4,
    "descripcion": "CIRUGIA INFANTIL",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 5,
+   "id": 5,
    "descripcion": "CIRUGIA MATERNA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 6,
+   "id": 6,
    "descripcion": "CLINICA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 7,
+   "id": 7,
    "descripcion": "ECOGRAFIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 8,
+   "id": 8,
    "descripcion": "GINECOLOGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 9,
+   "id": 9,
    "descripcion": "HEMOTERAPIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 10,
+   "id": 10,
    "descripcion": "INFECTOLOGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 11,
+   "id": 11,
    "descripcion": "INTERNACION PEDIATRICA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 12,
+   "id": 12,
    "descripcion": "MEDICINA GENERAL",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 13,
+   "id": 13,
    "descripcion": "NEONATOLOGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 14,
+   "id": 14,
    "descripcion": "NEUROCIRUGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 15,
+   "id": 15,
    "descripcion": "OBSTETRICIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 16,
+   "id": 16,
    "descripcion": "PEDIATRIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 17,
+   "id": 17,
    "descripcion": "TERAPIA INTENSIVA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 18,
+   "id": 18,
    "descripcion": "TERAPIA INTENSIVA INFANTIL",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 19,
+   "id": 19,
    "descripcion": "TOCOGINECOLOGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 20,
+   "id": 20,
    "descripcion": "TRAUMATOLOGIA",
    "idProfesion": 1
   },
   {
-   "idEspecialidad": 21,
+   "id": 21,
    "descripcion": "UROLOGIA",
    "idProfesion": 1
   }

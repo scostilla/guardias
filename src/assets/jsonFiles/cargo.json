@@ -1,26 +1,26 @@
 [
   {
-   "id_cargo": 1,
+   "id": 1,
    "descripcion": "jefe de area",
    "funcion": "jefe"
   },
   {
-   "id_cargo": 2,
+   "id": 2,
    "descripcion": "a cargo de area",
    "funcion": "cargo"
   },
   {
-   "id_cargo": 3,
+   "id": 3,
    "descripcion": "personal administrativo",
    "funcion": "admin"
   },
   {
-   "id_cargo": 4,
+   "id": 4,
    "descripcion": "Jefe de Personal",
    "funcion": "jefePersonal"
   },
   {
-   "id_cargo": 5,
+   "id": 5,
    "descripcion": "afectado al area",
    "funcion": "afectado"
   }
