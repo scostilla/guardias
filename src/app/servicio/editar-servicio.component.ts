@@ -11,9 +11,9 @@ import { ServicioService } from '../services/Servicio/servicio.service';
 })
 export class EditarServicioComponent implements OnInit{
 
-
+  //servicio: Servicio = null;
   servicio: Servicio = new Servicio("");
-  servicioAux: any;
+  //servicioAux: any;
 
   constructor(
     private servicioService: ServicioService,
