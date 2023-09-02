@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, map } from 'rxjs';
+import { Observable, forkJoin, map, of } from 'rxjs';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 import Persona from 'src/server/models/Persona';
@@ -133,6 +133,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
 
   public savePersona() {
     this.persona = {};
+
     if (this.profesional) {
       this.persona.nombre = this.profesional.nombre;
       this.persona.apellido = this.profesional.apellido;
@@ -142,79 +143,66 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.email = '';
       this.persona.sexo = '';
       this.persona.telefono = '';
-
-      //this.persona.idHospital=-1;
-      //this.persona.idUdo = -2;
       this.persona.idCargo = -3;
       this.persona.estado = 1;
       this.persona.idLegajo = -4;
 
-      // if(this.profesional.hospital){
-      //   this.buscarId(this.profesional.hospital, '../assets/jsonFiles/hospitales.json').subscribe(idEncontrado => {
-      //     if(idEncontrado){
-      //     this.persona.idHospital = idEncontrado;
-      //     }else{
-      //       this.persona.idHospital=-1;
-      //     }
-      //   });
-      //   console.log("id hospital"+this.persona.idHospital);
-      // }
+      const idHospitalObservable = this.profesional.hospital? this.buscarId(this.profesional.hospital,'../assets/jsonFiles/hospitales.json'): of(-1);
 
-      if (this.profesional.hospital) {
-        this.buscarId(
-          this.profesional.hospital,
-          '../assets/jsonFiles/hospitales.json'
-        ).subscribe((idEncontrado) => {
-          this.persona.idHospital = idEncontrado;
-          console.log('idHospital: ' + this.persona.idHospital);
-        });
-      }
-
-      if (this.profesional.udo) {
-        this.buscarId(
-          this.profesional.udo,
-          '../assets/jsonFiles/hospitales.json'
-        ).subscribe((idEncontrado) => {
-          this.persona.idUdo = idEncontrado;
-          console.log('udo: ' + this.persona.idUdo);
-        });
-      }
-
-      if (this.profesional.profesion) {
-        this.buscarId(
-          this.profesional.profesion,
-          '../assets/jsonFiles/profesion.json'
-        ).subscribe((idEncontrado) => {
-          this.persona.idProfesion = idEncontrado;
-          console.log('profesion: ' + this.persona.idProfesion);
-        });
-      }
-
-      this.http
-        .get<any[]>('../assets/jsonFiles/cargo.json')
-        .pipe(
-          map((data) =>
-            data.find((item) => item.id === this.profesional?.idCargo)
+      const idUdoObservable = this.profesional.udo
+        ? this.buscarId(
+            this.profesional.udo,
+            '../assets/jsonFiles/hospitales.json'
           )
-        )
-        .subscribe((elementoEncontrado) => {
-          if (elementoEncontrado) {
-            this.persona.idCargo = elementoEncontrado.id;
-          } else {
-            this.persona.idCargo = -1;
-          }
-          console.log(this.persona);
-        });
-    }
+        : of(-1);
 
-    this.apiServiceService.savePersona(this.persona).subscribe(
-      (resp) => {
-        console.log(this.persona);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+      const idProfesionObservable = this.profesional.profesion
+        ? this.buscarId(
+            this.profesional.profesion,
+            '../assets/jsonFiles/profesion.json'
+          )
+        : of(-1);
+
+      forkJoin([
+        idHospitalObservable,
+        idUdoObservable,
+        idProfesionObservable,
+      ]).subscribe(
+        ([idHospital, idUdo, idProfesion]) => {
+          this.persona.idHospital = idHospital;
+          this.persona.idUdo = idUdo;
+          this.persona.idProfesion = idProfesion;
+
+          this.http
+            .get<any[]>('../assets/jsonFiles/cargo.json')
+            .pipe(
+              map((data) =>
+                data.find((item) => item.id === this.profesional?.idCargo)
+              )
+            )
+            .subscribe((elementoEncontrado) => {
+              if (elementoEncontrado) {
+                this.persona.idCargo = elementoEncontrado.id;
+              } else {
+                this.persona.idCargo = -1;
+              }
+              console.log(this.persona);
+
+              this.apiServiceService.savePersona(this.persona).subscribe(
+                (resp) => {
+                  console.log('Persona guardada:', resp);
+                },
+                (error) => {
+                  console.error('Error al guardar persona:', error);
+                }
+              );
+            });
+        },
+        (error) => {
+          console.error('Error al buscar IDs:', error);
+        }
+      );
+    }
   }
 
   //removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA
