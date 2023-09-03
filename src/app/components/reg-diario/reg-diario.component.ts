@@ -19,7 +19,8 @@ export class RegDiarioComponent {
   defaultSelected:string='';
   pasiva:string='';
   alert:string='';
-  guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
+  //aqui comentar linea de abajo
+ guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
   servicio:string[]=['Guardia central','Cardiología','Cirugia general','Cirugia infantil','Pediatria'];
   hospital:string[]= ['Dn. Pablo Soria','San Roque','Materno Infantil'];
   especialidad_ps:string[]=['Cirugía General','Cirugía Cardio Vascular o Vascular Periférica','Cirugía Reparadora','Nefrología','Oftalmología','Oncología','Hematología','Urología','Traumatología','UTI-UTIN','Neurocirugía'];
@@ -86,6 +87,16 @@ export class RegDiarioComponent {
   }
 
   cargarServicio(): void {
+    this.servicioService.lista().subscribe(
+      data => {
+        this.servicios = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  cargarTipoGuardia(): void {
     this.servicioService.lista().subscribe(
       data => {
         this.servicios = data;

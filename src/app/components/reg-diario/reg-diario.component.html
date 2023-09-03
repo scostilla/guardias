@@ -1,4 +1,4 @@
-<div mat-dialog-title class="backgroud">
+<!-- <div mat-dialog-title class="backgroud">
     <h1 class="font">Nuevo Registro</h1>
 </div>
 
@@ -22,21 +22,21 @@
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-outline-primary" routerLink="/nuevo">Nuevo</button>
+  <button class="btn btn-outline-primary" routerLink="/nuevo">Nuevo</button> -->
 
 
-    <!-- esto es el original
+    esto es el original
 
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Tipo de servicio</mat-label>
         <mat-select [(ngModel)]="defaultSelected">
-            <mat-option [value]="servicio" *ngFor="let servicio of servicios" [value]="servicio">
+            <mat-option [value]="servicio.descripcion" *ngFor="let servicio of servicios" [value]="servicio.descripcion">
                 {{servicio.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <div [ngSwitch]="defaultSelected" appearance="outline">
-        <div *ngSwitchCase="'Guardia activa'">
+    <div [ngSwitch]="defaultSelected">
+        <div *ngSwitchCase="'Guardia activa'" >
             <mat-form-field appearance="outline">
                 <mat-label>Tipo de guardia</mat-label>
                 <mat-select>
@@ -162,4 +162,3 @@
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
 </div>
 
- -->
