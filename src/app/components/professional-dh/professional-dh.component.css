@@ -4,3 +4,7 @@
 .col-center {
   text-align: center;
 }
+th {
+  vertical-align: middle;
+  text-align: center;
+}

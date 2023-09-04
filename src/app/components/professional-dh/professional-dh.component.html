@@ -7,17 +7,20 @@
       </button>
     </div>
     <div class="col d-flex justify-content-end">
-      <button mat-fab extended color="basic" [matMenuTriggerFor]="menu">
-        <mat-icon>get_app</mat-icon>
-        Descargar
-      </button>
-      <mat-menu #menu="matMenu">
+      <button  mat-fab extended color="basic" [matMenuTriggerFor]="opcion"><mat-icon>drag_indicator</mat-icon> Opciones </button>
+      <mat-menu #opcion="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="descargas"><mat-icon>get_app</mat-icon> Descargar </button>
+        <button mat-menu-item><mat-icon>edit</mat-icon> Editar </button>
+        <button mat-menu-item><mat-icon>history</mat-icon> Historial </button>
+      </mat-menu>
+      
+      <mat-menu #descargas="matMenu">
         <button mat-menu-item>PDF</button>
         <button mat-menu-item>XLS</button>
       </mat-menu>
+      
     </div>
 </div>
-
   <div class="col-sm">
       <table class="table table-sm  table-borderless">
             <thead class="table-light col-center">
@@ -75,7 +78,7 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <td>
+                                <td rowspan="4">
                                     <tr>
                                       <td>Apellido y nombre: </td>
                                       <td style="font-weight: bold;">{{person.apellido}}, {{person.nombre}}</td>
@@ -110,6 +113,57 @@
                                       <td style="font-weight: bold;">J-2</td>
                                     </tr>
                                 </td>
+                                <td>CE (8 hs.)</td>
+                                <td>-</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>CE (6 hs.)</td>
+                                <td>CE (6 hs.)</td>
+                                <td  style="font-weight: bold;">40</td>
+                              </tr>
+                              <tr>
+                                <td>CE (8 hs.)</td>
+                                <td>-</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>CE (6 hs.)</td>
+                                <td>CE (6 hs.)</td>
+                                <td  style="font-weight: bold;">40</td>
+                              </tr>
+                              <tr>
+                                <td>CE (8 hs.)</td>
+                                <td>-</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (4 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>CE (2 hs.)</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>CE (6 hs.)</td>
+                                <td>CE (6 hs.)</td>
+                                <td  style="font-weight: bold;">40</td>
+                              </tr>
+                              <tr>
                                 <td>CE (8 hs.)</td>
                                 <td>-</td>
                                 <td>CE (4 hs.)</td>

@@ -33,6 +33,17 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   color: #ad643a;
 }
 
+.center-content{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.negrita {
+  font-weight: bold;
+}
 
 .mat-button-toggle {
     font-family: "Ubuntu", sans-serif;
@@ -144,14 +155,6 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 }
 
 /* --referencias-- */
-.center-content{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 20px;
-  }
-
 .ref {
     font-weight: bold;
     float: left;
@@ -219,6 +222,32 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   color: darkorchid;
 }
 
+.ref-calendar-dia--finde-tabla {
+  color: #9e9ea1;
+}
+
+.circulo--finde-tabla {
+  background: #9e9ea1;
+}
+
+/* --Tablas-- */
+
+.thead-gris {
+  background-color: #bbb9b9;
+}
+
+.thead-celeste {
+  background-color: #7bcce9;}
+
+.titulo-tabla {
+  background-color: #37BBED !important; color: #fff; border-radius: 10px 10px 0 0;
+}
+
+th {
+  vertical-align: middle;
+  text-align: center;
+}
+
 /* --Calendario-- */
 .titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
     letter-spacing: .1em;
@@ -268,7 +297,6 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     padding: 3px 12px;
     margin: 5px 10px;
     font-size: 0.6em;
-    background-color: #37BBED;
     border-radius: 7px;
     cursor: pointer;
   }
@@ -290,17 +318,17 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   }
   
   .calendar-dia__content {
-    background: #4e8792;
+    background: #9e9ea1;
     height: 200px;
     border-radius: 10px;
   }
   
   .ref-calendar-dia__content {
-    color: #4e8792;
+    color: #9e9ea1;
   }
 
   .circulo--dia {
-    background: #4e8792;
+    background: #9e9ea1;
   }
 
   
@@ -446,5 +474,10 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     .calendar-dia__content {
       padding-bottom: 100%;
     }
+
+    .table-scroll {
+      overflow-x:auto;
+    }
+
   }
   
