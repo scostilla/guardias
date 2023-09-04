@@ -15,4 +15,7 @@ export default class Persona {
   idCargo?: number;
   idProfesion?: number;
 
+  constructor() {}
+
+
 }

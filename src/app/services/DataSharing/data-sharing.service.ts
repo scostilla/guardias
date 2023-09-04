@@ -5,9 +5,18 @@ import { Injectable } from '@angular/core';
 })
 export class DataSharingService {
   private formData: any;
+  private sendFormData: boolean = false;
   private id: number = -1;
 
   constructor() {}
+
+  setSendFormData(value: boolean) {
+    this.sendFormData = value;
+  }
+
+  getSendFormData(){
+    return this.sendFormData;
+  }
 
   setProfessionalFormData(data: any) {
     this.formData = data;

@@ -122,7 +122,8 @@ export class ProfessionalAbmComponent {
       adicional: this.person.adicional,
       udo: this.person.udo,
       hospital: this.person.hospital,
-      cargo: this.person.idCargo,
+      idCargo: this.person.idCargo,
+      cargo: this.person.cargo,
     });
   }
 
@@ -135,8 +136,10 @@ export class ProfessionalAbmComponent {
       //enviar el formData a professional-list
       this.dataSharingService.setProfessionalFormData(formData);
       this.dataSharingService.setProfessionalId(this.data.id);
+      this.dataSharingService.setSendFormData(true);
     } else {
       console.log('professional form not valid');
+      this.dataSharingService.setSendFormData(false);
       this.markFormGroupTouched(this.professionalForm);
     }
     this.dialogRef.close();
@@ -157,6 +160,7 @@ export class ProfessionalAbmComponent {
   }
 
   cancel() {
+    this.dataSharingService.setSendFormData(false);
     this.dialogRef.close();
   }
 }

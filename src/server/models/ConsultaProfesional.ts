@@ -18,6 +18,7 @@ export default class ConsultaProfesional {
   udo?: string;
   hospital?: string;
   profesion?: string;
+  cargo?: string;
   matricula?: string;
 
   especialidad?: string;
@@ -26,4 +27,7 @@ export default class ConsultaProfesional {
   categoria?: string;
   tipoGuardia?: string;
   cargaHoraria?: string;
+
+  constructor() {}
+
 }

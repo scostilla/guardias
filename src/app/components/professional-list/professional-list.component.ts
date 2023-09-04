@@ -78,16 +78,28 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           especialidad: profesional.especialidad || '',
           sitRevista: profesional.sitRevista || '',
           cargaHoraria: profesional.cargaHoraria || '',
+          cargo: profesional.cargo || '',
           adicional: profesional.adicional || '',
           categoria: profesional.categoria || '',
           udo: profesional.udo || '',
           hospital: profesional.hospital || '',
           idHospital: profesional.idHospital || 0,
+          idCargo: profesional.idCargo || 0,
+          idDistribucionHoraria: profesional.idDistribucionHoraria || 0,
+          idEspecialidad: profesional.idEspecialidad || 0,
+          idLegajo: profesional.idLegajo || 0,
+          idPersona: profesional.idPersona || 0,
+          idProfesion: profesional.idProfesion || 0,
+          idProfesional: profesional.idProfesional || 0,
+          idTipoGuardia: profesional.idTipoGuardia || 0,
+          idUdo: profesional.idUdo || 0,
+          matricula: profesional.matricula || '',
+          tipoGuardia: profesional.tipoGuardia || '',
         };
       });
 
       this.dataSource.data = userDataArray;
-      console.log(this.profesionales);
+      console.log(this.dataSource.data);
     });
   }
 
@@ -113,6 +125,9 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      this.profesional = new ConsultaProfesional();
+      this.persona = new Persona();
       this.profesional = this.dataSharingService.getProfessionalFormData();
       console.log(this.profesional);
       if (this.profesionales) {
@@ -121,12 +136,15 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
         );
         console.log('profesional encontrado: ');
         console.log(this.profesionalEncontrado);
+        console.log("submit: "+this.dataSharingService.getSendFormData());
       }
 
-      if (this.dataSharingService.getProfessionalId() === -1) {
-        this.savePersona();
-      } else {
-        //modificar profesional
+      if (this.dataSharingService.getSendFormData()) {
+        if (this.dataSharingService.getProfessionalId() == -1) {
+          this.savePersona();
+        } else {
+          //modificar profesional
+        }
       }
     });
   }
@@ -147,7 +165,12 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.estado = 1;
       this.persona.idLegajo = -4;
 
-      const idHospitalObservable = this.profesional.hospital? this.buscarId(this.profesional.hospital,'../assets/jsonFiles/hospitales.json'): of(-1);
+      const idHospitalObservable = this.profesional.hospital
+        ? this.buscarId(
+            this.profesional.hospital,
+            '../assets/jsonFiles/hospitales.json'
+          )
+        : of(-1);
 
       const idUdoObservable = this.profesional.udo
         ? this.buscarId(
@@ -163,40 +186,33 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           )
         : of(-1);
 
+      const idCargoObservable = this.profesional.cargo
+        ? this.buscarId(
+            this.profesional.cargo,
+            '../assets/jsonFiles/cargo.json'
+          )
+        : of(-1);
+
       forkJoin([
         idHospitalObservable,
         idUdoObservable,
         idProfesionObservable,
+        idCargoObservable,
       ]).subscribe(
-        ([idHospital, idUdo, idProfesion]) => {
+        ([idHospital, idUdo, idProfesion, idCargo]) => {
           this.persona.idHospital = idHospital;
           this.persona.idUdo = idUdo;
           this.persona.idProfesion = idProfesion;
+          this.persona.idCargo = idCargo;
 
-          this.http
-            .get<any[]>('../assets/jsonFiles/cargo.json')
-            .pipe(
-              map((data) =>
-                data.find((item) => item.id === this.profesional?.idCargo)
-              )
-            )
-            .subscribe((elementoEncontrado) => {
-              if (elementoEncontrado) {
-                this.persona.idCargo = elementoEncontrado.id;
-              } else {
-                this.persona.idCargo = -1;
-              }
-              console.log(this.persona);
-
-              this.apiServiceService.savePersona(this.persona).subscribe(
-                (resp) => {
-                  console.log('Persona guardada:', resp);
-                },
-                (error) => {
-                  console.error('Error al guardar persona:', error);
-                }
-              );
-            });
+          this.apiServiceService.savePersona(this.persona).subscribe(
+            (resp) => {
+              console.log('Persona guardada:', resp);
+            },
+            (error) => {
+              console.error('Error al guardar persona:', error);
+            }
+          );
         },
         (error) => {
           console.error('Error al buscar IDs:', error);
