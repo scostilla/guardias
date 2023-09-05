@@ -20,6 +20,10 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
+import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
+import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
@@ -61,6 +65,10 @@ const routes: Routes = [
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
+  {path:'ddjj-extra-tot',component:DdjjExtraTotComponent},
+  {path:'ddjj-contrafactura-tot',component:DdjjContrafacturaTotComponent},
+  {path:'ddjj-cargoyagrup-tot',component:DdjjCargoyagrupTotComponent},
+  {path:'ddjj-tentativo',component:DdjjTentativoComponent},
  /*  {path:'api', component:ApiComponent} */
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path: 'cronograma', component:CronogramaComponent},

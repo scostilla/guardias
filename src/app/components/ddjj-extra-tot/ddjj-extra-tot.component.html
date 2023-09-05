@@ -6,26 +6,20 @@
             Volver
           </button>
         </div>
-        <div class="col offset-9">
-          <button mat-fab extended color="primary" routerLink="/ddjj-tentativo">
-            <mat-icon>assignment</mat-icon>
-            DDJJ Tentativo
-          </button>        
-        </div>
     </div>
     <div class="row">
-        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA</span>
+        <div class="titulos"> DDJJ <span class="titulos-second">EXTRAS (Completo)</span>
       </div>
   
     <div class="row mt-3">
       <div class="col-sm">
-          <table class="table table-sm  table-borderless">
-                <thead class="col-center thead-celeste">
+          <table class="table table-sm table-borderless">
+                <thead  class="col-center thead-celeste">
                     <tr>
-                        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS CONTRA FACTURA</th>
+                        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS (Completo)</th>
                     </tr>
                     <tr>
-                        <th>Julio 2023</th>
+                        <th >Julio 2023</th>
                     </tr>
                     <tr>
                         <th>MINISTERIO DE SALUD</th>
@@ -43,9 +37,13 @@
                             <table class="table table-hover table-bordered table-sm caption-top">
                                 <thead class="thead-gris">
                                   <tr>
-                                    <th rowspan="2">N° ORDEN</th>
-                                    <th colspan="3">PROFESIONAL</th>
-                                    <th colspan="4">COMPROBANTE</th>
+                                    <th rowspan="3">N° ORDEN</th>
+                                    <th rowspan="3">SERVICIO</th>
+                                    <th rowspan="3">APELLIDO Y NOMBRE</th>
+                                    <th rowspan="3">CUIL</th>
+                                    <th rowspan="3">VINCULO LABORAL - UDO</th>
+                                    <th rowspan="3">CATEGORIA</th>
+                                    <th rowspan="3">NOVEDADES</th>
                                     <th colspan="2">DÍA DE GUARDIA</th>
                                     <th colspan="2">CANTIDAD DE HS. GUARDIA</th>
                                     <th colspan="2">MONTO POR GUARDIA</th>
@@ -55,13 +53,6 @@
                                     <th rowspan="2">TOTAL</th>
                                   </tr>
                                   <tr>
-                                    <th>APELLIDO Y NOMBRE</th>
-                                    <th>CUIL</th>
-                                    <th>ESPECIALIDAD</th>
-                                    <td>Contribuyente</td>
-                                    <td>Factura</td>
-                                    <td>Fecha de emisión</td>
-                                    <td></td>
                                     <td>L-V</td>
                                     <td>S-D-F</td>
                                     <td>L-V</td>
@@ -79,13 +70,12 @@
                                 <tbody>
                                   <tr>
                                     <td>1</td>
+                                    <td>clinica</td>
                                     <td>HUERTAS CLEMENTE</td>
                                     <td>20-45368456-5</td>
-                                    <td>GENERALISTA</td>
-                                    <td>Responsable Inscripto</td>
-                                    <td>B-2-56</td>
-                                    <td>4/4/2023</td>
-                                    <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;" (click)="openPopupCfedit()">edit</mat-icon></td>
+                                    <td>PTA. PTE.</td>
+                                    <td>E(J-1)</td>
+                                    <td>-</td>
                                     <td>27/7/2023</td>
                                     <td></td>
                                     <td>8</td>
@@ -99,28 +89,50 @@
                                     <td>$31.178,78</td>
                                     <td></td>
                                     <td style="background-color: #eee;">$31.178,78</td>
+                                  </tr>
                                   <tr>
                                     <td>2</td>
+                                    <td>cardiologia</td>
                                     <td>ARRAYA PEDRO ADEMIR</td>
                                     <td>20-20675037-3</td>
-                                    <td>GENERALISTA</td>
+                                    <td>PTA. PTE.</td>
+                                    <td>E(J-1)</td>
+                                    <td>-</td>
+                                    <td>27/7/2023</td>
                                     <td></td>
+                                    <td>8</td>
                                     <td></td>
+                                    <td>$12.696,98</td>
                                     <td></td>
-                                    <td><mat-icon color="primary" matTooltip="Agregar factura" style="cursor: pointer;" (click)="openPopupCf()">note_add</mat-icon></td>
-                                    <td>30/6/2023</td>
-                                    <td>2/7/2023</td>
                                     <td>24</td>
+                                    <td></td>
+                                    <td>$18.481,80</td>
+                                    <td></td>
+                                    <td>$31.178,78</td>
+                                    <td></td>
+                                    <td style="background-color: #eee;">$31.178,78</td>
+                                  </tr>
+                                  <tr>
+                                    <td>3</td>
+                                    <td>cirugia</td>
+                                    <td>MORALES RICARDO</td>
+                                    <td>20-20479956-3</td>
+                                    <td>PTA. PTE.</td>
+                                    <td>E(J-1)</td>
+                                    <td>-</td>
+                                    <td>27/7/2023</td>
+                                    <td></td>
+                                    <td>8</td>
+                                    <td></td>
+                                    <td>$12.696,98</td>
+                                    <td></td>
                                     <td>24</td>
-                                    <td>$38.090,94</td>
-                                    <td>$41.900,03</td>
                                     <td></td>
+                                    <td>$18.481,80</td>
                                     <td></td>
+                                    <td>$31.178,78</td>
                                     <td></td>
-                                    <td></td>
-                                    <td>$38.090,94</td>
-                                    <td>$41.900,03</td>
-                                    <td style="background-color: #eee;">$79.990,97</td>
+                                    <td style="background-color: #eee;">$31.178,78</td>
                                   </tr>
                                 </tbody>
                                 <tfoot>
@@ -148,10 +160,6 @@
     <button mat-menu-item>PDF</button>
     <button mat-menu-item>XLS</button>
   </mat-menu>
-    <button mat-fab extended color="warn" routerLink="/ddjj-contrafactura-tot">
-    <mat-icon>assignment_turned_in</mat-icon>
-    Pase a DPH
-  </button>
 </div>
 </div>
 </div>

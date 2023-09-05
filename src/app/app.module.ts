@@ -83,6 +83,10 @@ import { ProfessionalDhComponent } from './components/professional-dh/profession
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
+import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
+import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
+import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
+import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
 
 
 registerLocaleData(localePy,'es');
@@ -146,6 +150,10 @@ registerLocaleData(localePy,'es');
     PopupDdjjCfComponent,
     PopupDdjjCfEditComponent,
     CronogramaPDefTotComponent,
+    DdjjTentativoComponent,
+    DdjjCargoyagrupTotComponent,
+    DdjjExtraTotComponent,
+    DdjjContrafacturaTotComponent,
     
   ],
 
