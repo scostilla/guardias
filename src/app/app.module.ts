@@ -50,7 +50,7 @@ import {MatTableModule} from '@angular/material/table';
 import {NgFor} from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import {MatBadgeModule} from '@angular/material/badge';
-
+import {RouterModule} from '@angular/router';
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
@@ -80,6 +80,7 @@ import { CronogramaPDefComponent } from './components/cronograma-p-def/cronogram
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+
 
 //external
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -155,13 +156,14 @@ registerLocaleData(localePy,'es');
     NuevoServicioComponent,
     EditarServicioComponent,
     EliminarServicioComponent,
+    RegDiarioComponent,
+    
     
   ],
 
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    ProfessionalTableComponent,
     NgxMatTimepickerModule,
     HttpClientModule,
     AppRoutingModule,
@@ -184,6 +186,8 @@ registerLocaleData(localePy,'es');
     MatBadgeModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
+    ProfessionalTableComponent,
+    RouterModule,
   ],
   providers: [
     ProfessionalDataServiceService,

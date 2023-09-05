@@ -39,6 +39,8 @@ import { DetalleServicioComponent } from './servicio/detalle-servicio.component'
 import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
 import { EditarServicioComponent } from './servicio/editar-servicio.component';
 import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
+import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
+import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
 
 
 const routes: Routes = [
@@ -84,7 +86,8 @@ const routes: Routes = [
  {path:'nuevo',component:NuevoServicioComponent},
  {path:'editar/:id',component:EditarServicioComponent},
  {path:'eliminar/:id',component:EliminarServicioComponent},
- {path:'**',redirectTo:'',pathMatch:'full'}
+ {path:'**',redirectTo:'',pathMatch:'full'},
+ {path:'regDiario/:id',component:RegDiarioComponent}
 
 
  //si tecleamos una direccion erronea redirige a raiz

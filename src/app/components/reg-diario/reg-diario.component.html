@@ -25,22 +25,26 @@
   <button class="btn btn-outline-primary" routerLink="/nuevo">Nuevo</button> -->
 
 
-    esto es el original
-
+esto es el original
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">Nuevo Registro</h1>
+</div>
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Tipo de servicio</mat-label>
         <mat-select [(ngModel)]="defaultSelected">
-            <mat-option [value]="servicio.descripcion" *ngFor="let servicio of servicios" [value]="servicio.descripcion">
+            <mat-option [value]="servicio.descripcion" *ngFor="let servicio of servicios"
+                [value]="servicio.descripcion">
                 {{servicio.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
     <div [ngSwitch]="defaultSelected">
-        <div *ngSwitchCase="'Guardia activa'" >
+        <div *ngSwitchCase="'Guardia activa'">
             <mat-form-field appearance="outline">
                 <mat-label>Tipo de guardia</mat-label>
                 <mat-select>
-                    <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+                    <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias">
+                        {{tipoGuardias.descripcion}}</mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -60,40 +64,41 @@
                 <mat-select [(ngModel)]="pasiva">
                     <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp}}</mat-option>
                 </mat-select>
-            </mat-form-field>    
+            </mat-form-field>
         </div>
         <div [ngSwitch]="pasiva" appearance="outline">
             <div *ngSwitchCase="'Dn. Pablo Soria'">
                 <mat-form-field appearance="outline">
-                 <mat-label>Especialidad</mat-label>
-                 <mat-select [(ngModel)]="alert">
-                    <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
-                </mat-select>
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div *ngSwitchCase="'San Roque'">
                 <mat-form-field appearance="outline">
-                 <mat-label>Especialidad</mat-label>
-                 <mat-select [(ngModel)]="alert">
-                    <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
-                </mat-select>
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div *ngSwitchCase="'Materno Infantil'">
                 <mat-form-field appearance="outline">
-                 <mat-label>Especialidad</mat-label>
-                 <mat-select [(ngModel)]="alert">
-                    <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
-                </mat-select>
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
-                <span [ngSwitch]="alert">
-                    <span *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
+            <span [ngSwitch]="alert">
+                <span
+                    *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
                     <div class="alert alert-danger" role="alert">
-                    Especialidad seleccionada sin requerimiento.
+                        Especialidad seleccionada sin requerimiento.
                     </div>
-                    </span>
                 </span>
+            </span>
         </div>
     </div>
     <div mat-dialog-subtitle>
@@ -157,8 +162,6 @@
     </div>
 </div>
 <div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
 </div>
-

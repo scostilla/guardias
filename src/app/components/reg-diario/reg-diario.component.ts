@@ -5,7 +5,13 @@ import { ToastrService } from 'ngx-toastr';
 import { Servicio } from 'src/app/models/servicio';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
 import { ServicioService } from 'src/app/services/Servicio/servicio.service';
+
 import { PopupComponent } from '../popup/popup.component';
+import { TipoGuardia } from 'src/app/models/tipoGuardia';
+import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
+import { Profesional } from 'src/app/models/profesional';
 
 @Component({
   selector: 'app-reg-diario',
@@ -13,6 +19,7 @@ import { PopupComponent } from '../popup/popup.component';
   styleUrls: ['./reg-diario.component.css']
 })
 export class RegDiarioComponent {
+  profesional: Profesional = new Profesional("","",0);
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
   //tipoServicio:string[]= ['Guardia activa','Guardia pasiva','Consultorio','Pase'];
@@ -20,7 +27,7 @@ export class RegDiarioComponent {
   pasiva:string='';
   alert:string='';
   //aqui comentar linea de abajo
- guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
+  //guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
   servicio:string[]=['Guardia central','Cardiología','Cirugia general','Cirugia infantil','Pediatria'];
   hospital:string[]= ['Dn. Pablo Soria','San Roque','Materno Infantil'];
   especialidad_ps:string[]=['Cirugía General','Cirugía Cardio Vascular o Vascular Periférica','Cirugía Reparadora','Nefrología','Oftalmología','Oncología','Hematología','Urología','Traumatología','UTI-UTIN','Neurocirugía'];
@@ -35,6 +42,8 @@ export class RegDiarioComponent {
   selectedProfesion: string | undefined;
 
   servicios: Servicio[] = [];
+  tipoGuardias: TipoGuardia[] = [];
+
 
   constructor(
     private _fb:FormBuilder,
@@ -42,12 +51,16 @@ export class RegDiarioComponent {
     private professionalDataService: ProfessionalDataServiceService,
     public dialogRef: MatDialogRef<RegDiarioComponent>,
     private servicioService: ServicioService,
+    private tipoGuardiaService: tipoGuardiaService,
+    private activatedRoute: ActivatedRoute,
+    private profesionalService: ProfesionalService,
+    private router: Router,
     private toastr: ToastrService
     )
       {
         this.registroForm = this._fb.group(
           {
-      hospital:'',     
+      hospital:'',
       servicio:'',
       tipo_guardia:'',
       nombre:'',
@@ -72,7 +85,10 @@ export class RegDiarioComponent {
   }
 
   ngOnInit() {
+    
     this.cargarServicio();
+    this.cargarTipoGuardia();
+
     this.professionalDataService.dataUpdated.subscribe(() => {
       this.selectedId = this.professionalDataService.selectedId;
       this.selectedCuil = this.professionalDataService.selectedCuil;
@@ -97,9 +113,9 @@ export class RegDiarioComponent {
     );
   }
   cargarTipoGuardia(): void {
-    this.servicioService.lista().subscribe(
+    this.tipoGuardiaService.lista().subscribe(
       data => {
-        this.servicios = data;
+        this.tipoGuardias = data;
       },
       err => {
         console.log(err);
@@ -120,6 +136,21 @@ export class RegDiarioComponent {
         this.toastr.error(err.error.mensaje, 'Fail', {
           timeOut: 3000,  positionClass: 'toast-top-center',
         });
+      }
+    );
+  }
+
+  cargarProfesional(){
+    const id = this.activatedRoute.snapshot.params['id'];
+    this.profesionalService.detail(id).subscribe(
+      data => {
+        this.profesional = data;
+      },
+      err => {
+        this.toastr.error(err.error.mensaje, 'Fail', {
+          timeOut: 3000,  positionClass: 'toast-top-center',
+        });
+        this.router.navigate(['./']);
       }
     );
   }
