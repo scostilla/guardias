@@ -1,0 +1,17 @@
+[
+  {
+   "id": 2,
+   "descripcion": "24 Horas",
+   "cantidad": "24"
+  },
+  {
+   "id": 3,
+   "descripcion": "30 Horas",
+   "cantidad": "30"
+  },
+  {
+   "id": 4,
+   "descripcion": "40 Horas",
+   "cantidad": "40"
+  }
+ ]

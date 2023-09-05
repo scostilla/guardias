@@ -24,6 +24,7 @@ export class ProfessionalAbmComponent {
   options: any[] | undefined;
   specialties: any[] | undefined;
   cargos: any[] | undefined;
+  cargaHoraria: any[] | undefined;
   guardias: any[] | undefined;
   profesionList: any[] | undefined;
   person: any;
@@ -99,6 +100,12 @@ export class ProfessionalAbmComponent {
       .get<any[]>('../assets/jsonFiles/tipoGuardia.json')
       .subscribe((data) => {
         this.guardias = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/cargaHoraria.json')
+      .subscribe((data) => {
+        this.cargaHoraria = data;
       });
 
       this.http

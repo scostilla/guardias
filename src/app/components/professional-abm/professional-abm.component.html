@@ -166,11 +166,10 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
-          <mat-select formControlName="cargaHoraria" [required]="selectedRevista !== 'INDEPENDIENTE'"
-            [disabled]="selectedRevista == 'INDEPENDIENTE'" [(ngModel)]="selectedCarga">
-            <mat-option [value]="24">24</mat-option>
-            <mat-option [value]="30">30</mat-option>
-            <mat-option [value]="40">40</mat-option>
+          <mat-select formControlName="hospital">
+            <mat-option *ngFor="let option of cargaHoraria" [value]="option.descripcion">
+              {{ option.descripcion }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">
