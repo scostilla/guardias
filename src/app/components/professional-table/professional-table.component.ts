@@ -8,6 +8,10 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { NavigationExtras, Route, Router, RouterModule } from '@angular/router';
+import { DialogServiceService } from 'src/app/services/DialogService/dialog-service.service';
+import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-professional-table',
@@ -20,9 +24,12 @@ import { MatInputModule } from '@angular/material/input';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    RouterModule,
   ],
 })
 export class ProfessionalTableComponent implements OnInit {
+
+  
   dataSource: MatTableDataSource<Profesional>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -33,8 +40,14 @@ export class ProfessionalTableComponent implements OnInit {
 
   
   constructor(
+    private router: Router,
+    
     private http: HttpClient,
-    private profesionalService: ProfesionalService
+    private profesionalService: ProfesionalService,
+    private professionalDataService: ProfessionalDataServiceService,
+    private dialogService: DialogServiceService,
+
+    public dialogRef: MatDialogRef<ProfessionalTableComponent>,
     
     ) {
       this.dataSource = new MatTableDataSource<Profesional>([]);
@@ -55,6 +68,12 @@ export class ProfessionalTableComponent implements OnInit {
     
   }
 
+  seleccionar(){
+    //this.router.navigateByUrl('regDiario/');
+    
+    this.cancel();
+    
+  }
   
 
   cargarProfesionales(): void {
@@ -76,15 +95,19 @@ export class ProfessionalTableComponent implements OnInit {
     }
   }
 
+  
   onRowDoubleClick(row: any) {
-    /* console.log('professional table id:', row.id);
-    this.professionalDataService.selectedId = row.id;
-    this.professionalDataService.selectedCuil = row.cuil;
-    this.professionalDataService.selectedNombre = row.nombre;
-    this.professionalDataService.selectedApellido = row.apellido;
-    this.professionalDataService.selectedProfesion = row.profesion;
+    console.log('professional table id:', row.idPersona);
+    const id: NavigationExtras = {state: {example: row.idPersona}};
+    console.log('professional table id:', id);
+    this.router.navigate(['regDiario'],id);
+    //console.log('professional table id:', id);
     this.professionalDataService.dataUpdated.emit();
-    this.dialogService.closeDialog(); */
+    this.dialogService.closeDialog();
+  }
+
+  cancel() {
+    this.dialogRef.close();
   }
 
  /*  filtrar(event: Event){

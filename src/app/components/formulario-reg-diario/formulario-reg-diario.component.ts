@@ -11,14 +11,15 @@ import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.servic
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
 import { Profesional } from 'src/app/models/profesional';
+import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
+
 
 @Component({
-  selector: 'app-reg-diario',
-  templateUrl: './reg-diario.component.html',
-  styleUrls: ['./reg-diario.component.css']
+  selector: 'app-formulario-reg-diario',
+  templateUrl: './formulario-reg-diario.component.html',
+  styleUrls: ['./formulario-reg-diario.component.css']
 })
-
-export class RegDiarioComponent {
+export class FormularioRegDiarioComponent {
 
   public routerLinkVariable = "/regDiario/:id";
   profesional: Profesional = new Profesional("", "", 0);
@@ -193,19 +194,5 @@ export class RegDiarioComponent {
     this.dialogRef.close();
   }
 
+
 }
-
-/* no abre el popup a pesar de tener el mismo codigo que el metodo openDialog
-  openPopup(componentParameter:any){
-    const dialogRef = this.dialog.open(PopupComponent,{
-      width:'1000px',
-    });
-    
-    dialogRef.componentInstance.componentParameter = componentParameter;
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('popup closed');
-    })
-  } 
-  
-*/
-

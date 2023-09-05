@@ -41,6 +41,7 @@ import { EditarServicioComponent } from './servicio/editar-servicio.component';
 import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
+import { FormularioRegDiarioComponent } from './components/formulario-reg-diario/formulario-reg-diario.component';
 
 
 const routes: Routes = [
@@ -86,12 +87,19 @@ const routes: Routes = [
  {path:'nuevo',component:NuevoServicioComponent},
  {path:'editar/:id',component:EditarServicioComponent},
  {path:'eliminar/:id',component:EliminarServicioComponent},
+ {path:'regDiario/:id',component:RegDiarioComponent},
  {path:'**',redirectTo:'',pathMatch:'full'},
- {path:'regDiario/:id',component:RegDiarioComponent}
+ /* {path:'regDiario/:id',component:RegDiarioComponent},
+  */{path:'**',redirectTo:'',pathMatch:'full'},
+  //registro
+{path:'forRegDiario/:id',component:FormularioRegDiarioComponent},
+ 
 
 
  //si tecleamos una direccion erronea redirige a raiz
 ];
+
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

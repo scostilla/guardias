@@ -32,10 +32,6 @@
       <td mat-cell *matCellDef="let profesional" class="cell"> {{profesional.idPersona}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="idPerson">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> I </th>
-      <td mat-cell *matCellDef="let profesional" class="cell"> aaaaaa </td>
-    </ng-container>
   
     <ng-container matColumnDef="nombre">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
@@ -50,24 +46,29 @@
     <ng-container matColumnDef="dni">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> DNI </th>
       <td mat-cell *matCellDef="let profesional" class="cell"> {{profesional.dni}} </td>
+      <!-- <td mat-cell *matCellDef="let profesional">
+        <button  mat-button routerLinkActive="mat-raised-button"  [routerLink]="['regDiario',profesional.idPersona]">Editar</button>
+      </td> -->
+    </ng-container>
+    
+    <ng-container matColumnDef=" ">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+      <td mat-cell *matCellDef="let profesional" class="cell">
+        <button mat-raised-button class="btnupdate" color="primary" type="button" routerLink="regDiario/{{profesional.idPersona}}" (click)="seleccionar();" >Seleccionar</button>
+      </td>
     </ng-container>
 
-    <ng-container matColumnDef="idPers">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> I </th>
-      <td mat-cell *matCellDef="let profesional" class="cell"> aaaaaa </td>
-    </ng-container>
-
-    <ng-container matColumnDef="seleccionar">
+    <!-- <ng-container matColumnDef="seleccionar">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Seleccionar </th>
       
       <td mat-cell *matCellDef="let profesional">
-        <button  class="btn btn-outline-warning" routerLink="">Editar</button>
+        <button  class="btn btn-outline-warning" routerLink="{{profesional.idPersona}}">Editar</button>
       </td>
         
-    </ng-container>
+    </ng-container> -->
 
-    <tr mat-header-row *matHeaderRowDef="['idPersona','nombre','apellido','dni']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['idPersona','nombre','apellido','dni']" (dblclick)="onRowDoubleClick(row)"></tr>
+    <tr mat-header-row *matHeaderRowDef="['idPersona','nombre','apellido','dni',' ']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['idPersona','nombre','apellido','dni',' ']" (dblclick)="onRowDoubleClick(row)"></tr>
 
     
     <tr class="mat-row" *matNoDataRow>

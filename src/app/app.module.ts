@@ -90,6 +90,7 @@ import { DetalleServicioComponent } from './servicio/detalle-servicio.component'
 import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
 import { EditarServicioComponent } from './servicio/editar-servicio.component';
 import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
+import { FormularioRegDiarioComponent } from './components/formulario-reg-diario/formulario-reg-diario.component';
 
 
 
@@ -157,6 +158,7 @@ registerLocaleData(localePy,'es');
     EditarServicioComponent,
     EliminarServicioComponent,
     RegDiarioComponent,
+    FormularioRegDiarioComponent,
     
     
   ],
@@ -168,6 +170,7 @@ registerLocaleData(localePy,'es');
     HttpClientModule,
     AppRoutingModule,
     CommonModule,
+    RouterModule,
     SharedModule,
     MatFormFieldModule,
     MatInputModule,
@@ -187,7 +190,6 @@ registerLocaleData(localePy,'es');
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     ProfessionalTableComponent,
-    RouterModule,
   ],
   providers: [
     ProfessionalDataServiceService,
