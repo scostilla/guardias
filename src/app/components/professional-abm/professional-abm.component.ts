@@ -17,16 +17,19 @@ interface Specialty {
   styleUrls: ['./professional-abm.component.css'],
 })
 export class ProfessionalAbmComponent {
-  selectedProfesion: string = 'Medico';
-  selectedRevista: string = 'contratado';
-  selectedCarga: string = '40';
+  selectedProfesion: string = 'MEDICO';
+  selectedRevista: string = 'CONTRATADO';
+  selectedCargaHoraria: string = '40 horas';
   professionalForm: FormGroup;
   options: any[] | undefined;
   specialties: any[] | undefined;
   cargos: any[] | undefined;
-  cargaHoraria: any[] | undefined;
+  cargaHorariaList: any[] | undefined;
   guardias: any[] | undefined;
   profesionList: any[] | undefined;
+  sitRevista: any[] | undefined;
+  adicionales: any[] | undefined;
+  categorias: any[] | undefined;
   person: any;
   profesionales?: Profesional[];
 
@@ -51,14 +54,14 @@ export class ProfessionalAbmComponent {
       cuil: ['', [Validators.pattern('[0-9-]*'), Validators.required]],
       profesion: ['', Validators.required],
       especialidad: [''],
-      revista: ['', Validators.required],
+      sitRevista: ['', Validators.required],
       categoria: [''],
       cargaHoraria: [''],
       adicional: [''],
       udo: [''],
       hospital: ['', Validators.required],
       tipoGuardia: [''],
-      mp: [''],
+      matricula: [''],
       cargo: [''],
       profesionList: [''],
     });
@@ -105,13 +108,31 @@ export class ProfessionalAbmComponent {
       this.http
       .get<any[]>('../assets/jsonFiles/cargaHoraria.json')
       .subscribe((data) => {
-        this.cargaHoraria = data;
+        this.cargaHorariaList = data;
       });
 
       this.http
       .get<any[]>('../assets/jsonFiles/profesion.json')
       .subscribe((data) => {
         this.profesionList = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/sitRevista.json')
+      .subscribe((data) => {
+        this.sitRevista = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/adicional.json')
+      .subscribe((data) => {
+        this.adicionales = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/categoria.json')
+      .subscribe((data) => {
+        this.categorias = data;
       });
   }
 
@@ -123,7 +144,7 @@ export class ProfessionalAbmComponent {
       cuil: this.person.cuil,
       profesion: this.person.profesion,
       especialidad: this.person.especialidad,
-      revista: this.person.sitRevista,
+      sitRevista: this.person.sitRevista,
       categoria: this.person.categoria,
       cargaHoraria: this.person.cargaHoraria,
       adicional: this.person.adicional,
@@ -131,6 +152,8 @@ export class ProfessionalAbmComponent {
       hospital: this.person.hospital,
       idCargo: this.person.idCargo,
       cargo: this.person.cargo,
+      matricula: this.person.matricula,
+      tipoGuardia: this.person.tipoGuardia,
     });
   }
 

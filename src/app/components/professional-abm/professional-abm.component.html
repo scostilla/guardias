@@ -120,7 +120,7 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>MP</mat-label>
-          <input matInput placeholder="Matricula Profesional" autocomplete="off" formControlName="mp" />
+          <input matInput placeholder="Matricula Profesional" autocomplete="off" formControlName="matricula" />
         </mat-form-field>
         <div class="error">
           <span *ngIf="
@@ -153,12 +153,10 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Sit. Revista</mat-label>
-          <mat-select formControlName="revista" [(ngModel)]="selectedRevista">
-            <mat-option value="interino">INTERINO</mat-option>
-            <mat-option value="planta">PLANTA PERMANENTE</mat-option>
-            <mat-option value="contratado">CONTRATADO</mat-option>
-            <mat-option value="afectado">AFECTADO</mat-option>
-            <mat-option value="independiente">INDEPENDIENTE</mat-option>
+          <mat-select formControlName="sitRevista" [(ngModel)]="selectedRevista">
+            <mat-option *ngFor="let option of sitRevista" [value]="option.descripcion">
+              {{ option.descripcion }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -166,8 +164,8 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
-          <mat-select formControlName="hospital">
-            <mat-option *ngFor="let option of cargaHoraria" [value]="option.descripcion">
+          <mat-select formControlName="cargaHoraria"  [(ngModel)]="selectedCargaHoraria">
+            <mat-option *ngFor="let option of cargaHorariaList" [value]="option.descripcion">
               {{ option.descripcion }}
             </mat-option>
           </mat-select>
@@ -187,12 +185,12 @@
       <div class="col">
         <mat-form-field>
           <mat-label>Adicional</mat-label>
-          <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"
-            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'"
+          <mat-select formControlName="adicional" [disabled]="selectedCargaHoraria !=='40 horas'"
+            [disabled]="selectedRevista == 'independiente'" [required]="selectedCargaHoraria == '40 horas'"
             [required]="selectedRevista !== 'independiente'">
-            <mat-option value="j1">J-1</mat-option>
-            <mat-option value="j2">J-2</mat-option>
-            <mat-option value="no">Sin Adicional</mat-option>
+            <mat-option *ngFor="let option of adicionales" [value]="option.descripcion">
+              {{ option.descripcion }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -201,11 +199,9 @@
           <mat-label>Categoria</mat-label>
           <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"
             [required]="selectedRevista !== 'independiente'">
-            <mat-option value="a">A</mat-option>
-            <mat-option value="b">B</mat-option>
-            <mat-option value="c">C</mat-option>
-            <mat-option value="d">D</mat-option>
-            <mat-option value="e">E</mat-option>
+            <mat-option *ngFor="let option of categorias" [value]="option.descripcion">
+              {{ option.descripcion }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
         <div class="error">

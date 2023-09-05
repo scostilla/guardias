@@ -1,17 +1,17 @@
 [
   {
    "id": 2,
-   "descripcion": "24 Horas",
+   "descripcion": "24 horas",
    "cantidad": "24"
   },
   {
    "id": 3,
-   "descripcion": "30 Horas",
+   "descripcion": "30 horas",
    "cantidad": "30"
   },
   {
    "id": 4,
-   "descripcion": "40 Horas",
+   "descripcion": "40 horas",
    "cantidad": "40"
   }
  ]
