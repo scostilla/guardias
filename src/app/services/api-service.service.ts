@@ -2,7 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
+import Legajo from 'src/server/models/Legajo';
 import Persona from 'src/server/models/Persona';
+import Profesional from 'src/server/models/Profesional';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,9 @@ import Persona from 'src/server/models/Persona';
 export class ApiServiceService {
   //URL del back
   private baseUrl = 'http://localhost:8080/api/V1/listaProfesionales';
+  private profesionalUrl = 'http://localhost:8080/api/V1/profesionales/';
   private personaUrl = 'http://localhost:8080/api/V1/personas/';
+  private legajoUrl = 'http://localhost:8080/api/V1/legajos/';
 
   constructor(private http: HttpClient) {}
 
@@ -46,6 +50,32 @@ export class ApiServiceService {
     );
   }
 
+  public saveProfesional(profesional: Profesional): Observable<number> {
+    console.log('profesional: ' + profesional.idTipoGuardia);
+    return this.http.post(this.profesionalUrl, profesional).pipe(
+      map((response: any) => {
+        return response as number;
+      }),
+      catchError((error) => {
+        console.error('Error al guardar el profesional:', error);
+        throw error;
+      })
+    );
+  }
+
+  public saveLegajo(legajo: Legajo): Observable<number> {
+    console.log('legajo: ' + legajo.idLegajo);
+    return this.http.post(this.legajoUrl, legajo).pipe(
+      map((response: any) => {
+        return response as number;
+      }),
+      catchError((error) => {
+        console.error('Error al guardar el legajo:', error);
+        throw error;
+      })
+    );
+  }
+
   put(url: string, data: any): Observable<any> {
     return this.http.put(this.baseUrl + url, data);
   }
@@ -54,7 +84,7 @@ export class ApiServiceService {
     return this.http.delete(this.baseUrl + url);
   }
 
-  getLegajoId(
+  getRevistaId(
     tipoRevista: string,
     categoria: string,
     adicional: string,
@@ -66,6 +96,6 @@ export class ApiServiceService {
       .set('adicional', adicional)
       .set('cargaHoraria', cargaHoraria);
 
-    return this.http.get<number>(`${this.personaUrl}legajo`, { params });
+    return this.http.get<number>(`${this.personaUrl}revista`, { params });
   }
 }

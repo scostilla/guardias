@@ -7,7 +7,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
+import Legajo from 'src/server/models/Legajo';
 import Persona from 'src/server/models/Persona';
+import Profesional from 'src/server/models/Profesional';
 import { DataSharingService } from '../../services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ProfessionalAbmComponent } from '../professional-abm/professional-abm.component';
@@ -30,9 +32,14 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   profesionales?: ConsultaProfesional[] | undefined;
   profesional?: ConsultaProfesional;
   profesionalEncontrado?: ConsultaProfesional;
+  newProfesional!: Profesional;
   persona!: Persona;
-  idPersonal?: number;
+  newLegajo!: Legajo;
+  idPersona?: number;
   idLegajo?: number;
+  idRevista?: number;
+  fechaInicio?: Date;
+  fechaResolucion?: Date;
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -59,6 +66,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     paginatorLabels.nextPageLabel = 'Siguiente';
     paginatorLabels.previousPageLabel = 'Anterior';
     this.dataSource = new MatTableDataSource<UserData>([]);
+    this.newProfesional = new Profesional();
   }
 
   ngOnInit() {
@@ -165,7 +173,6 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.telefono = '';
       this.persona.idCargo = -3;
       this.persona.estado = 1;
-      //this.persona.idLegajo = -4;
 
       const idHospitalObservable = this.profesional.hospital
         ? this.buscarId(
@@ -195,61 +202,147 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           )
         : of(-1);
 
+      forkJoin([
+        idHospitalObservable,
+        idUdoObservable,
+        idProfesionObservable,
+        idCargoObservable,
+      ])
+        .pipe(
+          switchMap(([idHospital, idUdo, idProfesion, idCargo]) => {
+            this.persona.idHospital = idHospital;
+            this.persona.idUdo = idUdo;
+            this.persona.idProfesion = idProfesion;
+            this.persona.idCargo = idCargo;
+
+            if (
+              this.profesional?.sitRevista &&
+              this.profesional?.categoria &&
+              this.profesional?.adicional &&
+              this.profesional?.cargaHoraria
+            ) {
+              return this.apiServiceService.getRevistaId(
+                this.profesional.sitRevista,
+                this.profesional.categoria,
+                this.profesional.adicional,
+                this.profesional.cargaHoraria
+              );
+            } else {
+              return of(null);
+            }
+          })
+        )
+        .subscribe(
+          (revistaId) => {
+            if (revistaId !== null) {
+              this.idRevista = revistaId;
+              console.log('Revista ID:', this.idRevista);
+            }
+
+            this.apiServiceService.savePersona(this.persona).subscribe(
+              (idPersona) => {
+                if (idPersona !== -1) {
+                  this.idPersona = idPersona;
+                  console.log('ID de persona creada:', this.idPersona);
+                  this.saveLegajo();
+                  this.saveProfesional();
+                } else {
+                  console.error('Error al crear persona');
+                }
+              },
+              (error) => {
+                console.error('Error al guardar persona:', error);
+              }
+            );
+          },
+          (error) => {
+            console.error('Error al buscar IDs:', error);
+          }
+        );
+    }
+  }
+
+  public saveProfesional() {
+    if (this.profesional) {
+      this.newProfesional.idPersona = this.idPersona;
+      this.newProfesional.matricula = this.profesional.matricula;
+
+      const idEspecialidadObservable = this.profesional.especialidad
+        ? this.buscarId(
+            this.profesional.especialidad,
+            '../assets/jsonFiles/especialidades.json'
+          )
+        : of(-1);
+
+      const idCargaHorariaObservable = this.profesional.cargaHoraria
+        ? this.buscarId(
+            this.profesional.cargaHoraria,
+            '../assets/jsonFiles/cargaHoraria.json'
+          )
+        : of(-1);
+
+      const idTipoGuardiaObservable = this.profesional.tipoGuardia
+        ? this.buscarId(
+            this.profesional.tipoGuardia,
+            '../assets/jsonFiles/tipoGuardia.json'
+          )
+        : of(-1);
 
       forkJoin([
-  idHospitalObservable,
-  idUdoObservable,
-  idProfesionObservable,
-  idCargoObservable,
-]).pipe(
-  switchMap(([idHospital, idUdo, idProfesion, idCargo]) => {
-    this.persona.idHospital = idHospital;
-    this.persona.idUdo = idUdo;
-    this.persona.idProfesion = idProfesion;
-    this.persona.idCargo = idCargo;
+        idEspecialidadObservable,
+        idCargaHorariaObservable,
+        idTipoGuardiaObservable,
+      ])
+        .pipe(
+          switchMap(
+            ([idEspecialidad, idDistribucionHoraria, idTipoGuardia]) => {
+              this.newProfesional.idEspecialidad = idEspecialidad;
+              this.newProfesional.idDistribucionHoraria = idDistribucionHoraria;
+              this.newProfesional.idTipoGuardia = idTipoGuardia;
 
-    if (
-      this.profesional?.sitRevista &&
-      this.profesional?.categoria &&
-      this.profesional?.adicional &&
-      this.profesional?.cargaHoraria
-    ) {
-      return this.apiServiceService.getLegajoId(
-        this.profesional.sitRevista,
-        this.profesional.categoria,
-        this.profesional.adicional,
-        this.profesional.cargaHoraria
-      );
-    } else {
-      return of(null); // Si no se cumplen las condiciones, emite un valor nulo
-    }
-  })
-).subscribe(
-  (legajoId) => {
-    if (legajoId !== null) {
-      this.persona.idLegajo = legajoId;
-      console.log('Legajo ID:', this.persona.idLegajo);
-    }
+              return this.apiServiceService.saveProfesional(
+                this.newProfesional
+              );
+            }
+          )
+        )
+        .subscribe(
+          (idProfesional) => {
+            if (idProfesional !== -1) {
+              this.newProfesional.idProfesional = idProfesional;
+              console.log(
+                'ID del profesional creado:',
+                this.newProfesional.idProfesional
+              );
+            } else {
+              console.error('Error al crear el profesional');
+            }
+          },
+          (error) => {
+            console.error('Error al guardar el profesional:', error);
+          }
+        );
 
-    this.apiServiceService.savePersona(this.persona).subscribe(
-      (idPersonal) => {
-        if (idPersonal !== -1) {
-          this.idPersonal = idPersonal;
-          console.log('ID de persona creada:', this.idPersonal);
-        } else {
-          console.error('Error al crear persona');
-        }
+      console.log(this.newProfesional);
+    }
+  }
+
+  public saveLegajo() {
+    this.newLegajo.idPersona = this.idPersona;
+    this.newLegajo.idRevista = this.idRevista;
+    this.newLegajo.estado = true;
+    this.newLegajo.fechaInicio = new Date();
+    this.newLegajo.fechaResolucion = new Date();
+
+    this.apiServiceService.saveLegajo(this.newLegajo).subscribe(
+      (idLegajo: number) => {
+        this.idLegajo = idLegajo;
+        console.log('idLegajo guardado:', this.idLegajo);
       },
       (error) => {
-        console.error('Error al guardar persona:', error);
+        console.error('Error al guardar el legajo:', error);
       }
     );
-  },
-  (error) => {
-    console.error('Error al buscar IDs:', error);
-  }
-);
-    }
   }
 
   //removeProfessional POR AHORA SOLO ELIMINA EL ELEMENTO EN LA VISTA
@@ -287,19 +380,5 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
         return elementoEncontrado ? elementoEncontrado.id : -1;
       })
     );
-  }
-
-  buscarLegajo(
-    tipoRevista: string,
-    categoria: string,
-    adicional: string,
-    cargaHoraria: string
-  ): void {
-    this.apiServiceService
-      .getLegajoId(tipoRevista, categoria, adicional, cargaHoraria)
-      .subscribe((legajoId) => {
-        this.persona.idLegajo = legajoId;
-        console.log('Legajo ID:', this.idLegajo);
-      });
   }
 }

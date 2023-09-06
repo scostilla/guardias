@@ -19,7 +19,7 @@ interface Specialty {
 export class ProfessionalAbmComponent {
   selectedProfesion: string = 'MEDICO';
   selectedRevista: string = 'CONTRATADO';
-  selectedCargaHoraria: string = '40 horas';
+  selectedCargaHoraria: string = '30 horas';
   professionalForm: FormGroup;
   options: any[] | undefined;
   specialties: any[] | undefined;
