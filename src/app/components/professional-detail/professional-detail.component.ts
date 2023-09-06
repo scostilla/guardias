@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
@@ -15,9 +14,8 @@ export class ProfessionalDetailComponent implements OnInit {
   person: any;
   profesionales?: ConsultaProfesional[] | undefined;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient,
-    private apiServiceService: ApiServiceService,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number }) {}
+  constructor(private route: ActivatedRoute, private http: HttpClient, private apiServiceService: ApiServiceService) {}
+
 
     ngOnInit() {
       this.id = this.route.snapshot.paramMap.get('id');
