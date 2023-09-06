@@ -98,10 +98,11 @@ export class ProfessionalTableComponent implements OnInit {
   
   onRowDoubleClick(row: any) {
     console.log('professional table id1:', row.idPersona);
-    const id: NavigationExtras = {state: {example: row.idPersona}};
+    const id= row.idPersona;
+    //NavigationExtras = {state: {idPersona: row.idPersona}};
     console.log('professional table id2:', id);
-    this.router.navigate(['/']);
-    this.router.navigate(['/formRegDiario',id]);
+    //this.router.navigate(['/']);
+    this.router.navigate(['/formRegDiario'],{ state:{ idPersona:id } });
     //console.log('professional table id:', id);
     this.professionalDataService.dataUpdated.emit();
     this.dialogService.closeDialog();

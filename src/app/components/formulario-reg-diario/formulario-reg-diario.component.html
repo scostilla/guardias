@@ -33,7 +33,7 @@
         <mat-label>Tipo de servicio</mat-label>
         <mat-select [(ngModel)]="defaultSelected">
             <mat-option [value]="servicio.descripcion" *ngFor="let servicio of servicios"
-                [value]="servicio.descripcion">
+                [value]="servicio.descripcion" >
                 {{servicio.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
