@@ -53,8 +53,10 @@
                 </mat-select>
             </mat-form-field>
             <div mat-dialog-actions class="action">
-                <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
+                <button mat-raised-button routerLink="/tablaProfesional" class="btnupdate"
                     color="primary" type="button">Buscar Profesional</button>
+               <!--  <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
+                    color="primary" type="button">Buscar Profesional</button> -->
             </div>
         </div>
         <div *ngSwitchCase="'Guardia pasiva'">

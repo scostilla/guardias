@@ -94,11 +94,11 @@ export class FormularioRegDiarioComponent implements OnInit{
   }
 
   ngOnInit() {
-
+    
     this.cargarServicio();
     this.cargarTipoGuardia();
-
-    /* const id= this.activatedRoute.snapshot.params['idPersona'];
+    if(null != this.activatedRoute.snapshot.params['id']){
+    const id= this.activatedRoute.snapshot.params['id'];
     console.log("################## id3 : " + id);
     this.profesionalService.detail(id).subscribe(
       data => {
@@ -112,14 +112,17 @@ export class FormularioRegDiarioComponent implements OnInit{
         this.router.navigate(['formRegDiario']);
         console.log('error fabi, no guardo el objeto');
       }
-    ) */
+    )
+    }else{
+      console.log("vacio");
+    }
 
     
-    const navigation = history.state.data;
+    /* const navigation = history.state.data;
     console.log('######### id4:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
     this.profesional = objeto.example as Profesional;
-    console.info(this.profesional.idPersona);
+    console.info(this.profesional.idPersona); */
 
 
     /* PRUEBA 2 */
@@ -128,14 +131,14 @@ export class FormularioRegDiarioComponent implements OnInit{
     this.profesional = objeto.example as Profesional;
     console.info(this.profesional.idPersona); */
 
-    this.professionalDataService.dataUpdated.subscribe(() =>
+    /* this.professionalDataService.dataUpdated.subscribe(() =>
     {
       this.selectedId = this.professionalDataService.selectedId;
       this.selectedCuil = this.professionalDataService.selectedCuil;
       this.selectedNombre = this.professionalDataService.selectedNombre;
       this.selectedApellido = this.professionalDataService.selectedApellido;
       this.selectedProfesion = this.professionalDataService.selectedProfesion;
-    });
+    }); */
 
   }
 

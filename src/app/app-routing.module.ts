@@ -42,6 +42,7 @@ import { EliminarServicioComponent } from './servicio/eliminar-servicio.componen
 import { SearchProfessionalComponent } from './components/search-professional/search-professional.component';
 import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
 import { FormularioRegDiarioComponent } from './components/formulario-reg-diario/formulario-reg-diario.component';
+import { TablaProfesionalComponent } from './components/tabla-profesional/tabla-profesional.component';
 
 
 const routes: Routes = [
@@ -90,7 +91,8 @@ const routes: Routes = [
  //{path:'regDiario/:id',component:RegDiarioComponent},
  {path:'formRegDiario',component:FormularioRegDiarioComponent},
  {path:'formRegDiario/:id',component:FormularioRegDiarioComponent},
- {path:'**',redirectTo:'',pathMatch:'full'},
+ {path:'tablaProfesional',component:TablaProfesionalComponent},
+ 
    //registro
 
  /* {path:'regDiario/:id',component:RegDiarioComponent},

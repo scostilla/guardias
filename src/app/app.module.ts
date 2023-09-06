@@ -90,6 +90,7 @@ import { DetalleServicioComponent } from './servicio/detalle-servicio.component'
 import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
 import { EditarServicioComponent } from './servicio/editar-servicio.component';
 import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
+import { TablaProfesionalComponent } from './components/tabla-profesional/tabla-profesional.component';
 
 
 
@@ -159,6 +160,7 @@ registerLocaleData(localePy,'es');
     EliminarServicioComponent,
     RegDiarioComponent,
     FormularioRegDiarioComponent,
+    TablaProfesionalComponent,
     
     
   ],
