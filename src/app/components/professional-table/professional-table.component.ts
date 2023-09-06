@@ -69,7 +69,7 @@ export class ProfessionalTableComponent implements OnInit {
   }
 
   seleccionar(){
-    //this.router.navigateByUrl('regDiario/');
+    //this.router.navigateByUrl('formRegDiario/');
     
     this.cancel();
     
@@ -97,10 +97,11 @@ export class ProfessionalTableComponent implements OnInit {
 
   
   onRowDoubleClick(row: any) {
-    console.log('professional table id:', row.idPersona);
+    console.log('professional table id1:', row.idPersona);
     const id: NavigationExtras = {state: {example: row.idPersona}};
-    console.log('professional table id:', id);
-    this.router.navigate(['regDiario'],id);
+    console.log('professional table id2:', id);
+    this.router.navigate(['/']);
+    this.router.navigate(['/formRegDiario',id]);
     //console.log('professional table id:', id);
     this.professionalDataService.dataUpdated.emit();
     this.dialogService.closeDialog();

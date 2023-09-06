@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr';
-import { Servicio } from 'src/app/models/servicio';
-import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
-import { ServicioService } from 'src/app/services/Servicio/servicio.service';
-import { PopupComponent } from '../popup/popup.component';
-import { TipoGuardia } from 'src/app/models/tipoGuardia';
-import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
 import { Profesional } from 'src/app/models/profesional';
-import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
+import { Servicio } from 'src/app/models/servicio';
+import { TipoGuardia } from 'src/app/models/tipoGuardia';
+import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
+//import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
+import { ServicioService } from 'src/app/services/Servicio/servicio.service';
+import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.service';
+import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { PopupComponent } from '../popup/popup.component';
+
 
 
 @Component({
@@ -19,7 +20,7 @@ import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
   templateUrl: './formulario-reg-diario.component.html',
   styleUrls: ['./formulario-reg-diario.component.css']
 })
-export class FormularioRegDiarioComponent {
+export class FormularioRegDiarioComponent implements OnInit{
 
   public routerLinkVariable = "/regDiario/:id";
   profesional: Profesional = new Profesional("", "", 0);
@@ -52,7 +53,7 @@ export class FormularioRegDiarioComponent {
     private _fb: FormBuilder,
     private dialog: MatDialog,
     private professionalDataService: ProfessionalDataServiceService,
-    public dialogRef: MatDialogRef<RegDiarioComponent>,
+    
 
     
 
@@ -97,7 +98,8 @@ export class FormularioRegDiarioComponent {
     this.cargarServicio();
     this.cargarTipoGuardia();
 
-   /*  const id= this.activatedRoute.snapshot.params['idPersona'];
+    /* const id= this.activatedRoute.snapshot.params['idPersona'];
+    console.log("################## id3 : " + id);
     this.profesionalService.detail(id).subscribe(
       data => {
         this.profesional = data;
@@ -107,14 +109,14 @@ export class FormularioRegDiarioComponent {
         this.toastr.error(err.error.mensaje, 'Fail',{
           timeOut:3000, positionClass: 'toast-top-center',
         });
-        this.router.navigate(['nuevo']);
+        this.router.navigate(['formRegDiario']);
         console.log('error fabi, no guardo el objeto');
       }
     ) */
 
     
     const navigation = history.state.data;
-    console.log('######### id:', navigation);
+    console.log('######### id4:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
     this.profesional = objeto.example as Profesional;
     console.info(this.profesional.idPersona);
@@ -190,9 +192,7 @@ export class FormularioRegDiarioComponent {
     );
   }
 
-  cancel() {
-    this.dialogRef.close();
-  }
+  
 
 
 }

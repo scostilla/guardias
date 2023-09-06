@@ -25,6 +25,7 @@ export class EditarServicioComponent implements OnInit{
 
   ngOnInit() {
     const id = this.activatedRoute.snapshot.params['id'];
+    console.log("##############" + id  );
     this.servicioService.detail(id).subscribe(
       data => {
         this.servicio = data;

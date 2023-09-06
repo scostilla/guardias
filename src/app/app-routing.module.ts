@@ -45,7 +45,7 @@ import { FormularioRegDiarioComponent } from './components/formulario-reg-diario
 
 
 const routes: Routes = [
-  { path: '', component: LoginComponent },
+  //{ path: '', component: LoginComponent },
   { path: 'professional-form', component: ProfessionalFormComponent },
   { path: 'daily-schedule', component: DailyScheduleComponent},
   {path:"home-page", component:HomePageComponent},
@@ -82,17 +82,20 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 
  //prueba CRUD
- //{path:'',component:ListaServicioComponent},
+ {path:'',component:ListaServicioComponent},
  {path:'detalle/:id',component:DetalleServicioComponent},
  {path:'nuevo',component:NuevoServicioComponent},
  {path:'editar/:id',component:EditarServicioComponent},
  {path:'eliminar/:id',component:EliminarServicioComponent},
- {path:'regDiario/:id',component:RegDiarioComponent},
+ //{path:'regDiario/:id',component:RegDiarioComponent},
+ {path:'formRegDiario',component:FormularioRegDiarioComponent},
+ {path:'formRegDiario/:id',component:FormularioRegDiarioComponent},
  {path:'**',redirectTo:'',pathMatch:'full'},
+   //registro
+
  /* {path:'regDiario/:id',component:RegDiarioComponent},
   */{path:'**',redirectTo:'',pathMatch:'full'},
-  //registro
-{path:'forRegDiario/:id',component:FormularioRegDiarioComponent},
+
  
 
 

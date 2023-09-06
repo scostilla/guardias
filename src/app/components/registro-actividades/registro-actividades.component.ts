@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
 import { NovedadesFormComponent } from '../novedades-form/novedades-form.component';
 import { DistHorariaComponent } from '../dist-horaria/dist-horaria.component';
+import { FormularioRegDiarioComponent } from '../formulario-reg-diario/formulario-reg-diario.component';
 
 @Component({
   selector: 'app-registro-actividades',
@@ -19,7 +20,7 @@ export class RegistroActividadesComponent {
     ) {}
 
   openRegistroDiario(){
-    this.dialogReg.open(RegDiarioComponent, {
+    this.dialogReg.open(FormularioRegDiarioComponent, {
       width: '600px',
       disableClose: true,
     })

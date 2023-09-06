@@ -80,7 +80,7 @@ import { CronogramaPDefComponent } from './components/cronograma-p-def/cronogram
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
-
+import { FormularioRegDiarioComponent } from './components/formulario-reg-diario/formulario-reg-diario.component';
 
 //external
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -90,7 +90,7 @@ import { DetalleServicioComponent } from './servicio/detalle-servicio.component'
 import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
 import { EditarServicioComponent } from './servicio/editar-servicio.component';
 import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
-import { FormularioRegDiarioComponent } from './components/formulario-reg-diario/formulario-reg-diario.component';
+
 
 
 

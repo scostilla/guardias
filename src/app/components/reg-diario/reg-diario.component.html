@@ -1,4 +1,4 @@
-<!-- <div mat-dialog-title class="backgroud">
+<div mat-dialog-title class="backgroud">
     <h1 class="font">Nuevo Registro</h1>
 </div>
 
@@ -22,9 +22,9 @@
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-outline-primary" routerLink="/nuevo">Nuevo</button> -->
+  <button class="btn btn-outline-primary" routerLink="/nuevo">Nuevo</button>
 
-
+<!-- 
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Nuevo Registro</h1>
 </div>
@@ -100,38 +100,7 @@
             </span>
         </div>
     </div>
-    <div mat-dialog-subtitle>
-        <h2>Detalle del profesional</h2>
-    </div>
-    <div class="container" *ngIf="profesional">
-        <div class="row mt-5">
-            <div class="col-md-4 mx-auto">
-                <form novalidate #f="ngForm">
-                    <div class="form-group">
-                        <label for="nombre">Id</label>
-                        <input type="number" class="form-control" id="id" name="id"
-                        [(ngModel)]="profesional.idPersona" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre"
-                        [(ngModel)]="profesional.nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="precio">Apellido</label>
-                        <input type="text" class="form-control" id="apellido" name="apellido"
-                        [(ngModel)]="profesional.apellido" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nombre">Dni</label>
-                        <input type="number" class="form-control" id="dni" name="dni"
-                        [(ngModel)]="profesional.dni" required>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- <div class="row">
+    <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>Nombre</mat-label>
@@ -158,7 +127,7 @@
                 <input matInput placeholder="ingrese">
             </mat-form-field>
         </div>
-    </div> -->
+    </div>
     <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
@@ -191,4 +160,4 @@
 <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
-</div>
+</div> -->
