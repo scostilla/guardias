@@ -31,6 +31,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   profesional?: ConsultaProfesional;
   profesionalEncontrado?: ConsultaProfesional;
   persona!: Persona;
+  idPersonal?: number;
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -136,7 +137,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
         );
         console.log('profesional encontrado: ');
         console.log(this.profesionalEncontrado);
-        console.log("submit: "+this.dataSharingService.getSendFormData());
+        console.log('submit: ' + this.dataSharingService.getSendFormData());
       }
 
       if (this.dataSharingService.getSendFormData()) {
@@ -206,8 +207,13 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           this.persona.idCargo = idCargo;
 
           this.apiServiceService.savePersona(this.persona).subscribe(
-            (resp) => {
-              console.log('Persona guardada:', resp);
+            (idPersonal) => {
+              if (idPersonal !== -1) {
+                this.idPersonal = idPersonal;
+                console.log('ID de persona creada:', this.idPersonal);
+              } else {
+                console.error('Error al crear persona');
+              }
             },
             (error) => {
               console.error('Error al guardar persona:', error);

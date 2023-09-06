@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 import Persona from 'src/server/models/Persona';
 
@@ -36,10 +36,16 @@ private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
     return this.http.post(url, data);
   }
 
-  public savePersona (persona:Persona): Observable<Persona>{
-    console.log("url: "+ this.personaUrl);
-    console.log("data: "+persona);
-    return this.http.post(this.personaUrl,persona);
+  public savePersona(persona: Persona): Observable<number> {
+    return this.http.post(this.personaUrl, persona).pipe(
+      map((response: any) => {
+        return response as number;
+      }),
+      catchError((error) => {
+        console.error('Error al guardar persona:', error);
+        throw error;
+      })
+    );
   }
 
   put(url: string, data: any): Observable<any> {
