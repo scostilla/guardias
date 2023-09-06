@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 import Persona from 'src/server/models/Persona';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 
 /*
@@ -13,16 +13,14 @@ import Persona from 'src/server/models/Persona';
 #UNICO Servicio encargado de comunicarse con el backEnd
 
  */
-
 export class ApiServiceService {
-
   //URL del back
-private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
-  private personaUrl = "http://localhost:8080/api/V1/personas/";
+  private baseUrl = 'http://localhost:8080/api/V1/listaProfesionales';
+  private personaUrl = 'http://localhost:8080/api/V1/personas/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getProfesionales():Observable<ConsultaProfesional[]>{
+  getProfesionales(): Observable<ConsultaProfesional[]> {
     return this.http.get<ConsultaProfesional[]>(`${this.baseUrl}`);
   }
 
@@ -31,8 +29,8 @@ private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
   }
 
   post(url: string, data: any): Observable<any> {
-    console.log("url: "+ url);
-    console.log("data: "+data);
+    console.log('url: ' + url);
+    console.log('data: ' + data);
     return this.http.post(url, data);
   }
 
@@ -54,5 +52,20 @@ private baseUrl = "http://localhost:8080/api/V1/listaProfesionales";
 
   delete(url: string): Observable<any> {
     return this.http.delete(this.baseUrl + url);
+  }
+
+  getLegajoId(
+    tipoRevista: string,
+    categoria: string,
+    adicional: string,
+    cargaHoraria: string
+  ): Observable<number> {
+    const params = new HttpParams()
+      .set('tipoRevista', tipoRevista)
+      .set('categoria', categoria)
+      .set('adicional', adicional)
+      .set('cargaHoraria', cargaHoraria);
+
+    return this.http.get<number>(`${this.personaUrl}legajo`, { params });
   }
 }

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, forkJoin, map, of } from 'rxjs';
+import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 import Persona from 'src/server/models/Persona';
@@ -32,6 +32,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   profesionalEncontrado?: ConsultaProfesional;
   persona!: Persona;
   idPersonal?: number;
+  idLegajo?: number;
   displayedColumns: string[] = [
     'id',
     'cuil',
@@ -164,7 +165,7 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
       this.persona.telefono = '';
       this.persona.idCargo = -3;
       this.persona.estado = 1;
-      this.persona.idLegajo = -4;
+      //this.persona.idLegajo = -4;
 
       const idHospitalObservable = this.profesional.hospital
         ? this.buscarId(
@@ -194,36 +195,60 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
           )
         : of(-1);
 
-      forkJoin([
-        idHospitalObservable,
-        idUdoObservable,
-        idProfesionObservable,
-        idCargoObservable,
-      ]).subscribe(
-        ([idHospital, idUdo, idProfesion, idCargo]) => {
-          this.persona.idHospital = idHospital;
-          this.persona.idUdo = idUdo;
-          this.persona.idProfesion = idProfesion;
-          this.persona.idCargo = idCargo;
 
-          this.apiServiceService.savePersona(this.persona).subscribe(
-            (idPersonal) => {
-              if (idPersonal !== -1) {
-                this.idPersonal = idPersonal;
-                console.log('ID de persona creada:', this.idPersonal);
-              } else {
-                console.error('Error al crear persona');
-              }
-            },
-            (error) => {
-              console.error('Error al guardar persona:', error);
-            }
-          );
-        },
-        (error) => {
-          console.error('Error al buscar IDs:', error);
-        }
+      forkJoin([
+  idHospitalObservable,
+  idUdoObservable,
+  idProfesionObservable,
+  idCargoObservable,
+]).pipe(
+  switchMap(([idHospital, idUdo, idProfesion, idCargo]) => {
+    this.persona.idHospital = idHospital;
+    this.persona.idUdo = idUdo;
+    this.persona.idProfesion = idProfesion;
+    this.persona.idCargo = idCargo;
+
+    if (
+      this.profesional?.sitRevista &&
+      this.profesional?.categoria &&
+      this.profesional?.adicional &&
+      this.profesional?.cargaHoraria
+    ) {
+      return this.apiServiceService.getLegajoId(
+        this.profesional.sitRevista,
+        this.profesional.categoria,
+        this.profesional.adicional,
+        this.profesional.cargaHoraria
       );
+    } else {
+      return of(null); // Si no se cumplen las condiciones, emite un valor nulo
+    }
+  })
+).subscribe(
+  (legajoId) => {
+    if (legajoId !== null) {
+      this.persona.idLegajo = legajoId;
+      console.log('Legajo ID:', this.persona.idLegajo);
+    }
+
+    this.apiServiceService.savePersona(this.persona).subscribe(
+      (idPersonal) => {
+        if (idPersonal !== -1) {
+          this.idPersonal = idPersonal;
+          console.log('ID de persona creada:', this.idPersonal);
+        } else {
+          console.error('Error al crear persona');
+        }
+      },
+      (error) => {
+        console.error('Error al guardar persona:', error);
+      }
+    );
+  },
+  (error) => {
+    console.error('Error al buscar IDs:', error);
+  }
+);
     }
   }
 
@@ -262,5 +287,19 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
         return elementoEncontrado ? elementoEncontrado.id : -1;
       })
     );
+  }
+
+  buscarLegajo(
+    tipoRevista: string,
+    categoria: string,
+    adicional: string,
+    cargaHoraria: string
+  ): void {
+    this.apiServiceService
+      .getLegajoId(tipoRevista, categoria, adicional, cargaHoraria)
+      .subscribe((legajoId) => {
+        this.persona.idLegajo = legajoId;
+        console.log('Legajo ID:', this.idLegajo);
+      });
   }
 }
