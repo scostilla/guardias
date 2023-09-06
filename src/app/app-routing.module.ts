@@ -12,6 +12,10 @@ import { ProfessionalNewsComponent } from './components/professional-news/profes
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
+import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
 import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
@@ -56,6 +60,10 @@ const routes: Routes = [
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
   {path: 'novedades-form', component: NovedadesFormComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
+  {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
+  {path:'dist-horaria-cons', component:DistHorariaConsComponent},
+  {path:'dist-horaria-giras', component:DistHorariaGirasComponent},
+  {path:'dist-horaria-otras', component:DistHorariaOtrasComponent},
   {path:'guardias-view', component: GuardiasViewComponent},
   {path:'guardias-view-p', component: GuardiasViewPComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},

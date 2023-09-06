@@ -87,6 +87,10 @@ import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentati
 import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
 import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
 
 
 registerLocaleData(localePy,'es');
@@ -154,6 +158,10 @@ registerLocaleData(localePy,'es');
     DdjjCargoyagrupTotComponent,
     DdjjExtraTotComponent,
     DdjjContrafacturaTotComponent,
+    DistHorariaGuardiaComponent,
+    DistHorariaConsComponent,
+    DistHorariaGirasComponent,
+    DistHorariaOtrasComponent,
     
   ],
 
