@@ -12,6 +12,8 @@ import { ProfesionalService } from 'src/app/services/Servicio/profesional.servic
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { PopupComponent } from '../popup/popup.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { DialogServiceService } from 'src/app/services/DialogService/dialog-service.service';
 
 
 
@@ -21,17 +23,20 @@ import { PopupComponent } from '../popup/popup.component';
   templateUrl: './formulario-reg-diario.component.html',
   styleUrls: ['./formulario-reg-diario.component.css']
 })
-export class FormularioRegDiarioComponent implements OnInit{
+export class FormularioRegDiarioComponent implements OnInit {
 
   @Input()
-  
+
 
   public routerLinkVariable = "/regDiario/:id";
   profesional: Profesional = new Profesional("", "", 0);
 
   servicios: Servicio[] = [];
   tipoGuardias: TipoGuardia[] = [];
-  
+
+  //esto cambié : dataSource: MatTableDataSource<Profesional>
+  dataSource: MatTableDataSource<Profesional> = new MatTableDataSource<Profesional>;
+
 
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
@@ -51,26 +56,25 @@ export class FormularioRegDiarioComponent implements OnInit{
   selectedNombre: string | undefined;
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
-  contador =0;
+  contador = 0;
 
 
   constructor(
     private _fb: FormBuilder,
     private dialog: MatDialog,
-    private professionalDataService: ProfessionalDataServiceService,
-    
-    
-    
 
     private servicioService: ServicioService,
     private tipoGuardiaService: tipoGuardiaService,
-    
     private profesionalService: ProfesionalService,
+
+    private professionalDataService: ProfessionalDataServiceService,
+    private dialogService: DialogServiceService,
+
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
 
-    
+
   ) {
     this.registroForm = this._fb.group(
       {
@@ -88,6 +92,12 @@ export class FormularioRegDiarioComponent implements OnInit{
       })
   }
 
+  /* FALTA RESOLVER
+    ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  } */
+
   openDialog(componentParameter: any) {
     const dialogRef = this.dialog.open(PopupComponent, {
       width: '800px'
@@ -100,31 +110,38 @@ export class FormularioRegDiarioComponent implements OnInit{
   }
 
   ngOnInit() {
-    
+
     this.cargarServicio();
     this.cargarTipoGuardia();
-    
-    if(null!=this.activatedRoute.snapshot.params['id']){
-    const id= this.activatedRoute.snapshot.params['id'];
-    console.log("################## id3 : " + id);
-    this.profesionalService.detail(id).subscribe(
-      data => {
-        this.profesional = data;
-        console.log(this.profesional.nombre);
+   // this.cargarProfesional();
+
+    this.profesionalService.lista().subscribe(
+      profesionales => {
+        this.dataSource.data = profesionales;
       },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Fail',{
-          timeOut:3000, positionClass: 'toast-top-center',
-        });
-        this.router.navigate(['formRegDiario']);
-        console.log('error fabi, no guardo el objeto');
-      }
-    )
-    }else{
+    );
+
+    if (null != this.activatedRoute.snapshot.params['id']) {
+      const id = this.activatedRoute.snapshot.params['id'];
+      console.log("################## id3 : " + id);
+      this.profesionalService.detail(id).subscribe(
+        data => {
+          this.profesional = data;
+          console.log(this.profesional.nombre);
+        },
+        err => {
+          this.toastr.error(err.error.mensaje, 'Fail', {
+            timeOut: 3000, positionClass: 'toast-top-center',
+          });
+          this.router.navigate(['formRegDiario']);
+          console.log('error fabi, no guardo el objeto');
+        }
+      )
+    } else {
       console.log('vacio');
     }
 
-    
+
     /* const navigation = history.state.data;
     console.log('######### id4:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
@@ -138,16 +155,16 @@ export class FormularioRegDiarioComponent implements OnInit{
     this.profesional = objeto.example as Profesional;
     console.info(this.profesional.idPersona); */
 
-   /*  this.professionalDataService.dataUpdated.subscribe(() =>
-    {
-      this.selectedId = this.professionalDataService.selectedId;
-      this.selectedCuil = this.professionalDataService.selectedCuil;
-      this.selectedNombre = this.professionalDataService.selectedNombre;
-      this.selectedApellido = this.professionalDataService.selectedApellido;
-      this.selectedProfesion = this.professionalDataService.selectedProfesion;
-    }); */
+    /*  this.professionalDataService.dataUpdated.subscribe(() =>
+     {
+       this.selectedId = this.professionalDataService.selectedId;
+       this.selectedCuil = this.professionalDataService.selectedCuil;
+       this.selectedNombre = this.professionalDataService.selectedNombre;
+       this.selectedApellido = this.professionalDataService.selectedApellido;
+       this.selectedProfesion = this.professionalDataService.selectedProfesion;
+     }); */
   }
-  
+
 
   cargarServicio(): void {
     this.servicioService.lista().subscribe(
@@ -170,8 +187,9 @@ export class FormularioRegDiarioComponent implements OnInit{
     );
   }
 
-  cargarProfesional() {
-    const id = this.activatedRoute.snapshot.params['id'];
+  cargarProfesional(id: any) {
+    //const id = this.activatedRoute.snapshot.params['id'];
+    console.log("############### id prof: "+id);
     this.profesionalService.detail(id).subscribe(
       data => {
         this.profesional = data;
@@ -201,8 +219,26 @@ export class FormularioRegDiarioComponent implements OnInit{
       }
     );
   }
-  
-  
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  onRowDoubleClick(row: any) {
+    console.log('professional table id1:', row.idPersona);
+    const id= row.idPersona;
+    //NavigationExtras = {state: {idPersona: row.idPersona}};
+    console.log('professional table id2:', id);
+    //this.router.navigate(['/']);
+    this.router.navigate(['/formRegDiario'],{ state:{ idPersona:id } });
+    //console.log('professional table id:', id);
+    this.professionalDataService.dataUpdated.emit();
+    this.dialogService.closeDialog();
+  }
 
 }

@@ -47,6 +47,7 @@ export class ProfessionalTableComponent implements OnInit {
     private professionalDataService: ProfessionalDataServiceService,
     private dialogService: DialogServiceService,
 
+    
     public dialogRef: MatDialogRef<ProfessionalTableComponent>,
     
     ) {

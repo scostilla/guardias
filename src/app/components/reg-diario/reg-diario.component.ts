@@ -57,8 +57,8 @@ export class RegDiarioComponent {
 
     private servicioService: ServicioService,
     private tipoGuardiaService: tipoGuardiaService,
-    
     private profesionalService: ProfesionalService,
+    
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router
