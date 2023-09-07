@@ -57,6 +57,7 @@ export class FormularioRegDiarioComponent implements OnInit {
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
   contador = 0;
+  bandera: boolean = false;
 
 
   constructor(
@@ -201,6 +202,7 @@ export class FormularioRegDiarioComponent implements OnInit {
         this.router.navigate(['./']);
       }
     );
+    this.mostraTabla();
   }
 
   borrarServicio(id: any) {
@@ -232,13 +234,19 @@ export class FormularioRegDiarioComponent implements OnInit {
   onRowDoubleClick(row: any) {
     console.log('professional table id1:', row.idPersona);
     const id= row.idPersona;
+    this.cargarProfesional(id);
     //NavigationExtras = {state: {idPersona: row.idPersona}};
-    console.log('professional table id2:', id);
+    //console.log('professional table id2:', id);
     //this.router.navigate(['/']);
-    this.router.navigate(['/formRegDiario'],{ state:{ idPersona:id } });
+    //this.router.navigate(['/formRegDiario'],{ state:{ idPersona:id } });
     //console.log('professional table id:', id);
-    this.professionalDataService.dataUpdated.emit();
-    this.dialogService.closeDialog();
+    //this.professionalDataService.dataUpdated.emit();
+    //this.dialogService.closeDialog();
   }
-
+  mostraTabla(){
+    if(this.bandera==true)
+    this.bandera = false;
+  else
+    this.bandera = true;
+  }
 }
