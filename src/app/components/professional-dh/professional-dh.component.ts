@@ -16,6 +16,25 @@ export class ProfessionalDhComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private apiServiceService: ApiServiceService) {}
 
+
+  ngOnInit() {
+    this.id = this.route.snapshot.paramMap.get('id');
+    console.log('ID:', this.id);
+    this.cargarDatosperson(parseInt(this.id ?? '', 10));
+  }
+
+  cargarDatosperson(id: number) {
+    this.http
+      .get<any[]>('../../../assets/jsonFiles/profesionales.json')
+      .subscribe((data: any[]) => {
+        this.person = data.find((item) => item.id === id);
+        if (this.person) {
+          console.log(this.person);
+        }
+      });
+  }
+
+  /*
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     console.log('ID:', this.id);
@@ -30,5 +49,7 @@ export class ProfessionalDhComponent implements OnInit {
         console.log(this.person);
       }
     });
-  }
+  }*/
+
+
 }

@@ -66,6 +66,7 @@ export class ProfessionalAbmComponent {
       profesionList: [''],
     });
 
+    /*
     if (this.data.id !== -1) {
       this.apiServiceService.getProfesionales().subscribe((DBdata: any[]) => {
         console.log(DBdata);
@@ -77,7 +78,21 @@ export class ProfessionalAbmComponent {
         }
       });
     }
+  }*/
+
+  if (this.data.id !== -1) {
+    this.http
+      .get<any[]>('../../../assets/jsonFiles/profesionales.json')
+      .subscribe((data: any[]) => {
+        this.person = data.find((item) => item.id === this.data.id);
+        if (this.person) {
+          console.log(this.person.nombre);
+          this.patchFormValues();
+        }
+      });
   }
+}
+
 
   ngOnInit() {
     console.log('Received id:', this.data.id);

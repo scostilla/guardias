@@ -21,7 +21,6 @@ export interface PeriodicElement {
 
 export class DigestoComponent {
   displayedColumns: string[] = ['tipo', 'posicion', 'categoria', 'fecha', 'detalle', 'url'];
-  //dataSource = new MatTableDataSource(ELEMENT_DATA);
   dataSource: MatTableDataSource<UserData>;
 
   constructor(

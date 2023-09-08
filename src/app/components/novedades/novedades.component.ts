@@ -1,7 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { PopupNovedadAgregarComponent} from '../popup-novedad-agregar/popup-novedad-agregar.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { PopupNovedadAgregarComponent } from '../popup-novedad-agregar/popup-novedad-agregar.component';
+import { UserData } from '../professional-list/professional-list.component';
 
 
 export interface PeriodicElement {
@@ -25,14 +27,23 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['./novedades.component.css']
 })
 export class NovedadesComponent {
-  displayedColumns: string[] = ['guardia', 'cat', 'act', 'detalle', 'edit', 'ver'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  displayedColumns: string[] = ['tipo', 'categoria', 'fecha', 'detalle', 'edit', 'url'];
+  dataSource: MatTableDataSource<UserData>;
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    private http: HttpClient,
+    public dialog: MatDialog,
+  ) {
+    this.dataSource = new MatTableDataSource<UserData>([]);
+  }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  ngOnInit() {
+    this.http
+      .get<UserData[]>('../../../assets/jsonFiles/novedades.json')
+      .subscribe((data) => {
+        this.dataSource.data = data;
+        console.log(this.dataSource.data);
+      });
   }
   openPopupNovedad(){
     this.dialog.open(PopupNovedadAgregarComponent, {
@@ -41,4 +52,8 @@ export class NovedadesComponent {
     })
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 }

@@ -70,7 +70,12 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.getProfesionales();
+    //this.getProfesionales();
+    this.http
+    .get<UserData[]>('../../../assets/jsonFiles/profesionales.json')
+    .subscribe((data) => {
+      this.dataSource.data = data;
+    });
   }
 
   private getProfesionales() {
@@ -135,6 +140,20 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(this.dataSharingService.getProfessionalFormData());
+      this.dataSource.data.push(this.dataSharingService.getProfessionalFormData());
+      console.log("id recibido: "+this.dataSharingService.getProfessionalId());
+    });
+  }
+/*
+  addEditProfessional(id: number) {
+    const dialogRef = this.dialog.open(ProfessionalAbmComponent, {
+      width: '600px',
+      disableClose: true,
+      data: { id: id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
       console.log(result);
       this.profesional = new ConsultaProfesional();
       this.persona = new Persona();
@@ -151,14 +170,14 @@ export class ProfessionalListComponent implements OnInit, AfterViewInit {
 
       if (this.dataSharingService.getSendFormData()) {
         if (this.dataSharingService.getProfessionalId() == -1) {
-          this.savePersona();
+          //this.savePersona();
         } else {
           //modificar profesional
         }
       }
     });
   }
-
+*/
   public savePersona() {
     this.persona = {};
 
