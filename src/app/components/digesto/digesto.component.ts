@@ -1,7 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { UserData } from '../professional-list/professional-list.component';
 
 export interface PeriodicElement {
     guardia: string;
@@ -11,14 +12,6 @@ export interface PeriodicElement {
     detalle: string;
     ver: string;
 }
-const ELEMENT_DATA: PeriodicElement[] = [
-  {guardia: 'guardia-act', position: 1, cat: 'Circular', act: '24/07/2023', detalle: 'Circular N° 11: Ajustes guardias contra factura 1° y 2° corte - Mayo 2023', ver: '/assets/digesto/CIRCULAR-11-DPH-2023.pdf'},
-  {guardia: 'guardia-act', position: 2, cat: 'Circular', act: '17/07/2023', detalle: 'Circular N° 10: Rectificativa circular N° 2 - Guardias contra factura', ver: '/assets/digesto/CIRCULAR-10-2023.pdf'},
-  {guardia: 'guardia-act', position: 3, cat: 'Resolución conjunta', act: '17/07/2023', detalle: 'Resolución conjunta N° 114: necesidad de actualizar los valores del régimen de guardias brindadas en los establecimientos. Descongelamiento del valor de la Guardia Médica del Interior.', ver: '/assets/digesto/RESOL-CONJUNTA-114-SyHF-2023.pdf'},
-  {guardia: 'guardia-act', position: 4, cat: 'Resolución conjunta', act: '03/07/2023', detalle: 'Resolución conjunta N° 161: en referencia a la resolución conjunta N° 114, sobre el descongelamiento del valor de la Guardia Médica del Interior.', ver: '/assets/digesto/RESOL-CONJUNTA-161-S-2023.pdf'},
-  {guardia: 'guardia-pas', position: 5, cat: 'Decreto', act: '10/11/2016', detalle: 'Decreto N° 2423: Implementación de Sistema de Guardias Pasivas en distintos establecimientos del Sistema Público Provincial de Salud.', ver: '/assets/digesto/DECRETO-2423-GuardiasPasivas.pdf'},
-];
-
 
 @Component({
   selector: 'app-digesto',
@@ -27,9 +20,25 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 
 export class DigestoComponent {
-  displayedColumns: string[] = ['guardia', 'position', 'cat', 'act', 'detalle', 'ver'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  displayedColumns: string[] = ['tipo', 'posicion', 'categoria', 'fecha', 'detalle', 'url'];
+  //dataSource = new MatTableDataSource(ELEMENT_DATA);
+  dataSource: MatTableDataSource<UserData>;
 
+  constructor(
+    private http: HttpClient,
+    public dialog: MatDialog,
+  ) {
+    this.dataSource = new MatTableDataSource<UserData>([]);
+  }
+
+  ngOnInit() {
+    this.http
+      .get<UserData[]>('../../../assets/jsonFiles/digesto.json')
+      .subscribe((data) => {
+        this.dataSource.data = data;
+        console.log(this.dataSource.data);
+      });
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

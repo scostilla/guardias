@@ -1,0 +1,42 @@
+[
+  {
+   "tipo": "activa",
+   "posicion": 1,
+   "categoria": "Circular",
+   "fecha": "07\/24\/2023",
+   "detalle": "Circular N° 11: Ajustes guardias contra factura 1° y 2° corte - Mayo 2023",
+   "url": " \/assets\/digesto\/CIRCULAR-11-DPH-2023.pdf"
+  },
+  {
+   "tipo": "activa",
+   "posicion": 2,
+   "categoria": "Circular",
+   "fecha": "07\/17\/2023",
+   "detalle": "Circular N° 10: Rectificativa circular N° 2 - Guardias contra factura",
+   "url": "\/assets\/digesto\/CIRCULAR-10-2023.pdf"
+  },
+  {
+   "tipo": "activa",
+   "posicion": 3,
+   "categoria": "Resolución conjunta",
+   "fecha": "07\/17\/2023",
+   "detalle": "Resolución conjunta N° 114: necesidad de actualizar los valores del régimen de guardias brindadas en los establecimientos. Descongelamiento del valor de la Guardia Médica del Interior.",
+   "url": "\/assets\/digesto\/RESOL-CONJUNTA-114-SyHF-2023.pdf"
+  },
+  {
+   "tipo": "activa",
+   "posicion": 4,
+   "categoria": "Resolución conjunta",
+   "fecha": "07\/03\/2023",
+   "detalle": "Resolución conjunta N° 161: en referencia a la resolución conjunta N° 114, sobre el descongelamiento del valor de la Guardia Médica del Interior.",
+   "url": "\/assets\/digesto\/RESOL-CONJUNTA-161-S-2023.pdf"
+  },
+  {
+   "tipo": "pasiva",
+   "posicion": 5,
+   "categoria": "Decreto",
+   "fecha": "11\/10\/2016",
+   "detalle": "Decreto N° 2423: Implementación de Sistema de Guardias Pasivas en distintos establecimientos del Sistema Público Provincial de Salud.",
+   "url": "\/assets\/digesto\/DECRETO-2423-GuardiasPasivas.pdf"
+  }
+ ]
