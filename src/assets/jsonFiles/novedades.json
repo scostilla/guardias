@@ -1,33 +1,34 @@
 [
   {
-   "tipo": "activa",
-   "posicion": 1,
-   "categoria": "Digesto",
-   "fecha": "07\/24\/2023",
-   "detalle": "Circular N° 11: Ajustes guardias contra factura 1° y 2° corte - Mayo 2023",
-   "url": "\/digesto"
+    "tipo": "activa",
+    "categoria": "Digesto",
+    "fecha": "07/24/2023",
+    "detalle": "Circular N° 11: Ajustes guardias contra factura 1° y 2° corte - Mayo 2023",
+    "edit": "",
+    "url": "/digesto"
   },
   {
-   "tipo": "activa",
-   "posicion": 2,
-   "categoria": "Digesto",
-   "fecha": "07\/17\/2023",
-   "detalle": "Circular N° 10: Rectificativa circular N° 2 - Guardias contra factura",
-   "url": "\/digesto"
+    "tipo": "activa",
+    "categoria": "Digesto",
+    "fecha": "07/17/2023",
+    "detalle": "Circular N° 10: Rectificativa circular N° 2 - Guardias contra factura",
+    "edit": "",
+    "url": "/digesto"
   },
   {
-   "posicion": 3,
-   "categoria": "Novedad",
-   "fecha": "07\/11\/2023",
-   "detalle": "Se ha modificado tu contraseña.",
-   "url": "#"
+    "tipo": "",
+    "categoria": "Novedad",
+    "fecha": "07/11/2023",
+    "detalle": "Se ha modificado tu contraseña.",
+    "edit": "",
+    "url": "#"
   },
   {
-   "tipo": "pasiva",
-   "posicion": 4,
-   "categoria": "Digesto",
-   "fecha": "11\/10\/2016",
-   "detalle": "Decreto N° 2423: Implementación de Sistema de Guardias Pasivas en distintos establecimientos del Sistema Público Provincial de Salud.",
-   "url": "\/digesto"
+    "tipo": "pasiva",
+    "categoria": "Digesto",
+    "fecha": "11/10/2016",
+    "detalle": "Decreto N° 2423: Implementación de Sistema de Guardias Pasivas en distintos establecimientos del Sistema Público Provincial de Salud.",
+    "edit": "",
+    "url": "/digesto"
   }
- ]
+]
