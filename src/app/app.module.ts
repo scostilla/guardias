@@ -70,8 +70,16 @@ import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.com
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
+import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
+import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
+import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
 import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
@@ -150,6 +158,14 @@ registerLocaleData(localePy,'es');
     PopupDdjjCfComponent,
     PopupDdjjCfEditComponent,
     CronogramaPDefTotComponent,
+    DdjjTentativoComponent,
+    DdjjCargoyagrupTotComponent,
+    DdjjExtraTotComponent,
+    DdjjContrafacturaTotComponent,
+    DistHorariaGuardiaComponent,
+    DistHorariaConsComponent,
+    DistHorariaGirasComponent,
+    DistHorariaOtrasComponent,
 
   ],
 

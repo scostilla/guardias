@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA</span>
+        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA (Consolidado)</span>
       </div>
   
     <div class="row mt-3">
@@ -45,14 +45,16 @@
                                   <tr>
                                     <th rowspan="2">N° ORDEN</th>
                                     <th colspan="3">PROFESIONAL</th>
-                                    <th colspan="4">COMPROBANTE</th>
+                                    <th colspan="3">COMPROBANTE</th>
                                     <th colspan="2">DÍA DE GUARDIA</th>
                                     <th colspan="2">CANTIDAD DE HS. GUARDIA</th>
                                     <th colspan="2">MONTO POR GUARDIA</th>
                                     <th colspan="2">CANTIDAD DE HS. BONO</th>
                                     <th colspan="2">MONTO BONO</th>
                                     <th colspan="2" style="background-color: rgb(78, 233, 168);">TOTAL HS. A LIQUIDAR</th>
-                                    <th rowspan="2">TOTAL</th>
+                                    <th rowspan="2">TOTAL CALCULADO</th>
+                                    <th rowspan="2">TOTAL FACTURADO</th>
+                                    <th rowspan="2">DIFERENCIA DE REDONDEO</th>
                                   </tr>
                                   <tr>
                                     <th>APELLIDO Y NOMBRE</th>
@@ -61,7 +63,6 @@
                                     <td>Contribuyente</td>
                                     <td>Factura</td>
                                     <td>Fecha de emisión</td>
-                                    <td></td>
                                     <td>L-V</td>
                                     <td>S-D-F</td>
                                     <td>L-V</td>
@@ -85,7 +86,6 @@
                                     <td>Responsable Inscripto</td>
                                     <td>B-2-56</td>
                                     <td>4/4/2023</td>
-                                    <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;" (click)="openPopupCfedit()">edit</mat-icon></td>
                                     <td>27/7/2023</td>
                                     <td></td>
                                     <td>8</td>
@@ -99,6 +99,8 @@
                                     <td>$31.178,78</td>
                                     <td></td>
                                     <td style="background-color: #eee;">$31.178,78</td>
+                                    <td style="background-color: #eee;">$31.178,78</td>
+                                    <td style="background-color: #eee;">$0,03</td>
                                   <tr>
                                     <td>2</td>
                                     <td>ARRAYA PEDRO ADEMIR</td>
@@ -107,7 +109,6 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><mat-icon color="primary" matTooltip="Agregar factura" style="cursor: pointer;" (click)="openPopupCf()">note_add</mat-icon></td>
                                     <td>30/6/2023</td>
                                     <td>2/7/2023</td>
                                     <td>24</td>
@@ -121,7 +122,18 @@
                                     <td>$38.090,94</td>
                                     <td>$41.900,03</td>
                                     <td style="background-color: #eee;">$79.990,97</td>
+                                    <td style="background-color: #eee;">$79.990,95</td>
+                                    <td style="background-color: #eee;">$0,02</td>
                                   </tr>
+                                  <tr style="background-color: #61bfd6;">
+                                    <td colspan="17" style="font-weight: bold;">TOTAL HOSPITAL PABLO SORIA</td>
+                                    <td>69.269,72</td>
+                                    <td>$41.900,03</td>
+                                    <td>$111.169,75</td>
+                                    <td>111.169,7</td>
+                                    <td> - </td>
+                                  </tr>
+
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -148,10 +160,6 @@
     <button mat-menu-item>PDF</button>
     <button mat-menu-item>XLS</button>
   </mat-menu>
-    <button mat-fab extended color="warn" routerLink="/ddjj-contrafactura-tot">
-    <mat-icon>assignment_turned_in</mat-icon>
-    Pase a DPH
-  </button>
 </div>
 </div>
 </div>

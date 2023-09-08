@@ -10,11 +10,19 @@ import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-r
 import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
+import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
@@ -54,6 +62,10 @@ const routes: Routes = [
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
   {path: 'novedades-form', component: NovedadesFormComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
+  {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
+  {path:'dist-horaria-cons', component:DistHorariaConsComponent},
+  {path:'dist-horaria-giras', component:DistHorariaGirasComponent},
+  {path:'dist-horaria-otras', component:DistHorariaOtrasComponent},
   {path:'guardias-view', component: GuardiasViewComponent},
   {path:'guardias-view-p', component: GuardiasViewPComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
@@ -63,6 +75,10 @@ const routes: Routes = [
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
+  {path:'ddjj-extra-tot',component:DdjjExtraTotComponent},
+  {path:'ddjj-contrafactura-tot',component:DdjjContrafacturaTotComponent},
+  {path:'ddjj-cargoyagrup-tot',component:DdjjCargoyagrupTotComponent},
+  {path:'ddjj-tentativo',component:DdjjTentativoComponent},
  /*  {path:'api', component:ApiComponent} */
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path:'cronograma-definitivo', component:CronogramaDefinitivoComponent},
