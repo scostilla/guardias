@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
+import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
@@ -35,6 +37,7 @@ import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-r
 import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
 import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
 import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
+import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
@@ -68,8 +71,10 @@ const routes: Routes = [
   {path:'guardias-view-p', component: GuardiasViewPComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
-  { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
-  { path: 'professional-dh/:id', component: ProfessionalDhComponent },
+  {path: 'professional-detail/:id', component: ProfessionalDetailComponent },
+  {path: 'professional-dh/:id', component: ProfessionalDhComponent },
+  {path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
+  {path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
@@ -86,6 +91,7 @@ const routes: Routes = [
  {path: 'cronograma-p-def', component:CronogramaPDefComponent},
  {path: 'cronograma-p-def-tot', component:CronogramaPDefTotComponent},
  {path: 'cronograma-p-hos', component:CronogramaPHosComponent},
+ {path: 'cronograma-form-agregar', component:CronogramaFormAgregarComponent},
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'novedades', component:NovedadesComponent}, 

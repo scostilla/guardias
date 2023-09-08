@@ -91,6 +91,9 @@ import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/d
 import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
 import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
 import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
+import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
+import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
+import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
 
 
 registerLocaleData(localePy,'es');
@@ -162,6 +165,9 @@ registerLocaleData(localePy,'es');
     DistHorariaConsComponent,
     DistHorariaGirasComponent,
     DistHorariaOtrasComponent,
+    ProfessionalDhHistComponent,
+    ProfessionalDhJunioComponent,
+    CronogramaFormAgregarComponent,
     
   ],
 

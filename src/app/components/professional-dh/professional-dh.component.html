@@ -1,7 +1,7 @@
 <div class="row tabla-center">
   <div class="row" style="margin-bottom: 15px;">
     <div class="col">
-      <button mat-fab extended color="primary" routerLink="/professional-list">
+      <button mat-fab extended color="primary" routerLink="/professional-list/">
         <mat-icon>arrow_back_ios</mat-icon>
         Volver
       </button>
@@ -11,12 +11,12 @@
       <mat-menu #opcion="matMenu">
         <button mat-menu-item [matMenuTriggerFor]="descargas"><mat-icon>get_app</mat-icon> Descargar </button>
         <button mat-menu-item><mat-icon>edit</mat-icon> Editar </button>
-        <button mat-menu-item><mat-icon>history</mat-icon> Historial </button>
+        <button mat-menu-item routerLink="/professional-dh-hist/{{person.id}}"><mat-icon>history</mat-icon> Historial D.H. profesionales</button>
       </mat-menu>
       
       <mat-menu #descargas="matMenu">
-        <button mat-menu-item>PDF</button>
-        <button mat-menu-item>XLS</button>
+        <button mat-menu-item><a href="/assets/descargas/distHoraria_prof_julio2023.pdf" target="_blank" style="text-decoration: none; color: black;"> PDF </a></button>
+        <button mat-menu-item><a href="/assets/descargas/distHoraria_prof_julio2023.xlsx" target="_blank" style="text-decoration: none; color: black;"> XLS </a></button>
       </mat-menu>
       
     </div>
@@ -192,7 +192,7 @@
             </tbody>
         </table>
           <div class="alert alert-success" role="alert">
-          El total de horas semanales cargadas coincide con la carga horaria informada (40).
+          El total de horas semanales cargadas coincide con la carga horaria informada <strong>(40)</strong>.
           </div> 
     </div>
 </div>
