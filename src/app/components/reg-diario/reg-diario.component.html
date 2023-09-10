@@ -23,10 +23,10 @@
                     <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <div mat-dialog-actions class="action">
+            <!-- <div mat-dialog-actions class="action">
                 <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
                     color="primary" type="button">Buscar Profesional</button>
-            </div>
+            </div> -->
         </div>
         <div *ngSwitchCase="'Guardia pasiva'">
             <mat-form-field appearance="outline">
@@ -70,6 +70,10 @@
                 </span>
         </div>
     </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
+            color="primary" type="button">Buscar Profesional</button>
+    </div>
     <div mat-dialog-subtitle>
         <h2>Detalle del profesional</h2>
     </div>
@@ -105,7 +109,7 @@
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>Ingreso</mat-label>
-                <input matInput [matDatepicker]="picker1" >
+                <input matInput [matDatepicker]="picker1" required>
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
