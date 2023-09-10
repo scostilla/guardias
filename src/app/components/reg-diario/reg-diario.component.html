@@ -77,13 +77,13 @@
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>Nombre</mat-label>
-                <input matInput placeholder="{{selectedNombre}}">
+                <input matInput placeholder="{{selectedNombre}}" disabled>
             </mat-form-field>
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>Apellido</mat-label>
-                <input matInput placeholder="{{selectedApellido}}">
+                <input matInput placeholder="{{selectedApellido}}" disabled>
             </mat-form-field>
         </div>
     </div>
@@ -91,13 +91,13 @@
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>DNI</mat-label>
-                <input matInput placeholder="ingrese">
+                <input matInput placeholder="ingrese" disabled>
             </mat-form-field>
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>Profesion</mat-label>
-                <input matInput placeholder="ingrese">
+                <input matInput placeholder="ingrese" disabled>
             </mat-form-field>
         </div>
     </div>
@@ -105,7 +105,7 @@
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>Ingreso</mat-label>
-                <input matInput [matDatepicker]="picker1">
+                <input matInput [matDatepicker]="picker1" >
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
