@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-dist-horaria-cons',
@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./dist-horaria-cons.component.css']
 })
 export class DistHorariaConsComponent {
-  hospitales:string[]= ['DN. PABLO SORIA'];
+  hospitales:any;
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
   guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
@@ -24,7 +24,7 @@ export class DistHorariaConsComponent {
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
-        this.options = data;
+        this.hospitales = data;
       });
   }
 

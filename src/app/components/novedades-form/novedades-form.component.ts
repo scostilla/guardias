@@ -36,7 +36,6 @@ export class NovedadesFormComponent {
         this.licencias = data;
       });
 
-
   }
 
   /*

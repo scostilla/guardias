@@ -16,7 +16,7 @@
         <mat-label>Lugar</mat-label>
         <mat-select>
             <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
-                {{hosp}}</mat-option>
+                {{hosp.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
 

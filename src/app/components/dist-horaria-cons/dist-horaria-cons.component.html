@@ -7,7 +7,7 @@
         <mat-select>
             <mat-option *ngFor="let co of cons" [value]="co"> {{co}}</mat-option>
         </mat-select>
-    </mat-form-field>  
+    </mat-form-field>
     <mat-form-field appearance="outline">
         <mat-label>Día de consultorio</mat-label>
         <mat-select>
@@ -18,7 +18,7 @@
         <mat-label>Lugar</mat-label>
         <mat-select>
             <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
-                {{hosp}}</mat-option>
+                {{hosp.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">

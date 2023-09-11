@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DistHorariaGuardiaComponent } from '../dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaConsComponent } from '../dist-horaria-cons/dist-horaria-cons.component';
 import { DistHorariaGirasComponent } from '../dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaGuardiaComponent } from '../dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaOtrasComponent } from '../dist-horaria-otras/dist-horaria-otras.component';
 
 @Component({
@@ -13,7 +13,8 @@ import { DistHorariaOtrasComponent } from '../dist-horaria-otras/dist-horaria-ot
 })
 export class DistHorariaComponent {
 
-  hospitales:string[]= ['DN. PABLO SORIA'];
+  hospitales:any;
+  profesionales:any;
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
   guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
@@ -36,7 +37,13 @@ export class DistHorariaComponent {
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
-        this.options = data;
+        this.hospitales = data;
+      });
+
+      this.http
+      .get<any[]>('../assets/jsonFiles/profesionales.json')
+      .subscribe((data) => {
+        this.profesionales = data;
       });
   }
 

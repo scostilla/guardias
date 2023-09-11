@@ -6,34 +6,34 @@
         <mat-label>Hospital</mat-label>
         <mat-select>
             <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
-                {{hosp}}</mat-option>
+                {{hosp.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
         <mat-label>Profesional</mat-label>
         <mat-select>
-            <mat-option *ngFor="let prof of profesional" [value]="prof">{{prof}}</mat-option>
+            <mat-option *ngFor="let prof of profesionales" [value]="prof">{{prof.apellido}}, {{prof.nombre}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <p>Guardias 
+    <p>Guardias
         <button mat-icon-button color="primary" (click)="openDistGuardia()" matTooltip="Agregar nuevo día de guardia">
         <mat-icon>playlist_add</mat-icon>
       </button>
     </p>
-    
-    <p>Consultorio 
+
+    <p>Consultorio
         <button mat-icon-button color="primary" (click)="openDistCons()" matTooltip="Agregar nuevo día de consultorio">
         <mat-icon>playlist_add</mat-icon>
       </button>
     </p>
-    
-    <p>Giras médicas 
+
+    <p>Giras médicas
         <button mat-icon-button color="primary" (click)="openDistGira()" matTooltip="Agregar nuevo día de gira médica">
         <mat-icon>playlist_add</mat-icon>
       </button>
     </p>
 
-    <p>Otras actividades 
+    <p>Otras actividades
         <button mat-icon-button color="primary" (click)="openDistOtra()" matTooltip="Agregar nuevo día de actividad">
         <mat-icon>playlist_add</mat-icon>
       </button>
