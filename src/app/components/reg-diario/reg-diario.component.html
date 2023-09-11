@@ -28,20 +28,7 @@
           type="button">Buscar Profesional</button>
       </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Especialidad</mat-label>
-        <mat-select [(ngModel)]="alert">
-          <mat-option *ngFor="let esp of especialidadesHospital" [value]="esp"> {{esp.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <span [ngSwitch]="alert">
-        <span
-          *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
-          <div class="alert alert-danger" role="alert">
-            Especialidad seleccionada sin requerimiento.
-          </div>
-        </span>
-      </span>
+
     </div>
     <div *ngSwitchCase="'Guardia pasiva'">
       <mat-form-field appearance="outline">

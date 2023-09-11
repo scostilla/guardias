@@ -41,7 +41,7 @@ export class RegDiarioComponent {
     'Pediatria',
   ];
   //hospital: string[] = ['Dn. Pablo Soria', 'San Roque', 'Materno Infantil'];
-  especialidad_ps: string[] = [
+  /*especialidad_ps: string[] = [
     'Cirugía General',
     'Cirugía Cardio Vascular o Vascular Periférica',
     'Cirugía Reparadora',
@@ -83,7 +83,7 @@ export class RegDiarioComponent {
     'UTI-UTIN',
     'Nutrición Infantil',
     'Cardiología Infantil',
-  ];
+  ];*/
 
   selectedId: string | undefined;
   selectedCuil: string | undefined;
