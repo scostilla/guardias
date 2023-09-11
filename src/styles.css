@@ -45,6 +45,10 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   font-weight: bold;
 }
 
+.scroll {
+  overflow: auto;
+}
+
 .mat-button-toggle {
     font-family: "Ubuntu", sans-serif;
     font-weight: 600;

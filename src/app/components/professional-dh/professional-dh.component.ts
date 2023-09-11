@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfessionalFormEditComponent} from '../professional-form-edit/professional-form-edit.component';
+
 
 @Component({
   selector: 'app-professional-dh',
@@ -11,7 +14,8 @@ export class ProfessionalDhComponent implements OnInit {
   id: string | null | undefined;
   person: any;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(private route: ActivatedRoute, private http: HttpClient, public dialogReg: MatDialog,
+    ) {}
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
@@ -29,4 +33,11 @@ export class ProfessionalDhComponent implements OnInit {
         }
       });
   }
+  openFormEdit(){
+    this.dialogReg.open(ProfessionalFormEditComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
 }

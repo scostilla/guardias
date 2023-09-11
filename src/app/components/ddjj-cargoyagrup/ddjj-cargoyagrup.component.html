@@ -11,7 +11,7 @@
       <div class="titulos"> DDJJ <span class="titulos-second">CARGO Y AGRUPACIÓN</span>
     </div>
     <div class="row mt-3">
-      <div class="col-sm">
+      <div class="col-sm scroll">
           <table class="table table-sm  table-borderless">
                 <thead class="col-center thead-celeste">
                     <tr>
@@ -255,20 +255,23 @@
   <div class="col offset-1">
     <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de semana</span>
     <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
-</div>
-<div class="col offset-6">
-  <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
+  </div>
+  <div class="col-auto">
+    <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
     <mat-icon>get_app</mat-icon>
     Descargar
-  </button>
-  <mat-menu #menu2="matMenu">
+    </button>
+    <mat-menu #menu2="matMenu">
     <button mat-menu-item>PDF</button>
     <button mat-menu-item>XLS</button>
-  </mat-menu>
+    </mat-menu>
     <button mat-fab extended color="warn" routerLink="/ddjj-cargoyagrup-tot">
     <mat-icon>assignment_turned_in</mat-icon>
     Pase a DPH
-  </button>
+    </button>
+  </div>
+  <div class="col-1">
+  </div>
 </div>
-</div>
+
 </div>

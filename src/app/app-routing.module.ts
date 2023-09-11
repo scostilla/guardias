@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
+import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
@@ -54,6 +55,7 @@ import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'professional-form', component: ProfessionalFormComponent },
+  { path: 'professional-form-edit', component: ProfessionalFormEditComponent },
   { path: 'daily-schedule', component: DailyScheduleComponent},
   {path:"home-page", component:HomePageComponent},
   {path:"registro-diario",component: RegistroDiarioComponent},

@@ -1,0 +1,19 @@
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">Selecciona el día a modificar</h1>
+</div>
+<div mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+        <mat-label>Día</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Cantidad Hs.</mat-label>
+        <input matInput type="number" placeholder="Numero" value="">
+    </mat-form-field>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button class="btnupdate" type="button"
+            [mat-dialog-close]="false">Cancelar</button>
+        <button mat-raised-button class="btnupdate" color="primary" type="submit">Modificar</button>
+    </div>

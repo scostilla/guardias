@@ -94,6 +94,7 @@ import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
 import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
+import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -168,6 +169,7 @@ registerLocaleData(localePy,'es');
     ProfessionalDhHistComponent,
     ProfessionalDhJunioComponent,
     CronogramaFormAgregarComponent,
+    ProfessionalFormEditComponent,
     
   ],
 
