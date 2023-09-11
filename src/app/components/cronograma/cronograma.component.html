@@ -19,10 +19,11 @@
       <mat-button-toggle value="definitivo" routerLink="/cronograma-def">Definitivo</mat-button-toggle>
       <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
     </mat-button-toggle-group>
-    <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+    <button mat-button [matMenuTriggerFor]="menu">» {{
+      hospitalSeleccionado.descripcion }} ( {{hospitalSeleccionado.region}} )</button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Hospital San Roque (Centro)</button>
-      <button mat-menu-item>Materno Infantil (Centro)</button>
+      <button mat-menu-item *ngFor="let hospital of hospitales" (click)="seleccionarHospital(hospital)">{{
+        hospital.descripcion }} ( {{hospital.region}} )</button>
     </mat-menu>
   </div>
 </div>
@@ -79,13 +80,15 @@
         <mat-icon class="icon-verde" matTooltip="carga completa">check_circle</mat-icon>
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--text circulo--extra" matTooltip="Clínica, 8 hs">Dr. Candido Perez</div>
-      <div class="calendar-dia--text circulo--cargo" matTooltip="Ginecología, 6 hs">Dra. María Paz Monteros</div>
-      <div class="calendar-dia--text circulo--agrupacion" matTooltip="Ginecología, 12 hs">Dra. Juana Felicitas</div>
-      <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Juliana Ramos</div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+      <div [class]="profesionalActual.tipoGuardia"
+        [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+        {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+        <div class="calendar-dia--icon-add">
+          <mat-icon>add</mat-icon>
+        </div>
       </div>
+    </div>
     </div>
   </li>
   <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
