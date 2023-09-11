@@ -18,18 +18,9 @@
     </div>
 </div>
 <div class="container">
-  <div class="center-content">
-    <span class="ref-circulo ref-circulo-act"></span>&nbsp;<span class="ref ref-guardia-act">Guardia Activa</span>
-    <span class="ref-circulo ref-circulo-pas"></span>&nbsp;<span class="ref ref-guardia-pas">Guardia Pasiva</span>
-</div>
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-      <ng-container matColumnDef="guardia">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element"><span class="{{element.guardia}}"></span></td>
-      </ng-container>
-     
+    
         <ng-container matColumnDef="cat">
           <th mat-header-cell *matHeaderCellDef> Sección </th>
           <td mat-cell *matCellDef="let element"> {{element.cat}} </td>
