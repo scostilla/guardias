@@ -1,28 +1,89 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/Professional-data-service.service';
+import Especialidad from 'src/server/models/Especialidad';
 import { PopupComponent } from '../popup/popup.component';
 
 @Component({
   selector: 'app-reg-diario',
   templateUrl: './reg-diario.component.html',
-  styleUrls: ['./reg-diario.component.css']
+  styleUrls: ['./reg-diario.component.css'],
 })
 export class RegDiarioComponent {
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
-  tipoServicio:string[]= ['Guardia activa','Guardia pasiva','Consultorio','Pase'];
-  defaultSelected:string='';
-  pasiva:string='';
-  alert:string='';
-  guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
-  servicio:string[]=['Guardia central','Cardiología','Cirugia general','Cirugia infantil','Pediatria'];
-  hospital:string[]= ['Dn. Pablo Soria','San Roque','Materno Infantil'];
-  especialidad_ps:string[]=['Cirugía General','Cirugía Cardio Vascular o Vascular Periférica','Cirugía Reparadora','Nefrología','Oftalmología','Oncología','Hematología','Urología','Traumatología','UTI-UTIN','Neurocirugía'];
-  especialidad_sr:string[]=['Cirugía General','Cirugía Reparadora','Nefrología','Oncología','Hematología','Urología','Infectología','Traumatología','UTI-UTIN','Neumonología','Reumatología'];
-  especialidad_mi:string[]=['Cirugía General','Cirugía Cardio Vascular o Vascular Periférica','Cirugía Reparadora','Nefrología','Oftalmología','Oncología','Otorrinolaringología','Psiquiatría','Hematología','Urología','Gastroenterología','Traumatología','UTI-UTIN','Nutrición Infantil','Cardiología Infantil'];
-
+  hospital: any;
+  especialidades: any;
+  hospitalSeleccionado: any;
+  especialidadesHospital: any;
+  tipoServicio: string[] = [
+    'Guardia activa',
+    'Guardia pasiva',
+    'Consultorio',
+    'Pase',
+  ];
+  defaultSelected: string = '';
+  pasiva: string = '';
+  alert: string = '';
+  guardia: string[] = [
+    'Guardia extra',
+    'Contra Factura',
+    'Cargo',
+    'Agrupacion',
+  ];
+  servicio: string[] = [
+    'Guardia central',
+    'Cardiología',
+    'Cirugia general',
+    'Cirugia infantil',
+    'Pediatria',
+  ];
+  //hospital: string[] = ['Dn. Pablo Soria', 'San Roque', 'Materno Infantil'];
+  especialidad_ps: string[] = [
+    'Cirugía General',
+    'Cirugía Cardio Vascular o Vascular Periférica',
+    'Cirugía Reparadora',
+    'Nefrología',
+    'Oftalmología',
+    'Oncología',
+    'Hematología',
+    'Urología',
+    'Traumatología',
+    'UTI-UTIN',
+    'Neurocirugía',
+  ];
+  especialidad_sr: string[] = [
+    'Cirugía General',
+    'Cirugía Reparadora',
+    'Nefrología',
+    'Oncología',
+    'Hematología',
+    'Urología',
+    'Infectología',
+    'Traumatología',
+    'UTI-UTIN',
+    'Neumonología',
+    'Reumatología',
+  ];
+  especialidad_mi: string[] = [
+    'Cirugía General',
+    'Cirugía Cardio Vascular o Vascular Periférica',
+    'Cirugía Reparadora',
+    'Nefrología',
+    'Oftalmología',
+    'Oncología',
+    'Otorrinolaringología',
+    'Psiquiatría',
+    'Hematología',
+    'Urología',
+    'Gastroenterología',
+    'Traumatología',
+    'UTI-UTIN',
+    'Nutrición Infantil',
+    'Cardiología Infantil',
+  ];
 
   selectedId: string | undefined;
   selectedCuil: string | undefined;
@@ -31,39 +92,54 @@ export class RegDiarioComponent {
   selectedProfesion: string | undefined;
 
   constructor(
-    private _fb:FormBuilder,
+    private _fb: FormBuilder,
     private dialog: MatDialog,
     private professionalDataService: ProfessionalDataServiceService,
-    public dialogRef: MatDialogRef<RegDiarioComponent>,
-    )
-      {
-        this.registroForm = this._fb.group(
-          {
-      hospital:'',     
-      servicio:'',
-      tipo_guardia:'',
-      nombre:'',
-      apellido:'',
-      dni:'',
-      profesion:'',
-      hs_ingreso:'',
-      fec_ingreso:'',
-      hs_egreso:'',
-      fec_egreso:'',
-          })
-      }
+    private http: HttpClient,
+    public dialogRef: MatDialogRef<RegDiarioComponent>
+  ) {
+    this.registroForm = this._fb.group({
+      hospital: '',
+      servicio: '',
+      tipo_guardia: '',
+      nombre: '',
+      apellido: '',
+      dni: '',
+      profesion: '',
+      hs_ingreso: '',
+      fec_ingreso: '',
+      hs_egreso: '',
+      fec_egreso: '',
+    });
+  }
 
-  openDialog(componentParameter:any){
-    const dialogRef = this.dialog.open(PopupComponent,{
-      width:'800px'});
+  openDialog(componentParameter: any) {
+    const dialogRef = this.dialog.open(PopupComponent, {
+      width: '800px',
+    });
 
-      dialogRef.componentInstance.componentParameter=componentParameter;
-      dialogRef.afterClosed().subscribe((result) => {
-        console.log('popup closed');
-      })
+    dialogRef.componentInstance.componentParameter = componentParameter;
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('popup closed');
+    });
   }
 
   ngOnInit() {
+
+    //HOSPITALES
+    this.http
+      .get<any[]>('../assets/jsonFiles/hospitales.json')
+      .subscribe((data) => {
+        this.hospital = data;
+      });
+
+      //ESPECIALIDADES
+      this.http
+      .get<any[]>('../assets/jsonFiles/especialidades.json')
+      .subscribe((data) => {
+        this.especialidades = data;
+      });
+
 
     this.professionalDataService.dataUpdated.subscribe(() => {
       this.selectedId = this.professionalDataService.selectedId;
@@ -74,10 +150,21 @@ export class RegDiarioComponent {
     });
   }
 
+
+  cargarEspecialidades() {
+    if (this.hospitalSeleccionado && this.hospitalSeleccionado.especialidades) {
+      this.especialidadesHospital = this.especialidades.filter(
+        (especialidad: Especialidad) => this.hospitalSeleccionado.especialidades.includes(especialidad.id)
+      );
+    } else {
+      this.especialidadesHospital = [];
+    }
+  }
+
+
   cancel() {
     this.dialogRef.close();
   }
-
 }
 
 /* no abre el popup a pesar de tener el mismo codigo que el metodo openDialog
@@ -93,4 +180,3 @@ export class RegDiarioComponent {
   }
 
 */
-
