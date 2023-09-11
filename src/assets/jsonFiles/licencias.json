@@ -1,0 +1,170 @@
+[
+  {
+   "id": 1,
+   "descripcion": "LAO",
+   "ley": 3161,
+   "articulo": 19,
+   "inciso": 13
+  },
+  {
+   "id": 2,
+   "descripcion": "Afecciones de corto tratamiento",
+   "ley": 3161,
+   "articulo": "Art. 10 a)",
+   "inciso": 3
+  },
+  {
+   "id": 3,
+   "descripcion": "Enfermedad en horas de labor",
+   "ley": 3161,
+   "articulo": "Art. 10 b)",
+   "inciso": 5
+  },
+  {
+   "id": 4,
+   "descripcion": "Afecciones de largo tratamiento",
+   "ley": 3161,
+   "articulo": "Art. 10 c)",
+   "inciso": 5
+  },
+  {
+   "id": 5,
+   "descripcion": "Accidente de trabajo",
+   "ley": 3161,
+   "articulo": "Art. 10 d)",
+   "inciso": 6
+  },
+  {
+   "id": 6,
+   "descripcion": "Incapacidad",
+   "ley": 3161,
+   "articulo": "Art. 10 e)",
+   "inciso": 7
+  },
+  {
+   "id": 7,
+   "descripcion": "Anticipo de haber por pasividad",
+   "ley": 3161,
+   "articulo": "Art. 10 f)",
+   "inciso": 7
+  },
+  {
+   "id": 8,
+   "descripcion": "Maternidad",
+   "ley": 3161,
+   "articulo": "Art. 10 g)",
+   "inciso": 10
+  },
+  {
+   "id": 9,
+   "descripcion": "Maternidad Excedencia",
+   "ley": 3161,
+   "articulo": "Art. 138 CCTG",
+   "inciso": 12
+  },
+  {
+   "id": 10,
+   "descripcion": "Maternidad (Nac. sin vida)",
+   "ley": 3161,
+   "articulo": "Art. 135 CCTG",
+   "inciso": 11
+  },
+  {
+   "id": 11,
+   "descripcion": "tenencia para adopcion",
+   "ley": 3161,
+   "articulo": "Art. 10 h)",
+   "inciso": 3
+  },
+  {
+   "id": 12,
+   "descripcion": "Atención hijos menores",
+   "ley": 3161,
+   "articulo": "Art. 10 i)",
+   "inciso": 9
+  },
+  {
+   "id": 13,
+   "descripcion": "Atención Grupo familiar",
+   "ley": 3161,
+   "articulo": "Art. 10 j)",
+   "inciso": 8
+  },
+  {
+   "id": 14,
+   "descripcion": "Declaración jurada grupo familiar",
+   "ley": 3161,
+   "articulo": "Art. 10 k)",
+   "inciso": 14
+  },
+  {
+   "id": 15,
+   "descripcion": "Incompatibilidad",
+   "ley": 3161,
+   "articulo": "Art. 10 l)",
+   "inciso": 12
+  },
+  {
+   "id": 16,
+   "descripcion": "Para Rendir Examenes",
+   "ley": 3161,
+   "articulo": "Art. 13 a)",
+   "inciso": 6
+  },
+  {
+   "id": 17,
+   "descripcion": "Para Realizar estudios o Investigaciones",
+   "ley": 3161,
+   "articulo": "Art. 13 b)",
+   "inciso": 13
+  },
+  {
+   "id": 18,
+   "descripcion": "Estudios en Escuela Def. Nac.",
+   "ley": 3161,
+   "articulo": "Art. 13 c)",
+   "inciso": 15
+  },
+  {
+   "id": 19,
+   "descripcion": "Matrimonio del agente o hijos",
+   "ley": 3161,
+   "articulo": "Art. 13 d)",
+   "inciso": 4
+  },
+  {
+   "id": 20,
+   "descripcion": "Act. Deportivas no rentadas",
+   "ley": 3161,
+   "articulo": "Art. 13 e)",
+   "inciso": 9
+  },
+  {
+   "id": 21,
+   "descripcion": "Compensatorio",
+   "ley": 3161,
+   "articulo": "Art. 13 f)",
+   "inciso": 1
+  },
+  {
+   "id": 22,
+   "descripcion": "Parte por enfermedad",
+   "ley": 3162,
+   "articulo": "Art. 13 g)",
+   "inciso": 12
+  },
+  {
+   "id": 23,
+   "descripcion": "Familiar enfermo",
+   "ley": 3163,
+   "articulo": "Art. 13 h)",
+   "inciso": 7
+  },
+  {
+   "id": 24,
+   "descripcion": "Falta sin aviso",
+   "ley": 3164,
+   "articulo": "Art. 13 i)",
+   "inciso": 10
+  }
+ ]

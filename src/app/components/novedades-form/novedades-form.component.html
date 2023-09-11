@@ -6,19 +6,19 @@
         <mat-label>Hospital</mat-label>
         <mat-select>
             <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
-                {{hosp}}</mat-option>
+                {{hosp.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
         <mat-label>Profesional</mat-label>
         <mat-select>
-            <mat-option *ngFor="let prof of profesional" [value]="prof"> {{prof}}</mat-option>
+            <mat-option *ngFor="let prof of profesionales" [value]="prof"> {{prof.apellido}}, {{prof.nombre}}</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
         <mat-label>Novedad</mat-label>
         <mat-select>
-            <mat-option *ngFor="let noved of novedad" [value]="noved"> {{noved}}</mat-option>
+            <mat-option *ngFor="let noved of licencias" [value]="noved"> {{noved.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
 
