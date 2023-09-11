@@ -74,6 +74,7 @@ export class ProfessionalTableComponent implements AfterViewInit {
   onRowDoubleClick(row: any) {
     console.log('professional table id:', row.id);
     this.professionalDataService.selectedId = row.id;
+    this.professionalDataService.selectedDni = row.dni;
     this.professionalDataService.selectedCuil = row.cuil;
     this.professionalDataService.selectedNombre = row.nombre;
     this.professionalDataService.selectedApellido = row.apellido;

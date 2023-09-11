@@ -6,6 +6,7 @@ import { ApiServiceService } from '../api-service.service';
 })
 export class ProfessionalDataServiceService {
   selectedId: any;
+  selectedDni: any;
   selectedCuil: any;
   selectedNombre: any;
   selectedApellido: any;

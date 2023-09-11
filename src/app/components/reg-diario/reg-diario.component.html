@@ -23,10 +23,6 @@
           <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
         </mat-select>
       </mat-form-field>
-      <div mat-dialog-actions class="action">
-        <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
-          type="button">Buscar Profesional</button>
-      </div>
 
 
     </div>
@@ -53,7 +49,10 @@
         </span>
       </span>
     </div>
-
+  </div>
+  <div mat-dialog-actions class="action">
+    <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
+      type="button">Buscar Profesional</button>
   </div>
   <div mat-dialog-subtitle>
     <h2>Detalle del profesional</h2>
@@ -62,13 +61,13 @@
     <div class="col">
       <mat-form-field appearance="outline">
         <mat-label>Nombre</mat-label>
-        <input matInput placeholder="{{selectedNombre}}">
+        <input matInput [(ngModel)]="selectedNombre" placeholder="{{selectedNombre}}">
       </mat-form-field>
     </div>
     <div class="col">
       <mat-form-field appearance="outline">
         <mat-label>Apellido</mat-label>
-        <input matInput placeholder="{{selectedApellido}}">
+        <input matInput [(ngModel)]="selectedApellido" placeholder="{{selectedApellido}}">
       </mat-form-field>
     </div>
   </div>
@@ -76,13 +75,13 @@
     <div class="col">
       <mat-form-field appearance="outline">
         <mat-label>DNI</mat-label>
-        <input matInput placeholder="ingrese">
+        <input matInput [(ngModel)]="selectedDni" placeholder="{{selectedDni}}">
       </mat-form-field>
     </div>
     <div class="col">
       <mat-form-field appearance="outline">
         <mat-label>Profesion</mat-label>
-        <input matInput placeholder="ingrese">
+        <input matInput [(ngModel)]="selectedProfesion" placeholder="{{selectedProfesion}}">
       </mat-form-field>
     </div>
   </div>

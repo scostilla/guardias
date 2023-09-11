@@ -40,53 +40,10 @@ export class RegDiarioComponent {
     'Cirugia infantil',
     'Pediatria',
   ];
-  //hospital: string[] = ['Dn. Pablo Soria', 'San Roque', 'Materno Infantil'];
-  /*especialidad_ps: string[] = [
-    'Cirugía General',
-    'Cirugía Cardio Vascular o Vascular Periférica',
-    'Cirugía Reparadora',
-    'Nefrología',
-    'Oftalmología',
-    'Oncología',
-    'Hematología',
-    'Urología',
-    'Traumatología',
-    'UTI-UTIN',
-    'Neurocirugía',
-  ];
-  especialidad_sr: string[] = [
-    'Cirugía General',
-    'Cirugía Reparadora',
-    'Nefrología',
-    'Oncología',
-    'Hematología',
-    'Urología',
-    'Infectología',
-    'Traumatología',
-    'UTI-UTIN',
-    'Neumonología',
-    'Reumatología',
-  ];
-  especialidad_mi: string[] = [
-    'Cirugía General',
-    'Cirugía Cardio Vascular o Vascular Periférica',
-    'Cirugía Reparadora',
-    'Nefrología',
-    'Oftalmología',
-    'Oncología',
-    'Otorrinolaringología',
-    'Psiquiatría',
-    'Hematología',
-    'Urología',
-    'Gastroenterología',
-    'Traumatología',
-    'UTI-UTIN',
-    'Nutrición Infantil',
-    'Cardiología Infantil',
-  ];*/
 
   selectedId: string | undefined;
   selectedCuil: string | undefined;
+  selectedDni: string | undefined;
   selectedNombre: string | undefined;
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
@@ -147,6 +104,7 @@ export class RegDiarioComponent {
       this.selectedNombre = this.professionalDataService.selectedNombre;
       this.selectedApellido = this.professionalDataService.selectedApellido;
       this.selectedProfesion = this.professionalDataService.selectedProfesion;
+      this.selectedDni = this.professionalDataService.selectedDni;
     });
   }
 
