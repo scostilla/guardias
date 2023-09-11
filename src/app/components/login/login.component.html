@@ -1,22 +1,44 @@
 <div class=" d-flex justify-content-center align-items-center vh-100">
+  
   <div class="bg-white p-5 rounded-5 text-secondary shadow p-2 mb-5 rounded "
     style="width: 25rem;">
+    
     <div class="d-flex justify-content-center ">
       <i class="fa-regular fa-circle-user" style="height: 7rem;"></i>
     </div>
+
     <div class="fuente text-center fs-1 fw-bold mt-5 fw-bold">Login</div>
+
+    <form ngForm (ngSubmit)="vacio()" #formLogin="ngForm">
+
     <div class="input-group mt-5">
       <div class="input-group-text">
         <i class="fa-solid fa-user text-secondary" style="height: 2rem"></i>
       </div>
-      <input class="form-control bg-light fuente" type="text" placeholder="Usuario/a">
+      <input ngModel class="form-control bg-light fuente" type="text" placeholder="Usuario/a" required #usuario="ngModel">
+      
     </div>
+
+    <div class="alert alert-danger mt-2" [hidden]="usuario.valid || usuario.pristine">
+      El usuario es obligatorio
+    </div>
+
     <div class="input-group mt-3">
       <div class="input-group-text">
         <i class="fa-solid fa-lock text-secondary" style="height: 2rem"></i>
       </div>
-      <input class="form-control bg-light fuente" type="password" placeholder="Contraseña">
+      <input ngModel class="form-control bg-light fuente" type="password" placeholder="Contraseña" required #pass="ngModel">
+      
     </div>
-    <div class="btn btn-info  w-100 mt-5 shadow p-2 mb-5 rounded fuente" routerLink="/home-page" >Entrar</div>
+
+    <div class="alert alert-danger mt-2" [hidden]="pass.valid || pass.pristine">
+      La contraseña es obligatoria
+    </div>
+    
+    <button [disabled]="formLogin.invalid" > enviar</button>
+    <!-- <div class="btn btn-info  w-100 mt-5 shadow p-2 mb-5 rounded fuente" routerLink="/home-page" >Entrar</div> -->
+  
+  </form>
   </div>
+
 </div>
