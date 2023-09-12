@@ -2,3 +2,21 @@ mat-form-field{
     width: 100%;
     margin-right: 12px;
   }
+
+  .backgroud{
+    background-color: #243c74;
+    color: white;
+  }
+  
+  .error {
+    color:red;
+   /*  margin-top: -20px; */
+  }
+
+  .action{
+    padding: 0px 25px 20px;
+    }
+    
+  .btnupdate{
+    flex: 1;
+  }

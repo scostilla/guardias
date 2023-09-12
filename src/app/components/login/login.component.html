@@ -9,8 +9,8 @@
 
     <div class="fuente text-center fs-1 fw-bold mt-5 fw-bold">Login</div>
 
-    <form ngForm (ngSubmit)="vacio()" #formLogin="ngForm">
-
+    <!-- <form ngForm (ngSubmit)="vacio()" #formLogin="ngForm">
+ -->
     <div class="input-group mt-5">
       <div class="input-group-text">
         <i class="fa-solid fa-user text-secondary" style="height: 2rem"></i>
@@ -35,10 +35,10 @@
       La contraseña es obligatoria
     </div>
     
-    <button [disabled]="formLogin.invalid" > enviar</button>
+    <button class="btn btn-info  w-100 mt-5 shadow p-2 mb-5 rounded fuente" routerLink="/home-page" [disabled]="usuario.invalid ||pass.invalid" > Entrar</button>
     <!-- <div class="btn btn-info  w-100 mt-5 shadow p-2 mb-5 rounded fuente" routerLink="/home-page" >Entrar</div> -->
   
-  </form>
+  
   </div>
 
 </div>
