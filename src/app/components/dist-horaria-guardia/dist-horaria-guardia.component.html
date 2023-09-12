@@ -1,25 +1,61 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Guardias</h1>
 </div>
-<div mat-dialog-content class="content">
-    <mat-form-field appearance="outline">
-        <mat-label>Tipo de guardia</mat-label>
-        <mat-select>
-            <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Día de guardia</mat-label>
-        <mat-select>
-            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Cantidad Hs.</mat-label>
-        <input matInput type="number" placeholder="Numero" value="">
-    </mat-form-field>
-    <div mat-dialog-actions class="action">
-        <button mat-raised-button class="btnupdate" type="button"
-            [mat-dialog-close]="false">Cancelar</button>
-        <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar guardia</button>
+
+<form [formGroup]="distribForm">
+    <div mat-dialog-content class="content">
+        <mat-form-field appearance="outline">
+            <mat-label>Tipo de guardia</mat-label>
+            <mat-select formControlName="guardia">
+                <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="error">
+            <span *ngIf="
+            distribForm.get('guardia')?.hasError('required') &&
+            distribForm.get('guardia')?.touched
+              ">
+              <h5>El tipo de guardia es un campo requerido</h5>
+            </span>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Día de guardia</mat-label>
+            <mat-select formControlName="dia">
+                <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="error">
+            <span *ngIf="
+            distribForm.get('dia')?.hasError('required') &&
+            distribForm.get('dia')?.touched
+              ">
+              <h5>El tipo de guardia es un campo requerido</h5>
+            </span>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Cantidad Hs.</mat-label>
+            <input matInput  placeholder="Numero"  formControlName="horas">
+        </mat-form-field>
+        <div class="error">
+            <span *ngIf="
+            distribForm.get('horas')?.hasError('required') &&
+            distribForm.get('horas')?.touched
+              ">
+              <h5>La cantidad de horas es un campo requerido</h5>
+            </span>
+            <span *ngIf="
+            distribForm.get('horas')?.hasError('pattern') &&
+            distribForm.get('horas')?.touched
+            ">
+              <h5>Las horas debe contener solo números</h5>
+            </span>
+          </div>
+
+        <div mat-dialog-actions class="action">
+            <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
+            <button mat-raised-button class="btnupdate" color="primary" type="submit" [disabled]="distribForm.invalid" [mat-dialog-close]="false">Agregar guardia</button>
+        </div>
     </div>
+</form>

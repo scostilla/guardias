@@ -30,6 +30,9 @@ export class RegDiarioComponent {
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
 
+  //minDate: string;
+  currentDate:Date = new Date();
+
   constructor(
     private _fb:FormBuilder,
     private dialog: MatDialog,
@@ -51,6 +54,9 @@ export class RegDiarioComponent {
       hs_egreso:'',
       fec_egreso:'',
           })
+          // Obteniendo la fecha actual y estableciéndola como la fecha mínima
+          const currentDate = new Date();
+          //this.minDate = currentDate.toISOString().split('T')[0];// Formatear la fecha como 'YYYY-MM-DD'
       }
   
   openDialog(componentParameter:any){
