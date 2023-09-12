@@ -85,7 +85,7 @@
           professionalForm.get('cuil')?.hasError('pattern') &&
           professionalForm.get('cuil')?.touched
           ">
-            <h5>El cuil debe contener solo n</h5>
+            <h5>El cuil debe contener solo numeros y "-"</h5>
           </span>
         </div>
       </div>
@@ -127,7 +127,6 @@
           </mat-select>
         </mat-form-field>
       </div>
-
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
@@ -154,16 +153,26 @@
         <mat-form-field>
           <mat-label>Adicional</mat-label>
           <mat-select formControlName="adicional" [disabled]="selectedCarga !=='40'"
-            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'" [required]="selectedRevista !== 'independiente'">
+            [disabled]="selectedRevista == 'independiente'" [required]="selectedCarga == '40'"
+            [required]="selectedRevista !== 'independiente'">
             <mat-option value="j1">J-1</mat-option>
             <mat-option value="j2">J-2</mat-option>
           </mat-select>
         </mat-form-field>
+        <div class="error">
+          <span *ngIf="
+          professionalForm.get('adicional')?.hasError('required') &&
+          professionalForm.get('adicional')?.touched
+        ">
+            <h5>El adicional es un campo requerido</h5>
+          </span>
+        </div>
       </div>
       <div class="col">
         <mat-form-field>
           <mat-label>Categoria</mat-label>
-          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"  [required]="selectedRevista !== 'independiente'">
+          <mat-select formControlName="categoria" [disabled]="selectedRevista == 'independiente'"
+            [required]="selectedRevista !== 'independiente'">
             <mat-option value="a">A</mat-option>
             <mat-option value="b">B</mat-option>
             <mat-option value="c">C</mat-option>
@@ -223,10 +232,19 @@
     </div>
 
   </mat-dialog-content>
-  <mat-dialog-actions align="end">
+  <!-- <mat-dialog-actions align="end">
     <button type="button" class="btnCancel" mat-button (click)="cancel()">Cancelar</button>
     <button class="btnAdd" [disabled]="professionalForm.invalid" type="submit" mat-button cdkFocusInitial>
       Agregar
     </button>
-  </mat-dialog-actions>
+  </mat-dialog-actions> -->
+
+  <div mat-dialog-actions class="action mt-4" align="center">
+    <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+    </button>
+    <button mat-raised-button class="btnAdd" color="primary" [disabled]="professionalForm.invalid" type="submit">Agregar
+    </button>
+  </div>
+
+
 </form>

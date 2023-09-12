@@ -10,8 +10,13 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
         <mat-label>Descripción actividad</mat-label>
-        <input matInput placeholder="Describe brevemente" value="">
+        <!-- <input matInput placeholder="Describe brevemente" value=""> -->
+        <input ngModel matInput placeholder="Describe brevemente" value="" required #descripcion="ngModel">
+        
     </mat-form-field>
+    <div class="alert alert-danger" [hidden]="descripcion.valid || descripcion.pristine">
+        La descripción es obligatoria
+      </div>
     <mat-form-field appearance="outline">
         <mat-label>Lugar</mat-label>
         <mat-select>

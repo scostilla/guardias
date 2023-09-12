@@ -41,3 +41,7 @@ mat-form-field{
 mat-label{
   color: #243c74;
 }
+
+.action{
+  padding: 0px 25px 20px;
+  }
