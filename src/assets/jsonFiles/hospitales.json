@@ -7,7 +7,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 2",
     "complejidad": 1,
-    "especialidades": [6, 2]
+    "especialidades": [6, 2],
+    "descubierto": [14, 18]
   },
   {
     "id": 2,
@@ -17,7 +18,8 @@
     "tipo": "CENTRO",
     "region": "CENTRO",
     "complejidad": 1,
-    "especialidades": [6, 2, 3, 4, 5]
+    "especialidades": [6, 2, 3, 4, 5],
+    "descubierto": [10,11,17]
   },
   {
     "id": 3,
@@ -27,7 +29,8 @@
     "tipo": "CENTRO",
     "region": "CENTRO",
     "complejidad": 1,
-    "especialidades": [6, 10]
+    "especialidades": [6, 10],
+    "descubierto": [22,17]
   },
   {
     "id": 4,
@@ -37,7 +40,8 @@
     "tipo": "HOSPITAL",
     "region": "CENTRO",
     "complejidad": 3,
-    "especialidades": [6, 15, 18, 4, 21, 10, 8, 12]
+    "especialidades": [6, 15, 18, 4, 21, 10, 8, 12],
+    "descubierto": [6, 2]
   },
   {
     "id": 5,
@@ -47,7 +51,8 @@
     "tipo": "HOSPITAL",
     "region": "VALLE",
     "complejidad": 2,
-    "especialidades": [6, 13]
+    "especialidades": [6, 13],
+    "descubierto": [1,7]
   },
   {
     "id": 6,
@@ -57,7 +62,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 1",
     "complejidad": 2,
-    "especialidades": [6, 21, 7, 8, 9]
+    "especialidades": [6, 21, 7, 8, 9],
+    "descubierto": [15,26,20]
   },
   {
     "id": 7,
@@ -67,7 +73,8 @@
     "tipo": "HOSPITAL",
     "region": "PUNA",
     "complejidad": 2,
-    "especialidades": [6, 20]
+    "especialidades": [6, 20],
+    "descubierto": [1,31]
   },
   {
     "id": 8,
@@ -77,7 +84,8 @@
     "tipo": "HOSPITAL",
     "region": "QUEBRADA",
     "complejidad": 1,
-    "especialidades": [6, 2]
+    "especialidades": [6, 2],
+    "descubierto": [18,20]
   },
   {
     "id": 9,
@@ -87,7 +95,8 @@
     "tipo": "HOSPITAL",
     "region": "QUEBRADA",
     "complejidad": 1,
-    "especialidades": [6]
+    "especialidades": [6],
+    "descubierto": [21,22,24]
   },
   {
     "id": 10,
@@ -97,7 +106,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 2",
     "complejidad": 2,
-    "especialidades": [6, 12, 9, 16, 17]
+    "especialidades": [6, 12, 9, 16, 17],
+    "descubierto": [3,7]
   },
   {
     "id": 11,
@@ -107,7 +117,8 @@
     "tipo": "HOSPITAL",
     "region": "QUEBRADA",
     "complejidad": 1,
-    "especialidades": [6, 2, 17, 18]
+    "especialidades": [6, 2, 17, 18],
+    "descubierto": [16,15]
   },
   {
     "id": 12,
@@ -115,9 +126,10 @@
     "domicilio": "domicilio 12",
     "localidad": "EL AGUILAR",
     "tipo": "HOSPITAL",
-    "region": "QUEBRADA/PUNA",
+    "region": "PUNA",
     "complejidad": 1,
-    "especialidades": [6]
+    "especialidades": [6],
+    "descubierto": [6, 29]
   },
   {
     "id": 13,
@@ -127,7 +139,8 @@
     "tipo": "HOSPITAL",
     "region": "CENTRO",
     "complejidad": 1,
-    "especialidades": [6, 8, 9, 19, 20, 17, 18, 14]
+    "especialidades": [6, 8, 9, 19, 20, 17, 18, 14],
+    "descubierto": [26, 22]
   },
   {
     "id": 14,
@@ -137,7 +150,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 1",
     "complejidad": 1,
-    "especialidades": [6, 2]
+    "especialidades": [6, 2],
+    "descubierto": [23, 24]
   },
   {
     "id": 15,
@@ -147,7 +161,8 @@
     "tipo": "HOSPITAL",
     "region": "CENTRO",
     "complejidad": 3,
-    "especialidades": [6, 2, 3, 4, 5, 9, 10, 1]
+    "especialidades": [6, 2, 3, 4, 5, 9, 10, 1],
+    "descubierto": [6, 12]
   },
   {
     "id": 16,
@@ -157,7 +172,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 2",
     "complejidad": 1,
-    "especialidades": [6, 2]
+    "especialidades": [6, 2],
+    "descubierto": [9, 31]
   },
   {
     "id": 17,
@@ -167,7 +183,8 @@
     "tipo": "HOSPITAL",
     "region": "PUNA",
     "complejidad": 1,
-    "especialidades": [6]
+    "especialidades": [6],
+    "descubierto": [30, 4]
   },
   {
     "id": 18,
@@ -177,7 +194,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 1",
     "complejidad": 1,
-    "especialidades": [6]
+    "especialidades": [6],
+    "descubierto": [23, 1]
   },
   {
     "id": 19,
@@ -187,7 +205,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 1",
     "complejidad": 1,
-    "especialidades": [6, 2]
+    "especialidades": [6, 2],
+    "descubierto": [28, 12]
   },
   {
     "id": 20,
@@ -197,7 +216,8 @@
     "tipo": "HOSPITAL",
     "region": "VALLE",
     "complejidad": 1,
-    "especialidades": [6, 2, 3, 4, 5]
+    "especialidades": [6, 2, 3, 4, 5],
+    "descubierto": [1,2,3]
   },
   {
     "id": 21,
@@ -207,7 +227,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 2",
     "complejidad": 1,
-    "especialidades": [6, 12, 14, 16, 18]
+    "especialidades": [6, 12, 14, 16, 18],
+    "descubierto": [5,19,31]
   },
   {
     "id": 22,
@@ -215,7 +236,9 @@
     "domicilio": "domicilio 22",
     "tipo": "PREHOSPITALARIO",
     "region": "CENTRO",
-    "complejidad": 3
+    "complejidad": 3,
+    "especialidades": [6, 2],
+    "descubierto": [16,13, 23]
   },
   {
     "id": 23,
@@ -225,7 +248,8 @@
     "tipo": "HOSPITAL",
     "region": "VALLE",
     "complejidad": 1,
-    "especialidades": [6]
+    "especialidades": [6],
+    "descubierto": [11, 12]
   },
   {
     "id": 24,
@@ -235,7 +259,8 @@
     "tipo": "HOSPITAL",
     "region": "RAMAL 2",
     "complejidad": 1,
-    "especialidades": [6, 2, 1]
+    "especialidades": [6, 2, 1],
+    "descubierto": [5,6]
   },
   {
     "id": 25,
@@ -245,7 +270,8 @@
     "tipo": "HOSPITAL",
     "region": "CENTRO",
     "complejidad": 3,
-    "especialidades": [6, 2, 1, 3, 7, 9]
+    "especialidades": [6, 2, 1, 3, 7, 9],
+    "descubierto": [27,29,30,31]
   },
   {
     "id": 26,
@@ -255,7 +281,8 @@
     "tipo": "HOSPITAL",
     "region": "QUEBRADA",
     "complejidad": 1,
-    "especialidades": [6, 2]
+    "especialidades": [6, 2],
+    "descubierto": [6, 10,20,30]
   },
   {
     "id": 27,
@@ -265,6 +292,7 @@
     "tipo": "HOSPITAL",
     "region": "VALLE",
     "complejidad": 1,
-    "especialidades": [6, 2, 10, 11, 16]
+    "especialidades": [6, 2, 10, 11, 16],
+    "descubierto": [1, 11,14,31]
   }
 ]
