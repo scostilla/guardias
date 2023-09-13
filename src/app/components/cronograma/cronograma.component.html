@@ -68,8 +68,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'SABADO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -81,14 +88,15 @@
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
       <div *ngFor="let profesionalActual of profesionalesFiltrados">
-      <div [class]="profesionalActual.tipoGuardia"
-        [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
-        {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
-        <div class="calendar-dia--icon-add">
-          <mat-icon>add</mat-icon>
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'DOMINGO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </li>
   <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
@@ -97,8 +105,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'LUNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -108,8 +123,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MARTES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -119,22 +141,33 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MIERCOLES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
-  <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioDisp2()">
+  <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
     <span class="calendar-dia__number">06</span>
     <div class="calendar-dia__content">
       <div class="calendar-dia--icon">
-        <mat-icon matTooltip="al menos una carga">check_circle</mat-icon>
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Lucía Medina</div>
-      <div class="calendar-dia--text circulo--cargo" matTooltip="Cardiología, 8 hs">Dr. Juan Quintero</div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'JUEVES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -144,8 +177,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'VIERNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -155,8 +195,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'SABADO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -177,8 +224,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'LUNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -188,8 +242,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MARTES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -199,8 +260,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MIERCOLES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -210,14 +278,35 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'JUEVES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
   <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
     <span class="calendar-dia__number">14</span>
-    <div class="calendar-dia__content"></div>
+    <div class="calendar-dia__content">
+      <div class="calendar-dia--icon">
+        <mat-icon matTooltip="Sin carga">cancel</mat-icon>
+      </div>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'VIERNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
   </li>
   <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
     <span class="calendar-dia__number">15</span>
@@ -225,8 +314,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'SABADO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -236,14 +332,35 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'DOMINGO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
-  <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
+  <li class="calendar-dia" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
     <span class="calendar-dia__number">17</span>
-    <div class="calendar-dia__content"></div>
+    <div class="calendar-dia__content">
+      <div class="calendar-dia--icon">
+        <mat-icon matTooltip="Sin carga">cancel</mat-icon>
+      </div>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'LUNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
   </li>
   <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
     <span class="calendar-dia__number">18</span>
@@ -251,8 +368,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MARTES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -262,8 +386,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MIERCOLES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -273,8 +404,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'JUEVES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -284,8 +422,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'VIERNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -295,8 +440,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'SABADO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -306,8 +458,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'DOMINGO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -317,8 +476,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'LUNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -328,8 +494,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MARTES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -339,8 +512,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'MIERCOLES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -350,8 +530,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'JUEVES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -361,8 +548,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'VIERNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -372,8 +566,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'SABADO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -383,8 +584,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'DOMINGO'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -394,8 +602,15 @@
       <div class="calendar-dia--icon">
         <mat-icon matTooltip="Sin carga">cancel</mat-icon>
       </div>
-      <div class="calendar-dia--icon-add">
-        <mat-icon>add</mat-icon>
+      <div *ngFor="let profesionalActual of profesionalesFiltrados">
+        <div [class]="profesionalActual.tipoGuardia"
+          [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'"
+          *ngIf="profesionalActual.cargoDiasI === 'LUNES'">
+          {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+          <div class="calendar-dia--icon-add">
+            <mat-icon>add</mat-icon>
+          </div>
+        </div>
       </div>
     </div>
   </li>
