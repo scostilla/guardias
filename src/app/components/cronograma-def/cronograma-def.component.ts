@@ -9,14 +9,14 @@ import { Component } from '@angular/core';
 export class CronogramaDefComponent {
 
 
-  profesionales?: any[];
-  hospitales?: any[];
-  profesionalesFiltrados?: any[];
-  profesionalesContrafactura?: any[];
-  profesionalesCargo?: any[];
-  profesionalesExtra?: any[];
-  profesionalesReagrupacion?: any[];
-  profesionalesPasiva?: any[];
+  profesionales?: any[] = [];
+  hospitales?: any[] = [];
+  profesionalesFiltrados?: any[] = [];
+  profesionalesContrafactura?: any[] = [];
+  profesionalesCargo?: any[] = [];
+  profesionalesExtra?: any[] = [];
+  profesionalesReagrupacion?: any[] = [];
+  profesionalesPasiva?: any[] = [];
 
   hospitalSeleccionado: any;
   profesionalActual: any;

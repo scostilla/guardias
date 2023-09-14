@@ -130,261 +130,190 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>1</td>
-                    <td style="background-color: #527edb; font-weight: bold;">CARGO Y AGRUPACIÓN</td>
-                    <ng-container *ngFor="let profesionalActual of profesionalesCargo">
+                    <td *ngIf="profesionalesCargo" [attr.rowspan]="profesionalesCargo.length + 1">1</td>
+                    <td *ngIf="profesionalesCargo" style="background-color: #527edb; font-weight: bold;"
+                      [attr.rowspan]="profesionalesCargo.length + 1">CARGO Y AGRUPACIÓN</td>
+                  </tr>
+                  <ng-container *ngFor="let profesionalActual of profesionalesCargo; let i = index">
+                    <tr>
                       <td>{{profesionalActual.servicio}}</td>
                       <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
                       <td>{{profesionalActual.cuil}}</td>
                       <td>{{profesionalActual.sitRevista}}</td>
                       <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
                       <td>{{profesionalActual.especialidad}}</td>
-                    </ng-container>
-                    <ng-container *ngIf="profesionalesCargo && profesionalesCargo.length === 0">
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #df7545;"></td>
                       <td></td>
-                    </ng-container>
-                    <td style="background-color: #9e9ea1; color: #527edb; font-weight: bold;">8</td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #527edb; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #df7545;"></td>
-                    <td style="color: #527edb; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="color: #527edb; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="color: #527edb; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                  </tr>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                    </tr>
+                  </ng-container>
                   <tr>
-                    <td>2</td>
-                    <td style="background-color: #f3be1f; font-weight: bold;">EXTRAS</td>
+                    <td *ngIf="profesionalesExtra" [attr.rowspan]="profesionalesExtra.length + 1">2</td>
+                    <td *ngIf="profesionalesExtra" style="background-color: #f3be1f; font-weight: bold;"
+                      [attr.rowspan]="profesionalesExtra.length + 1">EXTRA</td>
+                  </tr>
+                  <ng-container *ngFor="let profesionalActual of profesionalesExtra; let i = index">
+                    <tr>
+                      <td>{{profesionalActual.servicio}}</td>
+                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
+                      <td>{{profesionalActual.cuil}}</td>
+                      <td>{{profesionalActual.sitRevista}}</td>
+                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
+                      <td>{{profesionalActual.especialidad}}</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #df7545;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td *ngIf="profesionalesContrafactura" [attr.rowspan]="profesionalesContrafactura.length + 1">3</td>
+                    <td *ngIf="profesionalesContrafactura" style="background-color: #709b54; font-weight: bold;"
+                      [attr.rowspan]="profesionalesContrafactura.length + 1">CONTRAFACTURA</td>
+                  </tr>
+                  <ng-container *ngFor="let profesionalActual of profesionalesContrafactura; let i = index">
+                    <tr>
+                      <td>{{profesionalActual.servicio}}</td>
+                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
+                      <td>{{profesionalActual.cuil}}</td>
+                      <td>{{profesionalActual.sitRevista}}</td>
+                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
+                      <td>{{profesionalActual.especialidad}}</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #df7545;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td *ngIf="profesionalesPasiva" [attr.rowspan]="profesionalesPasiva.length + 1">4</td>
+                    <td *ngIf="profesionalesPasiva" style="background-color: #caa8eb; font-weight: bold;"
+                      [attr.rowspan]="profesionalesPasiva.length + 1">PASIVAS</td>
+                  </tr>
+                  <ng-container *ngFor="let profesionalActual of profesionalesPasiva; let i = index">
+                    <tr>
+                      <td>{{profesionalActual.servicio}}</td>
+                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
+                      <td>{{profesionalActual.cuil}}</td>
+                      <td>{{profesionalActual.sitRevista}}</td>
+                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
+                      <td>{{profesionalActual.especialidad}}</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #df7545;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="color: #487928; font-weight: bold;">8</td>
+                      <td></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td style="background-color: #9e9ea1;"></td>
+                      <td></td>
+                    </tr>
+                  </ng-container>
 
-                    <ng-container *ngFor="let profesionalActual of profesionalesExtra">
-                      <td>{{profesionalActual.servicio}}</td>
-                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
-                      <td>{{profesionalActual.cuil}}</td>
-                      <td>{{profesionalActual.sitRevista}}</td>
-                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
-                      <td>{{profesionalActual.especialidad}}</td>
-                    </ng-container>
-                    <ng-container *ngIf="profesionalesExtra && profesionalesExtra.length === 0">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </ng-container>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="color: #f3be1f; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #df7545;"></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #f3be1f; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #f3be1f; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td style="background-color: #709b54; font-weight: bold;">CONTRAFACTURA</td>
-                    <ng-container *ngFor="let profesionalActual of profesionalesContrafactura">
-                      <td>{{profesionalActual.servicio}}</td>
-                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
-                      <td>{{profesionalActual.cuil}}</td>
-                      <td>{{profesionalActual.sitRevista}}</td>
-                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
-                      <td>{{profesionalActual.especialidad}}</td>
-                    </ng-container>
-                    <ng-container *ngIf="profesionalesContrafactura && profesionalesContrafactura.length === 0">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </ng-container>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #df7545;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td style="background-color: #F4AF88; font-weight: bold;">REAGRUPACION</td>
-                    <ng-container *ngFor="let profesionalActual of profesionalesReagrupacion">
-                      <td>{{profesionalActual.servicio}}</td>
-                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
-                      <td>{{profesionalActual.cuil}}</td>
-                      <td>{{profesionalActual.sitRevista}}</td>
-                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
-                      <td>{{profesionalActual.especialidad}}</td>
-                    </ng-container>
-                    <ng-container *ngIf="profesionalesReagrupacion && profesionalesReagrupacion.length === 0">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </ng-container>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #df7545;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td style="background-color: #caa8eb; font-weight: bold;">PASIVAS</td>
-                    <ng-container *ngFor="let profesionalActual of profesionalesPasiva">
-                      <td>{{profesionalActual.servicio}}</td>
-                      <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
-                      <td>{{profesionalActual.cuil}}</td>
-                      <td>{{profesionalActual.sitRevista}}</td>
-                      <td>{{profesionalActual.cat}} ({{profesionalActual.adicional}})</td>
-                      <td>{{profesionalActual.especialidad}}</td>
-                    </ng-container>
-                    <ng-container *ngIf="profesionalesPasiva && profesionalesPasiva.length === 0">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </ng-container>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #df7545;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1; color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="color: #487928; font-weight: bold;">8</td>
-                    <td></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td style="background-color: #9e9ea1;"></td>
-                    <td></td>
-                  </tr>
                 </tbody>
                 <tfoot>
                   <tr>
@@ -399,9 +328,7 @@
     </div>
   </div>
 </div>
-
 <div class="row">
-
   <div class="col offset-1">
     <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de
       semana</span>
