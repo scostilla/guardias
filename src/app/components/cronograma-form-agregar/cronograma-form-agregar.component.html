@@ -11,7 +11,15 @@
             </mat-select>
           </mat-form-field>
     <mat-form-field appearance="outline">
-        <mat-label>Selecciona Tipo de Servicio</mat-label>
+            <mat-label>Tipo de Guardia</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let Guard of guards" [value]="Guard.value">
+                {{Guard.viewValue}}
+              </mat-option>
+            </mat-select>
+    </mat-form-field>    
+    <mat-form-field appearance="outline">
+        <mat-label>Tipo de Servicio</mat-label>
         <mat-select>
           <mat-option *ngFor="let Serv of servs" [value]="Serv.value">
             {{Serv.viewValue}}

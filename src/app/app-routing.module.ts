@@ -34,6 +34,8 @@ import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentati
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
+import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
+import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
 import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
 import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
 import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
@@ -88,6 +90,8 @@ const routes: Routes = [
  {path:'MonthTableComponent',component:MonthTableComponent},
  {path: 'cronograma', component:CronogramaComponent},
  {path: 'cronograma-def', component:CronogramaDefComponent},
+ {path: 'cronograma-def-materno', component:CronogramaDefMaternoComponent},
+ {path: 'cronograma-def-sroque', component:CronogramaDefSroqueComponent},
  {path: 'cronograma-reg', component:CronogramaRegComponent},
  {path: 'cronograma-p', component:CronogramaPComponent},
  {path: 'cronograma-p-def', component:CronogramaPDefComponent},

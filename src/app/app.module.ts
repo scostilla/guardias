@@ -95,6 +95,8 @@ import { ProfessionalDhHistComponent } from './components/professional-dh-hist/p
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
 import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
+import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
+import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
 
 
 registerLocaleData(localePy,'es');
@@ -170,6 +172,8 @@ registerLocaleData(localePy,'es');
     ProfessionalDhJunioComponent,
     CronogramaFormAgregarComponent,
     ProfessionalFormEditComponent,
+    CronogramaDefMaternoComponent,
+    CronogramaDefSroqueComponent,
     
   ],
 

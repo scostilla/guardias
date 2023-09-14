@@ -15,6 +15,11 @@ interface Serv {
   viewValue: string;
 }
 
+interface Guard {
+  value: string;
+  viewValue: string;
+}
+
 
 @Component({
   selector: 'app-cronograma-form-agregar',
@@ -23,15 +28,26 @@ interface Serv {
 })
 export class CronogramaFormAgregarComponent {
   profs: Prof[] = [
-    {value: 'steak-0', viewValue: 'Candido Perez'},
-    {value: 'pizza-1', viewValue: 'María Paz Monteros'},
-    {value: 'tacos-2', viewValue: 'Juana Felicitas'},
+    {value: 'steak-0', viewValue: 'Colque, Natalia Jimena'},
+    {value: 'pizza-1', viewValue: 'Palazzo, Alejandro Antonio'},
+    {value: 'tacos-2', viewValue: 'Carrillo, Daniela Mercedes'},
+    {value: 'tacos-3', viewValue: 'Cura, Pablo Luis Miguel'},
+    {value: 'tacos-4', viewValue: 'Ramirez, Luis Antonio'},
   ];
 
   servs: Serv[] = [
     {value: 'steak-0', viewValue: 'Clínica'},
     {value: 'pizza-1', viewValue: 'Cardiología'},
     {value: 'tacos-2', viewValue: 'Ginecología'},
+    {value: 'tacos-3', viewValue: 'Cirugia'},
+    {value: 'tacos-4', viewValue: 'Oncohematología'},
+  ];
+
+  guards: Guard[] = [
+    {value: 'extra', viewValue: 'Extra'},
+    {value: 'cargo', viewValue: 'Cargo'},
+    {value: 'agrupacion', viewValue: 'Agrupación'},
+    {value: 'contrafactura', viewValue: 'Contrafactura'},
   ];
 
 }

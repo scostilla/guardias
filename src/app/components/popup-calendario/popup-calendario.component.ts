@@ -12,9 +12,10 @@ export interface PeriodicElement {
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Perez, Cándido', weight: 'Clínica', cant: 8, symbol: ''},
-  {position: 2, name: 'Monteros, María Paz', weight: 'Ginecología', cant: 6, symbol: ''},
-  {position: 3, name: 'Felicitas, Juana', weight: 'Ginecología', cant: 14, symbol: ''},
+  {position: 1, name: 'Colque, Natalia Jimena', weight: 'Clínica', cant: 8, symbol: ''},
+  {position: 2, name: 'Palazzo, Alejandro Antonio', weight: 'Cardiología', cant: 6, symbol: ''},
+  {position: 3, name: 'Cura, Pablo Luis Miguel', weight: 'Cirugía', cant: 12, symbol: ''},
+  {position: 4, name: 'Ramirez, Luis antonio', weight: 'Clínica', cant: 12, symbol: ''},
 ];
 
 /**
