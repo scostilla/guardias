@@ -97,6 +97,8 @@ import { CronogramaFormAgregarComponent } from './components/cronograma-form-agr
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
 import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
+import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
+import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
 
 
 registerLocaleData(localePy,'es');
@@ -174,6 +176,8 @@ registerLocaleData(localePy,'es');
     ProfessionalFormEditComponent,
     CronogramaDefMaternoComponent,
     CronogramaDefSroqueComponent,
+    DdjjCargoyagrupTotalApComponent,
+    DdjjCargoyagrupTotalRecComponent,
     
   ],
 

@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Agrega la observación de porque se rechaza:</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Observación</mat-label>
+    <input matInput [(ngModel)]="data.observ" required #observ="ngModel" placeholder="Es necesario completar el número de guardias correctamente. Por favor, realiza las modificaciones y vuelve a presentar la DDJJ.">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button onclick="document.getElementById('btn-rechazo').classList.add('mostrar');" (click)="onNoClick()">Cancelar</button>
+  <button mat-button [mat-dialog-close]="data.observ" cdkFocusInitial color="primary" onclick="document.getElementById('btn-rechazo').classList.remove('mostrar');" [disabled]="observ.invalid">Agregar observacion</button>
+</div>

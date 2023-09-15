@@ -10,7 +10,7 @@ export class DailyScheduleComponent {
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
-  selectedHospital: string = '';
+  selectedHospital: string = 'DN. PABLO SORIA';
 
   constructor(
     private http: HttpClient,
