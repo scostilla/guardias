@@ -45,6 +45,11 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   font-weight: bold;
 }
 
+.mat-success {
+  background-color: green;
+  color: #fff;
+}
+
 .scroll {
   overflow: auto;
 }
