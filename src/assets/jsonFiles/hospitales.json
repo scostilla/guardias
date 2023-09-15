@@ -8,7 +8,8 @@
     "region": "RAMAL 2",
     "complejidad": 1,
     "especialidades": [6, 2],
-    "descubierto": [14, 18]
+    "descubierto": [14, 18],
+    "pasivas": false
   },
   {
     "id": 2,
@@ -30,7 +31,8 @@
     "region": "CENTRO",
     "complejidad": 1,
     "especialidades": [6, 10],
-    "descubierto": [22,17]
+    "descubierto": [22,17],
+    "pasivas": true
   },
   {
     "id": 4,
@@ -41,7 +43,8 @@
     "region": "CENTRO",
     "complejidad": 3,
     "especialidades": [6, 15, 18, 4, 21, 10, 8, 12],
-    "descubierto": [6, 2]
+    "descubierto": [6, 2],
+    "pasivas": true
   },
   {
     "id": 5,
@@ -52,7 +55,8 @@
     "region": "VALLE",
     "complejidad": 2,
     "especialidades": [6, 13],
-    "descubierto": [1,7]
+    "descubierto": [1,7],
+    "pasivas": false
   },
   {
     "id": 6,
@@ -63,7 +67,8 @@
     "region": "RAMAL 1",
     "complejidad": 2,
     "especialidades": [6, 21, 7, 8, 9],
-    "descubierto": [15,26,20]
+    "descubierto": [15,26,20],
+    "pasivas": false
   },
   {
     "id": 7,
@@ -74,7 +79,8 @@
     "region": "PUNA",
     "complejidad": 2,
     "especialidades": [6, 20],
-    "descubierto": [1,31]
+    "descubierto": [1,31],
+    "pasivas": false
   },
   {
     "id": 8,
@@ -85,7 +91,8 @@
     "region": "QUEBRADA",
     "complejidad": 1,
     "especialidades": [6, 2],
-    "descubierto": [18,20]
+    "descubierto": [18,20],
+    "pasivas": true
   },
   {
     "id": 9,
@@ -96,7 +103,8 @@
     "region": "QUEBRADA",
     "complejidad": 1,
     "especialidades": [6],
-    "descubierto": [21,22,24]
+    "descubierto": [21,22,24],
+    "pasivas": false
   },
   {
     "id": 10,
@@ -107,7 +115,8 @@
     "region": "RAMAL 2",
     "complejidad": 2,
     "especialidades": [6, 12, 9, 16, 17],
-    "descubierto": [3,7]
+    "descubierto": [3,7],
+    "pasivas": false
   },
   {
     "id": 11,
@@ -118,7 +127,8 @@
     "region": "QUEBRADA",
     "complejidad": 1,
     "especialidades": [6, 2, 17, 18],
-    "descubierto": [16,15]
+    "descubierto": [16,15],
+    "pasivas": false
   },
   {
     "id": 12,
@@ -129,7 +139,8 @@
     "region": "PUNA",
     "complejidad": 1,
     "especialidades": [6],
-    "descubierto": [6, 29]
+    "descubierto": [6, 29],
+    "pasivas": false
   },
   {
     "id": 13,
@@ -140,7 +151,8 @@
     "region": "CENTRO",
     "complejidad": 1,
     "especialidades": [6, 8, 9, 19, 20, 17, 18, 14],
-    "descubierto": [26, 22]
+    "descubierto": [26, 22],
+    "pasivas": false
   },
   {
     "id": 14,
@@ -151,7 +163,8 @@
     "region": "RAMAL 1",
     "complejidad": 1,
     "especialidades": [6, 2],
-    "descubierto": [23, 24]
+    "descubierto": [23, 24],
+    "pasivas": false
   },
   {
     "id": 15,
@@ -162,7 +175,8 @@
     "region": "CENTRO",
     "complejidad": 3,
     "especialidades": [6, 2, 3, 4, 5, 9, 10, 1],
-    "descubierto": [6, 12]
+    "descubierto": [6, 12],
+    "pasivas": true
   },
   {
     "id": 16,
@@ -173,7 +187,8 @@
     "region": "RAMAL 2",
     "complejidad": 1,
     "especialidades": [6, 2],
-    "descubierto": [9, 31]
+    "descubierto": [9, 31],
+    "pasivas": false
   },
   {
     "id": 17,
@@ -184,7 +199,8 @@
     "region": "PUNA",
     "complejidad": 1,
     "especialidades": [6],
-    "descubierto": [30, 4]
+    "descubierto": [30, 4],
+    "pasivas": false
   },
   {
     "id": 18,
@@ -195,7 +211,8 @@
     "region": "RAMAL 1",
     "complejidad": 1,
     "especialidades": [6],
-    "descubierto": [23, 1]
+    "descubierto": [23, 1],
+    "pasivas": false
   },
   {
     "id": 19,
@@ -206,7 +223,8 @@
     "region": "RAMAL 1",
     "complejidad": 1,
     "especialidades": [6, 2],
-    "descubierto": [28, 12]
+    "descubierto": [28, 12],
+    "pasivas": false
   },
   {
     "id": 20,
@@ -217,7 +235,8 @@
     "region": "VALLE",
     "complejidad": 1,
     "especialidades": [6, 2, 3, 4, 5],
-    "descubierto": [1,2,3]
+    "descubierto": [1,2,3],
+    "pasivas": false
   },
   {
     "id": 21,
@@ -228,7 +247,8 @@
     "region": "RAMAL 2",
     "complejidad": 1,
     "especialidades": [6, 12, 14, 16, 18],
-    "descubierto": [5,19,31]
+    "descubierto": [5,19,31],
+    "pasivas": false
   },
   {
     "id": 22,
@@ -238,7 +258,8 @@
     "region": "CENTRO",
     "complejidad": 3,
     "especialidades": [6, 2],
-    "descubierto": [16,13, 23]
+    "descubierto": [16,13, 23],
+    "pasivas": false
   },
   {
     "id": 23,
@@ -249,7 +270,8 @@
     "region": "VALLE",
     "complejidad": 1,
     "especialidades": [6],
-    "descubierto": [11, 12]
+    "descubierto": [11, 12],
+    "pasivas": false
   },
   {
     "id": 24,
@@ -260,7 +282,8 @@
     "region": "RAMAL 2",
     "complejidad": 1,
     "especialidades": [6, 2, 1],
-    "descubierto": [5,6]
+    "descubierto": [5,6],
+    "pasivas": false
   },
   {
     "id": 25,
@@ -271,7 +294,8 @@
     "region": "CENTRO",
     "complejidad": 3,
     "especialidades": [6, 2, 1, 3, 7, 9],
-    "descubierto": [27,29,30,31]
+    "descubierto": [27,29,30,31],
+    "pasivas": true
   },
   {
     "id": 26,
@@ -282,7 +306,8 @@
     "region": "QUEBRADA",
     "complejidad": 1,
     "especialidades": [6, 2],
-    "descubierto": [6, 10,20,30]
+    "descubierto": [6, 10,20,30],
+    "pasivas": false
   },
   {
     "id": 27,
@@ -293,6 +318,7 @@
     "region": "VALLE",
     "complejidad": 1,
     "especialidades": [6, 2, 10, 11, 16],
-    "descubierto": [1, 11,14,31]
+    "descubierto": [1, 11,14,31],
+    "pasivas": false
   }
 ]
