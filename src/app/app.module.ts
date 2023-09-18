@@ -99,6 +99,8 @@ import { CronogramaDefMaternoComponent } from './components/cronograma-def-mater
 import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
 import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
 import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
+import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
+import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
 
 
 registerLocaleData(localePy,'es');
@@ -178,6 +180,8 @@ registerLocaleData(localePy,'es');
     CronogramaDefSroqueComponent,
     DdjjCargoyagrupTotalApComponent,
     DdjjCargoyagrupTotalRecComponent,
+    DdjjExtraTotRecComponent,
+    DdjjExtraTotApComponent,
     
   ],
 
