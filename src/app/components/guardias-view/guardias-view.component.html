@@ -3,9 +3,9 @@
     <div class="row">
       <div class="titulos">.:: Guardias <span class="titulos-second">Activas</span>
     </div>
-    <div class="row"> 
+    <div class="row">
       <div class="col-sm offset-1">
-    <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Modificar</button>
+        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Modificar</button>
     <mat-menu #menug="matMenu">
       <button mat-menu-item routerLink="/guardias-view-p">Guardias Pasivas</button>
     </mat-menu>
@@ -31,7 +31,7 @@
       <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
     </div>
     <div class="col d-flex justify-content-center"></div>
-        <app-daily-schedule></app-daily-schedule>
+    <app-daily-schedule [tipoGuardia]="'activa'"></app-daily-schedule>
       </div>
     </div>
 

@@ -16,7 +16,7 @@ export class GuardiasViewComponent {
     private http: HttpClient,
   ) {
   }
-
+/*
   ngOnInit() {
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
@@ -62,5 +62,5 @@ export class GuardiasViewComponent {
       result[key].push(currentValue);
       return result;
     }, {});
-  }
+  }*/
 }
