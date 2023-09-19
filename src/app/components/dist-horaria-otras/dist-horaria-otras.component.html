@@ -1,37 +1,74 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Otras Actividades</h1>
 </div>
-<div mat-dialog-content class="content">
+<form [formGroup]="otrasActiv">
+    <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Día actividad</mat-label>
-        <mat-select>
+        <mat-select formControlName="dia">
             <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Descripción actividad</mat-label>
-        <!-- <input matInput placeholder="Describe brevemente" value=""> -->
-        <input ngModel matInput placeholder="Describe brevemente" value="" required #descripcion="ngModel">
-        
-    </mat-form-field>
-    <div class="alert alert-danger" [hidden]="descripcion.valid || descripcion.pristine">
-        La descripción es obligatoria
+    <div class="error">
+        <span *ngIf="
+        otrasActiv.get('dia')?.hasError('required') &&
+            otrasActiv.get('dia')?.touched
+          ">
+          <h5>El dia es un campo requerido</h5>
+        </span>
       </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descripción actividad</mat-label>
+        <input matInput placeholder="Describe brevemente" formControlName="descrip">
+      </mat-form-field>
+      <div class="error">
+        <span *ngIf="
+        otrasActiv.get('descrip')?.hasError('required') &&
+        otrasActiv.get('descrip')?.touched
+          ">
+          <h5>La descripcion es un campo requerido</h5>
+        </span>
+      </div>
+    
     <mat-form-field appearance="outline">
         <mat-label>Lugar</mat-label>
-        <mat-select>
+        <mat-select formControlName="hospital">
             <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
                 {{hosp}}</mat-option>
         </mat-select>
     </mat-form-field>
+    <div class="error">
+        <span *ngIf="
+            otrasActiv.get('hospital')?.hasError('required') &&
+            otrasActiv.get('hospital')?.touched
+          ">
+          <h5>El lugar es un campo requerido</h5>
+        </span>
+      </div>
 
     <mat-form-field appearance="outline">
         <mat-label>Cantidad Hs.</mat-label>
-        <input matInput type="number" placeholder="Numero" value="">
+        <input matInput placeholder="Numero" formControlName="horas">
     </mat-form-field>
-</div>
-<div mat-dialog-actions class="action">
+    <div class="error">
+        <span *ngIf="
+        otrasActiv.get('horas')?.hasError('required') &&
+        otrasActiv.get('horas')?.touched
+          ">
+          <h5>La cantidad de horas es un campo requerido</h5>
+        </span>
+        <span *ngIf="
+        otrasActiv.get('horas')?.hasError('pattern') &&
+        otrasActiv.get('horas')?.touched
+        ">
+          <h5>Las horas deben contener solo números</h5>
+        </span>
+      </div>
+    </div>
+    <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button"
         [mat-dialog-close]="false">Cancelar</button>
-    <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar actividad</button>
-</div>
+    <button mat-raised-button class="btnupdate" color="primary" [disabled]="otrasActiv.invalid" type="submit" [mat-dialog-close]="false">Agregar actividad</button>
+    </div>
+</form>

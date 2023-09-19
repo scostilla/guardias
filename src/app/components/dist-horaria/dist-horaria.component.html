@@ -1,67 +1,67 @@
 <div mat-dialog-title class="backgroud">
-    <h1 class="font">Distribución Horaria</h1>
+  <h1 class="font">Distribución Horaria</h1>
 </div>
 
 <form [formGroup]="distribForm">
 <div mat-dialog-content class="content">
-    <mat-form-field appearance="outline">
-        <mat-label>Hospital</mat-label>
-        <mat-select formControlName="hospital">
-            <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
-                {{hosp}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <div class="error">
-        <span *ngIf="
-        distribForm.get('hospital')?.hasError('required') &&
-        distribForm.get('hospital')?.touched
-          ">
-          <h5>El hospital es un campo requerido</h5>
-        </span>
-      </div>
-      
-    <mat-form-field appearance="outline">
-        <mat-label>Profesional</mat-label>
-        <mat-select formControlName="profesional">
-            <mat-option *ngFor="let prof of profesional" [value]="prof">{{prof}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <div class="error">
-        <span *ngIf="
-        distribForm.get('profesional')?.hasError('required') &&
-        distribForm.get('profesional')?.touched
-          ">
-          <h5>El hospital es un campo requerido</h5>
-        </span>
-      </div>
-
-    <p>Guardias 
-        <button mat-icon-button color="primary" (click)="openDistGuardia()" matTooltip="Agregar nuevo día de guardia">
-        <mat-icon>playlist_add</mat-icon>
-      </button>
-    </p>
+  <mat-form-field appearance="outline">
+      <mat-label>Hospital</mat-label>
+      <mat-select formControlName="hospital">
+          <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
+              {{hosp}}</mat-option>
+      </mat-select>
+  </mat-form-field>
+  <div class="error">
+      <span *ngIf="
+      distribForm.get('hospital')?.hasError('required') &&
+      distribForm.get('hospital')?.touched
+        ">
+        <h5>El hospital es un campo requerido</h5>
+      </span>
+    </div>
     
-    <p>Consultorio 
-        <button mat-icon-button color="primary" (click)="openDistCons()" matTooltip="Agregar nuevo día de consultorio">
-        <mat-icon>playlist_add</mat-icon>
-      </button>
-    </p>
-    
-    <p>Giras médicas 
-        <button mat-icon-button color="primary" (click)="openDistGira()" matTooltip="Agregar nuevo día de gira médica">
-        <mat-icon>playlist_add</mat-icon>
-      </button>
-    </p>
+  <mat-form-field appearance="outline">
+      <mat-label>Profesional</mat-label>
+      <mat-select formControlName="profesional">
+          <mat-option *ngFor="let prof of profesional" [value]="prof">{{prof}}</mat-option>
+      </mat-select>
+  </mat-form-field>
+  <div class="error">
+      <span *ngIf="
+      distribForm.get('profesional')?.hasError('required') &&
+      distribForm.get('profesional')?.touched
+        ">
+        <h5>El profesional es un campo requerido</h5>
+      </span>
+    </div>
 
-    <p>Otras actividades 
-        <button mat-icon-button color="primary" (click)="openDistOtra()" matTooltip="Agregar nuevo día de actividad">
-        <mat-icon>playlist_add</mat-icon>
-      </button>
-    </p>
+  <p>Guardias 
+      <button mat-icon-button color="primary" (click)="openDistGuardia()" matTooltip="Agregar nuevo día de guardia">
+      <mat-icon>playlist_add</mat-icon>
+    </button>
+  </p>
+  
+  <p>Consultorio 
+      <button mat-icon-button color="primary" (click)="openDistCons()" matTooltip="Agregar nuevo día de consultorio">
+      <mat-icon>playlist_add</mat-icon>
+    </button>
+  </p>
+  
+  <p>Giras médicas 
+      <button mat-icon-button color="primary" (click)="openDistGira()" matTooltip="Agregar nuevo día de gira médica">
+      <mat-icon>playlist_add</mat-icon>
+    </button>
+  </p>
+
+  <p>Otras actividades 
+      <button mat-icon-button color="primary" (click)="openDistOtra()" matTooltip="Agregar nuevo día de actividad">
+      <mat-icon>playlist_add</mat-icon>
+    </button>
+  </p>
 </div>
 <div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
-    <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
+  <button mat-raised-button class="btnupdate" type="button"
+      [mat-dialog-close]="false">Cancelar</button>
+  <button mat-raised-button class="btnupdate" color="primary" [disabled]="distribForm.invalid" type="submit" [mat-dialog-close]="false">Guardar</button>
 </div>
 </form>

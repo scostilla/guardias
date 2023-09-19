@@ -1,20 +1,45 @@
 <div mat-dialog-title class="backgroud">
-    <h1 class="font">Giras Médicas</h1>
+  <h1 class="font">Giras Médicas </h1>
 </div>
-<div mat-dialog-content class="content">
-    <mat-form-field appearance="outline">
-        <mat-label>Día de gira médica</mat-label>
-        <mat-select>
-            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Cantidad Hs.</mat-label>
-        <input matInput type="number" placeholder="Numero" value="">
-    </mat-form-field>
-</div>
-<div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
-    <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar gira médica</button>
-</div>
+<form [formGroup]="giras">
+  <div mat-dialog-content class="content">
+      <mat-form-field appearance="outline">
+      <mat-label>Día de gira médica</mat-label>
+      <mat-select formControlName="dia">
+          <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+      </mat-select>
+      </mat-form-field>
+      <div class="error">
+          <span *ngIf="
+              giras.get('dia')?.hasError('required') &&
+              giras.get('dia')?.touched
+            ">
+            <h5>El dia es un campo requerido</h5>
+          </span>
+        </div>
+
+      <mat-form-field appearance="outline">
+          <mat-label>Cantidad Hs.</mat-label>
+          <input matInput placeholder="Numero" formControlName="horas">
+      </mat-form-field>
+      <div class="error">
+          <span *ngIf="
+          giras.get('horas')?.hasError('required') &&
+          giras.get('horas')?.touched
+            ">
+            <h5>La cantidad de horas es un campo requerido</h5>
+          </span>
+          <span *ngIf="
+          giras.get('horas')?.hasError('pattern') &&
+          giras.get('horas')?.touched
+          ">
+            <h5>Las horas deben contener solo números</h5>
+          </span>
+        </div>
+  </div>
+  <div mat-dialog-actions class="action">
+  <button mat-raised-button class="btnupdate" type="button"
+      [mat-dialog-close]="false">Cancelar</button>
+  <button mat-raised-button class="btnupdate" color="primary" [disabled]="giras.invalid" type="submit" [mat-dialog-close]="false">Agregar gira médica</button>
+  </div>
+</form>

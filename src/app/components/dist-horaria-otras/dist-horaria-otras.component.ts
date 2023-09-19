@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dist-horaria-otras',
@@ -17,7 +18,20 @@ export class DistHorariaOtrasComponent {
   selectedService: string = 'Cargo';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
-  constructor(private http: HttpClient) {}
+
+  otrasActiv: FormGroup;
+
+  constructor(
+    private http: HttpClient,
+    private fb: FormBuilder,
+    ) {
+      this.otrasActiv= this.fb.group({
+        dia: ['', Validators.required],
+        descrip: ['', Validators.required],
+        hospital: ['', Validators.required],
+        horas: ['', [Validators.pattern('[1-9]*'), Validators.required]]
+      })
+    }
   options: any[] | undefined;
 
   ngOnInit() {

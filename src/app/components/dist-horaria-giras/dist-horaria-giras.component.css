@@ -1,4 +1,19 @@
 mat-form-field{
-    width: 100%;
-    margin-right: 12px;
-  }
+  width: 100%;
+  margin-right: 12px;
+}
+
+.backgroud{
+  background-color: #243c74;
+  color: white;
+}
+
+.font{
+  font-family: "Ubuntu";
+  font-size:170%;
+}
+
+.error {
+  color:red;
+ /*  margin-top: -20px; */
+}
