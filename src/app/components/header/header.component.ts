@@ -31,6 +31,9 @@ export class HeaderComponent implements OnDestroy {
       this.nombre = params['nombre'];
       this.apellido = params['apellido'];
       this.url = params['url'];
+      if(this.url ==""){
+        this.url = "assets/img/users/generic.jpg";
+      }
     });
   }
 
