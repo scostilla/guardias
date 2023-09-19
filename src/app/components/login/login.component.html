@@ -1,22 +1,19 @@
-<div class=" d-flex justify-content-center align-items-center vh-100">
-  <div class="bg-white p-5 rounded-5 text-secondary shadow p-2 mb-5 rounded "
-    style="width: 25rem;">
-    <div class="d-flex justify-content-center ">
-      <i class="fa-regular fa-circle-user" style="height: 7rem;"></i>
-    </div>
-    <div class="fuente text-center fs-1 fw-bold mt-5 fw-bold">Login</div>
-    <div class="input-group mt-5">
-      <div class="input-group-text">
-        <i class="fa-solid fa-user text-secondary" style="height: 2rem"></i>
+<div class="container col-md-5">
+  <div class=" d-flex justify-content-center align-items-center vh-100">
+    <div class="bg-white p-5 rounded-5 text-secondary shadow p-2 mb-5 rounded "
+      style="width: 25rem;">
+      <div class="d-flex justify-content-center ">
+        <i class="fa-regular fa-circle-user" style="height: 7rem;"></i>
       </div>
-      <input class="form-control bg-light fuente" type="text" placeholder="Usuario/a">
+      <div class="fuente text-center fs-1 fw-bold mt-5 fw-bold">Login</div>
+<br>
+  <form (ngSubmit)="userLogin()">
+    <div class="mb-3">
+      <input type="text" [(ngModel)]="loggedUser.usuario" class="form-control bg-light fuente" type="text" placeholder="Usuario/a" id="usuario" name="usuario" >
     </div>
-    <div class="input-group mt-3">
-      <div class="input-group-text">
-        <i class="fa-solid fa-lock text-secondary" style="height: 2rem"></i>
-      </div>
-      <input class="form-control bg-light fuente" type="password" placeholder="Contraseña">
+    <div class="mb-3">
+      <input type="password" [(ngModel)]="loggedUser.contrasena" class="form-control bg-light fuente" id="contrasena" name="contrasena" placeholder="Contraseña">
     </div>
-    <div class="btn btn-info  w-100 mt-5 shadow p-2 mb-5 rounded fuente" routerLink="/home-page" >Entrar</div>
-  </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
 </div>

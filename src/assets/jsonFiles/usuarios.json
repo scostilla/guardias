@@ -1,0 +1,50 @@
+[
+  {
+   "id": 1,
+   "userName": "admin",
+   "pass": "admin",
+   "apellido": "adminstrador",
+   "nombre": "ejemplo",
+   "estado": 1
+  },
+  {
+   "id": 2,
+   "userName": "baja",
+   "pass": "baja",
+   "apellido": "baja",
+   "nombre": "usuario",
+   "estado": 0
+  },
+  {
+   "id": 3,
+   "userName": "scostilla",
+   "pass": "scostilla",
+   "apellido": "costilla",
+   "nombre": "sebastian",
+   "estado": 1
+  },
+  {
+   "id": 4,
+   "userName": "fyucgra",
+   "pass": "fyucgra",
+   "apellido": "yucgra",
+   "nombre": "fabiana",
+   "estado": 1
+  },
+  {
+   "id": 5,
+   "userName": "ncruz",
+   "pass": "ncruz",
+   "apellido": "cruz",
+   "nombre": "nicolas",
+   "estado": 1
+  },
+  {
+   "id": 6,
+   "userName": "aluna",
+   "pass": "aluna",
+   "apellido": "luna",
+   "nombre": "amanda",
+   "estado": 1
+  }
+ ]

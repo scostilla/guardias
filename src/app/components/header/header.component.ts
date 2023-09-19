@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,13 +12,23 @@ export class HeaderComponent implements OnDestroy {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showButtons: boolean = true;
+  nombre?: string;
+  apellido?: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private route: ActivatedRoute) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.showNavBar = !(event.url === '/' || event.url === '/home-page');
         this.showButtons= !(event.url === '/');
       }
+    });
+  }
+
+  ngOnInit(): void {
+    // Acceder a los parámetros de consulta
+    this.route.queryParams.subscribe(params => {
+      this.nombre = params['nombre'];
+      this.apellido = params['apellido'];
     });
   }
 
