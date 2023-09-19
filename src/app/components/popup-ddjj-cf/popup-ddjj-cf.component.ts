@@ -7,17 +7,17 @@ import { Component } from '@angular/core';
 })
 export class PopupDdjjCfComponent {
   alert:any;
-  
-  constructor() { 
+
+  constructor() {
      this.alert='';
- } 
+ }
  esDiferente():boolean {
-         
+
      if(this.alert!=79990) {
              return true;
      }
-      else { 
+      else {
          return false;
-     } 
+     }
  }
 }

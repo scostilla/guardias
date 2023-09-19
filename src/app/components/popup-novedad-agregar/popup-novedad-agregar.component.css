@@ -1,35 +1,35 @@
 
-  mat-form-field{
-    align-items: center;
-    width: 100%;
-  }
+mat-form-field{
+  align-items: center;
+  width: 100%;
+}
 
-  .mdc-dialog__title
+.mdc-dialog__title
 {
-  background-color: #243c74;
-  color: white;
+background-color: #243c74;
+color: white;
 }
 
 .row{
-    display: flex;
-  }
+  display: flex;
+}
 
 .col{
-    flex:90%;
-    margin:20px;
-  }
+  flex:90%;
+  margin:20px;
+}
 
-  .requiredField{
-    color: red;
-  }
-  label {
-    display: block;
-    font:
-      1rem 'Ubuntu',
-      sans-serif;
-  }
-  
-  input,
-  label {
-    margin: 0.4rem 0;
-  }
+.requiredField{
+  color: red;
+}
+label {
+  display: block;
+  font:
+    1rem 'Ubuntu',
+    sans-serif;
+}
+
+input,
+label {
+  margin: 0.4rem 0;
+}

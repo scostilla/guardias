@@ -1,44 +1,44 @@
 <div mat-dialog-title class="backgroud">
-    <h1 class="font">AGREGAR FACTURA</h1>
+  <h1 class="font">AGREGAR FACTURA</h1>
 </div>
 <div mat-dialog-content class="content">
-    <div class="row mt-3">
-        <p>Para: ARRAYA PEDRO ADEMIR</p>
-        <p>CUIL: 20-20675037-3</p>
-    </div>    
-    <mat-form-field appearance="outline">
-        <mat-label>Contribuyente</mat-label>
-        <mat-select>
-            <mat-option>Monotributista</mat-option>
-            <mat-option>Responsable inscripto</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>N° Factura</mat-label>
-        <input matInput value="">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Fecha</mat-label>
-        <input matInput [matDatepicker]="picker1">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Monto</mat-label>
-        <input matInput type="number" [(ngModel)]="alert">
-    </mat-form-field>
-    <span [ngSwitch]="alert">
-        <span *ngSwitchCase="[79990].includes(alert) ? alert : !alert">
-        <div class="alert alert-danger" role="alert">
-        El monto ingresado no coincide con el informado.
-        </div>
-        </span>
-    </span>
+  <div class="row mt-3">
+      <p>Para: ARRAYA PEDRO ADEMIR</p>
+      <p>CUIL: 20-20675037-3</p>
+  </div>
+  <mat-form-field appearance="outline">
+      <mat-label>Contribuyente</mat-label>
+      <mat-select>
+          <mat-option>Monotributista</mat-option>
+          <mat-option>Responsable inscripto</mat-option>
+      </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+      <mat-label>N° Factura</mat-label>
+      <input matInput value="">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="picker1">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+      <mat-label>Monto</mat-label>
+      <input matInput type="number" [(ngModel)]="alert">
+  </mat-form-field>
+  <span [ngSwitch]="alert">
+      <span *ngSwitchCase="[79990].includes(alert) ? alert : !alert">
+      <div class="alert alert-danger" role="alert">
+      El monto ingresado no coincide con el informado.
+      </div>
+      </span>
+  </span>
 </div>
 <div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
-    <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar</button>
+  <button mat-raised-button class="btnupdate" type="button"
+      [mat-dialog-close]="false">Cancelar</button>
+  <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar</button>
 </div>
 

@@ -1,47 +1,47 @@
 <h2 mat-dialog-title>
-    AGREGAR NOVEDAD
-    <h5 class="requiredField">Todos los campos son obligatorios</h5>
-  </h2>
-  <div class="row center-content">
-    <div class="col">
+  AGREGAR NOVEDAD
+  <h5 class="requiredField">Todos los campos son obligatorios</h5>
+</h2>
+<div class="row center-content">
+  <div class="col">
+      <mat-form-field>
+          <mat-label>Región</mat-label>
+          <mat-select>
+            <mat-option value="0">Todas</mat-option>
+            <mat-option value="1">Centro</mat-option>
+            <mat-option value="2">Valles</mat-option>
+            <mat-option value="3">Puna</mat-option>
+            <mat-option value="4">Quebrada</mat-option>
+          </mat-select>
+        </mat-form-field>
+      <mat-form-field>
+          <mat-label>Efectores de Salud</mat-label>
+          <mat-select>
+            <mat-option value="0">Hospital Pablo Soria</mat-option>
+            <mat-option value="1">Hospital San Roque</mat-option>
+            <mat-option value="2">Hospital Materno Infantil</mat-option>
+            <mat-option value="3">CEN - Centro Especialiodades Norte</mat-option>
+            <mat-option value="4">CES - Centro de Especialidades Sur</mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-form-field>
-            <mat-label>Región</mat-label>
-            <mat-select>
-              <mat-option value="0">Todas</mat-option>
-              <mat-option value="1">Centro</mat-option>
-              <mat-option value="2">Valles</mat-option>
-              <mat-option value="3">Puna</mat-option>
-              <mat-option value="4">Quebrada</mat-option>
-            </mat-select>
-          </mat-form-field>
-        <mat-form-field>
-            <mat-label>Efectores de Salud</mat-label>
-            <mat-select>
-              <mat-option value="0">Hospital Pablo Soria</mat-option>
-              <mat-option value="1">Hospital San Roque</mat-option>
-              <mat-option value="2">Hospital Materno Infantil</mat-option>
-              <mat-option value="3">CEN - Centro Especialiodades Norte</mat-option>
-              <mat-option value="4">CES - Centro de Especialidades Sur</mat-option>            
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Sección</mat-label>
-            <mat-select>
-              <mat-option value="0">Digesto</mat-option>
-              <mat-option value="1">Novedad</mat-option>
-            </mat-select>
-          </mat-form-field>
-  <label for="avatar">Sube un archivo PDF, Word o Excel:</label>
-  <input type="file" id="avatar" name="avatar" accept=".pdf, .xls, .xlsx, .docx, .doc" />
-  <mat-form-field>
-    <mat-label>Detalle</mat-label>
-    <textarea matInput></textarea>
-  </mat-form-field>
+          <mat-label>Sección</mat-label>
+          <mat-select>
+            <mat-option value="0">Digesto</mat-option>
+            <mat-option value="1">Novedad</mat-option>
+          </mat-select>
+        </mat-form-field>
+<label for="avatar">Sube un archivo PDF, Word o Excel:</label>
+<input type="file" id="avatar" name="avatar" accept=".pdf, .xls, .xlsx, .docx, .doc" />
+<mat-form-field>
+  <mat-label>Detalle</mat-label>
+  <textarea matInput></textarea>
+</mat-form-field>
 
-  <div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
-    <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar Novedad</button>
-    </div>
+<div mat-dialog-actions class="action">
+  <button mat-raised-button class="btnupdate" type="button"
+      [mat-dialog-close]="false">Cancelar</button>
+  <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar Novedad</button>
+  </div>
 </div>
 </div>
