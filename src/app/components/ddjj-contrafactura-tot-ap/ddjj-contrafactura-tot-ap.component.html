@@ -6,32 +6,23 @@
             Volver
           </button>
         </div>
-        <div class="col">
-          <button mat-fab extended color="primary" routerLink="/ddjj-tentativo">
-            <mat-icon>assignment</mat-icon>
-            DDJJ Tentativo
-          </button>        
-        </div>
-        <div class="col-auto mx-4">
-          <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
-            <mat-icon>clear</mat-icon>
-          </button>
-          <button class="bg-success text-light" mat-mini-fab matTooltip="Autorizar" onclick="document.getElementById('firma').classList.toggle('mostrar');">
-            <mat-icon>done</mat-icon>
-          </button>
-        </div>
-  
-    </div>
-    <div class="row">
-        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA (Consolidado)</span>
+        <div class="row mt-5">
+            <div class="col-10 offset-1 justify-content-center">
+                <div class="alert alert-success" role="alert">
+                    La DDJJ a sido <strong>APROBADA</strong>.
+                    </div> 
+                  </div>
+          </div>  
+        <div class="row">
+        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA (APROBADA)</span>
       </div>
   
     <div class="row mt-3">
       <div class="col-sm scroll">
           <table class="table table-sm  table-borderless">
-                <thead class="col-center thead-celeste">
+                <thead class="col-center" style="background-color: rgb(151, 187, 151);">
                     <tr>
-                        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS CONTRA FACTURA</th>
+                        <th class="titulo-tabla" style="background-color: green !important; color: white;">DECLARACION JURADA GUARDIAS ACTIVAS CONTRA FACTURA (APROBADA)</th>
                     </tr>
                     <tr>
                         <th>Julio 2023</th>
@@ -147,7 +138,7 @@
                                 <tfoot>
                                     <tr>
                                       <td>OBSERV.:</td>
-                                      <td  *ngIf="observ" colspan="43" class="negrita" style="color: red;"><em>{{observ}}</em></td>
+                                      <td colspan="43" class="negrita" style="color: green;"><em>APROBADA.-</em></td>
                                       </tr>
                                 </tfoot>
                             </table>
@@ -158,6 +149,12 @@
         </div>
     </div>
 </div>
+<div class="row offset-1">
+    <div class="col negrita">
+     <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD; - </p>
+     </div>
+    <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;"/></div>
+   </div>
 <div class="row">
   <div class="col offset-1">
 </div>
@@ -170,21 +167,7 @@
     <button mat-menu-item>PDF</button>
     <button mat-menu-item>XLS</button>
   </mat-menu>
-  <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" routerLink="/ddjj-contrafactura-tot-rec" matTooltip="Devolver al Hospital">
-    <mat-icon>assignment_return</mat-icon>
-    RECHAZAR
-    </button>    
 </div>
 <div class="col-1">
 </div>
-</div>
-<div class="row offset-1 mostrar" id="firma">
-<div class="col negrita">
-<p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD; - </p>
-<button mat-fab extended class="bg-success text-light" routerLink="/ddjj-contrafactura-tot-ap" matTooltip="Pase al Hospital">
-  <mat-icon>assignment_turned_in</mat-icon>
-  APROBADO
-  </button>
-</div>
-<div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;"/></div>
 </div>

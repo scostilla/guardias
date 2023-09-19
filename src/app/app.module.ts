@@ -101,6 +101,8 @@ import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-t
 import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
 import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
 import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
+import { DdjjContrafacturaTotApComponent } from './components/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
+import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
 
 
 registerLocaleData(localePy,'es');
@@ -182,6 +184,8 @@ registerLocaleData(localePy,'es');
     DdjjCargoyagrupTotalRecComponent,
     DdjjExtraTotRecComponent,
     DdjjExtraTotApComponent,
+    DdjjContrafacturaTotApComponent,
+    DdjjContrafacturaTotRecComponent,
     
   ],
 

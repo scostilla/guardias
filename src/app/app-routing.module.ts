@@ -31,6 +31,8 @@ import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-to
 import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
 import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
 import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DdjjContrafacturaTotApComponent } from './components/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
+import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
 import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
 import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
 import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
@@ -90,6 +92,8 @@ const routes: Routes = [
   {path:'ddjj-extra-tot-rec',component:DdjjExtraTotRecComponent},
   {path:'ddjj-extra-tot-ap',component:DdjjExtraTotApComponent},
   {path:'ddjj-contrafactura-tot',component:DdjjContrafacturaTotComponent},
+  {path:'ddjj-contrafactura-tot-ap',component:DdjjContrafacturaTotApComponent},
+  {path:'ddjj-contrafactura-tot-rec',component:DdjjContrafacturaTotRecComponent},
   {path:'ddjj-cargoyagrup-tot',component:DdjjCargoyagrupTotComponent},
   {path:'ddjj-cargoyagrup-total-ap',component:DdjjCargoyagrupTotalApComponent},
   {path:'ddjj-cargoyagrup-total-rec',component:DdjjCargoyagrupTotalRecComponent},
