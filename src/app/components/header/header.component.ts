@@ -14,6 +14,7 @@ export class HeaderComponent implements OnDestroy {
   showButtons: boolean = true;
   nombre?: string;
   apellido?: string;
+  url?: string;
 
   constructor(private router: Router, private route: ActivatedRoute) {
     this.routerSubscription = this.router.events.subscribe((event) => {
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnDestroy {
     this.route.queryParams.subscribe(params => {
       this.nombre = params['nombre'];
       this.apellido = params['apellido'];
+      this.url = params['url'];
     });
   }
 

@@ -5,6 +5,7 @@
    "pass": "admin",
    "apellido": "adminstrador",
    "nombre": "ejemplo",
+   "url": "",
    "estado": 1
   },
   {
@@ -13,6 +14,7 @@
    "pass": "baja",
    "apellido": "baja",
    "nombre": "usuario",
+   "url": "",
    "estado": 0
   },
   {
@@ -21,6 +23,7 @@
    "pass": "scostilla",
    "apellido": "costilla",
    "nombre": "sebastian",
+   "url": "assets/img/users/scostilla.jpg",
    "estado": 1
   },
   {
@@ -29,6 +32,7 @@
    "pass": "fyucgra",
    "apellido": "yucgra",
    "nombre": "fabiana",
+   "url": "assets/img/users/fyucgra.jpg",
    "estado": 1
   },
   {
@@ -37,6 +41,7 @@
    "pass": "ncruz",
    "apellido": "cruz",
    "nombre": "nicolas",
+   "url": "assets/img/users/ncruz.jpg",
    "estado": 1
   },
   {
@@ -45,6 +50,7 @@
    "pass": "aluna",
    "apellido": "luna",
    "nombre": "amanda",
+   "url": "assets/img/users/aluna.jpg",
    "estado": 1
   }
  ]

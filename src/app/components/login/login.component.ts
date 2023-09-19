@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
         const queryParams = {
           nombre: this.user.nombre,
           apellido: this.user.apellido,
+          url:this.user.url,
         };
         this.router.navigate(['/home-page'], { queryParams });
       } else {
