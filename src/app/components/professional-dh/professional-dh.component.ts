@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { ApiServiceService } from 'src/app/services/api-service.service';
-import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
+import { ProfessionalFormEditComponent } from '../professional-form-edit/professional-form-edit.component';
+
 
 @Component({
   selector: 'app-professional-dh',
@@ -12,10 +13,9 @@ import ConsultaProfesional from 'src/server/models/ConsultaProfesional';
 export class ProfessionalDhComponent implements OnInit {
   id: string | null | undefined;
   person: any;
-  profesionales?: ConsultaProfesional[] | undefined;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private apiServiceService: ApiServiceService) {}
-
+  constructor(private route: ActivatedRoute, private http: HttpClient, public dialogReg: MatDialog,
+    ) {}
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
@@ -33,23 +33,11 @@ export class ProfessionalDhComponent implements OnInit {
         }
       });
   }
-
-  /*
-  ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    console.log('ID:', this.id);
-    this.cargarDatosPerson(parseInt(this.id ?? '', 10));
+  openFormEdit(){
+    this.dialogReg.open(ProfessionalFormEditComponent, {
+      width: '600px',
+      disableClose: true,
+    })
   }
-
-  cargarDatosPerson(id: number) {
-    this.apiServiceService.getProfesionales().subscribe((data) => {
-      this.profesionales = data;
-      this.person = this.profesionales.find((item) => item.idProfesional === id);
-      if (this.person) {
-        console.log(this.person);
-      }
-    });
-  }*/
-
 
 }
