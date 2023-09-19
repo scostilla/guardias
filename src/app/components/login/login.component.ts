@@ -40,6 +40,8 @@ export class LoginComponent implements OnInit {
           this.validateUser();
         } else {
           alert('Usuario inválido, ingrese nuevamente por favor');
+          this.loggedUser.usuario = '';
+          this.loggedUser.contrasena = '';
         }
       });
   }
@@ -49,7 +51,7 @@ export class LoginComponent implements OnInit {
       if (this.user.estado === 1) {
         const queryParams = {
           nombre: this.user.nombre,
-          apellido: this.user.apellido
+          apellido: this.user.apellido,
         };
         this.router.navigate(['/home-page'], { queryParams });
       } else {
@@ -58,9 +60,12 @@ export class LoginComponent implements OnInit {
             this.user.userName +
             ' se encuetra dado de baja, por favor comuniquese con el administrador'
         );
+        this.loggedUser.usuario = '';
+        this.loggedUser.contrasena = '';
       }
-    }else{
+    } else {
       alert('Contraseña incorrecta');
+      this.loggedUser.contrasena = '';
     }
   }
 }
