@@ -11,6 +11,7 @@
       <mat-menu #opcion="matMenu">
         <button mat-menu-item [matMenuTriggerFor]="descargas"><mat-icon>get_app</mat-icon> Descargar </button>
         <button mat-menu-item (click)="openFormEdit()"><mat-icon>edit</mat-icon> Editar </button>
+        <button mat-menu-item (click)="openFormDelet()"><mat-icon>delete</mat-icon> Eliminar </button>
         <button mat-menu-item routerLink="/professional-dh-hist/{{person.id}}"><mat-icon>history</mat-icon> Historial D.H. profesionales</button>
       </mat-menu>
       

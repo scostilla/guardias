@@ -5,13 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProfessionalFormEditComponent} from '../professional-form-edit/professional-form-edit.component';
 import { ProfessionalFormDeletComponent} from '../professional-form-delet/professional-form-delet.component';
 
-
 @Component({
-  selector: 'app-professional-dh',
-  templateUrl: './professional-dh.component.html',
-  styleUrls: ['./professional-dh.component.css']
+  selector: 'app-professional-plantilla-dh',
+  templateUrl: './professional-plantilla-dh.component.html',
+  styleUrls: ['./professional-plantilla-dh.component.css']
 })
-export class ProfessionalDhComponent implements OnInit {
+export class ProfessionalPlantillaDhComponent implements OnInit {
   id: string | null | undefined;
   person: any;
 
