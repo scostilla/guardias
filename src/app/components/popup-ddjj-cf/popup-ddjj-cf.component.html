@@ -26,6 +26,17 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
         <mat-label>Monto</mat-label>
+        <input matInput type="number" [(ngModel)]="alert" (change)="esDiferente()">
+    </mat-form-field>
+    <span [ngSwitch]="alert">
+        <span *ngIf="!((alert >= 79990.92)  &&  (alert <= 79990.97))" >
+            <div class="alert alert-danger" role="alert">
+                El monto ingresado no coincide con el informado.
+            </div>
+        </span>
+    </span>
+    <!-- <mat-form-field appearance="outline">
+        <mat-label>Monto</mat-label>
         <input matInput type="number" [(ngModel)]="alert">
     </mat-form-field>
     <span [ngSwitch]="alert">
@@ -34,7 +45,7 @@
         El monto ingresado no coincide con el informado.
         </div>
         </span>
-    </span>
+    </span> -->
 </div>
 <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button"
