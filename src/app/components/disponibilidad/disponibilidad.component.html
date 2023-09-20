@@ -6,12 +6,17 @@
     </div>
 </div>
 <div class="row"> 
-  <div class="col-9 offset-1 mx-auto">
-<button mat-button [matMenuTriggerFor]="menu" style="font-weight: bold;">» Región Centro</button>
+  <div class="col-9 offset-1">
+<button mat-button [matMenuTriggerFor]="menu" style="font-weight: bold;">» Región Quebrada</button>
 <mat-menu #menu="matMenu">
   <button mat-menu-item>Región Valles</button>
   <button mat-menu-item>Región Puna</button>
-  <button mat-menu-item>Región Quebrada</button>
+  <button mat-menu-item>Región Ramal</button>
+  <button mat-menu-item>Región Centro</button>
+</mat-menu>
+<button mat-button [matMenuTriggerFor]="menu2" style="font-weight: bold;">» Servicio: Guardias de agrupación</button>
+<mat-menu #menu2="matMenu">
+  <button mat-menu-item>Guardias de Reagrupación</button>
 </mat-menu>
 </div>
 </div>
@@ -49,39 +54,51 @@
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="39" (click)="openPopupCalendarioDisp()">
       <span class="calendar-dia__number">02</span>
       <div class="calendar-dia__content">
-        <div class="calendar-dia--icon">
-          <mat-icon>check_circle</mat-icon>
-          <mat-icon>done</mat-icon>
-          <mat-icon>clear</mat-icon></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Centro, 8 prof.">Dn. Pablo Soria</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Centro, 6 prof.">Materno Infantil</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Centro, 4 prof.">San Roque</div>
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Gutierrez Luis Ariel</div>
     </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="40">
       <span class="calendar-dia__number">03</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+      </div>
     </li>
     <li class="calendar-dia" data-weekday="Ma" data-week="40">
       <span class="calendar-dia__number">04</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+      </div>
     </li>
     <li class="calendar-dia" data-weekday="Mi" data-week="40">
       <span class="calendar-dia__number">05</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Maretinez, Yanina Vanesa</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+      </div>
     </li>
     <li class="calendar-dia" data-weekday="Ju" data-week="40">
       <span class="calendar-dia__number">06</span>
       <div class="calendar-dia__content">
-        <div class="calendar-dia--icon">
-          <mat-icon>check_circle</mat-icon>
-          <mat-icon>done</mat-icon>
-          <mat-icon>clear</mat-icon></div>
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Maretinez, Yanina Vanesa</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia--today" data-weekday="Vi" data-week="40">
       <span class="calendar-dia__number">07</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Maretinez, Yanina Vanesa</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+      </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="40">
       <span class="calendar-dia__number">08</span>
