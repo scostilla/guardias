@@ -32,6 +32,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
       this.apellido = params['apellido'];
       this.url = params['url'];
       this.showWelcomeMessage = params['showWelcomeMessage'];
+      this.showNavBar = !params['showWelcomeMessage'];
       if (this.url == '') {
         this.url = 'assets/img/users/generic.jpg';
       }
