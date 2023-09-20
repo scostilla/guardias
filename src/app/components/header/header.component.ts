@@ -35,11 +35,13 @@ export class HeaderComponent implements OnDestroy, OnInit {
       if (this.url == '') {
         this.url = 'assets/img/users/generic.jpg';
       }
-    });
-
+      this.welcomeMessage = '¡Bienvenido, '+this.nombre+' '+this.apellido+'!';
     setTimeout(() => {
       this.showWelcomeMessage = false;
     }, 2000);
+    });
+
+
   }
 
   ngOnDestroy(): void {
