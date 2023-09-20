@@ -30,6 +30,10 @@ export class LoginComponent implements OnInit {
 
   userLogin() {
     console.log(this.loggedUser);
+    if(this.loggedUser.usuario =="" || this.loggedUser.contrasena ==""){
+      alert('Faltan datos');
+    }else{
+
     this.http
       .get<any[]>('../assets/jsonFiles/usuarios.json')
       .subscribe((data) => {
@@ -44,6 +48,8 @@ export class LoginComponent implements OnInit {
           this.loggedUser.contrasena = '';
         }
       });
+    }
+
   }
 
   validateUser() {
