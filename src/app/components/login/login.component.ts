@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit {
           nombre: this.user.nombre,
           apellido: this.user.apellido,
           url:this.user.url,
+          showWelcomeMessage: true,
         };
         this.router.navigate(['/home-page'], { queryParams });
       } else {

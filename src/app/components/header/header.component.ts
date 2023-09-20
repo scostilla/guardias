@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -7,34 +7,39 @@ import { Subscription } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent implements OnDestroy, OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showButtons: boolean = true;
   nombre?: string;
   apellido?: string;
   url?: string;
+  showWelcomeMessage = false;
+  welcomeMessage = '';
 
   constructor(private router: Router, private route: ActivatedRoute) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.showNavBar = !(event.url === '/' || event.url === '/home-page');
-        this.showButtons= !(event.url === '/');
+        this.showButtons = !(event.url === '/');
       }
     });
   }
 
   ngOnInit(): void {
-    // Acceder a los parámetros de consulta
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.nombre = params['nombre'];
       this.apellido = params['apellido'];
       this.url = params['url'];
-      if(this.url ==""){
-        this.url = "assets/img/users/generic.jpg";
+      this.showWelcomeMessage = params['showWelcomeMessage'];
+      if (this.url == '') {
+        this.url = 'assets/img/users/generic.jpg';
       }
     });
+
+    setTimeout(() => {
+      this.showWelcomeMessage = false;
+    }, 2000);
   }
 
   ngOnDestroy(): void {

@@ -68,6 +68,7 @@ export class DailyScheduleComponent {
           type: professional.tipoGuardia,
         })),
       }));
+      console.log(this.professionalGroups);
     } else {
       this.professionalGroups = [];
     }
