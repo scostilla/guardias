@@ -93,6 +93,15 @@ import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.c
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { TablaComponent } from './components/tabla/tabla.component';
+import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
+import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
+import { DdjjContrafacturaTotApComponent } from './components/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
+import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
+import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
+import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
+import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
+import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
+import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -166,6 +175,15 @@ registerLocaleData(localePy,'es');
     DistHorariaConsComponent,
     DistHorariaGirasComponent,
     DistHorariaOtrasComponent,
+    DdjjCargoyagrupTotalApComponent,
+    DdjjCargoyagrupTotalRecComponent,
+    DdjjContrafacturaTotApComponent,
+    DdjjContrafacturaTotRecComponent,
+    DdjjExtraTotApComponent,
+    DdjjExtraTotRecComponent,
+    ProfessionalDhHistComponent,
+    ProfessionalDhJunioComponent,
+    ProfessionalFormEditComponent,
 
   ],
 
