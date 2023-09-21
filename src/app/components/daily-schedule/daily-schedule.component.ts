@@ -56,6 +56,7 @@ export class DailyScheduleComponent {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital
       );
+      console.log(this.selectedHospital);
 
       const groupedData = this.groupBy(filteredData, 'servicio');
 

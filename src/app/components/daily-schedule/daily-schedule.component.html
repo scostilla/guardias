@@ -14,7 +14,7 @@
       <mat-select placeholder="Seleccione un Hospital" [(ngModel)]="selectedHospital" name="service"
         class="form-control" (selectionChange)="updateHospital()">
         <mat-option *ngFor="let option of options" [value]="option.descripcion">
-          {{ option.descripcion }} ( {{option.region}})
+          {{option.descripcion}} ({{option.region}})
         </mat-option>
       </mat-select>
     </div>
