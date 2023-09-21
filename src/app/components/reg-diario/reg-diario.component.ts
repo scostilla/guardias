@@ -84,10 +84,10 @@ export class RegDiarioComponent {
   ngOnInit() {
 
     //HOSPITALES
-    this.http
+      this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
-        this.hospital = data;
+        this.hospital = data.filter((element) => element.pasivas === true);
       });
 
       //ESPECIALIDADES

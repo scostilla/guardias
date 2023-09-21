@@ -24,7 +24,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Profesional</mat-label>
             <mat-select formControlName="profesional">
-                <mat-option *ngFor="let prof of profesionales" [value]="prof"> {{prof}}</mat-option>
+                <mat-option *ngFor="let prof of profesionales" [value]="prof"> {{prof.apellido}}, {{prof.nombre}}</mat-option>
             </mat-select>
         </mat-form-field>
         <div class="error">
