@@ -15,7 +15,7 @@ export class NovedadesFormComponent {
   hospitales: any;
   profesionales: any;
   licencias: any;
-
+  novedadesForm: any;
 
   constructor( private fb:FormBuilder, private http: HttpClient) {
     this.novedadesForm = this.fb.group({

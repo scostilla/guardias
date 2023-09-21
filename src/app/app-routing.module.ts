@@ -35,7 +35,13 @@ import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-
 import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
 import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
+import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
+import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
+import { HistorialComponent } from './components/historial/historial.component';
+import { HomePageComponent } from './components/home-page/home-page.component';
+import { LoginComponent } from './components/login/login.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
+import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
@@ -48,11 +54,10 @@ import { ProfessionalDhJunioComponent } from './components/professional-dh-junio
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
-import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
-
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
+import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
