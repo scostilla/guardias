@@ -5,6 +5,7 @@ import { DistHorariaConsComponent } from '../dist-horaria-cons/dist-horaria-cons
 import { DistHorariaGirasComponent } from '../dist-horaria-giras/dist-horaria-giras.component';
 import { DistHorariaGuardiaComponent } from '../dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaOtrasComponent } from '../dist-horaria-otras/dist-horaria-otras.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dist-horaria',
@@ -24,13 +25,21 @@ export class DistHorariaComponent {
   selectedService: string = 'Cargo';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
+
+  distribForm: FormGroup;
   constructor(
     private http: HttpClient,
     public dialogReg: MatDialog,
     public dialogNov: MatDialog,
     public dialogDistrib: MatDialog,
+    private fb: FormBuilder
+    ) {
+      this.distribForm = this.fb.group({
+        hospital: ['', Validators.required],
+        profesional: ['', Validators.required],
+      })
 
-    ) {}
+    }
   options: any[] | undefined;
 
   ngOnInit() {

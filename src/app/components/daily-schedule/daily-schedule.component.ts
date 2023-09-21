@@ -11,7 +11,7 @@ export class DailyScheduleComponent {
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
-  selectedHospital: string = '';
+  selectedHospital: string = 'DN. PABLO SORIA';
 
   constructor(private http: HttpClient) {}
 
@@ -56,6 +56,7 @@ export class DailyScheduleComponent {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital
       );
+      console.log(this.selectedHospital);
 
       const groupedData = this.groupBy(filteredData, 'servicio');
 
@@ -68,6 +69,7 @@ export class DailyScheduleComponent {
           type: professional.tipoGuardia,
         })),
       }));
+      console.log(this.professionalGroups);
     } else {
       this.professionalGroups = [];
     }

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 
 
 @Component({
@@ -14,9 +15,18 @@ export class NovedadesFormComponent {
   hospitales: any;
   profesionales: any;
   licencias: any;
+  novedadesForm: any;
 
+  constructor( private fb:FormBuilder, private http: HttpClient) {
+    this.novedadesForm = this.fb.group({
+      hospital: ['', Validators.required],
+      profesional: ['', Validators.required],
+      novedad: ['', Validators.required],
+      fecInicio: ['', Validators.required],
+      fecFin: ['', Validators.required],
 
-  constructor(private http: HttpClient) {}
+    });
+  }
   ngOnInit() {
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')

@@ -284,8 +284,296 @@
           </table>
       </div>
   </div>
+  <div class="row" style="margin-bottom: 10px;">
+      <div class="col">
+        <button mat-fab extended color="primary" routerLink="/guardias-view">
+          <mat-icon>arrow_back_ios</mat-icon>
+          Volver
+        </button>
+      </div>
+      <div class="col-auto mx-4">
+        <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <button class="bg-success text-light" mat-mini-fab matTooltip="Autorizar" onclick="document.getElementById('firma').classList.toggle('mostrar');">
+          <mat-icon>done</mat-icon>
+        </button>
+      </div>
+  </div>
+  <div class="row">
+      <div class="titulos"> DDJJ <span class="titulos-second">EXTRAS (Completo)</span>
+    </div>
+
+  <div class="row mt-3">
+    <div class="col-sm scroll">
+        <table class="table table-sm table-borderless">
+              <thead  class="col-center thead-celeste">
+                  <tr>
+                      <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS (Completo)</th>
+                  </tr>
+                  <tr>
+                      <th >Julio 2023</th>
+                  </tr>
+                  <tr>
+                      <th>MINISTERIO DE SALUD</th>
+                  </tr>
+                  <tr>
+                      <th>"DN. PABLO SORIA"</th>
+                  </tr>
+                  <tr>
+                      <th>REGION: CENTRO</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td colspan="16">
+                          <table class="table table-hover table-bordered table-sm caption-top">
+                              <thead class="thead-gris">
+                                <tr>
+                                  <th rowspan="3">N° ORDEN</th>
+                                  <th rowspan="3">SERVICIO</th>
+                                  <th rowspan="3">APELLIDO Y NOMBRE</th>
+                                  <th rowspan="3">CUIL</th>
+                                  <th rowspan="3">VINCULO LABORAL - UDO</th>
+                                  <th rowspan="3">CATEGORIA</th>
+                                  <th rowspan="3">NOVEDADES</th>
+                                  <th colspan="31">GUARDIAS ACTIVAS</th>
+                                  <th colspan="3" style="background-color: rgb(78, 233, 168);">GUARDIAS EXTRA</th>
+                                  <th colspan="3" style="background-color: rgb(192, 233, 78);">BONO UTI 1580</th>
+                                </tr>
+                                <tr>
+                                  <td style="background-color: #9e9ea1;">Sa</td>
+                                  <td style="background-color: #9e9ea1;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #9e9ea1;">Sa</td>
+                                  <td style="background-color: #9e9ea1;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #9e9ea1;">Sa</td>
+                                  <td style="background-color: #9e9ea1;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #9e9ea1;">Sa</td>
+                                  <td style="background-color: #9e9ea1;">Do</td>
+                                  <td>Lu</td>
+                                  <td>Ma</td>
+                                  <td>Mi</td>
+                                  <td>Ju</td>
+                                  <td>Vi</td>
+                                  <td style="background-color: #9e9ea1;">Sa</td>
+                                  <td style="background-color: #9e9ea1;">Do</td>
+                                  <td>Lu</td>
+                                  <td colspan="2" style="background-color: rgb(78, 233, 168);">Total en horas</td>
+                                  <td rowspan="2" class="negrita">Total Hs.</td>
+                                  <td colspan="2" style="background-color: rgb(192, 233, 78);">Total en horas</td>
+                                  <td rowspan="2" class="negrita">Total Hs.</td>
+                                </tr>
+                                <tr>
+                                  <td style="background-color: #9e9ea1;">1</td>
+                                  <td style="background-color: #9e9ea1;">2</td>
+                                  <td>3</td>
+                                  <td>4</td>
+                                  <td>5</td>
+                                  <td>6</td>
+                                  <td>7</td>
+                                  <td style="background-color: #9e9ea1;">8</td>
+                                  <td style="background-color: #df7545;">9</td>
+                                  <td>10</td>
+                                  <td>11</td>
+                                  <td>12</td>
+                                  <td>13</td>
+                                  <td>14</td>
+                                  <td style="background-color: #9e9ea1;">15</td>
+                                  <td style="background-color: #9e9ea1;">16</td>
+                                  <td>17</td>
+                                  <td>18</td>
+                                  <td>19</td>
+                                  <td>20</td>
+                                  <td>21</td>
+                                  <td style="background-color: #9e9ea1;">22</td>
+                                  <td style="background-color: #9e9ea1;">23</td>
+                                  <td>24</td>
+                                  <td>25</td>
+                                  <td>26</td>
+                                  <td>27</td>
+                                  <td>28</td>
+                                  <td style="background-color: #9e9ea1;">29</td>
+                                  <td style="background-color: #9e9ea1;">30</td>
+                                  <td>31</td>
+                                  <td style="background-color: rgb(78, 233, 168);">L-V</td>
+                                  <td style="background-color: rgb(78, 233, 168);">S-D-F</td>
+                                  <td style="background-color: rgb(192, 233, 78);">L-V</td>
+                                  <td style="background-color: rgb(192, 233, 78);">S-D-F</td>
+                                </tr>
+                                                  </thead>
+                              <tbody>
+                                <tr>
+                                  <td>1</td>
+                                  <td>Terapia</td>
+                                  <td>APAZA, JUAN FERNANDO</td>
+                                  <td>20-27324976-2</td>
+                                  <td>Planta Permanente</td>
+                                  <td>A(J-2)</td>
+                                  <td>-</td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #df7545;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td>96</td>
+                                  <td></td>
+                                  <td class="negrita">96</td>
+                                  <td>96</td>
+                                  <td></td>
+                                  <td class="negrita">96</td>
+                                </tr>
+                                <tr>
+                                  <td>2</td>
+                                  <td>Ginecología</td>
+                                  <td>BUSTOS, RITA MARIA</td>
+                                  <td>27-24324954-1</td>
+                                  <td>Planta Permanente</td>
+                                  <td>24 HS.</td>
+                                  <td>-</td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #df7545;"></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td>24</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td>24</td>
+                                  <td>120</td>
+                                  <td></td>
+                                  <td class="negrita">120</td>
+                                  <td>120</td>
+                                  <td></td>
+                                  <td class="negrita">120</td>
+                                </tr>
+                                <tr>
+                                  <td>3</td>
+                                  <td>Clínica</td>
+                                  <td>SAINZ, ADRIANA  ELENA</td>
+                                  <td>27-18405994-6</td>
+                                  <td>Planta Permanente</td>
+                                  <td>B(J-2)</td>
+                                  <td>-</td>
+                                  <td style="background-color: #9e9ea1;">24</td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td style="background-color: #9e9ea1;">24</td>
+                                  <td style="background-color: #df7545;"></td>
+                                  <td></td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td style="background-color: #9e9ea1;">24</td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td style="background-color: #9e9ea1;">24</td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td>4</td>
+                                  <td style="background-color: #9e9ea1;">24</td>
+                                  <td style="background-color: #9e9ea1;"></td>
+                                  <td></td>
+                                  <td>64</td>
+                                  <td>120</td>
+                                  <td class="negrita">184</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                  <tr>
+                                    <td>OBSERV.:</td>
+                                    <td  *ngIf="observ" colspan="43" class="negrita" style="color: red;"><em>{{observ}}</em></td>
+                                </tr>
+                              </tfoot>
+                          </table>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
 </div>
 <div class="row">
+<div class="col offset-1">
+  <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de semana</span>
+  <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
 <div class="col offset-1">
   <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de semana</span>
   <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
@@ -305,7 +593,20 @@
   </button>
 </div>
 <div class="col-1">
+<div class="col-1">
 </div>
+</div>
+
+</div>
+<div class="row offset-1 mostrar" id="firma">
+<div class="col negrita">
+<p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD; - </p>
+<button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap" matTooltip="Pase al Hospital">
+  <mat-icon>assignment_turned_in</mat-icon>
+  APROBADO
+  </button>
+</div>
+<div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;"/></div>
 </div>
 
 </div>

@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { ProfessionalFormDeletComponent } from '../professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from '../professional-form-edit/professional-form-edit.component';
 
 
@@ -34,7 +35,15 @@ export class ProfessionalDhComponent implements OnInit {
       });
   }
   openFormEdit(){
-    this.dialogReg.open(ProfessionalFormEditComponent, {
+    const dialogRef: MatDialogRef<ProfessionalFormEditComponent> = this.dialogReg.open(ProfessionalFormEditComponent, {
+      width: '600px',
+      disableClose: true,
+      data: { id: this.id }
+    })
+  }
+
+  openFormDelet(){
+    this.dialogReg.open(ProfessionalFormDeletComponent, {
       width: '600px',
       disableClose: true,
     })

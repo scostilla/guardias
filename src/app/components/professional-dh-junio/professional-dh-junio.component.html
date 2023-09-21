@@ -1,1 +1,197 @@
-<p>professional-dh-junio works!</p>
+<div class="row tabla-center">
+    <div class="row" style="margin-bottom: 15px;">
+      <div class="col">
+        <button mat-fab extended color="primary" routerLink="/professional-dh-hist/{{person.id}}">
+          <mat-icon>arrow_back_ios</mat-icon>
+          Volver
+        </button>
+      </div>
+      <div class="col d-flex justify-content-end">
+        <button  mat-fab extended color="basic" [matMenuTriggerFor]="opcion"><mat-icon>drag_indicator</mat-icon> Opciones </button>
+        <mat-menu #opcion="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="descargas"><mat-icon>get_app</mat-icon> Descargar </button>
+        </mat-menu>
+
+        <mat-menu #descargas="matMenu">
+          <button mat-menu-item><a href="/assets/descargas/distHoraria_prof_julio2023.pdf" target="_blank" style="text-decoration: none; color: black;"> PDF </a></button>
+          <button mat-menu-item><a href="/assets/descargas/distHoraria_prof_julio2023.xlsx" target="_blank" style="text-decoration: none; color: black;"> XLS </a></button>
+        </mat-menu>
+
+      </div>
+  </div>
+    <div class="col-sm">
+        <table class="table table-sm  table-borderless">
+              <thead class="table-light col-center">
+                <tr>
+                  <th style="background-color: black; color: #fff;">DISTRIBUCION HORARIA PROFESIONALES</th>
+              </tr>
+                  <tr>
+                      <th>Junio 2023</th>
+                  </tr>
+                  <tr>
+                      <th>MINISTERIO DE SALUD</th>
+                  </tr>
+                  <tr>
+                      <th>"DN. PABLO SORIA"</th>
+                  </tr>
+                  <tr>
+                      <th>REGION: CENTRO</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td colspan="16">
+                          <table class="table table-hover table-bordered table-sm caption-top">
+                              <thead style="background-color: #bbb9b9;">
+                                <tr>
+                                  <th rowspan="3">DATOS PROFESIONAL</th>
+                                  <th colspan="14">DISTRIBUCIÓN HORARIA - JUNIO 2023</th>
+                                  <th rowspan="3">TOTAL HS. SEMANALES</th>
+                                </tr>
+                                <tr>
+                                  <td colspan="2" style="background-color: #eee;">Sa</td>
+                                  <td colspan="2" style="background-color: #eee;">Do</td>
+                                  <td colspan="2">Lu</td>
+                                  <td colspan="2">Ma</td>
+                                  <td colspan="2">Mi</td>
+                                  <td colspan="2">Ju</td>
+                                  <td colspan="2">Vi</td>
+                                </tr>
+                                <tr>
+                                  <td style="background-color: #eee;">Mañana</td>
+                                  <td style="background-color: #eee;">Tarde</td>
+                                  <td style="background-color: #eee;">Mañana</td>
+                                  <td style="background-color: #eee;">Tarde</td>
+                                  <td>Mañana</td>
+                                  <td>Tarde</td>
+                                  <td>Mañana</td>
+                                  <td>Tarde</td>
+                                  <td>Mañana</td>
+                                  <td>Tarde</td>
+                                  <td>Mañana</td>
+                                  <td>Tarde</td>
+                                  <td>Mañana</td>
+                                  <td>Tarde</td>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td rowspan="4">
+                                      <tr>
+                                        <td>Apellido y nombre: </td>
+                                        <td style="font-weight: bold;">{{person.apellido}}, {{person.nombre}}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>CUIL: </td>
+                                        <td style="font-weight: bold;">{{person.cuil}}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Especialidad: </td>
+                                        <td style="font-weight: bold;">{{person.especialidad}} </td>
+                                      </tr>
+                                      <tr>
+                                        <td>U.D.O: </td>
+                                        <td style="font-weight: bold;">HOSPITAL PABLO SORIA</td>
+
+                                      </tr>
+                                      <tr>
+                                        <td>Situación de revista: </td>
+                                        <td style="font-weight: bold;">{{person.sitRevista}}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Categoria: </td>
+                                        <td style="font-weight: bold;">E(J-1)</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Carga horaria: </td>
+                                        <td style="font-weight: bold;">40 </td>
+                                      </tr>
+                                      <tr>
+                                        <td>Adicional: </td>
+                                        <td style="font-weight: bold;">J-2</td>
+                                      </tr>
+                                  </td>
+                                  <td>CE (8 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>-</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td  style="font-weight: bold;">40</td>
+                                </tr>
+                                <tr>
+                                  <td>CE (8 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>-</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td  style="font-weight: bold;">40</td>
+                                </tr>
+                                <tr>
+                                  <td>CE (8 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>-</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td  style="font-weight: bold;">40</td>
+                                </tr>
+                                <tr>
+                                  <td>CE (8 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (4 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>CE (2 hs.)</td>
+                                  <td>-</td>
+                                  <td>-</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td>CE (6 hs.)</td>
+                                  <td  style="font-weight: bold;">40</td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                  <tr>
+                                      <td>OBSERV.:</td>
+                                  </tr>
+                              </tfoot>
+                          </table>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+            <div class="alert alert-success" role="alert">
+            El total de horas semanales cargadas coincide con la carga horaria informada <strong>(40)</strong>.
+            </div>
+      </div>
+  </div>
+

@@ -84,10 +84,10 @@ export class RegDiarioComponent {
   ngOnInit() {
 
     //HOSPITALES
-    this.http
+      this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
-        this.hospital = data;
+        this.hospital = data.filter((element) => element.pasivas === true);
       });
 
       //ESPECIALIDADES
@@ -124,17 +124,3 @@ export class RegDiarioComponent {
     this.dialogRef.close();
   }
 }
-
-/* no abre el popup a pesar de tener el mismo codigo que el metodo openDialog
-  openPopup(componentParameter:any){
-    const dialogRef = this.dialog.open(PopupComponent,{
-      width:'1000px',
-    });
-
-    dialogRef.componentInstance.componentParameter = componentParameter;
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('popup closed');
-    })
-  }
-
-*/
