@@ -1,53 +1,102 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Novedades de Profesionales</h1>
 </div>
-<div mat-dialog-content class="content">
-    <mat-form-field appearance="outline">
-        <mat-label>Hospital</mat-label>
-        <mat-select>
-            <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
-                {{hosp.descripcion}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Profesional</mat-label>
-        <mat-select>
-            <mat-option *ngFor="let prof of profesionales" [value]="prof"> {{prof.apellido}}, {{prof.nombre}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Novedad</mat-label>
-        <mat-select>
-            <mat-option *ngFor="let noved of licencias" [value]="noved"> {{noved.descripcion}}</mat-option>
-        </mat-select>
-    </mat-form-field>
+
+<form [formGroup]="novedadesForm">
+    <!-- <div mat-dialog-content class="content"> -->
+    <mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Hospital</mat-label>
+            <mat-select>
+              <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
+                  {{hosp.descripcion}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="error">
+            <span *ngIf="
+            novedadesForm.get('hospital')?.hasError('required') &&
+            novedadesForm.get('hospital')?.touched">
+                <h5>El hospital es un campo requerido</h5>
+            </span>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Profesional</mat-label>
+            <mat-select formControlName="profesional">
+                <mat-option *ngFor="let prof of profesional" [value]="prof"> {{prof}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="error">
+            <span *ngIf="
+            novedadesForm.get('profesional')?.hasError('required') &&
+            novedadesForm.get('profesional')?.touched">
+                <h5>El profesional es un campo requerido</h5>
+            </span>
+        </div>
 
 
-    <div class="row">
-        <div class="col">
-            <mat-form-field appearance="outline">
-                <mat-label>Fecha inicio</mat-label>
-                <input matInput [matDatepicker]="picker1">
-                <mat-hint>MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-                <mat-datepicker #picker1></mat-datepicker>
-            </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Novedad</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let noved of licencias" [value]="noved"> {{noved.descripcion}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="error">
+            <span *ngIf="
+            novedadesForm.get('novedad')?.hasError('required') &&
+            novedadesForm.get('novedad')?.touched">
+                <h5> La novedad es un campo requerido</h5>
+            </span>
         </div>
-        <div class="col">
-            <mat-form-field appearance="outline">
-                <mat-label>Fecha fin</mat-label>
-                <input matInput [matDatepicker]="picker2">
-                <mat-hint>MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                <mat-datepicker #picker2></mat-datepicker>
-            </mat-form-field>
+
+
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha inicio</mat-label>
+                    <input matInput [matDatepicker]="picker1" formControlName="fecInicio"[readonly]="true">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="error">
+                <span *ngIf="
+                novedadesForm.get('fecInicio')?.hasError('required') &&
+                novedadesForm.get('fecInicio')?.touched">
+                    <h5> La fecha de inicio es un campo requerido</h5>
+                </span>
+            </div>
+
+            <div class="col">
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha fin</mat-label>
+                    <input matInput [matDatepicker]="picker2" formControlName="fecFin" [readonly]="true">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="error">
+                <span *ngIf="
+                novedadesForm.get('fecFin')?.hasError('required') &&
+                novedadesForm.get('fecFin')?.touched">
+                    <h5> La fecha de inicio es un campo requerido</h5>
+                </span>
+            </div>
+
         </div>
+        <!-- </div> -->
+    </mat-dialog-content>
+
+
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
+        <button mat-raised-button class="btnupdate" color="primary" [disabled]="novedadesForm.invalid" type="submit" [mat-dialog-close]="false">Guardar</button>
     </div>
-</div>
-<div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
-    <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
-</div>
+
+</form>
 
 <!--esto es lo viejo
 <app-registro-actividades></app-registro-actividades>

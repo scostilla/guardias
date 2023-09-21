@@ -1,23 +1,23 @@
 <div class="row tabla-center">
-  <div class="row" style="margin-bottom: 15px;">
-    <div class="col">
-      <button mat-fab extended color="primary" routerLink="/professional-dh/{{person.id}}">
-        <mat-icon>arrow_back_ios</mat-icon>
-        Volver
-      </button>
+    <div class="row" style="margin-bottom: 15px;">
+      <div class="col">
+        <button mat-fab extended color="primary" routerLink="/professional-dh/{{person.id}}">
+          <mat-icon>arrow_back_ios</mat-icon>
+          Volver
+        </button>
+      </div>
+      <div class="col d-flex justify-content-end">
+      </div>
     </div>
-    <div class="col d-flex justify-content-end">
-    </div>
-  </div>
-  <div class="col-sm">
-      <h4>Historial de distribución horaria por mes de <strong>{{person.apellido}}, {{person.nombre}} ({{person.cuil}})</strong></h4>
-      <button  mat-fab extended color="basic" [matMenuTriggerFor]="opcion"><mat-icon>calendar_today</mat-icon> Selecciona el mes </button>
-      <mat-menu #opcion="matMenu">
-        <button mat-menu-item routerLink="/professional-dh-junio/{{person.id}}"> Junio </button>
-      </mat-menu>
-      <button mat-fab extended color="warn" routerLink="/professional-plantilla-dh/{{person.id}}">
-        <mat-icon>assignment</mat-icon>
-        Plantilla de Dist. Horaria
-      </button>
+    <div class="col-sm">
+        <h4>Historial de distribución horaria por mes de <strong>{{person.apellido}}, {{person.nombre}} ({{person.cuil}})</strong></h4>
+        <button  mat-fab extended color="basic" [matMenuTriggerFor]="opcion"><mat-icon>calendar_today</mat-icon> Selecciona el mes </button>
+        <mat-menu #opcion="matMenu">
+          <button mat-menu-item routerLink="/professional-dh-junio/{{person.id}}"> Junio </button>
+        </mat-menu>
+        <button mat-fab extended color="warn" routerLink="/professional-plantilla-dh/{{person.id}}">
+          <mat-icon>assignment</mat-icon>
+          Plantilla de Dist. Horaria
+        </button>
 
-  </div>
+    </div>

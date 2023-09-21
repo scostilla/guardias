@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -48,37 +47,43 @@ export class RegDiarioComponent {
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
 
+  //minDate: string;
+  currentDate:Date = new Date();
+
   constructor(
     private _fb: FormBuilder,
     private dialog: MatDialog,
     private professionalDataService: ProfessionalDataServiceService,
-    private http: HttpClient,
-    public dialogRef: MatDialogRef<RegDiarioComponent>
-  ) {
-    this.registroForm = this._fb.group({
-      hospital: '',
-      servicio: '',
-      tipo_guardia: '',
-      nombre: '',
-      apellido: '',
-      dni: '',
-      profesion: '',
-      hs_ingreso: '',
-      fec_ingreso: '',
-      hs_egreso: '',
-      fec_egreso: '',
-    });
-  }
+    public dialogRef: MatDialogRef<RegDiarioComponent>,
+    )
+      {
+        this.registroForm = this._fb.group(
+          {
+      hospital:'',
+      servicio:'',
+      tipo_guardia:'',
+      nombre:'',
+      apellido:'',
+      dni:'',
+      profesion:'',
+      hs_ingreso:'',
+      fec_ingreso:'',
+      hs_egreso:'',
+      fec_egreso:'',
+          })
+          // Obteniendo la fecha actual y estableciéndola como la fecha mínima
+          const currentDate = new Date();
+          //this.minDate = currentDate.toISOString().split('T')[0];// Formatear la fecha como 'YYYY-MM-DD'
+      }
 
-  openDialog(componentParameter: any) {
-    const dialogRef = this.dialog.open(PopupComponent, {
-      width: '800px',
-    });
+  openDialog(componentParameter:any){
+    const dialogRef = this.dialog.open(PopupComponent,{
+      width:'800px'});
 
-    dialogRef.componentInstance.componentParameter = componentParameter;
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('popup closed');
-    });
+      dialogRef.componentInstance.componentParameter=componentParameter;
+      dialogRef.afterClosed().subscribe((result) => {
+        console.log('popup closed');
+      })
   }
 
   ngOnInit() {

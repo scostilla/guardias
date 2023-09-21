@@ -17,7 +17,22 @@ export class DistHorariaConsComponent {
   selectedService: string = 'Cargo';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
-  constructor(private http: HttpClient) {}
+
+  distHoraria: FormGroup;
+
+  constructor(
+    private http: HttpClient,
+    private fb: FormBuilder,
+    ) {
+      this.distHoraria = this.fb.group({
+        consultorio: ['', Validators.required],
+        dia: ['', Validators.required],
+        lugar: ['', Validators.required],
+        turno: ['', Validators.required],
+        horas: ['', [Validators.pattern('[1-9]*'), Validators.required]],
+      })
+    }
+
   options: any[] | undefined;
 
   ngOnInit() {

@@ -85,7 +85,7 @@
           professionalForm.get('cuil')?.hasError('pattern') &&
           professionalForm.get('cuil')?.touched
           ">
-            <h5>El cuil debe contener solo n</h5>
+            <h5>El cuil debe contener solo numeros y "-"</h5>
           </span>
         </div>
       </div>
@@ -160,7 +160,6 @@
           </mat-select>
         </mat-form-field>
       </div>
-
       <div class="col">
         <mat-form-field>
           <mat-label>Carga Horaria</mat-label>
@@ -193,6 +192,14 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+        <div class="error">
+          <span *ngIf="
+          professionalForm.get('adicional')?.hasError('required') &&
+          professionalForm.get('adicional')?.touched
+        ">
+            <h5>El adicional es un campo requerido</h5>
+          </span>
+        </div>
       </div>
       <div class="col">
         <mat-form-field>
@@ -271,11 +278,20 @@
     </div>
 
   </mat-dialog-content>
-  <mat-dialog-actions align="end">
+  <!-- <mat-dialog-actions align="end">
     <button type="button" class="btnCancel" mat-button (click)="cancel()">Cancelar</button>
     <button class="btnAdd" [disabled]="!isFormDirty() || professionalForm.invalid" type="submit" mat-button
       cdkFocusInitial>
       Agregar
     </button>
-  </mat-dialog-actions>
+  </mat-dialog-actions> -->
+
+  <div mat-dialog-actions class="action mt-4" align="center">
+    <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+    </button>
+    <button mat-raised-button class="btnAdd" color="primary" [disabled]="professionalForm.invalid" type="submit">Agregar
+    </button>
+  </div>
+
+
 </form>

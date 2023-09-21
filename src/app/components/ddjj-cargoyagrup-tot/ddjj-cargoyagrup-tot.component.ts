@@ -14,6 +14,7 @@ export interface DialogData {
   selector: 'app-ddjj-cargoyagrup-tot',
   templateUrl: './ddjj-cargoyagrup-tot.component.html',
   styleUrls: ['./ddjj-cargoyagrup-tot.component.css'],
+  styleUrls: ['./ddjj-cargoyagrup-tot.component.css'],
 })
 export class DdjjCargoyagrupTotComponent {
   observ!: string;

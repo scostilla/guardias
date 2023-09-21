@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CronogramaFormAgregarComponent} from '../cronograma-form-agregar/cronograma-form-agregar.component';
 
 export interface PeriodicElement {
   name: string;
@@ -26,4 +28,15 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class PopupCalendarioDisp2Component {
   displayedColumns: string[] = ['position', 'name', 'weight', 'cant', 'symbol'];
   dataSource = ELEMENT_DATA;
+
+  constructor(
+    public dialogReg: MatDialog,
+  ){}
+    openPopupAgregar(){
+      this.dialogReg.open(CronogramaFormAgregarComponent, {
+        width: '550px',
+        disableClose: true,
+      }) 
+  }
+
 }

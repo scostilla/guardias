@@ -2,117 +2,135 @@
   <h1 class="font">Nuevo Registro</h1>
 </div>
 <div mat-dialog-content class="content">
-  <mat-form-field appearance="outline">
-    <mat-label>Tipo de servicio</mat-label>
-    <mat-select [(ngModel)]="defaultSelected">
-      <mat-option [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">
-        {{tipserv}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div [ngSwitch]="defaultSelected" appearance="outline">
-    <div *ngSwitchCase="'Guardia activa'">
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo de guardia</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+    <mat-form-field appearance="outline">
+        <mat-label>Tipo de servicio</mat-label>
+        <mat-select [(ngModel)]="defaultSelected">
+            <mat-option [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">
+                {{tipserv}}</mat-option>
         </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Servicio</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-
+    </mat-form-field>
+    <div [ngSwitch]="defaultSelected" appearance="outline">
+        <div *ngSwitchCase="'Guardia activa'">
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de guardia</mat-label>
+                <mat-select>
+                    <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Servicio</mat-label>
+                <mat-select>
+                    <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngSwitchCase="'Guardia pasiva'">
+            <mat-form-field appearance="outline">
+                <mat-label>Establecimiento</mat-label>
+                <mat-select [(ngModel)]="pasiva">
+                    <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div [ngSwitch]="pasiva" appearance="outline">
+            <div *ngSwitchCase="'Dn. Pablo Soria'">
+                <mat-form-field appearance="outline">
+                 <mat-label>Especialidad</mat-label>
+                 <mat-select [(ngModel)]="alert">
+                    <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngSwitchCase="'San Roque'">
+                <mat-form-field appearance="outline">
+                 <mat-label>Especialidad</mat-label>
+                 <mat-select [(ngModel)]="alert">
+                    <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngSwitchCase="'Materno Infantil'">
+                <mat-form-field appearance="outline">
+                 <mat-label>Especialidad</mat-label>
+                 <mat-select [(ngModel)]="alert">
+                    <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+                <span [ngSwitch]="alert">
+                    <span *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
+                    <div class="alert alert-danger" role="alert">
+                    Especialidad seleccionada sin requerimiento.
+                    </div>
+                    </span>
+                </span>
+        </div>
     </div>
-    <div *ngSwitchCase="'Guardia pasiva'">
-      <mat-form-field appearance="outline">
-        <mat-label>Establecimiento</mat-label>
-        <mat-select [(ngModel)]="hospitalSeleccionado" (ngModelChange)="cargarEspecialidades()">
-          <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Especialidad</mat-label>
-        <mat-select [(ngModel)]="alert">
-          <mat-option *ngFor="let esp of especialidadesHospital" [value]="esp.descripcion">
-            {{esp.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <span [ngSwitch]="alert">
-        <span
-          *ngSwitchCase="['CIRUGIA INFANTIL','CLINICA','HEMOTERAPIA','NEONATOLOGIA','TRAUMATOLOGIA','TERAPIA INTENSIVA INFANTIL'].includes(alert) ? alert : !alert">
-          <div class="alert alert-danger" role="alert">
-            Especialidad seleccionada sin requerimiento.
-          </div>
-        </span>
-      </span>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
+            color="primary" type="button">Buscar Profesional</button>
     </div>
-  </div>
-  <div mat-dialog-actions class="action">
-    <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
-      type="button">Buscar Profesional</button>
-  </div>
-  <div mat-dialog-subtitle>
-    <h2>Detalle del profesional</h2>
-  </div>
-  <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput [(ngModel)]="selectedNombre" placeholder="{{selectedNombre}}">
-      </mat-form-field>
+    <div mat-dialog-subtitle>
+        <h2>Detalle del profesional</h2>
     </div>
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Apellido</mat-label>
-        <input matInput [(ngModel)]="selectedApellido" placeholder="{{selectedApellido}}">
-      </mat-form-field>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput placeholder="{{selectedNombre}}" disabled>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Apellido</mat-label>
+                <input matInput placeholder="{{selectedApellido}}" disabled>
+            </mat-form-field>
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>DNI</mat-label>
-        <input matInput [(ngModel)]="selectedDni" placeholder="{{selectedDni}}">
-      </mat-form-field>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>DNI</mat-label>
+                <input matInput placeholder="ingrese" disabled>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Profesion</mat-label>
+                <input matInput placeholder="ingrese" disabled>
+            </mat-form-field>
+        </div>
     </div>
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Profesion</mat-label>
-        <input matInput [(ngModel)]="selectedProfesion" placeholder="{{selectedProfesion}}">
-      </mat-form-field>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Ingreso</mat-label>
+                <input matInput [matDatepicker]="picker1" [min]="currentDate" [max]="currentDate" [readonly]="true">
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <!-- <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker> -->
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <app-time-picker></app-time-picker>
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Ingreso</mat-label>
-        <input matInput [matDatepicker]="picker1">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-      </mat-form-field>
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline">
+                <mat-label>Egreso</mat-label>
+                <input matInput [matDatepicker]="picker2" [readonly]="true">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <app-time-picker></app-time-picker>
+        </div>
     </div>
-    <div class="col">
-      <app-time-picker></app-time-picker>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Egreso</mat-label>
-        <input matInput [matDatepicker]="picker2">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <div class="col">
-      <app-time-picker></app-time-picker>
-    </div>
-  </div>
 </div>
 <div mat-dialog-actions class="action">
   <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>

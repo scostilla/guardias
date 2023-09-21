@@ -1,4 +1,5 @@
 .tabla-center {
+<<<<<<< HEAD
   margin-left: 2%; margin-right: 2%;
 }
 .col-center {
@@ -8,3 +9,14 @@ th {
   vertical-align: middle;
   text-align: center;
 }
+=======
+    margin-left: 2%; margin-right: 2%;
+  }
+  .col-center {
+    text-align: center;
+  }
+  th {
+    vertical-align: middle;
+    text-align: center;
+  }
+>>>>>>> origin/tentativo

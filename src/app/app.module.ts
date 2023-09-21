@@ -61,8 +61,11 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
 //Date Import
 import localePy from '@angular/common/locales/es-PY';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
+import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
+import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
 import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
 import { CronogramaDefinitivoComponent } from './components/cronograma-definitivo/cronograma-definitivo.component';
+import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
 import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
 import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
 import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
@@ -71,7 +74,13 @@ import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-r
 import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
 import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
+import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
+import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
+import { DdjjContrafacturaTotApComponent } from './components/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
+import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
 import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
+import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
 import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
@@ -91,17 +100,13 @@ import { PopupCalendarioComponent } from './components/popup-calendario/popup-ca
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
-import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
-import { TablaComponent } from './components/tabla/tabla.component';
-import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
-import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
-import { DdjjContrafacturaTotApComponent } from './components/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
-import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
-import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
-import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
+import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
+import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
+import { TablaComponent } from './components/tabla/tabla.component';
 
 
 registerLocaleData(localePy,'es');
@@ -175,6 +180,20 @@ registerLocaleData(localePy,'es');
     DistHorariaConsComponent,
     DistHorariaGirasComponent,
     DistHorariaOtrasComponent,
+    ProfessionalDhHistComponent,
+    ProfessionalDhJunioComponent,
+    CronogramaFormAgregarComponent,
+    ProfessionalFormEditComponent,
+    CronogramaDefMaternoComponent,
+    CronogramaDefSroqueComponent,
+    DdjjCargoyagrupTotalApComponent,
+    DdjjCargoyagrupTotalRecComponent,
+    DdjjExtraTotRecComponent,
+    DdjjExtraTotApComponent,
+    DdjjContrafacturaTotApComponent,
+    DdjjContrafacturaTotRecComponent,
+    ProfessionalFormDeletComponent,
+    ProfessionalPlantillaDhComponent,
     DdjjCargoyagrupTotalApComponent,
     DdjjCargoyagrupTotalRecComponent,
     DdjjContrafacturaTotApComponent,
