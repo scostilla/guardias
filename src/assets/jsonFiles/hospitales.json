@@ -20,7 +20,8 @@
     "region": "CENTRO",
     "complejidad": 1,
     "especialidades": [6, 2, 3, 4, 5],
-    "descubierto": [10,11,17]
+    "descubierto": [10,11,17],
+    "pasivas": false
   },
   {
     "id": 3,

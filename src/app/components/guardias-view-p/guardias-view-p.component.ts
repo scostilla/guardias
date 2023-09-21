@@ -31,7 +31,7 @@ export class GuardiasViewPComponent {
   }
 
   updateHospital() {
-    //console.log('update hospital');
+    console.log('update hospital');
     if (this.services) {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital
