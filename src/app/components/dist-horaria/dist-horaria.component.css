@@ -10,8 +10,6 @@ mat-form-field{
   margin-right: 12px;
 }
 
-
-
 .action{
   padding: 0px 25px 20px;
   }
@@ -26,8 +24,16 @@ mat-form-field{
 }
 
 .font{
-  font-family: "archia";
+  font-family: "Ubuntu";
   font-size:170%;
 }
 
+p {
+  color: #243c74;
+  font-weight: bold;
+}
 
+.error {
+  color:red;
+ /*  margin-top: -20px; */
+}

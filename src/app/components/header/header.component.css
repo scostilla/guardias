@@ -1,10 +1,5 @@
-@charset "utf-8";
-@font-face {
-    font-family: "Ubuntu", sans-serif;
-    src: url('src/assets/font/Ubuntu-Regular.ttf');
-}
-.bg-celeste-argentina {
-    background-color: #37BBED;
+.fond-celeste {
+    background-color: #37BBED !important;
 }
 
 nav{
@@ -56,7 +51,7 @@ mat-menu{
   width: 100%;
 }
 
-.title{
+.title-header{
   cursor: pointer;
 }
 
@@ -69,8 +64,13 @@ mat-menu{
 }
 
 /* Botones header */
+.content-icon-header {
+  width: 20%; 
+  text-align: right; 
+  float: left; 
+}
 .icon-material {
-  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-right: 1.5%;
+  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-left: 5%;
 }
 .icon-material:hover {
   color: #37BBED; background-color: #314981;
@@ -114,6 +114,7 @@ mat-menu{
   justify-content: center;
   font-size: 0.8em;
 }
+
 
 /*
 

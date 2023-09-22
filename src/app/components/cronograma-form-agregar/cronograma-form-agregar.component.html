@@ -1,0 +1,40 @@
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">AGREGAR PROFESIONAL</h1>
+</div>
+<div mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+            <mat-label>Selecciona Profesional</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let Prof of profs" [value]="Prof.value">
+                {{Prof.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+    <mat-form-field appearance="outline">
+            <mat-label>Tipo de Guardia</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let Guard of guards" [value]="Guard.value">
+                {{Guard.viewValue}}
+              </mat-option>
+            </mat-select>
+    </mat-form-field>    
+    <mat-form-field appearance="outline">
+        <mat-label>Tipo de Servicio</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let Serv of servs" [value]="Serv.value">
+            {{Serv.viewValue}}
+          </mat-option>
+        </mat-select>
+</mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Cantidad Hs.</mat-label>
+        <input matInput type="number">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions class="action">
+    <button mat-raised-button class="btnupdate" type="button"
+        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" color="primary" type="submit">Agregar</button>
+</div>
+
+

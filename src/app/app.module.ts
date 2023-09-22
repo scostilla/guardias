@@ -1,9 +1,9 @@
-import { Component, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
 
@@ -48,10 +48,59 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
 import {MatTableModule} from '@angular/material/table';
 import {NgFor} from '@angular/common';
-import {MatButtonToggleGroup, MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatBadgeModule} from '@angular/material/badge';
 
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
+import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+
+
+
+//Date Import
+import localePy from '@angular/common/locales/es-PY';
+import { TablaComponent } from './components/tabla/tabla.component';
+import { ArrayFecComponent } from './components/array-fec/array-fec.component';
+import { MonthTableComponent } from './components/month-table/month-table.component';
+import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
+import { CronogramaComponent } from './components/cronograma/cronograma.component';
+import { DigestoComponent } from './components/digesto/digesto.component';
+import { HistorialComponent } from './components/historial/historial.component';
+import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
+import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
+import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
+import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
+import { PopupCalendarioDisp2Component } from './components/popup-calendario-disp2/popup-calendario-disp2.component';
+import { NovedadesComponent } from './components/novedades/novedades.component';
+import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
+import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
+import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
+import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
+import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
+import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
+import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
+import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
+import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
+import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
+import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
+import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
+import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
+import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
+import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
+import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
+import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
+import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
+
+
+registerLocaleData(localePy,'es');
+
 
 @NgModule({
   declarations: [
@@ -85,6 +134,47 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     RegDiarioComponent,
     DdjjExtraComponent,
     ProfessionalDetailComponent,
+    DdjjContrafacturaComponent,
+    DdjjCargoyagrupComponent,
+   /*  ApiComponent,  */
+    TablaComponent,
+    ArrayFecComponent,
+    MonthTableComponent,
+    PopupCalendarioComponent,
+    CronogramaComponent,
+    DigestoComponent,
+    HistorialComponent,
+    DisponibilidadComponent,
+    PopupCalendarioDispComponent,
+    CronogramaDefComponent,
+    PopupCalendarioVacioComponent,
+    CronogramaRegComponent,
+    PopupCalendarioDisp2Component,
+    NovedadesComponent,
+    PopupNovedadAgregarComponent,
+    CronogramaPComponent,
+    CronogramaPDefComponent,
+    CronogramaPHosComponent,
+    GuardiasViewPComponent,
+    ProfessionalDhComponent,
+    PopupDdjjCfComponent,
+    PopupDdjjCfEditComponent,
+    CronogramaPDefTotComponent,
+    DdjjTentativoComponent,
+    DdjjCargoyagrupTotComponent,
+    DdjjExtraTotComponent,
+    DdjjContrafacturaTotComponent,
+    DistHorariaGuardiaComponent,
+    DistHorariaConsComponent,
+    DistHorariaGirasComponent,
+    DistHorariaOtrasComponent,
+    ProfessionalDhHistComponent,
+    ProfessionalDhJunioComponent,
+    CronogramaFormAgregarComponent,
+    ProfessionalFormEditComponent,
+    CronogramaDefMaternoComponent,
+    CronogramaDefSroqueComponent,
+    
   ],
 
   imports: [
@@ -108,12 +198,15 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
     FormsModule,
     MatTableModule,
     NgFor,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    DatePipe,
+    MatBadgeModule,
   ],
   providers: [
-    ProfessionalDataServiceService
-    /*ProfessionalDataServiceService,*/
+    ProfessionalDataServiceService,
+    {provide: LOCALE_ID,useValue:'es'}
   ],
+  
   bootstrap: [AppComponent],
 })
 export class AppModule {}

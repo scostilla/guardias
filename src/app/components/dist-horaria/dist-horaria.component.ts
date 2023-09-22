@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { DistHorariaGuardiaComponent } from '../dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaConsComponent } from '../dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from '../dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaOtrasComponent } from '../dist-horaria-otras/dist-horaria-otras.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dist-horaria',
@@ -7,16 +13,32 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./dist-horaria.component.css'],
 })
 export class DistHorariaComponent {
-  hospitales:string[]= ['CALILEGUA','CEN - CENTRO DE ESPECIALIDADES NORTE','DR. PABLO SORIA','DR. ARTURO ZABALA'];
+
+  hospitales:string[]= ['DN. PABLO SORIA'];
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
-  guardia:string[]= ['Guardia extra','Contra Factura','Cargo','Agrupacion'];
+  guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-  cons:string[]= ['Cons ext','Comis'];
+  cons:string[]= ['Consultorio externo','Comisión'];
+  turno:string[]= ['Mañana','Tarde'];
 
   selectedService: string = 'Cargo';
   selectedGuard: string = '';
   disableButton: boolean = this.selectedGuard == '';
-  constructor(private http: HttpClient) {}
+
+  distribForm: FormGroup;
+  constructor(
+    private http: HttpClient,
+    public dialogReg: MatDialog,
+    public dialogNov: MatDialog,
+    public dialogDistrib: MatDialog,
+    private fb: FormBuilder
+    ) {
+      this.distribForm = this.fb.group({
+        hospital: ['', Validators.required],
+        profesional: ['', Validators.required],
+      })
+
+    }
   options: any[] | undefined;
 
   ngOnInit() {
@@ -26,4 +48,35 @@ export class DistHorariaComponent {
         this.options = data;
       });
   }
+
+
+  openDistGuardia(){
+    this.dialogReg.open(DistHorariaGuardiaComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
+  openDistCons(){
+    this.dialogReg.open(DistHorariaConsComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
+  openDistGira(){
+    this.dialogReg.open(DistHorariaGirasComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
+  openDistOtra(){
+    this.dialogReg.open(DistHorariaOtrasComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
+
 }

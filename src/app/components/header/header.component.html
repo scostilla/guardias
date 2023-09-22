@@ -1,11 +1,7 @@
-<link
-  href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@100&display=swap"
-  rel="stylesheet"
-/>
-<nav class="navbar navbar-expand-lg bg-celeste-argentina shadow">
+<nav class="navbar navbar-expand-lg fond-celeste shadow">
   <div class="logo container mt-2 mb-2">
     <div class="align-items-right">
-      <a href="http://salud.jujuy.gob.ar/" target="_blank">
+      <a routerLink="/home-page">
         <img src="assets/img/pnglogo1.png" width="170" height="100" />
       </a>
     </div>
@@ -13,19 +9,22 @@
     <div class="collapse navbar-collapse">
       <div class="container" routerLink="/home-page">
         <div class="input-group justify-content-center text-light">
-          <div id="titulo"><h3 class="fw-bold title">SISTEMA PROVINCIAL DE</h3></div><br/>
-          <div id="titulo"><h1 class="fw-bold title">GUARDIAS</h1></div>
+          <div id="titulo"><h3 class="fw-bold title-header">SISTEMA PROVINCIAL DE</h3></div><br/>
+          <div id="titulo"><h1 class="fw-bold title-header">GUARDIAS</h1></div>
         </div>
       </div>
+      <div class="content-icon-header">
       <button mat-fab [matMenuTriggerFor]="menu_admin"
         type="submit"
         class="icon-material"  *ngIf="showButtons">
         <mat-icon>settings</mat-icon>
       </button>
         <mat-menu #menu_admin="matMenu">
-            <div class="col" type="button" routerLink="/">
-            <button mat-menu-item><mat-icon>assessment</mat-icon><span>Estadisticas</span></button>
-            <button mat-menu-item><mat-icon>face</mat-icon><span>Agregar usuario</span></button>
+            <div class="col" type="button">
+            <button mat-menu-item><mat-icon>build</mat-icon><span>Configuraciones</span></button>
+            <button mat-menu-item><mat-icon>face</mat-icon><span>Usuario</span></button>
+            <button mat-menu-item routerLink="/novedades"><mat-icon  matBadge="2" matBadgeColor="warn">mail</mat-icon><span>Novedades</span></button>
+            <button mat-menu-item routerLink="/digesto"><mat-icon>picture_as_pdf</mat-icon><span>Digesto</span></button>
           </div>
         </mat-menu>
       <button mat-fab [matMenuTriggerFor]="menu"
@@ -45,11 +44,11 @@
               Administrativo
             </div>
           </div>
-          <button mat-menu-item><mat-icon>build</mat-icon><span>Opciones</span></button>
           <div class="col" type="button" routerLink="/">
             <button mat-menu-item><mat-icon>exit_to_app</mat-icon><span>Salir</span></button>
           </div>
         </mat-menu>
+        </div>
     </div>
   </div>
  </nav>
