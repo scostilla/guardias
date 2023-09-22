@@ -3,31 +3,83 @@ h2{
     font-size:350%;
 }
 
+#container-title-hosp {
+	float: left;
+	width: 100%;
+	height: 200px;
+	background-image: url("/assets/img/fond_nom_hosp.png");
+	background-repeat: no-repeat;
+	background-size: auto;
+	margin-top: -25px;
+	margin-bottom: -80px;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+}
+.text-title-hosp{
+	margin-top: -165px;
+	margin-left: 15px;
+	padding: 30px 30px 20px 30px;
+	width: auto;
+	height: 28px;
+	background-color: #243c74;
+	font-size: 1.2em;
+	color: #FFF;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	border-radius: 0 0 12px 12px;
+	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+	-moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+	box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+}
+
 div.boton {
     width: 100%;
 	height: 200px;
 	margin: 2%;
-	float:left;
 	color:#333;
 	text-decoration:none;
-    -moz-border-radius: 3%;
-    -webkit-border-radius: 3%;
-    border-radius: 3%;
-}
-div.boton:hover {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
 	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
     -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
     box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+	transition: all 0.5s;
 }
+div.boton span {
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+	transition: 0.5s;
+  }
+  div.boton span:after {
+	content: '\00bb';
+	position: absolute;
+	opacity: 0;
+	top: 0;
+	right: -20px;
+	transition: 0.5s;
+  }
+  
+  div.boton:hover span {
+	padding-right: 25px;
+  }
+  
+  div.boton:hover span:after {
+	opacity: 1;
+	right: 0;
+  }
 .icon1_boton, .icon2_boton, .icon3_boton, .icon4_boton, .icon5_boton, .icon6_boton {
-    -moz-border-radius: 3% 3% 0 0;
-    -webkit-border-radius: 3% 3% 0 0;
-    border-radius: 3% 3% 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
 	width: 100%;
 	font-size: 1.2em;
 	font-weight:bold;
-text-align:center; color: #fff;
-padding:3%;
+	text-align:center; 
+	padding:3%;
 }
 .icon1_boton {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
 .icon2_boton {background-color: #1B497B; border-bottom: 9px solid #123253;}
@@ -36,9 +88,10 @@ padding:3%;
 .icon5_boton {background-color: #EB428F; border-bottom: 9px solid #c73778;}
 .icon6_boton {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
 
-
 .text_boton {text-align: center;
 	font-size: 150%;
 	padding: 0 8% 8% 8%;
 	display:block;
 	}
+
+	  

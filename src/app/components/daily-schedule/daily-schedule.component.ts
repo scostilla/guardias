@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-daily-schedule',
@@ -7,27 +7,47 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./daily-schedule.component.css'],
 })
 export class DailyScheduleComponent {
+  @Input() tipoGuardia?: string;
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
-  selectedHospital: string = '';
+  selectedHospital: string = 'DN. PABLO SORIA';
 
-  constructor(
-    private http: HttpClient,
-  ) {
-  }
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http
-      .get<any[]>('../assets/jsonFiles/hospitales.json')
-      .subscribe((data) => {
-        this.options = data;
-      });
-    this.http
-      .get<any[]>('../assets/jsonFiles/servicios.json')
-      .subscribe((data) => {
-        this.services = data;
-      });
+    if (this.tipoGuardia !== 'pasiva') {
+      this.http
+        .get<any[]>('../assets/jsonFiles/hospitales.json')
+        .subscribe((data) => {
+          this.options = data;
+          console.log(this.options);
+
+        });
+
+      this.http
+        .get<any[]>('../assets/jsonFiles/profesionales.json')
+        .subscribe((data) => {
+          this.services = data.filter(
+            (profesional) => profesional.tipoGuardia !== 'pasiva'
+          );
+        });
+    } else {
+      this.http
+        .get<any[]>('../assets/jsonFiles/hospitales.json')
+        .subscribe((data) => {
+          this.options = data.filter((options) => options.pasivas == true);
+          console.log(this.options);
+        });
+
+      this.http
+        .get<any[]>('../assets/jsonFiles/profesionales.json')
+        .subscribe((data) => {
+          this.services = data.filter(
+            (profesional) => profesional.tipoGuardia == 'pasiva'
+          );
+        });
+    }
   }
 
   updateHospital() {
@@ -36,6 +56,7 @@ export class DailyScheduleComponent {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital
       );
+      console.log(this.selectedHospital);
 
       const groupedData = this.groupBy(filteredData, 'servicio');
 
@@ -44,10 +65,11 @@ export class DailyScheduleComponent {
         professionals: groupedData[service].map((professional: any) => ({
           apellido: professional.apellido,
           nombre: professional.nombre,
-          hs: professional.hs || null,
-          type: professional.tipo,
+          hs: professional.cargaHoraria || null,
+          type: professional.tipoGuardia,
         })),
       }));
+      console.log(this.professionalGroups);
     } else {
       this.professionalGroups = [];
     }

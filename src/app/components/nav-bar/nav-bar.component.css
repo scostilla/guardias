@@ -50,7 +50,9 @@
 .nav > .nav-links > a:hover {
   background-color: #37BBED;
   color: #243c74;
-  font-weight:500;
+  font-weight:bold;
+  height: 34px;
+  border-radius: 0 0 10px 10px;
 }
 
 .nav > #nav-check {
@@ -103,6 +105,10 @@
   .nav > .nav-links > a {
     display: block;
     width: 100%;
+  }
+  .nav > .nav-links > a:hover {
+    height: 30px;
+    border-radius: 0;
   }
   .nav > #nav-check:not(:checked) ~ .nav-links {
     height: 0px;

@@ -1,0 +1,27 @@
+[
+  {
+   "id": 1,
+   "nombre": "cf",
+   "descripcion": "guardia contra factura"
+  },
+  {
+   "id": 2,
+   "nombre": "cargo",
+   "descripcion": "guardia del cargo"
+  },
+  {
+   "id": 3,
+   "nombre": "extra",
+   "descripcion": "guardia extra"
+  },
+  {
+   "id": 4,
+   "nombre": "agrupacion",
+   "descripcion": "guardia de agrupacion"
+  },
+  {
+   "id": 5,
+   "nombre": "pasiva",
+   "descripcion": "guardia pasiva"
+  }
+ ]

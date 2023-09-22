@@ -1,0 +1,10 @@
+.tabla-center {
+  margin-left: 2%; margin-right: 2%;
+}
+.col-center {
+  text-align: center;
+}
+th {
+  vertical-align: middle;
+  text-align: center;
+}

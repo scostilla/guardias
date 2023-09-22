@@ -14,7 +14,7 @@
       <mat-select placeholder="Seleccione un Hospital" [(ngModel)]="selectedHospital" name="service"
         class="form-control" (selectionChange)="updateHospital()">
         <mat-option *ngFor="let option of options" [value]="option.descripcion">
-          {{ option.descripcion }} ( {{option.region}})
+          {{option.descripcion}} ({{option.region}})
         </mat-option>
       </mat-select>
     </div>
@@ -23,12 +23,12 @@
 
 <!--correcto con tablas-->
 <div class="container">
-  <div class="row row-cols-4 d-flex "  >
+  <div class="row row-cols-4 d-flex ">
     <div class="col"
       *ngFor="let professionalGroup of professionalGroups.slice(0,professionalGroups.length - (professionalGroups.length % 4 || 4))">
       <table class="table table-striped">
-        <thead >
-          <tr style="background-color: rgba(190, 181, 181, 0.274);  " >
+        <thead>
+          <tr style="background-color: rgba(190, 181, 181, 0.274);  ">
             <app-schedule-card [service]="professionalGroup.service"></app-schedule-card>
           </tr>
         </thead>

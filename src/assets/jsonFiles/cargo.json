@@ -1,0 +1,27 @@
+[
+  {
+   "id": 1,
+   "descripcion": "jefe de area",
+   "funcion": "jefe"
+  },
+  {
+   "id": 2,
+   "descripcion": "a cargo de area",
+   "funcion": "cargo"
+  },
+  {
+   "id": 3,
+   "descripcion": "personal administrativo",
+   "funcion": "admin"
+  },
+  {
+   "id": 4,
+   "descripcion": "Jefe de Personal",
+   "funcion": "jefePersonal"
+  },
+  {
+   "id": 5,
+   "descripcion": "afectado al area",
+   "funcion": "afectado"
+  }
+ ]

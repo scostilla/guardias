@@ -10,13 +10,13 @@ export class GuardiasViewComponent {
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
-  selectedHospital: string = '';
+  selectedHospital: string = 'DN. PABLO SORIA';
 
   constructor(
     private http: HttpClient,
   ) {
   }
-
+/*
   ngOnInit() {
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
@@ -62,5 +62,5 @@ export class GuardiasViewComponent {
       result[key].push(currentValue);
       return result;
     }, {});
-  }
+  }*/
 }

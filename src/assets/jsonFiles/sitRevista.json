@@ -1,0 +1,26 @@
+[
+  {
+   "id": 1,
+   "descripcion": "CONTRATADO"
+  },
+  {
+   "id": 2,
+   "descripcion": "AFECTADO"
+  },
+  {
+   "id": 3,
+   "descripcion": "PLANTA PERMANENTE"
+  },
+  {
+   "id": 4,
+   "descripcion": "INDEPENDIENTE"
+  },
+  {
+   "id": 5,
+   "descripcion": "RESIDENTE"
+  },
+  {
+   "id": 6,
+   "descripcion": "INTERINO"
+  }
+ ]

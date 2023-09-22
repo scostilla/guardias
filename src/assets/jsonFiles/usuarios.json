@@ -1,0 +1,56 @@
+[
+  {
+   "id": 1,
+   "userName": "admin",
+   "pass": "admin",
+   "apellido": "adminstrador",
+   "nombre": "ejemplo",
+   "url": "",
+   "estado": 1
+  },
+  {
+   "id": 2,
+   "userName": "baja",
+   "pass": "baja",
+   "apellido": "baja",
+   "nombre": "usuario",
+   "url": "",
+   "estado": 0
+  },
+  {
+   "id": 3,
+   "userName": "scostilla",
+   "pass": "scostilla",
+   "apellido": "costilla",
+   "nombre": "sebastian",
+   "url": "assets/img/users/scostilla.jpg",
+   "estado": 1
+  },
+  {
+   "id": 4,
+   "userName": "fyucgra",
+   "pass": "fyucgra",
+   "apellido": "yucgra",
+   "nombre": "fabiana",
+   "url": "assets/img/users/fyucgra.jpg",
+   "estado": 1
+  },
+  {
+   "id": 5,
+   "userName": "ncruz",
+   "pass": "ncruz",
+   "apellido": "cruz",
+   "nombre": "nicolas",
+   "url": "assets/img/users/ncruz.jpg",
+   "estado": 1
+  },
+  {
+   "id": 6,
+   "userName": "aluna",
+   "pass": "aluna",
+   "apellido": "luna",
+   "nombre": "amanda",
+   "url": "assets/img/users/aluna.jpg",
+   "estado": 1
+  }
+ ]
