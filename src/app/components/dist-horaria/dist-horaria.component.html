@@ -6,7 +6,7 @@
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Hospital</mat-label>
-        <mat-select formControlName="hospital">
+        <mat-select formControlName="hospital" (selectionChange)="onHospitalSelectionChange($event)">
             <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
                 {{hosp.descripcion}}</mat-option>
         </mat-select>

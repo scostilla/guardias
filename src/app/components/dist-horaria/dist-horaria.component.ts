@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DistHorariaConsComponent } from '../dist-horaria-cons/dist-horaria-cons.component';
 import { DistHorariaGirasComponent } from '../dist-horaria-giras/dist-horaria-giras.component';
 import { DistHorariaGuardiaComponent } from '../dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaOtrasComponent } from '../dist-horaria-otras/dist-horaria-otras.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dist-horaria',
@@ -16,6 +16,7 @@ export class DistHorariaComponent {
 
   hospitales:any;
   profesionales:any;
+  selectedHospital?: any;
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
   guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
@@ -48,14 +49,22 @@ export class DistHorariaComponent {
       .subscribe((data) => {
         this.hospitales = data;
       });
-
-      this.http
-      .get<any[]>('../assets/jsonFiles/profesionales.json')
-      .subscribe((data) => {
-        this.profesionales = data;
-      });
   }
 
+  onHospitalSelectionChange(event: any) {
+    this.selectedHospital = event.value;
+    if (this.selectedHospital) {
+        this.http
+          .get<any[]>('../assets/jsonFiles/profesionales.json')
+          .subscribe((data) => {
+            this.profesionales = data.filter(
+              (element) => element.hospital == this.selectedHospital.descripcion
+            );
+          });
+    } else {
+      this.profesionales = [];
+    }
+  }
 
   openDistGuardia(){
     this.dialogReg.open(DistHorariaGuardiaComponent, {
