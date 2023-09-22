@@ -1,812 +1,102 @@
 [
-    {
-        "id": 20,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TERAPA INTENSIVA",
-        "apellido": "GUTIERREZ",
-        "nombre": "SONIA IRENE",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 21,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TERAPA INTENSIVA",
-        "apellido": "OVIEDO TORREZ",
-        "nombre": "CRISTINA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 22,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TERAPA INTENSIVA",
-        "apellido": "FARFAN",
-        "nombre": "MARIO OSCAR",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 23,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TERAPA INTENSIVA",
-        "apellido": "FLORES",
-        "nombre": "NADIA ALEJANDRA",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 24,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TERAPA INTENSIVA",
-        "apellido": "BAZO",
-        "nombre": "ANDREA ROSANA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 25,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TERAPA INTENSIVA",
-        "apellido": "CASTRO",
-        "nombre": "LUIS",
-        "hs": 8,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 26,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "RIBONETTO",
-        "nombre": "MARIA ALEJANDRA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 27,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "SILVA",
-        "nombre": "ADRIANA BEATRIZ",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 28,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "NIEVA",
-        "nombre": "CAROLINA VANESA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 29,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "ABALOS",
-        "nombre": "SILVINA FERNANDA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 30,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "KNORR",
-        "nombre": "ELINA NOEMI",
-        "hs": 8,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 31,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "LOPEZ",
-        "nombre": "ALBERTO RENE",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 32,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "MARTINEZ",
-        "nombre": "FATIMA ROMINA",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 33,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "GUARDIA CENTRAL",
-        "apellido": "PANTOJA",
-        "nombre": "DANIELA MARCELA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 34,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "MAMANI",
-        "nombre": "DANIELA VIVIANA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 35,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "RIVERA",
-        "nombre": "ISMAEL SANTIAGO",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 36,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "VILLA",
-        "nombre": "FLAVIA ALEJANDRA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 37,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "FIAD",
-        "nombre": "FACUNDO DALMACIO",
-        "hs": 8,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 38,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "ACOSTA",
-        "nombre": "MARIA AGUSTINA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 39,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CARI",
-        "nombre": "EUGENIO",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 40,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CAMPOS",
-        "nombre": "CARLOS ADRIAN",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 41,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "ALAVAR",
-        "nombre": "SONIA ELIZABETH",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 42,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "ALCORTA",
-        "nombre": "ADRIANA BEATRIZ",
-        "hs": 8,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 43,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CALISAYA",
-        "nombre": "LAURA MABEL",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 44,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CARLOS",
-        "nombre": "CLAUDIA SILVINA",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 45,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CASTRO",
-        "nombre": "ANA LIA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 46,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "LEZCANO",
-        "nombre": "KARINA MERCEDES",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 47,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CARRAZANA",
-        "nombre": "MARIELA RAQUEL",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 48,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "QUINTEROS",
-        "nombre": "GABRIELA JORGELINA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 49,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "CELLINO",
-        "nombre": "NATALIA SOLEDAD",
-        "hs": 8,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 50,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "LOPEZ",
-        "nombre": "ADRIANA MARCELA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 51,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "TABORDA",
-        "nombre": "DIANA ELISETH",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 52,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "REYES",
-        "nombre": "ADELINA NATALIA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 53,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "ALVAREZ",
-        "nombre": "VIVIANA KARINA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 54,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "SEGOVIA",
-        "nombre": "GRISELDA VERONICA",
-        "hs": 8,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 55,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "TELL",
-        "nombre": "ANA LAURA",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 56,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "ARIAS",
-        "nombre": "RENE MANUEL",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 57,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "VILLARREAL",
-        "nombre": "ANDREA DANIELA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 58,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "REICH",
-        "nombre": "MARIA NATALIA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 59,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "BULIUBASICH",
-        "nombre": "JULIETA",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 60,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "GONZALEZ BURGOS",
-        "nombre": "ANDREA MERCEDES",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 61,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "PANTOJA",
-        "nombre": "IRIS DEBORA",
-        "hs": 8,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 62,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "LOPEZ",
-        "nombre": "JORGE NAHUEL",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 63,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "SALINAS",
-        "nombre": "SILVANA BEATRIZ",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 64,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "RIVERO",
-        "nombre": "NATALIA ELIZABETH",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 65,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "CLINICA MEDICA",
-        "apellido": "ANDIA",
-        "nombre": "MARIA GLORIA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 66,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "TARCAYA",
-        "nombre": "DELIA HERMINIA",
-        "hs": 8,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 67,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "PASQUETI",
-        "nombre": "VIVIANA VERONICA",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 68,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "PALACIOS",
-        "nombre": "KARINA GABRIELA",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 69,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ZERPA",
-        "nombre": "CLAUDIA ESTELA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 70,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ARGAÑARAZ",
-        "nombre": "CECILIA MARIANA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 71,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ZAPANA",
-        "nombre": "DANIEL ANTONIO",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 72,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "CALIZAYA",
-        "nombre": "CARMEN ROSA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 73,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "FALCO",
-        "nombre": "RODOLFO GUSTAVO",
-        "hs": 8,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 74,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "GARZON",
-        "nombre": "CLAUDIA MARIELA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 75,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "PRIETO",
-        "nombre": "MONICA ALEJANDRA",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 76,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ROJAS",
-        "nombre": "MONICA PATRICIA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 77,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "CORIMAYO",
-        "nombre": "LORENA VANESA DEL CARMEN",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 78,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "CARDOZO",
-        "nombre": "BERTA",
-        "hs": 8,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 79,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "GONZALEZ",
-        "nombre": "NATALIA ANDREA",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 80,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ROMERO",
-        "nombre": "MONICA BEATRIZ",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 81,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ANZE",
-        "nombre": "JULIA SANDRA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 82,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "MENDEZ",
-        "nombre": "LUISA FABIANA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 83,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "PEÑALOZA",
-        "nombre": "PATRICIA BEATRIZ",
-        "hs": 24,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 84,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "VALDEZ LARA",
-        "nombre": "SILVIA RAQUEL",
-        "hs": 24,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 85,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "MEDINA",
-        "nombre": "YANINA BELEN",
-        "hs": 8,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 86,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "ALANCAY",
-        "nombre": "ANALIA ALEJANDRA",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 87,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "ANESTESISTA",
-        "apellido": "CUEVAS",
-        "nombre": "SILVINA ASUNCION",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 100,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "COROMINAS ALVARADO",
-        "nombre": "MARIANO",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 101,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "MARCA",
-        "nombre": "DANIEL ALEJANDRO",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 102,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "VARGAS",
-        "nombre": "JUAN OMAR",
-        "hs": 8,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 103,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "CRUZ",
-        "nombre": "LUIS JUSTINO",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 104,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "DIAZ",
-        "nombre": "FABIANA LILIAN",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 105,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "TORRES",
-        "nombre": "WALDO DANIEL",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 106,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "VARGAS",
-        "nombre": "JOSE LUIS",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 107,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "MITA",
-        "nombre": "JUAN MARTIN",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 108,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "CALVO ELLIFF",
-        "nombre": "FERNANDO AGUSTIN",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 109,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "VLADISLAVIC",
-        "nombre": "FERNANDO AGUSTIN",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 110,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "COCIO",
-        "nombre": "JULIO CESAR",
-        "hs": 12,
-        "tipo": "cargo"
-       },
-       {
-        "id": 111,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "PASTORE",
-        "nombre": "SILVANA ANDREA",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 112,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "LOPEZ BONFANTI",
-        "nombre": "JUAN JOSE",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 113,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "CRUZ",
-        "nombre": "ELINA NATALIA",
-        "hs": 12,
-        "tipo": "cargo"
-       },
-       {
-        "id": 114,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "INSAUSTI",
-        "nombre": "SERGIO ALEJANDRO",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 115,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "TABOADA",
-        "nombre": "ANALIA DANIELA",
-        "hs": 8,
-        "tipo": "extra"
-       },
-       {
-        "id": 116,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "APAZA",
-        "nombre": "FRANCO JUAN",
-        "hs": 8,
-        "tipo": "cargo"
-       },
-       {
-        "id": 117,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "GUZMAN",
-        "nombre": "MABEL ANGELICA ANALIA",
-        "hs": 12,
-        "tipo": "agrupacion"
-       },
-       {
-        "id": 118,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "CHOQUE",
-        "nombre": "GUILLERMO ALEJANDRO",
-        "hs": 12,
-        "tipo": "contrafactura"
-       },
-       {
-        "id": 119,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "LABORATORIO CENTRAL",
-        "apellido": "FICOSECO",
-        "nombre": "RENATA ANTONELA",
-        "hs": 24,
-        "tipo": "extra"
-       },
-       {
-        "id": 120,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TRAUMATOLOGIA",
-        "apellido": "EBRECHT",
-        "nombre": "GUILLERMO FEDERICO",
-        "hs": 24,
-        "tipo": "cargo"
-       },
-       {
-        "id": 121,
-        "hospital": "DR. PABLO SORIA",
-        "servicio": "TRAUMATOLOGIA",
-        "apellido": "ANZE",
-        "nombre": "JUAN CARLOS",
-        "hs": 8,
-        "tipo": "cargo"
-       }
-]
+  {
+   "ID": 1,
+   "DESCRIPCIÓN": "ANESTESIOLOGIA",
+   "nivel": [4]
+  },
+  {
+   "ID": 2,
+   "DESCRIPCIÓN": "ANESTESIOLOGIA INFANTIL",
+   "nivel": [4]
+  },
+  {
+   "ID": 3,
+   "DESCRIPCIÓN": "CARDIOLOGIA",
+   "nivel": [4]
+  },
+  {
+   "ID": 4,
+   "DESCRIPCIÓN": "CIRUGIA GENERAL",
+   "nivel": [1,2,3]
+  },
+  {
+   "ID": 5,
+   "DESCRIPCIÓN": "CIRUGIA INFANTIL",
+   "nivel": [2,3]
+  },
+  {
+   "ID": 6,
+   "DESCRIPCIÓN": "CLINICO",
+   "nivel": [1,2,3]
+  },
+  {
+   "ID": 7,
+   "DESCRIPCIÓN": "GINECOLOGIA",
+   "nivel": [1,2,3]
+  },
+  {
+   "ID": 8,
+   "DESCRIPCIÓN": "GUARDIA CENTRAL",
+   "nivel": [1]
+  },
+  {
+   "ID": 9,
+   "DESCRIPCIÓN": "HEMOTERAPIA",
+   "nivel": [1]
+  },
+  {
+   "ID": 10,
+   "DESCRIPCIÓN": "LABORATORIO\/ BIOQUIMICO",
+   "nivel": [1,2,3]
+  },
+  {
+   "ID": 11,
+   "DESCRIPCIÓN": "NEONATOLOGIA",
+   "nivel": [4]
+  },
+  {
+   "ID": 12,
+   "DESCRIPCIÓN": "OBSTETRICIA\/MATERNIDAD",
+   "nivel": [1,3]
+  },
+  {
+   "ID": 13,
+   "DESCRIPCIÓN": "ONCOHEMATOLOGIA",
+   "nivel": [3]
+  },
+  {
+   "ID": 14,
+   "DESCRIPCIÓN": "PEDIATRIA",
+   "nivel": [1,2,3]
+  },
+  {
+   "ID": 15,
+   "DESCRIPCIÓN": "TERAPIA INTENSIVA ADULTO",
+   "nivel": [4]
+  },
+  {
+   "ID": 16,
+   "DESCRIPCIÓN": "TERAPIA INTENSIVA INFANTIL",
+   "nivel": [4]
+  },
+  {
+   "ID": 17,
+   "DESCRIPCIÓN": "TERAPIA INTERMEDIA",
+   "nivel": [2]
+  },
+  {
+   "ID": 18,
+   "DESCRIPCIÓN": "TOCOGINECOLOGIA",
+   "nivel": [1,2]
+  },
+  {
+   "ID": 19,
+   "DESCRIPCIÓN": "TRAUMATOLOGIA",
+   "nivel": [2,3]
+  },
+  {
+   "ID": 20,
+   "DESCRIPCIÓN": "UROLOGIA",
+   "nivel": [2]
+  }
+ ]
