@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-daily-schedule',
@@ -12,6 +12,9 @@ export class DailyScheduleComponent {
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
+  @Output() enableExtra: EventEmitter<any> = new EventEmitter<any>();
+  @Output() enableCargo: EventEmitter<any> = new EventEmitter<any>();
+  @Output() enableContrafactura: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +25,6 @@ export class DailyScheduleComponent {
         .subscribe((data) => {
           this.options = data;
           console.log(this.options);
-
         });
 
       this.http
@@ -52,6 +54,7 @@ export class DailyScheduleComponent {
 
   updateHospital() {
     console.log('update hospital');
+
     if (this.services) {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital
@@ -70,8 +73,32 @@ export class DailyScheduleComponent {
         })),
       }));
       console.log(this.professionalGroups);
+      this.enbleGuardias();
     } else {
       this.professionalGroups = [];
+    }
+  }
+
+  enbleGuardias() {
+    this.enableCargo.emit(false);
+    this.enableExtra.emit(false);
+    this.enableContrafactura.emit(false);
+    if (this.professionalGroups) {
+      this.professionalGroups.forEach((group) => {
+        group.professionals.forEach((professional) => {
+          switch (professional.type) {
+            case 'cargo':
+              this.enableCargo.emit(true);
+              break;
+            case 'extra':
+              this.enableExtra.emit(true);
+              break;
+            case 'contrafactura':
+              this.enableContrafactura.emit(true);
+              break;
+          }
+        });
+      });
     }
   }
 

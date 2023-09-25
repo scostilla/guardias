@@ -12,9 +12,25 @@ export class GuardiasViewComponent {
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
 
+  enableExtra: any;
+  enableCargo: any;
+  enableContrafactura: any;
+
   constructor(
     private http: HttpClient,
   ) {
+  }
+
+  onExtraChange(value:any){
+    this.enableExtra = value;
+  }
+
+  onCargoChange(value:any){
+    this.enableCargo = value;
+  }
+
+  onContrafacturaChange(value:any){
+    this.enableContrafactura = value;
   }
 /*
   ngOnInit() {
