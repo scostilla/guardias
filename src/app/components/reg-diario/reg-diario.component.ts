@@ -16,6 +16,8 @@ export class RegDiarioComponent {
   timeControl: FormControl = new FormControl();
   hospital: any;
   especialidades: any;
+  profesionales: any;
+  profesionalSeleccionado: any;
   hospitalSeleccionado: any;
   especialidadesHospital: any;
   tipoServicio: string[] = [
@@ -96,16 +98,6 @@ export class RegDiarioComponent {
       .subscribe((data) => {
         this.especialidades = data;
       });
-
-
-    this.professionalDataService.dataUpdated.subscribe(() => {
-      this.selectedId = this.professionalDataService.selectedId;
-      this.selectedCuil = this.professionalDataService.selectedCuil;
-      this.selectedNombre = this.professionalDataService.selectedNombre;
-      this.selectedApellido = this.professionalDataService.selectedApellido;
-      this.selectedProfesion = this.professionalDataService.selectedProfesion;
-      this.selectedDni = this.professionalDataService.selectedDni;
-    });
   }
 
 
@@ -114,11 +106,36 @@ export class RegDiarioComponent {
       this.especialidadesHospital = this.especialidades.filter(
         (especialidad: Especialidad) => this.hospitalSeleccionado.especialidades.includes(especialidad.id)
       );
+      this.cargarProfesionales();
     } else {
       this.especialidadesHospital = [];
     }
   }
 
+
+  cargarProfesionales() {
+    if (this.hospitalSeleccionado) {
+      this.http
+        .get<any[]>('../assets/jsonFiles/profesionales.json')
+        .subscribe((data) => {
+          this.profesionales = data.filter(
+            (element) => element.hospital == this.hospitalSeleccionado.descripcion
+          );
+        });
+  } else {
+    this.profesionales = [];
+  }
+}
+
+cargarProfesional(){
+  console.log(this.profesionalSeleccionado);
+  this.selectedId = this.profesionalSeleccionado.id;
+      this.selectedCuil = this.profesionalSeleccionado.cuil;
+      this.selectedNombre = this.profesionalSeleccionado.nombre;
+      this.selectedApellido = this.profesionalSeleccionado.apellido;
+      this.selectedProfesion = this.profesionalSeleccionado.profesion;
+      this.selectedDni = this.profesionalSeleccionado.dni;
+}
 
   cancel() {
     this.dialogRef.close();
