@@ -34,13 +34,8 @@
         class="ref ref-contrafactura">Contrafactura</span>
     </div>
     <div class="col d-flex justify-content-center"></div>
-    <app-daily-schedule
-    [extra]="extra"
-    [cargo]="cargo"
-    [contrafactura]="contrafactura"
-    [tipoGuardia]="'activa'"
-      (enableExtra)="onExtraChange($event)"
-      (enableCargo)="onCargoChange($event)"
+    <app-daily-schedule [extra]="extra" [cargo]="cargo" [contrafactura]="contrafactura" [tipoGuardia]="'activa'"
+      (enableExtra)="onExtraChange($event)" (enableCargo)="onCargoChange($event)"
       (enableContrafactura)="onContrafacturaChange($event)">
     </app-daily-schedule>
   </div>

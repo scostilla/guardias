@@ -76,6 +76,12 @@ export class DailyScheduleComponent {
           nombre: professional.nombre,
           hs: professional.cargaHoraria || null,
           type: professional.tipoGuardia,
+          hospital: professional.hospital,
+          servicio: professional.servicio,
+          cuil:professional.cuil,
+          sitRevista: professional.sitRevista,
+          cat: professional.cat,
+          adicional: professional.adicional || null,
         })),
       }));
       console.log(this.professionalGroups);
