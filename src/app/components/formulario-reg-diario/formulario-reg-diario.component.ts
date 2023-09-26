@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
 import { Profesional } from 'src/app/models/profesional';
 import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
+import { ProfesionalTempService } from 'src/app/services/ProfesionalTemp/profesional-temp.service';
 
 
 @Component({
@@ -54,17 +55,18 @@ export class FormularioRegDiarioComponent {
     private professionalDataService: ProfessionalDataServiceService,
     public dialogRef: MatDialogRef<RegDiarioComponent>,
 
-    
+    private profesionalTemp: ProfesionalTempService,
 
     private servicioService: ServicioService,
     private tipoGuardiaService: tipoGuardiaService,
     
     private profesionalService: ProfesionalService,
-    private activatedRoute: ActivatedRoute,
+    //private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router
     
   ) {
+    const navigation = router.getCurrentNavigation();
     this.registroForm = this._fb.group(
       {
         hospital: '',
@@ -96,6 +98,12 @@ export class FormularioRegDiarioComponent {
 
     this.cargarServicio();
     this.cargarTipoGuardia();
+    console.log(`El valor de la variable cambio a: 9`);
+    // Con el subscribe escuchamos si la variable sufrió algún cambio
+    this.profesionalTemp.miVariable$.subscribe(data => {
+      console.log(`El valor de la variable cambio a: ${data}`);
+    });
+    //this.cargarProfesional(1);
 
    /*  const id= this.activatedRoute.snapshot.params['idPersona'];
     this.profesionalService.detail(id).subscribe(
@@ -113,11 +121,12 @@ export class FormularioRegDiarioComponent {
     ) */
 
     
-    const navigation = history.state.data;
+    /* const navigation = history.state.data;
+    holahssss
     console.log('######### id:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
     this.profesional = objeto.example as Profesional;
-    console.info(this.profesional.idPersona);
+    console.info(this.profesional.idPersona); */
 
 
     /* PRUEBA 2 */
@@ -158,10 +167,11 @@ export class FormularioRegDiarioComponent {
     );
   }
 
-  cargarProfesional() {
-    const id = this.activatedRoute.snapshot.params['id'];
+  public cargarProfesional(id:any) {
+    //const id = this.activatedRoute.snapshot.params['id'];
     this.profesionalService.detail(id).subscribe(
       data => {
+        console.log("######### entra id desde comp: " + id);
         this.profesional = data;
       },
       err => {

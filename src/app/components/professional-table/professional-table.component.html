@@ -54,7 +54,7 @@
     <ng-container matColumnDef=" ">
       <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
       <td mat-cell *matCellDef="let profesional" class="cell">
-        <button mat-raised-button class="btnupdate" color="primary" type="button" routerLink="regDiario/{{profesional.idPersona}}" (click)="seleccionar();" >Seleccionar</button>
+        <button mat-raised-button class="btnupdate" color="primary" type="button"  (click)="seleccionar(profesional.idPersona);" >Seleccionar</button>
       </td>
     </ng-container>
 

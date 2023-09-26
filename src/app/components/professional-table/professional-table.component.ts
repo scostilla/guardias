@@ -12,6 +12,8 @@ import { NavigationExtras, Route, Router, RouterModule } from '@angular/router';
 import { DialogServiceService } from 'src/app/services/DialogService/dialog-service.service';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ProfesionalTempService } from 'src/app/services/ProfesionalTemp/profesional-temp.service';
+import { FormularioRegDiarioComponent } from '../formulario-reg-diario/formulario-reg-diario.component';
 
 @Component({
   selector: 'app-professional-table',
@@ -41,7 +43,8 @@ export class ProfessionalTableComponent implements OnInit {
   
   constructor(
     private router: Router,
-    
+    private profesionalTemp: ProfesionalTempService,
+    //private formularioRegDiario: FormularioRegDiarioComponent,
     private http: HttpClient,
     private profesionalService: ProfesionalService,
     private professionalDataService: ProfessionalDataServiceService,
@@ -65,12 +68,16 @@ export class ProfessionalTableComponent implements OnInit {
         this.dataSource.data  = profesionales;
       },
       );
+      // Cambiarmos el valor de la variable para que todos los componentes que estan subscritos detecten el cambio
+    this.profesionalTemp.miVariable$.next(true);
     
   }
 
-  seleccionar(){
+  seleccionar(id:any){
     //this.router.navigateByUrl('regDiario/');
-    
+    //this.profesionalTemp.setId(id);
+    console.log("########### id: " + id);
+    //this.formularioRegDiario.cargarProfesional(id);
     this.cancel();
     
   }
