@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-guardias-view',
   templateUrl: './guardias-view.component.html',
-  styleUrls: ['./guardias-view.component.css']
+  styleUrls: ['./guardias-view.component.css'],
 })
 export class GuardiasViewComponent {
   services: any[] | undefined;
@@ -12,27 +12,39 @@ export class GuardiasViewComponent {
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
 
+  @Input() extra: any[] = [];
+  @Input() cargo: any[] = [];
+  @Input() contrafactura: any[] = [];
+
   enableExtra: any;
   enableCargo: any;
   enableContrafactura: any;
 
-  constructor(
-    private http: HttpClient,
-  ) {
+  constructor(private http: HttpClient) {}
+
+  onExtraChange(eventData: { enableExtra: boolean, extraVector: any[] }) {
+    this.enableExtra = eventData.enableExtra;
+    this.extra = eventData.extraVector;
+    console.log('EXTRA ' + this.enableExtra);
+    console.log(this.extra);
   }
 
-  onExtraChange(value:any){
-    this.enableExtra = value;
+  onCargoChange(eventData: { enableCargo: boolean, cargoVector: any[] }) {
+    this.enableCargo = eventData.enableCargo;
+    this.cargo = eventData.cargoVector;
+    console.log('CARGO ' + this.enableCargo);
+    console.log(this.cargo);
   }
 
-  onCargoChange(value:any){
-    this.enableCargo = value;
+  onContrafacturaChange(eventData: { enableContrafactura: boolean, contrafacturaVector: any[] }) {
+    this.enableContrafactura = eventData.enableContrafactura;
+    this.contrafactura = eventData.contrafacturaVector;
+    console.log('CONTRAFACTURA ' + this.enableContrafactura);
+    console.log(this.contrafactura);
   }
 
-  onContrafacturaChange(value:any){
-    this.enableContrafactura = value;
-  }
-/*
+
+  /*
   ngOnInit() {
     this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')

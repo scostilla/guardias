@@ -17,8 +17,10 @@
     <div style="width: 100%; float: right; font-weight: bold;">Selecciona DDJJ:</div>
     <mat-button-toggle-group name="tipoddjj">
       <mat-button-toggle value="ddjjextra" routerLink="/ddjj-extra" [disabled]="!enableExtra">Extras</mat-button-toggle>
-      <mat-button-toggle value="cargoyagrup" routerLink="/ddjj-cargoyagrup" [disabled]="!enableCargo">Cargo y agrupación</mat-button-toggle>
-      <mat-button-toggle value="contrafactura" routerLink="/ddjj-contrafactura" [disabled]="!enableContrafactura">Contra Factura</mat-button-toggle>
+      <mat-button-toggle value="cargoyagrup" routerLink="/ddjj-cargoyagrup" [disabled]="!enableCargo">Cargo y
+        agrupación</mat-button-toggle>
+      <mat-button-toggle value="contrafactura" routerLink="/ddjj-contrafactura" [disabled]="!enableContrafactura">Contra
+        Factura</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 </div>
@@ -32,7 +34,14 @@
         class="ref ref-contrafactura">Contrafactura</span>
     </div>
     <div class="col d-flex justify-content-center"></div>
-    <app-daily-schedule [tipoGuardia]="'activa'" (enableExtra)="onExtraChange($event)"
-      (enableCargo)="onCargoChange($event)" (enableContrafactura)="onContrafacturaChange($event)"></app-daily-schedule>
+    <app-daily-schedule
+    [extra]="extra"
+    [cargo]="cargo"
+    [contrafactura]="contrafactura"
+    [tipoGuardia]="'activa'"
+      (enableExtra)="onExtraChange($event)"
+      (enableCargo)="onCargoChange($event)"
+      (enableContrafactura)="onContrafacturaChange($event)">
+    </app-daily-schedule>
   </div>
 </div>
