@@ -143,11 +143,11 @@ export class FormularioRegDiarioComponent implements OnInit {
     }
 
 
-    /* const navigation = history.state.data;
+    const navigation = history.state.data;
     console.log('######### id4:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
     this.profesional = objeto.example as Profesional;
-    console.info(this.profesional.idPersona); */
+    console.info(this.profesional.idPersona);
 
 
     /* PRUEBA 2 */
