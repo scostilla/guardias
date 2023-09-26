@@ -7,9 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./novedades-form.component.css'],
 })
 export class NovedadesFormComponent {
-  hospitales:string[]= ['CALILEGUA','CEN - CENTRO DE ESPECIALIDADES NORTE','DR. PABLO SORIA','DR. ARTURO ZABALA'];
+  hospitales:string[]= ['DN. PABLO SORIA'];
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
-  novedad:string[]=['Compensatorio','L.A.O','Maternidad','Parte de Enfermo','Familiar Enfermo']
+  novedad:string[]=['Compensatorio','L.A.O.','Maternidad','Parte de Enfermo','Familiar Enfermo','Falta sin aviso']
   /*
   selectedService: string = 'Compensatorio';
   selectedGuard: string = '';

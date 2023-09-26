@@ -1,5 +1,5 @@
-<div mat-dialog-title class="backgroud" align="center">
-    <h1 class="font">REGISTRAR D. H.</h1>
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">Distribución Horaria</h1>
 </div>
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
@@ -15,6 +15,11 @@
             <mat-option *ngFor="let prof of profesional" [value]="prof">{{prof}}</mat-option>
         </mat-select>
     </mat-form-field>
+    <p>Guardias 
+        <button mat-icon-button color="primary" matTooltip="Agregar nuevo día de guardia">
+        <mat-icon>playlist_add</mat-icon>
+      </button>
+    </p>
     <mat-form-field appearance="outline">
         <mat-label>Tipo de guardia</mat-label>
         <mat-select>
@@ -22,15 +27,96 @@
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
-        <mat-label>Cantidad</mat-label>
-        <input matInput placeholder="Numero" value="">
+        <mat-label>Día de guardia</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+        </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
-        <mat-label>Cons</mat-label>
+        <mat-label>Cantidad Hs.</mat-label>
+        <input matInput type="number" placeholder="Numero" value="">
+    </mat-form-field>
+    
+    <p>Consultorio 
+        <button mat-icon-button color="primary" matTooltip="Agregar nuevo día de consultorio">
+        <mat-icon>playlist_add</mat-icon>
+      </button>
+    </p>
+    <mat-form-field appearance="outline">
+        <mat-label>Tipo de consultorio</mat-label>
         <mat-select>
             <mat-option *ngFor="let co of cons" [value]="co"> {{co}}</mat-option>
         </mat-select>
-    </mat-form-field>        
+    </mat-form-field>  
+    <mat-form-field appearance="outline">
+        <mat-label>Día de consultorio</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Lugar</mat-label>
+        <mat-select>
+            <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
+                {{hosp}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Turno</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let turn of turno" [value]="turn"> {{turn}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Cantidad Hs.</mat-label>
+        <input matInput type="number" placeholder="Numero" value="">
+    </mat-form-field>
+    
+    <p>Giras médicas 
+        <button mat-icon-button color="primary" matTooltip="Agregar nuevo día de gira médica">
+        <mat-icon>playlist_add</mat-icon>
+      </button>
+    </p>
+    <mat-form-field appearance="outline">
+        <mat-label>Día de gira médica</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Cantidad Hs.</mat-label>
+        <input matInput type="number" placeholder="Numero" value="">
+    </mat-form-field>
+
+    <p>Otras actividades 
+        <button mat-icon-button color="primary" matTooltip="Agregar nuevo día de actividad">
+        <mat-icon>playlist_add</mat-icon>
+      </button>
+    </p>
+    <mat-form-field appearance="outline">
+        <mat-label>Día actividad</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Descripción actividad</mat-label>
+        <input matInput placeholder="Describe brevemente" value="">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Lugar</mat-label>
+        <mat-select>
+            <mat-option [value]="hosp" *ngFor="let hosp of hospitales" [value]="hosp">
+                {{hosp}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Cantidad Hs.</mat-label>
+        <input matInput type="number" placeholder="Numero" value="">
+    </mat-form-field>
+
+
 </div>
 <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button"

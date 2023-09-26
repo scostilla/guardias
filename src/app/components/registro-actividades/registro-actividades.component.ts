@@ -20,19 +20,25 @@ export class RegistroActividadesComponent {
 
   openRegistroDiario(){
     this.dialogReg.open(RegDiarioComponent, {
-      height: '90%',
-            width: '50%'
+      width: '600px',
+      disableClose: true,
     })
   }
 
   openNovedades(){
-    this.dialogNov.open(NovedadesFormComponent)
+    this.dialogNov.open(NovedadesFormComponent, {
+      width: '600px',
+      disableClose: true,
+    })
   }
 
   openDistribucion(){
-    this.dialogDistrib.open(DistHorariaComponent)
+    this.dialogDistrib.open(DistHorariaComponent, {
+      width: '600px',
+      disableClose: true,
+    })
   }
-  
+
   /*
   addRegistro() {
     const dialogRef = this.dialog.open(RegistroDiarioComponent, {

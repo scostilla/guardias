@@ -1,0 +1,304 @@
+<div class="row">
+    <div class="col-8 offset-1 align-items-end">
+      <div class="titulos">.:: Cronograma <span class="titulos-second-reg">servicios</span></div>
+      <div class="row"> 
+        <div class="col offset-1">
+      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Pasivas</button>
+      <mat-menu #menug="matMenu">
+        <button mat-menu-item routerLink="/cronograma-reg">Guardias Activas Regionales</button>
+      </mat-menu>
+    </div>
+      </div>  
+    </div>
+    <div class="col-3 align-items-end">
+      <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
+        <mat-button-toggle value="tentativo" routerLink="/cronograma-p">Tentativo</mat-button-toggle>
+        <mat-button-toggle value="definitivo" routerLink="/cronograma-p-def">Definitivo</mat-button-toggle>
+        <mat-button-toggle value="regional" disabled>Servicios</mat-button-toggle>
+      </mat-button-toggle-group>
+      <button mat-button [matMenuTriggerFor]="menu">» Estas viendo: Región Centro</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Región Valles</button>
+        <button mat-menu-item>Región Puna</button>
+        <button mat-menu-item>Región Quebrada</button>
+      </mat-menu>
+    </div>
+  </div>
+  <div class="titulo-calendario-g">Julio 2023</div>
+  <div class="center-content">
+      <span class="ref-circulo circulo--dia"></span>&nbsp;<span class="ref ref-calendar-dia__content">Día hábil</span>
+      <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
+      <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>      
+  </div>
+  <ol class="calendar">
+      <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu">
+        <span class="calendar-dia__number">26</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma">
+        <span class="calendar-dia__number">27</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Mi">
+        <span class="calendar-dia__number">28</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Ju">
+        <span class="calendar-dia__number">29</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Vi">
+        <span class="calendar-dia__number">30</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
+        <span class="calendar-dia__number">01</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
+        <span class="calendar-dia__number">02</span>
+        <div class="calendar-dia__content">
+      </div>
+      </li>
+      <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
+        <span class="calendar-dia__number">03</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ma">
+        <span class="calendar-dia__number">04</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Mi">
+        <span class="calendar-dia__number">05</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ju">
+        <span class="calendar-dia__number">06</span>
+        <div class="calendar-dia__content">
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia--today" data-weekday="Vi">
+        <span class="calendar-dia__number">07</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
+        <span class="calendar-dia__number">08</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
+        <span class="calendar-dia__number">09</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
+        <span class="calendar-dia__number">10</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ma">
+        <span class="calendar-dia__number">11</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">MAterno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Mi">
+        <span class="calendar-dia__number">12</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ju">
+        <span class="calendar-dia__number">13</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">MAterno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Vi">
+        <span class="calendar-dia__number">14</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
+        <span class="calendar-dia__number">15</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
+        <span class="calendar-dia__number">16</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
+        <span class="calendar-dia__number">17</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ma">
+        <span class="calendar-dia__number">18</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Mi">
+        <span class="calendar-dia__number">19</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-feriado" data-weekday="Ju">
+        <span class="calendar-dia__number">20</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Vi">
+        <span class="calendar-dia__number">21</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
+        <span class="calendar-dia__number">22</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
+        <span class="calendar-dia__number">23</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
+        <span class="calendar-dia__number">24</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ma">
+        <span class="calendar-dia__number">25</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Mi">
+        <span class="calendar-dia__number">26</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Ju">
+        <span class="calendar-dia__number">27</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia" data-weekday="Vi">
+        <span class="calendar-dia__number">28</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
+        <span class="calendar-dia__number">29</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
+        <span class="calendar-dia__number">30</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
+        <span class="calendar-dia__number">31</span>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+        </div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma">
+        <span class="calendar-dia__number">01</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Mi">
+        <span class="calendar-dia__number">02</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Ju">
+        <span class="calendar-dia__number">03</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Vi">
+        <span class="calendar-dia__number">04</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Sa">
+        <span class="calendar-dia__number">05</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+      <li class="calendar-dia calendar-dia--otromes" data-weekday="Do">
+        <span class="calendar-dia__number">06</span>
+        <div class="calendar-dia__content"></div>
+      </li>
+    </ol>
+
+
