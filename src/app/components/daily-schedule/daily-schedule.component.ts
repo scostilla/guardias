@@ -10,6 +10,10 @@ export class DailyScheduleComponent {
   @Input() tipoGuardia?: string;
   services: any[] | undefined;
   options: any[] | undefined;
+  extra: any[] = [];
+cargo: any[] = [];
+contrafactura: any[] = [];
+
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
   @Output() enableExtra: EventEmitter<any> = new EventEmitter<any>();
@@ -73,16 +77,48 @@ export class DailyScheduleComponent {
         })),
       }));
       console.log(this.professionalGroups);
+      this.filtrarGuardias();
       this.enbleGuardias();
     } else {
       this.professionalGroups = [];
     }
   }
 
+  filtrarGuardias() {
+    this.extra = [];
+    this.cargo = [];
+    this.contrafactura = [];
+
+    if (this.professionalGroups) {
+      this.professionalGroups.forEach((group) => {
+        group.professionals.forEach((professional) => {
+          switch (professional.type) {
+            case 'cargo':
+              this.cargo.push(professional);
+              break;
+            case 'extra':
+              this.extra.push(professional);
+              break;
+            case 'contrafactura':
+              this.contrafactura.push(professional);
+              break;
+          }
+        });
+      });
+    }
+    console.log("guardias extra: ");
+    console.log(this.extra);
+    console.log("guardias del cargo: ");
+    console.log(this.cargo);
+    console.log("guardias contrafactura: ");
+    console.log(this.contrafactura);
+  }
+
   enbleGuardias() {
     this.enableCargo.emit(false);
     this.enableExtra.emit(false);
     this.enableContrafactura.emit(false);
+
     if (this.professionalGroups) {
       this.professionalGroups.forEach((group) => {
         group.professionals.forEach((professional) => {
