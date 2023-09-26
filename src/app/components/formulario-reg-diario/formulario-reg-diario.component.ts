@@ -100,7 +100,7 @@ export class FormularioRegDiarioComponent {
     this.cargarTipoGuardia();
     console.log(`El valor de la variable cambio a: 9`);
     // Con el subscribe escuchamos si la variable sufrió algún cambio
-    this.profesionalTemp.miVariable$.subscribe(data => {
+    this.profesionalTemp.profesionalTempId.subscribe(data => {
       console.log(`El valor de la variable cambio a: ${data}`);
     });
     //this.cargarProfesional(1);

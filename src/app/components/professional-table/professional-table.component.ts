@@ -69,13 +69,14 @@ export class ProfessionalTableComponent implements OnInit {
       },
       );
       // Cambiarmos el valor de la variable para que todos los componentes que estan subscritos detecten el cambio
-    this.profesionalTemp.miVariable$.next(true);
+    //this.profesionalTemp.miVariable$.next(true);
     
   }
 
   seleccionar(id:any){
     //this.router.navigateByUrl('regDiario/');
     //this.profesionalTemp.setId(id);
+    this.profesionalTemp.profesionalTempId.next(id);
     console.log("########### id: " + id);
     //this.formularioRegDiario.cargarProfesional(id);
     this.cancel();

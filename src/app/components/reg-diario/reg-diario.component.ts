@@ -11,6 +11,7 @@ import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.servic
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
 import { Profesional } from 'src/app/models/profesional';
+import { ProfesionalTempService } from 'src/app/services/ProfesionalTemp/profesional-temp.service';
 
 @Component({
   selector: 'app-reg-diario',
@@ -53,7 +54,7 @@ export class RegDiarioComponent {
     private professionalDataService: ProfessionalDataServiceService,
     public dialogRef: MatDialogRef<RegDiarioComponent>,
 
-    
+    private profesionalTemp: ProfesionalTempService,
 
     private servicioService: ServicioService,
     private tipoGuardiaService: tipoGuardiaService,
@@ -95,6 +96,12 @@ export class RegDiarioComponent {
 
     this.cargarServicio();
     this.cargarTipoGuardia();
+    
+    // Con el subscribe escuchamos si la variable sufrió algún cambio
+    this.profesionalTemp.profesionalTempId.subscribe(data => {
+      this.cargarProfesional(data);
+      console.log(`El valor de la variable cambio a: ${data}`);
+    });
 
    /*  const id= this.activatedRoute.snapshot.params['idPersona'];
     this.profesionalService.detail(id).subscribe(
@@ -112,11 +119,11 @@ export class RegDiarioComponent {
     ) */
 
     
-    const navigation = history.state.data;
+  /*   const navigation = history.state.data;
     console.log('######### id:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
     this.profesional = objeto.example as Profesional;
-    console.info(this.profesional.idPersona);
+    console.info(this.profesional.idPersona); */
 
 
     /* PRUEBA 2 */
@@ -157,8 +164,9 @@ export class RegDiarioComponent {
     );
   }
 
-  cargarProfesional() {
-    const id = this.activatedRoute.snapshot.params['id'];
+  cargarProfesional(id: number) {
+    //const id = this.activatedRoute.snapshot.params['id'];
+    if(id != -1){
     this.profesionalService.detail(id).subscribe(
       data => {
         this.profesional = data;
@@ -170,6 +178,7 @@ export class RegDiarioComponent {
         this.router.navigate(['./']);
       }
     );
+  }
   }
 
   borrarServicio(id: any) {

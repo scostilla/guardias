@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ProfesionalTempService {
     // Creamos un BehaviorSubject de tipo boolean
-  public miVariable$ = new BehaviorSubject<boolean>(false);
+  public profesionalTempId = new BehaviorSubject<number>(-1);
 
   constructor() { }
 /* 	private id:number | undefined;
