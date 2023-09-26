@@ -57,8 +57,8 @@ export class RegDiarioComponent {
 
     private servicioService: ServicioService,
     private tipoGuardiaService: tipoGuardiaService,
-    
     private profesionalService: ProfesionalService,
+    
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router
@@ -112,11 +112,11 @@ export class RegDiarioComponent {
     ) */
 
     
-    const navigation = history.state.data;
+    /* const navigation = history.state.data;
     console.log('######### id:', navigation);
     let objeto = navigation.extras.state as { example: Profesional };
     this.profesional = objeto.example as Profesional;
-    console.info(this.profesional.idPersona);
+    console.info(this.profesional.idPersona); */
 
 
     /* PRUEBA 2 */
@@ -125,14 +125,14 @@ export class RegDiarioComponent {
     this.profesional = objeto.example as Profesional;
     console.info(this.profesional.idPersona); */
 
-    this.professionalDataService.dataUpdated.subscribe(() =>
+    /* this.professionalDataService.dataUpdated.subscribe(() =>
     {
       this.selectedId = this.professionalDataService.selectedId;
       this.selectedCuil = this.professionalDataService.selectedCuil;
       this.selectedNombre = this.professionalDataService.selectedNombre;
       this.selectedApellido = this.professionalDataService.selectedApellido;
       this.selectedProfesion = this.professionalDataService.selectedProfesion;
-    });
+    }); */
 
   }
 
