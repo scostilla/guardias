@@ -72,6 +72,7 @@ export class DailyScheduleComponent {
       this.professionalGroups = Object.keys(groupedData).map((service) => ({
         service,
         professionals: groupedData[service].map((professional: any) => ({
+          id: professional.id,
           apellido: professional.apellido,
           nombre: professional.nombre,
           hs: professional.cargaHoraria || null,
