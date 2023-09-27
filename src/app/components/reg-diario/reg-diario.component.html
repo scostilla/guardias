@@ -110,7 +110,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Nombre</mat-label>
                         <input matInput placeholder="{{selectedNombre}}" id="nombre" name="nombre"
-                            [(ngModel)]="profesional.nombre">
+                            [(ngModel)]="profesional.nombre" disabled>
                     </mat-form-field>
                 </div>
                 <div class="col">
@@ -168,7 +168,7 @@
                 <input matInput placeholder="ingrese">
             </mat-form-field>
         </div>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
@@ -196,7 +196,7 @@
         <div class="col">
             <app-time-picker></app-time-picker>
         </div>
-    </div> -->
+    </div> 
 </div>
 <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
