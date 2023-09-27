@@ -30,7 +30,6 @@ export class DailyScheduleComponent {
         .get<any[]>('../assets/jsonFiles/hospitales.json')
         .subscribe((data) => {
           this.options = data;
-          console.log(this.options);
         });
 
       this.http
@@ -45,7 +44,6 @@ export class DailyScheduleComponent {
         .get<any[]>('../assets/jsonFiles/hospitales.json')
         .subscribe((data) => {
           this.options = data.filter((options) => options.pasivas == true);
-          console.log(this.options);
         });
 
       this.http
@@ -59,14 +57,10 @@ export class DailyScheduleComponent {
   }
 
   updateHospital() {
-    console.log('update hospital');
-
     if (this.services) {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital
       );
-      console.log(this.selectedHospital);
-
       const groupedData = this.groupBy(filteredData, 'servicio');
 
       this.professionalGroups = Object.keys(groupedData).map((service) => ({
