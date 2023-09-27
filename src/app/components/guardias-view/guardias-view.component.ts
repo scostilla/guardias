@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-guardias-view',
@@ -20,7 +21,7 @@ export class GuardiasViewComponent {
   enableCargo: any;
   enableContrafactura: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   onExtraChange(eventData: { enableExtra: boolean; extraVector: any[] }) {
     this.enableExtra = eventData.enableExtra;
@@ -38,5 +39,29 @@ export class GuardiasViewComponent {
   }) {
     this.enableContrafactura = eventData.enableContrafactura;
     this.contrafactura = eventData.contrafacturaVector;
+  }
+
+  sendAndRedirect(value: string) {
+    let vector;
+    let url = '';
+
+    switch (value) {
+      case 'ddjjextra':
+        vector = this.extra;
+        url = '/ddjj-extra';
+        break;
+      case 'cargoyagrup':
+        vector = this.cargo;
+        url = '/ddjj-cargoyagrup';
+        break;
+      case 'contrafactura':
+        vector = this.contrafactura;
+        url = '/ddjj-contrafactura';
+        break;
+    }
+
+    this.router.navigate([url], {
+      queryParams: { vector: JSON.stringify(vector) },
+    });
   }
 }
