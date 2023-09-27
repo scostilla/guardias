@@ -18,14 +18,14 @@ export class DdjjExtraComponent {
   ];
   dataSource = ELEMENT_DATA;
 
-  profesional: any[] = [];
+  profesionales: any[] = [];
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       if (params['vector']) {
-        this.profesional = JSON.parse(params['vector']);
-        console.log(this.profesional);
+        this.profesionales = JSON.parse(params['vector']);
+        console.log(this.profesionales);
       }
     });
   }

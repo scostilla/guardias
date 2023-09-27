@@ -10,7 +10,7 @@ import { PopupDdjjCfComponent } from '../popup-ddjj-cf/popup-ddjj-cf.component';
   styleUrls: ['./ddjj-contrafactura.component.css'],
 })
 export class DdjjContrafacturaComponent {
-  profesional: any[] = [];
+  profesionales: any[] = [];
 
   constructor(public dialogReg: MatDialog, private route: ActivatedRoute) {}
   openPopupCf() {
@@ -23,8 +23,8 @@ export class DdjjContrafacturaComponent {
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       if (params['vector']) {
-        this.profesional = JSON.parse(params['vector']);
-        console.log(this.profesional);
+        this.profesionales = JSON.parse(params['vector']);
+        console.log(this.profesionales);
       }
     });
   }

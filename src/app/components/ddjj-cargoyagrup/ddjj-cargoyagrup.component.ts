@@ -12,7 +12,7 @@ import { PopupCalendarioComponent } from '../popup-calendario/popup-calendario.c
 export class DdjjCargoyagrupComponent {
   /* date = '2023-07-21T13:59:31.238Z';  */
 
-  profesional: any[] = [];
+  profesionales: any[] = [];
   today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
 
@@ -39,8 +39,8 @@ export class DdjjCargoyagrupComponent {
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['vector']) {
-        this.profesional = JSON.parse(params['vector']);
-        console.log(this.profesional);
+        this.profesionales = JSON.parse(params['vector']);
+        console.log(this.profesionales);
       }
     });
   }

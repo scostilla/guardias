@@ -12,10 +12,12 @@ export class GuardiasViewComponent {
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
+  region: string = '';
 
   @Input() extra: any[] = [];
   @Input() cargo: any[] = [];
   @Input() contrafactura: any[] = [];
+  vector: any[] = [];
 
   enableExtra: any;
   enableCargo: any;
@@ -42,26 +44,37 @@ export class GuardiasViewComponent {
   }
 
   sendAndRedirect(value: string) {
-    let vector;
     let url = '';
 
     switch (value) {
       case 'ddjjextra':
-        vector = this.extra;
+        this.vector = this.extra;
         url = '/ddjj-extra';
         break;
       case 'cargoyagrup':
-        vector = this.cargo;
+        this.vector = this.cargo;
         url = '/ddjj-cargoyagrup';
         break;
       case 'contrafactura':
-        vector = this.contrafactura;
+        this.vector = this.contrafactura;
         url = '/ddjj-contrafactura';
         break;
     }
 
+    // this.http
+    //   .get<any[]>('../assets/jsonFiles/hospitales.json')
+    //   .subscribe((data) => {
+    //     this.selectedHospital = data.find(
+    //       (selectedHospital) => selectedHospital.nombre === this.vector[0].hospital
+    //     );
+    //   });
+    //   if (this.selectedHospital) {
+    //     // Accede a la propiedad "region" del hospital encontrado
+    //     this.region = this.selectedHospital.region;
+    //   }
+
     this.router.navigate([url], {
-      queryParams: { vector: JSON.stringify(vector) },
+      queryParams: { vector: JSON.stringify(this.vector) },
     });
   }
 }
