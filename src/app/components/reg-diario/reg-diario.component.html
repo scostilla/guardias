@@ -103,44 +103,54 @@
     <div mat-dialog-subtitle>
         <h2>Detalle del profesional</h2>
     </div>
-    <div class="container" *ngIf="profesional">
-        <div class="row mt-5">
-            <div class="col-md-4 mx-auto">
-                <form novalidate #f="ngForm">
-                    <div class="form-group">
-                        <label for="nombre">Id</label>
-                        <input type="number" class="form-control" id="id" name="id"
-                        [(ngModel)]="profesional.idPersona" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre"
-                        [(ngModel)]="profesional.nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="precio">Apellido</label>
-                        <input type="text" class="form-control" id="apellido" name="apellido"
-                        [(ngModel)]="profesional.apellido" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nombre">Dni</label>
-                        <input type="number" class="form-control" id="dni" name="dni"
-                        [(ngModel)]="profesional.dni" required>
-                    </div>
-                </form>
+    <div *ngIf="profesional">
+        <form novalidate #f="ngForm">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nombre</mat-label>
+                        <input matInput placeholder="{{selectedNombre}}" id="nombre" name="nombre"
+                            [(ngModel)]="profesional.nombre">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Apellido</mat-label>
+                        <input matInput placeholder="{{selectedApellido}}" id="apellido" name="apellido"
+                            [(ngModel)]="profesional.apellido">
+                    </mat-form-field>
+                </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <mat-form-field appearance="outline">
+                            <mat-label>DNI</mat-label>
+                            <input matInput id="dni" name="dni" [(ngModel)]="profesional.dni">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <mat-form-field appearance="outline">
+                            <mat-label>ID</mat-label>
+                            <input matInput id="id" name="id" [(ngModel)]="profesional.idPersona">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Nombre1</mat-label>
                 <input matInput placeholder="{{selectedNombre}}">
             </mat-form-field>
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Apellido</mat-label>
+                <mat-label>Apellido1</mat-label>
                 <input matInput placeholder="{{selectedApellido}}">
             </mat-form-field>
         </div>
@@ -148,13 +158,13 @@
     <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>DNI</mat-label>
+                <mat-label>DNI1</mat-label>
                 <input matInput placeholder="ingrese">
             </mat-form-field>
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Profesion</mat-label>
+                <mat-label>Profesion 1</mat-label>
                 <input matInput placeholder="ingrese">
             </mat-form-field>
         </div>
@@ -186,7 +196,7 @@
         <div class="col">
             <app-time-picker></app-time-picker>
         </div>
-    </div>
+    </div> -->
 </div>
 <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
