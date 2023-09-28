@@ -5,18 +5,21 @@ import { ActivatedRoute } from '@angular/router';
 import { ProfessionalFormDeletComponent } from '../professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from '../professional-form-edit/professional-form-edit.component';
 
-
 @Component({
   selector: 'app-professional-dh',
   templateUrl: './professional-dh.component.html',
-  styleUrls: ['./professional-dh.component.css']
+  styleUrls: ['./professional-dh.component.css'],
 })
 export class ProfessionalDhComponent implements OnInit {
   id: string | null | undefined;
   person: any;
+  totalSemanal: number = 0;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, public dialogReg: MatDialog,
-    ) {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    public dialogReg: MatDialog
+  ) {}
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
@@ -31,22 +34,35 @@ export class ProfessionalDhComponent implements OnInit {
         this.person = data.find((item) => item.id === id);
         if (this.person) {
           console.log(this.person);
+          this.calcularTotalSemanal();
         }
       });
   }
-  openFormEdit(){
-    const dialogRef: MatDialogRef<ProfessionalFormEditComponent> = this.dialogReg.open(ProfessionalFormEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: this.id }
-    })
+
+  calcularTotalSemanal() {
+    this.totalSemanal =
+    (this.person.cargoSabado ?? 0) +
+    (this.person.cargoDomingo ?? 0) +
+    (this.person.cargoLunes ?? 0) +
+    (this.person.cargoMartes ?? 0) +
+    (this.person.cargoMiercoles ?? 0) +
+    (this.person.cargoJueves ?? 0) +
+    (this.person.cargoViernes ?? 0);
   }
 
-  openFormDelet(){
+  openFormEdit() {
+    const dialogRef: MatDialogRef<ProfessionalFormEditComponent> =
+      this.dialogReg.open(ProfessionalFormEditComponent, {
+        width: '600px',
+        disableClose: true,
+        data: { id: this.id },
+      });
+  }
+
+  openFormDelet() {
     this.dialogReg.open(ProfessionalFormDeletComponent, {
       width: '600px',
       disableClose: true,
-    })
+    });
   }
-
 }
