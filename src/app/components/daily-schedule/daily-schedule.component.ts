@@ -77,6 +77,7 @@ export class DailyScheduleComponent {
           sitRevista: professional.sitRevista,
           cat: professional.cat,
           adicional: professional.adicional || null,
+          region: professional.region,
         })),
       }));
       console.log(this.professionalGroups);

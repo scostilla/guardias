@@ -82,5 +82,6 @@ export class CronogramaDefComponent {
         return profesional.tipoGuardia == "pasiva";
       });
     }
+    console.log(this.profesionalesCargo);
   }
 }

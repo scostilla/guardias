@@ -5657,6 +5657,7 @@
    "servicio": "GUARDIA CENTRAL",
    "udo": "NTRO. SR. DE LA BUENA ESPERANZA",
    "tipoGuardia": "contrafactura",
+   "contrafacturaMiercoles": 24,
    "celular": 3885063636
   },
   {
@@ -5733,6 +5734,7 @@
    "servicio": "GUARDIA CENTRAL",
    "udo": "NTRO. SR. DE LA BUENA ESPERANZA",
    "tipoGuardia": "contrafactura",
+   "contrafacturaMartes": 24,
    "celular": 3884440834
   },
   {
@@ -5751,6 +5753,7 @@
    "servicio": "GUARDIA CENTRAL",
    "udo": "NTRO. SR. DE LA BUENA ESPERANZA",
    "tipoGuardia": "extra",
+   "extraLunes": 12,
    "celular": 3885045394
   },
   {
