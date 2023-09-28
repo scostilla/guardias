@@ -2,7 +2,7 @@ import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
@@ -103,6 +103,18 @@ import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
+
+
+//external
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { ListaServicioComponent } from './servicio/lista-servicio.component';
+import { DetalleServicioComponent } from './servicio/detalle-servicio.component';
+import { NuevoServicioComponent } from './servicio/nuevo-servicio.component';
+import { EditarServicioComponent } from './servicio/editar-servicio.component';
+import { EliminarServicioComponent } from './servicio/eliminar-servicio.component';
+import { FormularioRegDiarioComponent } from './components/formulario-reg-diario/formulario-reg-diario.component';
+
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
@@ -169,6 +181,14 @@ registerLocaleData(localePy,'es');
     CronogramaPHosComponent,
     GuardiasViewPComponent,
     ProfessionalDhComponent,
+    ListaServicioComponent,
+    DetalleServicioComponent,
+    NuevoServicioComponent,
+    EditarServicioComponent,
+    EliminarServicioComponent,
+    RegDiarioComponent,
+    FormularioRegDiarioComponent,
+    
     PopupDdjjCfComponent,
     PopupDdjjCfEditComponent,
     CronogramaPDefTotComponent,
@@ -209,11 +229,11 @@ registerLocaleData(localePy,'es');
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    ProfessionalTableComponent,
     NgxMatTimepickerModule,
     HttpClientModule,
     AppRoutingModule,
     CommonModule,
+    RouterModule,
     SharedModule,
     MatFormFieldModule,
     MatInputModule,
@@ -230,6 +250,9 @@ registerLocaleData(localePy,'es');
     MatButtonToggleModule,
     DatePipe,
     MatBadgeModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
+    ProfessionalTableComponent,
   ],
   providers: [
     ProfessionalDataServiceService,

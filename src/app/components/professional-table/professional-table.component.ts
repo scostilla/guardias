@@ -82,4 +82,4 @@ export class ProfessionalTableComponent implements AfterViewInit {
     this.professionalDataService.dataUpdated.emit();
     this.dialogService.closeDialog();
   }
-}
+} 

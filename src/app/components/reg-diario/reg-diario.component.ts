@@ -11,7 +11,16 @@ import { PopupComponent } from '../popup/popup.component';
   templateUrl: './reg-diario.component.html',
   styleUrls: ['./reg-diario.component.css'],
 })
+
 export class RegDiarioComponent {
+
+  public routerLinkVariable = "/regDiario/:id";
+  profesional: Profesional = new Profesional("", "", 0);
+
+  servicios: Servicio[] = [];
+  tipoGuardias: TipoGuardia[] = [];
+  
+
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
   hospital: any;
@@ -50,7 +59,9 @@ export class RegDiarioComponent {
   selectedApellido: string | undefined;
   selectedProfesion: string | undefined;
 
+
   constructor(
+    private _fb: FormBuilder,
     private _fb: FormBuilder,
     private dialog: MatDialog,
     private professionalDataService: ProfessionalDataServiceService,
