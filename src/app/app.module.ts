@@ -229,11 +229,11 @@ registerLocaleData(localePy,'es');
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    ProfessionalTableComponent,
     NgxMatTimepickerModule,
     HttpClientModule,
     AppRoutingModule,
     CommonModule,
-    RouterModule,
     SharedModule,
     MatFormFieldModule,
     MatInputModule,
@@ -250,9 +250,6 @@ registerLocaleData(localePy,'es');
     MatButtonToggleModule,
     DatePipe,
     MatBadgeModule,
-    BrowserAnimationsModule,
-    ToastrModule.forRoot(),
-    ProfessionalTableComponent,
   ],
   providers: [
     ProfessionalDataServiceService,

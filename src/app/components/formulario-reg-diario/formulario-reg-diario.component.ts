@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Servicio } from 'src/app/models/servicio';
-import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
+
 import { ServicioService } from 'src/app/services/Servicio/servicio.service';
 import { PopupComponent } from '../popup/popup.component';
 import { TipoGuardia } from 'src/app/models/tipoGuardia';
@@ -52,7 +52,7 @@ export class FormularioRegDiarioComponent {
   constructor(
     private _fb: FormBuilder,
     private dialog: MatDialog,
-    private professionalDataService: ProfessionalDataServiceService,
+    /* private professionalDataService: ProfessionalDataServiceService, */
     public dialogRef: MatDialogRef<RegDiarioComponent>,
 
     private profesionalTemp: ProfesionalTempService,
@@ -135,14 +135,14 @@ export class FormularioRegDiarioComponent {
     this.profesional = objeto.example as Profesional;
     console.info(this.profesional.idPersona); */
 
-    this.professionalDataService.dataUpdated.subscribe(() =>
+    /* this.professionalDataService.dataUpdated.subscribe(() =>
     {
       this.selectedId = this.professionalDataService.selectedId;
       this.selectedCuil = this.professionalDataService.selectedCuil;
       this.selectedNombre = this.professionalDataService.selectedNombre;
       this.selectedApellido = this.professionalDataService.selectedApellido;
       this.selectedProfesion = this.professionalDataService.selectedProfesion;
-    });
+    }); */
 
   }
 
