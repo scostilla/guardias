@@ -245,8 +245,8 @@
    "servicio": "GUARDIA CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3884615751,
-   "agrupacionMiercoles": 12,
-   "agrupacionViernes": 12
+   "agrupacionViernes": 12,
+   "agrupacionMiercoles": 12
   },
   {
    "id": 31,
@@ -264,9 +264,9 @@
    "servicio": "GUARDIA CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3884627892,
-   "agrupacionLunes": 24,
+   "agrupacionDomingo": 6,
    "agrupacionMiercoles": 12,
-   "agrupacionDomingo": 6
+   "agrupacionLunes": 24
   },
   {
    "id": 32,
@@ -303,8 +303,8 @@
    "tipoGuardia": "cargo",
    "celular": 3885085178,
    "agrupacionMartes": 8,
-   "agrupacionSabado": 8,
-   "agrupacionDomingo": 8
+   "agrupacionDomingo": 8,
+   "agrupacionSabado": 8
   },
   {
    "id": 34,
@@ -322,7 +322,8 @@
    "region": "CENTRO",
    "servicio": "GUARDIA CENTRAL",
    "tipoGuardia": "extra",
-   "celular": 3885844655
+   "celular": 3885844655,
+   "extraSabado": 8
   },
   {
    "id": 35,
@@ -359,9 +360,9 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "agrupacion",
    "celular": 3885138808,
-   "agrupacionLunes": 8,
+   "agrupacionDomingo": 8,
    "agrupacionMiercoles": 8,
-   "agrupacionDomingo": 8
+   "agrupacionLunes": 8
   },
   {
    "id": 37,
@@ -379,8 +380,8 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3885878061,
-   "agrupacionLunes": 12,
-   "agrupacionViernes": 12
+   "agrupacionViernes": 12,
+   "agrupacionLunes": 12
   },
   {
    "id": 312,
@@ -775,10 +776,10 @@
    "udo": "DR. MIGUEL MISKOFF",
    "tipoGuardia": "agrupacion",
    "celular": 3884441065,
-   "extraMartes": 16,
    "extraViernes": 16,
    "extraSabado": 24,
-   "extraDomingo": 24
+   "extraDomingo": 24,
+   "extraMartes": 16
   },
   {
    "id": 39,
@@ -798,9 +799,9 @@
    "udo": "DR. MIGUEL MISKOFF",
    "tipoGuardia": "agrupacion",
    "celular": 3885676567,
-   "extraMartes": 16,
    "extraSabado": 24,
-   "extraDomingo": 24
+   "extraDomingo": 24,
+   "extraMartes": 16
   },
   {
    "id": 40,
@@ -880,9 +881,9 @@
    "udo": "DR. OSCAR ORIAS",
    "tipoGuardia": "cargo",
    "celular": 3885808491,
-   "extraJueves": 24,
    "extraDomingo": 24,
-   "agrupacionMartes": 24
+   "agrupacionMartes": 24,
+   "extraJueves": 24
   },
   {
    "id": 269,
@@ -960,8 +961,8 @@
    "servicio": "CLINICA MEDICA",
    "tipoGuardia": "extra",
    "celular": 3885399527,
-   "extraMiercoles": 24,
-   "agrupacionLunes": 24
+   "agrupacionLunes": 24,
+   "extraMiercoles": 24
   },
   {
    "id": 273,
@@ -1038,10 +1039,10 @@
    "udo": "DR. OSCAR ORIAS",
    "tipoGuardia": "extra",
    "celular": 3885695945,
-   "extraMiercoles": 24,
-   "extraJueves": 24,
    "extraViernes": 24,
-   "agrupacionLunes": 24
+   "agrupacionLunes": 24,
+   "extraJueves": 24,
+   "extraMiercoles": 24
   },
   {
    "id": 277,
@@ -1061,10 +1062,10 @@
    "udo": "DR. OSCAR ORIAS",
    "tipoGuardia": "extra",
    "celular": 3885642359,
-   "extraMiercoles": 24,
-   "extraJueves": 24,
    "extraViernes": 24,
-   "agrupacionMartes": 24
+   "agrupacionMartes": 24,
+   "extraJueves": 24,
+   "extraMiercoles": 24
   },
   {
    "id": 278,
@@ -1108,11 +1109,11 @@
    "tipoGuardia": "extra",
    "celular": 3884769209,
    "extraLunes": 12,
-   "extraMartes": 24,
-   "extraMiercoles": 12,
    "extraViernes": 24,
    "extraDomingo": 24,
-   "agrupacionJueves": 24
+   "agrupacionJueves": 24,
+   "extraMartes": 24,
+   "extraMiercoles": 12
   },
   {
    "id": 280,
@@ -1729,7 +1730,8 @@
    "region": "RAMAL II",
    "servicio": "ANESTESISTA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884886123
+   "celular": 3884886123,
+   "agrupacionJueves": 24
   },
   {
    "id": 43,
@@ -1748,7 +1750,8 @@
    "servicio": "CLINICO",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884013427
+   "celular": 3884013427,
+   "agrupacionJueves": 24
   },
   {
    "id": 44,
@@ -1767,7 +1770,8 @@
    "servicio": "CLINICO",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884304427
+   "celular": 3884304427,
+   "agrupacionJueves": 24
   },
   {
    "id": 45,
@@ -1785,7 +1789,8 @@
    "servicio": "CLINICO",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884098405
+   "celular": 3884098405,
+   "agrupacionJueves": 24
   },
   {
    "id": 46,
@@ -1804,7 +1809,8 @@
    "servicio": "CLINICO",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884805410
+   "celular": 3884805410,
+   "agrupacionJueves": 24
   },
   {
    "id": 47,
@@ -1823,7 +1829,8 @@
    "servicio": "CLINICO",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "extra",
-   "celular": 3884078491
+   "celular": 3884078491,
+   "extraJueves": 24
   },
   {
    "id": 48,
@@ -1841,7 +1848,8 @@
    "servicio": "CLINICO",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "agrupacion",
-   "celular": 3885628374
+   "celular": 3885628374,
+   "agrupacionJueves": 24
   },
   {
    "id": 49,
@@ -1859,7 +1867,8 @@
    "region": "QUEBRADA",
    "servicio": "PEDIATRIA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884164993
+   "celular": 3884164993,
+   "agrupacionJueves": 24
   },
   {
    "id": 50,
@@ -1878,7 +1887,8 @@
    "servicio": "PEDIATRIA",
    "udo": "DR. SALVADOR MAZZA",
    "tipoGuardia": "agrupacion",
-   "celular": 3884338846
+   "celular": 3884338846,
+   "agrupacionMartes": 24
   },
   {
    "id": 66,
@@ -1897,6 +1907,8 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3885399527,
+   "cargoMiercoles": 24,
+   "cargoJueves": 24,
    "contrafacturaLunes": 24
   },
   {
@@ -1917,6 +1929,8 @@
    "udo": "DR. WENCESLAO GALLARDO",
    "tipoGuardia": "cargo",
    "celular": 3884425059,
+   "cargoMartes": 24,
+   "extraLunes": 24,
    "contrafacturaMartes": 24
   },
   {
@@ -1937,6 +1951,8 @@
    "udo": "DR. WENCESLAO GALLARDO",
    "tipoGuardia": "cargo",
    "celular": 3885151694,
+   "cargoJueves": 24,
+   "extraViernes": 24,
    "contrafacturaMiercoles": 24
   },
   {
@@ -1957,6 +1973,8 @@
    "udo": "DR. WENCESLAO GALLARDO",
    "tipoGuardia": "cargo",
    "celular": 3885827142,
+   "cargoJueves": 24,
+   "extraSabado": 24,
    "contrafacturaJueves": 24
   },
   {
@@ -2159,7 +2177,7 @@
    "udo": "DR. WENCESLAO GALLARDO",
    "tipoGuardia": "agrupacion",
    "celular": 3885645431,
-   "extraSabado": 24
+   "agrupacionViernes": 24
   },
   {
    "id": 80,
@@ -2178,6 +2196,7 @@
    "servicio": "CLINICO",
    "tipoGuardia": "cargo",
    "celular": 3884063069,
+   "cargoMiercoles": 24,
    "contrafacturaMartes": 24
   },
   {
@@ -2197,6 +2216,7 @@
    "servicio": "CLINICO",
    "tipoGuardia": "cargo",
    "celular": 3884331756,
+   "cargoMiercoles": 24,
    "contrafacturaDomingo": 24
   },
   {
@@ -2216,6 +2236,7 @@
    "servicio": "CLINICO",
    "tipoGuardia": "cargo",
    "celular": 3884165808,
+   "cargoMartes": 24,
    "contrafacturaSabado": 24
   },
   {
@@ -2235,7 +2256,8 @@
    "servicio": "CLINICO",
    "udo": "SAME",
    "tipoGuardia": "agrupacion",
-   "celular": 3885827948
+   "celular": 3885827948,
+   "agrupacionMartes": 24
   },
   {
    "id": 84,
@@ -2565,10 +2587,10 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "extra",
    "celular": 3884171728,
-   "extraMartes": 24,
-   "extraJueves": 24,
    "extraSabado": 24,
-   "extraDomingo": 24
+   "extraDomingo": 24,
+   "extraMartes": 24,
+   "extraJueves": 24
   },
   {
    "id": 8,
@@ -2588,8 +2610,8 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "contrafactura",
    "celular": 3884158995,
-   "extraJueves": 12,
-   "extraDomingo": 24
+   "contrafacturaJueves": 12,
+   "contrafacturaDomingo": 24
   },
   {
    "id": 9,
@@ -2609,9 +2631,9 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "extra",
    "celular": 3885420753,
-   "extraMiercoles": 16,
+   "extraSabado": 24,
    "extraJueves": 16,
-   "extraSabado": 24
+   "extraMiercoles": 16
   },
   {
    "id": 10,
@@ -2631,10 +2653,10 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "extra",
    "celular": 3884341578,
-   "extraMiercoles": 12,
-   "extraJueves": 20,
    "extraSabado": 24,
-   "extraDomingo": 24
+   "extraDomingo": 24,
+   "extraJueves": 20,
+   "extraMiercoles": 12
   },
   {
    "id": 11,
@@ -2654,8 +2676,8 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "agrupacion",
    "celular": 3884927240,
-   "extraMartes": 12,
-   "extraSabado": 24
+   "extraSabado": 24,
+   "extraMartes": 12
   },
   {
    "id": 12,
@@ -2675,15 +2697,15 @@
    "udo": "MINISTERIO DE SALUD",
    "tipoGuardia": "agrupacion",
    "celular": 3884138470,
-   "extraMartes": 24,
-   "extraMiercoles": 24,
-   "extraJueves": 24,
    "extraSabado": 24,
    "extraDomingo": 24,
-   "contrafacturaViernes": 24,
    "GextraLunes": 6,
    "GextraHosp": "MAIMARA",
-   "GextraServicio": "TRAUMATOLOGIA"
+   "GextraServicio": "TRAUMATOLOGIA",
+   "extraMartes": 24,
+   "extraJueves": 24,
+   "extraMiercoles": 24,
+   "contrafacturaViernes": 24
   },
   {
    "id": 13,
@@ -2703,8 +2725,8 @@
    "udo": "MINISTERIO DE SALUD",
    "tipoGuardia": "extra",
    "celular": 3884925237,
-   "extraMiercoles": 16,
    "extraDomingo": 24,
+   "extraMiercoles": 16,
    "contrafacturaViernes": 24
   },
   {
@@ -2726,9 +2748,9 @@
    "tipoGuardia": "extra",
    "celular": 3885055718,
    "extraLunes": 12,
+   "extraViernes": 12,
    "extraMartes": 12,
-   "extraJueves": 12,
-   "extraViernes": 12
+   "extraJueves": 12
   },
   {
    "id": 15,
@@ -2747,9 +2769,9 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "extra",
    "celular": 3884569667,
-   "extraMiercoles": 12,
    "extraViernes": 12,
-   "extraSabado": 24
+   "extraSabado": 24,
+   "extraMiercoles": 12
   },
   {
    "id": 16,
@@ -2768,8 +2790,8 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "contrafactura",
    "celular": 3885333812,
-   "extraMartes": 12,
-   "extraDomingo": 24
+   "contrafacturaDomingo": 24,
+   "contrafacturaMartes": 12
   },
   {
    "id": 17,
@@ -2788,10 +2810,10 @@
    "udo": "GENERAL M. BELGRANO",
    "tipoGuardia": "extra",
    "celular": 3884396448,
-   "extraJueves": 12,
    "extraViernes": 12,
    "extraSabado": 24,
-   "extraDomingo": 24
+   "extraDomingo": 24,
+   "extraJueves": 12
   },
   {
    "id": 122,
@@ -3225,6 +3247,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884510653,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -3245,6 +3268,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885301688,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -3265,6 +3289,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885759123,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -3285,6 +3310,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884013427,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -3305,6 +3331,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884304427,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -3324,6 +3351,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884098405,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -3344,6 +3372,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884805410,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -3364,6 +3393,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884078491,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -3384,6 +3414,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885628374,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -3404,6 +3435,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884164993,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -3424,6 +3456,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884338846,
+   "cargoMartes": 24,
    "extraJueves": 24
   },
   {
@@ -3442,6 +3475,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3885063636,
+   "cargoMartes": 24,
    "extraJueves": 24
   },
   {
@@ -3462,6 +3496,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885708716,
+   "cargoMartes": 24,
    "extraLunes": 24
   },
   {
@@ -3482,6 +3517,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885845538,
+   "cargoMartes": 24,
    "extraLunes": 24
   },
   {
@@ -3502,6 +3538,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885243838,
+   "cargoMartes": 24,
    "extraViernes": 24
   },
   {
@@ -3521,6 +3558,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3884440834,
+   "cargoMartes": 24,
    "extraSabado": 24
   },
   {
@@ -3541,6 +3579,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885045394,
+   "cargoMartes": 24,
    "extraLunes": 24
   },
   {
@@ -3561,6 +3600,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884154912,
+   "cargoMartes": 24,
    "extraViernes": 24
   },
   {
@@ -3580,6 +3620,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3885445110,
+   "cargoMartes": 24,
    "extraSabado": 24
   },
   {
@@ -3599,6 +3640,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3884663343,
+   "cargoMartes": 24,
    "extraSabado": 24
   },
   {
@@ -3618,6 +3660,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3885770360,
+   "cargoMartes": 24,
    "extraSabado": 24
   },
   {
@@ -3637,6 +3680,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3884565115,
+   "cargoMartes": 24,
    "extraSabado": 24
   },
   {
@@ -3656,6 +3700,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3885808491,
+   "cargoMartes": 24,
    "extraDomingo": 24
   },
   {
@@ -3675,6 +3720,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3884810392,
+   "cargoMartes": 24,
    "extraDomingo": 24
   },
   {
@@ -3694,6 +3740,7 @@
    "servicio": "NEONATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3884271355,
+   "cargoMartes": 24,
    "extraSabado": 24
   },
   {
@@ -3714,6 +3761,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885178801,
+   "cargoMartes": 24,
    "extraMiercoles": 24
   },
   {
@@ -3734,6 +3782,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885399527,
+   "cargoMartes": 24,
    "extraMiercoles": 24
   },
   {
@@ -3754,6 +3803,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884425059,
+   "cargoMartes": 24,
    "extraJueves": 24
   },
   {
@@ -3774,6 +3824,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885151694,
+   "cargoMartes": 24,
    "extraJueves": 24
   },
   {
@@ -3793,6 +3844,7 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3885827142,
+   "cargoMartes": 24,
    "extraViernes": 24
   },
   {
@@ -3813,6 +3865,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885695945,
+   "cargoMartes": 24,
    "extraViernes": 24
   },
   {
@@ -3833,6 +3886,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885642359,
+   "cargoMartes": 24,
    "extraLunes": 24
   },
   {
@@ -3853,6 +3907,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885441771,
+   "cargoMartes": 24,
    "extraJueves": 24
   },
   {
@@ -3873,6 +3928,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884769209,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -3892,6 +3948,7 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884136825,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -3912,6 +3969,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885165837,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -3931,6 +3989,7 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884336840,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -3951,6 +4010,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885078300,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -3970,6 +4030,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885254144,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -3990,6 +4051,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885645431,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -4030,6 +4092,7 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884331756,
+   "cargoJueves": 24,
    "extraLunes": 24,
    "extraSabado": 24
   },
@@ -4051,6 +4114,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884165808,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -4071,6 +4135,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885827948,
+   "cargoJueves": 24,
    "extraViernes": 24
   },
   {
@@ -4090,6 +4155,7 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3885729517,
+   "cargoJueves": 24,
    "extraSabado": 24
   },
   {
@@ -4128,6 +4194,7 @@
    "servicio": "PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3885528319,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -4147,6 +4214,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884912685,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -4166,6 +4234,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884568005,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -4185,6 +4254,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884429392,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -4204,6 +4274,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884886123,
+   "cargoJueves": 24,
    "extraMartes": 12,
    "extraJueves": 12
   },
@@ -4224,6 +4295,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3885036896,
+   "cargoMiercoles": 24,
    "extraLunes": 24
   },
   {
@@ -4243,6 +4315,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3885811415,
+   "cargoMiercoles": 24,
    "extraMartes": 12,
    "extraJueves": 12
   },
@@ -4263,6 +4336,7 @@
    "servicio": "INTERNACION PEDIATRIA",
    "tipoGuardia": "cargo",
    "celular": 3884925148,
+   "cargoMiercoles": 24,
    "extraLunes": 24
   },
   {
@@ -4320,6 +4394,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884179278,
+   "cargoMiercoles": 24,
    "extraLunes": 24
   },
   {
@@ -4358,6 +4433,7 @@
    "servicio": "MATERNIDAD",
    "tipoGuardia": "cargo",
    "celular": 3885000424,
+   "cargoMiercoles": 24,
    "extraDomingo": 24
   },
   {
@@ -4377,6 +4453,7 @@
    "servicio": "MATERNIDAD",
    "tipoGuardia": "cargo",
    "celular": 3884986747,
+   "cargoMiercoles": 24,
    "extraViernes": 24
   },
   {
@@ -4397,6 +4474,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885349819,
+   "cargoMiercoles": 24,
    "extraViernes": 24
   },
   {
@@ -4416,6 +4494,7 @@
    "servicio": "MATERNIDAD",
    "tipoGuardia": "cargo",
    "celular": 3884589115,
+   "cargoMiercoles": 24,
    "extraViernes": 24
   },
   {
@@ -4435,6 +4514,7 @@
    "servicio": "MATERNIDAD",
    "tipoGuardia": "cargo",
    "celular": 3885168110,
+   "cargoMiercoles": 24,
    "extraViernes": 24
   },
   {
@@ -4475,6 +4555,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885298920,
+   "cargoMiercoles": 24,
    "extraMiercoles": 24
   },
   {
@@ -4495,6 +4576,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885057454,
+   "cargoMiercoles": 24,
    "extraLunes": 24
   },
   {
@@ -4515,6 +4597,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884069831,
+   "cargoMiercoles": 24,
    "extraMartes": 24
   },
   {
@@ -4535,6 +4618,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884666082,
+   "cargoMiercoles": 24,
    "extraMartes": 24
   },
   {
@@ -4555,6 +4639,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884666582,
+   "cargoMiercoles": 24,
    "extraMiercoles": 24
   },
   {
@@ -4574,6 +4659,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885029249,
+   "cargoMiercoles": 24,
    "extraMiercoles": 24
   },
   {
@@ -4594,6 +4680,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884171728,
+   "cargoMiercoles": 24,
    "extraJueves": 24
   },
   {
@@ -4614,6 +4701,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884158995,
+   "cargoMiercoles": 24,
    "extraJueves": 24
   },
   {
@@ -4634,6 +4722,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885420753,
+   "cargoMiercoles": 24,
    "extraJueves": 24
   },
   {
@@ -4654,6 +4743,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884341578,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -4674,6 +4764,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884927240,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -4694,6 +4785,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884138470,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -4714,6 +4806,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884925237,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -4733,6 +4826,7 @@
    "servicio": "MATERNIDAD",
    "tipoGuardia": "cargo",
    "celular": 3885055718,
+   "cargoJueves": 24,
    "extraSabado": 24
   },
   {
@@ -4771,6 +4865,7 @@
    "servicio": "TRAUMATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3885333812,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -4791,6 +4886,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884396448,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -4811,6 +4907,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885492202,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -4831,6 +4928,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884274795,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -4850,6 +4948,7 @@
    "servicio": "TRAUMATOLOGIA",
    "tipoGuardia": "cargo",
    "celular": 3884999585,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -4870,6 +4969,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884217747,
+   "cargoJueves": 24,
    "extraViernes": 24
   },
   {
@@ -4889,6 +4989,7 @@
    "servicio": "CIRUGIA PEDIATRICA",
    "tipoGuardia": "cargo",
    "celular": 3885960469,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -4909,6 +5010,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884750546,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -4929,6 +5031,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884763755,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -4949,6 +5052,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884932364,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -4969,6 +5073,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885294547,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -4989,6 +5094,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885368657,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -5009,6 +5115,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884083481,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -5029,6 +5136,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885475901,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -5106,6 +5214,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885085178,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -5126,6 +5235,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885844655,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -5146,6 +5256,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884962783,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -5166,6 +5277,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885138808,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -5205,6 +5317,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884441065,
+   "cargoJueves": 24,
    "extraViernes": 24
   },
   {
@@ -5224,6 +5337,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885676567,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -5244,6 +5358,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884510653,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -5264,6 +5379,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885301688,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -5283,6 +5399,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885759123,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -5303,6 +5420,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884013427,
+   "cargoJueves": 24,
    "extraSabado": 24
   },
   {
@@ -5323,6 +5441,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884304427,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -5378,6 +5497,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884078491,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -5397,6 +5517,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885628374,
+   "cargoJueves": 24,
    "extraMartes": 24
   },
   {
@@ -5416,6 +5537,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884164993,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -5435,6 +5557,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884338846,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -5454,6 +5577,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885063636,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -5473,6 +5597,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885708716,
+   "cargoJueves": 24,
    "extraJueves": 24
   },
   {
@@ -5492,6 +5617,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885845538,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -5511,6 +5637,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3885243838,
+   "cargoJueves": 24,
    "extraLunes": 24
   },
   {
@@ -5529,6 +5656,7 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3884440834,
+   "cargoJueves": 24,
    "extraViernes": 24
   },
   {
@@ -5547,6 +5675,7 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3885045394,
+   "cargoJueves": 24,
    "extraMiercoles": 24
   },
   {
@@ -5566,6 +5695,7 @@
    "udo": "MATERNO INFANTIL - DR. HECTOR QUINTANA",
    "tipoGuardia": "cargo",
    "celular": 3884154912,
+   "cargoJueves": 24,
    "extraViernes": 24
   },
   {
@@ -5584,6 +5714,7 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3885445110,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -5602,6 +5733,7 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3884663343,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -5620,6 +5752,7 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3885770360,
+   "cargoJueves": 24,
    "extraSabado": 24
   },
   {
@@ -5638,6 +5771,7 @@
    "servicio": "LABORATORIO CENTRAL",
    "tipoGuardia": "cargo",
    "celular": 3884565115,
+   "cargoJueves": 24,
    "extraDomingo": 24
   },
   {
@@ -5657,8 +5791,8 @@
    "servicio": "GUARDIA CENTRAL",
    "udo": "NTRO. SR. DE LA BUENA ESPERANZA",
    "tipoGuardia": "contrafactura",
-   "contrafacturaMiercoles": 24,
-   "celular": 3885063636
+   "celular": 3885063636,
+   "contrafacturaMiercoles": 24
   },
   {
    "id": 52,
@@ -5734,8 +5868,8 @@
    "servicio": "GUARDIA CENTRAL",
    "udo": "NTRO. SR. DE LA BUENA ESPERANZA",
    "tipoGuardia": "contrafactura",
-   "contrafacturaMartes": 24,
-   "celular": 3884440834
+   "celular": 3884440834,
+   "contrafacturaMartes": 24
   },
   {
    "id": 56,
@@ -5753,8 +5887,8 @@
    "servicio": "GUARDIA CENTRAL",
    "udo": "NTRO. SR. DE LA BUENA ESPERANZA",
    "tipoGuardia": "extra",
-   "extraLunes": 12,
-   "celular": 3885045394
+   "celular": 3885045394,
+   "extraLunes": 12
   },
   {
    "id": 57,

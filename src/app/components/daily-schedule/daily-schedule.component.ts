@@ -16,11 +16,21 @@ export class DailyScheduleComponent {
 
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
-  @Output() enableExtra: EventEmitter<{ enableExtra: boolean, extraVector: any[] }> = new EventEmitter<{ enableExtra: boolean, extraVector: any[] }>();
-@Output() enableCargo: EventEmitter<{ enableCargo: boolean, cargoVector: any[] }> = new EventEmitter<{ enableCargo: boolean, cargoVector: any[] }>();
-@Output() enableContrafactura: EventEmitter<{ enableContrafactura: boolean, contrafacturaVector: any[] }> = new EventEmitter<{ enableContrafactura: boolean, contrafacturaVector: any[] }>();
-
-
+  @Output() enableExtra: EventEmitter<{
+    enableExtra: boolean;
+    extraVector: any[];
+  }> = new EventEmitter<{ enableExtra: boolean; extraVector: any[] }>();
+  @Output() enableCargo: EventEmitter<{
+    enableCargo: boolean;
+    cargoVector: any[];
+  }> = new EventEmitter<{ enableCargo: boolean; cargoVector: any[] }>();
+  @Output() enableContrafactura: EventEmitter<{
+    enableContrafactura: boolean;
+    contrafacturaVector: any[];
+  }> = new EventEmitter<{
+    enableContrafactura: boolean;
+    contrafacturaVector: any[];
+  }>();
 
   constructor(private http: HttpClient) {}
 
@@ -73,11 +83,39 @@ export class DailyScheduleComponent {
           type: professional.tipoGuardia,
           hospital: professional.hospital,
           servicio: professional.servicio,
-          cuil:professional.cuil,
+          cuil: professional.cuil,
           sitRevista: professional.sitRevista,
           cat: professional.cat,
           adicional: professional.adicional || null,
           region: professional.region,
+          cargoLunes: professional.cargoLunes,
+          cargoMartes: professional.cargoMartes,
+          cargoMiercoles: professional.cargoMiercoles,
+          cargoJueves: professional.cargoJueves,
+          cargoViernes: professional.cargoViernes,
+          cargoSabado: professional.cargoSabado,
+          cargoDomingo: professional.cargoDomingo,
+          extraLunes: professional.extraLunes,
+          extraMartes: professional.extraMartes,
+          extraMiercoles: professional.extraMiercoles,
+          extraJueves: professional.extraJueves,
+          extraViernes: professional.extraViernes,
+          extraSabado: professional.extraSabado,
+          extraDomingo: professional.extraDomingo,
+          agrupacionLunes: professional.agrupacionLunes,
+          agrupacionMartes: professional.agrupacionMartes,
+          agrupacionMiercoles: professional.agrupacionMiercoles,
+          agrupacionJueves: professional.agrupacionJueves,
+          agrupacionViernes: professional.agrupacionViernes,
+          agrupacionSabado: professional.agrupacionSabado,
+          agrupacionDomingo: professional.agrupacionDomingo,
+          contrafacturaLunes: professional.contrafacturaLunes,
+          contrafacturaMartes: professional.contrafacturaMartes,
+          contrafacturaMiercoles: professional.contrafacturaMiercoles,
+          contrafacturaJueves: professional.contrafacturaJueves,
+          contrafacturaViernes: professional.contrafacturaViernes,
+          contrafacturaSabado: professional.contrafacturaSabado,
+          contrafacturaDomingo: professional.contrafacturaDomingo,
         })),
       }));
       console.log(this.professionalGroups);
@@ -115,20 +153,32 @@ export class DailyScheduleComponent {
   enbleGuardias() {
     this.enableCargo.emit({ enableCargo: false, cargoVector: [] });
     this.enableExtra.emit({ enableExtra: false, extraVector: [] });
-    this.enableContrafactura.emit({ enableContrafactura: false, contrafacturaVector: [] });
+    this.enableContrafactura.emit({
+      enableContrafactura: false,
+      contrafacturaVector: [],
+    });
 
     if (this.professionalGroups) {
       this.professionalGroups.forEach((group) => {
         group.professionals.forEach((professional) => {
           switch (professional.type) {
             case 'cargo':
-              this.enableCargo.emit({ enableCargo: true, cargoVector: this.cargo });
+              this.enableCargo.emit({
+                enableCargo: true,
+                cargoVector: this.cargo,
+              });
               break;
             case 'extra':
-              this.enableExtra.emit({ enableExtra: true, extraVector: this.extra });
+              this.enableExtra.emit({
+                enableExtra: true,
+                extraVector: this.extra,
+              });
               break;
             case 'contrafactura':
-              this.enableContrafactura.emit({ enableContrafactura: true, contrafacturaVector: this.contrafactura });
+              this.enableContrafactura.emit({
+                enableContrafactura: true,
+                contrafacturaVector: this.contrafactura,
+              });
               break;
           }
         });
