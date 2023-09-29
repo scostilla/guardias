@@ -29,7 +29,7 @@ export class CronogramaPDefComponent {
       });
 
     this.http
-      .get<any[]>('../assets/jsonFiles/profesionales.json')
+      .get<any[]>('../assets/jsonFiles/profesionalesPasivas.json')
       .subscribe((data) => {
         this.profesionales = data;
         this.profesionalActual = this.profesionales[0];
@@ -49,7 +49,7 @@ export class CronogramaPDefComponent {
         console.log(this.profesionalesFiltrados);
         return profesional.hospital == this.hospitalSeleccionado.descripcion;
       });
-      this.filtrarPorTipoGuardia();
+      //this.filtrarPorTipoGuardia();
     }
   }
 
