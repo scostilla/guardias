@@ -57,11 +57,9 @@ export class DailyScheduleComponent {
         });
 
       this.http
-        .get<any[]>('../assets/jsonFiles/profesionales.json')
+        .get<any[]>('../assets/jsonFiles/profesionalesPasivas.json')
         .subscribe((data) => {
-          this.services = data.filter(
-            (profesional) => profesional.tipoGuardia == 'pasiva'
-          );
+          this.services = data;
         });
     }
   }
