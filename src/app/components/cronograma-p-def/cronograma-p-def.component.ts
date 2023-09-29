@@ -53,6 +53,7 @@ export class CronogramaPDefComponent {
     }
   }
 
+  /*Por ahora no se utiliza, porq hay un json exclusivo de profesionales de guardias pasivas */
   filtrarPorTipoGuardia(){
     if (this.profesionalesFiltrados) {
       this.profesionalesPasiva = this.profesionalesFiltrados.filter((profesional) => {
