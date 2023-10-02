@@ -33,7 +33,47 @@
   <div class="center-content">
     <span>Estas viendo: <strong>GUARDIAS DISPONIBLES POR SERVICIO</strong></span>
   </div>
+  
+
+  <table>
+    <thead>
+        <tr>
+            <th>Domingo</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+            <th>Sábado</th>
+        </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let profesionalActual of profesionales">
+        <tr>
+            <td>&</td>
+            <td>#</td>
+            <td>?</td>
+            <td *ngIf="profesionalActual.pasivaMiercoles; else miercolElse">{{profesionalActual.nombre}} - {{profesionalActual.hospital}}</td>
+            <ng-template #miercolElse>
+              <p></p>
+            </ng-template>
+            <td *ngIf="profesionalActual.pasivaJueves; else juevesElse">{{profesionalActual.nombre}} - {{profesionalActual.hospital}}</td>
+            <ng-template #juevesElse>
+              <p></p>
+            </ng-template>
+            <td>!</td>
+            <td>*</td>
+            <td>=</td>
+        </tr>
+        <tr>
+            
+        </tr>
+        <!-- Continúa llenando las filas del calendario con las fechas -->
+      </ng-container>
+    </tbody>
+</table>
   <ol class="calendar">
+    
       <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu">
         <span class="calendar-dia__number">26</span>
         <div class="calendar-dia__content"></div>
@@ -55,12 +95,14 @@
         <div class="calendar-dia__content"></div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
+        
         <span class="calendar-dia__number">01</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Arraya Pedro - Dn. Pablo Soria</div>
+          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">  Arraya Pedro - Dn. Pablo Soria</div>
         <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Perez Valentina - Materno Infantil</div>
         </div>
+      
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
         <span class="calendar-dia__number">02</span>
@@ -309,6 +351,7 @@
         <span class="calendar-dia__number">06</span>
         <div class="calendar-dia__content"></div>
       </li>
+    
     </ol>
 
 
