@@ -290,11 +290,6 @@ export class CronogramaComponent {
     }
   }
 
-
-
-
-
-
   openPopupCalendario() {
     this.dialogReg.open(PopupCalendarioComponent, {
       width: '600px',

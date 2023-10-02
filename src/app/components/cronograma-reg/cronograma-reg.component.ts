@@ -1,19 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-cronograma-reg',
   templateUrl: './cronograma-reg.component.html',
-  styleUrls: ['./cronograma-reg.component.css']
+  styleUrls: ['./cronograma-reg.component.css'],
 })
-export class CronogramaRegComponent  implements OnInit {
-
+export class CronogramaRegComponent implements OnInit {
   hospitales?: any[];
   hospitalesFiltrados?: any[];
+  profesionales?: any[];
+  profesionalesProRegion?: any[];
   selectedRegion: string = 'CENTRO';
   hospitalSeleccionado: any;
   class?: string;
-
 
   constructor(private http: HttpClient) {}
 
@@ -22,16 +23,15 @@ export class CronogramaRegComponent  implements OnInit {
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
         this.hospitales = data;
-      this.filtrarHospitalPorRegion()
+        this.filtrarHospitalPorRegion();
       });
   }
 
-
   selectRegion(region: string) {
     this.selectedRegion = region;
-    this.filtrarHospitalPorRegion()
+    this.filtrarHospitalPorRegion();
     console.log(this.hospitalesFiltrados);
-
+    this.profesionalesPorRegion();
   }
 
   filtrarHospitalPorRegion() {
@@ -39,8 +39,33 @@ export class CronogramaRegComponent  implements OnInit {
       this.hospitalesFiltrados = this.hospitales.filter((hospital) => {
         return hospital.region == this.selectedRegion;
       });
-    }else{
-      console.log("nola");
+      this.profesionalesPorRegion();
+    } else {
+      console.log('nola');
+    }
+  }
+
+  profesionalesPorRegion() {
+    this.profesionalesProRegion = [];
+    if (this.hospitalesFiltrados && this.hospitalesFiltrados.length > 0) {
+      const observables = this.hospitalesFiltrados.map((hospital) => {
+        return this.http
+          .get<any[]>('../assets/jsonFiles/profesionales.json')
+          .pipe(
+            map((data) => {
+              return data.filter(
+                (profesional) => profesional.hospital === hospital.descripcion
+              );
+            })
+          );
+      });
+
+      forkJoin(observables).subscribe((result) => {
+        result.forEach((profesionalesPorHospital) => {
+          this.profesionalesProRegion?.push(...profesionalesPorHospital);
+        });
+        console.log(this.profesionalesProRegion);
+      });
     }
   }
 }
