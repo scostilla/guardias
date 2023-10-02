@@ -30,11 +30,20 @@ export class CronogramaPHosComponent {
     this.http.get<any[]>('../assets/jsonFiles/profesionalesPasivas.json').subscribe(data => {
       this.profesionalesTemp = data;
     
-      for(let i = 0 ; i <= this.profesionalesTemp.length; i++){
+      this.profesionalesTemp.forEach(elemento => {
+        if (elemento.id <=4 ) {
+          this.profesionalesLunes.push(this.profesionales[elemento]) ;
+          console.log("nombree "+ this.profesionalesLunes[1].id);
+          //console.log(`Se encontró un elemento con el valor ${valorComparar}`);
+        }
+      });
+
+     /*  for(let i = 0 ; i <= this.profesionalesTemp.length; i++){
+        console.log("nombree "+ this.profesionalesLunes[0].nombre);
         if(this.profesionalesTemp[i].id  >2)
         this.profesionalesLunes.push(this.profesionales[i]) ;
-      }
-      console.log("pasear el json  "+ this.profesionalesLunes[0].nombre);
+      } */
+      //console.log("pasear el json  "+ this.profesionalesLunes[0].nombre);
       
       console.log("faf  "+ this.profesionalesLunes.length);
     });
