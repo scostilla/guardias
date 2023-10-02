@@ -81,8 +81,6 @@ export class CronogramaComponent {
     this.filtrarProfesionalesPorHospital();
     if (this.profesionalesFiltrados) {
       for (let i = 0; i < this.profesionalesFiltrados.length; i++) {
-        console.log(i);
-        console.log(this.profesionalesFiltrados.length);
         switch(this.profesionalesFiltrados[i].tipoGuardia){
           case 'cargo':
             this.profesionalesFiltrados[i].tipoGuardia =
@@ -158,7 +156,6 @@ export class CronogramaComponent {
               //EXTERME HARDCODE ALERT!!!!!!!!!!!!
               this.profesionalesFiltrados[i].cargaHoraria = this.profesionalesFiltrados[i].extraMiercoles;
               this.profMiercoles.push(this.profesionalesFiltrados[i]);
-              console.log(this.profMiercoles );
               break;
             }
             if(this.profesionalesFiltrados[i].extraJueves){
