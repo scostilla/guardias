@@ -12,6 +12,15 @@ export class CronogramaRegComponent implements OnInit {
   hospitalesFiltrados?: any[];
   profesionales?: any[];
   profesionalesProRegion?: any[];
+
+  descubiertoDomingo?: any[] = [];
+  descubeirtoLunes?: any[] = [];
+  descubiertoMartes?: any[] = [];
+  descubiertoMiercoles?: any[] = [];
+  descubiertoJueves?: any[] = [];
+  descubiertoViernes?: any[] = [];
+  descubiertoSabado?: any[] = [];
+
   selectedRegion: string = 'CENTRO';
   hospitalSeleccionado: any;
   class?: string;
@@ -68,4 +77,16 @@ export class CronogramaRegComponent implements OnInit {
       });
     }
   }
+
+  /*
+  CARGAR DESCUBIERTO!!!!!!!!!!!!!!!!!!!!!!
+
+  cargarDescubierto:
+   const nuevoDescubierto = {
+      nombreHospital: "Nombre del Hospital",
+      descubierto: true
+    };
+    this.descubiertoDomingo.push(nuevoDescubierto);
+
+  */
 }
