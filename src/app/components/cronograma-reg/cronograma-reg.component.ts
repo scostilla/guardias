@@ -49,6 +49,7 @@ export class CronogramaRegComponent implements OnInit {
         return hospital.region == this.selectedRegion;
       });
       this.profesionalesPorRegion();
+      this.buscarDescubiertos();
     } else {
       console.log('nola');
     }
@@ -78,15 +79,19 @@ export class CronogramaRegComponent implements OnInit {
     }
   }
 
-  /*
-  CARGAR DESCUBIERTO!!!!!!!!!!!!!!!!!!!!!!
+  buscarDescubiertos() {
+    /* RECORRER EL VECTOR THIS.profesionalesProRegion Y CARGAR DESCUBIERTO!!!!!!!!!!!!!!!!!!!!!!
 
-  cargarDescubierto:
-   const nuevoDescubierto = {
+    agregarDescubierto() {
+    const nuevoDescubierto = {
+      dia: "Lunes",
       nombreHospital: "Nombre del Hospital",
       descubierto: true
     };
-    this.descubiertoDomingo.push(nuevoDescubierto);
+
+    this.descubierto.push(nuevoDescubierto);
+  }
 
   */
+  }
 }
