@@ -7,6 +7,7 @@ import { ProfessionalFormDeletComponent } from './components/professional-form-d
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
+import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { LoginComponent } from './components/login/login.component';
@@ -88,6 +89,7 @@ const routes: Routes = [
   {path: 'professional-dh/:id', component: ProfessionalDhComponent },
   {path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
   {path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
+  {path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
   {path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
