@@ -51,13 +51,8 @@ export class CronogramaComponent {
       .get<any[]>('../assets/jsonFiles/profesionales.json')
       .subscribe((data) => {
         this.profesionales = data;
-      });
-
-    this.http
-      .get<any[]>('../assets/jsonFiles/profesionales.json')
-      .subscribe((data) => {
-        this.profesionales = data;
         this.profesionalActual = this.profesionales[0];
+        console.log(this.profesionalActual);
       });
   }
 
