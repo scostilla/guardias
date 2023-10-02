@@ -1,107 +1,470 @@
 [
   {
    "id": 1,
-   "descripcion": "ANESTESISTA",
+   "descripcion": "CIRUGIA CARDIO VASCULAR O VASCULAR PERIFERICA",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 2,
-   "descripcion": "CARDIOLOGIA",
+   "descripcion": "CIRUGIA REPARADORA",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 3,
-   "descripcion": "CIRUGIA",
+   "descripcion": "NEFROLOGIA",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 4,
-   "descripcion": "CIRUGIA INFANTIL",
+   "descripcion": "ONCOHEMATOLOGIA",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 5,
-   "descripcion": "CIRUGIA MATERNA",
+   "descripcion": "PSIQUIETRIA",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 6,
-   "descripcion": "CLINICA",
+   "descripcion": "HEMATOLOGIA",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 7,
-   "descripcion": "ECOGRAFIA",
+   "descripcion": "VEHICULO DE INTERVENCÍON RAPIDA (VIR)",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 8,
-   "descripcion": "GINECOLOGIA",
+   "descripcion": "CENTRO UNICO DE ATENCIÓN DE PACIENTES",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 9,
-   "descripcion": "HEMOTERAPIA",
+   "descripcion": "UTI - UTIN",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 10,
-   "descripcion": "INFECTOLOGIA",
+   "descripcion": "NUTRICIÓN INFANTIL",
+   "pasiva": "false",
    "idProfesion": 1
   },
   {
    "id": 11,
-   "descripcion": "INTERNACION PEDIATRICA",
+   "descripcion": "ALERGIA E INMUNOLOGIA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 12,
-   "descripcion": "MEDICINA GENERAL",
+   "descripcion": "ANATOMIA PATOLOGICA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 13,
-   "descripcion": "NEONATOLOGIA",
+   "descripcion": "ANESTESIOLOGIA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 14,
-   "descripcion": "NEUROCIRUGIA",
+   "descripcion": "AUDITORIA MEDICA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 15,
-   "descripcion": "OBSTETRICIA",
+   "descripcion": "BACTERIOLOGIA CLINICA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 16,
-   "descripcion": "PEDIATRIA",
+   "descripcion": "CARDIOLOGIA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 17,
-   "descripcion": "TERAPIA INTENSIVA",
+   "descripcion": "CARDIOLOGIA INFANTIL",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 18,
-   "descripcion": "TERAPIA INTENSIVA INFANTIL",
+   "descripcion": "CIRUGIA",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 19,
-   "descripcion": "TOCOGINECOLOGIA",
+   "descripcion": "CIRUGIA CARDIOVASCULAR",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 20,
-   "descripcion": "TRAUMATOLOGIA",
+   "descripcion": "CIRUGIA DEL APARATO DIGESTIVO",
+   "pasiva": "true",
    "idProfesion": 1
   },
   {
    "id": 21,
+   "descripcion": "CIRUGIA DEL TORAX",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 22,
+   "descripcion": "CIRUGIA GENERAL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 23,
+   "descripcion": "CIRUGIA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 24,
+   "descripcion": "CIRUGIA PLASTICA Y REPARADORA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 25,
+   "descripcion": "CIRUGIA VASCULAR",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 26,
+   "descripcion": "CITODIAGNOSTICO",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 27,
+   "descripcion": "CLINICO",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 28,
+   "descripcion": "DERMATOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 29,
+   "descripcion": "DIABETES",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 30,
+   "descripcion": "DIAGNOSTICO POR IMAGEN",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 31,
+   "descripcion": "EMERGENTOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 32,
+   "descripcion": "ENDOCRINOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 33,
+   "descripcion": "ENDOCRINOLOGIA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 34,
+   "descripcion": "FISIATRIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 35,
+   "descripcion": "FLEBOLOGIA Y LINFOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 36,
+   "descripcion": "GASTROENTEROLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 37,
+   "descripcion": "GASTROENTEROLOGIA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 38,
+   "descripcion": "GERIATRIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 39,
+   "descripcion": "GERONTOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 40,
+   "descripcion": "GINECOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 41,
+   "descripcion": "HEMOTERAPIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 42,
+   "descripcion": "HEPATOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 43,
+   "descripcion": "INFECTOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 44,
+   "descripcion": "MASTOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 45,
+   "descripcion": "MEDICINA DEL DEPORTE",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 46,
+   "descripcion": "MEDICINA DEL TRABAJO",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 47,
+   "descripcion": "MEDICINA FAMILIAR",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 48,
+   "descripcion": "MEDICINA GENERAL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 49,
+   "descripcion": "MEDICINA INTERNA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 50,
+   "descripcion": "MEDICINA LEGAL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 51,
+   "descripcion": "MEDICINA NUCLEAR DIAGNOSTICA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 52,
+   "descripcion": "NEFRLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 53,
+   "descripcion": "NEFROLOGIA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 54,
+   "descripcion": "NEONATOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 55,
+   "descripcion": "NEUMONOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 56,
+   "descripcion": "NEUROCIRUGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 57,
+   "descripcion": "NEUROLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 58,
+   "descripcion": "OBSTETRICIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 59,
+   "descripcion": "OFTALMOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 60,
+   "descripcion": "ONCOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 61,
+   "descripcion": "ONCOLOGIA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 62,
+   "descripcion": "ORTOPEDIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 63,
+   "descripcion": "OTORRINOLARINGOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 64,
+   "descripcion": "PARASITOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 65,
+   "descripcion": "PEDIATRIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 66,
+   "descripcion": "PSIQUIATRIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 67,
+   "descripcion": "PSIQUIATRIA INFANTO JUVENIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 68,
+   "descripcion": "RADIOLOGIA DIAGNOSTICA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 69,
+   "descripcion": "RADIOLOGIA TERAPEUTICA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 70,
+   "descripcion": "REUMATOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 71,
+   "descripcion": "SALUD PUBLICA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 72,
+   "descripcion": "SALUD SOCIAL Y COMUNITARIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 73,
+   "descripcion": "TERAPIA INTENSIVA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 74,
+   "descripcion": "TOCOGINECOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 75,
+   "descripcion": "TOXICOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 76,
+   "descripcion": "TRAUMATOLOGIA",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 77,
+   "descripcion": "TRAUMATOLOGIA INFANTIL",
+   "pasiva": "true",
+   "idProfesion": 1
+  },
+  {
+   "id": 78,
    "descripcion": "UROLOGIA",
+   "pasiva": "true",
    "idProfesion": 1
   }
  ]

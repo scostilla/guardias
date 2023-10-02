@@ -9,7 +9,14 @@
         {{tipserv}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <div [ngSwitch]="defaultSelected" appearance="outline">
+  <mat-form-field appearance="outline">
+    <mat-label>Establecimiento</mat-label>
+    <mat-select [(ngModel)]="hospitalSeleccionado" (ngModelChange)="cargarEspecialidades()">
+      <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp.descripcion}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <ng-container [ngSwitch]="defaultSelected" appearance="outline">
     <div *ngSwitchCase="'Guardia activa'">
       <mat-form-field appearance="outline">
         <mat-label>Tipo de guardia</mat-label>
@@ -23,16 +30,8 @@
           <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
         </mat-select>
       </mat-form-field>
-
-
     </div>
     <div *ngSwitchCase="'Guardia pasiva'">
-      <mat-form-field appearance="outline">
-        <mat-label>Establecimiento</mat-label>
-        <mat-select [(ngModel)]="hospitalSeleccionado" (ngModelChange)="cargarEspecialidades()">
-          <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Especialidad</mat-label>
         <mat-select [(ngModel)]="alert">
@@ -49,11 +48,16 @@
         </span>
       </span>
     </div>
-  </div>
-  <div mat-dialog-actions class="action">
-    <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
-      type="button">Buscar Profesional</button>
-  </div>
+  </ng-container>
+
+
+  <mat-form-field appearance="outline">
+    <mat-label>Profesional</mat-label>
+    <mat-select [(ngModel)]="profesionalSeleccionado" (ngModelChange)="cargarProfesional()">
+      <mat-option *ngFor="let profesional of profesionales" [value]="profesional"> {{profesional.apellido}}, {{profesional.nombre}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <div mat-dialog-subtitle>
     <h2>Detalle del profesional</h2>
   </div>

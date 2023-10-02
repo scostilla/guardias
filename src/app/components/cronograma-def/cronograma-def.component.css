@@ -2,3 +2,20 @@ th {
     vertical-align: middle;
     text-align: center;
   }
+
+
+  .cargo{
+    color: #91A8DA; font-weight: bold;
+  }
+
+  .agrupacion{
+    color: #F4AF88; font-weight: bold;
+  }
+
+  .extra{
+    color: #FDD969; font-weight: bold;
+  }
+
+  .contrafactura{
+    color: #A9D08F; font-weight: bold;
+  }

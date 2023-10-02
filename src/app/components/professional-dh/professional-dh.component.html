@@ -34,10 +34,10 @@
                     <th>MINISTERIO DE SALUD</th>
                 </tr>
                 <tr>
-                    <th>"DN. PABLO SORIA"</th>
+                    <th>{{person.hospital}}</th>
                 </tr>
                 <tr>
-                    <th>REGION: CENTRO</th>
+                    <th>REGION: {{person.region}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,34 +47,19 @@
                             <thead style="background-color: #bbb9b9;">
                               <tr>
                                 <th rowspan="3">DATOS PROFESIONAL</th>
-                                <th colspan="14">DISTRIBUCIÓN HORARIA - JULIO 2023</th>
+                                <th colspan="7">DISTRIBUCIÓN HORARIA - JULIO 2023</th>
                                 <th rowspan="3">TOTAL HS. SEMANALES</th>
                               </tr>
                               <tr>
-                                <td colspan="2" style="background-color: #eee;">Sa</td>
-                                <td colspan="2" style="background-color: #eee;">Do</td>
-                                <td colspan="2">Lu</td>
-                                <td colspan="2">Ma</td>
-                                <td colspan="2">Mi</td>
-                                <td colspan="2">Ju</td>
-                                <td colspan="2">Vi</td>
+                                <td style="background-color: #eee;">Sa</td>
+                                <td style="background-color: #eee;">Do</td>
+                                <td>Lu</td>
+                                <td>Ma</td>
+                                <td>Mi</td>
+                                <td>Ju</td>
+                                <td>Vi</td>
                               </tr>
-                              <tr>
-                                <td style="background-color: #eee;">Mañana</td>
-                                <td style="background-color: #eee;">Tarde</td>
-                                <td style="background-color: #eee;">Mañana</td>
-                                <td style="background-color: #eee;">Tarde</td>
-                                <td>Mañana</td>
-                                <td>Tarde</td>
-                                <td>Mañana</td>
-                                <td>Tarde</td>
-                                <td>Mañana</td>
-                                <td>Tarde</td>
-                                <td>Mañana</td>
-                                <td>Tarde</td>
-                                <td>Mañana</td>
-                                <td>Tarde</td>
-                              </tr>
+
                             </thead>
                             <tbody>
                               <tr>
@@ -106,79 +91,51 @@
                                     </tr>
                                     <tr>
                                       <td>Carga horaria: </td>
-                                      <td style="font-weight: bold;">40 </td>
+                                      <td style="font-weight: bold;">{{person.cargaHoraria}}</td>
                                     </tr>
                                     <tr>
                                       <td>Adicional: </td>
                                       <td style="font-weight: bold;">{{person.adicional}}</td>
                                     </tr>
                                 </td>
-                                <td>CE (8 hs.)</td>
-                                <td>-</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>CE (6 hs.)</td>
-                                <td>CE (6 hs.)</td>
-                                <td  style="font-weight: bold;">40</td>
+                                <td>{{person.cargoSabado}}</td>
+                                <td>{{person.cargoDomingo}}</td>
+                                <td>{{person.cargoLunes}}</td>
+                                <td>{{person.cargoMartes}}</td>
+                                <td>{{person.cargoMiercoles}}</td>
+                                <td>{{person.cargoJueves}}</td>
+                                <td>{{person.cargoViernes}}</td>
+                                <td  style="font-weight: bold;">{{totalSemanal}}</td>
                               </tr>
                               <tr>
-                                <td>CE (8 hs.)</td>
-                                <td>-</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>CE (6 hs.)</td>
-                                <td>CE (6 hs.)</td>
-                                <td  style="font-weight: bold;">40</td>
+                                <td>{{person.cargoSabado}}</td>
+                                <td>{{person.cargoDomingo}}</td>
+                                <td>{{person.cargoLunes}}</td>
+                                <td>{{person.cargoMartes}}</td>
+                                <td>{{person.cargoMiercoles}}</td>
+                                <td>{{person.cargoJueves}}</td>
+                                <td>{{person.cargoViernes}}</td>
+                                <td  style="font-weight: bold;">{{totalSemanal}}</td>
                               </tr>
                               <tr>
-                                <td>CE (8 hs.)</td>
-                                <td>-</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>CE (6 hs.)</td>
-                                <td>CE (6 hs.)</td>
-                                <td  style="font-weight: bold;">40</td>
+                                <td>{{person.cargoSabado}}</td>
+                                <td>{{person.cargoDomingo}}</td>
+                                <td>{{person.cargoLunes}}</td>
+                                <td>{{person.cargoMartes}}</td>
+                                <td>{{person.cargoMiercoles}}</td>
+                                <td>{{person.cargoJueves}}</td>
+                                <td>{{person.cargoViernes}}</td>
+                                <td  style="font-weight: bold;">{{totalSemanal}}</td>
                               </tr>
                               <tr>
-                                <td>CE (8 hs.)</td>
-                                <td>-</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (4 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>CE (2 hs.)</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>CE (6 hs.)</td>
-                                <td>CE (6 hs.)</td>
-                                <td  style="font-weight: bold;">40</td>
+                                <td>{{person.cargoSabado}}</td>
+                                <td>{{person.cargoDomingo}}</td>
+                                <td>{{person.cargoLunes}}</td>
+                                <td>{{person.cargoMartes}}</td>
+                                <td>{{person.cargoMiercoles}}</td>
+                                <td>{{person.cargoJueves}}</td>
+                                <td>{{person.cargoViernes}}</td>
+                                <td  style="font-weight: bold;">{{totalSemanal}}</td>
                               </tr>
                             </tbody>
                             <tfoot>
@@ -191,8 +148,9 @@
                 </tr>
             </tbody>
         </table>
-          <div class="alert alert-success" role="alert">
-          El total de horas semanales cargadas coincide con la carga horaria informada <strong>(40)</strong>.
-          </div>
+        <div class="alert" [class.alert-success]="person.cargaHoraria === totalSemanal" [class.alert-danger]="person.cargaHoraria !== totalSemanal" role="alert">
+          {{ person.cargaHoraria === totalSemanal ? 'El total de horas semanales cargadas coincide con la carga horaria informada' : 'El total de horas semanales cargadas NO coincide con la carga horaria informada' }}
+          <strong>({{ person.cargaHoraria }})</strong>.
+        </div>
     </div>
 </div>

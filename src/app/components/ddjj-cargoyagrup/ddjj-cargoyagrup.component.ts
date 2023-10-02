@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { PopupCalendarioComponent } from '../popup-calendario/popup-calendario.component';
 
 
@@ -11,6 +12,7 @@ import { PopupCalendarioComponent } from '../popup-calendario/popup-calendario.c
 export class DdjjCargoyagrupComponent {
   /* date = '2023-07-21T13:59:31.238Z';  */
 
+  profesionales: any[] = [];
   today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
 
@@ -18,6 +20,7 @@ export class DdjjCargoyagrupComponent {
 
   constructor(
     public dialogReg: MatDialog,
+    private route: ActivatedRoute,
   ){
     for (var dia = 1; dia <= this.today; dia++) {
       this.numberOfMonth.push(dia);
@@ -32,6 +35,20 @@ export class DdjjCargoyagrupComponent {
 
     }
   }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['vector']) {
+        this.profesionales = JSON.parse(params['vector']);
+        console.log(this.profesionales);
+      }
+    });
+  }
+
+
+
+
+
   openPopupCalendario(){
     this.dialogReg.open(PopupCalendarioComponent, {
       width: '600px',

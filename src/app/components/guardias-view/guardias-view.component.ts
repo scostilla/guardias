@@ -1,66 +1,80 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-guardias-view',
   templateUrl: './guardias-view.component.html',
-  styleUrls: ['./guardias-view.component.css']
+  styleUrls: ['./guardias-view.component.css'],
 })
 export class GuardiasViewComponent {
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital: string = 'DN. PABLO SORIA';
+  region: string = '';
 
-  constructor(
-    private http: HttpClient,
-  ) {
+  @Input() extra: any[] = [];
+  @Input() cargo: any[] = [];
+  @Input() contrafactura: any[] = [];
+  vector: any[] = [];
+
+  enableExtra: any;
+  enableCargo: any;
+  enableContrafactura: any;
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  onExtraChange(eventData: { enableExtra: boolean; extraVector: any[] }) {
+    this.enableExtra = eventData.enableExtra;
+    this.extra = eventData.extraVector;
   }
-/*
-  ngOnInit() {
-    this.http
-      .get<any[]>('../assets/jsonFiles/hospitales.json')
-      .subscribe((data) => {
-        this.options = data;
-      });
-    this.http
-      .get<any[]>('../assets/jsonFiles/servicios.json')
-      .subscribe((data) => {
-        this.services = data;
-      });
+
+  onCargoChange(eventData: { enableCargo: boolean; cargoVector: any[] }) {
+    this.enableCargo = eventData.enableCargo;
+    this.cargo = eventData.cargoVector;
   }
 
-  updateHospital() {
-    //console.log('update hospital');
-    if (this.services) {
-      const filteredData = this.services.filter(
-        (item) => item.hospital === this.selectedHospital
-      );
+  onContrafacturaChange(eventData: {
+    enableContrafactura: boolean;
+    contrafacturaVector: any[];
+  }) {
+    this.enableContrafactura = eventData.enableContrafactura;
+    this.contrafactura = eventData.contrafacturaVector;
+  }
 
-      const groupedData = this.groupBy(filteredData, 'servicio');
+  sendAndRedirect(value: string) {
+    let url = '';
 
-      this.professionalGroups = Object.keys(groupedData).map((service) => ({
-        service,
-        professionals: groupedData[service].map((professional: any) => ({
-          apellido: professional.apellido,
-          nombre: professional.nombre,
-          hs: professional.hs || null,
-          type: professional.tipo,
-        })),
-      }));
-    } else {
-      this.professionalGroups = [];
+    switch (value) {
+      case 'ddjjextra':
+        this.vector = this.extra;
+        url = '/ddjj-extra';
+        break;
+      case 'cargoyagrup':
+        this.vector = this.cargo;
+        url = '/ddjj-cargoyagrup';
+        break;
+      case 'contrafactura':
+        this.vector = this.contrafactura;
+        url = '/ddjj-contrafactura';
+        break;
     }
-  }
 
-  private groupBy(array: any[], property: string) {
-    return array.reduce((result, currentValue) => {
-      const key = currentValue[property];
-      if (!result[key]) {
-        result[key] = [];
-      }
-      result[key].push(currentValue);
-      return result;
-    }, {});
-  }*/
+    // this.http
+    //   .get<any[]>('../assets/jsonFiles/hospitales.json')
+    //   .subscribe((data) => {
+    //     this.selectedHospital = data.find(
+    //       (selectedHospital) => selectedHospital.nombre === this.vector[0].hospital
+    //     );
+    //   });
+    //   if (this.selectedHospital) {
+    //     // Accede a la propiedad "region" del hospital encontrado
+    //     this.region = this.selectedHospital.region;
+    //   }
+
+    this.router.navigate([url], {
+      queryParams: { vector: JSON.stringify(this.vector) },
+    });
+  }
 }
