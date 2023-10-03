@@ -40,7 +40,6 @@ export class CronogramaRegComponent implements OnInit {
     this.selectedRegion = region;
     this.filtrarHospitalPorRegion();
     console.log(this.hospitalesFiltrados);
-    this.profesionalesPorRegion();
   }
 
   filtrarHospitalPorRegion() {
@@ -48,6 +47,8 @@ export class CronogramaRegComponent implements OnInit {
       this.hospitalesFiltrados = this.hospitales.filter((hospital) => {
         return hospital.region == this.selectedRegion;
       });
+      console.log(this.hospitalesFiltrados);
+      this.profesionalesPorRegion();
       //INICIALIZANDO LOS VECTORES EN DESCUBIERTO
       this.descubiertoDomingo.length = 0;
       this.descubiertoLunes.length = 0;
@@ -62,17 +63,16 @@ export class CronogramaRegComponent implements OnInit {
             nombreHospital: hospital.descripcion,
             descubierto: true,
           };
-          this.descubiertoDomingo.push(nuevoDescubierto);
-          this.descubiertoLunes.push(nuevoDescubierto);
-          this.descubiertoMartes.push(nuevoDescubierto);
-          this.descubiertoMiercoles.push(nuevoDescubierto);
-          this.descubiertoJueves.push(nuevoDescubierto);
-          this.descubiertoViernes.push(nuevoDescubierto);
-          this.descubiertoSabado.push(nuevoDescubierto);
+          this.descubiertoDomingo.push({ ...nuevoDescubierto });
+          this.descubiertoLunes.push({ ...nuevoDescubierto });
+          this.descubiertoMartes.push({ ...nuevoDescubierto });
+          this.descubiertoMiercoles.push({ ...nuevoDescubierto });
+          this.descubiertoJueves.push({ ...nuevoDescubierto });
+          this.descubiertoViernes.push({ ...nuevoDescubierto });
+          this.descubiertoSabado.push({ ...nuevoDescubierto });
         }
       }
       //TERMINA LA INICIALIZACION DED VECTORES
-      this.buscarDescubiertos();
     } else {
       console.log('nola');
     }
@@ -98,6 +98,7 @@ export class CronogramaRegComponent implements OnInit {
           this.profPorRegion?.push(...profesionalesPorHospital);
         });
         console.log(this.profPorRegion);
+        this.buscarDescubiertos();
       });
     }
   }
@@ -116,6 +117,7 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log(this.descubiertoDomingo);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
@@ -125,10 +127,11 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoLunes[indice].descubierto = false;
+            encontrado = true;
           }
         }
       }
-
+      console.log(this.descubiertoLunes);
       encontrado = false;
       for (const profesional of this.profPorRegion) {
         if (!encontrado && profesional.cargoMartes) {
@@ -137,9 +140,11 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoMartes[indice].descubierto = false;
+            encontrado = true;
           }
         }
       }
+      console.log(this.descubiertoMartes);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
@@ -149,9 +154,11 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoMiercoles[indice].descubierto = false;
+            encontrado = true;
           }
         }
       }
+      console.log(this.descubiertoMiercoles);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
@@ -161,9 +168,11 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoJueves[indice].descubierto = false;
+            encontrado = true;
           }
         }
       }
+      console.log(this.descubiertoJueves);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
@@ -173,9 +182,12 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoViernes[indice].descubierto = false;
+            encontrado = true;
           }
         }
       }
+      console.log(this.descubiertoViernes);
+
       encontrado = false;
       for (const profesional of this.profPorRegion) {
         if (!encontrado && profesional.cargoSabado) {
@@ -184,31 +196,11 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoSabado[indice].descubierto = false;
+            encontrado = true;
           }
         }
       }
+      console.log(this.descubiertoSabado);
     }
-    this.descubiertoDomingo = this.quitarDuplicados(this.descubiertoDomingo);
-    this.descubiertoLunes = this.quitarDuplicados(this.descubiertoLunes);
-    this.descubiertoMartes = this.quitarDuplicados(this.descubiertoMartes);
-    this.descubiertoMiercoles = this.quitarDuplicados(
-      this.descubiertoMiercoles
-    );
-    this.descubiertoJueves = this.quitarDuplicados(this.descubiertoJueves);
-    this.descubiertoViernes = this.quitarDuplicados(this.descubiertoViernes);
-    this.descubiertoSabado = this.quitarDuplicados(this.descubiertoSabado);
-    console.log(this.descubiertoDomingo);
-  }
-
-  quitarDuplicados(vector: any[]): any[] {
-    const uniqueHospitals: { [nombreHospital: string]: boolean } = {};
-    const resultadoUnico = vector.filter((elemento) => {
-      if (!uniqueHospitals[elemento.nombreHospital]) {
-        uniqueHospitals[elemento.nombreHospital] = true;
-        return true;
-      }
-      return false;
-    });
-    return resultadoUnico;
   }
 }
