@@ -107,7 +107,7 @@ export class CronogramaRegComponent implements OnInit {
     if (this.profPorRegion) {
       let encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoDomingo) {
+        if (!encontrado && (profesional.cargoDomingo || profesional.extraDomingo || profesional.contrafacturaDomingo || profesional.agrupacionDomingo)) {
           const indice = this.descubiertoDomingo.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -117,11 +117,12 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("domingo");
       console.log(this.descubiertoDomingo);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoLunes) {
+        if (!encontrado && (profesional.cargoLunes || profesional.extraLunes || profesional.contrafacturaLunes || profesional.agrupacionLunes)) {
           const indice = this.descubiertoLunes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -131,10 +132,11 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("lunes");
       console.log(this.descubiertoLunes);
       encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoMartes) {
+        if (!encontrado && (profesional.cargoMartes || profesional.extraMartes || profesional.contrafacturaMartes || profesional.agrupacionMartes)) {
           const indice = this.descubiertoMartes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -144,11 +146,12 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("martes");
       console.log(this.descubiertoMartes);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoMiercoles) {
+        if (!encontrado && (profesional.cargoMiercoles || profesional.extraMiercoles || profesional.contrafacturaMiercoles || profesional.agrupacionMiercoles)) {
           const indice = this.descubiertoMiercoles.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -158,11 +161,12 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("miercoles");
       console.log(this.descubiertoMiercoles);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoJueves) {
+        if (!encontrado && (profesional.cargoJueves || profesional.extraJueves || profesional.contrafacturaJueves || profesional.agrupacionJueves)) {
           const indice = this.descubiertoJueves.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -172,11 +176,12 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("jueves");
       console.log(this.descubiertoJueves);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoViernes) {
+        if (!encontrado && (profesional.cargoViernes || profesional.extraViernes || profesional.contrafacturaViernes || profesional.agrupacionViernes)) {
           const indice = this.descubiertoViernes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -186,11 +191,12 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("viernes");
       console.log(this.descubiertoViernes);
 
       encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && profesional.cargoSabado) {
+        if (!encontrado && (profesional.cargoSabado || profesional.extraSabado || profesional.contrafacturaSabado || profesional.agrupacionSabado)) {
           const indice = this.descubiertoSabado.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
@@ -200,6 +206,7 @@ export class CronogramaRegComponent implements OnInit {
           }
         }
       }
+      console.log("sabado");
       console.log(this.descubiertoSabado);
     }
   }
