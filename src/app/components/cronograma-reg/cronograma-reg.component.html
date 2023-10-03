@@ -62,68 +62,90 @@
         <span class="calendar-dia__number">01</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+          <div *ngFor="let descubierto of descubiertoSabado">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
         <span class="calendar-dia__number">02</span>
         <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div *ngFor="let descubierto of descubiertoDomingo">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
       </div>
       </li>
       <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
         <span class="calendar-dia__number">03</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+          <div *ngFor="let descubierto of descubiertoLunes">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ma">
         <span class="calendar-dia__number">04</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+          <div *ngFor="let descubierto of descubiertoMartes">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Mi">
         <span class="calendar-dia__number">05</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">San Roque</div>
+          <div *ngFor="let descubierto of descubiertoMiercoles">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ju">
         <span class="calendar-dia__number">06</span>
         <div class="calendar-dia__content">
+          <div class="calendar-dia--icon"></div>
+          <div *ngFor="let descubierto of descubiertoJueves">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--today" data-weekday="Vi">
         <span class="calendar-dia__number">07</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+          <div *ngFor="let descubierto of descubiertoViernes">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Sa">
         <span class="calendar-dia__number">08</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Materno Infantil</div>
+          <div *ngFor="let descubierto of descubiertoSabado">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do">
         <span class="calendar-dia__number">09</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+          <div *ngFor="let descubierto of descubiertoDomingo">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu">
         <span class="calendar-dia__number">10</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon"></div>
-          <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro">Dn. Pablo Soria</div>
+          <div *ngFor="let descubierto of descubiertoLunes">
+            <div class="calendar-dia--text circulo--general" matTooltip="Reg. Centro" *ngIf="descubierto.descubierto">{{ descubierto.nombreHospital }}</div>
+          </div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ma">
