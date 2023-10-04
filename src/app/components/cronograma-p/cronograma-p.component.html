@@ -3,7 +3,7 @@
       <div class="row">
         <div class="titulos">.:: Cronograma <span class="titulos-second">Tentativo</span>
       </div>
-      <div class="row"> 
+      <div class="row">
         <div class="col offset-1">
       <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Pasivas</button>
       <mat-menu #menug="matMenu">
@@ -19,10 +19,11 @@
         <mat-button-toggle value="definitivo" routerLink="/cronograma-p-def">Definitivo</mat-button-toggle>
         <mat-button-toggle value="regional" routerLink="/cronograma-p-hos">Servicios</mat-button-toggle>
       </mat-button-toggle-group>
-      <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+      <button mat-button [matMenuTriggerFor]="menu">» {{
+        hospitalSeleccionado.descripcion }} ( {{hospitalSeleccionado.region}} )</button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item>Hospital San Roque (Centro)</button>
-        <button mat-menu-item>Materno Infantil (Centro)</button>
+        <button mat-menu-item *ngFor="let hospital of hospitales" (click)="seleccionarHospital(hospital)">{{
+          hospital.descripcion }} ( {{hospital.region}} )</button>
       </mat-menu>
     </div>
   </div>
@@ -32,13 +33,7 @@
       <span class="ref-circulo circulo--finde"></span>&nbsp;<span class="ref ref-calendar-dia--finde">Fin de semana</span>
       <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
   </div>
-  <div class="center-content" style="background-color: #f5f3f3; margin: 0 0 0 25%; width: 50%;">
-    <span class="titulos-second" style="font-weight: bold;">Guardias:&nbsp;</span> 
-    <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
-    <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
-    <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
-    <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
-  </div>
+
   <ol class="calendar">
       <li class="calendar-dia calendar-dia--begin-week calendar-dia--otromes" data-weekday="Lu">
         <span class="calendar-dia__number">26</span>
@@ -65,8 +60,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profSabado">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendario()">
@@ -75,10 +76,12 @@
           <div class="calendar-dia--icon">
             <mat-icon class="icon-verde" matTooltip="carga completa">check_circle</mat-icon>
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
-          <div class="calendar-dia--text circulo--extra" matTooltip="Clínica, 8 hs">Dr. Candido Perez</div>
-          <div class="calendar-dia--text circulo--cargo" matTooltip="Ginecología, 6 hs">Dra. María Paz Monteros</div>
-          <div class="calendar-dia--text circulo--agrupacion" matTooltip="Ginecología, 12 hs">Dra. Juana Felicitas</div>
-          <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Juliana Ramos</div>
+            <div *ngFor="let profesionalActual of profDomingo">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
           <div class="calendar-dia--icon-add">
             <mat-icon>add</mat-icon>
           </div>
@@ -89,8 +92,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profLunes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
@@ -98,8 +107,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMartes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
@@ -107,8 +122,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMiercoles">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioDisp2()">
@@ -117,11 +138,15 @@
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="al menos una carga">check_circle</mat-icon>
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
-          <div class="calendar-dia--text circulo--contrafactura" matTooltip="Clínica, 12 hs">Dra. Lucía Medina</div>
-          <div class="calendar-dia--text circulo--cargo" matTooltip="Cardiología, 8 hs">Dr. Juan Quintero</div>
+            <div *ngFor="let profesionalActual of profJueves">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
           <div class="calendar-dia--icon-add">
             <mat-icon>add</mat-icon>
-          </div> 
+          </div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--today" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
@@ -129,8 +154,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profViernes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
@@ -138,8 +169,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profSabado">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
@@ -147,8 +184,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profDomingo">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
@@ -156,8 +199,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profLunes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
@@ -165,8 +214,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMartes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
@@ -174,8 +229,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMiercoles">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
@@ -183,21 +244,44 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profJueves">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
         <span class="calendar-dia__number">14</span>
-        <div class="calendar-dia__content"></div>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon">
+            <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profViernes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
+            <div class="calendar-dia--icon-add">
+              <mat-icon>add</mat-icon></div>
+        </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
         <span class="calendar-dia__number">15</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profSabado">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
@@ -205,21 +289,44 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profDomingo">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
         <span class="calendar-dia__number">17</span>
-        <div class="calendar-dia__content"></div>
+        <div class="calendar-dia__content">
+          <div class="calendar-dia--icon">
+            <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profLunes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
+            <div class="calendar-dia--icon-add">
+              <mat-icon>add</mat-icon></div>
+        </div>
       </li>
       <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
         <span class="calendar-dia__number">18</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMartes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
@@ -227,8 +334,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMiercoles">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-feriado" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
@@ -236,8 +349,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profJueves">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
@@ -245,8 +364,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profViernes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
@@ -254,8 +379,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profSabado">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
@@ -263,8 +394,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profDomingo">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
@@ -272,8 +409,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profLunes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
@@ -281,17 +424,28 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profMartes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Mi" (click)="openPopupCalendarioVacio()">
         <span class="calendar-dia__number">26</span>
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
-            <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <mat-icon matTooltip="Sin carga">cancel</mat-icon></div><div *ngFor="let profesionalActual of profMiercoles">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Ju" (click)="openPopupCalendarioVacio()">
@@ -299,8 +453,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profJueves">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia" data-weekday="Vi" (click)="openPopupCalendarioVacio()">
@@ -308,8 +468,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profViernes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" (click)="openPopupCalendarioVacio()">
@@ -317,8 +483,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profSabado">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia-finde" data-weekday="Do" (click)="openPopupCalendarioVacio()">
@@ -326,8 +498,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profDomingo">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" (click)="openPopupCalendarioVacio()">
@@ -335,8 +513,14 @@
         <div class="calendar-dia__content">
           <div class="calendar-dia--icon">
             <mat-icon matTooltip="Sin carga">cancel</mat-icon></div>
+            <div *ngFor="let profesionalActual of profLunes">
+              <div class="calendar-dia--text ref-circulo-pas"
+                [matTooltip]="profesionalActual.especialidad + ', ' + profesionalActual.cargaHoraria + ' hs'">
+                {{ profesionalActual.apellido }}, {{ profesionalActual.nombre }}
+              </div>
+            </div>
             <div class="calendar-dia--icon-add">
-              <mat-icon>add</mat-icon></div> 
+              <mat-icon>add</mat-icon></div>
         </div>
       </li>
       <li class="calendar-dia calendar-dia--otromes" data-weekday="Ma" (click)="openPopupCalendarioVacio()">
@@ -364,5 +548,3 @@
         <div class="calendar-dia__content"></div>
       </li>
     </ol>
-  
-      
