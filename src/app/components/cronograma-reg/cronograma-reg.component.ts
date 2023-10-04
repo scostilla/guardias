@@ -105,109 +105,82 @@ export class CronogramaRegComponent implements OnInit {
 
   buscarDescubiertos() {
     if (this.profPorRegion) {
-      let encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoDomingo || profesional.extraDomingo || profesional.contrafacturaDomingo || profesional.agrupacionDomingo)) {
+        if (profesional.cargoDomingo || profesional.extraDomingo || profesional.contrafacturaDomingo || profesional.agrupacionDomingo) {
           const indice = this.descubiertoDomingo.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoDomingo[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("domingo");
-      console.log(this.descubiertoDomingo);
 
-      encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoLunes || profesional.extraLunes || profesional.contrafacturaLunes || profesional.agrupacionLunes)) {
+        if (profesional.cargoLunes || profesional.extraLunes || profesional.contrafacturaLunes || profesional.agrupacionLunes) {
           const indice = this.descubiertoLunes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoLunes[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("lunes");
-      console.log(this.descubiertoLunes);
-      encontrado = false;
+
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoMartes || profesional.extraMartes || profesional.contrafacturaMartes || profesional.agrupacionMartes)) {
+        if (profesional.cargoMartes || profesional.extraMartes || profesional.contrafacturaMartes || profesional.agrupacionMartes) {
           const indice = this.descubiertoMartes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoMartes[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("martes");
-      console.log(this.descubiertoMartes);
 
-      encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoMiercoles || profesional.extraMiercoles || profesional.contrafacturaMiercoles || profesional.agrupacionMiercoles)) {
+        if (profesional.cargoMiercoles || profesional.extraMiercoles || profesional.contrafacturaMiercoles || profesional.agrupacionMiercoles) {
           const indice = this.descubiertoMiercoles.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoMiercoles[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("miercoles");
-      console.log(this.descubiertoMiercoles);
 
-      encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoJueves || profesional.extraJueves || profesional.contrafacturaJueves || profesional.agrupacionJueves)) {
+        if (profesional.cargoJueves || profesional.extraJueves || profesional.contrafacturaJueves || profesional.agrupacionJueves) {
           const indice = this.descubiertoJueves.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoJueves[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("jueves");
-      console.log(this.descubiertoJueves);
 
-      encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoViernes || profesional.extraViernes || profesional.contrafacturaViernes || profesional.agrupacionViernes)) {
+        if (profesional.cargoViernes || profesional.extraViernes || profesional.contrafacturaViernes || profesional.agrupacionViernes) {
           const indice = this.descubiertoViernes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoViernes[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("viernes");
-      console.log(this.descubiertoViernes);
 
-      encontrado = false;
       for (const profesional of this.profPorRegion) {
-        if (!encontrado && (profesional.cargoSabado || profesional.extraSabado || profesional.contrafacturaSabado || profesional.agrupacionSabado)) {
+        if (profesional.cargoSabado || profesional.extraSabado || profesional.contrafacturaSabado || profesional.agrupacionSabado) {
           const indice = this.descubiertoSabado.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
           );
           if (indice !== -1) {
             this.descubiertoSabado[indice].descubierto = false;
-            encontrado = false;
           }
         }
       }
-      console.log("sabado");
-      console.log(this.descubiertoSabado);
     }
   }
 }
