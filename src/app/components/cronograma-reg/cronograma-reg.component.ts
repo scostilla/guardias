@@ -114,9 +114,7 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoDomingo[indice].descubierto = false;
           }
         }
-      }
 
-      for (const profesional of this.profPorRegion) {
         if (profesional.cargoLunes || profesional.extraLunes || profesional.contrafacturaLunes || profesional.agrupacionLunes) {
           const indice = this.descubiertoLunes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
@@ -125,9 +123,7 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoLunes[indice].descubierto = false;
           }
         }
-      }
 
-      for (const profesional of this.profPorRegion) {
         if (profesional.cargoMartes || profesional.extraMartes || profesional.contrafacturaMartes || profesional.agrupacionMartes) {
           const indice = this.descubiertoMartes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
@@ -136,9 +132,7 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoMartes[indice].descubierto = false;
           }
         }
-      }
 
-      for (const profesional of this.profPorRegion) {
         if (profesional.cargoMiercoles || profesional.extraMiercoles || profesional.contrafacturaMiercoles || profesional.agrupacionMiercoles) {
           const indice = this.descubiertoMiercoles.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
@@ -147,9 +141,7 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoMiercoles[indice].descubierto = false;
           }
         }
-      }
 
-      for (const profesional of this.profPorRegion) {
         if (profesional.cargoJueves || profesional.extraJueves || profesional.contrafacturaJueves || profesional.agrupacionJueves) {
           const indice = this.descubiertoJueves.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
@@ -158,9 +150,7 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoJueves[indice].descubierto = false;
           }
         }
-      }
 
-      for (const profesional of this.profPorRegion) {
         if (profesional.cargoViernes || profesional.extraViernes || profesional.contrafacturaViernes || profesional.agrupacionViernes) {
           const indice = this.descubiertoViernes.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
@@ -169,9 +159,7 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoViernes[indice].descubierto = false;
           }
         }
-      }
 
-      for (const profesional of this.profPorRegion) {
         if (profesional.cargoSabado || profesional.extraSabado || profesional.contrafacturaSabado || profesional.agrupacionSabado) {
           const indice = this.descubiertoSabado.findIndex(
             (descubierto) => descubierto.nombreHospital === profesional.hospital
@@ -180,6 +168,15 @@ export class CronogramaRegComponent implements OnInit {
             this.descubiertoSabado[indice].descubierto = false;
           }
         }
+
+
+
+
+
+
+
+
+
       }
     }
   }
