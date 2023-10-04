@@ -113,7 +113,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoDomingo[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
@@ -128,7 +128,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoLunes[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
@@ -142,7 +142,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoMartes[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
@@ -157,7 +157,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoMiercoles[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
@@ -172,7 +172,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoJueves[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
@@ -187,7 +187,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoViernes[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
@@ -202,7 +202,7 @@ export class CronogramaRegComponent implements OnInit {
           );
           if (indice !== -1) {
             this.descubiertoSabado[indice].descubierto = false;
-            encontrado = true;
+            encontrado = false;
           }
         }
       }
