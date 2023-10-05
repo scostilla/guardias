@@ -246,12 +246,12 @@
                         <td class="{{profesionalActual.tipoGuardia}}">
                           {{ profesionalActual.extraLunes || profesionalActual.cargoLunes }}
                         </td>
-                        <td *ngIf="enableTotales">120</td>
-                        <td *ngIf="enableTotales"></td>
-                        <td class="negrita" *ngIf="enableTotales">120</td>
-                        <td *ngIf="enableTotales">120</td>
-                        <td *ngIf="enableTotales"></td>
-                        <td class="negrita" *ngIf="enableTotales">120</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasSemanal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasFindeSemana}}</td>
+                        <td class="negrita" *ngIf="enableTotales">{{profesionalActual.horasTotal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasSemanal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasFindeSemana}}</td>
+                        <td class="negrita" *ngIf="enableTotales">{{profesionalActual.horasTotal}}</td>
                       </tr>
                     </ng-container>
                   </tbody>
