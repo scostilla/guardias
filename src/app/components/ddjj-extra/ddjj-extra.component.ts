@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { DialogData } from '../ddjj-extra-tot/ddjj-extra-tot.component';
 
 @Component({
   selector: 'app-ddjj-extra',
@@ -16,12 +18,15 @@ export class DdjjExtraComponent {
     'categoria',
     'novedades',
   ];
-  dataSource = ELEMENT_DATA;
 
   profesionales: any[] = [];
-  constructor(private route: ActivatedRoute) {}
+  enableTotales: boolean = false;
+  observ!: string;
+
+  constructor(private route: ActivatedRoute, public dialog: MatDialog) {}
 
   ngOnInit() {
+    this.enableTotales = false;
     this.route.queryParams.subscribe((params) => {
       if (params['vector']) {
         this.profesionales = JSON.parse(params['vector']);
@@ -29,54 +34,31 @@ export class DdjjExtraComponent {
       }
     });
   }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogObserv, {
+      data: {observ: this.observ},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.observ = result;
+    });
+  }
+
+  btnPaseDPH(){
+    this.enableTotales = true;
+  }
+
 }
 
-export interface PeriodicElement {
-  nya: string;
-  position: number;
-  servicio: string;
+export class DialogObserv {
+  constructor(
+    public dialogRef: MatDialogRef<DialogObserv>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
 
-  cuil: number;
-  vinculo: string;
-  categoria: string;
-  novedades: string;
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    position: 1,
-    nya: 'Hydrogen',
-    servicio: 'clinica',
-    cuil: 1.0079,
-    vinculo: 'H',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-  {
-    position: 2,
-    nya: 'Helium',
-    servicio: 'clinica',
-    cuil: 4.0026,
-    vinculo: 'He',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-  {
-    position: 3,
-    nya: 'Lithium',
-    servicio: 'clinica',
-    cuil: 6.941,
-    vinculo: 'Li',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-  {
-    position: 4,
-    nya: 'Beryllium',
-    servicio: 'clinica',
-    cuil: 9.0122,
-    vinculo: 'Be',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-];

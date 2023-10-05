@@ -61,18 +61,6 @@ export class GuardiasViewComponent {
         break;
     }
 
-    // this.http
-    //   .get<any[]>('../assets/jsonFiles/hospitales.json')
-    //   .subscribe((data) => {
-    //     this.selectedHospital = data.find(
-    //       (selectedHospital) => selectedHospital.nombre === this.vector[0].hospital
-    //     );
-    //   });
-    //   if (this.selectedHospital) {
-    //     // Accede a la propiedad "region" del hospital encontrado
-    //     this.region = this.selectedHospital.region;
-    //   }
-
     this.router.navigate([url], {
       queryParams: { vector: JSON.stringify(this.vector) },
     });
