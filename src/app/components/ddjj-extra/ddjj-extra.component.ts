@@ -1,7 +1,15 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
-import { DialogData } from '../ddjj-extra-tot/ddjj-extra-tot.component';
+
+
+export interface DialogData {
+  observ: string;
+}
 
 @Component({
   selector: 'app-ddjj-extra',
@@ -52,6 +60,12 @@ export class DdjjExtraComponent {
 
 }
 
+@Component({
+  selector: 'dialog-observ',
+  templateUrl: 'dialog-observ.html',
+  standalone: true,
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule],
+})
 export class DialogObserv {
   constructor(
     public dialogRef: MatDialogRef<DialogObserv>,

@@ -268,6 +268,7 @@
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col offset-1">
       <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de
@@ -288,7 +289,43 @@
         <mat-icon>assignment_turned_in</mat-icon>
         Pase a DPH
       </button>
+      <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" routerLink="/ddjj-extra-tot-rec"
+        matTooltip="Devolver al Hospital"  *ngIf="enableTotales">
+        <mat-icon>assignment_return</mat-icon>
+        RECHAZAR
+      </button>
     </div>
-    <div class="col-1"></div>
+    <div class="col-1">
+      <div class="col-1">
+      </div>
+    </div>
+
   </div>
+  <div class="row offset-1 mostrar" id="firma">
+    <div class="col negrita">
+      <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
+        GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O.,
+        LIC. POR MATERNIDAD; - </p>
+      <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap"
+        matTooltip="Pase al Hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO
+      </button>
+    </div>
+    <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
+  </div>
+
+</div>
+<div class="row offset-1 mostrar" id="firma">
+  <div class="col negrita">
+    <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
+      GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O.,
+      LIC. POR MATERNIDAD; - </p>
+    <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap"
+      matTooltip="Pase al Hospital">
+      <mat-icon>assignment_turned_in</mat-icon>
+      APROBADO
+    </button>
+  </div>
+  <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
 </div>
