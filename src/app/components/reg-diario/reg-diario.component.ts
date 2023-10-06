@@ -5,6 +5,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/Professional-data-service.service';
 import Especialidad from 'src/server/models/Especialidad';
 import { PopupComponent } from '../popup/popup.component';
+import { Servicio } from 'src/app/models/servicio';
+import { ServicioService } from 'src/app/services/Servicio/servicio.service';
+import { TipoGuardia } from 'src/app/models/tipoGuardia';
+import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.service';
 
 @Component({
   selector: 'app-reg-diario',
@@ -12,9 +16,14 @@ import { PopupComponent } from '../popup/popup.component';
   styleUrls: ['./reg-diario.component.css'],
 })
 export class RegDiarioComponent {
+
+  servicios: Servicio[] = [];
+  tipoGuardias: TipoGuardia[] = [];
+
+
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
-  hospital: any;
+  hospital2: any;
   especialidades: any;
   profesionales: any;
   profesionalSeleccionado: any;
@@ -35,13 +44,67 @@ export class RegDiarioComponent {
     'Cargo',
     'Agrupacion',
   ];
-  servicio: string[] = [
+  hospital: string[] = [
+    'Dn. Pablo Soria',
+    'San Roque', 
+    'Materno Infantil'
+  ];
+
+  especialidad_ps: string[] = [
+    'soria',
+    'Cirugía General', 
+    'Cirugía Cardio Vascular o Vascular Periférica', 
+    'Cirugía Reparadora', 
+    'Nefrología', 
+    'Oftalmología', 
+    'Oncología', 
+    'Hematología', 
+    'Urología', 
+    'Traumatología', 
+    'UTI-UTIN', 
+    'Neurocirugía'
+  ];
+
+  especialidad_sr: string[] = [
+    'roque',
+    'Cirugía General', 
+    'Cirugía Reparadora', 
+    'Nefrología', 
+    'Oncología', 
+    'Hematología', 
+    'Urología', 
+    'Infectología', 
+    'Traumatología', 
+    'UTI-UTIN', 
+    'Neumonología', 
+    'Reumatología'
+  ];
+
+  especialidad_mi: string[] = [
+    'materno',
+    'Cirugía General', 
+    'Cirugía Cardio Vascular o Vascular Periférica', 
+    'Cirugía Reparadora', 
+    'Nefrología', 
+    'Oftalmología', 
+    'Oncología', 
+    'Otorrinolaringología', 
+    'Psiquiatría', 
+    'Hematología', 
+    'Urología', 
+    'Gastroenterología', 
+    'Traumatología', 
+    'UTI-UTIN', 
+    'Nutrición Infantil', 
+    'Cardiología Infantil'
+  ];
+  /* servicio: string[] = [
     'Guardia central',
     'Cardiología',
     'Cirugia general',
     'Cirugia infantil',
     'Pediatria',
-  ];
+  ]; */
 
   selectedId: string | undefined;
   selectedCuil: string | undefined;
@@ -53,6 +116,11 @@ export class RegDiarioComponent {
   constructor(
     private _fb: FormBuilder,
     private dialog: MatDialog,
+
+    private servicioService: ServicioService,
+    private tipoGuardiaService: tipoGuardiaService,
+
+
     private professionalDataService: ProfessionalDataServiceService,
     private http: HttpClient,
     public dialogRef: MatDialogRef<RegDiarioComponent>
@@ -85,12 +153,16 @@ export class RegDiarioComponent {
 
   ngOnInit() {
 
+    this.cargarServicio();
+    this.cargarTipoGuardia();
+
+
     //HOSPITALES
-      this.http
+      /* this.http
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
         this.hospital = data.filter((element) => element.pasivas === true);
-      });
+      }); */
 
       //ESPECIALIDADES
       this.http
@@ -100,6 +172,27 @@ export class RegDiarioComponent {
       });
   }
 
+  cargarServicio(): void {
+    this.servicioService.lista().subscribe(
+      data => {
+        this.servicios = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  cargarTipoGuardia(): void {
+    this.tipoGuardiaService.lista().subscribe(
+      data => {
+        this.tipoGuardias = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
 
   cargarEspecialidades() {
     if (this.hospitalSeleccionado && this.hospitalSeleccionado.especialidades) {

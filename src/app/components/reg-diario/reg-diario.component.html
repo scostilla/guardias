@@ -9,29 +9,41 @@
         {{tipserv}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field appearance="outline">
+
+  <!-- Establecimiento va o no en guardia activa? -->
+
+  <!-- <mat-form-field appearance="outline">
     <mat-label>Establecimiento</mat-label>
     <mat-select [(ngModel)]="hospitalSeleccionado" (ngModelChange)="cargarEspecialidades()">
-      <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp.descripcion}}</mat-option>
+      <mat-option *ngFor="let hosp of hospital2" [value]="hosp"> {{hosp.descripcion}}</mat-option>
     </mat-select>
-  </mat-form-field>
+  </mat-form-field> -->
 
   <ng-container [ngSwitch]="defaultSelected" appearance="outline">
     <div *ngSwitchCase="'Guardia activa'">
+
+      <!-- carga Tipo de Guardia desde BD -->
       <mat-form-field appearance="outline">
         <mat-label>Tipo de guardia</mat-label>
         <mat-select>
-          <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+            <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias">
+                {{tipoGuardias.descripcion}}</mat-option>
         </mat-select>
-      </mat-form-field>
+    </mat-form-field>
+
+      <!-- carga Servicios desde BD  -->
       <mat-form-field appearance="outline">
-        <mat-label>Servicio</mat-label>
+        <mat-label>Servicio fa</mat-label>
         <mat-select>
-          <mat-option *ngFor="let serv of servicio" [value]="serv"> {{serv}}</mat-option>
+            <mat-option *ngFor="let servicio of servicios" [value]="servicio.descripcion">
+                {{servicio.descripcion}}</mat-option>
         </mat-select>
-      </mat-form-field>
+    </mat-form-field>
     </div>
-    <div *ngSwitchCase="'Guardia pasiva'">
+
+    <!-- parte de guardia pasiva viejo -->
+
+    <!-- <div *ngSwitchCase="'Guardia pasiva'">
       <mat-form-field appearance="outline">
         <mat-label>Especialidad</mat-label>
         <mat-select [(ngModel)]="alert">
@@ -47,7 +59,52 @@
           </div>
         </span>
       </span>
-    </div>
+    </div> -->
+
+    <!-- aqui es la otra parte de la otra rama -->
+    <div *ngSwitchCase="'Guardia pasiva'">
+      <mat-form-field appearance="outline">
+          <mat-label>Establecimiento fa</mat-label>
+          <mat-select [(ngModel)]="pasiva">
+              <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+  </div>
+  <div [ngSwitch]="pasiva" appearance="outline">
+      <div *ngSwitchCase="'Dn. Pablo Soria'">
+          <mat-form-field appearance="outline">
+              <mat-label>Especialidad fa</mat-label>
+              <mat-select [(ngModel)]="alert">
+                  <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+              </mat-select>
+          </mat-form-field>
+      </div>
+      <div *ngSwitchCase="'San Roque'">
+          <mat-form-field appearance="outline">
+              <mat-label>Especialidad fa</mat-label>
+              <mat-select [(ngModel)]="alert">
+                  <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
+              </mat-select>
+          </mat-form-field>
+      </div>
+      <div *ngSwitchCase="'Materno Infantil'">
+          <mat-form-field appearance="outline">
+              <mat-label>Especialidad fa</mat-label>
+              <mat-select [(ngModel)]="alert">
+                  <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
+              </mat-select>
+          </mat-form-field>
+      </div>
+      <span [ngSwitch]="alert">
+          <span
+              *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
+              <div class="alert alert-danger" role="alert">
+                  Especialidad seleccionada sin requerimiento.
+              </div>
+          </span>
+      </span>
+  </div>
+
   </ng-container>
 
 
