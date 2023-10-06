@@ -31,6 +31,7 @@ export class DdjjExtraComponent {
   enableTotales: boolean = false;
   enableAprobada: boolean = false;
   enableRechazada: boolean = false;
+  estado: string = 'pendiente';
   horasSemanal: number = 0;
   horasFindeSemana: number = 0;
   observ!: string;
@@ -55,6 +56,8 @@ export class DdjjExtraComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       this.observ = result;
+    //this.btnRechazado();
+
     });
   }
 
@@ -97,8 +100,19 @@ export class DdjjExtraComponent {
   }
 
   btnAprobado(){
-    console.log('APROBADO');
     this.enableAprobada = true;
+    this.estado = 'aprobado';
+  }
+
+  btnRechazado(){
+    if(this.observ){
+    this.enableRechazada = true;
+    this.estado = 'rechazado';
+    }else{
+    this.enableRechazada = false;
+    this.estado = 'pendiente';
+    }
+    console.log(this.enableRechazada);
   }
 
 }

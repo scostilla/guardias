@@ -15,7 +15,16 @@
       </div>
     </div>
 
-    <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada">
+    <div class="row mt-5" *ngIf="enableRechazada">
+    <div class="col-10 offset-1 justify-content-center" >
+      <div class="alert alert-danger" role="alert">
+        Es necesario realizar las correcciones detalladas en la fila <strong>OBSERVACIONES y volver a realizar el pase a
+          DPH</strong>.
+      </div>
+    </div>
+  </div>
+
+    <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada && !enableRechazada">
       <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
         <mat-icon>clear</mat-icon>
       </button>
@@ -24,22 +33,23 @@
         <mat-icon>done</mat-icon>
       </button>
     </div>
-
-
   </div>
   <div class="row">
     <div class="titulos">DDJJ <span class="titulos-second">EXTRAS</span><span class="titulos-second"
-        *ngIf="enableAprobada"> (APROBADA)</span></div>
+        *ngIf="enableAprobada"> (APROBADA)</span>
+      <span class="titulos-second" *ngIf="enableRechazada"> (RECHAZADA)</span>
+    </div>
 
     <div class="row mt-3">
       <div class="col-sm scroll">
         <table class="table table-sm table-borderless">
-          <thead class="col-center" [style.background-color]="enableAprobada ? 'rgb(151, 187, 151)' : 'rgb(123, 204, 233)'">
+          <thead class="col-center {{estado}}">
             <tr>
 
-              <th *ngIf="!enableAprobada; else elseBlock" class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS</th>
+              <th *ngIf="!enableAprobada; else elseBlock" class=" {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
+                EXTRAS</th>
               <ng-template #elseBlock>
-                <th class="titulo-tabla" style="background-color: green !important; color: white;">DECLARACION JURADA
+                <th class="titulo-tabla {{estado}}">DECLARACION JURADA
                   GUARDIAS ACTIVAS EXTRAS (APROBADA)</th>
               </ng-template>
 
@@ -268,7 +278,9 @@
                   <tfoot>
                     <tr>
                       <td>OBSERV.:</td>
-                      <td colspan="43" class="negrita" style="color: green;" *ngIf="enableAprobada"><em>APROBADA.-</em></td>
+                      <td colspan="43" class="negrita" style="color: green;" *ngIf="enableAprobada"><em>APROBADA.-</em>
+                      </td>
+                      <td  colspan="43" class="negrita" style="color: red;" *ngIf="enableRechazada"><em>Es necesario completar el número de guardias correctamente.</em></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -314,8 +326,8 @@
         <mat-icon>assignment_turned_in</mat-icon>
         Pase a DPH
       </button>
-      <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" routerLink="/ddjj-extra-tot-rec"
-        matTooltip="Devolver al Hospital" *ngIf="enableTotales  && !enableAprobada">
+      <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" (click)="btnRechazado()"
+        matTooltip="Devolver al Hospital" *ngIf="!enableRechazada">
         <mat-icon>assignment_return</mat-icon>
         RECHAZAR
       </button>

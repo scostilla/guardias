@@ -2,23 +2,29 @@
 
 @charset "utf-8";
 @font-face {
-    font-family: Ubuntu;
-    src: url('src/assets/font/Ubuntu-Regular.ttf');
+  font-family: Ubuntu;
+  src: url("src/assets/font/Ubuntu-Regular.ttf");
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: "Ubuntu", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Ubuntu", sans-serif;
+}
 
-.title{
-    --bs-text-opacity: 1;
-    color: rgba(var(--bs-secondary-rgb),var(--bs-text-opacity))!important;
-    margin-top: 15px;
+.title {
+  --bs-text-opacity: 1;
+  color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important;
+  margin-top: 15px;
 }
 
 .titulos {
-    font-weight: bold;
-    color: #37BBED;
-    font-size: 2em;
-    padding: 20px 20px 0 1.4%;
+  font-weight: bold;
+  color: #37bbed;
+  font-size: 2em;
+  padding: 20px 20px 0 1.4%;
 }
 
 .titulos-second {
@@ -33,7 +39,7 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   color: #ad643a;
 }
 
-.center-content{
+.center-content {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,76 +60,76 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 }
 
 .mat-button-toggle {
-    font-family: "Ubuntu", sans-serif;
-    font-weight: 600;
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 600;
 }
 
 .mat-button-toggle:hover {
-    background-color: #37BBED;
-    color: #FFF;
+  background-color: #37bbed;
+  color: #fff;
 }
 
 .mat-button-toggle-disabled:hover {
-    background-color: inherit;
-    color: #D3D3D3;
-    font-weight: initial;
+  background-color: inherit;
+  color: #d3d3d3;
+  font-weight: initial;
 }
 
 /* --botones-- */
 
 .container-boton {
-    position: relative;
-    width: 100%;
-    float: left;
-    margin: 0 0 10% 0;
-    cursor: pointer;
+  position: relative;
+  width: 100%;
+  float: left;
+  margin: 0 0 10% 0;
+  cursor: pointer;
 }
 
 .image {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 15px 15px;
-    border: #f8f4f4 solid 6px;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 15px 15px;
+  border: #f8f4f4 solid 6px;
 }
 
 .overlay {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: auto;
-    width: 100%;
-    opacity: 0;
-    transition: .5s ease;
-    background-color: #37BBED;
-    border-radius: 15px 15px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: auto;
+  width: 100%;
+  opacity: 0;
+  transition: 0.5s ease;
+  background-color: #37bbed;
+  border-radius: 15px 15px;
 }
 
 .container-boton:hover .overlay {
-    opacity: 1;
+  opacity: 1;
 }
 
 .text {
-    color: white;
-    font-size: 120%;
-    font-family: "Ubuntu";
-    font-weight: 900;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    text-align: center;
-    line-height: normal;
+  color: white;
+  font-size: 120%;
+  font-family: "Ubuntu";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: normal;
 }
 
-@media (max-width:600px) {
-    .text {
-        font-size: 140%;
-    }
+@media (max-width: 600px) {
+  .text {
+    font-size: 140%;
+  }
 }
 
 /* --botones circulares-- */
@@ -153,8 +159,8 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   height: auto;
   width: 100%;
   opacity: 0;
-  transition: .5s ease;
-  background-color: #37BBED;
+  transition: 0.5s ease;
+  background-color: #37bbed;
   border-radius: 50% 50%;
 }
 
@@ -164,18 +170,18 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 
 /* --referencias-- */
 .ref {
-    font-weight: bold;
-    float: left;
-    margin: 10px 30px 10px 3px;
-  }
+  font-weight: bold;
+  float: left;
+  margin: 10px 30px 10px 3px;
+}
 
-  .ref-circulo {
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin: 10px 0 10px 0;
-  }
+.ref-circulo {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 10px 0 10px 0;
+}
 
 /* -- colores guardias -- */
 .ref-extra {
@@ -187,31 +193,31 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 }
 
 .ref-cargo {
-  color: #91A8DA;
+  color: #91a8da;
 }
 
 .circulo--cargo {
-  background: #91A8DA;
+  background: #91a8da;
 }
 
 .ref-agrupacion {
-  color: #F4AF88;
+  color: #f4af88;
 }
 
 .circulo--agrupacion {
-  background: #F4AF88;
+  background: #f4af88;
 }
 
 .ref-contrafactura {
-  color: #A9D08F;
+  color: #a9d08f;
 }
 
 .circulo--contrafactura {
-  background: #A9D08F;
+  background: #a9d08f;
 }
 
 .circulo--general {
-  background: #37BBED;
+  background: #37bbed;
 }
 
 .ref-circulo-act {
@@ -222,7 +228,7 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   color: coral;
 }
 
-.ref-circulo-pas{
+.ref-circulo-pas {
   background-color: darkorchid;
 }
 
@@ -245,10 +251,13 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 }
 
 .thead-celeste {
-  background-color: #7bcce9;}
+  background-color: #7bcce9;
+}
 
 .titulo-tabla {
-  background-color: #37BBED !important; color: #fff; border-radius: 10px 10px 0 0;
+  background-color: #37bbed !important;
+  color: #fff;
+  border-radius: 10px 10px 0 0;
 }
 
 th {
@@ -257,228 +266,224 @@ th {
 }
 
 /* --Calendario-- */
-.titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
-    letter-spacing: .1em;
-      font-family: "Ubuntu";
-      font-size: 3.6em;
-      padding: 40px 50px 20px 20px;
-      text-align: center;
-      font-weight: bolder;
-  }
+.titulo-calendario,
+.titulo-calendario-def,
+.titulo-calendario-reg {
+  letter-spacing: 0.1em;
+  font-family: "Ubuntu";
+  font-size: 3.6em;
+  padding: 40px 50px 20px 20px;
+  text-align: center;
+  font-weight: bolder;
+}
 
-  .titulo-calendario {
-    color: #243c74;
-  }
+.titulo-calendario {
+  color: #243c74;
+}
 
-  .titulo-calendario-def {
-    color: #734db8;
-  }
+.titulo-calendario-def {
+  color: #734db8;
+}
 
-  .titulo-calendario-reg {
-    color: #ad643a;
-  }
+.titulo-calendario-reg {
+  color: #ad643a;
+}
 
-  .titulo-calendario-g {
-    letter-spacing: .1em;
-      font-family: "Ubuntu";
-      font-size: 3.6em;
-      padding: 40px 50px 20px 20px;
-      text-align: center;
-      font-weight: bolder;
-      color: #37BBED;
-  }
+.titulo-calendario-g {
+  letter-spacing: 0.1em;
+  font-family: "Ubuntu";
+  font-size: 3.6em;
+  padding: 40px 50px 20px 20px;
+  text-align: center;
+  font-weight: bolder;
+  color: #37bbed;
+}
 
 .calendar {
-    margin: 4rem;
-    padding: 0;
-    list-style: none;
-    font-size: 1.4rem;
-  }
+  margin: 4rem;
+  padding: 0;
+  list-style: none;
+  font-size: 1.4rem;
+}
 
+.calendar-dia {
+  color: #fff;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.calendar-dia--text {
+  padding: 3px 12px;
+  margin: 5px 10px;
+  font-size: 0.6em;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.calendar-dia:hover {
+  opacity: 0.8;
+}
+
+.calendar-dia:nth-child(7n + 1)::before {
+  content: attr(data-week);
+  position: absolute;
+  color: #999;
+}
+
+.calendar-dia::after {
+  content: attr(data-weekday);
+  position: absolute;
+  color: #999;
+}
+
+.calendar-dia__content {
+  background: #9e9ea1;
+  height: 200px;
+  border-radius: 10px;
+}
+
+.ref-calendar-dia__content {
+  color: #9e9ea1;
+}
+
+.circulo--dia {
+  background: #9e9ea1;
+}
+
+.calendar-dia--icon {
+  padding: 5px 5px 5px 50px;
+  height: 20%;
+  margin-bottom: 30px;
+  text-align: right;
+}
+
+.calendar-dia--icon-add {
+  padding: 5px 5px 5px 10px;
+  height: 15%;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: right;
+  cursor: pointer;
+}
+
+.icon-verde {
+  color: #d0fe72;
+}
+
+.calendar-dia--otromes .calendar-dia__content {
+  opacity: 0.5;
+}
+
+.calendar-dia--hoy .calendar-dia__content {
+  background-color: #15d3ec;
+}
+
+.ref-calendar-dia--hoy {
+  color: #15d3ec;
+}
+
+.calendar-dia-feriado .calendar-dia__content {
+  background-color: #df7545;
+}
+
+.ref-calendar-dia--feriado {
+  color: #df7545;
+}
+
+.circulo--feriado {
+  background: #df7545;
+}
+
+.calendar-dia-finde .calendar-dia__content {
+  background-color: #caa8eb;
+}
+
+.ref-calendar-dia--finde {
+  color: #caa8eb;
+}
+
+.circulo--finde {
+  background: #caa8eb;
+}
+
+.calendar-dia__number {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 40rem) {
   .calendar-dia {
-    color: #fff;
-    position: relative;
-    box-sizing: border-box;
+    margin: 0 0 2px;
   }
 
-  .calendar-dia--text{
-    padding: 3px 12px;
-    margin: 5px 10px;
-    font-size: 0.6em;
-    border-radius: 7px;
-    cursor: pointer;
-  }
-
-  .calendar-dia:hover {
-    opacity: .8;
-  }
-
-  .calendar-dia:nth-child(7n+1)::before {
-    content: attr(data-week);
-    position: absolute;
-    color: #999;
+  .calendar-dia:nth-child(7n + 1)::before {
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 0.5rem);
+    display: block;
+    text-align: center;
   }
 
   .calendar-dia::after {
-    content: attr(data-weekday);
-    position: absolute;
-    color: #999;
+    right: calc(100% + 0.5rem);
+    top: 0.5rem;
+  }
+
+  .calendar-dia--otromes {
+    display: none;
+  }
+
+  .calendar-dia--begin-week {
+    margin-top: 3rem;
   }
 
   .calendar-dia__content {
-    background: #9e9ea1;
-    height: 200px;
-    border-radius: 10px;
+    padding: 0 0 20%;
   }
-
-  .ref-calendar-dia__content {
-    color: #9e9ea1;
-  }
-
-  .circulo--dia {
-    background: #9e9ea1;
-  }
-
-
-  .calendar-dia--icon{
-    padding: 5px 5px 5px 50px;
-    height: 20%;
-    margin-bottom: 30px;
-    text-align: right;
-  }
-
-  .calendar-dia--icon-add{
-    padding: 5px 5px 5px 10px;
-    height: 15%;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: right;
-    cursor: pointer;
-  }
-
-  .icon-verde {
-    color: #D0FE72;
 }
 
-
-
-  .calendar-dia--otromes .calendar-dia__content {
-    opacity: .5;
+@media screen and (min-width: 40rem) {
+  .calendar {
+    display: flex;
+    flex-wrap: wrap;
   }
 
-  .calendar-dia--hoy .calendar-dia__content {
-    background-color: #15d3ec;
+  .calendar-dia {
+    flex-basis: calc(14.28571% - 2px);
+    margin: 1px;
   }
 
-  .ref-calendar-dia--hoy {
-    color: #15d3ec;
+  .calendar-dia:nth-child(7n + 1)::before {
+    right: calc(100% + 0.5rem);
+    top: 0.5rem;
   }
 
-  .calendar-dia-feriado .calendar-dia__content {
-    background-color: #df7545;
+  .calendar-dia::after {
+    display: none;
   }
 
-  .ref-calendar-dia--feriado {
-    color: #df7545;
+  .calendar-dia:nth-child(-n + 7)::after {
+    display: inline;
+    bottom: calc(100% + 0.2rem);
+    left: 0.5rem;
   }
 
-  .circulo--feriado {
-    background: #df7545;
+  .calendar-dia--otromes {
+    display: block;
   }
 
-
-  .calendar-dia-finde .calendar-dia__content {
-    background-color: #caa8eb;
+  .calendar-dia--past .calendar-dia__number {
+    opacity: 0.5;
   }
 
-  .ref-calendar-dia--finde {
-    color: #caa8eb;
+  .calendar-dia__content {
+    padding-bottom: 100%;
   }
 
-  .circulo--finde {
-    background: #caa8eb;
+  .table-scroll {
+    overflow-x: auto;
   }
-
-
-  .calendar-dia__number {
-    position: absolute;
-    top: .5rem;
-    left: .5rem;
-    font-weight: bold;
-  }
-
-  @media screen and (max-width: 40rem) {
-    .calendar-dia {
-      margin: 0 0 2px;
-    }
-
-    .calendar-dia:nth-child(7n+1)::before {
-      left: 0;
-      right: 0;
-      bottom: calc(100% + .5rem);
-      display: block;
-      text-align: center;
-    }
-
-    .calendar-dia::after {
-      right: calc(100% + .5rem);
-      top: .5rem;
-    }
-
-    .calendar-dia--otromes {
-      display: none;
-    }
-
-    .calendar-dia--begin-week {
-      margin-top: 3rem;
-    }
-
-    .calendar-dia__content {
-      padding: 0 0 20%;
-    }
-  }
-
-  @media screen and (min-width: 40rem) {
-    .calendar {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .calendar-dia {
-      flex-basis: calc(14.28571% - 2px);
-      margin: 1px;
-    }
-
-    .calendar-dia:nth-child(7n+1)::before {
-      right: calc(100% + .5rem);
-      top: .5rem;
-    }
-
-    .calendar-dia::after {
-      display: none;
-    }
-
-    .calendar-dia:nth-child(-n+7)::after {
-      display: inline;
-      bottom: calc(100% + .2rem);
-      left: .5rem;
-    }
-
-    .calendar-dia--otromes {
-      display: block;
-    }
-
-    .calendar-dia--past .calendar-dia__number {
-      opacity: .5;
-    }
-
-    .calendar-dia__content {
-      padding-bottom: 100%;
-    }
-
-    .table-scroll {
-      overflow-x:auto;
-    }
-
-  }
+}
