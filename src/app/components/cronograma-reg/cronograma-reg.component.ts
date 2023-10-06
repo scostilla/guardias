@@ -1,19 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-cronograma-reg',
   templateUrl: './cronograma-reg.component.html',
-  styleUrls: ['./cronograma-reg.component.css']
+  styleUrls: ['./cronograma-reg.component.css'],
 })
-export class CronogramaRegComponent  implements OnInit {
-
+export class CronogramaRegComponent implements OnInit {
   hospitales?: any[];
   hospitalesFiltrados?: any[];
+  profesionales?: any[];
+  profPorRegion?: any[];
+
+  descubiertoDomingo: any[] = [];
+  descubiertoLunes: any[] = [];
+  descubiertoMartes: any[] = [];
+  descubiertoMiercoles: any[] = [];
+  descubiertoJueves: any[] = [];
+  descubiertoViernes: any[] = [];
+  descubiertoSabado: any[] = [];
+
   selectedRegion: string = 'CENTRO';
   hospitalSeleccionado: any;
   class?: string;
-
 
   constructor(private http: HttpClient) {}
 
@@ -22,16 +32,14 @@ export class CronogramaRegComponent  implements OnInit {
       .get<any[]>('../assets/jsonFiles/hospitales.json')
       .subscribe((data) => {
         this.hospitales = data;
-      this.filtrarHospitalPorRegion()
+        this.filtrarHospitalPorRegion();
       });
   }
 
-
   selectRegion(region: string) {
     this.selectedRegion = region;
-    this.filtrarHospitalPorRegion()
+    this.filtrarHospitalPorRegion();
     console.log(this.hospitalesFiltrados);
-
   }
 
   filtrarHospitalPorRegion() {
@@ -39,8 +47,137 @@ export class CronogramaRegComponent  implements OnInit {
       this.hospitalesFiltrados = this.hospitales.filter((hospital) => {
         return hospital.region == this.selectedRegion;
       });
-    }else{
-      console.log("nola");
+      console.log(this.hospitalesFiltrados);
+      this.profesionalesPorRegion();
+      //INICIALIZANDO LOS VECTORES EN DESCUBIERTO
+      this.descubiertoDomingo.length = 0;
+      this.descubiertoLunes.length = 0;
+      this.descubiertoMartes.length = 0;
+      this.descubiertoMiercoles.length = 0;
+      this.descubiertoJueves.length = 0;
+      this.descubiertoViernes.length = 0;
+      this.descubiertoSabado.length = 0;
+      if (this.hospitalesFiltrados) {
+        for (const hospital of this.hospitalesFiltrados) {
+          const nuevoDescubierto = {
+            nombreHospital: hospital.descripcion,
+            descubierto: true,
+          };
+          this.descubiertoDomingo.push({ ...nuevoDescubierto });
+          this.descubiertoLunes.push({ ...nuevoDescubierto });
+          this.descubiertoMartes.push({ ...nuevoDescubierto });
+          this.descubiertoMiercoles.push({ ...nuevoDescubierto });
+          this.descubiertoJueves.push({ ...nuevoDescubierto });
+          this.descubiertoViernes.push({ ...nuevoDescubierto });
+          this.descubiertoSabado.push({ ...nuevoDescubierto });
+        }
+      }
+      //TERMINA LA INICIALIZACION DED VECTORES
+    } else {
+      console.log('nola');
+    }
+  }
+
+  profesionalesPorRegion() {
+    this.profPorRegion = [];
+    if (this.hospitalesFiltrados) {
+      const observables = this.hospitalesFiltrados.map((hospital) => {
+        return this.http
+          .get<any[]>('../assets/jsonFiles/profesionales.json')
+          .pipe(
+            map((data) => {
+              return data.filter(
+                (profesional) => profesional.hospital === hospital.descripcion
+              );
+            })
+          );
+      });
+
+      forkJoin(observables).subscribe((result) => {
+        result.forEach((profesionalesPorHospital) => {
+          this.profPorRegion?.push(...profesionalesPorHospital);
+        });
+        console.log(this.profPorRegion);
+        this.buscarDescubiertos();
+      });
+    }
+  }
+
+  buscarDescubiertos() {
+    if (this.profPorRegion) {
+      for (const profesional of this.profPorRegion) {
+        if (profesional.cargoDomingo || profesional.extraDomingo || profesional.contrafacturaDomingo || profesional.agrupacionDomingo) {
+          const indice = this.descubiertoDomingo.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoDomingo[indice].descubierto = false;
+          }
+        }
+
+        if (profesional.cargoLunes || profesional.extraLunes || profesional.contrafacturaLunes || profesional.agrupacionLunes) {
+          const indice = this.descubiertoLunes.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoLunes[indice].descubierto = false;
+          }
+        }
+
+        if (profesional.cargoMartes || profesional.extraMartes || profesional.contrafacturaMartes || profesional.agrupacionMartes) {
+          const indice = this.descubiertoMartes.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoMartes[indice].descubierto = false;
+          }
+        }
+
+        if (profesional.cargoMiercoles || profesional.extraMiercoles || profesional.contrafacturaMiercoles || profesional.agrupacionMiercoles) {
+          const indice = this.descubiertoMiercoles.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoMiercoles[indice].descubierto = false;
+          }
+        }
+
+        if (profesional.cargoJueves || profesional.extraJueves || profesional.contrafacturaJueves || profesional.agrupacionJueves) {
+          const indice = this.descubiertoJueves.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoJueves[indice].descubierto = false;
+          }
+        }
+
+        if (profesional.cargoViernes || profesional.extraViernes || profesional.contrafacturaViernes || profesional.agrupacionViernes) {
+          const indice = this.descubiertoViernes.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoViernes[indice].descubierto = false;
+          }
+        }
+
+        if (profesional.cargoSabado || profesional.extraSabado || profesional.contrafacturaSabado || profesional.agrupacionSabado) {
+          const indice = this.descubiertoSabado.findIndex(
+            (descubierto) => descubierto.nombreHospital === profesional.hospital
+          );
+          if (indice !== -1) {
+            this.descubiertoSabado[indice].descubierto = false;
+          }
+        }
+
+
+
+
+
+
+
+
+
+      }
     }
   }
 }

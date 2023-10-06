@@ -1,5 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
+
+
+export interface DialogData {
+  observ: string;
+}
 
 @Component({
   selector: 'app-ddjj-extra',
@@ -16,12 +26,17 @@ export class DdjjExtraComponent {
     'categoria',
     'novedades',
   ];
-  dataSource = ELEMENT_DATA;
 
   profesionales: any[] = [];
-  constructor(private route: ActivatedRoute) {}
+  enableTotales: boolean = false;
+  horasSemanal: number = 0;
+  horasFindeSemana: number = 0;
+  observ!: string;
+
+  constructor(private route: ActivatedRoute, public dialog: MatDialog) {}
 
   ngOnInit() {
+    this.enableTotales = false;
     this.route.queryParams.subscribe((params) => {
       if (params['vector']) {
         this.profesionales = JSON.parse(params['vector']);
@@ -29,54 +44,71 @@ export class DdjjExtraComponent {
       }
     });
   }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogObserv, {
+      data: {observ: this.observ},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.observ = result;
+    });
+  }
+
+  btnPaseDPH(){
+    this.enableTotales = true;
+
+    if(this.profesionales){
+      for (let i = 0; i < this.profesionales.length; i++) {
+
+        if(this.profesionales[i].extraLunes){
+          this.horasSemanal = + this.profesionales[i].extraLunes;
+        }
+        if(this.profesionales[i].extraMartes){
+          this.horasSemanal = + this.profesionales[i].extraMartes;
+        }
+        if(this.profesionales[i].extraMiercoles){
+          this.horasSemanal = + this.profesionales[i].extraMiercoles;
+        }
+        if(this.profesionales[i].extraJueves){
+          this.horasSemanal = + this.profesionales[i].extraJueves;
+        }
+        if(this.profesionales[i].extraViernes){
+          this.horasSemanal = + this.profesionales[i].extraViernes;
+        }
+
+        if(this.profesionales[i].extraSabado){
+          this.horasFindeSemana = + this.profesionales[i].extraSabado;
+        }
+        if(this.profesionales[i].extraDomingo){
+          this.horasFindeSemana = + this.profesionales[i].extraDomingo;
+        }
+
+        //SOLO PARA ESTER MES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //MULTIPLICO *4 MARTES A VIERNES Y *5 FINDE Y LUNES
+        this.profesionales[i].horasSemanal = this.horasSemanal*4+this.profesionales[i].extraLunes ||0;
+        this.profesionales[i].horasFindeSemana = this.horasFindeSemana*5 ||0;
+        this.profesionales[i].horasTotal = this.profesionales[i].horasSemanal + this.profesionales[i].horasFindeSemana;
+      }
+    }
+  }
+
 }
 
-export interface PeriodicElement {
-  nya: string;
-  position: number;
-  servicio: string;
+@Component({
+  selector: 'dialog-observ',
+  templateUrl: 'dialog-observ.html',
+  standalone: true,
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule],
+})
+export class DialogObserv {
+  constructor(
+    public dialogRef: MatDialogRef<DialogObserv>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
 
-  cuil: number;
-  vinculo: string;
-  categoria: string;
-  novedades: string;
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    position: 1,
-    nya: 'Hydrogen',
-    servicio: 'clinica',
-    cuil: 1.0079,
-    vinculo: 'H',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-  {
-    position: 2,
-    nya: 'Helium',
-    servicio: 'clinica',
-    cuil: 4.0026,
-    vinculo: 'He',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-  {
-    position: 3,
-    nya: 'Lithium',
-    servicio: 'clinica',
-    cuil: 6.941,
-    vinculo: 'Li',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-  {
-    position: 4,
-    nya: 'Beryllium',
-    servicio: 'clinica',
-    cuil: 9.0122,
-    vinculo: 'Be',
-    categoria: 'E(J-1)',
-    novedades: 'L.A.O. Del 24 al 31-04-23',
-  },
-];

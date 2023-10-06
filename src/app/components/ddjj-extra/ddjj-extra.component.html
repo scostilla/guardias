@@ -6,6 +6,21 @@
         Volver
       </button>
     </div>
+
+
+    <div class="col-auto mx-4" *ngIf="enableTotales">
+      <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
+        <mat-icon>clear</mat-icon>
+      </button>
+      <button class="bg-success text-light" mat-mini-fab matTooltip="Autorizar"
+        onclick="document.getElementById('firma').classList.toggle('mostrar');">
+        <mat-icon>done</mat-icon>
+      </button>
+    </div>
+
+
+
+
   </div>
   <div class="row">
     <div class="titulos">DDJJ <span class="titulos-second">EXTRAS</span></div>
@@ -35,9 +50,7 @@
           <tbody>
             <tr>
               <td colspan="16">
-                <table
-                  class="table table-hover table-bordered table-sm caption-top"
-                >
+                <table class="table table-hover table-bordered table-sm caption-top">
                   <thead class="thead-gris">
                     <tr>
                       <th rowspan="3">N° ORDEN</th>
@@ -48,6 +61,10 @@
                       <th rowspan="3">CATEGORIA</th>
                       <th rowspan="3">NOVEDADES</th>
                       <th colspan="31">GUARDIAS ACTIVAS</th>
+                      <th colspan="3" style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">GUARDIAS EXTRA
+                      </th>
+                      <th colspan="3" style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">BONO UTI 1580
+                      </th>
                     </tr>
                     <tr>
                       <td style="background-color: #9e9ea1">Sa</td>
@@ -81,6 +98,12 @@
                       <td style="background-color: #9e9ea1">Sa</td>
                       <td style="background-color: #9e9ea1">Do</td>
                       <td>Lu</td>
+                      <td colspan="2" style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">Total en horas
+                      </td>
+                      <td rowspan="2" class="negrita" *ngIf="enableTotales">Total Hs.</td>
+                      <td colspan="2" style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">Total en horas
+                      </td>
+                      <td rowspan="2" class="negrita" *ngIf="enableTotales">Total Hs.</td>
                     </tr>
                     <tr>
                       <td style="background-color: #9e9ea1">1</td>
@@ -114,6 +137,10 @@
                       <td style="background-color: #9e9ea1">29</td>
                       <td style="background-color: #9e9ea1">30</td>
                       <td>31</td>
+                      <td style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">L-V</td>
+                      <td style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">S-D-F</td>
+                      <td style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">L-V</td>
+                      <td style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">S-D-F</td>
                     </tr>
                   </thead>
                   <tbody>
@@ -219,6 +246,12 @@
                         <td class="{{profesionalActual.tipoGuardia}}">
                           {{ profesionalActual.extraLunes || profesionalActual.cargoLunes }}
                         </td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasSemanal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasFindeSemana}}</td>
+                        <td class="negrita" *ngIf="enableTotales">{{profesionalActual.horasTotal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasSemanal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasFindeSemana}}</td>
+                        <td class="negrita" *ngIf="enableTotales">{{profesionalActual.horasTotal}}</td>
                       </tr>
                     </ng-container>
                   </tbody>
@@ -235,16 +268,13 @@
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col offset-1">
-      <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span
-        class="ref ref-calendar-dia--finde-tabla"
-        >Fin de semana</span
-      >
+      <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de
+        semana</span>
       <span class="ref-circulo circulo--feriado"></span>&nbsp;<span
-        class="ref ref-calendar-dia--feriado"
-        >Asueto/Feriado</span
-      >
+        class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
     </div>
     <div class="col-auto">
       <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
@@ -255,11 +285,47 @@
         <button mat-menu-item>PDF</button>
         <button mat-menu-item>XLS</button>
       </mat-menu>
-      <button mat-fab extended color="warn" routerLink="/ddjj-extra-tot">
+      <button mat-fab extended color="warn" (click)="btnPaseDPH()" *ngIf="!enableTotales">
         <mat-icon>assignment_turned_in</mat-icon>
         Pase a DPH
       </button>
+      <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" routerLink="/ddjj-extra-tot-rec"
+        matTooltip="Devolver al Hospital"  *ngIf="enableTotales">
+        <mat-icon>assignment_return</mat-icon>
+        RECHAZAR
+      </button>
     </div>
-    <div class="col-1"></div>
+    <div class="col-1">
+      <div class="col-1">
+      </div>
+    </div>
+
   </div>
+  <div class="row offset-1 mostrar" id="firma">
+    <div class="col negrita">
+      <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
+        GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O.,
+        LIC. POR MATERNIDAD; - </p>
+      <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap"
+        matTooltip="Pase al Hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO
+      </button>
+    </div>
+    <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
+  </div>
+
+</div>
+<div class="row offset-1 mostrar" id="firma">
+  <div class="col negrita">
+    <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
+      GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O.,
+      LIC. POR MATERNIDAD; - </p>
+    <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap"
+      matTooltip="Pase al Hospital">
+      <mat-icon>assignment_turned_in</mat-icon>
+      APROBADO
+    </button>
+  </div>
+  <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
 </div>
