@@ -7,8 +7,15 @@
       </button>
     </div>
 
+    <div class="row mt-5" *ngIf="enableAprobada">
+      <div class="col-10 offset-1 justify-content-center">
+        <div class="alert alert-success" role="alert">
+          La DDJJ ha sido <strong>APROBADA</strong>.
+        </div>
+      </div>
+    </div>
 
-    <div class="col-auto mx-4" *ngIf="enableTotales">
+    <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada">
       <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
         <mat-icon>clear</mat-icon>
       </button>
@@ -19,20 +26,23 @@
     </div>
 
 
-
-
   </div>
   <div class="row">
-    <div class="titulos">DDJJ <span class="titulos-second">EXTRAS</span></div>
+    <div class="titulos">DDJJ <span class="titulos-second">EXTRAS</span><span class="titulos-second"
+        *ngIf="enableAprobada"> (APROBADA)</span></div>
 
     <div class="row mt-3">
       <div class="col-sm scroll">
         <table class="table table-sm table-borderless">
-          <thead class="col-center thead-celeste">
+          <thead class="col-center" [style.background-color]="enableAprobada ? 'rgb(151, 187, 151)' : 'rgb(123, 204, 233)'">
             <tr>
-              <th class="titulo-tabla">
-                DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS
-              </th>
+
+              <th *ngIf="!enableAprobada; else elseBlock" class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS</th>
+              <ng-template #elseBlock>
+                <th class="titulo-tabla" style="background-color: green !important; color: white;">DECLARACION JURADA
+                  GUARDIAS ACTIVAS EXTRAS (APROBADA)</th>
+              </ng-template>
+
             </tr>
             <tr>
               <th>Julio 2023</th>
@@ -269,6 +279,20 @@
     </div>
   </div>
 
+  <div class="row offset-1 mostrar" id="firma">
+    <div class="col negrita">
+      <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
+        GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE ENCUENTREN GOZANDO DE L.A.O.,
+        LIC. POR MATERNIDAD; - </p>
+      <button mat-fab extended class="bg-success text-light" (click)="btnAprobado()" *ngIf="!enableAprobada"
+        matTooltip="Pase al Hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO
+      </button>
+    </div>
+    <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
+  </div>
+
   <div class="row">
     <div class="col offset-1">
       <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de
@@ -290,7 +314,7 @@
         Pase a DPH
       </button>
       <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" routerLink="/ddjj-extra-tot-rec"
-        matTooltip="Devolver al Hospital"  *ngIf="enableTotales">
+        matTooltip="Devolver al Hospital" *ngIf="enableTotales  && !enableAprobada">
         <mat-icon>assignment_return</mat-icon>
         RECHAZAR
       </button>
@@ -299,33 +323,4 @@
       <div class="col-1">
       </div>
     </div>
-
   </div>
-  <div class="row offset-1 mostrar" id="firma">
-    <div class="col negrita">
-      <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
-        GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O.,
-        LIC. POR MATERNIDAD; - </p>
-      <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap"
-        matTooltip="Pase al Hospital">
-        <mat-icon>assignment_turned_in</mat-icon>
-        APROBADO
-      </button>
-    </div>
-    <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
-  </div>
-
-</div>
-<div class="row offset-1 mostrar" id="firma">
-  <div class="col negrita">
-    <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
-      GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE EN CUENTREN GOZANDO DE L.A.O.,
-      LIC. POR MATERNIDAD; - </p>
-    <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-extra-tot-ap"
-      matTooltip="Pase al Hospital">
-      <mat-icon>assignment_turned_in</mat-icon>
-      APROBADO
-    </button>
-  </div>
-  <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
-</div>

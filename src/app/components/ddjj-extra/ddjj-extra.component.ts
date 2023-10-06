@@ -29,6 +29,8 @@ export class DdjjExtraComponent {
 
   profesionales: any[] = [];
   enableTotales: boolean = false;
+  enableAprobada: boolean = false;
+  enableRechazada: boolean = false;
   horasSemanal: number = 0;
   horasFindeSemana: number = 0;
   observ!: string;
@@ -92,6 +94,11 @@ export class DdjjExtraComponent {
         this.profesionales[i].horasTotal = this.profesionales[i].horasSemanal + this.profesionales[i].horasFindeSemana;
       }
     }
+  }
+
+  btnAprobado(){
+    console.log('APROBADO');
+    this.enableAprobada = true;
   }
 
 }
