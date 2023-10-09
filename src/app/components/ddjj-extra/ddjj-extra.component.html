@@ -16,13 +16,14 @@
     </div>
 
     <div class="row mt-5" *ngIf="enableRechazada">
-    <div class="col-10 offset-1 justify-content-center" >
-      <div class="alert alert-danger" role="alert">
-        Es necesario realizar las correcciones detalladas en la fila <strong>OBSERVACIONES y volver a realizar el pase a
-          DPH</strong>.
+      <div class="col-10 offset-1 justify-content-center">
+        <div class="alert alert-danger" role="alert">
+          Es necesario realizar las correcciones detalladas en la fila <strong>OBSERVACIONES y volver a realizar el pase
+            a
+            DPH</strong>.
+        </div>
       </div>
     </div>
-  </div>
 
     <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada && !enableRechazada">
       <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
@@ -44,16 +45,13 @@
       <div class="col-sm scroll">
         <table class="table table-sm table-borderless">
           <thead class="col-center {{estado}}">
-            <tr>
 
-              <th *ngIf="!enableAprobada; else elseBlock" class=" {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
-                EXTRAS</th>
-              <ng-template #elseBlock>
-                <th class="titulo-tabla {{estado}}">DECLARACION JURADA
-                  GUARDIAS ACTIVAS EXTRAS (APROBADA)</th>
-              </ng-template>
-
-            </tr>
+            <th *ngIf="estado === 'pendiente'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
+              EXTRAS (PENDIENTE)</th>
+            <th *ngIf="estado === 'aprobado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS
+              (APROBADA)</th>
+            <th *ngIf="estado === 'rechazado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
+              EXTRAS (RECHAZADA)</th>
             <tr>
               <th>Julio 2023</th>
             </tr>
@@ -280,7 +278,8 @@
                       <td>OBSERV.:</td>
                       <td colspan="43" class="negrita" style="color: green;" *ngIf="enableAprobada"><em>APROBADA.-</em>
                       </td>
-                      <td  colspan="43" class="negrita" style="color: red;" *ngIf="enableRechazada"><em>Es necesario completar el número de guardias correctamente.</em></td>
+                      <td colspan="43" class="negrita" style="color: red;" *ngIf="enableRechazada"><em>Es necesario
+                          completar el número de guardias correctamente.</em></td>
                     </tr>
                   </tfoot>
                 </table>

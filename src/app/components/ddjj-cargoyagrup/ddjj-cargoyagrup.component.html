@@ -1,21 +1,64 @@
 <div class="tabla-center">
-  <div class="row" style="margin-bottom: 10px;">
+  <div class="row" style="margin-bottom: 10px">
     <div class="col">
       <button mat-fab extended color="primary" routerLink="/guardias-view">
         <mat-icon>arrow_back_ios</mat-icon>
         Volver
       </button>
     </div>
+
+    <div class="row mt-5" *ngIf="enableAprobada">
+      <div class="col-10 offset-1 justify-content-center">
+        <div class="alert alert-success" role="alert">
+          La DDJJ ha sido <strong>APROBADA</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-5" *ngIf="enableRechazada">
+      <div class="col-10 offset-1 justify-content-center">
+        <div class="alert alert-danger" role="alert">
+          Es necesario realizar las correcciones detalladas en la fila <strong>OBSERVACIONES y volver a realizar el pase
+            a
+            DPH</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada && !enableRechazada">
+      <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
+        <mat-icon>clear</mat-icon>
+      </button>
+      <button class="bg-success text-light" mat-mini-fab matTooltip="Autorizar"
+        onclick="document.getElementById('firma').classList.toggle('mostrar');">
+        <mat-icon>done</mat-icon>
+      </button>
+    </div>
   </div>
   <div class="row">
-    <div class="titulos"> DDJJ <span class="titulos-second">CARGO Y AGRUPACIÓN</span>
+    <div class="titulos">DDJJ <span class="titulos-second">CARGO Y AGRUPACIÓN</span><span class="titulos-second"
+        *ngIf="enableAprobada"> (APROBADA)</span>
+      <span class="titulos-second" *ngIf="enableRechazada"> (RECHAZADA)</span>
     </div>
+
+
     <div class="row mt-3">
       <div class="col-sm scroll">
         <table class="table table-sm  table-borderless">
-          <thead class="col-center thead-celeste">
+          <thead class="col-center {{estado}}">
             <tr>
-              <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
+
+              <th *ngIf="estado === 'pendiente'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
+                DEL CARGO Y AGRUPACION (PENDIENTE)</th>
+              <th *ngIf="estado === 'aprobado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS DEL
+                CARGO Y AGRUPACION
+                (APROBADA)</th>
+              <th *ngIf="estado === 'rechazado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
+                DEL CARGO Y AGRUPACION (RECHAZADA)</th>
+
+
+
+              <!-- <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th> -->
             </tr>
             <tr>
               <th>Julio 2023</th>
@@ -44,6 +87,10 @@
                       <th rowspan="3">CATEGORIA</th>
                       <th rowspan="3">NOVEDADES</th>
                       <th colspan="31">GUARDIAS ACTIVAS</th>
+                      <th colspan="3" style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">GUARDIAS EXTRA
+                      </th>
+                      <th colspan="3" style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">BONO UTI 1580
+                      </th>
                     </tr>
                     <tr>
                       <td style="background-color: #9e9ea1;">Sa</td>
@@ -77,6 +124,12 @@
                       <td style="background-color: #9e9ea1;">Sa</td>
                       <td style="background-color: #9e9ea1;">Do</td>
                       <td>Lu</td>
+                      <td colspan="2" style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">Total en horas
+                      </td>
+                      <td rowspan="2" class="negrita" *ngIf="enableTotales">Total Hs.</td>
+                      <td colspan="2" style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">Total en horas
+                      </td>
+                      <td rowspan="2" class="negrita" *ngIf="enableTotales">Total Hs.</td>
                     </tr>
                     <tr>
                       <td style="background-color: #9e9ea1;">1</td>
@@ -110,6 +163,10 @@
                       <td style="background-color: #9e9ea1;">29</td>
                       <td style="background-color: #9e9ea1;">30</td>
                       <td>31</td>
+                      <td style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">L-V</td>
+                      <td style="background-color: rgb(78, 233, 168);" *ngIf="enableTotales">S-D-F</td>
+                      <td style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">L-V</td>
+                      <td style="background-color: rgb(192, 233, 78);" *ngIf="enableTotales">S-D-F</td>
                     </tr>
                   </thead>
                   <tbody>
@@ -215,12 +272,22 @@
                         <td class="{{profesionalActual.tipoGuardia}}">
                           {{ profesionalActual.agrupacionLunes || profesionalActual.cargoLunes }}
                         </td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasSemanal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasFindeSemana}}</td>
+                        <td class="negrita" *ngIf="enableTotales">{{profesionalActual.horasTotal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasSemanal}}</td>
+                        <td *ngIf="enableTotales">{{profesionalActual.horasFindeSemana}}</td>
+                        <td class="negrita" *ngIf="enableTotales">{{profesionalActual.horasTotal}}</td>
                       </tr>
                     </ng-container>
                   </tbody>
                   <tfoot>
                     <tr>
                       <td>OBSERV.:</td>
+                      <td colspan="43" class="negrita" style="color: green;" *ngIf="enableAprobada"><em>APROBADA.-</em>
+                      </td>
+                      <td colspan="43" class="negrita" style="color: red;" *ngIf="enableRechazada"><em>Es necesario
+                          completar el número de guardias correctamente.</em></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -231,6 +298,23 @@
       </div>
     </div>
   </div>
+
+
+
+  <div class="row offset-1 mostrar" id="firma">
+    <div class="col negrita">
+      <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
+        GUARDIAS COVID- SEGÚN RESOLUCIÓN N° 516-S/2023 - PARA AQUELLOS AGENTES QUE SE ENCUENTREN GOZANDO DE L.A.O.,
+        LIC. POR MATERNIDAD; - </p>
+      <button mat-fab extended class="bg-success text-light" (click)="btnAprobado()" *ngIf="!enableAprobada"
+        matTooltip="Pase al Hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO
+      </button>
+    </div>
+    <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
+  </div>
+
   <div class="row">
     <div class="col offset-1">
       <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de
@@ -247,13 +331,18 @@
         <button mat-menu-item>PDF</button>
         <button mat-menu-item>XLS</button>
       </mat-menu>
-      <button mat-fab extended color="warn" routerLink="/ddjj-cargoyagrup-tot">
+      <button mat-fab extended color="warn" (click)="btnPaseDPH()" *ngIf="!enableTotales">
         <mat-icon>assignment_turned_in</mat-icon>
         Pase a DPH
       </button>
+      <button id="btn-rechazo" class="mostrar" mat-fab extended color="warn" (click)="btnRechazado()"
+        matTooltip="Devolver al Hospital" *ngIf="!enableRechazada">
+        <mat-icon>assignment_return</mat-icon>
+        RECHAZAR
+      </button>
     </div>
     <div class="col-1">
+      <div class="col-1">
+      </div>
     </div>
   </div>
-
-</div>

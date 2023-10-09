@@ -64,6 +64,17 @@ export class DdjjCargoyagrupComponent {
     });
   }
 
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogObserv, {
+      data: { observ: this.observ },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('The dialog was closed');
+      this.observ = result;
+    });
+  }
+
   openPopupCalendario() {
     this.dialogReg.open(PopupCalendarioComponent, {
       width: '600px',
