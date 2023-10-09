@@ -273,8 +273,8 @@
                       <td>OBSERV.:</td>
                       <td colspan="43" class="negrita" style="color: green;" *ngIf="enableAprobada"><em>APROBADA.-</em>
                       </td>
-                      <td colspan="43" class="negrita" style="color: red;" *ngIf="enableRechazada"><em>Es necesario
-                          completar el número de guardias correctamente.</em></td>
+                      <td  *ngIf="observ && !enableRechazada" colspan="43" class="negrita" style="color: red;"><em>{{observ}}</em></td>
+                      <td colspan="43" class="negrita" style="color: red;" *ngIf="enableRechazada"><em>{{observ}}</em></td>
                     </tr>
                   </tfoot>
                 </table>

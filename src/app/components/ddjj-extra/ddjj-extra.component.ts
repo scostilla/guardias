@@ -68,6 +68,9 @@ export class DdjjExtraComponent {
 
     if (this.profesionales) {
       for (let i = 0; i < this.profesionales.length; i++) {
+        this.horasFindeSemana = 0;
+        this.horasSemanal = 0;
+
         if (this.profesionales[i].extraLunes) {
           this.horasSemanal = +this.profesionales[i].extraLunes;
         }
