@@ -1,20 +1,25 @@
-import { HttpClient } from '@angular/common/http';
+//import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { NavigationExtras, Router } from '@angular/router';
 import { DialogServiceService } from 'src/app/services/DialogService/dialog-service.service';
+import { ProfesionalTempService } from 'src/app/services/ProfesionalTemp/profesional-temp.service';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/Professional-data-service.service';
+import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
+import Profesional from 'src/server/models/Profesional';
 
-export interface UserData {
+/* export interface UserData {
   id: number;
   cuil: string;
   apellido: string;
   nombre: string;
   profesion: string;
-}
+} */
 
 @Component({
   selector: 'app-professional-table',
@@ -30,23 +35,30 @@ export interface UserData {
   ],
 })
 export class ProfessionalTableComponent implements AfterViewInit {
-  displayedColumns: string[] = [
+  /* displayedColumns: string[] = [
     'id',
     'cuil',
     'apellido',
     'nombre',
     'profesion',
-  ];
-  dataSource: MatTableDataSource<UserData>;
+  ]; */
+  dataSource: MatTableDataSource<Profesional>;
+  profesionales: Profesional[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
   constructor(
-    private http: HttpClient,
-    private professionalDataService: ProfessionalDataServiceService, private dialogService: DialogServiceService
+    //private http: HttpClient,
+    private professionalDataService: ProfessionalDataServiceService, 
+    private dialogService: DialogServiceService,
+    private profesionalTemp: ProfesionalTempService,
+    private profesionalService: ProfesionalService,
+    private router: Router,
+    
+    public dialogRef: MatDialogRef<ProfessionalTableComponent>
+    
   ) {
-    this.dataSource = new MatTableDataSource<UserData>([]);
+    this.dataSource = new MatTableDataSource<Profesional>([]);
   }
 
   ngAfterViewInit() {
@@ -55,11 +67,39 @@ export class ProfessionalTableComponent implements AfterViewInit {
   }
 
   ngOnInit() {
-    this.http
+    this.cargarProfesionales();
+    this.profesionalService.lista().subscribe(
+      profesionales => {
+        this.dataSource.data  = profesionales;
+      },
+      );
+      // Cambiarmos el valor de la variable para que todos los componentes que estan subscritos detecten el cambio
+    //this.profesionalTemp.miVariable$.next(true);
+
+    /* Aquí cargamos con JSON */
+    /* this.http
       .get<UserData[]>('../../../assets/jsonFiles/profesionales.json')
       .subscribe((data) => {
         this.dataSource.data = data;
-      });
+      }); */
+
+  }
+
+  seleccionar(id:any){
+    this.profesionalTemp.profesionalTempId.next(id);
+    console.log("########### id: " + id);
+    this.cancel();
+  }
+
+  cargarProfesionales(): void {
+    this.profesionalService.lista().subscribe(
+      data => {
+        this.profesionales = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   applyFilter(event: Event) {
@@ -72,7 +112,17 @@ export class ProfessionalTableComponent implements AfterViewInit {
   }
 
   onRowDoubleClick(row: any) {
-    console.log('professional table id:', row.id);
+    
+    console.log('professional table id:', row.idPersona);
+    const id: NavigationExtras = {state: {example: row.idPersona}};
+    console.log('professional table id:', id);
+    this.router.navigate(['regDiario'],id);
+    //console.log('professional table id:', id);
+    this.professionalDataService.dataUpdated.emit();
+    this.dialogService.closeDialog();
+
+    /* Uso con JSon */
+    /* console.log('professional table id:', row.id);
     this.professionalDataService.selectedId = row.id;
     this.professionalDataService.selectedDni = row.dni;
     this.professionalDataService.selectedCuil = row.cuil;
@@ -81,5 +131,11 @@ export class ProfessionalTableComponent implements AfterViewInit {
     this.professionalDataService.selectedProfesion = row.profesion;
     this.professionalDataService.dataUpdated.emit();
     this.dialogService.closeDialog();
+ */
+    
+  }
+
+  cancel() {
+    this.dialogRef.close();
   }
 }

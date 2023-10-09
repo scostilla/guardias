@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/Professional-data-service.service';
 import Especialidad from 'src/server/models/Especialidad';
 import { PopupComponent } from '../popup/popup.component';
@@ -9,6 +10,10 @@ import { Servicio } from 'src/app/models/servicio';
 import { ServicioService } from 'src/app/services/Servicio/servicio.service';
 import { TipoGuardia } from 'src/app/models/tipoGuardia';
 import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.service';
+import { Profesional } from 'src/app/models/profesional';
+import { ProfesionalTempService } from 'src/app/services/ProfesionalTemp/profesional-temp.service';
+import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
+
 
 @Component({
   selector: 'app-reg-diario',
@@ -19,6 +24,7 @@ export class RegDiarioComponent {
 
   servicios: Servicio[] = [];
   tipoGuardias: TipoGuardia[] = [];
+  profesional: Profesional = new Profesional("", "", 0);
 
 
   registroForm: FormGroup;
@@ -106,12 +112,12 @@ export class RegDiarioComponent {
     'Pediatria',
   ]; */
 
-  selectedId: string | undefined;
+  /* selectedId: string | undefined;
   selectedCuil: string | undefined;
   selectedDni: string | undefined;
   selectedNombre: string | undefined;
   selectedApellido: string | undefined;
-  selectedProfesion: string | undefined;
+  selectedProfesion: string | undefined; */
 
   constructor(
     private _fb: FormBuilder,
@@ -119,6 +125,9 @@ export class RegDiarioComponent {
 
     private servicioService: ServicioService,
     private tipoGuardiaService: tipoGuardiaService,
+    private profesionalTemp: ProfesionalTempService,
+    private profesionalService: ProfesionalService,
+    //private toastr: ToastrService,
 
 
     private professionalDataService: ProfessionalDataServiceService,
@@ -155,6 +164,12 @@ export class RegDiarioComponent {
 
     this.cargarServicio();
     this.cargarTipoGuardia();
+    
+    // Con el subscribe escuchamos si la variable sufrió algún cambio
+   /*  this.profesionalTemp.profesionalTempId.subscribe(data => {
+      this.cargarProfesional(data);
+      console.log(`El valor de la variable cambio a: ${data}`);
+    }); */
 
 
     //HOSPITALES
@@ -220,7 +235,24 @@ export class RegDiarioComponent {
   }
 }
 
-cargarProfesional(){
+/* cargarProfesional(id: number) {
+  //const id = this.activatedRoute.snapshot.params['id'];
+  if(id != -1){
+  this.profesionalService.detail(id).subscribe(
+    data => {
+      this.profesional = data;
+    },
+    err => {
+      this.toastr.error(err.error.mensaje, 'Fail', {
+        timeOut: 3000, positionClass: 'toast-top-center',
+      });
+      this.router.navigate(['./']);
+    }
+  );
+}
+} */
+
+/* cargarProfesional(){
   console.log(this.profesionalSeleccionado);
   this.selectedId = this.profesionalSeleccionado.id;
       this.selectedCuil = this.profesionalSeleccionado.cuil;
@@ -228,7 +260,7 @@ cargarProfesional(){
       this.selectedApellido = this.profesionalSeleccionado.apellido;
       this.selectedProfesion = this.profesionalSeleccionado.profesion;
       this.selectedDni = this.profesionalSeleccionado.dni;
-}
+} */
 
   cancel() {
     this.dialogRef.close();
