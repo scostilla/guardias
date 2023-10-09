@@ -6,7 +6,6 @@
         Volver
       </button>
     </div>
-
     <div class="row mt-5" *ngIf="enableAprobada">
       <div class="col-10 offset-1 justify-content-center">
         <div class="alert alert-success" role="alert">
@@ -14,7 +13,6 @@
         </div>
       </div>
     </div>
-
     <div class="row mt-5" *ngIf="enableRechazada">
       <div class="col-10 offset-1 justify-content-center">
         <div class="alert alert-danger" role="alert">
@@ -24,7 +22,6 @@
         </div>
       </div>
     </div>
-
     <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada && !enableRechazada">
       <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
         <mat-icon>clear</mat-icon>
@@ -40,12 +37,10 @@
         *ngIf="enableAprobada"> (APROBADA)</span>
       <span class="titulos-second" *ngIf="enableRechazada"> (RECHAZADA)</span>
     </div>
-
     <div class="row mt-3">
       <div class="col-sm scroll">
         <table class="table table-sm table-borderless">
           <thead class="col-center {{estado}}">
-
             <th *ngIf="estado === 'pendiente'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
               EXTRAS (PENDIENTE)</th>
             <th *ngIf="estado === 'aprobado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS

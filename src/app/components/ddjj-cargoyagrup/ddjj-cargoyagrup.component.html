@@ -6,7 +6,6 @@
         Volver
       </button>
     </div>
-
     <div class="row mt-5" *ngIf="enableAprobada">
       <div class="col-10 offset-1 justify-content-center">
         <div class="alert alert-success" role="alert">
@@ -14,7 +13,6 @@
         </div>
       </div>
     </div>
-
     <div class="row mt-5" *ngIf="enableRechazada">
       <div class="col-10 offset-1 justify-content-center">
         <div class="alert alert-danger" role="alert">
@@ -24,7 +22,6 @@
         </div>
       </div>
     </div>
-
     <div class="col-auto mx-4" *ngIf="enableTotales && !enableAprobada && !enableRechazada">
       <button color="warn" mat-mini-fab matTooltip="Rechazar" class="mx-3" (click)="openDialog()">
         <mat-icon>clear</mat-icon>
@@ -40,14 +37,11 @@
         *ngIf="enableAprobada"> (APROBADA)</span>
       <span class="titulos-second" *ngIf="enableRechazada"> (RECHAZADA)</span>
     </div>
-
-
     <div class="row mt-3">
       <div class="col-sm scroll">
         <table class="table table-sm  table-borderless">
           <thead class="col-center {{estado}}">
             <tr>
-
               <th *ngIf="estado === 'pendiente'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
                 DEL CARGO Y AGRUPACION (PENDIENTE)</th>
               <th *ngIf="estado === 'aprobado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS DEL
@@ -55,10 +49,6 @@
                 (APROBADA)</th>
               <th *ngIf="estado === 'rechazado'" class="titulo-tabla {{estado}}">DECLARACION JURADA GUARDIAS ACTIVAS
                 DEL CARGO Y AGRUPACION (RECHAZADA)</th>
-
-
-
-              <!-- <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th> -->
             </tr>
             <tr>
               <th>Julio 2023</th>
@@ -298,9 +288,6 @@
       </div>
     </div>
   </div>
-
-
-
   <div class="row offset-1 mostrar" id="firma">
     <div class="col negrita">
       <p>CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE
@@ -314,7 +301,6 @@
     </div>
     <div class="col"><img src="assets/img/firma_arias.png" style="width: 400px;" /></div>
   </div>
-
   <div class="row">
     <div class="col offset-1">
       <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de

@@ -87,33 +87,63 @@ export class DdjjCargoyagrupComponent {
 
     if (this.profesionales) {
       for (let i = 0; i < this.profesionales.length; i++) {
-        if (this.profesionales[i].extraLunes) {
-          this.horasSemanal = +this.profesionales[i].extraLunes;
+        if (
+          this.profesionales[i].cargoLunes ||
+          this.profesionales[i].agrupacionLunes
+        ) {
+          this.horasSemanal = +this.profesionales[i].cargoLunes || 0;
+          this.horasSemanal = +this.profesionales[i].agrupacionLunes || 0;
+          this.horasSemanal = this.horasSemanal * 2;
         }
-        if (this.profesionales[i].extraMartes) {
-          this.horasSemanal = +this.profesionales[i].extraMartes;
+        if (
+          this.profesionales[i].cargoMartes ||
+          this.profesionales[i].agrupacionMartes
+        ) {
+          this.horasSemanal = +this.profesionales[i].cargoMartes || 0;
+          this.horasSemanal = +this.profesionales[i].agrupacionMartes || 0;
         }
-        if (this.profesionales[i].extraMiercoles) {
-          this.horasSemanal = +this.profesionales[i].extraMiercoles;
+        if (
+          this.profesionales[i].cargoMiercoles ||
+          this.profesionales[i].agrupacionMiercoles
+        ) {
+          this.horasSemanal = +this.profesionales[i].cargoMiercoles || 0;
+          this.horasSemanal = +this.profesionales[i].agrupacionMiercoles || 0;
         }
-        if (this.profesionales[i].extraJueves) {
-          this.horasSemanal = +this.profesionales[i].extraJueves;
+        if (
+          this.profesionales[i].cargoJueves ||
+          this.profesionales[i].agrupacionJueves
+        ) {
+          this.horasSemanal = +this.profesionales[i].cargoJueves || 0;
+          this.horasSemanal = +this.profesionales[i].agrupacionJueves || 0;
         }
-        if (this.profesionales[i].extraViernes) {
-          this.horasSemanal = +this.profesionales[i].extraViernes;
+        if (
+          this.profesionales[i].cargoViernes ||
+          this.profesionales[i].agrupacionViernes
+        ) {
+          this.horasSemanal = +this.profesionales[i].cargoViernes || 0;
+          this.horasSemanal = +this.profesionales[i].agrupacionViernes || 0;
         }
 
-        if (this.profesionales[i].extraSabado) {
-          this.horasFindeSemana = +this.profesionales[i].extraSabado;
+        if (
+          this.profesionales[i].cargoSabado ||
+          this.profesionales[i].agrupacionSabado
+        ) {
+          this.horasFindeSemana = +this.profesionales[i].cargoSabado || 0;
+          this.horasFindeSemana = +this.profesionales[i].agrupacionSabado || 0;
         }
-        if (this.profesionales[i].extraDomingo) {
-          this.horasFindeSemana = +this.profesionales[i].extraDomingo;
+        if (
+          this.profesionales[i].cargoDomingo ||
+          this.profesionales[i].agrupacionDomingo
+        ) {
+          this.horasFindeSemana = +this.profesionales[i].cargoDomingo || 0;
+          this.horasFindeSemana = +this.profesionales[i].agrupacionDomingo || 0;
         }
 
         //SOLO PARA ESTER MES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //MULTIPLICO *4 MARTES A VIERNES Y *5 FINDE Y LUNES
-        this.profesionales[i].horasSemanal =
-          this.horasSemanal * 4 + this.profesionales[i].extraLunes || 0;
+        this.profesionales[i].horasSemanal = this.horasSemanal * 4;
+
+        //          this.horasSemanal * 4 + this.profesionales[i].cargoLunes || 0 + this.profesionales[i].cargoLunes || 0;
         this.profesionales[i].horasFindeSemana = this.horasFindeSemana * 5 || 0;
         this.profesionales[i].horasTotal =
           this.profesionales[i].horasSemanal +
