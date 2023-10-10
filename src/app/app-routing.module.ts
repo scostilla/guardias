@@ -61,6 +61,7 @@ import { ProfessionalPlantillaDhComponent } from './components/professional-plan
 import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
+import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
 
 
 const routes: Routes = [
@@ -126,6 +127,22 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
+
+ //prueba CRUD
+ //{path:'',component:ListaServicioComponent},
+ 
+
+ 
+ {path:'regDiario/:id',component:RegDiarioComponent},
+ {path:'**',redirectTo:'',pathMatch:'full'},
+ /* {path:'regDiario/:id',component:RegDiarioComponent},
+  */{path:'**',redirectTo:'',pathMatch:'full'},
+  //registro
+//{path:'forRegDiario/:id',component:FormularioRegDiarioComponent},
+ 
+
+
+ //si tecleamos una direccion erronea redirige a raiz
 ];
 
 @NgModule({

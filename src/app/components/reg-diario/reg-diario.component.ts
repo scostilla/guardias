@@ -13,6 +13,9 @@ import { tipoGuardiaService } from 'src/app/services/Servicio/tipoGuardia.servic
 import { Profesional } from 'src/app/models/profesional';
 import { ProfesionalTempService } from 'src/app/services/ProfesionalTemp/profesional-temp.service';
 import { ProfesionalService } from 'src/app/services/Servicio/profesional.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { registroActividadService } from 'src/app/services/Servicio/registroActividad.services';
 
 
 @Component({
@@ -22,10 +25,15 @@ import { ProfesionalService } from 'src/app/services/Servicio/profesional.servic
 })
 export class RegDiarioComponent {
 
+  public routerLinkVariable = "/regDiario/:id";
   servicios: Servicio[] = [];
   tipoGuardias: TipoGuardia[] = [];
   profesional: Profesional = new Profesional("", "", 0);
 
+  formulario: FormGroup;
+
+
+  registroActividad: any = {};
 
   registroForm: FormGroup;
   timeControl: FormControl = new FormControl();
@@ -55,7 +63,6 @@ export class RegDiarioComponent {
     'San Roque', 
     'Materno Infantil'
   ];
-
   especialidad_ps: string[] = [
     'soria',
     'Cirugía General', 
@@ -70,7 +77,6 @@ export class RegDiarioComponent {
     'UTI-UTIN', 
     'Neurocirugía'
   ];
-
   especialidad_sr: string[] = [
     'roque',
     'Cirugía General', 
@@ -85,7 +91,6 @@ export class RegDiarioComponent {
     'Neumonología', 
     'Reumatología'
   ];
-
   especialidad_mi: string[] = [
     'materno',
     'Cirugía General', 
@@ -112,12 +117,13 @@ export class RegDiarioComponent {
     'Pediatria',
   ]; */
 
-  /* selectedId: string | undefined;
+  selectedId: string | undefined;
   selectedCuil: string | undefined;
   selectedDni: string | undefined;
   selectedNombre: string | undefined;
   selectedApellido: string | undefined;
-  selectedProfesion: string | undefined; */
+  selectedProfesion: string | undefined;
+ 
 
   constructor(
     private _fb: FormBuilder,
@@ -127,12 +133,13 @@ export class RegDiarioComponent {
     private tipoGuardiaService: tipoGuardiaService,
     private profesionalTemp: ProfesionalTempService,
     private profesionalService: ProfesionalService,
-    //private toastr: ToastrService,
-
+    private toastr: ToastrService,
+    private router: Router,
 
     private professionalDataService: ProfessionalDataServiceService,
     private http: HttpClient,
-    public dialogRef: MatDialogRef<RegDiarioComponent>
+    public dialogRef: MatDialogRef<RegDiarioComponent>,
+    private registroActividadService: registroActividadService,
   ) {
     this.registroForm = this._fb.group({
       hospital: '',
@@ -147,6 +154,8 @@ export class RegDiarioComponent {
       hs_egreso: '',
       fec_egreso: '',
     });
+
+    this.formulario= this._fb.group({})
   }
 
   openDialog(componentParameter: any) {
@@ -166,10 +175,10 @@ export class RegDiarioComponent {
     this.cargarTipoGuardia();
     
     // Con el subscribe escuchamos si la variable sufrió algún cambio
-   /*  this.profesionalTemp.profesionalTempId.subscribe(data => {
+    this.profesionalTemp.profesionalTempId.subscribe(data => {
       this.cargarProfesional(data);
       console.log(`El valor de la variable cambio a: ${data}`);
-    }); */
+    });
 
 
     //HOSPITALES
@@ -186,6 +195,27 @@ export class RegDiarioComponent {
         this.especialidades = data;
       });
   }
+
+  guardarRegistroDiario(){
+     // Llama al servicio para guardar el registro de actividad
+  this.registroActividadService.save(this.registroActividad)
+  .subscribe(
+    (respuesta) => {
+      // Manejar la respuesta exitosa, como redirigir o mostrar un mensaje de éxito
+      console.log('Registro de actividad creado con éxito:', respuesta);
+      // Puedes limpiar el formulario o realizar otras acciones después del éxito.
+    },
+    (error) => {
+      // Manejar errores, como mostrar un mensaje de error
+      console.error('Error al crear el registro de actividad', error);
+    }
+  );
+
+  }
+
+
+  
+
 
   cargarServicio(): void {
     this.servicioService.lista().subscribe(
@@ -235,7 +265,7 @@ export class RegDiarioComponent {
   }
 }
 
-/* cargarProfesional(id: number) {
+cargarProfesional(id: number) {
   //const id = this.activatedRoute.snapshot.params['id'];
   if(id != -1){
   this.profesionalService.detail(id).subscribe(
@@ -250,7 +280,7 @@ export class RegDiarioComponent {
     }
   );
 }
-} */
+}
 
 /* cargarProfesional(){
   console.log(this.profesionalSeleccionado);

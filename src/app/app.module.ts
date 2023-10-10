@@ -107,6 +107,7 @@ import { ProfessionalFormDeletComponent } from './components/professional-form-d
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { TablaComponent } from './components/tabla/tabla.component';
+import { ToastrModule } from 'ngx-toastr';
 
 
 registerLocaleData(localePy,'es');
@@ -230,6 +231,7 @@ registerLocaleData(localePy,'es');
     MatButtonToggleModule,
     DatePipe,
     MatBadgeModule,
+    ToastrModule.forRoot(),
   ],
   providers: [
     ProfessionalDataServiceService,
