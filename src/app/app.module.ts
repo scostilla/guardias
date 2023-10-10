@@ -51,14 +51,12 @@ import { SearchProfessionalComponent } from './components/search-professional/se
 import { TimePickerComponent } from './components/time-picker/time-picker.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/Professional-data-service.service';
 
-
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 
-
-
 //Date Import
+
 import localePy from '@angular/common/locales/es-PY';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
 import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
@@ -101,15 +99,15 @@ import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
+import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
+import { TablaComponent } from './components/tabla/tabla.component';
 
-
-registerLocaleData(localePy,'es');
-
+registerLocaleData(localePy, 'es');
 
 @NgModule({
   declarations: [
@@ -145,7 +143,7 @@ registerLocaleData(localePy,'es');
     ProfessionalDetailComponent,
     DdjjContrafacturaComponent,
     DdjjCargoyagrupComponent,
-   /*  ApiComponent,  */
+    /*  ApiComponent,  */
     TablaComponent,
     ArrayFecComponent,
     MonthTableComponent,
@@ -193,7 +191,16 @@ registerLocaleData(localePy,'es');
     DdjjContrafacturaTotRecComponent,
     ProfessionalFormDeletComponent,
     ProfessionalPlantillaDhComponent,
-
+    DdjjCargoyagrupTotalApComponent,
+    DdjjCargoyagrupTotalRecComponent,
+    DdjjContrafacturaTotApComponent,
+    DdjjContrafacturaTotRecComponent,
+    DdjjExtraTotApComponent,
+    DdjjExtraTotRecComponent,
+    ProfessionalDhHistComponent,
+    ProfessionalDhJunioComponent,
+    ProfessionalFormEditComponent,
+    ProfessionalDhJunioAsisComponent,
   ],
 
   imports: [
@@ -220,10 +227,11 @@ registerLocaleData(localePy,'es');
     MatButtonToggleModule,
     DatePipe,
     MatBadgeModule,
+    BrowserModule,
   ],
   providers: [
     ProfessionalDataServiceService,
-    {provide: LOCALE_ID,useValue:'es'}
+    { provide: LOCALE_ID, useValue: 'es' },
   ],
 
   bootstrap: [AppComponent],
