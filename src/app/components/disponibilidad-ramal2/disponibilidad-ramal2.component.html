@@ -7,12 +7,12 @@
 </div>
 <div class="row"> 
   <div class="col-9 offset-1">
-<button mat-button [matMenuTriggerFor]="menu" style="font-weight: bold;">» Región Quebrada</button>
+<button mat-button [matMenuTriggerFor]="menu" style="font-weight: bold;">» Región Ramal II</button>
 <mat-menu #menu="matMenu">
   <button mat-menu-item>Región Valles</button>
   <button mat-menu-item>Región Puna</button>
   <button mat-menu-item>Región Ramal I</button>
-  <button mat-menu-item routerLink="/disponibilidad-ramal2">Región Ramal II</button>
+  <button mat-menu-item routerLink="/disponibilidad">Región Quebrada</button>
   <button mat-menu-item>Región Centro</button>
 </mat-menu>
 </div>
@@ -46,170 +46,177 @@
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="39">
       <span class="calendar-dia__number">01</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+      <div class="calendar-dia--text circulo--general" matTooltip="Cirugía, Dr. Oscar Orias">BAREIRO MARTINEZ WILFRIDO</div>
+      </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="39" (click)="openPopupCalendarioDisp()">
       <span class="calendar-dia__number">02</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Gutierrez Luis Ariel</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">RAMOS JORGE ARNALDO</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">ROMERO OSCAR HUMBERTO</div>
     </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="40">
       <span class="calendar-dia__number">03</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Clínica, Dr. Oscar Orias">LUMETTO ROMINA ROSANA</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">PIZARRO MONICA BEATRIZ</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Ma" data-week="40">
       <span class="calendar-dia__number">04</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez María Susana</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">GARCES MENDOZA MORAIMA ELENA</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Mi" data-week="40">
       <span class="calendar-dia__number">05</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">FIGUEROA ELIO</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">ARRAYA PEDRO ADEMIR</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Ju" data-week="40">
       <span class="calendar-dia__number">06</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Terapia Intensiva, Dr. Oscar Orias">GONZALEZ CLAUDIO FABIAN</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">RAMOS JORGE ARNALDO</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia--today" data-weekday="Vi" data-week="40">
       <span class="calendar-dia__number">07</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Traumatólogo, Gral. Belgrano">Guevara Rodriguez Fernando</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatría, Dr. Oscar Orias">ESCUDERO JORGELINA MARIANELA</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="40">
       <span class="calendar-dia__number">08</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Neurocirugía, Dr. Oscar Orias">CONCHA LEDESMA RODOLFO OMAR</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Infectología, Dr. Oscar Orias">BEJARANO FERNANDO JOSE</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="40">
       <span class="calendar-dia__number">09</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatría, Dr. Oscar Orias">GUERRERO MARIA PAULA</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatría, Dr. Oscar Orias">VALDIVIEZO RITA</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">CARRIZO ALICIA BEATRIZ</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="41">
       <span class="calendar-dia__number">10</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">ARRAYA PEDRO ADEMIR</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Ma" data-week="41">
       <span class="calendar-dia__number">11</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Clínica, Dr. Oscar Orias">LUMETTO ROMINA ROSANA</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Mi" data-week="41">
       <span class="calendar-dia__number">12</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Ju" data-week="41">
       <span class="calendar-dia__number">13</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Terapia Intensiva, Dr. Oscar Orias">GONZALEZ CLAUDIO FABIAN</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">RAMOS JORGE ARNALDO</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Vi" data-week="41">
       <span class="calendar-dia__number">14</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Traumatólogo, Gral. Belgrano">Guevara Rodriguez Fernando</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">FIGUEROA	ELIO</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatría, Dr. Oscar Orias">ESCUDERO JORGELINA MARIANELA</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="41">
       <span class="calendar-dia__number">15</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">RAMOS JORGE ARNALDO</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="41">
       <span class="calendar-dia__number">16</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Gutierrez Luis Ariel</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatría, Dr. Oscar Orias">VALDIVIEZO RITA</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">JORDAN CECILIA CRISTINA</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="42">
       <span class="calendar-dia__number">17</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+      <div class="calendar-dia--icon"></div>
+      <div class="calendar-dia--text circulo--general" matTooltip="Cirugía, Dr. Oscar Orias">BAREIRO MARTINEZ WILFRIDO</div>
+      </div>
     </li>
     <li class="calendar-dia" data-weekday="Ma" data-week="42">
       <span class="calendar-dia__number">18</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Gutierrez Luis Ariel</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">RAMOS	JORGE ARNALDO</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Calilegua">ROMERO OSCAR HUMBERTO</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Mi" data-week="42">
       <span class="calendar-dia__number">19</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Terapia Intensiva, Dr. Oscar Orias">GONZALEZ CLAUDIO FABIAN</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-feriado" data-weekday="Ju" data-week="42">
       <span class="calendar-dia__number">20</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Terapia Intensiva, Dr. Oscar Orias">GONZALEZ CLAUDIO FABIAN</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Vi" data-week="42">
       <span class="calendar-dia__number">21</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Neurocirugía, Dr. Oscar Orias">CONCHA LEDESMA RODOLFO OMAR</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="42">
       <span class="calendar-dia__number">22</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Pediatría, Dr. Oscar Orias">ESCUDERO JORGELINA MARIANELA</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
+      </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="42">
       <span class="calendar-dia__number">23</span>
@@ -219,9 +226,8 @@
       <span class="calendar-dia__number">24</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">ARRAYA PEDRO ADEMIR</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
       </div>
     </li>
     <li class="calendar-dia" data-weekday="Ma" data-week="43">
@@ -230,31 +236,40 @@
     </li>
     <li class="calendar-dia" data-weekday="Mi" data-week="43">
       <span class="calendar-dia__number">26</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Infectología, Dr. Oscar Orias">BEJARANO FERNANDO JOSE</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
+      </div>
     </li>
     <li class="calendar-dia" data-weekday="Ju" data-week="43">
       <span class="calendar-dia__number">27</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Neurocirugía, Dr. Oscar Orias">CONCHA LEDESMA RODOLFO OMAR</div>
+      </div>
     </li>
     <li class="calendar-dia" data-weekday="Vi" data-week="43">
       <span class="calendar-dia__number">28</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, María Susana</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Martinez, Yanina Vanesa</div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Gral. Belgrano">Urbina Pedro Silverio</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">ARRAYA PEDRO ADEMIR</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">BARRIOS GABRIELA GISELA</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Sa" data-week="43">
       <span class="calendar-dia__number">29</span>
-      <div class="calendar-dia__content"></div>
+      <div class="calendar-dia__content">
+        <div class="calendar-dia--icon"></div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Presbitero Esc. Zegada">FIGUEROA ELIO</div>
+      </div>
     </li>
     <li class="calendar-dia calendar-dia-finde" data-weekday="Do" data-week="43">
       <span class="calendar-dia__number">30</span>
       <div class="calendar-dia__content">
         <div class="calendar-dia--icon"></div>
-        <div class="calendar-dia--text circulo--general" matTooltip="Pediatra, Gral. Belgrano">Mejia Angélica Estela</div>
+        <div class="calendar-dia--text circulo--general" matTooltip="Generalista, Dr. Oscar Orias">SUAREZ ZORRILLA PABLO LUIS</div>
       </div>
     </li>
     <li class="calendar-dia calendar-dia--begin-week" data-weekday="Lu" data-week="44">
@@ -286,5 +301,6 @@
       <div class="calendar-dia__content"></div>
     </li>
   </ol>
+
 
 

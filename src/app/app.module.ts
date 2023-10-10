@@ -106,6 +106,7 @@ import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactur
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
+import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal2/disponibilidad-ramal2.component';
 
 
 registerLocaleData(localePy,'es');
@@ -192,6 +193,7 @@ registerLocaleData(localePy,'es');
     ProfessionalFormDeletComponent,
     ProfessionalPlantillaDhComponent,
     ProfessionalDhJunioAsisComponent,
+    DisponibilidadRamal2Component,
     
   ],
 

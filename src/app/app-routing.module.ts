@@ -56,6 +56,7 @@ import { DigestoComponent } from './components/digesto/digesto.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
+import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal2/disponibilidad-ramal2.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
@@ -121,6 +122,7 @@ const routes: Routes = [
  {path: 'novedades', component:NovedadesComponent}, 
  {path: 'historial', component:HistorialComponent},
  {path: 'disponibilidad', component:DisponibilidadComponent},
+ {path: 'disponibilidad-ramal2', component:DisponibilidadRamal2Component},
  {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
