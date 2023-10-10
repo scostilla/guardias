@@ -5,7 +5,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogModule,
-  MatDialogRef
+  MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -62,12 +62,30 @@ export class DdjjContrafacturaComponent {
     });
   }
 
-  openPopupCfedit() {
+  openPopupCfedit(
+    apellido: string,
+    nombre: string,
+    cuil: string,
+    compContribuyente: string,
+    compFactura: string,
+    compFecha: string,
+    cfTotalLiq: number
+  ) {
     this.dialogReg.open(PopupDdjjCfEditComponent, {
       width: '550px',
       disableClose: true,
+      data: {
+        apellido: apellido,
+        nombre: nombre,
+        cuil: cuil,
+        compContribuyente: compContribuyente,
+        compFactura: compFactura,
+        compFecha: compFecha,
+        cfTotalLiq: cfTotalLiq || 0,
+      },
     });
   }
+
   btnAprobado() {
     this.enableAprobada = true;
     this.estado = 'aprobado';
@@ -89,8 +107,6 @@ export class DdjjContrafacturaComponent {
   }
 }
 
-
-
 @Component({
   selector: 'dialog-observ',
   templateUrl: 'dialog-observ.html',
@@ -103,8 +119,6 @@ export class DdjjContrafacturaComponent {
     MatButtonModule,
   ],
 })
-
-
 export class DialogObserv {
   constructor(
     public dialogRef: MatDialogRef<DialogObserv>,

@@ -130,8 +130,22 @@
                         <td>{{profesionalActual.comp_contribuyente}}</td>
                         <td>{{profesionalActual.comp_factura}}</td>
                         <td>{{profesionalActual.comp_fecha}}</td>
-                        <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;"
-                            (click)="openPopupCfedit()">edit</mat-icon></td>
+                        <td>
+                          <mat-icon
+                            color="primary"
+                            matTooltip="Modificar factura"
+                            style="cursor: pointer;"
+                            (click)="openPopupCfedit(
+                              profesionalActual.apellido,
+                              profesionalActual.nombre,
+                              profesionalActual.cuil,
+                              profesionalActual.comp_contribuyente,
+                              profesionalActual.comp_factura,
+                              profesionalActual.comp_fecha,
+                              profesionalActual.cf_total_liq
+                            )">edit
+                          </mat-icon>
+                        </td>
                         <td>{{profesionalActual.cf_guardia_dias_lv}}</td>
                         <td>{{profesionalActual.cf_guardia_dias_sdf}}</td>
                         <td>{{profesionalActual.cf_guardia_cant_hs_lv}}</td>
