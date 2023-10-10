@@ -77,7 +77,61 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+
+
+
+
+
+                    <ng-container *ngFor="let profesionalActual of profesionales; let i = index">
+                      <tr>
+                        <td>{{i+1}}</td>
+                        <td>{{profesionalActual.apellido}}, {{profesionalActual.nombre}}</td>
+                        <td>{{profesionalActual.cuil}}</td>
+                        <td>{{profesionalActual.servicio}}</td>
+                        <td>{{profesionalActual.comp_contribuyente}}</td>
+                        <td>{{profesionalActual.comp_factura}}</td>
+                        <td>{{profesionalActual.comp_fecha}}</td>
+                        <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;"
+                            (click)="openPopupCfedit()">edit</mat-icon></td>
+                        <td>{{profesionalActual.cf_guardia_dias_lv}}</td>
+                        <td>{{profesionalActual.cf_guardia_dias_sdf}}</td>
+                        <td>{{profesionalActual.cf_guardia_cant_hs_lv}}</td>
+                        <td>{{profesionalActual.cf_guardia_cant_hs_sdf}}</td>
+
+                        <td>${{profesionalActual.cf_guardia_monto_lv || 0}}</td>
+                        <td>${{profesionalActual.cf_guardia_monto_sdf || 0}}</td>
+                        <td>{{profesionalActual.cf_bono_cant_hs_lv}}</td>
+                        <td>{{profesionalActual.cf_bono_cant_hs_sdf}}</td>
+
+                        <td>${{profesionalActual.cf_bono_monto_lv || 0}}</td>
+                        <td>${{profesionalActual.cf_bono_monto_sdf || 0}}</td>
+
+                        <td>${{profesionalActual.cf_total_hs_liq_lv || 0}}</td>
+                        <td>${{profesionalActual.cf_total_hs_liq_sdf || 0}}</td>
+                        <td style="background-color: #eee;">${{profesionalActual.cf_total_liq || 0}}</td>
+
+
+
+
+                      </tr>
+                    </ng-container>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!-- <tr>
                       <td>1</td>
                       <td>HUERTAS CLEMENTE</td>
                       <td>20-45368456-5</td>
@@ -123,7 +177,7 @@
                       <td>$38.090,94</td>
                       <td>$41.900,03</td>
                       <td style="background-color: #eee;">$79.990,97</td>
-                    </tr>
+                    </tr> -->
                   </tbody>
                   <tfoot>
                     <tr>

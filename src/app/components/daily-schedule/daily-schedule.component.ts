@@ -81,6 +81,7 @@ export class DailyScheduleComponent {
           type: professional.tipoGuardia,
           hospital: professional.hospital,
           servicio: professional.servicio,
+          especialidad: professional.especialidad,
           cuil: professional.cuil,
           sitRevista: professional.sitRevista,
           cat: professional.cat,
