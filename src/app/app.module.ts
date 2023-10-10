@@ -82,6 +82,7 @@ import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-e
 import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
+import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal2/disponibilidad-ramal2.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
 import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
@@ -201,6 +202,7 @@ registerLocaleData(localePy, 'es');
     ProfessionalDhJunioComponent,
     ProfessionalFormEditComponent,
     ProfessionalDhJunioAsisComponent,
+    DisponibilidadRamal2Component,
   ],
 
   imports: [
