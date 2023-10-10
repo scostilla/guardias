@@ -6372,15 +6372,15 @@
    "cf_guardia_dias_lv": "07\/24\/2023",
    "cf_guardia_cant_hs_lv": 4,
    "cf_guardia_cant_hs_sdf": 0,
-   "cf_guardia_monto_lv": 261201.46800000005,
+   "cf_guardia_monto_lv": 261201.47,
    "cf_guardia_monto_sdf": 0,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 261201.46800000005,
+   "cf_total_hs_liq_lv": 261201.47,
    "cf_total_hs_liq_sdf": 0,
-   "cf_total_liq": 261201.46800000005,
+   "cf_total_liq": 261201.47,
    "cf_total_fact": 261201.48,
-   "cf_dif_redondeo": -0.011999999958788976
+   "cf_dif_redondeo": -0.01
   },
   {
    "id": 315,
@@ -6407,15 +6407,15 @@
    "cf_guardia_dias_sdf": "07\/15\/2023",
    "cf_guardia_cant_hs_lv": 2,
    "cf_guardia_cant_hs_sdf": 5,
-   "cf_guardia_monto_lv": 130600.73400000003,
-   "cf_guardia_monto_sdf": 359152.05000000005,
+   "cf_guardia_monto_lv": 130600.73,
+   "cf_guardia_monto_sdf": 359152.05,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 130600.73400000003,
-   "cf_total_hs_liq_sdf": 359152.05000000005,
-   "cf_total_liq": 489752.7840000001,
+   "cf_total_hs_liq_lv": 130600.73,
+   "cf_total_hs_liq_sdf": 359152.05,
+   "cf_total_liq": 489752.78,
    "cf_total_fact": 489752.74,
-   "cf_dif_redondeo": 0.044000000110827386
+   "cf_dif_redondeo": 0.04
   },
   {
    "id": 316,
@@ -6449,7 +6449,7 @@
    "cf_total_hs_liq_sdf": 143660.82,
    "cf_total_liq": 143660.82,
    "cf_total_fact": 143660.8,
-   "cf_dif_redondeo": 0.02000000001862645
+   "cf_dif_redondeo": 0.02
   },
   {
    "id": 317,
@@ -6475,15 +6475,15 @@
    "cf_guardia_dias_lv": "07\/26\/2023",
    "cf_guardia_cant_hs_lv": 5,
    "cf_guardia_cant_hs_sdf": 0,
-   "cf_guardia_monto_lv": 326501.8350000001,
+   "cf_guardia_monto_lv": 326501.83,
    "cf_guardia_monto_sdf": 0,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 326501.8350000001,
+   "cf_total_hs_liq_lv": 326501.83,
    "cf_total_hs_liq_sdf": 0,
-   "cf_total_liq": 326501.8350000001,
+   "cf_total_liq": 326501.83,
    "cf_total_fact": 326501.85,
-   "cf_dif_redondeo": -0.014999999897554517
+   "cf_dif_redondeo": -0.01
   },
   {
    "id": 318,
@@ -6551,7 +6551,7 @@
    "cf_total_hs_liq_sdf": 71830.41,
    "cf_total_liq": 71830.41,
    "cf_total_fact": 71830.4,
-   "cf_dif_redondeo": 0.010000000009313226
+   "cf_dif_redondeo": 0.01
   },
   {
    "id": 320,
@@ -6578,17 +6578,17 @@
    "cf_guardia_dias_sdf": "07\/29\/2023",
    "cf_guardia_cant_hs_lv": 5.5,
    "cf_guardia_cant_hs_sdf": 4.5,
-   "cf_guardia_monto_lv": 411560.9835,
-   "cf_guardia_monto_sdf": 416404.945,
+   "cf_guardia_monto_lv": 411560.98,
+   "cf_guardia_monto_sdf": 416404.94,
    "cf_bono_cant_hs_lv": 5.5,
    "cf_bono_cant_hs_sdf": 4.5,
    "cf_bono_monto_lv": 40000,
    "cf_bono_monto_sdf": 40000,
-   "cf_total_hs_liq_lv": 451560.9835,
-   "cf_total_hs_liq_sdf": 406404.945,
-   "cf_total_liq": 857965.9285000002,
+   "cf_total_hs_liq_lv": 451560.98,
+   "cf_total_hs_liq_sdf": 406404.94,
+   "cf_total_liq": 857965.93,
    "cf_total_fact": 857965.87,
-   "cf_dif_redondeo": 0.05850000015925616
+   "cf_dif_redondeo": 0.06
   },
   {
    "id": 321,
@@ -6615,15 +6615,15 @@
    "cf_guardia_dias_sdf": "07\/21\/2023",
    "cf_guardia_cant_hs_lv": 9,
    "cf_guardia_cant_hs_sdf": 4,
-   "cf_guardia_monto_lv": 587703.3030000001,
+   "cf_guardia_monto_lv": 587703.30,
    "cf_guardia_monto_sdf": 287321.64,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 587703.3030000001,
+   "cf_total_hs_liq_lv": 587703.30,
    "cf_total_hs_liq_sdf": 287321.64,
-   "cf_total_liq": 875024.9430000001,
+   "cf_total_liq": 875024.94,
    "cf_total_fact": 875024.94,
-   "cf_dif_redondeo": 0.003000000142492354
+   "cf_dif_redondeo": 0.01
   },
   {
    "id": 322,
@@ -6647,17 +6647,17 @@
    "comp_factura": "B-3-16",
    "comp_fecha": "08\/09\/2023",
    "cf_guardia_dias_lv": "07\/25\/2023",
-   "cf_guardia_cant_hs_lv": 0.6666666666666666,
+   "cf_guardia_cant_hs_lv": 0.66,
    "cf_guardia_cant_hs_sdf": 0,
-   "cf_guardia_monto_lv": 43533.57800000001,
+   "cf_guardia_monto_lv": 43533.58,
    "cf_guardia_monto_sdf": 0,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 43533.57800000001,
+   "cf_total_hs_liq_lv": 43533.58,
    "cf_total_hs_liq_sdf": 0,
-   "cf_total_liq": 43533.57800000001,
+   "cf_total_liq": 43533.58,
    "cf_total_fact": 43533.58,
-   "cf_dif_redondeo": -0.001999999993131496
+   "cf_dif_redondeo": -0.01
   },
   {
    "id": 323,
@@ -6683,15 +6683,15 @@
    "cf_guardia_dias_lv": "07\/17\/2023",
    "cf_guardia_cant_hs_lv": 1,
    "cf_guardia_cant_hs_sdf": 0,
-   "cf_guardia_monto_lv": 65300.36700000001,
+   "cf_guardia_monto_lv": 65300.37,
    "cf_guardia_monto_sdf": 0,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 65300.36700000001,
+   "cf_total_hs_liq_lv": 65300.37,
    "cf_total_hs_liq_sdf": 0,
-   "cf_total_liq": 65300.36700000001,
+   "cf_total_liq": 65300.37,
    "cf_total_fact": 65300.37,
-   "cf_dif_redondeo": -0.002999999989697244
+   "cf_dif_redondeo": -0.02
   },
   {
    "id": 324,
@@ -6725,7 +6725,7 @@
    "cf_total_hs_liq_sdf": 340697.6,
    "cf_total_liq": 340697.6,
    "cf_total_fact": 340697.56,
-   "cf_dif_redondeo": 0.03999999997904524
+   "cf_dif_redondeo": 0.04
   },
   {
    "id": 325,
@@ -6752,15 +6752,15 @@
    "cf_guardia_dias_sdf": "07\/22\/2023",
    "cf_guardia_cant_hs_lv": 1,
    "cf_guardia_cant_hs_sdf": 2,
-   "cf_guardia_monto_lv": 65300.36700000001,
+   "cf_guardia_monto_lv": 65300.36,
    "cf_guardia_monto_sdf": 143660.82,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 65300.36700000001,
+   "cf_total_hs_liq_lv": 65300.36,
    "cf_total_hs_liq_sdf": 143660.82,
-   "cf_total_liq": 208961.18700000003,
+   "cf_total_liq": 208961.18,
    "cf_total_fact": 208961.17,
-   "cf_dif_redondeo": 0.01700000002165325
+   "cf_dif_redondeo": 0.01
   },
   {
    "id": 326,
@@ -6787,15 +6787,15 @@
    "cf_guardia_dias_sdf": "07\/28\/2023",
    "cf_guardia_cant_hs_lv": 1.5,
    "cf_guardia_cant_hs_sdf": 2,
-   "cf_guardia_monto_lv": 97950.55050000001,
+   "cf_guardia_monto_lv": 97950.55,
    "cf_guardia_monto_sdf": 143660.82,
    "cf_bono_cant_hs_lv": 0,
    "cf_bono_cant_hs_sdf": 0,
-   "cf_total_hs_liq_lv": 97950.55050000001,
+   "cf_total_hs_liq_lv": 97950.55,
    "cf_total_hs_liq_sdf": 143660.82,
-   "cf_total_liq": 241611.37050000002,
+   "cf_total_liq": 241611.37,
    "cf_total_fact": 241611.35,
-   "cf_dif_redondeo": 0.020500000013271347
+   "cf_dif_redondeo": 0.02
   },
   {
    "id": 327,
@@ -6826,9 +6826,9 @@
    "cf_bono_cant_hs_sdf": 5,
    "cf_bono_monto_sdf": 40000,
    "cf_total_hs_liq_lv": 0,
-   "cf_total_hs_liq_sdf": 451561.05000000005,
-   "cf_total_liq": 451561.05000000005,
+   "cf_total_hs_liq_sdf": 451561.05,
+   "cf_total_liq": 451561.05,
    "cf_total_fact": 451560.95,
-   "cf_dif_redondeo": 0.1000000000349246
+   "cf_dif_redondeo": 0.10
   }
  ]
