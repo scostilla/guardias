@@ -1,17 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
-import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
-import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
-import { CronogramaDefinitivoComponent } from './components/cronograma-definitivo/cronograma-definitivo.component';
-import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
-import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
-import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
-import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
-import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
-import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
-import { CronogramaTentativoComponent } from './components/cronograma-tentativo/cronograma-tentativo.component';
-import { CronogramaComponent } from './components/cronograma/cronograma.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
 import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
@@ -89,6 +77,7 @@ const routes: Routes = [
   {path: 'professional-dh/:id', component: ProfessionalDhComponent },
   {path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
   {path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
+  {path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
   {path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},

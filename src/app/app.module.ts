@@ -106,7 +106,6 @@ import { ProfessionalDhComponent } from './components/professional-dh/profession
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
-import { TablaComponent } from './components/tabla/tabla.component';
 
 
 registerLocaleData(localePy,'es');
@@ -194,15 +193,6 @@ registerLocaleData(localePy,'es');
     DdjjContrafacturaTotRecComponent,
     ProfessionalFormDeletComponent,
     ProfessionalPlantillaDhComponent,
-    DdjjCargoyagrupTotalApComponent,
-    DdjjCargoyagrupTotalRecComponent,
-    DdjjContrafacturaTotApComponent,
-    DdjjContrafacturaTotRecComponent,
-    DdjjExtraTotApComponent,
-    DdjjExtraTotRecComponent,
-    ProfessionalDhHistComponent,
-    ProfessionalDhJunioComponent,
-    ProfessionalFormEditComponent,
 
   ],
 

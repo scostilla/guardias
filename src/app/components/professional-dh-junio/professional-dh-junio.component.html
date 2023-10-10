@@ -7,6 +7,10 @@
         </button>
       </div>
       <div class="col d-flex justify-content-end">
+        <button mat-fab extended color="warn" routerLink="/professional-dh-junio-asis/{{person.id}}">
+          <mat-icon>assignment</mat-icon>
+          Plantilla de Asistencia
+        </button>
         <button  mat-fab extended color="basic" [matMenuTriggerFor]="opcion"><mat-icon>drag_indicator</mat-icon> Opciones </button>
         <mat-menu #opcion="matMenu">
           <button mat-menu-item [matMenuTriggerFor]="descargas"><mat-icon>get_app</mat-icon> Descargar </button>
