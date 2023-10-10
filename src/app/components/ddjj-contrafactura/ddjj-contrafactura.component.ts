@@ -1,9 +1,14 @@
 import { Component, Inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
+  MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { PopupDdjjCfEditComponent } from '../popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { PopupDdjjCfComponent } from '../popup-ddjj-cf/popup-ddjj-cf.component';
@@ -83,6 +88,23 @@ export class DdjjContrafacturaComponent {
     this.enableTotales = true;
   }
 }
+
+
+
+@Component({
+  selector: 'dialog-observ',
+  templateUrl: 'dialog-observ.html',
+  standalone: true,
+  imports: [
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+  ],
+})
+
+
 export class DialogObserv {
   constructor(
     public dialogRef: MatDialogRef<DialogObserv>,
