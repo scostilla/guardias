@@ -1,6 +1,32 @@
 .tabla-center {
-  margin-left: 2%; margin-right: 2%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 .col-center {
   text-align: center;
+}
+
+
+thead.aprobado{
+  background-color: rgb(151, 187, 151);
+}
+
+thead.pendiente{
+  background-color:rgb(123, 204, 233);
+}
+
+thead.rechazado{
+  background-color:rgb(248, 176, 176);
+}
+
+th.aprobado{
+  background-color: green !important; color: white;
+}
+
+th.pendiente{
+  background-color: #37BBED !important; color: #fff; border-radius: 10px 10px 0 0;
+}
+
+th.rechazado{
+  background-color: red !important; color: white;
 }

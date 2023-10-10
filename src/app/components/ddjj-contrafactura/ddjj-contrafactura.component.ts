@@ -1,9 +1,16 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { DialogData } from '../ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { PopupDdjjCfEditComponent } from '../popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { PopupDdjjCfComponent } from '../popup-ddjj-cf/popup-ddjj-cf.component';
+
+export interface DialogData {
+  observ: string;
+}
 
 @Component({
   selector: 'app-ddjj-contrafactura',
@@ -18,7 +25,11 @@ export class DdjjContrafacturaComponent {
   estado: string = 'pendiente';
   observ!: string;
 
-  constructor(public dialogReg: MatDialog, private route: ActivatedRoute) {}
+  constructor(
+    public dialogReg: MatDialog,
+    private route: ActivatedRoute,
+    public dialog: MatDialog
+  ) {}
   openPopupCf() {
     this.dialogReg.open(PopupDdjjCfComponent, {
       width: '550px',
@@ -32,6 +43,17 @@ export class DdjjContrafacturaComponent {
         this.profesionales = JSON.parse(params['vector']);
         console.log(this.profesionales);
       }
+    });
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogObserv, {
+      data: { observ: this.observ },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('The dialog was closed');
+      this.observ = result;
     });
   }
 
@@ -55,6 +77,10 @@ export class DdjjContrafacturaComponent {
       this.estado = 'pendiente';
     }
     console.log(this.enableRechazada);
+  }
+
+  btnPaseDPH() {
+    this.enableTotales = true;
   }
 }
 export class DialogObserv {
