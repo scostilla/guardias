@@ -128,7 +128,8 @@ export class RegDiarioComponent {
 }
 
 cargarProfesional(){
-  console.log(this.profesionalSeleccionado);
+  
+  console.log("este es el #########"+this.profesionalSeleccionado);
   this.selectedId = this.profesionalSeleccionado.id;
       this.selectedCuil = this.profesionalSeleccionado.cuil;
       this.selectedNombre = this.profesionalSeleccionado.nombre;
