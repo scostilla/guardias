@@ -140,7 +140,8 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td>OBSERV.:</td>
+                                    <td colspan="13" class="alert" [class.alert-success]="person.cargaHoraria === totalSemanal" [class.alert-danger]="person.cargaHoraria !== totalSemanal" role="alert" *ngIf="person.cargaHoraria === totalSemanal">OBS.: <strong>Carga Horaria completa</strong></td>
+                                    <td colspan="13" class="alert" [class.alert-success]="person.cargaHoraria === totalSemanal" [class.alert-danger]="person.cargaHoraria !== totalSemanal" role="alert" *ngIf="person.cargaHoraria != totalSemanal">OBS.: <strong>Debe completar la carga horaria</strong></td>
                                 </tr>
                             </tfoot>
                         </table>
