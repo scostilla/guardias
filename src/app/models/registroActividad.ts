@@ -5,14 +5,16 @@ export class RegistroActividad{
     establecimiento: string;
     fechaIngreso: Date;
     fechaEgreso: Date;
-    horaIngreso: Date;
-    horaEgreso: Date;
+    horaIngreso: String;
+    horaEgreso: String;
+    servicio:string
     
-    constructor(establecimiento:string, fechaIngreso:Date, fechaEgreso: Date, horaIngreso: Date, horaEgreso: Date){
+    constructor(establecimiento:string, fechaIngreso:Date, fechaEgreso: Date, horaIngreso: String, horaEgreso: String, servicio:string){
         this.establecimiento=establecimiento;
         this.fechaIngreso=fechaIngreso;
         this.fechaEgreso=fechaEgreso;
         this.horaIngreso=horaIngreso;
         this.horaEgreso=horaEgreso;
+        this.servicio=servicio
     }
 }

@@ -2,232 +2,179 @@
   <h1 class="font">Nuevo Registro fabi</h1>
 </div>
 
-<!-- <form [formGroup]="formulario" (ngSubmit)="guardarRegistroDiario()"> -->
-  <div mat-dialog-content class="content">
 
-    <mat-form-field appearance="outline">
-    <mat-label>Tipo de servicio</mat-label>
-    <mat-select [(ngModel)]="defaultSelected">
-      <mat-option [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">
-        {{tipserv}}</mat-option>
-    </mat-select>
-    </mat-form-field>
+<!-- AQUI IMPLEMENTO OTRA ESTRUCTURA PARA USAR FORM -->
 
-  <!-- Establecimiento va o no en guardia activa? -->
+<!-- Contenedor del formulario -->
+<form [formGroup]="formFabi" (ngSubmit)="guardar()" >
+  <ng-container layout-padding>
+    <div mat-dialog-content class="form-container">
+      <!-- Primera fila de campos -->
+      <div class="form-row">
+        
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label>Tipo de servicio</mat-label>
+          <mat-select formControlName="field1" required  [(ngModel)]="defaultSelected">
+            <mat-option  [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">{{tipserv}}</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-  <!-- <mat-form-field appearance="outline">
-    <mat-label>Establecimiento</mat-label>
-    <mat-select [(ngModel)]="hospitalSeleccionado" (ngModelChange)="cargarEspecialidades()">
-      <mat-option *ngFor="let hosp of hospital2" [value]="hosp"> {{hosp.descripcion}}</mat-option>
-    </mat-select>
-  </mat-form-field> -->
-
-    <ng-container [ngSwitch]="defaultSelected" appearance="outline">
-    <div *ngSwitchCase="'Guardia activa'">
-
-      <!-- carga Tipo de Guardia desde BD -->
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo de guardia BD</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias">
-            {{tipoGuardias.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <!-- carga Servicios desde BD  -->
-      <mat-form-field appearance="outline">
-        <mat-label>Servicio BD</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let servicio of servicios" [value]="servicio.descripcion">
-            {{servicio.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <!-- parte de guardia pasiva viejo -->
-
-    <!-- <div *ngSwitchCase="'Guardia pasiva'">
-      <mat-form-field appearance="outline">
-        <mat-label>Especialidad</mat-label>
-        <mat-select [(ngModel)]="alert">
-          <mat-option *ngFor="let esp of especialidadesHospital" [value]="esp.descripcion">
-            {{esp.descripcion}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <span [ngSwitch]="alert">
-        <span
-          *ngSwitchCase="['CIRUGIA INFANTIL','CLINICA','HEMOTERAPIA','NEONATOLOGIA','TRAUMATOLOGIA','TERAPIA INTENSIVA INFANTIL'].includes(alert) ? alert : !alert">
-          <div class="alert alert-danger" role="alert">
-            Especialidad seleccionada sin requerimiento.
-          </div>
-        </span>
-      </span>
-    </div> -->
-
-    <!-- aqui es la otra parte de la otra rama -->
-    <div *ngSwitchCase="'Guardia pasiva'">
-      <mat-form-field appearance="outline">
-        <mat-label>Establecimiento fa</mat-label>
-        <mat-select [(ngModel)]="pasiva">
-          <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div [ngSwitch]="pasiva" appearance="outline">
-      <div *ngSwitchCase="'Dn. Pablo Soria'">
-        <mat-form-field appearance="outline">
-          <mat-label>Especialidad fa</mat-label>
-          <mat-select [(ngModel)]="alert">
-            <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+        <!-- carga Establecimiento  desde BD -->
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label>Establecimiento fa</mat-label>
+          <mat-select formControlName="est" required [(ngModel)]="pasiva">
+            <mat-option *ngFor="let hosp of hospital" [value]="hosp">{{hosp}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-      <div *ngSwitchCase="'San Roque'">
-        <mat-form-field appearance="outline">
-          <mat-label>Especialidad fa</mat-label>
-          <mat-select [(ngModel)]="alert">
-            <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div *ngSwitchCase="'Materno Infantil'">
-        <mat-form-field appearance="outline">
-          <mat-label>Especialidad fa</mat-label>
-          <mat-select [(ngModel)]="alert">
-            <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <span [ngSwitch]="alert">
-        <span
-          *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
-          <div class="alert alert-danger" role="alert">
-            Especialidad seleccionada sin requerimiento.
-          </div>
-        </span>
-      </span>
-    </div>
 
-    </ng-container>
-
-
-  <!-- <mat-form-field appearance="outline">
-    <mat-label>Profesional</mat-label>
-    <mat-select [(ngModel)]="profesionalSeleccionado" (ngModelChange)="cargarProfesional()">
-      <mat-option *ngFor="let profesional of profesionales" [value]="profesional"> {{profesional.apellido}}, {{profesional.nombre}}</mat-option>
-    </mat-select>
-  </mat-form-field> -->
-
-    <div mat-dialog-actions class="action">
-    <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
-      type="button">Buscar Profesional fabi</button>
-    </div>
-
-    <div mat-dialog-subtitle>
-    <h2>Detalle del profesional</h2>
-    </div>
-
-    <div *ngIf="profesional">
-    <form novalidate #f="ngForm">
-      <div class="row">
-        <div class="col">
-          <mat-form-field appearance="outline">
-            <mat-label>Nombre</mat-label>
-            <input matInput placeholder="{{selectedNombre}}" id="nombre" name="nombre" [(ngModel)]="profesional.nombre"
-              disabled>
-          </mat-form-field>
-        </div>
-        <div class="col">
-          <mat-form-field appearance="outline">
-            <mat-label>Apellido</mat-label>
-            <input matInput placeholder="{{selectedApellido}}" id="apellido" name="apellido"
-              [(ngModel)]="profesional.apellido">
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <mat-form-field appearance="outline">
-              <mat-label>DNI</mat-label>
-              <input matInput id="dni" name="dni" [(ngModel)]="profesional.dni">
+      <!-- Segunda fila de campos -->
+      <div class="form-row">
+        <ng-container [ngSwitch]="defaultSelected" >
+          <div *ngSwitchCase="'Guardia activa'">
+            
+            <!-- carga Tipo de Guardia desde BD -->
+            <mat-form-field class="form-field " appearance="outline">
+              <mat-label>Tipo de guardia BD</mat-label>
+                <mat-select formControlName="field3">
+                <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias">
+                  {{tipoGuardias.descripcion}}</mat-option>
+                </mat-select>
             </mat-form-field>
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group">
-            <mat-form-field appearance="outline">
-              <mat-label>ID</mat-label>
-              <input matInput id="id" name="id" [(ngModel)]="profesional.idPersona">
+
+            <!-- carga Servicios desde BD  -->
+            <mat-form-field class="form-field  " appearance="outline">
+              <mat-label>Servicio BD</mat-label>
+                <mat-select formControlName="serv">
+                  <mat-option *ngFor="let servicio of servicios" [value]="servicio.descripcion">
+                    {{servicio.descripcion}}</mat-option>
+                </mat-select>
             </mat-form-field>
+
           </div>
+          
+          <div *ngSwitchCase="'Guardia pasiva'">
+
+            <div [ngSwitch]="pasiva" appearance="outline">
+              <div *ngSwitchCase="'Dn. Pablo Soria'">
+                <mat-form-field appearance="outline">
+                  <mat-label>Especialidad fa</mat-label>
+                  <mat-select formControlName="field6" [(ngModel)]="alert">
+                    <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div *ngSwitchCase="'San Roque'">
+                <mat-form-field appearance="outline">
+                  <mat-label>Especialidad fa</mat-label>
+                  <mat-select formControlName="field7" [(ngModel)]="alert">
+                    <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div *ngSwitchCase="'Materno Infantil'">
+                <mat-form-field appearance="outline">
+                  <mat-label>Especialidad fa</mat-label>
+                  <mat-select formControlName="field8" [(ngModel)]="alert">
+                    <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <span [ngSwitch]="alert">
+                <span
+                  *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
+                  <div class="alert alert-danger" role="alert">
+                    Especialidad seleccionada sin requerimiento.
+                  </div>
+                </span>
+              </span>
+            </div>
+
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Tercera fila de campos -->
+      <div class="form-row">
+        <div mat-dialog-actions class="action">
+          <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
+            type="button">Buscar Profesional fabi</button>
+          </div>
+      </div>
+      <!-- Cuarta fila de campos -->
+      <div class="form-row">
+        <div mat-dialog-subtitle>
+          <h2>Detalle del profesional</h2>
         </div>
       </div>
-    </form>
-    </div>
+      <!-- cuarta fila de campos -->
+      <div class="form-row" *ngIf="profesional">
+        <form>
+          <mat-form-field class="form-field" appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput placeholder="{{selectedNombre}}" id="nombre" name="nombre" [(ngModel)]="profesional.nombre" disabled>
+          </mat-form-field>
+          
+          <mat-form-field class="form-field" appearance="outline">
+          <mat-label>Apellido</mat-label>
+          <input matInput placeholder="{{selectedApellido}}" id="apellido" name="apellido"
+              [(ngModel)]="profesional.apellido" disabled>
+          </mat-form-field>
 
+          <mat-form-field class="form-field" appearance="outline">
+          <mat-label>DNI</mat-label>
+          <input matInput id="dni" name="dni" [(ngModel)]="profesional.dni" disabled>
+          </mat-form-field>
+          
+          <mat-form-field class="form-field" appearance="outline">
+          <mat-label>ID</mat-label>
+          <input matInput id="id" name="id" [(ngModel)]="profesional.idPersona" disabled>
+          </mat-form-field>
+        </form>
+      </div>
 
-  <!-- Esto es lo que estaba -->
-  <!-- <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput [(ngModel)]="selectedNombre" placeholder="{{selectedNombre}}">
-      </mat-form-field>
-    </div>
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Apellido</mat-label>
-        <input matInput [(ngModel)]="selectedApellido" placeholder="{{selectedApellido}}">
-      </mat-form-field>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>DNI</mat-label>
-        <input matInput [(ngModel)]="selectedDni" placeholder="{{selectedDni}}">
-      </mat-form-field>
-    </div>
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Profesion</mat-label>
-        <input matInput [(ngModel)]="selectedProfesion" placeholder="{{selectedProfesion}}">
-      </mat-form-field>
-    </div>
-  </div> -->
-
-    <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline">
-        <mat-label>Ingreso</mat-label>
-        <input matInput [matDatepicker]="picker1">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <div class="col">
-      <app-time-picker></app-time-picker>
-    </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="outline">
-        <mat-label>Egreso</mat-label>
-        <input matInput [matDatepicker]="picker2" formControlName="horaEgreso">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
+      <!-- Quinta fila de campos -->
+      <div class="form-row">
+        
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label>Ingreso</mat-label>
+          <input formControlName="fechaDeIngreso" matInput [matDatepicker]="picker1">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
+
+        <app-time-picker [timeValue]="formFabi.get('timeValue')?.value"></app-time-picker>
+        
       </div>
-      <div class="col">
-      <app-time-picker></app-time-picker>
+
+      <!-- Sexta fila de campos -->
+      <div class="form-row">
+        
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label>Egreso</mat-label>
+          <input formControlName="fechaDeEgreso" matInput [matDatepicker]="picker2">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <app-time-picker [timeValue]="formFabi.get('timeValue')?.value"></app-time-picker>
+
       </div>
+
+      <!-- Septima fila de campos -->
+      <div class="form-row">
+        <div mat-dialog-actions class="action">
+          <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
+          <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
+          </div>
+      </div>
+
     </div>
-  </div>
-  <div mat-dialog-actions class="action">
-  <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
-  <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
-  </div>
-<!-- </form> -->
+  </ng-container>
+</form>
+
+<!-- AQUI IMPLEMENTO OTRA ESTRUCTURA PARA USAR FORM -->
+
+

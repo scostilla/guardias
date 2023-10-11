@@ -109,6 +109,8 @@ import { ProfessionalPlantillaDhComponent } from './components/professional-plan
 import { TablaComponent } from './components/tabla/tabla.component';
 import { ToastrModule } from 'ngx-toastr';
 
+//para formulario Reg-diario que ya está agregado mas arrib a
+//import { ReactiveFormsModule } from '@angular/forms';
 
 registerLocaleData(localePy,'es');
 

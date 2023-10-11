@@ -1,4 +1,4 @@
-
+/* 
 .content{
     padding-top: 10px; 
     
@@ -38,3 +38,33 @@ mat-form-field{
 }
 
 
+ */
+
+
+ .backgroud{
+    background-color: #243c74;
+    color: white;
+}
+
+.font{
+    font-family: "Ubuntu";
+    font-size:170%;
+}
+
+ .form-container {
+    display: flex; /* Utiliza un diseño de caja flexible */
+    flex-direction: column; /* Alinea los elementos en una columna */
+  }
+  
+  /* Estilo para cada fila de campos */
+  .form-row {
+    display: flex; /* Utiliza un diseño de caja flexible */
+    flex-direction: row; /* Alinea los elementos en una fila */
+    margin-bottom: 16px; /* Espacio entre filas (ajusta según sea necesario) */
+  }
+  
+  /* Estilo para cada campo de entrada */
+  .form-field {
+    flex: 1; /* Hace que los campos ocupen un espacio igual en la fila */
+    margin-right: 16px; /* Espacio entre campos (ajusta según sea necesario) */
+  }

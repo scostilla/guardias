@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/Professional-data-service.service';
@@ -16,6 +16,7 @@ import { ProfesionalService } from 'src/app/services/Servicio/profesional.servic
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { registroActividadService } from 'src/app/services/Servicio/registroActividad.services';
+import { RegistroActividad } from 'src/app/models/registroActividad';
 
 
 @Component({
@@ -29,6 +30,8 @@ export class RegDiarioComponent {
   servicios: Servicio[] = [];
   tipoGuardias: TipoGuardia[] = [];
   profesional: Profesional = new Profesional("", "", 0);
+
+  formFabi: FormGroup;
 
   formulario: FormGroup;
 
@@ -136,11 +139,29 @@ export class RegDiarioComponent {
     private toastr: ToastrService,
     private router: Router,
 
+
+
     private professionalDataService: ProfessionalDataServiceService,
+
+    private formBuilder:FormBuilder,
+    private registroActividadService: registroActividadService,  // Inyecta el servicio
+
     private http: HttpClient,
-    public dialogRef: MatDialogRef<RegDiarioComponent>,
-    private registroActividadService: registroActividadService,
+    public dialogRef: MatDialogRef<RegDiarioComponent>
+    
   ) {
+    // Inicializa el FormGroup y define los FormControl
+    this.formFabi = this.formBuilder.group({
+      field1: ['', Validators.required],
+      field3: ['', Validators.required],
+      serv: ['', Validators.required],
+      field6: ['', Validators.required],
+      est: ['', Validators.required],
+      fechaDeIngreso: ['', Validators.required],
+      fechaDeEgreso: ['', Validators.required],
+      
+    });
+
     this.registroForm = this._fb.group({
       hospital: '',
       servicio: '',
@@ -194,6 +215,36 @@ export class RegDiarioComponent {
       .subscribe((data) => {
         this.especialidades = data;
       });
+  }
+
+  guardar() {
+    // Accede a los valores del formulario
+    const formData = this.formFabi.value;
+    
+    // Crea una instancia de RegistroActividad utilizando los datos del formulario
+    const registroActividad: RegistroActividad = {
+      // Asigna los valores de formData a los campos correspondientes de RegistroActividad
+      // Asegúrate de que los nombres de los campos coincidan con los de RegistroActividad
+      establecimiento: formData.est,
+      fechaIngreso: formData.fechaDeIngreso,
+      servicio:formData.serv,
+     
+      horaIngreso: this.formFabi.get('timeValue')?.value + '',
+      
+      horaEgreso: this.formFabi.get('timeValue')?.value + '',
+      fechaEgreso: formData.fechaDeEgreso,
+    };
+
+    // Llama al servicio para guardar los datos
+    this.registroActividadService.save(registroActividad).subscribe(
+      response => {
+        console.log(this.formFabi.get('timeValue')?.value + '');
+        console.log('Guardado con éxito', response);
+      },
+      error => {
+        console.error('Error al guardar', error);
+      }
+    );
   }
 
   guardarRegistroDiario(){
