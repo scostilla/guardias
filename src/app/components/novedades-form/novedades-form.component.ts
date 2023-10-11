@@ -22,8 +22,7 @@ export class NovedadesFormComponent {
       hospital: ['', Validators.required],
       profesional: ['', Validators.required],
       novedad: ['', Validators.required],
-      fecInicio: ['', Validators.required],
-      fecFin: ['', Validators.required],
+
     });
   }
   ngOnInit() {

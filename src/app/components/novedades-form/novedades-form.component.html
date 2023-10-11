@@ -54,35 +54,21 @@
             <div class="col">
                 <mat-form-field appearance="outline">
                     <mat-label>Fecha inicio</mat-label>
-                    <input matInput [matDatepicker]="picker1" formControlName="fecInicio"[readonly]="true">
+                    <input matInput [matDatepicker]="picker1" >
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                 </mat-form-field>
             </div>
-            <div class="error">
-                <span *ngIf="
-                novedadesForm.get('fecInicio')?.hasError('required') &&
-                novedadesForm.get('fecInicio')?.touched">
-                    <h5> La fecha de inicio es un campo requerido</h5>
-                </span>
-            </div>
 
             <div class="col">
                 <mat-form-field appearance="outline">
                     <mat-label>Fecha fin</mat-label>
-                    <input matInput [matDatepicker]="picker2" formControlName="fecFin" [readonly]="true">
+                    <input matInput [matDatepicker]="picker2" >
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                 </mat-form-field>
-            </div>
-            <div class="error">
-                <span *ngIf="
-                novedadesForm.get('fecFin')?.hasError('required') &&
-                novedadesForm.get('fecFin')?.touched">
-                    <h5> La fecha de inicio es un campo requerido</h5>
-                </span>
             </div>
 
         </div>
@@ -92,7 +78,7 @@
 
     <div mat-dialog-actions class="action">
         <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
-        <button mat-raised-button class="btnupdate" color="primary" [disabled]="novedadesForm.invalid" type="submit" [mat-dialog-close]="false">Guardar</button>
+        <button mat-raised-button class="btnupdate" color="primary" type="submit" [mat-dialog-close]="false">Guardar</button>
     </div>
 
 </form>
