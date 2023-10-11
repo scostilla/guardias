@@ -35,11 +35,12 @@
   </div>
   <div class="row">
     <div class="col offset-9">
-      <button mat-fab extended color="primary" routerLink="/ddjj-tentativo">
+      <button mat-fab extended color="primary"  (click)="sendAndRedirect('/ddjj-tentativo')">
         <mat-icon>assignment</mat-icon>
         DDJJ Tentativo
       </button>
     </div>
+
     <div class="titulos">DDJJ <span class="titulos-second">CONTRA FACTURA</span><span class="titulos-second"
         *ngIf="enableAprobada"> (APROBADA)</span>
       <span class="titulos-second" *ngIf="enableRechazada"> (RECHAZADA)</span>

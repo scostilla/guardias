@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+
+import { HttpClient } from '@angular/common/http';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -9,7 +11,7 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PopupDdjjCfEditComponent } from '../popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { PopupDdjjCfComponent } from '../popup-ddjj-cf/popup-ddjj-cf.component';
 
@@ -33,7 +35,8 @@ export class DdjjContrafacturaComponent {
   constructor(
     public dialogReg: MatDialog,
     private route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {}
   openPopupCf() {
     this.dialogReg.open(PopupDdjjCfComponent, {
@@ -105,7 +108,20 @@ export class DdjjContrafacturaComponent {
   btnPaseDPH() {
     this.enableTotales = true;
   }
+
+  sendAndRedirect(value: string) {
+    this.router.navigate([value], {
+      queryParams: { vector: JSON.stringify(this.profesionales) },
+    });
+  }
 }
+
+
+
+
+
+
+
 
 @Component({
   selector: 'dialog-observ',
@@ -122,7 +138,9 @@ export class DdjjContrafacturaComponent {
 export class DialogObserv {
   constructor(
     public dialogRef: MatDialogRef<DialogObserv>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   onNoClick(): void {
