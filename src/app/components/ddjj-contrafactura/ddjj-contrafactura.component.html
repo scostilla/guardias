@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col offset-9">
+    <div class="col offset-9" *ngIf="!enableTotales">
       <button mat-fab extended color="primary"  (click)="sendAndRedirect('/ddjj-tentativo')">
         <mat-icon>assignment</mat-icon>
         DDJJ Tentativo
