@@ -158,9 +158,14 @@
           <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
         </mat-form-field>
+        
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label>hora egreso</mat-label>
+          <input formControlName="fechaDeEgreso" type="datetime-local" [(ngModel)]="date">
+        </mat-form-field>
 
-        <app-time-picker [timeValue]="formFabi.get('timeValue')?.value"></app-time-picker>
 
+        
       </div>
 
       <!-- Septima fila de campos -->
