@@ -40,6 +40,16 @@ export class ProfessionalDhComponent implements OnInit {
   }
 
   calcularTotalSemanal() {
+    if(this.person){
+      this.person.cargoSabado = this.person.cargoSabado ||0 + this.person.agrupacionSabado ||0 ;
+      this.person.cargoDomingo = this.person.cargoDomingo ||0 + this.person.agrupacionDomingo ||0 ;
+      this.person.cargoLunes = this.person.cargoLunes ||0 + this.person.agrupacionLunes ||0 ;
+      this.person.cargoMartes = this.person.cargoMartes ||0 + this.person.agrupacionMartes ||0 ;
+      this.person.cargoMiercoles = this.person.cargoMiercoles ||0 + this.person.agrupacionMiercoles ||0 ;
+      this.person.cargoJueves = this.person.cargoJueves ||0 + this.person.agrupacionJueves ||0 ;
+      this.person.cargoViernes = this.person.cargoViernes ||0 + this.person.agrupacionViernes ||0 ;
+
+    }
     this.totalSemanal =
     (this.person.cargoSabado ?? 0) +
     (this.person.cargoDomingo ?? 0) +
