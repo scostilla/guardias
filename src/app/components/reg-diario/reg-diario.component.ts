@@ -32,6 +32,7 @@ export class RegDiarioComponent {
   profesional: Profesional = new Profesional("", "", 0);
 
   formFabi: FormGroup;
+  timeValue:string ='';;
 
   formulario: FormGroup;
 
@@ -139,8 +140,6 @@ export class RegDiarioComponent {
     private toastr: ToastrService,
     private router: Router,
 
-
-
     private professionalDataService: ProfessionalDataServiceService,
 
     private formBuilder:FormBuilder,
@@ -159,6 +158,7 @@ export class RegDiarioComponent {
       est: ['', Validators.required],
       fechaDeIngreso: ['', Validators.required],
       fechaDeEgreso: ['', Validators.required],
+      timeValue:['']
       
     });
 
@@ -220,6 +220,7 @@ export class RegDiarioComponent {
   guardar() {
     // Accede a los valores del formulario
     const formData = this.formFabi.value;
+    this.timeValue= this.formFabi.get('timeValue')?.value;
     
     // Crea una instancia de RegistroActividad utilizando los datos del formulario
     const registroActividad: RegistroActividad = {
@@ -229,16 +230,16 @@ export class RegDiarioComponent {
       fechaIngreso: formData.fechaDeIngreso,
       servicio:formData.serv,
      
-      horaIngreso: this.formFabi.get('timeValue')?.value + '',
+      horaIngreso: this.timeValue,
       
-      horaEgreso: this.formFabi.get('timeValue')?.value + '',
+      horaEgreso: this.formFabi.get('timeValue')?.value,
       fechaEgreso: formData.fechaDeEgreso,
     };
 
     // Llama al servicio para guardar los datos
     this.registroActividadService.save(registroActividad).subscribe(
       response => {
-        console.log(this.formFabi.get('timeValue')?.value + '');
+        console.log(this.formFabi.get('timeValue')?.value);
         console.log('Guardado con éxito', response);
       },
       error => {
