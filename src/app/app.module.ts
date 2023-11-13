@@ -108,6 +108,10 @@ import { ProfessionalFormEditComponent } from './components/professional-form-ed
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { TablaComponent } from './components/tabla/tabla.component';
 import { ToastrModule } from 'ngx-toastr';
+import { DetallePaisComponent } from './components/Paises_prueba/detalle-pais/detalle-pais.component';
+import { NuevoPaisComponent } from './components/Paises_prueba/nuevo-pais/nuevo-pais.component';
+import { EditarPaisComponent } from './components/Paises_prueba/editar-pais/editar-pais.component';
+import { ListaPaisComponent } from './components/Paises_prueba/lista-pais/lista-pais.component';
 
 //para formulario Reg-diario que ya está agregado mas arrib a
 //import { ReactiveFormsModule } from '@angular/forms';
@@ -206,6 +210,10 @@ registerLocaleData(localePy,'es');
     ProfessionalDhHistComponent,
     ProfessionalDhJunioComponent,
     ProfessionalFormEditComponent,
+    DetallePaisComponent,
+    NuevoPaisComponent,
+    EditarPaisComponent,
+    ListaPaisComponent,
 
   ],
 

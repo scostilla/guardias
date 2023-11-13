@@ -62,6 +62,11 @@ import { RegistroActividadesComponent } from './components/registro-actividades/
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
+import { DetallePaisComponent } from './components/Paises_prueba/detalle-pais/detalle-pais.component';
+import { NuevoPaisComponent } from './components/Paises_prueba/nuevo-pais/nuevo-pais.component';
+import { EditarPaisComponent } from './components/Paises_prueba/editar-pais/editar-pais.component';
+import { ListaPaisComponent } from './components/Paises_prueba/lista-pais/lista-pais.component';
+
 
 
 const routes: Routes = [
@@ -127,6 +132,10 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
+ {path: 'detalle-pais', component:DetallePaisComponent},
+ {path: 'nuevo-pais', component:NuevoPaisComponent},
+ {path: 'editar-pais', component:EditarPaisComponent},
+ {path: 'lista-pais', component:ListaPaisComponent},
 
  //prueba CRUD
  //{path:'',component:ListaServicioComponent},
@@ -134,12 +143,18 @@ const routes: Routes = [
 
  
  {path:'regDiario/:id',component:RegDiarioComponent},
+ 
+ //Puebas Nico
+ {path:'detalle/:id',component:DetallePaisComponent},
+ {path:'nuevo',component:NuevoPaisComponent},
+ {path:'editar/:id',component:EditarPaisComponent},
+
  {path:'**',redirectTo:'',pathMatch:'full'},
  /* {path:'regDiario/:id',component:RegDiarioComponent},
   */{path:'**',redirectTo:'',pathMatch:'full'},
   //registro
 //{path:'forRegDiario/:id',component:FormularioRegDiarioComponent},
- 
+
 
 
  //si tecleamos una direccion erronea redirige a raiz
