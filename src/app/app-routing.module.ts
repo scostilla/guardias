@@ -132,9 +132,9 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
- {path: 'detalle-pais', component:DetallePaisComponent},
+ {path: 'detalle-pais/id', component:DetallePaisComponent},
  {path: 'nuevo-pais', component:NuevoPaisComponent},
- {path: 'editar-pais', component:EditarPaisComponent},
+ {path: 'editar-pais/id', component:EditarPaisComponent},
  {path: 'lista-pais', component:ListaPaisComponent},
 
  //prueba CRUD
