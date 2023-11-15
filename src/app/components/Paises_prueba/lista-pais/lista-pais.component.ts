@@ -28,4 +28,8 @@ export class ListaPaisComponent implements OnInit {
     )
   }
 
+  borrar(id: number) {
+    alert('borrar el ' + id);
+  }
+
 }

@@ -132,10 +132,7 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
- {path: 'detalle-pais/id', component:DetallePaisComponent},
- {path: 'nuevo-pais', component:NuevoPaisComponent},
- {path: 'editar-pais/id', component:EditarPaisComponent},
- {path: 'lista-pais', component:ListaPaisComponent},
+
 
  //prueba CRUD
  //{path:'',component:ListaServicioComponent},
@@ -145,9 +142,10 @@ const routes: Routes = [
  {path:'regDiario/:id',component:RegDiarioComponent},
  
  //Puebas Nico
- {path:'detalle/:id',component:DetallePaisComponent},
- {path:'nuevo',component:NuevoPaisComponent},
- {path:'editar/:id',component:EditarPaisComponent},
+ {path: 'detalle-pais/id', component:DetallePaisComponent},
+ {path: 'nuevo-pais', component:NuevoPaisComponent},
+ {path: 'editar-pais/id', component:EditarPaisComponent},
+ {path: 'lista-pais', component:ListaPaisComponent},
 
  {path:'**',redirectTo:'',pathMatch:'full'},
  /* {path:'regDiario/:id',component:RegDiarioComponent},
