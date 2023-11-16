@@ -32,13 +32,13 @@ export class NuevoPaisComponent implements OnInit{
         this.toastr.success('Pais Creado', 'OK', {
           timeOut: 3000
         });
-        this.router.navigate(['/']);
+        this.router.navigate(['/lista-pais']);
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Fail', {
           timeOut: 3000
         });
-        this.router.navigate(['/']);
+        this.router.navigate(['/lista-pais']);
       }
     )
 

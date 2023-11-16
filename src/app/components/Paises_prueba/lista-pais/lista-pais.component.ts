@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Paises } from '../../../models/paises';
 import { PaisesService } from '../../../services/paises.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-lista-pais',
@@ -10,8 +11,12 @@ import { PaisesService } from '../../../services/paises.service';
 export class ListaPaisComponent implements OnInit {
 
   paises: Paises[] = [];
+  router: any;
 
-  constructor(private paisesService: PaisesService) {}
+  constructor(
+    private paisesService: PaisesService,
+    private toastr: ToastrService,
+    ) {}
 
   ngOnInit() {
     this.cargarPaises();
@@ -25,11 +30,23 @@ export class ListaPaisComponent implements OnInit {
       err => {
         console.log(err);
       }
-    )
+    );
   }
 
   borrar(id: number) {
-    alert('borrar el ' + id);
+    this.paisesService.delete(id).subscribe(
+      data=> {
+        this.toastr.success('Producto Eliminado', 'OK', {
+          timeOut: 3000, positionClass: 'toast-top-center'
+        });
+        this.cargarPaises();
+      },
+      err => {
+        this.toastr.error(err.error.mensaje, 'Fail', {
+          timeOut: 3000, positionClass: 'toast-top-center',
+        });
+      }
+    );
   }
 
 }
