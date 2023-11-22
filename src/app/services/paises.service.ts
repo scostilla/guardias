@@ -36,24 +36,4 @@ public delete(id:number): Observable<any> {
   return this.httpClient.delete<any>(this.paisesURL + `delete/${id}`);
 }
 
-
-
-
-      /* public detailDescripcion(descripcion:string): Observable<Servicio> {
-        return this.httpClient.get<Servicio>(this.profesionalURL + `detail/${descripcion}`);
-    }
-
-    public save(servicio:Servicio): Observable<any> {
-        return this.httpClient.post<any>(this.profesionalURL + 'create',servicio);
-    }
-    
-    public update(id:number,servicio:Servicio): Observable<any> {
-        return this.httpClient.put<any>(this.servicioURL + `update/${id}`,servicio);
-    }
-
-    public delete(id:number): Observable<any> {
-        return this.httpClient.delete<any>(this.servicioURL + `delete/${id}`);
-    }
- */
-
 }

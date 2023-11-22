@@ -16,8 +16,9 @@
         <td>{{pais.codigo}}</td>
         <td>{{pais.nacionalidad}}</td>
         <td>{{pais.nombre}}</td>
-        <td><button mat-button color="primary" routerLink="/editar/{{pais.id}}">Editar</button></td>
-        <!-- <td><button mat-button color="accent" (click)="borrar(pais.id)">Eliminar</button></td> -->
+        <td><button mat-button color="primary" routerLink="/detalle-pais/{{pais.id}}">Detalle</button></td>
+        <td><button mat-button color="primary" routerLink="/editar-pais/{{pais.id}}">Editar</button></td>
+        <td><button mat-button color="accent" (click)="borrar(pais.id)">Eliminar</button></td>
       </tr>
     </tbody>
   </table>

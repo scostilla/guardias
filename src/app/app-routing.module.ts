@@ -142,9 +142,9 @@ const routes: Routes = [
  {path:'regDiario/:id',component:RegDiarioComponent},
  
  //Puebas Nico
- {path: 'detalle-pais/id', component:DetallePaisComponent},
+ {path: 'detalle-pais/:id', component:DetallePaisComponent},
  {path: 'nuevo-pais', component:NuevoPaisComponent},
- {path: 'editar-pais/id', component:EditarPaisComponent},
+ {path: 'editar-pais/:id', component:EditarPaisComponent},
  {path: 'lista-pais', component:ListaPaisComponent},
 
  {path:'**',redirectTo:'',pathMatch:'full'},
