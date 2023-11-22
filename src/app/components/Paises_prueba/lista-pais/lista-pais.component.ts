@@ -36,15 +36,11 @@ export class ListaPaisComponent implements OnInit {
   borrar(id: number) {
     this.paisesService.delete(id).subscribe(
       data=> {
-        this.toastr.success('Producto Eliminado', 'OK', {
-          timeOut: 3000, positionClass: 'toast-top-center'
-        });
+        alert("Pais borrado con exito.");
         this.cargarPaises();
       },
       err => {
-        this.toastr.error(err.error.mensaje, 'Fail', {
-          timeOut: 3000, positionClass: 'toast-top-center',
-        });
+        alert("No se pudo borrar.");
       }
     );
   }
