@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Paises } from '../../../models/paises';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { PaisesService } from 'src/app/services/paises.service';
+import { Paises } from '../../../models/paises';
 
 @Component({
   selector: 'app-editar-pais',
@@ -11,7 +11,7 @@ import { PaisesService } from 'src/app/services/paises.service';
 })
 export class EditarPaisComponent implements OnInit {
 
-  paises: Paises = null;
+  paises?: Paises;
 
   constructor(
     private paisService: PaisesService,
@@ -21,7 +21,8 @@ export class EditarPaisComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.params.id;
+    const id = this.activatedRoute.snapshot.params['id'];
+
     alert(id);
   }
 
