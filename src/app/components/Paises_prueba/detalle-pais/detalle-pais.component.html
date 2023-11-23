@@ -1,1 +1,15 @@
-<p>detalle-pais works!</p>
+<div class="row mt-5" *ngIf="paises">
+    <div class="col-md-4 mx-auto">
+        <div class="card" style="width: 18rem;">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><b>Id:</b>{{paises.id}}</li>
+                <li class="list-group-item"><b>código:</b>{{paises.codigo}}</li>
+                <li class="list-group-item"><b>nacionalidad:</b>{{paises.nacionalidad}}</li>
+                <li class="list-group-item"><b>Pais:</b>{{paises.nombre}}</li>
+            </ul>
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-block" (click)="volver()">Volver atrás</button>
+        </div>
+    </div>
+    </div>
+</div>

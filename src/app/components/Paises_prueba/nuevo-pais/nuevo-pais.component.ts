@@ -29,12 +29,16 @@ export class NuevoPaisComponent implements OnInit{
     const pais = new Paises(this.codigo, this.nacionalidad, this.nombre);
     this.paisesService.save(pais).subscribe(
       data=> {
-        alert("Pais creado con exito.");
-        this.router.navigate(['/lista-pais']);
+        this.toastr.success('Pais eliminado', 'OK', {
+          timeOut: 5000, positionClass: 'toast-top-center'
+        });
+        this.router.navigate(['/lista-pais'])
       },
       err => {
-        alert("No se pudo agregar el pais.");
-        this.router.navigate(['/lista-pais']);
+        this.toastr.error(err.error.mensaje, 'Fail', {
+          timeOut: 5000, positionClass: 'toast-top-center'
+        });
+        this.router.navigate(['/lista-pais'])
       }
     )
 

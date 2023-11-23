@@ -27,7 +27,7 @@ export class EditarPaisComponent implements OnInit {
         this.paises = data;
       },
       err => {
-        alert("No se pudo agregart el pais.");
+        alert("No se pudo modificar2 el pais.");
         this.router.navigate(['/']);
       }
     );
@@ -35,17 +35,18 @@ export class EditarPaisComponent implements OnInit {
 
   onUpdate(): void {
     const id = this.activatedRoute.snapshot.params['id'];
+    if(this.paises) {
     this.paisService.update(id, this.paises).subscribe(
       data=> {
         alert("Pais modificado con exito.");
-        this.router.navigate(['/']);
+        this.router.navigate(['/lista-pais']);
       },
       err => {
         alert("No se pudo modificar el pais.");
-        this.router.navigate(['/']);
+        this.router.navigate(['/lista-pais']);
       }
     )
   }
-
+  }
   }
 
