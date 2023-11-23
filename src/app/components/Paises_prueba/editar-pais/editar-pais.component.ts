@@ -22,8 +22,30 @@ export class EditarPaisComponent implements OnInit {
 
   ngOnInit() {
     const id = this.activatedRoute.snapshot.params['id'];
-
-    alert(id);
+    this.paisService.detail(id).subscribe(
+      data=> {
+        this.paises = data;
+      },
+      err => {
+        alert("No se pudo agregart el pais.");
+        this.router.navigate(['/']);
+      }
+    );
   }
 
-}
+  onUpdate(): void {
+    const id = this.activatedRoute.snapshot.params['id'];
+    this.paisService.update(id, this.paises).subscribe(
+      data=> {
+        alert("Pais modificado con exito.");
+        this.router.navigate(['/']);
+      },
+      err => {
+        alert("No se pudo modificar el pais.");
+        this.router.navigate(['/']);
+      }
+    )
+  }
+
+  }
+

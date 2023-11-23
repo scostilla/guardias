@@ -33,7 +33,7 @@ export class NuevoPaisComponent implements OnInit{
         this.router.navigate(['/lista-pais']);
       },
       err => {
-        alert("No se pudo agregart el pais.");
+        alert("No se pudo agregar el pais.");
         this.router.navigate(['/lista-pais']);
       }
     )
