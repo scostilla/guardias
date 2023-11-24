@@ -29,7 +29,7 @@ export class NuevoPaisComponent implements OnInit{
     const pais = new Paises(this.codigo, this.nacionalidad, this.nombre);
     this.paisesService.save(pais).subscribe(
       data=> {
-        this.toastr.success('Pais eliminado', 'OK', {
+        this.toastr.success('Pais Agregado', 'OK', {
           timeOut: 5000, positionClass: 'toast-top-center'
         });
         this.router.navigate(['/lista-pais'])
