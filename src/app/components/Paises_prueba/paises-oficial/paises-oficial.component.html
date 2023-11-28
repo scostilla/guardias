@@ -1,32 +1,32 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngFor="let pais of paises">
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
-  
+
     <!-- Position Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef> No. </th>
-      <td mat-cell *matCellDef="let element"> {{pais.id}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
     </ng-container>
-  
+
     <!-- Name Column -->
     <ng-container matColumnDef="codigo">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{pais.codigo}} </td>
+      <th mat-header-cell *matHeaderCellDef> Codigo </th>
+      <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
     </ng-container>
-  
+
     <!-- Weight Column -->
     <ng-container matColumnDef="nacionalidad">
-      <th mat-header-cell *matHeaderCellDef> Weight </th>
-      <td mat-cell *matCellDef="let element"> {{pais.nacionalidad}} </td>
+      <th mat-header-cell *matHeaderCellDef> Nacionalidad </th>
+      <td mat-cell *matCellDef="let element"> {{element.nacionalidad}} </td>
     </ng-container>
-  
+
     <!-- Symbol Column -->
     <ng-container matColumnDef="nombre">
-      <th mat-header-cell *matHeaderCellDef> Symbol </th>
-      <td mat-cell *matCellDef="let element"> {{pais.nombre}} </td>
+      <th mat-header-cell *matHeaderCellDef> Nombre </th>
+      <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
     </ng-container>
-  
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>

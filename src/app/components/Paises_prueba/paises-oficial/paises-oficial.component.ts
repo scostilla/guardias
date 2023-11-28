@@ -1,23 +1,21 @@
-import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { ToastrService } from 'ngx-toastr';
 import { Paises } from '../../../models/paises';
 import { PaisesService } from '../../../services/paises.service';
-import { ToastrService } from 'ngx-toastr';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 
+import { HttpClient } from '@angular/common/http';
 import {
-  MatDialog,
-  MatDialogRef,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogTitle,
-  MatDialogContent,
+  MatDialog
 } from '@angular/material/dialog';
-import {MatButtonModule} from '@angular/material/button';
+import { MatSort } from '@angular/material/sort';
+import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
+import { ApiServiceService } from 'src/app/services/api-service.service';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 export interface UserData {
-  id?: number;
+  id: number;
   codigo: string;
   nacionalidad: string;
   nombre: string;
@@ -35,14 +33,23 @@ export class PaisesOficialComponent implements OnInit, AfterViewInit  {
   router: any;
   displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre'];
   dataSource: MatTableDataSource<UserData>;
-  
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private paisesService: PaisesService,
     private toastr: ToastrService,
     public dialog: MatDialog,
+    private http: HttpClient,
+    private paginatorLabels: MatPaginatorIntl,
+    private dataSharingService: DataSharingService,
+    private apiServiceService: ApiServiceService
     ) {
+      paginatorLabels.itemsPerPageLabel = 'Items por pagina';
+    paginatorLabels.firstPageLabel = 'Primera Pagina';
+    paginatorLabels.nextPageLabel = 'Siguiente';
+    paginatorLabels.previousPageLabel = 'Anterior';
       this.dataSource = new MatTableDataSource<UserData>([]);
     }
 
@@ -59,14 +66,22 @@ export class PaisesOficialComponent implements OnInit, AfterViewInit  {
 
   cargarPaises(): void {
     this.paisesService.lista().subscribe(
-      data => {
-        this.paises = data;
+      (data: Paises[]) => {
+        const userDataArray: UserData[] = data.map(pais => ({
+          id: pais.id || 0,
+          codigo: pais.codigo || '',
+          nacionalidad: pais.nacionalidad || '',
+          nombre: pais.nombre || '',
+        }));
+
+        this.dataSource.data = userDataArray;
       },
-      err => {
+      (err) => {
         console.log(err);
       }
     );
   }
+
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(PaisesOficialComponent, {
