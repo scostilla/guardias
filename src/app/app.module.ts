@@ -113,6 +113,7 @@ import { DetallePaisComponent } from './components/Paises_prueba/detalle-pais/de
 import { NuevoPaisComponent } from './components/Paises_prueba/nuevo-pais/nuevo-pais.component';
 import { EditarPaisComponent } from './components/Paises_prueba/editar-pais/editar-pais.component';
 import { ListaPaisComponent } from './components/Paises_prueba/lista-pais/lista-pais.component';
+import { PaisesOficialComponent } from './components/Paises_prueba/paises-oficial/paises-oficial.component';
 
 //para formulario Reg-diario que ya está agregado mas arrib a
 //import { ReactiveFormsModule } from '@angular/forms';
@@ -215,6 +216,7 @@ registerLocaleData(localePy,'es');
     NuevoPaisComponent,
     EditarPaisComponent,
     ListaPaisComponent,
+    PaisesOficialComponent,
 
   ],
 

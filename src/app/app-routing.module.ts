@@ -66,6 +66,7 @@ import { DetallePaisComponent } from './components/Paises_prueba/detalle-pais/de
 import { NuevoPaisComponent } from './components/Paises_prueba/nuevo-pais/nuevo-pais.component';
 import { EditarPaisComponent } from './components/Paises_prueba/editar-pais/editar-pais.component';
 import { ListaPaisComponent } from './components/Paises_prueba/lista-pais/lista-pais.component';
+import { PaisesOficialComponent } from './components/Paises_prueba/paises-oficial/paises-oficial.component';
 
 
 
@@ -146,6 +147,7 @@ const routes: Routes = [
  {path: 'nuevo-pais', component:NuevoPaisComponent},
  {path: 'editar-pais/:id', component:EditarPaisComponent},
  {path: 'lista-pais', component:ListaPaisComponent},
+ {path: 'paises-oficial', component:PaisesOficialComponent},
 
  {path:'**',redirectTo:'',pathMatch:'full'},
  /* {path:'regDiario/:id',component:RegDiarioComponent},
