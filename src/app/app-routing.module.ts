@@ -61,6 +61,10 @@ import { PopupCalendarioDispComponent } from './components/popup-calendario-disp
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
+import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
+import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
+
+
 
 
 
@@ -127,6 +131,9 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
+ {path: 'configuracion', component:ConfiguracionComponent},
+ {path: 'pais', component:PaisComponent},
+
 ];
 
 @NgModule({

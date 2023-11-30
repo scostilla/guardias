@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
+import { MatDividerModule } from '@angular/material/divider';
 
 //Components
 import { AppComponent } from './app.component';
@@ -107,6 +108,9 @@ import { ProfessionalFormDeletComponent } from './components/professional-form-d
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
 import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal2/disponibilidad-ramal2.component';
+import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
+import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
+import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
 
 
 registerLocaleData(localePy,'es');
@@ -194,6 +198,9 @@ registerLocaleData(localePy,'es');
     ProfessionalPlantillaDhComponent,
     ProfessionalDhJunioAsisComponent,
     DisponibilidadRamal2Component,
+    ConfiguracionComponent,
+    PaisComponent,
+    ProvinciaComponent,
     
   ],
 
@@ -221,6 +228,8 @@ registerLocaleData(localePy,'es');
     MatButtonToggleModule,
     DatePipe,
     MatBadgeModule,
+    MatDividerModule,
+    
   ],
   providers: [
     ProfessionalDataServiceService,

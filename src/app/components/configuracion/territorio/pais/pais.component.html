@@ -1,0 +1,59 @@
+<p>pais works!</p><div class="row">
+    <div class="col-1">
+    </div>
+    <div class="col-6 justify-content-end">
+      <div class="titulos">.:: PAISES</div>
+    </div>
+    <div class="col-1 align-items-right">
+      <button mat-fab color="primary" routerLink="/nuevo-pais" matTooltip="Agregar Paises">
+        <mat-icon>library_add</mat-icon>
+      </button>
+    </div>
+    <div class="col-3">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="container">
+  <div class="row professionalList">
+    <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  
+  
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+  
+  
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
+        <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="nacionalidad">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nacionalidad </th>
+        <td mat-cell *matCellDef="let element"> {{element.nacionalidad}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Pais </th>
+        <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon class="btnDetail" routerLink="/detalle-pais/{{element.id}}">zoom_in</mat-icon>
+          <mat-icon class="btnEdit" routerLink="/editar-pais/{{element.id}}" matTooltip="Editar {{element.id}} {{element.nombre}}">edit</mat-icon>
+          <mat-icon class="btnRemove" (click)="borrar(element.id ?? 0, element.nombre)" matTooltip="Eliminar {{element.id}} {{element.nombre}}">person_remove</mat-icon>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+  </div>
