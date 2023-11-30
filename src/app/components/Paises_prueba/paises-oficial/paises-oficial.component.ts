@@ -31,7 +31,7 @@ export class PaisesOficialComponent implements OnInit, AfterViewInit  {
 
   paises: Paises[] = [];
   router: any;
-  displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre'];
+  displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre', 'actions'];
   dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -62,6 +62,7 @@ export class PaisesOficialComponent implements OnInit, AfterViewInit  {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   cargarPaises(): void {
@@ -82,6 +83,10 @@ export class PaisesOficialComponent implements OnInit, AfterViewInit  {
     );
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(PaisesOficialComponent, {
