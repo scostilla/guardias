@@ -17,11 +17,11 @@ export class PaisesService {
   }
 
   public detail(id:number): Observable<Paises> {
-      return this.httpClient.get<Paises>(this.paisesURL + `detail/${id}`);
+      return this.httpClient.get<Paises>(this.paisesURL + `detalle/${id}`);
   }
 
   public detailName(nombre:string): Observable<Paises> {
-    return this.httpClient.get<Paises>(this.paisesURL + `detailname/${nombre}`);
+    return this.httpClient.get<Paises>(this.paisesURL + `detallenombre/${nombre}`);
 }
 
 public save(paises:Paises): Observable<any> {
