@@ -1,6 +1,5 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
@@ -57,6 +56,9 @@ import { ProfessionalDetailComponent } from './components/professional-detail/pr
 import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 
+//Toastr
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 
 //Date Import
@@ -111,6 +113,12 @@ import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
 import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
+import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
+import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
+import { PaisNewComponent } from './components/configuracion/territorio/pais-new/pais-new.component';
+import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
+import { ProvinciaNewComponent } from './components/configuracion/territorio/provincia-new/provincia-new.component';
+import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -201,6 +209,12 @@ registerLocaleData(localePy,'es');
     ConfiguracionComponent,
     PaisComponent,
     ProvinciaComponent,
+    PaisEditComponent,
+    PaisDetailComponent,
+    PaisNewComponent,
+    ProvinciaDetailComponent,
+    ProvinciaNewComponent,
+    ProvinciaEditComponent,
     
   ],
 
@@ -229,6 +243,7 @@ registerLocaleData(localePy,'es');
     DatePipe,
     MatBadgeModule,
     MatDividerModule,
+    ToastrModule.forRoot() // ToastrModule added
     
   ],
   providers: [

@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>
+    AGREGAR PAIS
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  <form (ngSubmit)="onCreate()" novalidate #f="ngForm">
+    <mat-dialog-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Código</mat-label>
+            <input matInput placeholder="Ingresar código del País" autocomplete="off" id="codigo" name="codigo" [(ngModel)]="codigo" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nacionalidad</mat-label>
+            <input matInput placeholder="Ingresar Nacionalidad" autocomplete="off" id="nacionalidad" name="nacionalidad" [(ngModel)]="nacionalidad" required/>
+          </mat-form-field>
+        </div>
+      </div>
+  
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre del País</mat-label>
+            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="nombre" required/>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions class="action mt-4" align="center">
+      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+      </button>
+      <button mat-raised-button class="btnAdd" color="primary"  [disabled]="!f.valid">Agregar</button>
+    </div>
+  </form>

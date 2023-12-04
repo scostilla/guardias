@@ -63,6 +63,16 @@ import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.c
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
+import { PaisNewComponent } from './components/configuracion/territorio/pais-new/pais-new.component';
+import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
+import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
+import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
+import { ProvinciaNewComponent } from './components/configuracion/territorio/provincia-new/provincia-new.component';
+import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
+import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
+
+
+
 
 
 
@@ -133,6 +143,14 @@ const routes: Routes = [
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
  {path: 'configuracion', component:ConfiguracionComponent},
  {path: 'pais', component:PaisComponent},
+ {path: 'pais-new', component:PaisNewComponent},
+ {path: 'pais-detail', component:PaisDetailComponent},
+ {path: 'pais-edit', component:PaisEditComponent},
+ {path: 'provincia', component:ProvinciaComponent},
+ {path: 'provincia-new', component:ProvinciaNewComponent},
+ {path: 'provincia-detail', component:ProvinciaDetailComponent},
+ {path: 'provincia-edit', component:ProvinciaEditComponent},
+
 
 ];
 

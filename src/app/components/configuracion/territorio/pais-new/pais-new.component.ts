@@ -1,0 +1,54 @@
+import { Component, OnInit } from '@angular/core';
+import { PaisService } from '../../../../services/pais.service';
+import { Pais } from '../../../../models/pais';
+import { Router } from '@angular/router';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
+
+@Component({
+  selector: 'app-pais-new',
+  templateUrl: './pais-new.component.html',
+  styleUrls: ['./pais-new.component.css']
+})
+export class PaisNewComponent implements OnInit {
+  codigo: string = '';
+  nacionalidad: string = '';
+  nombre: string = '';
+
+  constructor(
+    private PaisService: PaisService,
+    private toastr: ToastrService,
+    private router: Router,
+    public dialogRef: MatDialogRef<PaisNewComponent>,
+
+    ) {}
+
+  ngOnInit() {
+    
+  }
+
+  onCreate(): void {
+    const pais = new Pais(this.codigo, this.nacionalidad, this.nombre);
+    this.PaisService.save(pais).subscribe(
+      data=> {
+        this.toastr.success('Pais Agregado', 'OK', {
+          timeOut: 7000, positionClass: 'toast-top-center'
+        });
+        this.router.navigate(['/pais'])
+      },
+      err => {
+        this.toastr.error(err.error.mensaje, 'Error', {
+          timeOut: 7000, positionClass: 'toast-top-center'
+        });
+        this.router.navigate(['/pais'])
+      }
+    )
+
+    this.dialogRef.close();
+  }
+
+  cancel() {
+    this.dialogRef.close();
+  }
+
+}

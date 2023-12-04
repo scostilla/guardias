@@ -4,6 +4,12 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class DataSharingService {
+  getPaisId() {
+    throw new Error('Method not implemented.');
+  }
+  getPaisFormData(): any {
+    throw new Error('Method not implemented.');
+  }
   private formData: any;
   private id: number = -1;
 

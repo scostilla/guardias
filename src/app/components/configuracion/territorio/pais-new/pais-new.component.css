@@ -1,0 +1,47 @@
+mat-form-field{
+  align-items: center;
+  width: 100%;
+}
+.mdc-dialog__title
+{
+  background-color: #243c74;
+  color: white;
+}
+
+.btnAdd{
+  color: #243c74;
+}
+
+.btnAdd[disabled]{
+  color: #87a4e9;
+}
+
+.btnCancel{
+  color: #9b0a0a;
+}
+
+.requiredField{
+  color: red;
+}
+.row{
+  display: flex;
+}
+
+.col{
+  flex:50%;
+  margin:0px,5px;
+}
+
+.error {
+  color:red;
+  margin-top: -20px;
+}
+
+
+mat-label{
+  color: #243c74;
+}
+
+.action{
+  padding: 0px 25px 20px;
+  }

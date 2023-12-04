@@ -1,0 +1,15 @@
+<div class="row mt-5" *ngIf="pais">
+    <div class="col-md-4 mx-auto">
+        <div class="card" style="width: 18rem;">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><b>Id:</b>{{pais.id}}</li>
+                <li class="list-group-item"><b>código:</b>{{pais.codigo}}</li>
+                <li class="list-group-item"><b>nacionalidad:</b>{{pais.nacionalidad}}</li>
+                <li class="list-group-item"><b>Pais:</b>{{pais.nombre}}</li>
+            </ul>
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-block" (click)="volver()">Volver atrás</button>
+        </div>
+    </div>
+    </div>
+</div>

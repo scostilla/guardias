@@ -12,6 +12,9 @@ import {
 import { MatSort } from '@angular/material/sort';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { PaisNewComponent } from '../pais-new/pais-new.component';
+import { PaisEditComponent } from '../pais-edit/pais-edit.component';
+import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
 
 export interface UserData {
   id: number;
@@ -26,6 +29,7 @@ export interface UserData {
   templateUrl: './pais.component.html',
   styleUrls: ['./pais.component.css']
 })
+
 export class PaisComponent implements OnInit, AfterViewInit {
 
   paises: Pais[] = [];
@@ -40,6 +44,9 @@ export class PaisComponent implements OnInit, AfterViewInit {
     private paisService: PaisService,
     private toastr: ToastrService,
     public dialog: MatDialog,
+    public dialogNew: MatDialog,
+    public dialogEdit: MatDialog,
+    public dialogDetail: MatDialog,
     private http: HttpClient,
     private paginatorLabels: MatPaginatorIntl,
     private dataSharingService: DataSharingService,
@@ -93,6 +100,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
       exitAnimationDuration,
     });
   }
+
   borrar(id: number, nombre: string) {
     this.dialog
     .open(ConfirmDialogComponent, {
@@ -113,16 +121,42 @@ export class PaisComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/'])
       },
       err => {
-        this.toastr.error(err.error.mensaje, 'Fail', {
+        this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 5000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/lista-pais'])
+        this.router.navigate(['/pais'])
       }
     );
   } else {
     this.dialog.closeAll();
   }
 });
+  }
+
+  addNewPais() {
+    this.dialogNew.open(PaisNewComponent, {
+      width: '600px',
+      disableClose: true,
+    });
+
+  }
+
+  addEditPais(id: number) {
+    this.dialogEdit.open(PaisEditComponent, {
+      width: '600px',
+      disableClose: true,
+      data: { id: id },
+    });
+
+  }
+
+  addDetailPais(id: number) {
+    this.dialogDetail.open(PaisDetailComponent, {
+      width: '600px',
+      disableClose: true,
+      data: { id: id },
+    });
+
   }
 
 }
