@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaisService } from 'src/app/services/pais.service';
 import { ToastrService } from 'ngx-toastr';
 import { Pais } from 'src/app/models/pais';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { PaisService } from 'src/app/services/pais.service';
 
 
 @Component({
@@ -22,12 +22,12 @@ export class PaisDetailComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     public dialogo: MatDialogRef<PaisDetailComponent>,
-   @Inject(MAT_DIALOG_DATA) public data: string
+  @Inject(MAT_DIALOG_DATA) public data: { id: number }
 
   ) {}
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.params['id'];
+    const id = this.data.id;
     this.paisService.detail(id).subscribe(
       data=> {
         this.pais = data;
