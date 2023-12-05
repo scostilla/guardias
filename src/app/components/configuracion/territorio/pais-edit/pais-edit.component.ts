@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaisService } from '../../../../services/pais.service';
-import { Pais } from '../../../../models/pais';
-import { MatDialogRef} from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { Pais } from '../../../../models/pais';
+import { PaisService } from '../../../../services/pais.service';
 
 
 @Component({
@@ -21,10 +21,12 @@ export class PaisEditComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     public dialogRef: MatDialogRef<PaisEditComponent>,
+  @Inject(MAT_DIALOG_DATA) public data: { id: number }
   ) {}
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.params['id'];
+    const id = this.data.id;
+    console.log("ngOnInit "+id);
     this.paisService.detail(id).subscribe(
       data=> {
         this.toastr.success('Pais Modificado', 'OK', {
@@ -42,7 +44,8 @@ export class PaisEditComponent implements OnInit {
   }
 
   onUpdate(): void {
-    const id = this.activatedRoute.snapshot.params['id'];
+    const id = this.data.id;
+    console.log("onUpdate "+id);
     if(this.pais) {
     this.paisService.update(id, this.pais).subscribe(
       data=> {

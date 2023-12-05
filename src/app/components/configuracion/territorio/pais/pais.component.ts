@@ -1,18 +1,18 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { PaisService } from 'src/app/services/pais.service';
 import { ToastrService } from 'ngx-toastr';
 import { Pais } from 'src/app/models/pais';
+import { PaisService } from 'src/app/services/pais.service';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { PaisNewComponent } from '../pais-new/pais-new.component';
-import { PaisEditComponent } from '../pais-edit/pais-edit.component';
 import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
+import { PaisEditComponent } from '../pais-edit/pais-edit.component';
+import { PaisNewComponent } from '../pais-new/pais-new.component';
 
 
 export interface UserData {
@@ -142,13 +142,13 @@ export class PaisComponent implements OnInit, AfterViewInit {
   }
 
   addEditPais(id: number) {
-    this.dialogEdit.open(PaisEditComponent, {
+    this.dialog.open(PaisEditComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
-
   }
+
 
   addDetailPais(id: number) {
     const dialogRef = this.dialog.open(PaisDetailComponent, {
