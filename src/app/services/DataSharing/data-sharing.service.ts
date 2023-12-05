@@ -4,12 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class DataSharingService {
-  getPaisId() {
-    throw new Error('Method not implemented.');
-  }
-  getPaisFormData(): any {
-    throw new Error('Method not implemented.');
-  }
+  
   private formData: any;
   private id: number = -1;
 
@@ -28,6 +23,22 @@ export class DataSharingService {
   }
 
   getProfessionalId() {
+    return this.id;
+  }
+
+  setPaisFormData(data: any) {
+    this.formData = data;
+  }
+
+  getPaisFormData() {
+    return this.formData;
+  }
+
+  setPaisId(id: number) {
+    this.id = id;
+  }
+
+  getPaisId() {
     return this.id;
   }
 }

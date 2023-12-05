@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { PaisService } from '../../../../services/pais.service';
-import { Pais } from '../../../../models/pais';
 import { Router } from '@angular/router';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { PaisService } from 'src/app/services/pais.service';
 import { ToastrService } from 'ngx-toastr';
+import { Pais } from 'src/app/models/pais';
 
 @Component({
   selector: 'app-pais-new',

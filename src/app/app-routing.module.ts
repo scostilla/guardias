@@ -144,12 +144,12 @@ const routes: Routes = [
  {path: 'configuracion', component:ConfiguracionComponent},
  {path: 'pais', component:PaisComponent},
  {path: 'pais-new', component:PaisNewComponent},
- {path: 'pais-detail', component:PaisDetailComponent},
- {path: 'pais-edit', component:PaisEditComponent},
+ {path: 'pais-detail/:id', component:PaisDetailComponent},
+ {path: 'pais-edit/:id', component:PaisEditComponent},
  {path: 'provincia', component:ProvinciaComponent},
  {path: 'provincia-new', component:ProvinciaNewComponent},
- {path: 'provincia-detail', component:ProvinciaDetailComponent},
- {path: 'provincia-edit', component:ProvinciaEditComponent},
+ {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
+ {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
 
 
 ];

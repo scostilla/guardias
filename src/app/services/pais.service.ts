@@ -8,31 +8,32 @@ import { Pais } from "src/app/models/pais";
 })
 export class PaisService {
 
-  PaisURL = 'http://localhost:8080/pais/';
+  paisesURL = 'http://localhost:8080/pais/';
 
   constructor(private httpClient: HttpClient) { }
 
   public lista(): Observable<Pais[]> {
-      return this.httpClient.get<Pais[]>(this.PaisURL + 'lista');
+      return this.httpClient.get<Pais[]>(this.paisesURL + 'lista');
   }
 
   public detail(id:number): Observable<Pais> {
-      return this.httpClient.get<Pais>(this.PaisURL + `detail/${id}`);
+      return this.httpClient.get<Pais>(this.paisesURL + `detalle/${id}`);
   }
 
   public detailName(nombre:string): Observable<Pais> {
-    return this.httpClient.get<Pais>(this.PaisURL + `detailname/${nombre}`);
+    return this.httpClient.get<Pais>(this.paisesURL + `detallenombre/${nombre}`);
 }
 
-public save(Pais:Pais): Observable<any> {
-  return this.httpClient.post<any>(this.PaisURL + 'create', Pais);
+public save(paises:Pais): Observable<any> {
+  return this.httpClient.post<any>(this.paisesURL + 'create', paises);
 }
 
-public update(id:number, Pais:Pais): Observable<any> {
-  return this.httpClient.put<any>(this.PaisURL + `update/${id}`, Pais);
+public update(id:number, paises:Pais): Observable<any> {
+  return this.httpClient.put<any>(this.paisesURL + `update/${id}`, paises);
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.PaisURL + `delete/${id}`);
+  return this.httpClient.delete<any>(this.paisesURL + `delete/${id}`);
 }
+
 }

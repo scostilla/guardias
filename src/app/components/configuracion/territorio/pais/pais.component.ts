@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { PaisService } from 'src/app/services/pais.service';
 import { ToastrService } from 'ngx-toastr';
-import { Pais } from '../../../../models/pais';
-import { PaisService } from '../../../../services/pais.service';
+import { Pais } from 'src/app/models/pais';
 
 import { HttpClient } from '@angular/common/http';
 import {
@@ -15,6 +15,7 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { PaisNewComponent } from '../pais-new/pais-new.component';
 import { PaisEditComponent } from '../pais-edit/pais-edit.component';
 import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
+
 
 export interface UserData {
   id: number;
@@ -51,7 +52,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
     private paginatorLabels: MatPaginatorIntl,
     private dataSharingService: DataSharingService,
     ) {
-      paginatorLabels.itemsPerPageLabel = 'Items por pagina';
+    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
     paginatorLabels.firstPageLabel = 'Primera Pagina';
     paginatorLabels.nextPageLabel = 'Siguiente';
     paginatorLabels.previousPageLabel = 'Anterior';
@@ -60,6 +61,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.cargarPaises();
+
   }
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
@@ -118,7 +120,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
         this.toastr.success('Pais eliminado', 'OK', {
           timeOut: 5000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/'])
+        this.router.navigate(['/pais'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
@@ -151,12 +153,17 @@ export class PaisComponent implements OnInit, AfterViewInit {
   }
 
   addDetailPais(id: number) {
-    this.dialogDetail.open(PaisDetailComponent, {
+    const dialogRef = this.dialog.open(PaisDetailComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(this.dataSharingService.getPaisFormData());
+      this.dataSource.data.push(this.dataSharingService.getPaisFormData());
+      console.log("id recibido: "+this.dataSharingService.getPaisId());
+    });
   }
 
 }

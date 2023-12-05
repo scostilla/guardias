@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaisService } from '../../../../services/pais.service';
 import { Pais } from '../../../../models/pais';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef} from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 
 
