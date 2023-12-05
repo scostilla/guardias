@@ -6,9 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Pais } from 'src/app/models/pais';
 
 import { HttpClient } from '@angular/common/http';
-import {
-  MatDialog
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';

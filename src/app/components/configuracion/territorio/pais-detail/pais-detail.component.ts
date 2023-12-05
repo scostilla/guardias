@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaisService } from 'src/app/services/pais.service';
 import { ToastrService } from 'ngx-toastr';
 import { Pais } from 'src/app/models/pais';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 
 @Component({
@@ -20,6 +21,8 @@ export class PaisDetailComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
+    public dialogo: MatDialogRef<PaisDetailComponent>,
+   @Inject(MAT_DIALOG_DATA) public data: string
 
   ) {}
 
