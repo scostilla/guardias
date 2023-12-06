@@ -1,5 +1,4 @@
-<h2 mat-dialog-title>
-    MODIFICAR PAIS
+<h2 mat-dialog-title>MODIFICAR PAIS
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
   <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="pais">
@@ -31,9 +30,9 @@
         </div>
       </div>
     </mat-dialog-content>
-    <div mat-dialog-actions class="action mt-4" align="center">
+    <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
       </button>
-      <button mat-raised-button class="btnAdd" color="primary"  [disabled]="!f.valid">Modificar</button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
     </div>
   </form>

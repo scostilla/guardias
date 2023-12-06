@@ -116,13 +116,13 @@ export class PaisComponent implements OnInit, AfterViewInit {
     this.paisService.delete(id).subscribe(
       data=> {
         this.toastr.success('Pais eliminado', 'OK', {
-          timeOut: 5000, positionClass: 'toast-top-center'
+          timeOut: 6000, positionClass: 'toast-top-center'
         });
         this.router.navigate(['/pais'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 5000, positionClass: 'toast-top-center'
+          timeOut: 6000, positionClass: 'toast-top-center'
         });
         this.router.navigate(['/pais'])
       }
@@ -141,23 +141,29 @@ export class PaisComponent implements OnInit, AfterViewInit {
 
   }
 
-  addEditPais(id: number) {
-    this.dialog.open(PaisEditComponent, {
+  addDetailPais(id: number) {
+    const dialogDetail = this.dialog.open(PaisDetailComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
+    });
+
+    dialogDetail.afterClosed().subscribe((result) => {
+      console.log(this.dataSharingService.getPaisFormData());
+      this.dataSource.data.push(this.dataSharingService.getPaisFormData());
+      console.log("id recibido: "+this.dataSharingService.getPaisId());
     });
   }
 
 
-  addDetailPais(id: number) {
-    const dialogRef = this.dialog.open(PaisDetailComponent, {
+  addEditPais(id: number) {
+    const dialogEdit = this.dialog.open(PaisEditComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogEdit.afterClosed().subscribe((result) => {
       console.log(this.dataSharingService.getPaisFormData());
       this.dataSource.data.push(this.dataSharingService.getPaisFormData());
       console.log("id recibido: "+this.dataSharingService.getPaisId());

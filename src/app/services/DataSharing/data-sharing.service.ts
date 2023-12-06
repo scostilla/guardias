@@ -41,4 +41,21 @@ export class DataSharingService {
   getPaisId() {
     return this.id;
   }
+
+  setProvinciaFormData(data: any) {
+    this.formData = data;
+  }
+
+  getProvinciaFormData() {
+    return this.formData;
+  }
+
+  setProvinciaId(id: number) {
+    this.id = id;
+  }
+
+  getProvinciaId() {
+    return this.id;
+  }
+
 }

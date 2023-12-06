@@ -34,15 +34,15 @@ export class PaisDetailComponent implements OnInit {
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
+          timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.volver();
+        this.dialogo.close();
       }
     );
 
   }
 
-  volver(): void {
-    this.router.navigate(['/pais'])
+  cancel() {
+    this.dialogo.close();
   }
 }

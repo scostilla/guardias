@@ -1,15 +1,29 @@
-<div class="row mt-5" *ngIf="pais">
-    <div class="col-md-4 mx-auto">
-        <div class="card" style="width: 18rem;">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><b>Id:</b>{{pais.id}}</li>
-                <li class="list-group-item"><b>código:</b>{{pais.codigo}}</li>
-                <li class="list-group-item"><b>nacionalidad:</b>{{pais.nacionalidad}}</li>
-                <li class="list-group-item"><b>Pais:</b>{{pais.nombre}}</li>
-            </ul>
-        <div class="card-footer">
-            <button class="btn btn-outline-primary btn-block" (click)="volver()">Volver atrás</button>
-        </div>
+<h1 mat-dialog-title>DETALLE
+    <h5>País</h5>
+</h1>
+<mat-dialog-content>
+    <table class="table" *ngIf="pais">
+        <tbody>
+          <tr>
+            <th scope="row">ID</th>
+            <td>{{pais.id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Código</th>
+            <td>{{pais.codigo}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Nacionalidad</th>
+            <td>{{pais.nacionalidad}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Nombre País</th>
+            <td>{{pais.nombre}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar</button>
     </div>
-    </div>
-</div>
+  </mat-dialog-content>

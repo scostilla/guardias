@@ -1,1 +1,22 @@
-<p>provincia-edit works!</p>
+<div class="container-mt-3" *ngIf="pais">
+    <div class="row">
+        <div class="col-md-4 mx-auto-4">
+            <form (ngSubmit)="onUpdate()" novalidate #f="ngForm">
+                <div class="form-group">
+                    <label for="codigo">Código</label>
+                    <input type="text" class="form-control" id="codigo" name="codigo" [(ngModel)]="pais.codigo" required>
+                </div>
+                <div class="form-group">
+                    <label for="nacionalidad">Nacionalidad</label>
+                    <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" [(ngModel)]="pais.nacionalidad" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="pais.nombre" required>
+                </div>
+                <button class="btn btn-outline-success btn-block" [disabled]="!f.valid">Modificar</button>
+            </form>
+        </div>
+    </div>
+  
+  </div>
