@@ -13,7 +13,7 @@ import { Provincia } from 'src/app/models/provincia';
 export class ProvinciaNewComponent implements OnInit {
   gentilicio: string = '';
   nombre: string = '';
-  id_pais: number = null;
+  id_pais: number = 0;
 
   constructor(
     private ProvinciaService: ProvinciaService,

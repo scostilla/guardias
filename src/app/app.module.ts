@@ -119,6 +119,14 @@ import { PaisNewComponent } from './components/configuracion/territorio/pais-new
 import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
 import { ProvinciaNewComponent } from './components/configuracion/territorio/provincia-new/provincia-new.component';
 import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
+import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
+import { DepartamentoNewComponent } from './components/configuracion/territorio/departamento-new/departamento-new.component';
+import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
+import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
+import { LocalidadComponent } from './components/configuracion/territorio/localidad/localidad.component';
+import { LocalidadNewComponent } from './components/configuracion/territorio/localidad-new/localidad-new.component';
+import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
+import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
 
 
 registerLocaleData(localePy,'es');
@@ -215,6 +223,14 @@ registerLocaleData(localePy,'es');
     ProvinciaDetailComponent,
     ProvinciaNewComponent,
     ProvinciaEditComponent,
+    DepartamentoComponent,
+    DepartamentoNewComponent,
+    DepartamentoEditComponent,
+    DepartamentoDetailComponent,
+    LocalidadComponent,
+    LocalidadNewComponent,
+    LocalidadEditComponent,
+    LocalidadDetailComponent,
     
   ],
 

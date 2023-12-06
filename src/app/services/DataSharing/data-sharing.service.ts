@@ -58,4 +58,21 @@ export class DataSharingService {
     return this.id;
   }
 
+
+  setDepartamentoFormData(data: any) {
+    this.formData = data;
+  }
+
+  getDepartamentoFormData() {
+    return this.formData;
+  }
+
+  setDepartamentoId(id: number) {
+    this.id = id;
+  }
+
+  getDepartamentoId() {
+    return this.id;
+  }
+
 }

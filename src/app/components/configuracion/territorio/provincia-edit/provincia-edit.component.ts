@@ -2,8 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Pais } from '../../../../models/pais';
-import { PaisService } from '../../../../services/pais.service';
+import { Provincia } from 'src/app/models/provincia';
+import { ProvinciaService } from 'src/app/services/provincia.service';
+
 
 @Component({
   selector: 'app-provincia-edit',
@@ -12,10 +13,10 @@ import { PaisService } from '../../../../services/pais.service';
 })
 export class ProvinciaEditComponent implements OnInit {
 
-  pais?: Pais;
+  provincia?: Provincia;
 
   constructor(
-    private paisService: PaisService,
+    private provinciaService: ProvinciaService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
@@ -25,20 +26,14 @@ export class ProvinciaEditComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    console.log("ngOnInit "+id);
-    this.paisService.detail(id).subscribe(
+    this.provinciaService.detail(id).subscribe(
       data=> {
-        this.toastr.success('Pais Modificado', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-        this.router.navigate(['/pais']);
-        console.log(this.paisService);
+        this.provincia = data;
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
+          timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
       }
     );
   }
@@ -46,8 +41,8 @@ export class ProvinciaEditComponent implements OnInit {
   onUpdate(): void {
     const id = this.data.id;
     console.log("onUpdate "+id);
-    if(this.pais) {
-    this.paisService.update(id, this.pais).subscribe(
+    if(this.provincia) {
+    this.provinciaService.update(id, this.provincia).subscribe(
       data=> {
         this.toastr.success('Pais Modificado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'

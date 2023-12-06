@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaisService } from 'src/app/services/pais.service';
 import { ToastrService } from 'ngx-toastr';
-import { Pais } from 'src/app/models/pais';
+import { Provincia } from 'src/app/models/provincia';
+import { ProvinciaService } from 'src/app/services/provincia.service';
+
 
 @Component({
   selector: 'app-provincia-detail',
@@ -12,27 +14,35 @@ import { Pais } from 'src/app/models/pais';
 
 export class ProvinciaDetailComponent implements OnInit {
 
-  pais?: Pais;
+  provincia?: Provincia;
 
   constructor(
-    private paisService: PaisService,
+    private provinciaService: ProvinciaService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    public dialogo: MatDialogRef<ProvinciaDetailComponent>,
+  @Inject(MAT_DIALOG_DATA) public data: { id: number }
+
   ) {}
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.params['id'];
-    this.paisService.detail(id).subscribe(
+    const id = this.data.id;
+    this.provinciaService.detail(id).subscribe(
       data=> {
-        this.pais = data;
+        this.provincia = data;
       },
       err => {
-        alert("No se pudo modificar2 el pais.");
-        this.router.navigate(['/provincia']);
+        this.toastr.error(err.error.mensaje, 'Error', {
+          timeOut: 6000, positionClass: 'toast-top-center'
+        });
+        this.dialogo.close();
       }
     );
 
   }
 
+  cancel() {
+    this.dialogo.close();
+  }
 }
