@@ -14,7 +14,6 @@ import { ProvinciaDetailComponent } from '../provincia-detail/provincia-detail.c
 import { ProvinciaEditComponent } from '../provincia-edit/provincia-edit.component';
 import { ProvinciaNewComponent } from '../provincia-new/provincia-new.component';
 
-
 export interface UserData {
   id: number;
   gentilicio: string;
@@ -22,18 +21,21 @@ export interface UserData {
   id_pais: number;
 }
 
-
 @Component({
   selector: 'app-provincia',
   templateUrl: './provincia.component.html',
-  styleUrls: ['./provincia.component.css']
+  styleUrls: ['./provincia.component.css'],
 })
-
 export class ProvinciaComponent implements OnInit, AfterViewInit {
-
   provincias: Provincia[] = [];
   router: any;
-  displayedColumns: string[] = ['id', 'gentilicio', 'nombre', 'id_pais', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'gentilicio',
+    'nombre',
+    'id_pais',
+    'actions',
+  ];
   dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -48,18 +50,17 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     public dialogDetail: MatDialog,
     private http: HttpClient,
     private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    ) {
+    private dataSharingService: DataSharingService
+  ) {
     paginatorLabels.itemsPerPageLabel = 'Items por pagina';
     paginatorLabels.firstPageLabel = 'Primera Pagina';
     paginatorLabels.nextPageLabel = 'Siguiente';
     paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    this.dataSource = new MatTableDataSource<UserData>([]);
+  }
 
   ngOnInit() {
     this.cargarProvincias();
-
   }
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
@@ -73,13 +74,14 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
   cargarProvincias(): void {
     this.provinciaService.lista().subscribe(
       (data: Provincia[]) => {
-        const userDataArray: UserData[] = data.map(provincia => ({
+        const userDataArray: UserData[] = data.map((provincia) => ({
           id: provincia.id || 0,
           gentilicio: provincia.gentilicio || '',
           nombre: provincia.nombre || '',
-          id_pais: provincia.id_pais || 0,
+          id_pais: provincia.id_pais !== undefined ? provincia.id_pais : 0,
         }));
 
+        console.log(userDataArray);
         this.dataSource.data = userDataArray;
       },
       (err) => {
@@ -93,7 +95,10 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+  openDialog(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string
+  ): void {
     this.dialog.open(ProvinciaComponent, {
       width: '250px',
       enterAnimationDuration,
@@ -103,34 +108,35 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
 
   borrar(id: number, nombre: string) {
     this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.provinciaService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('Provincia eliminada', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-        this.router.navigate(['/provincia'])
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-        this.router.navigate(['/provincia'])
-      }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
+      .open(ConfirmDialogComponent, {
+        data: {
+          message: 'Confirma la eliminación de ' + nombre,
+          title: 'Eliminar',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirm: Boolean) => {
+        if (confirm) {
+          this.provinciaService.delete(id).subscribe(
+            (data) => {
+              this.toastr.success('Provincia eliminada', 'OK', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+              });
+              this.router.navigate(['/provincia']);
+            },
+            (err) => {
+              this.toastr.error(err.error.mensaje, 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+              });
+              this.router.navigate(['/provincia']);
+            }
+          );
+        } else {
+          this.dialog.closeAll();
+        }
+      });
   }
 
   addNewProvincia() {
@@ -138,7 +144,6 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
       width: '600px',
       disableClose: true,
     });
-
   }
 
   addDetailProvincia(id: number) {
@@ -151,10 +156,9 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     dialogDetail.afterClosed().subscribe((result) => {
       console.log(this.dataSharingService.getProvinciaFormData());
       this.dataSource.data.push(this.dataSharingService.getProvinciaFormData());
-      console.log("id recibido: "+this.dataSharingService.getProvinciaId());
+      console.log('id recibido: ' + this.dataSharingService.getProvinciaId());
     });
   }
-
 
   addEditProvincia(id: number) {
     const dialogEdit = this.dialog.open(ProvinciaEditComponent, {
@@ -166,8 +170,7 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     dialogEdit.afterClosed().subscribe((result) => {
       console.log(this.dataSharingService.getProvinciaFormData());
       this.dataSource.data.push(this.dataSharingService.getProvinciaFormData());
-      console.log("id recibido: "+this.dataSharingService.getProvinciaId());
+      console.log('id recibido: ' + this.dataSharingService.getProvinciaId());
     });
   }
-
 }
