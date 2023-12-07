@@ -1,12 +1,12 @@
 export class Departamento {
     id?: number;
-    codigo_postal: string;
+    codigoPostal: string;
     nombre: string;
     id_provincia: number;
 
 
-constructor(codigo_postal: string, nombre: string, id_provincia: number) {
-    this.codigo_postal = codigo_postal;
+constructor(codigoPostal: string, nombre: string, id_provincia: number) {
+    this.codigoPostal = codigoPostal;
     this.nombre = nombre;
     this.id_provincia = id_provincia;
 }

@@ -17,7 +17,7 @@ import { DepartamentoNewComponent } from '../departamento-new/departamento-new.c
 
 export interface UserData {
   id: number;
-  codigo_postal: string;
+  codigoPostal: string;
   nombre: string;
   id_provincia: number;
 }
@@ -33,7 +33,7 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
 
   departamento: Departamento[] = [];
   router: any;
-  displayedColumns: string[] = ['id', 'codigo_postal', 'nombre', 'id_provincia', 'actions'];
+  displayedColumns: string[] = ['id', 'codigoPostal', 'nombre', 'id_provincia', 'actions'];
   dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -75,7 +75,7 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
       (data: Departamento[]) => {
         const userDataArray: UserData[] = data.map(departamento => ({
           id: departamento.id || 0,
-          codigo_postal: departamento.codigo_postal || '',
+          codigoPostal: departamento.codigoPostal || 'sdf',
           nombre: departamento.nombre || '',
           id_provincia: departamento.id_provincia || 0,
         }));
