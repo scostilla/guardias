@@ -1,1 +1,25 @@
-<p>localidad-detail works!</p>
+<h1 mat-dialog-title>DETALLE
+    <h5>Localidad</h5>
+</h1>
+<mat-dialog-content>
+    <table class="table" *ngIf="localidad">
+        <tbody>
+          <tr>
+            <th scope="row">ID</th>
+            <td>{{localidad.id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Nombre localidad</th>
+            <td>{{localidad.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Nombre País</th>
+            <td>{{localidad.id_departamento}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar</button>
+    </div>
+  </mat-dialog-content>

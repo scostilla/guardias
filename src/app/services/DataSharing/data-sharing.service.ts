@@ -75,4 +75,21 @@ export class DataSharingService {
     return this.id;
   }
 
+
+  setLocalidadFormData(data: any) {
+    this.formData = data;
+  }
+
+  getLocalidadFormData() {
+    return this.formData;
+  }
+
+  setLocalidadId(id: number) {
+    this.id = id;
+  }
+
+  getLocalidadId() {
+    return this.id;
+  }
+
 }
