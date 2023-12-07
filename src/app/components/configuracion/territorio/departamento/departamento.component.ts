@@ -17,7 +17,7 @@ import { DepartamentoNewComponent } from '../departamento-new/departamento-new.c
 
 export interface UserData {
   id: number;
-  codigo_postal: number;
+  codigo_postal: string;
   nombre: string;
   id_provincia: number;
 }
@@ -75,7 +75,7 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
       (data: Departamento[]) => {
         const userDataArray: UserData[] = data.map(departamento => ({
           id: departamento.id || 0,
-          codigo_postal: departamento.codigo_postal || 0,
+          codigo_postal: departamento.codigo_postal || '',
           nombre: departamento.nombre || '',
           id_provincia: departamento.id_provincia || 0,
         }));

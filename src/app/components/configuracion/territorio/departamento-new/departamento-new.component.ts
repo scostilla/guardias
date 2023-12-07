@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DepartamentoService } from 'src/app/services/departamento.service';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Departamento } from 'src/app/models/departamento';
+import { DepartamentoService } from 'src/app/services/departamento.service';
 
 @Component({
   selector: 'app-departamento-new',
@@ -11,7 +11,7 @@ import { Departamento } from 'src/app/models/departamento';
   styleUrls: ['./departamento-new.component.css']
 })
 export class DepartamentoNewComponent implements OnInit {
-  codigo_postal: number = 0;
+  codigo_postal: string = '';
   nombre: string = '';
   id_provincia: number = 0;
 
@@ -24,7 +24,7 @@ export class DepartamentoNewComponent implements OnInit {
     ) {}
 
   ngOnInit() {
-    
+
   }
 
   onCreate(): void {
