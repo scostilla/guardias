@@ -2,33 +2,33 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Provincia } from 'src/app/models/provincia';
-import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Departamento } from 'src/app/models/departamento';
+import { DepartamentoService } from 'src/app/services/departamento.service';
 
 
 @Component({
-  selector: 'app-provincia-edit',
-  templateUrl: './provincia-edit.component.html',
-  styleUrls: ['./provincia-edit.component.css']
+  selector: 'app-departamento-edit',
+  templateUrl: './departamento-edit.component.html',
+  styleUrls: ['./departamento-edit.component.css']
 })
-export class ProvinciaEditComponent implements OnInit {
+export class DepartamentoEditComponent implements OnInit {
 
-  provincia?: Provincia;
+  departamento?: Departamento;
 
   constructor(
-    private provinciaService: ProvinciaService,
+    private departamentoService: DepartamentoService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
-    public dialogRef: MatDialogRef<ProvinciaEditComponent>,
+    public dialogRef: MatDialogRef<DepartamentoEditComponent>,
   @Inject(MAT_DIALOG_DATA) public data: { id: number }
   ) {}
 
   ngOnInit() {
     const id = this.data.id;
-    this.provinciaService.detail(id).subscribe(
+    this.departamentoService.detail(id).subscribe(
       data=> {
-        this.provincia = data;
+        this.departamento = data;
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
@@ -41,19 +41,19 @@ export class ProvinciaEditComponent implements OnInit {
   onUpdate(): void {
     const id = this.data.id;
     console.log("onUpdate "+id);
-    if(this.provincia) {
-    this.provinciaService.update(id, this.provincia).subscribe(
+    if(this.departamento) {
+    this.departamentoService.update(id, this.departamento).subscribe(
       data=> {
-        this.toastr.success('Pais Modificado', 'OK', {
+        this.toastr.success('Departamento Modificado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
+        this.router.navigate(['/departamento'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
+        this.router.navigate(['/departamento'])
       }
     )
   }

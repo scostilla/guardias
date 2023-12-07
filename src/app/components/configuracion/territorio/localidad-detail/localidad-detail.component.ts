@@ -2,35 +2,35 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Provincia } from 'src/app/models/provincia';
-import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Localidad } from 'src/app/models/localidad';
+import { LocalidadService } from 'src/app/services/localidad.service';
 
 
 @Component({
-  selector: 'app-provincia-detail',
-  templateUrl: './provincia-detail.component.html',
-  styleUrls: ['./provincia-detail.component.css']
+  selector: 'app-localidad-detail',
+  templateUrl: './localidad-detail.component.html',
+  styleUrls: ['./localidad-detail.component.css']
 })
 
-export class ProvinciaDetailComponent implements OnInit {
+export class LocalidadDetailComponent implements OnInit {
 
-  provincia?: Provincia;
+  localidad?: Localidad;
 
   constructor(
-    private provinciaService: ProvinciaService,
+    private localidadService: LocalidadService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
-    public dialogo: MatDialogRef<ProvinciaDetailComponent>,
+    public dialogo: MatDialogRef<LocalidadDetailComponent>,
   @Inject(MAT_DIALOG_DATA) public data: { id: number }
 
   ) {}
 
   ngOnInit() {
     const id = this.data.id;
-    this.provinciaService.detail(id).subscribe(
+    this.localidadService.detail(id).subscribe(
       data=> {
-        this.provincia = data;
+        this.localidad = data;
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {

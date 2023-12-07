@@ -1,13 +1,13 @@
-<h2 mat-dialog-title>MODIFICAR PROVINCIA
+<h2 mat-dialog-title>MODIFICAR DEPARTAMENTO
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="provincia">
+  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="departamento">
     <mat-dialog-content>
       <div class="row">
         <div class="col">
           <mat-form-field appearance="fill">
-            <mat-label>Gentilicio</mat-label>
-            <input matInput placeholder="Ingresar gentilicio del País" autocomplete="off" id="gentilicio" name="gentilicio" [(ngModel)]="provincia.gentilicio" required/>
+            <mat-label>Código postal</mat-label>
+            <input matInput placeholder="Ingresar código postal del País" autocomplete="off" id="codigo_postal" name="codigo_postal" [(ngModel)]="departamento.codigo_postal" required/>
           </mat-form-field>
         </div>
       </div>
@@ -15,8 +15,8 @@
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
-            <mat-label>Nombre de la provincia</mat-label>
-            <input matInput placeholder="Ingresar Nombre de la Provincia" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="provincia.nombre" required/>
+            <mat-label>Nombre del Departamento</mat-label>
+            <input matInput placeholder="Ingresar Nombre de la Provincia" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="departamento.nombre" required/>
           </mat-form-field>
         </div>
       </div>
@@ -24,8 +24,8 @@
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
-            <mat-label>Nombre del País</mat-label>
-            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="id_pais" name="id_pais" [(ngModel)]="provincia.id_pais" required/>
+            <mat-label>Provincia</mat-label>
+            <input matInput placeholder="Ingresar nombre de la Provincia" autocomplete="off" id="id_provincia" name="id_provincia" [(ngModel)]="departamento.id_provincia" required/>
           </mat-form-field>
         </div>
       </div>
@@ -36,3 +36,4 @@
       <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
     </div>
   </form>
+

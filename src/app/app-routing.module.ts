@@ -70,6 +70,14 @@ import { ProvinciaComponent } from './components/configuracion/territorio/provin
 import { ProvinciaNewComponent } from './components/configuracion/territorio/provincia-new/provincia-new.component';
 import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
 import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
+import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
+import { DepartamentoNewComponent } from './components/configuracion/territorio/departamento-new/departamento-new.component';
+import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
+import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
+import { LocalidadComponent } from './components/configuracion/territorio/localidad/localidad.component';
+import { LocalidadNewComponent } from './components/configuracion/territorio/localidad-new/localidad-new.component';
+import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
+import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
 
 
 
@@ -150,6 +158,14 @@ const routes: Routes = [
  {path: 'provincia-new', component:ProvinciaNewComponent},
  {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
  {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
+ {path: 'departamento', component:DepartamentoComponent},
+ {path: 'departamento-new', component:DepartamentoNewComponent},
+ {path: 'departamento-detail/:id', component:DepartamentoDetailComponent},
+ {path: 'departamento-edit/:id', component:DepartamentoEditComponent},
+ {path: 'localidad', component:LocalidadComponent},
+ {path: 'localidad-new', component:LocalidadNewComponent},
+ {path: 'localidad-detail/:id', component:LocalidadDetailComponent},
+ {path: 'localidad-edit/:id', component:LocalidadEditComponent},
 
 
 ];
