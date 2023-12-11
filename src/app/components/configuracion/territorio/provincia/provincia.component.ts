@@ -18,7 +18,7 @@ export interface UserData {
   id: number;
   gentilicio: string;
   nombre: string;
-  id_pais: number;
+  idPais: number;
 }
 
 @Component({
@@ -33,7 +33,7 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     'id',
     'gentilicio',
     'nombre',
-    'id_pais',
+    'idPais',
     'actions',
   ];
   dataSource: MatTableDataSource<UserData>;
@@ -78,7 +78,7 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
           id: provincia.id || 0,
           gentilicio: provincia.gentilicio || '',
           nombre: provincia.nombre || '',
-          id_pais: provincia.id_pais !== undefined ? provincia.id_pais : 0,
+          idPais: provincia.idPais !== undefined ? provincia.idPais : 0,
         }));
 
         console.log(userDataArray);

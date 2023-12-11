@@ -2,12 +2,12 @@ export class Provincia {
     id?: number;
     gentilicio: string;
     nombre: string;
-    id_pais: number;
+    idPais: number;
 
 
-constructor(gentilicio: string, nombre: string, id_pais: number) {
+constructor(gentilicio: string, nombre: string, idPais: number) {
     this.gentilicio = gentilicio;
     this.nombre = nombre;
-    this.id_pais = id_pais;
+    this.idPais = idPais;
 }
 }
