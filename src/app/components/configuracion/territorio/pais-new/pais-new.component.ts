@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDialogRef } from '@angular/material/dialog';
-import { PaisService } from 'src/app/services/pais.service';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Pais } from 'src/app/models/pais';
+import { Pais } from 'src/app/models/Pais';
+import { PaisService } from 'src/app/services/pais.service';
 
 @Component({
   selector: 'app-pais-new',
@@ -24,7 +24,7 @@ export class PaisNewComponent implements OnInit {
     ) {}
 
   ngOnInit() {
-    
+
   }
 
   onCreate(): void {

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Provincia } from 'src/app/models/provincia';
+import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
 
 import { HttpClient } from '@angular/common/http';
@@ -78,7 +78,7 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
           id: provincia.id || 0,
           gentilicio: provincia.gentilicio || '',
           nombre: provincia.nombre || '',
-          id_pais: provincia.id_pais !== undefined ? provincia.id_pais : 0,
+          id_pais: provincia.pais.id !== undefined ? provincia.pais.id : 0,
         }));
 
         console.log(userDataArray);

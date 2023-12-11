@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Pais } from 'src/app/models/pais';
+import { Pais } from 'src/app/models/Pais';
 import { PaisService } from 'src/app/services/pais.service';
 
 import { HttpClient } from '@angular/common/http';

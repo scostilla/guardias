@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Provincia } from 'src/app/models/provincia';
+import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
 
 
