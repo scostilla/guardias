@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Departamento } from 'src/app/models/Departamento';
+import { Departamento } from 'src/app/models/departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
 
 @Component({

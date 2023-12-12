@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Localidad } from 'src/app/models/Localidad';
+import { Localidad } from 'src/app/models/localidad';
 import { LocalidadService } from 'src/app/services/localidad.service';
 
 import { HttpClient } from '@angular/common/http';
