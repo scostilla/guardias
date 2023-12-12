@@ -25,14 +25,9 @@
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
-            <mat-label>Pais</mat-label>
-            <mat-select [(value)]="dataSource" autocomplete="off" id="idPais" name="idPais" [(ngModel)]="idPais" required>
-              <mat-option *ngFor="let pais of paises" [value]="pais.id">
-                {{ pais.nombre }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>  
-
+            <mat-label>País</mat-label>
+            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="id_pais" name="id_pais" [(ngModel)]="id_pais" required/>
+          </mat-form-field>
         </div>
       </div>
     </mat-dialog-content>
