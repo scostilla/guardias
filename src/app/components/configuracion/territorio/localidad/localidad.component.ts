@@ -19,6 +19,7 @@ export interface UserData {
   id: number;
   nombre: string;
   id_departamento: number;
+  departamento: string;
 }
 
 
@@ -32,7 +33,7 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
 
   localidads: Localidad[] = [];
   router: any;
-  displayedColumns: string[] = ['id', 'nombre', 'id_departamento', 'actions'];
+  displayedColumns: string[] = ['id', 'nombre', 'departamento', 'actions'];
   dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -76,6 +77,7 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
           id: localidad.id || 0,
           nombre: localidad.nombre || '',
           id_departamento: localidad.departamento.id !== undefined ? localidad.departamento.id : 0,
+          departamento: localidad.departamento.nombre !== undefined ? localidad.departamento.nombre : '',
         }));
 
         this.dataSource.data = userDataArray;
