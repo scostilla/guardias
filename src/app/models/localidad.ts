@@ -1,11 +1,13 @@
+import { Departamento } from "./Departamento";
+
 export class Localidad {
     id?: number;
     nombre: string;
-    id_departamento: number;
+    departamento: Departamento;
 
 
-constructor(nombre: string, id_departamento: number) {
+constructor(nombre: string, departamento: Departamento) {
     this.nombre = nombre;
-    this.id_departamento = id_departamento;
+    this.departamento = departamento;
 }
 }

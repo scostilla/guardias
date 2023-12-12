@@ -1,13 +1,14 @@
+import { Provincia } from './Provincia';
+
 export class Departamento {
-    id?: number;
-    codigoPostal: string;
-    nombre: string;
-    id_provincia: number;
+  id?: number;
+  codigoPostal: string;
+  nombre: string;
+  provincia: Provincia;
 
-
-constructor(codigoPostal: string, nombre: string, id_provincia: number) {
+  constructor(codigoPostal: string, nombre: string, provincia: Provincia) {
     this.codigoPostal = codigoPostal;
     this.nombre = nombre;
-    this.id_provincia = id_provincia;
-}
+    this.provincia = provincia;
+  }
 }

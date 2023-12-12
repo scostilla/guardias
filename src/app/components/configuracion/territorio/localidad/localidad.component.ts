@@ -75,7 +75,7 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
         const userDataArray: UserData[] = data.map(localidad => ({
           id: localidad.id || 0,
           nombre: localidad.nombre || '',
-          id_departamento: localidad.id_departamento || 0,
+          id_departamento: localidad.departamento.id !== undefined ? localidad.departamento.id : 0,
         }));
 
         this.dataSource.data = userDataArray;
