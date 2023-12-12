@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Localidad } from 'src/app/models/Localidad';
+import { Localidad } from 'src/app/models/localidad';
 import { LocalidadService } from 'src/app/services/localidad.service';
 
 

@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Departamento } from 'src/app/models/Departamento';
+import { Departamento } from 'src/app/models/departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
 
 

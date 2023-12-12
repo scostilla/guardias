@@ -2,14 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Pais } from 'src/app/models/Pais';
-import { Provincia } from 'src/app/models/Provincia';
+import { Pais } from 'src/app/models/pais';
+import { Provincia } from 'src/app/models/provincia';
 import { PaisService } from 'src/app/services/pais.service';
 import { ProvinciaService } from 'src/app/services/provincia.service';
-import { Pais } from 'src/app/models/pais';
-import { PaisService } from 'src/app/services/pais.service';
-import {MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
 
 export interface UserData {
   id: number;
@@ -36,8 +32,6 @@ export class ProvinciaNewComponent implements OnInit {
     private ProvinciaService: ProvinciaService,
 =======
   id_pais?: number;
-  pais?: Pais;
-  provincia?: Provincia;
 
   constructor(
     private provinciaService: ProvinciaService,
@@ -107,11 +101,10 @@ export class ProvinciaNewComponent implements OnInit {
         error => {
           console.error('Error al obtener el detalle del país:', error);
         }
-      );
+      )
     }
     this.dialogRef.close();
   }
-
 
   cancel() {
     this.dialogRef.close();

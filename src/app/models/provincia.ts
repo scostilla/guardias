@@ -1,4 +1,3 @@
-import { Pais } from './Pais';
 export class Provincia {
     id?: number;
     gentilicio: string;
@@ -15,7 +14,7 @@ constructor(gentilicio: string, nombre: string, idPais: number) {
     pais: Pais;
 
 
-constructor(gentilicio: string, nombre: string, pais: Pais) {
+constructor(gentilicio: string, nombre: string, id_pais: number) {
     this.gentilicio = gentilicio;
     this.nombre = nombre;
     this.pais = pais;

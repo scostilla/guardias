@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Departamento } from 'src/app/models/Departamento';
+import { Departamento } from 'src/app/models/departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
 
 import { HttpClient } from '@angular/common/http';
