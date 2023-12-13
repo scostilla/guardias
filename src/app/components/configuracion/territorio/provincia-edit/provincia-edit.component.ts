@@ -44,16 +44,16 @@ export class ProvinciaEditComponent implements OnInit {
     if(this.provincia) {
     this.provinciaService.update(id, this.provincia).subscribe(
       data=> {
-        this.toastr.success('Pais Modificado', 'OK', {
+        this.toastr.success('Provincia Modificado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
+        this.router.navigate(['/provincia'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
+        this.router.navigate(['/provincia'])
       }
     )
   }
