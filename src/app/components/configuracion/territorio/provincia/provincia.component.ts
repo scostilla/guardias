@@ -83,7 +83,6 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
           pais: provincia.pais.nombre !== undefined ? provincia.pais.nombre : '',
         }));
 
-        console.log(userDataArray);
         this.dataSource.data = userDataArray;
       },
       (err) => {
@@ -156,7 +155,7 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     });
 
     dialogDetail.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getProvinciaFormData());
+      console.log("linea 158: "+this.dataSharingService.getProvinciaFormData());
       this.dataSource.data.push(this.dataSharingService.getProvinciaFormData());
       console.log('id recibido: ' + this.dataSharingService.getProvinciaId());
     });
