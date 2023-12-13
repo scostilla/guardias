@@ -6,7 +6,6 @@
     </div>
     <div class="row justify-content-center mt-4 mb-4">
         <div class="col">
-            <mat-divider></mat-divider>
             <section>
             <div class="example-label">Datos territorio</div>
             <div class="example-button-row">
@@ -16,19 +15,34 @@
                 <button mat-raised-button routerLink="/localidad">Localidad</button>
             </div>
             </section>
+            <mat-divider></mat-divider>
         </div>
     </div>
     <div class="row justify-content-center mt-4 mb-4">
       <div class="col">
-          <mat-divider></mat-divider>
           <section>
           <div class="example-label">Establecimiento</div>
           <div class="example-button-row">
               <button mat-raised-button color="primary" routerLink="/pais">Ministerios</button>
               <button mat-raised-button color="accent" routerLink="/provincia">Hospitales</button>
+              <button mat-raised-button color="warn" routerLink="/provincia">Caps</button>
           </div>
           </section>
           <mat-divider></mat-divider>
       </div>
-  </div>
+    </div>
+    <div class="row justify-content-center mt-6 mb-6">
+      <div class="col">
+          <section>
+          <div class="example-label">Usuarios</div>
+          <div class="example-button-row">
+              <button mat-raised-button color="primary" routerLink="/pais">Personas</button>
+              <button mat-raised-button color="accent" routerLink="/provincia">Usuarios</button>
+              <button mat-raised-button color="warn" routerLink="/provincia">Autoridades</button>
+              <button mat-raised-button routerLink="/localidad">Asistenciales y No asistenciales</button>
+          </div>
+          </section>
+          <mat-divider></mat-divider>
+      </div>
+    </div>
 </div>
