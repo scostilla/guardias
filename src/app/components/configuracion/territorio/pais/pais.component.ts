@@ -149,7 +149,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
     });
 
     dialogDetail.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getPaisFormData());
+      console.log("linea 152: "+this.dataSharingService.getPaisFormData());
       this.dataSource.data.push(this.dataSharingService.getPaisFormData());
       console.log("id recibido: "+this.dataSharingService.getPaisId());
     });
@@ -164,7 +164,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
     });
 
     dialogEdit.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getPaisFormData());
+      console.log("linea 167: "+this.dataSharingService.getPaisFormData());
       this.dataSource.data.push(this.dataSharingService.getPaisFormData());
       console.log("id recibido: "+this.dataSharingService.getPaisId());
     });

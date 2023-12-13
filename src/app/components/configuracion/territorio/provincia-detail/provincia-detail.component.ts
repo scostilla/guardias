@@ -28,6 +28,7 @@ export class ProvinciaDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
+    console.log("id recibido:"+id);
     this.provinciaService.detail(id).subscribe(
       data=> {
         this.provincia = data;
@@ -39,7 +40,6 @@ export class ProvinciaDetailComponent implements OnInit {
         this.dialogo.close();
       }
     );
-
   }
 
   cancel() {
