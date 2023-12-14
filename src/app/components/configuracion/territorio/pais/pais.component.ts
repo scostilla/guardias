@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
 import { PaisEditComponent } from '../pais-edit/pais-edit.component';
 import { PaisNewComponent } from '../pais-new/pais-new.component';
+import { Router } from '@angular/router';
 
 
 export interface UserData {
@@ -32,7 +33,6 @@ export interface UserData {
 export class PaisComponent implements OnInit, AfterViewInit {
 
   paises: Pais[] = [];
-  router: any;
   displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre', 'actions'];
   dataSource: MatTableDataSource<UserData>;
 
@@ -49,6 +49,8 @@ export class PaisComponent implements OnInit, AfterViewInit {
     private http: HttpClient,
     private paginatorLabels: MatPaginatorIntl,
     private dataSharingService: DataSharingService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
     ) {
     paginatorLabels.itemsPerPageLabel = 'Items por pagina';
     paginatorLabels.firstPageLabel = 'Primera Pagina';
@@ -59,8 +61,8 @@ export class PaisComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.cargarPaises();
-
   }
+  
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -118,13 +120,14 @@ export class PaisComponent implements OnInit, AfterViewInit {
         this.toastr.success('Pais eliminado', 'OK', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
+        this.cargarPaises();
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
         this.router.navigate(['/pais'])
+
       }
     );
   } else {
