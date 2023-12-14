@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
@@ -50,7 +50,6 @@ export class PaisComponent implements OnInit, AfterViewInit {
     private paginatorLabels: MatPaginatorIntl,
     private dataSharingService: DataSharingService,
     private router: Router,
-    private cdr: ChangeDetectorRef,
     ) {
     paginatorLabels.itemsPerPageLabel = 'Items por pagina';
     paginatorLabels.firstPageLabel = 'Primera Pagina';
