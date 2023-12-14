@@ -40,7 +40,6 @@ export class PaisNewComponent implements OnInit {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
       }
     )
 

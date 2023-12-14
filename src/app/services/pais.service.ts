@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Pais } from "src/app/models/Pais";
 
 @Injectable({
@@ -9,8 +10,13 @@ import { Pais } from "src/app/models/Pais";
 export class PaisService {
 
   paisesURL = 'http://localhost:8080/pais/';
+  private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
+
+  get refresh$(){
+    return this._refresh$;
+  }
 
   public lista(): Observable<Pais[]> {
       return this.httpClient.get<Pais[]>(this.paisesURL + 'lista');
@@ -25,11 +31,21 @@ export class PaisService {
 }
 
 public save(paises:Pais): Observable<any> {
-  return this.httpClient.post<any>(this.paisesURL + 'create', paises);
+  return this.httpClient.post<any>(this.paisesURL + 'create', paises)
+  .pipe(
+    tap(() => {
+     this._refresh$.next(); 
+    })
+  )
 }
 
 public update(id:number, paises:Pais): Observable<any> {
-  return this.httpClient.put<any>(this.paisesURL + `update/${id}`, paises);
+  return this.httpClient.put<any>(this.paisesURL + `update/${id}`, paises)
+  .pipe(
+    tap(() => {
+     this._refresh$.next(); 
+    })
+  )
 }
 
 public delete(id:number): Observable<any> {

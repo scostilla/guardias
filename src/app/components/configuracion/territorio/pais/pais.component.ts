@@ -14,6 +14,7 @@ import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
 import { PaisEditComponent } from '../pais-edit/pais-edit.component';
 import { PaisNewComponent } from '../pais-new/pais-new.component';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 
 export interface UserData {
@@ -35,6 +36,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
   paises: Pais[] = [];
   displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre', 'actions'];
   dataSource: MatTableDataSource<UserData>;
+  suscription?: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -60,6 +62,15 @@ export class PaisComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.cargarPaises();
+
+    this.suscription = this.paisService.refresh$.subscribe(() => {
+      this.cargarPaises();
+    })
+  }
+
+  ngOnDestroy(): void{
+    this.suscription?.unsubscribe();
+    console.log('Observable cerrado');
   }
   
   get<T>(arg0: any) {
