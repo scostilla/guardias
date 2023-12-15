@@ -47,13 +47,11 @@ export class PaisEditComponent implements OnInit {
         this.toastr.success('Pais Modificado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
       }
     )
   }

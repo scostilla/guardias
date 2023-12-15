@@ -3,8 +3,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Pais } from 'src/app/models/Pais';
-import { Provincia } from 'src/app/models/Provincia';
 import { PaisService } from 'src/app/services/pais.service';
+import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
 
 @Component({
@@ -18,6 +18,7 @@ export class ProvinciaNewComponent implements OnInit {
   id_pais?: number;
   pais?: Pais;
   provincia?: Provincia;
+  paises: Pais[] = [];
 
   constructor(
     private provinciaService: ProvinciaService,
@@ -25,11 +26,12 @@ export class ProvinciaNewComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     public dialogRef: MatDialogRef<ProvinciaNewComponent>,
-
     ) {}
 
   ngOnInit() {
-
+    this.paisService.lista().subscribe((data: Pais[]) => {
+      this.paises = data;
+    });
   }
 
 

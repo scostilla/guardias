@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Pais } from 'src/app/models/Pais';
+import { PaisService } from 'src/app/services/pais.service';
+
 
 
 @Component({
@@ -14,9 +17,12 @@ import { ProvinciaService } from 'src/app/services/provincia.service';
 export class ProvinciaEditComponent implements OnInit {
 
   provincia?: Provincia;
+  paises: Pais[] = [];
+
 
   constructor(
     private provinciaService: ProvinciaService,
+    private paisService: PaisService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
@@ -36,6 +42,10 @@ export class ProvinciaEditComponent implements OnInit {
         });
       }
     );
+    this.paisService.lista().subscribe((data: Pais[]) => {
+      this.paises = data;
+    });
+
   }
 
   onUpdate(): void {

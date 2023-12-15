@@ -26,7 +26,11 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>País</mat-label>
-            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="id_pais" name="id_pais" [(ngModel)]="id_pais" required/>
+            <mat-select id="id_pais" name="id_pais" [(ngModel)]="id_pais" required>
+              <mat-option *ngFor="let pais of paises" [value]="pais.id">
+                {{ pais.nombre }}
+              </mat-option>
+            </mat-select>          
           </mat-form-field>
         </div>
       </div>
