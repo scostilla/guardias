@@ -35,7 +35,7 @@ export class DepartamentoNewComponent implements OnInit {
   onCreate(): void {
 
     if(this.idProvincia){
-      this. provinciaService.detail(this.idProvincia).subscribe(
+      this. provinciaService.detalle(this.idProvincia).subscribe(
         provincia => {
           this.departamento = new Departamento(this.codigoPostal, this.nombre, provincia);
           this.DepartamentoService.save(this.departamento).subscribe(

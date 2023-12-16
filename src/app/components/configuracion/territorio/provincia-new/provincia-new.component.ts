@@ -37,7 +37,7 @@ export class ProvinciaNewComponent implements OnInit {
 
   onCreate(): void {
     if (this.id_pais) {
-      this.paisService.detail(this.id_pais).subscribe(
+      this.paisService.detalle(this.id_pais).subscribe(
         pais => {
           this.provincia = new Provincia(this.gentilicio, this.nombre, pais);
           this.provinciaService.save(this.provincia).subscribe(

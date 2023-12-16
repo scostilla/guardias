@@ -16,11 +16,11 @@ export class DepartamentoService {
       return this.httpClient.get<Departamento[]>(this.departamentosURL + 'lista');
   }
 
-  public detail(id:number): Observable<Departamento> {
+  public detalle(id:number): Observable<Departamento> {
       return this.httpClient.get<Departamento>(this.departamentosURL + `detalle/${id}`);
   }
 
-  public detailName(nombre:string): Observable<Departamento> {
+  public detallenombre(nombre:string): Observable<Departamento> {
     return this.httpClient.get<Departamento>(this.departamentosURL + `detallenombre/${nombre}`);
 }
 

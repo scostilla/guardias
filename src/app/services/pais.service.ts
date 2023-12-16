@@ -22,12 +22,12 @@ export class PaisService {
       return this.httpClient.get<Pais[]>(this.paisesURL + 'lista');
   }
 
-  public detail(id:number): Observable<Pais> {
-      return this.httpClient.get<Pais>(this.paisesURL + `detail/${id}`);
+  public detalle(id:number): Observable<Pais> {
+      return this.httpClient.get<Pais>(this.paisesURL + `detalle/${id}`);
   }
 
-  public detailName(nombre:string): Observable<Pais> {
-    return this.httpClient.get<Pais>(this.paisesURL + `detailname/${nombre}`);
+  public detallenombre(nombre:string): Observable<Pais> {
+    return this.httpClient.get<Pais>(this.paisesURL + `detallenombre/${nombre}`);
 }
 
 public save(paises:Pais): Observable<any> {

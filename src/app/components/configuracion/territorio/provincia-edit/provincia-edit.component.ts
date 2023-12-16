@@ -18,6 +18,7 @@ export class ProvinciaEditComponent implements OnInit {
 
   provincia?: Provincia;
   paises: Pais[] = [];
+  selected = 9;
 
 
   constructor(
@@ -32,9 +33,10 @@ export class ProvinciaEditComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    this.provinciaService.detail(id).subscribe(
+    this.provinciaService.detalle(id).subscribe(
       data=> {
         this.provincia = data;
+        this.provincia.pais.id = data.pais.id;
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {

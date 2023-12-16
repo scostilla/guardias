@@ -28,7 +28,7 @@ export class DepartamentoDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    this.departamentoService.detail(id).subscribe(
+    this.departamentoService.detalle(id).subscribe(
       data=> {
         this.departamento = data;
       },

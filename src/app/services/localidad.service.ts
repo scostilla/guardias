@@ -16,11 +16,11 @@ export class LocalidadService {
       return this.httpClient.get<Localidad[]>(this.localidadesURL + 'lista');
   }
 
-  public detail(id:number): Observable<Localidad> {
+  public detalle(id:number): Observable<Localidad> {
       return this.httpClient.get<Localidad>(this.localidadesURL + `detalle/${id}`);
   }
 
-  public detailName(nombre:string): Observable<Localidad> {
+  public detallenombre(nombre:string): Observable<Localidad> {
     return this.httpClient.get<Localidad>(this.localidadesURL + `detallenombre/${nombre}`);
 }
 

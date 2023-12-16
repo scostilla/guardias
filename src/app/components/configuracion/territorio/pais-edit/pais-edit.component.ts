@@ -26,7 +26,7 @@ export class PaisEditComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    this.paisService.detail(id).subscribe(
+    this.paisService.detalle(id).subscribe(
       data=> {
         this.pais = data;
       },

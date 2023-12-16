@@ -16,11 +16,11 @@ export class ProvinciaService {
       return this.httpClient.get<Provincia[]>(this.provinciasURL + 'lista');
   }
 
-  public detail(id:number): Observable<Provincia> {
+  public detalle(id:number): Observable<Provincia> {
       return this.httpClient.get<Provincia>(this.provinciasURL + `detalle/${id}`);
   }
 
-  public detailName(nombre:string): Observable<Provincia> {
+  public detallenombre(nombre:string): Observable<Provincia> {
     return this.httpClient.get<Provincia>(this.provinciasURL + `detallenombre/${nombre}`);
 }
 

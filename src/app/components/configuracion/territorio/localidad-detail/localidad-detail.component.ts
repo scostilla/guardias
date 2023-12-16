@@ -28,7 +28,7 @@ export class LocalidadDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    this.localidadService.detail(id).subscribe(
+    this.localidadService.detalle(id).subscribe(
       data=> {
         this.localidad = data;
       },
