@@ -2,10 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Provincia } from 'src/app/models/Provincia';
-import { ProvinciaService } from 'src/app/services/provincia.service';
 import { Pais } from 'src/app/models/Pais';
+import { Provincia } from 'src/app/models/Provincia';
 import { PaisService } from 'src/app/services/pais.service';
+import { ProvinciaService } from 'src/app/services/provincia.service';
 
 
 
@@ -46,6 +46,7 @@ export class ProvinciaEditComponent implements OnInit {
     );
     this.paisService.lista().subscribe((data: Pais[]) => {
       this.paises = data;
+      console.log(this.paises);
     });
 
   }

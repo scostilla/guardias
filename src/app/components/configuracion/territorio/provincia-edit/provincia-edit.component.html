@@ -35,12 +35,13 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre del País</mat-label>
-            <mat-select id="id_pais" name="id_pais" [(ngModel)]="provincia.pais.nombre" [(value)]="provincia.pais.id" required>
-              <mat-option *ngFor="let pais of paises" [value]="pais.id">
+            <mat-select id="id_pais" name="id_pais" [(ngModel)]="provincia.pais.nombre" required>
+              <mat-option *ngFor="let pais of paises" [value]="pais.nombre">
                 {{ pais.nombre }}
               </mat-option>
-            </mat-select>          
+            </mat-select>
           </mat-form-field>
+
         </div>
       </div>
     </mat-dialog-content>
