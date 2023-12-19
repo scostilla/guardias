@@ -16,7 +16,7 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre del Departamento</mat-label>
-            <input matInput placeholder="Ingresar Nombre de la Provincia" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="departamento.nombre" required/>
+            <input matInput placeholder="Ingresar Nombre del departamento" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="departamento.nombre" required/>
           </mat-form-field>
         </div>
       </div>
@@ -24,8 +24,12 @@
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
-            <mat-label>Provincia</mat-label>
-            <input matInput placeholder="Ingresar nombre de la Provincia" autocomplete="off" id="id_provincia" name="id_provincia" [(ngModel)]="departamento.provincia.id" required/>
+            <mat-label>Nombre de la Provincia</mat-label>
+            <mat-select id="idProvincia" name="idProvincia" [(ngModel)]="departamento.provincia.nombre" required>
+              <mat-option *ngFor="let provincia of provincias" [value]="provincia.nombre">
+                {{ provincia.nombre }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
       </div>

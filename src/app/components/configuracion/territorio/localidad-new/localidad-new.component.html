@@ -1,1 +1,35 @@
-<p>localidad-new works!</p>
+<h2 mat-dialog-title>
+    AGREGAR LOCALIDAD
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  <form (ngSubmit)="onCreate()" novalidate #f="ngForm">
+    <mat-dialog-content>
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre de la localidad</mat-label>
+            <input matInput placeholder="Ingresar nombre de la localidad" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="nombre" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Departamento</mat-label>
+            <mat-select id="idDepartamento" name="idDepartamento" [(ngModel)]="idDepartamento" required>
+              <mat-option *ngFor="let departamento of Departamentos" [value]="departamento.id">
+                {{ departamento.nombre }}
+              </mat-option>
+            </mat-select>          
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+      </button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">Agregar</button>
+    </div>
+  </form>
+

@@ -12,12 +12,15 @@ import { ProvinciaService } from 'src/app/services/provincia.service';
   templateUrl: './departamento-new.component.html',
   styleUrls: ['./departamento-new.component.css']
 })
+
 export class DepartamentoNewComponent implements OnInit {
   codigoPostal: string = '';
   nombre: string = '';
-  idProvincia: number = 0;
+  idProvincia?: number;
   provincia?: Provincia;
   departamento?: Departamento;
+  Provincias: Provincia[] = [];
+
 
   constructor(
     private DepartamentoService: DepartamentoService,
@@ -29,7 +32,9 @@ export class DepartamentoNewComponent implements OnInit {
     ) {}
 
   ngOnInit() {
-
+    this.provinciaService.lista().subscribe((data: Provincia[]) => {
+      this.Provincias = data;
+    });
   }
 
   onCreate(): void {

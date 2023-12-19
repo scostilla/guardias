@@ -18,7 +18,6 @@ export class ProvinciaEditComponent implements OnInit {
 
   provincia?: Provincia;
   paises: Pais[] = [];
-  selected = 9;
 
 
   constructor(
@@ -60,13 +59,11 @@ export class ProvinciaEditComponent implements OnInit {
         this.toastr.success('Provincia Modificado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/provincia'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/provincia'])
       }
     )
   }

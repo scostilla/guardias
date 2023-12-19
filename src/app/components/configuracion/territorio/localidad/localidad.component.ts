@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Localidad } from 'src/app/models/Localidad';
 import { LocalidadService } from 'src/app/services/localidad.service';
+import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +36,7 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
   router: any;
   displayedColumns: string[] = ['id', 'nombre', 'departamento', 'actions'];
   dataSource: MatTableDataSource<UserData>;
+  suscription?: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -59,8 +61,17 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.cargarLocalidad();
-
+    
+    this.suscription = this.localidadService.refresh$.subscribe(() => {
+      this.cargarLocalidad();
+    })
   }
+
+  ngOnDestroy(): void{
+    this.suscription?.unsubscribe();
+    console.log('Observable cerrado');
+  }
+
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -118,13 +129,12 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
         this.toastr.success('localidad eliminada', 'OK', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/localidad'])
+        this.cargarLocalidad();
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/localidad'])
       }
     );
   } else {

@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -38,6 +39,7 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
     'actions',
   ];
   dataSource: MatTableDataSource<UserData>;
+  suscription?: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -62,7 +64,17 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.cargarProvincias();
+
+    this.suscription = this.provinciaService.refresh$.subscribe(() => {
+      this.cargarProvincias();
+    })
   }
+
+  ngOnDestroy(): void{
+    this.suscription?.unsubscribe();
+    console.log('Observable cerrado');
+  }
+
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -124,14 +136,13 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
               });
-              this.router.navigate(['/provincia']);
+              this.cargarProvincias();
             },
             (err) => {
               this.toastr.error(err.error.mensaje, 'Error', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
               });
-              this.router.navigate(['/provincia']);
             }
           );
         } else {

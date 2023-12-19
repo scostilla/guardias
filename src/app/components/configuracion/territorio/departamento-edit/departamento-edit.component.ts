@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
+import { Provincia } from 'src/app/models/Provincia';
+import { ProvinciaService } from 'src/app/services/provincia.service';
+
 
 
 @Component({
@@ -14,9 +17,12 @@ import { DepartamentoService } from 'src/app/services/departamento.service';
 export class DepartamentoEditComponent implements OnInit {
 
   departamento?: Departamento;
+  provincias: Provincia[] = [];
+
 
   constructor(
     private departamentoService: DepartamentoService,
+    private provinciaService: ProvinciaService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
@@ -29,6 +35,7 @@ export class DepartamentoEditComponent implements OnInit {
     this.departamentoService.detalle(id).subscribe(
       data=> {
         this.departamento = data;
+        this.departamento.provincia.id = data.provincia.id;
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
@@ -36,6 +43,10 @@ export class DepartamentoEditComponent implements OnInit {
         });
       }
     );
+    this.provinciaService.lista().subscribe((data: Provincia[]) => {
+      this.provincias = data;
+      console.log(this.provincias);
+    });
   }
 
   onUpdate(): void {
@@ -47,13 +58,11 @@ export class DepartamentoEditComponent implements OnInit {
         this.toastr.success('Departamento Modificado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/departamento'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/departamento'])
       }
     )
   }

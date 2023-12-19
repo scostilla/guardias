@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-    AGREGAR PROVINCIA
+    AGREGAR DEPARTAMENTO
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
   <form (ngSubmit)="onCreate()" novalidate #f="ngForm">
@@ -16,7 +16,7 @@
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
-            <mat-label>Nombre</mat-label>
+            <mat-label>Nombre del departamento</mat-label>
             <input matInput placeholder="Ingresar nombre del departamento" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="nombre" required/>
           </mat-form-field>
         </div>
@@ -26,7 +26,11 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Provincia</mat-label>
-            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="id_provincia" name="id_provincia" [(ngModel)]="idProvincia" required/>
+            <mat-select id="idProvincia" name="idProvincia" [(ngModel)]="idProvincia" required>
+              <mat-option *ngFor="let provincia of Provincias" [value]="provincia.id">
+                {{ provincia.nombre }}
+              </mat-option>
+            </mat-select>          
           </mat-form-field>
         </div>
       </div>

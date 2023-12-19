@@ -34,7 +34,6 @@ export class PaisNewComponent implements OnInit {
         this.toastr.success('Pais Agregado', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {

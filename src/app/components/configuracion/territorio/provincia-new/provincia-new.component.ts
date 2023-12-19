@@ -12,6 +12,7 @@ import { ProvinciaService } from 'src/app/services/provincia.service';
   templateUrl: './provincia-new.component.html',
   styleUrls: ['./provincia-new.component.css']
 })
+
 export class ProvinciaNewComponent implements OnInit {
   gentilicio: string = '';
   nombre: string = '';

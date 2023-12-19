@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
+import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -36,6 +37,7 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
   router: any;
   displayedColumns: string[] = ['id', 'codigoPostal', 'nombre','provincia', 'actions'];
   dataSource: MatTableDataSource<UserData>;
+  suscription?: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -61,7 +63,16 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.cargarDepartamento();
 
+    this.suscription = this.departamentoService.refresh$.subscribe(() => {
+      this.cargarDepartamento();
+    })
   }
+
+  ngOnDestroy(): void{
+    this.suscription?.unsubscribe();
+    console.log('Observable cerrado');
+  }
+
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -120,13 +131,12 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
         this.toastr.success('Departamento eliminado', 'OK', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/departamento'])
+        this.cargarDepartamento();
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/departamento'])
       }
     );
   } else {

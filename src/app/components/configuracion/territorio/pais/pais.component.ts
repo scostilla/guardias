@@ -136,8 +136,6 @@ export class PaisComponent implements OnInit, AfterViewInit {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/pais'])
-
       }
     );
   } else {
