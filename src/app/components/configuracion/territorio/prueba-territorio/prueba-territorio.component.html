@@ -1,0 +1,26 @@
+<div class="example-button-row">
+    <button mat-button routerLink="/nuevo-pais">Nuevo</button>
+  </div>
+  
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">código</th>
+        <th scope="col">Nacionalidad</th>
+        <th scope="col">Nombre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pais of paises">
+        <th scope="row">{{pais.id}}</th>
+        <td>{{pais.codigo}}</td>
+        <td>{{pais.nacionalidad}}</td>
+        <td>{{pais.nombre}}</td>
+        <td><button mat-button color="primary" routerLink="/detalle-pais/{{pais.id}}">Detalle</button></td>
+        <td><button mat-button color="primary" routerLink="/editar-pais/{{pais.id}}">Editar</button></td>
+        <td><button mat-button color="accent" (click)="borrar(pais.id ?? 0, pais.nombre)">Eliminar</button></td>
+      </tr>
+    </tbody>
+  </table>
+  

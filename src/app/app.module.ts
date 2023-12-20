@@ -127,6 +127,8 @@ import { LocalidadComponent } from './components/configuracion/territorio/locali
 import { LocalidadNewComponent } from './components/configuracion/territorio/localidad-new/localidad-new.component';
 import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
 import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
+import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
+import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
 
 
 registerLocaleData(localePy,'es');
@@ -231,6 +233,8 @@ registerLocaleData(localePy,'es');
     LocalidadNewComponent,
     LocalidadEditComponent,
     LocalidadDetailComponent,
+    PruebaTerritorioComponent,
+    MinisterioComponent,
     
   ],
 

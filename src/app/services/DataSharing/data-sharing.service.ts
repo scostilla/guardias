@@ -92,4 +92,21 @@ export class DataSharingService {
     return this.id;
   }
 
+  setMinisterioFormData(data: any) {
+    this.formData = data;
+  }
+
+  getMinisterioFormData() {
+    return this.formData;
+  }
+
+  setMinisterioId(id: number) {
+    this.id = id;
+  }
+
+  getMinisterioId() {
+    return this.id;
+  }
+
+
 }
