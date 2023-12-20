@@ -5,7 +5,7 @@
       <div class="titulos">.:: PAISES</div>
     </div>
     <div class="col-1 align-items-right">
-      <button mat-fab color="primary" (click)="addNewPais()" matTooltip="Agregar Pais">
+      <button mat-fab color="primary" (click)="addNewMinisterio()" matTooltip="Agregar Pais">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
@@ -45,8 +45,8 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
         <td mat-cell *matCellDef="let element">
-          <mat-icon class="btnDetail" (click)="addDetailPais(element.id)" matTooltip="Ver {{element.nombre}}">zoom_in</mat-icon>
-          <mat-icon class="btnEdit" (click)="addEditPais(element.id)" matTooltip="Editar {{element.nombre}}">edit</mat-icon>
+          <mat-icon class="btnDetail" (click)="addDetailMinisterio(element.id)" matTooltip="Ver {{element.nombre}}">zoom_in</mat-icon>
+          <mat-icon class="btnEdit" (click)="addEditMinisterio(element.id)" matTooltip="Editar {{element.nombre}}">edit</mat-icon>
           <mat-icon class="btnRemove" (click)="borrar(element.id ?? 0, element.nombre)" matTooltip="Eliminar {{element.nombre}}">delete</mat-icon>
         </td>
       </ng-container>

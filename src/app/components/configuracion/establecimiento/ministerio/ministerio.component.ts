@@ -10,9 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
-import { PaisEditComponent } from '../pais-edit/pais-edit.component';
-import { PaisNewComponent } from '../pais-new/pais-new.component';
+import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component';
+import { MinisterioEditComponent } from '../ministerio-edit/ministerio-edit.component';
+import { MinisterioNewComponent } from '../ministerio-new/ministerio-new.component';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -31,10 +31,10 @@ export interface UserData {
   styleUrls: ['./ministerio.component.css']
 })
 
-export class PaisComponent implements OnInit, AfterViewInit {
+export class MinisterioComponent implements OnInit, AfterViewInit {
 
-  paises: Pais[] = [];
-  displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre', 'actions'];
+  ministerios: Ministerio[] = [];
+  displayedColumns: string[] = ['id', 'domicilio', 'estado', 'idLocalidad', 'idRegion', 'nombre', 'observacion', 'telefono', 'idCabecera', 'actions'];
   dataSource: MatTableDataSource<UserData>;
   suscription?: Subscription;
 
@@ -42,7 +42,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private paisService: PaisService,
+    private ministerioService: MinisterioService,
     private toastr: ToastrService,
     public dialog: MatDialog,
     public dialogNew: MatDialog,
@@ -61,10 +61,10 @@ export class PaisComponent implements OnInit, AfterViewInit {
     }
 
   ngOnInit() {
-    this.cargarPaises();
+    this.cargarMinisterios();
 
-    this.suscription = this.paisService.refresh$.subscribe(() => {
-      this.cargarPaises();
+    this.suscription = this.ministerioService.refresh$.subscribe(() => {
+      this.cargarMinisterios();
     })
   }
 
@@ -83,13 +83,18 @@ export class PaisComponent implements OnInit, AfterViewInit {
   }
 
   cargarPaises(): void {
-    this.paisService.lista().subscribe(
-      (data: Pais[]) => {
-        const userDataArray: UserData[] = data.map(pais => ({
-          id: pais.id || 0,
-          codigo: pais.codigo || '',
-          nacionalidad: pais.nacionalidad || '',
-          nombre: pais.nombre || '',
+    this.ministerioService.lista().subscribe(
+      (data: Ministerio[]) => {
+        const userDataArray: UserData[] = data.map(ministerio => ({
+          id: ministerio.id || 0,
+          domicilio: ministerio.domicilio || '',
+          estado: ministerio.estado !== undefined,
+          idLocalidad: ministerio.idLocalidad !== undefined,
+          idRegion: ministerio.idRegion !== undefined,
+          nombre: ministerio.nombre || '',
+          observacion: ministerio.observacion || '',
+          telefono: ministerio.telefono !== undefined,
+          idCabecera: ministerio.idCabecera !== undefined,
         }));
 
         this.dataSource.data = userDataArray;
@@ -106,7 +111,7 @@ export class PaisComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(PaisComponent, {
+    this.dialog.open(MinisterioComponent, {
       width: '250px',
       enterAnimationDuration,
       exitAnimationDuration,
@@ -125,9 +130,9 @@ export class PaisComponent implements OnInit, AfterViewInit {
     .subscribe((confirm: Boolean) => {
       if (confirm) {
 
-    this.paisService.delete(id).subscribe(
+    this.ministerioService.delete(id).subscribe(
       data=> {
-        this.toastr.success('Pais eliminado', 'OK', {
+        this.toastr.success('Ministerio eliminado', 'OK', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
         this.cargarPaises();
@@ -144,40 +149,40 @@ export class PaisComponent implements OnInit, AfterViewInit {
 });
   }
 
-  addNewPais() {
-    this.dialogNew.open(PaisNewComponent, {
+  addNewMinisterio() {
+    this.dialogNew.open(MinisterioNewComponent, {
       width: '600px',
       disableClose: true,
     });
 
   }
 
-  addDetailPais(id: number) {
-    const dialogDetail = this.dialog.open(PaisDetailComponent, {
+  addDetailMinisterio(id: number) {
+    const dialogDetail = this.dialog.open(MinisterioDetailComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
 
     dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 152: "+this.dataSharingService.getPaisFormData());
-      this.dataSource.data.push(this.dataSharingService.getPaisFormData());
-      console.log("id recibido: "+this.dataSharingService.getPaisId());
+      console.log("linea 152: "+this.dataSharingService.getMinisterioFormData());
+      this.dataSource.data.push(this.dataSharingService.getMinisterioFormData());
+      console.log("id recibido: "+this.dataSharingService.getMinisterioId());
     });
   }
 
 
-  addEditPais(id: number) {
-    const dialogEdit = this.dialog.open(PaisEditComponent, {
+  addEditMinisterio(id: number) {
+    const dialogEdit = this.dialog.open(MinisterioEditComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
 
     dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getPaisFormData());
-      this.dataSource.data.push(this.dataSharingService.getPaisFormData());
-      console.log("id recibido: "+this.dataSharingService.getPaisId());
+      console.log("linea 167: "+this.dataSharingService.getMinisterioFormData());
+      this.dataSource.data.push(this.dataSharingService.getMinisterioFormData());
+      console.log("id recibido: "+this.dataSharingService.getMinisterioId());
     });
   }
 
