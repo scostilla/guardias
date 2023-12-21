@@ -19,9 +19,15 @@ import { Subscription } from 'rxjs';
 
 export interface UserData {
   id: number;
-  codigo: string;
-  nacionalidad: string;
+  domicilio: string;
+  estado: number;
+  idLocalidad: number;
+  idRegion: number;
   nombre: string;
+  observacion: string;
+  telefono: number;
+  idCabecera: number;
+
 }
 
 
@@ -82,19 +88,19 @@ export class MinisterioComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  cargarPaises(): void {
+  cargarMinisterios(): void {
     this.ministerioService.lista().subscribe(
       (data: Ministerio[]) => {
         const userDataArray: UserData[] = data.map(ministerio => ({
           id: ministerio.id || 0,
           domicilio: ministerio.domicilio || '',
-          estado: ministerio.estado !== undefined,
-          idLocalidad: ministerio.idLocalidad !== undefined,
-          idRegion: ministerio.idRegion !== undefined,
+          estado: ministerio.estado || 0,
+          idLocalidad: ministerio.idLocalidad || 0,
+          idRegion: ministerio.idRegion || 0,
           nombre: ministerio.nombre || '',
           observacion: ministerio.observacion || '',
-          telefono: ministerio.telefono !== undefined,
-          idCabecera: ministerio.idCabecera !== undefined,
+          telefono: ministerio.telefono || 0,
+          idCabecera: ministerio.idCabecera || 0,
         }));
 
         this.dataSource.data = userDataArray;
@@ -135,7 +141,7 @@ export class MinisterioComponent implements OnInit, AfterViewInit {
         this.toastr.success('Ministerio eliminado', 'OK', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.cargarPaises();
+        this.cargarMinisterios();
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
