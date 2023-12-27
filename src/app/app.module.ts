@@ -6,6 +6,8 @@ import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 //Components
 import { AppComponent } from './app.component';
@@ -269,6 +271,13 @@ registerLocaleData(localePy,'es');
     DatePipe,
     MatBadgeModule,
     MatDividerModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,    
     ToastrModule.forRoot() // ToastrModule added
     
   ],

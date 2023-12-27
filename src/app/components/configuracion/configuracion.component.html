@@ -1,49 +1,111 @@
+
+
+
 <div class="container">
-    <div class="row">
+    <div class="row mb-5">
       <div class="col">
         <div class="titulos">.:: CONFIGURACIONES</div>
       </div>
     </div>
+
+    <div class="container">
+      <!-- Page Features-->
+      <div class="row mb-4 ">
+        <div class="col-lg">
+          <div class="boton card border-0 align-items-center" type="button" routerLink="/registro-actividades">
+            <div class="icon1_boton">
+              <div class="card-body text-center">
+                <h2 class="fs-4 fw-bold"><span><mat-icon>local_hospital</mat-icon> ACTIVIDADES</span></h2>
+              </div>
+              </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="boton card border-0 align-items-center" type="button" routerLink="/professional-list">
+            <div class="icon2_boton">
+              <div class="card-body text-center">
+                <h2 class="fs-4 fw-bold"><span>PROFESIONALES</span></h2>
+              </div>
+              </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="boton card border-0 align-items-center" type="button" routerLink="/cronograma">
+            <div class="icon3_boton">
+              <div class="card-body text-center">
+                <h2 class="fs-4 fw-bold"><span>CRONOGRAMAS</span></h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row justify-content-center mt-4 mb-4">
-        <div class="col">
-            <section>
-            <div class="example-label">Datos territorio</div>
+    <mat-accordion>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="panel-title">
+            Opciones generales
+          </mat-panel-title>
+          <mat-panel-description>
+            Configuraciones varias
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Botones</p>
+      </mat-expansion-panel>
+      <mat-expansion-panel (opened)="panelOpenState = true"
+                           (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="panel-title">
+            Datos territorio
+          </mat-panel-title>
+          <mat-panel-description>
+            Pais, Provincia, Departamento, Localidad. 
+          </mat-panel-description>
+        </mat-expansion-panel-header>
             <div class="example-button-row">
                 <button mat-raised-button color="primary" routerLink="/pais">Pais</button>
                 <button mat-raised-button color="accent" routerLink="/provincia">Provincia</button>
                 <button mat-raised-button color="warn" routerLink="/departamento">Departamento</button>
                 <button mat-raised-button routerLink="/localidad">Localidad</button>
             </div>
-            </section>
-            <mat-divider></mat-divider>
-        </div>
-    </div>
-    <div class="row justify-content-center mt-4 mb-4">
-      <div class="col">
-          <section>
-          <div class="example-label">Establecimiento</div>
+      </mat-expansion-panel>
+            <mat-expansion-panel (opened)="panelOpenState = true"
+                           (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="panel-title">
+            Datos Establecimientos
+          </mat-panel-title>
+          <mat-panel-description>
+            Hospitales, Caps, Ministerio, Regiones. 
+          </mat-panel-description>
+        </mat-expansion-panel-header>
           <div class="example-button-row">
               <button mat-raised-button color="primary" routerLink="/ministerio">Ministerios</button>
               <button mat-raised-button color="accent" routerLink="/provincia">Hospitales</button>
               <button mat-raised-button color="warn" routerLink="/provincia">Caps</button>
               <button mat-raised-button routerLink="/region">Regiones</button>
           </div>
-          </section>
-          <mat-divider></mat-divider>
-      </div>
-    </div>
-    <div class="row justify-content-center mt-6 mb-6">
-      <div class="col">
-          <section>
-          <div class="example-label">Usuarios</div>
+      </mat-expansion-panel>
+      <mat-expansion-panel (opened)="panelOpenState = true"
+                           (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="panel-title">
+            Datos Usuarios
+          </mat-panel-title>
+          <mat-panel-description>
+            Personas, Usuarios, Autoridades, Asistenciales/No asistenciales.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
           <div class="example-button-row">
               <button mat-raised-button color="primary" routerLink="/pais">Personas</button>
               <button mat-raised-button color="accent" routerLink="/provincia">Usuarios</button>
               <button mat-raised-button color="warn" routerLink="/provincia">Autoridades</button>
               <button mat-raised-button routerLink="/localidad">Asistenciales y No asistenciales</button>
           </div>
-          </section>
-          <mat-divider></mat-divider>
-      </div>
+      </mat-expansion-panel>
+
+    </mat-accordion>
     </div>
-</div>
+
