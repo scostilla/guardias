@@ -8,6 +8,7 @@ import { SharedModule } from './components/shared/shared.module';
 import { MatDividerModule } from '@angular/material/divider';
 import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatCardModule} from '@angular/material/card';
 
 //Components
 import { AppComponent } from './app.component';
@@ -277,7 +278,8 @@ registerLocaleData(localePy,'es');
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule,    
+    MatNativeDateModule, 
+    MatCardModule,   
     ToastrModule.forRoot() // ToastrModule added
     
   ],
