@@ -1,20 +1,24 @@
+import { Localidad } from "./Localidad";
+import { Region } from "./Region";
+
+
 export class Ministerio {
     id?: number;
     domicilio: string;
     estado: number;
-    idLocalidad: number;
-    idRegion: number;
+    localidad: Localidad;
+    region: Region;
     nombre: string;
     observacion: string;
     telefono: number;
     idCabecera: number;
 
 
-constructor(domicilio: string, estado: number, idLocalidad: number, idRegion: number, nombre: string, observacion: string, telefono: number, idCabecera: number) {
+constructor(domicilio: string, estado: number, localidad: Localidad, region: Region, nombre: string, observacion: string, telefono: number, idCabecera: number) {
     this.domicilio = domicilio;
     this.estado = estado;
-    this.idLocalidad = idLocalidad;
-    this.idRegion = idRegion;
+    this.localidad = localidad;
+    this.region = region;
     this.nombre = nombre;
     this.observacion = observacion;
     this.telefono = telefono;

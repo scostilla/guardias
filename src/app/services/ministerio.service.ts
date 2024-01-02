@@ -9,7 +9,7 @@ import { Ministerio } from "src/app/models/Ministerio";
 })
 export class MinisterioService {
 
-  ministeriosURL = 'http://localhost:8080/pais/';
+  ministeriosURL = 'http://localhost:8080/ministerio/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
@@ -34,7 +34,7 @@ public save(ministerios:Ministerio): Observable<any> {
   return this.httpClient.post<any>(this.ministeriosURL + 'create', ministerios)
   .pipe(
     tap(() => {
-     this._refresh$.next(); 
+     this._refresh$.next();
     })
   )
 }
@@ -43,7 +43,7 @@ public update(id:number, ministerios:Ministerio): Observable<any> {
   return this.httpClient.put<any>(this.ministeriosURL + `update/${id}`, ministerios)
   .pipe(
     tap(() => {
-     this._refresh$.next(); 
+     this._refresh$.next();
     })
   )
 }

@@ -8,13 +8,13 @@ import { MinisterioService } from 'src/app/services/ministerio.service';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component';
 import { MinisterioEditComponent } from '../ministerio-edit/ministerio-edit.component';
 import { MinisterioNewComponent } from '../ministerio-new/ministerio-new.component';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 
 export interface UserData {
@@ -40,7 +40,7 @@ export interface UserData {
 export class MinisterioComponent implements OnInit, AfterViewInit {
 
   ministerios: Ministerio[] = [];
-  displayedColumns: string[] = ['id', 'domicilio', 'estado', 'idLocalidad', 'idRegion', 'nombre', 'observacion', 'telefono', 'idCabecera', 'actions'];
+  displayedColumns: string[] = ['id', 'domicilio', 'estado', 'idLocalidad', 'idRegion', 'nombre', 'actions'];
   dataSource: MatTableDataSource<UserData>;
   suscription?: Subscription;
 
@@ -78,7 +78,7 @@ export class MinisterioComponent implements OnInit, AfterViewInit {
     this.suscription?.unsubscribe();
     console.log('Observable cerrado');
   }
-  
+
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -95,8 +95,8 @@ export class MinisterioComponent implements OnInit, AfterViewInit {
           id: ministerio.id || 0,
           domicilio: ministerio.domicilio || '',
           estado: ministerio.estado || 0,
-          idLocalidad: ministerio.idLocalidad || 0,
-          idRegion: ministerio.idRegion || 0,
+          idLocalidad: ministerio.localidad.id !== undefined ? ministerio.localidad.id : 0,
+          idRegion: ministerio.region.id !== undefined ? ministerio.region.id : 0,
           nombre: ministerio.nombre || '',
           observacion: ministerio.observacion || '',
           telefono: ministerio.telefono || 0,
