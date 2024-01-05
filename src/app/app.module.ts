@@ -135,6 +135,10 @@ import { MinisterioComponent } from './components/configuracion/establecimiento/
 import { MinisterioNewComponent } from './components/configuracion/establecimiento/ministerio-new/ministerio-new.component';
 import { MinisterioDetailComponent } from './components/configuracion/establecimiento/ministerio-detail/ministerio-detail.component';
 import { MinisterioEditComponent } from './components/configuracion/establecimiento/ministerio-edit/ministerio-edit.component';
+import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
+import { HospitalDetailComponent } from './components/configuracion/establecimiento/hospital-detail/hospital-detail.component';
+import { HospitalEditComponent } from './components/configuracion/establecimiento/hospital-edit/hospital-edit.component';
+import { HospitalNewComponent } from './components/configuracion/establecimiento/hospital-new/hospital-new.component';
 
 
 registerLocaleData(localePy,'es');
@@ -244,6 +248,10 @@ registerLocaleData(localePy,'es');
     MinisterioNewComponent,
     MinisterioDetailComponent,
     MinisterioEditComponent,
+    HospitalComponent,
+    HospitalDetailComponent,
+    HospitalEditComponent,
+    HospitalNewComponent,
     
   ],
 
