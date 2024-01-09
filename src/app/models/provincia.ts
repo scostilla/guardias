@@ -1,4 +1,5 @@
 import { Pais } from './Pais';
+
 export class Provincia {
     id?: number;
     gentilicio: string;
