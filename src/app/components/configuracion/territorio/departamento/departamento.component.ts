@@ -2,13 +2,14 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
-import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
+import { Provincia } from 'src/app/models/Provincia';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { DepartamentoDetailComponent } from '../departamento-detail/departamento-detail.component';
@@ -20,8 +21,8 @@ export interface UserData {
   id: number;
   codigoPostal: string;
   nombre: string;
-  id_provincia: number;
-  provincia: string;
+  //id_provincia: number;
+  provincia: Provincia;
 }
 
 
@@ -89,11 +90,12 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
           id: departamento.id || 0,
           codigoPostal: departamento.codigoPostal || '',
           nombre: departamento.nombre || '',
-          id_provincia: departamento.provincia.id  !== undefined ? departamento.provincia.id : 0,
-          provincia: departamento.provincia.nombre  !== undefined ? departamento.provincia.nombre : '',
+          //id_provincia: departamento.provincia.id  !== undefined ? departamento.provincia.id : 0,
+          provincia: departamento.provincia,
         }));
 
         this.dataSource.data = userDataArray;
+        console.log(this.dataSource.data);
       },
       (err) => {
         console.log(err);
