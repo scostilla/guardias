@@ -17,7 +17,7 @@ import { DepartamentoNewComponent } from '../departamento-new/departamento-new.c
 
 export interface UserData {
   id: number;
-  gentilicio: string;
+  codigoPostal: string;
   nombre: string;
   id_provincia: number;
   provincia: String;
