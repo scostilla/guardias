@@ -2,9 +2,9 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { Localidad } from 'src/app/models/Localidad';
 import { LocalidadService } from 'src/app/services/localidad.service';
-import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -61,7 +61,7 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.cargarLocalidad();
-    
+
     this.suscription = this.localidadService.refresh$.subscribe(() => {
       this.cargarLocalidad();
     })
@@ -87,8 +87,8 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
         const userDataArray: UserData[] = data.map(localidad => ({
           id: localidad.id || 0,
           nombre: localidad.nombre || '',
-          id_departamento: localidad.departamento.id !== undefined ? localidad.departamento.id : 0,
-          departamento: localidad.departamento.nombre !== undefined ? localidad.departamento.nombre : '',
+          id_departamento: localidad.departamento.id ? localidad.departamento.id || 0 : 0,
+          departamento: localidad.departamento.nombre ? localidad.departamento.nombre || '' : '',
         }));
 
         this.dataSource.data = userDataArray;

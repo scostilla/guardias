@@ -2,9 +2,9 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
-import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -91,8 +91,8 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
           id: departamento.id || 0,
           codigoPostal: departamento.codigoPostal || '',
           nombre: departamento.nombre || '',
-          id_provincia: departamento.provincia.id !== undefined ? departamento.provincia.id : 0,
-          provincia: departamento.provincia.nombre !== undefined ? departamento.provincia.nombre : '',
+          id_provincia: departamento.provincia ? departamento.provincia.id || 0 : 0,
+          provincia: departamento.provincia ? departamento.provincia.nombre || '' : '',
         }));
 
         this.dataSource.data = userDataArray;
