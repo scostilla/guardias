@@ -2,41 +2,42 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
+import { Subscription } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { Provincia } from 'src/app/models/Provincia';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { DepartamentoDetailComponent } from '../departamento-detail/departamento-detail.component';
 import { DepartamentoEditComponent } from '../departamento-edit/departamento-edit.component';
 import { DepartamentoNewComponent } from '../departamento-new/departamento-new.component';
 
-
 export interface UserData {
   id: number;
   codigoPostal: string;
   nombre: string;
-  //id_provincia: number;
-  provincia: Provincia;
+  id_provincia: number;
+  provincia: String;
 }
-
 
 @Component({
   selector: 'app-departamento',
   templateUrl: './departamento.component.html',
-  styleUrls: ['./departamento.component.css']
+  styleUrls: ['./departamento.component.css'],
 })
-
 export class DepartamentoComponent implements OnInit, AfterViewInit {
-
-  departamento: Departamento[] = [];
+  provincias: Departamento[] = [];
   router: any;
-  displayedColumns: string[] = ['id', 'codigoPostal', 'nombre','provincia', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'codigoPostal',
+    'nombre',
+    'provincia',
+    'actions',
+  ];
   dataSource: MatTableDataSource<UserData>;
   suscription?: Subscription;
 
@@ -52,14 +53,14 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
     public dialogDetail: MatDialog,
     private http: HttpClient,
     private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    ) {
+    private dataSharingService: DataSharingService
+  ) {
     paginatorLabels.itemsPerPageLabel = 'Items por pagina';
     paginatorLabels.firstPageLabel = 'Primera Pagina';
     paginatorLabels.nextPageLabel = 'Siguiente';
     paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    this.dataSource = new MatTableDataSource<UserData>([]);
+  }
 
   ngOnInit() {
     this.cargarDepartamento();
@@ -86,16 +87,15 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
   cargarDepartamento(): void {
     this.departamentoService.lista().subscribe(
       (data: Departamento[]) => {
-        const userDataArray: UserData[] = data.map(departamento => ({
+        const userDataArray: UserData[] = data.map((departamento) => ({
           id: departamento.id || 0,
           codigoPostal: departamento.codigoPostal || '',
           nombre: departamento.nombre || '',
-          //id_provincia: departamento.provincia.id  !== undefined ? departamento.provincia.id : 0,
-          provincia: departamento.provincia,
+          id_provincia: departamento.provincia.id !== undefined ? departamento.provincia.id : 0,
+          provincia: departamento.provincia.nombre !== undefined ? departamento.provincia.nombre : '',
         }));
 
         this.dataSource.data = userDataArray;
-        console.log(this.dataSource.data);
       },
       (err) => {
         console.log(err);
@@ -108,7 +108,10 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+  openDialog(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string
+  ): void {
     this.dialog.open(DepartamentoComponent, {
       width: '250px',
       enterAnimationDuration,
@@ -118,33 +121,34 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
 
   borrar(id: number, nombre: string) {
     this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.departamentoService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('Departamento eliminado', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-        this.cargarDepartamento();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
+      .open(ConfirmDialogComponent, {
+        data: {
+          message: 'Confirma la eliminación de ' + nombre,
+          title: 'Eliminar',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirm: Boolean) => {
+        if (confirm) {
+          this.departamentoService.delete(id).subscribe(
+            (data) => {
+              this.toastr.success('Departamento eliminado', 'OK', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+              });
+              this.cargarDepartamento();
+            },
+            (err) => {
+              this.toastr.error(err.error.mensaje, 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+              });
+            }
+          );
+        } else {
+          this.dialog.closeAll();
+        }
+      });
   }
 
   addNewDepartamento() {
@@ -152,7 +156,6 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
       width: '600px',
       disableClose: true,
     });
-
   }
 
   addDetailDepartamento(id: number) {
@@ -163,12 +166,11 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
     });
 
     dialogDetail.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getDepartamentoFormData());
+      console.log("linea 158: "+this.dataSharingService.getDepartamentoFormData());
       this.dataSource.data.push(this.dataSharingService.getDepartamentoFormData());
-      console.log("id recibido: "+this.dataSharingService.getDepartamentoId());
+      console.log('id recibido: ' + this.dataSharingService.getDepartamentoId());
     });
   }
-
 
   addEditDepartamento(id: number) {
     const dialogEdit = this.dialog.open(DepartamentoEditComponent, {
@@ -180,8 +182,7 @@ export class DepartamentoComponent implements OnInit, AfterViewInit {
     dialogEdit.afterClosed().subscribe((result) => {
       console.log(this.dataSharingService.getDepartamentoFormData());
       this.dataSource.data.push(this.dataSharingService.getDepartamentoFormData());
-      console.log("id recibido: "+this.dataSharingService.getDepartamentoId());
+      console.log('id recibido: ' + this.dataSharingService.getDepartamentoId());
     });
   }
-
 }

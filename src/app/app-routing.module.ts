@@ -79,6 +79,8 @@ import { LocalidadNewComponent } from './components/configuracion/territorio/loc
 import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
 import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
 import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
+import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
+
 
 
 import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
@@ -171,6 +173,8 @@ const routes: Routes = [
  {path: 'localidad-detail/:id', component:LocalidadDetailComponent},
  {path: 'localidad-edit/:id', component:LocalidadEditComponent},
  {path: 'ministerio', component:MinisterioComponent},
+ {path: 'hospital', component:HospitalComponent},
+
 
 
  {path: 'prueba-territorio', component:PruebaTerritorioComponent},

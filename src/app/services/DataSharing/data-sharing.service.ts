@@ -108,5 +108,20 @@ export class DataSharingService {
     return this.id;
   }
 
+  setHospitalFormData(data: any) {
+    this.formData = data;
+  }
+
+  getHospitalFormData() {
+    return this.formData;
+  }
+
+  setHospitalId(id: number) {
+    this.id = id;
+  }
+
+  getHospitalId() {
+    return this.id;
+  }
 
 }

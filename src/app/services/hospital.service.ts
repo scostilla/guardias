@@ -9,7 +9,7 @@ import { Hospital } from "src/app/models/Hospital";
 })
 export class HospitalService {
 
-  ministeriosURL = 'http://localhost:8080/ministerio/';
+  hospitalesURL = 'http://localhost:8080/ministerio/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
@@ -19,19 +19,19 @@ export class HospitalService {
   }
 
   public lista(): Observable<Hospital[]> {
-      return this.httpClient.get<Hospital[]>(this.ministeriosURL + 'lista');
+      return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'lista');
   }
 
   public detalle(id:number): Observable<Hospital> {
-      return this.httpClient.get<Hospital>(this.ministeriosURL + `detalle/${id}`);
+      return this.httpClient.get<Hospital>(this.hospitalesURL + `detalle/${id}`);
   }
 
   public detallenombre(nombre:string): Observable<Hospital> {
-    return this.httpClient.get<Hospital>(this.ministeriosURL + `detallenombre/${nombre}`);
+    return this.httpClient.get<Hospital>(this.hospitalesURL + `detallenombre/${nombre}`);
 }
 
-public save(ministerios:Hospital): Observable<any> {
-  return this.httpClient.post<any>(this.ministeriosURL + 'create', ministerios)
+public save(hospitales:Hospital): Observable<any> {
+  return this.httpClient.post<any>(this.hospitalesURL + 'create', hospitales)
   .pipe(
     tap(() => {
      this._refresh$.next();
@@ -39,8 +39,8 @@ public save(ministerios:Hospital): Observable<any> {
   )
 }
 
-public update(id:number, ministerios:Hospital): Observable<any> {
-  return this.httpClient.put<any>(this.ministeriosURL + `update/${id}`, ministerios)
+public update(id:number, hospitales:Hospital): Observable<any> {
+  return this.httpClient.put<any>(this.hospitalesURL + `update/${id}`, hospitales)
   .pipe(
     tap(() => {
      this._refresh$.next();
@@ -49,7 +49,7 @@ public update(id:number, ministerios:Hospital): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.ministeriosURL + `delete/${id}`);
+  return this.httpClient.delete<any>(this.hospitalesURL + `delete/${id}`);
 }
 
 }

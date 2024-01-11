@@ -18,6 +18,8 @@ export class DepartamentoEditComponent implements OnInit {
 
   departamento?: Departamento;
   provincias: Provincia[] = [];
+  provinciasEncontrado?: Provincia;
+
 
 
   constructor(
@@ -49,10 +51,19 @@ export class DepartamentoEditComponent implements OnInit {
     });
   }
 
+  provinciaChange() {
+    if (this.departamento) {
+      const nombre = this.departamento.provincia.nombre;
+      this.provinciasEncontrado = this.provincias.find((provincia) => provincia.nombre === nombre);
+    }
+  }
+
+
   onUpdate(): void {
     const id = this.data.id;
     console.log("onUpdate "+id);
     if(this.departamento) {
+      this.departamento.provincia = this.provinciasEncontrado ? this.provinciasEncontrado : this.departamento.provincia;
     this.departamentoService.update(id, this.departamento).subscribe(
       data=> {
         this.toastr.success('Departamento Modificado', 'OK', {
