@@ -87,8 +87,8 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
         const userDataArray: UserData[] = data.map(localidad => ({
           id: localidad.id || 0,
           nombre: localidad.nombre || '',
-          id_departamento: localidad.departamento.id ? localidad.departamento.id || 0 : 0,
-          departamento: localidad.departamento.nombre ? localidad.departamento.nombre || '' : '',
+          id_departamento: localidad.departamento ? localidad.departamento.id || 0 : 0,
+          departamento: localidad.departamento ? localidad.departamento.nombre || '' : '',
         }));
 
         this.dataSource.data = userDataArray;
@@ -98,6 +98,7 @@ export class LocalidadComponent implements OnInit, AfterViewInit {
       }
     );
   }
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
