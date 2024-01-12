@@ -144,6 +144,13 @@ import { RegionComponent } from './components/configuracion/establecimiento/regi
 import { RegionNewComponent } from './components/configuracion/establecimiento/region-new/region-new.component';
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail/region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
+import { CapsNewComponent } from './components/configuracion/establecimiento/caps-new/caps-new.component';
+import { CapsEditComponent } from './components/configuracion/establecimiento/caps-edit/caps-edit.component';
+import { CapsDetailComponent } from './components/configuracion/establecimiento/caps-detail/caps-detail.component';
+import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
+import { FeriadoNewComponent } from './components/configuracion/calendario/feriado-new/feriado-new.component';
+import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
+import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -262,6 +269,13 @@ registerLocaleData(localePy,'es');
     RegionNewComponent,
     RegionDetailComponent,
     RegionEditComponent,
+    CapsNewComponent,
+    CapsEditComponent,
+    CapsDetailComponent,
+    FeriadoComponent,
+    FeriadoNewComponent,
+    FeriadoDetailComponent,
+    FeriadoEditComponent,
     
   ],
 

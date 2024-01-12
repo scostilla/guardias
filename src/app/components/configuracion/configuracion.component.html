@@ -122,6 +122,21 @@
               <button mat-raised-button routerLink="/localidad">Asistenciales y No asistenciales</button>
           </div>
       </mat-expansion-panel>
+      <mat-expansion-panel (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false">
+<mat-expansion-panel-header>
+<mat-panel-title class="panel-title">
+Datos Calendario
+</mat-panel-title>
+<mat-panel-description>
+Feriados.
+</mat-panel-description>
+</mat-expansion-panel-header>
+<div class="example-button-row">
+<button mat-raised-button color="primary" routerLink="/feriado">Feriados</button>
+</div>
+</mat-expansion-panel>
+
 
     </mat-accordion>
     </div>

@@ -22,12 +22,12 @@ export class RegionService {
       return this.httpClient.get<Region[]>(this.regionesURL + 'lista');
   }
 
-  public detalle(id:number): Observable<Region> {
-      return this.httpClient.get<Region>(this.regionesURL + `detalle/${id}`);
+  public detail(id:number): Observable<Region> {
+      return this.httpClient.get<Region>(this.regionesURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Region> {
-    return this.httpClient.get<Region>(this.regionesURL + `detallenombre/${nombre}`);
+  public detailname(nombre:string): Observable<Region> {
+    return this.httpClient.get<Region>(this.regionesURL + `detailname/${nombre}`);
 }
 
 public save(regiones:Region): Observable<any> {

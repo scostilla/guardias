@@ -85,6 +85,10 @@ import { RegionComponent } from './components/configuracion/establecimiento/regi
 import { RegionNewComponent } from './components/configuracion/establecimiento/region-new/region-new.component';
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
+import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
+import { FeriadoNewComponent } from './components/configuracion/calendario/feriado-new/feriado-new.component';
+import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail//feriado-detail.component';
+import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 
 
 
@@ -186,6 +190,13 @@ const routes: Routes = [
  {path: 'region-new', component:RegionNewComponent},
  {path: 'region-detail/:id', component:RegionDetailComponent},
  {path: 'region-edit/:id', component:RegionEditComponent},
+ {path: 'feriado', component:FeriadoComponent},
+ {path: 'feriado-new', component:FeriadoNewComponent},
+ {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
+ {path: 'feriado-edit/:id', component:FeriadoEditComponent},
+
+
+
 
 
 

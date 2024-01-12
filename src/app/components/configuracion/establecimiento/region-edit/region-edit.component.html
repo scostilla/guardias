@@ -1,1 +1,21 @@
-<p>region-edit works!</p>
+<h2 mat-dialog-title>MODIFICAR REGION
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="region">
+    <mat-dialog-content>
+  
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre del País</mat-label>
+            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="region.nombre" required/>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+      </button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
+    </div>
+  </form>

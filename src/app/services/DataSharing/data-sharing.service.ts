@@ -124,6 +124,22 @@ export class DataSharingService {
     return this.id;
   }
 
+  setCapsFormData(data: any) {
+    this.formData = data;
+  }
+
+  getCapsFormData() {
+    return this.formData;
+  }
+
+  setCapsId(id: number) {
+    this.id = id;
+  }
+
+  getCapsId() {
+    return this.id;
+  }
+
   setRegionFormData(data: any) {
     this.formData = data;
   }
@@ -137,6 +153,23 @@ export class DataSharingService {
   }
 
   getRegionId() {
+    return this.id;
+  }
+
+  
+  setFeriadoFormData(data: any) {
+    this.formData = data;
+  }
+
+  getFeriadoFormData() {
+    return this.formData;
+  }
+
+  setFeriadoId(id: number) {
+    this.id = id;
+  }
+
+  getFeriadoId() {
     return this.id;
   }
 

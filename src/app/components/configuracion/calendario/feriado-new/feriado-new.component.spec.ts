@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RegionEditComponent } from './region-edit.component';
+import { FeriadoNewComponent } from './feriado-new.component';
 
-describe('RegionEditComponent', () => {
-  let component: RegionEditComponent;
-  let fixture: ComponentFixture<RegionEditComponent>;
+describe('FeriadoNewComponent', () => {
+  let component: FeriadoNewComponent;
+  let fixture: ComponentFixture<FeriadoNewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RegionEditComponent ]
+      declarations: [ FeriadoNewComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RegionEditComponent);
+    fixture = TestBed.createComponent(FeriadoNewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -28,7 +28,7 @@ export class RegionDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    this.regionService.detalle(id).subscribe(
+    this.regionService.detail(id).subscribe(
       data=> {
         this.region = data;
       },

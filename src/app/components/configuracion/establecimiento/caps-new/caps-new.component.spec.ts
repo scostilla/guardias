@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RegionNewComponent } from './region-new.component';
+import { CapsNewComponent } from './caps-new.component';
 
-describe('RegionNewComponent', () => {
-  let component: RegionNewComponent;
-  let fixture: ComponentFixture<RegionNewComponent>;
+describe('CapsNewComponent', () => {
+  let component: CapsNewComponent;
+  let fixture: ComponentFixture<CapsNewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RegionNewComponent ]
+      declarations: [ CapsNewComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RegionNewComponent);
+    fixture = TestBed.createComponent(CapsNewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
