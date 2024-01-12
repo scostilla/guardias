@@ -139,6 +139,11 @@ import { HospitalComponent } from './components/configuracion/establecimiento/ho
 import { HospitalDetailComponent } from './components/configuracion/establecimiento/hospital-detail/hospital-detail.component';
 import { HospitalEditComponent } from './components/configuracion/establecimiento/hospital-edit/hospital-edit.component';
 import { HospitalNewComponent } from './components/configuracion/establecimiento/hospital-new/hospital-new.component';
+import { CapsComponent } from './components/configuracion/establecimiento/caps/caps.component';
+import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { RegionNewComponent } from './components/configuracion/establecimiento/region-new/region-new.component';
+import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail/region-detail.component';
+import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -252,6 +257,11 @@ registerLocaleData(localePy,'es');
     HospitalDetailComponent,
     HospitalEditComponent,
     HospitalNewComponent,
+    CapsComponent,
+    RegionComponent,
+    RegionNewComponent,
+    RegionDetailComponent,
+    RegionEditComponent,
     
   ],
 

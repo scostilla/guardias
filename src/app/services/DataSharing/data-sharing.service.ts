@@ -124,4 +124,21 @@ export class DataSharingService {
     return this.id;
   }
 
+  setRegionFormData(data: any) {
+    this.formData = data;
+  }
+
+  getRegionFormData() {
+    return this.formData;
+  }
+
+  setRegionId(id: number) {
+    this.id = id;
+  }
+
+  getRegionId() {
+    return this.id;
+  }
+
+
 }

@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>DETALLE
+    <h5>Región</h5>
+</h1>
+<mat-dialog-content>
+    <table class="table" *ngIf="region">
+        <tbody>
+          <tr>
+            <th scope="row">ID</th>
+            <td>{{region.id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Nombre Región</th>
+            <td>{{region.nombre}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cerrar</button>
+    </div>
+  </mat-dialog-content>

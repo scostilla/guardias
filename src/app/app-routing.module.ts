@@ -80,6 +80,13 @@ import { LocalidadDetailComponent } from './components/configuracion/territorio/
 import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
 import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
 import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
+import { CapsComponent } from './components/configuracion/establecimiento/caps/caps.component';
+import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { RegionNewComponent } from './components/configuracion/establecimiento/region-new/region-new.component';
+import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
+import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
+
+
 
 
 
@@ -174,6 +181,13 @@ const routes: Routes = [
  {path: 'localidad-edit/:id', component:LocalidadEditComponent},
  {path: 'ministerio', component:MinisterioComponent},
  {path: 'hospital', component:HospitalComponent},
+ {path: 'caps', component:CapsComponent},
+ {path: 'region', component:RegionComponent},
+ {path: 'region-new', component:RegionNewComponent},
+ {path: 'region-detail/:id', component:RegionDetailComponent},
+ {path: 'region-edit/:id', component:RegionEditComponent},
+
+
 
 
 

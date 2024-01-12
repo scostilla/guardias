@@ -9,7 +9,7 @@ import { Hospital } from "src/app/models/Hospital";
 })
 export class HospitalService {
 
-  hospitalesURL = 'http://localhost:8080/ministerio/';
+  hospitalesURL = 'http://localhost:8080/hospital/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
