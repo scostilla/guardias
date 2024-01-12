@@ -9,7 +9,7 @@ import { Feriado } from "src/app/models/Feriado";
 })
 export class FeriadoService {
 
-  feriadosURL = 'http://localhost:8080/pais/';
+  feriadosURL = 'http://localhost:8080/feriado/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
