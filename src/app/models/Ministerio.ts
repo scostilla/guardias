@@ -5,7 +5,7 @@ import { Region } from "./Region";
 export class Ministerio {
     id?: number;
     domicilio: string;
-    estado: number;
+    estado: boolean;
     localidad: Localidad;
     region: Region;
     nombre: string;
@@ -14,7 +14,7 @@ export class Ministerio {
     idCabecera: number;
 
 
-constructor(domicilio: string, estado: number, localidad: Localidad, region: Region, nombre: string, observacion: string, telefono: number, idCabecera: number) {
+constructor(domicilio: string, estado: boolean, localidad: Localidad, region: Region, nombre: string, observacion: string, telefono: number, idCabecera: number) {
     this.domicilio = domicilio;
     this.estado = estado;
     this.localidad = localidad;

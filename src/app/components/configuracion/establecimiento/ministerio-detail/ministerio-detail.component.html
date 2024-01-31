@@ -1,1 +1,34 @@
-<p>ministerio-detail works!</p>
+<h1 mat-dialog-title>DETALLE
+    <h5>MINISTERIO</h5>
+  </h1>
+  <mat-dialog-content>
+    <table class="table" *ngIf="ministerio">
+        <tbody>
+          <tr>
+            <th scope="row">ID</th>
+            <td>{{ministerio.id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Nombre</th>
+            <td>{{ministerio.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Domicilio</th>
+            <td>{{ministerio.domicilio}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Localidad</th>
+            <td>{{ministerio.localidad}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Región</th>
+            <td>{{ministerio.region}}</td>
+          </tr>
+        </tbody>
+      </table>
+  
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cerrar</button>
+    </div>
+  </mat-dialog-content>
+  

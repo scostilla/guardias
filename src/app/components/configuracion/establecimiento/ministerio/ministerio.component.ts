@@ -20,9 +20,11 @@ import { MinisterioNewComponent } from '../ministerio-new/ministerio-new.compone
 export interface UserData {
   id: number;
   domicilio: string;
-  estado: number;
+  estado: boolean;
   idLocalidad: number;
+  localidad: string;
   idRegion: number;
+  region: string;
   nombre: string;
   observacion: string;
   telefono: number;
@@ -40,6 +42,8 @@ export interface UserData {
 export class MinisterioComponent implements OnInit, AfterViewInit {
 
   ministerios: Ministerio[] = [];
+  localidades: Ministerio[] = [];
+  regiones: Ministerio[] = [];
   displayedColumns: string[] = ['id', 'domicilio', 'estado', 'idLocalidad', 'idRegion', 'nombre', 'actions'];
   dataSource: MatTableDataSource<UserData>;
   suscription?: Subscription;
@@ -94,13 +98,15 @@ export class MinisterioComponent implements OnInit, AfterViewInit {
         const userDataArray: UserData[] = data.map(ministerio => ({
           id: ministerio.id || 0,
           domicilio: ministerio.domicilio || '',
-          estado: ministerio.estado || 0,
-          idLocalidad: ministerio.localidad.id !== undefined ? ministerio.localidad.id : 0,
-          idRegion: ministerio.region.id !== undefined ? ministerio.region.id : 0,
+          estado: ministerio.estado,
+          idLocalidad: ministerio.localidad ? ministerio.localidad.id || 0 : 0,
+          localidad: ministerio.localidad ? ministerio.localidad.nombre || '' : '',
+          idRegion: ministerio.region ? ministerio.region.id || 0 : 0,
+          region: ministerio.region ? ministerio.region.nombre || '' : '',
           nombre: ministerio.nombre || '',
           observacion: ministerio.observacion || '',
-          telefono: ministerio.telefono || 0,
-          idCabecera: ministerio.idCabecera || 0,
+          telefono: ministerio.telefono,
+          idCabecera: ministerio.idCabecera,
         }));
 
         this.dataSource.data = userDataArray;
