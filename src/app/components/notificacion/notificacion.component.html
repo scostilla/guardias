@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-1">
+    </div>
+    <div class="col-6 justify-content-end">
+      <div class="titulos">.:: NOTIFICACIONES</div>
+    </div>
+    <div class="col-1 align-items-right">
+      <button mat-fab color="primary" (click)="addNewNotificacion()" matTooltip="Agregar Notificación">
+        <mat-icon>library_add</mat-icon>
+      </button>
+    </div>
+    <div class="col-3">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="container">
+  <div class="row">
+    <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  
+  
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+  
+  
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Notificación </th>
+        <td mat-cell *matCellDef="let element"> {{element.fechanotificacion}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="nacionalidad">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Detalle </th>
+        <td mat-cell *matCellDef="let element"> {{element.detalle}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Sección </th>
+        <td mat-cell *matCellDef="let element"> {{element.tipo}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon class="btnEdit" (click)="addEditNotificacion(element.id)" matTooltip="Editar {{element.nombre}}">edit</mat-icon>
+          <mat-icon class="btnRemove" (click)="borrar(element.id ?? 0, element.nombre)" matTooltip="Eliminar {{element.nombre}}">delete</mat-icon>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+  </div>

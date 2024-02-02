@@ -54,6 +54,7 @@ import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronogram
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
+import { NotificacionComponent } from './components/notificacion/notificacion.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal2/disponibilidad-ramal2.component';
@@ -159,6 +160,7 @@ const routes: Routes = [
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'novedades', component:NovedadesComponent}, 
+ {path: 'notificacion', component:NotificacionComponent}, 
  {path: 'historial', component:HistorialComponent},
  {path: 'disponibilidad', component:DisponibilidadComponent},
  {path: 'disponibilidad-ramal2', component:DisponibilidadRamal2Component},

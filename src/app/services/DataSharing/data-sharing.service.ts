@@ -172,5 +172,21 @@ export class DataSharingService {
     return this.id;
   }
 
+  setNotificacionFormData(data: any) {
+    this.formData = data;
+  }
+
+  getNotificacionFormData() {
+    return this.formData;
+  }
+
+  setNotificacionId(id: number) {
+    this.id = id;
+  }
+
+  getNotificacionId() {
+    return this.id;
+  }
+
 
 }

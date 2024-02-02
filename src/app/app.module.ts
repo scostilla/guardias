@@ -151,6 +151,8 @@ import { FeriadoComponent } from './components/configuracion/calendario/feriado/
 import { FeriadoNewComponent } from './components/configuracion/calendario/feriado-new/feriado-new.component';
 import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
+import { NotificacionComponent } from './components/notificacion/notificacion.component';
+import { NotificacionEditComponent } from './components/notificacion/notificacion-edit/notificacion-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -276,6 +278,8 @@ registerLocaleData(localePy,'es');
     FeriadoNewComponent,
     FeriadoDetailComponent,
     FeriadoEditComponent,
+    NotificacionComponent,
+    NotificacionEditComponent,
     
   ],
 
