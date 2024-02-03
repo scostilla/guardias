@@ -2,10 +2,11 @@
 mat-form-field{
     align-items: center;
     width: 100%;
+    font-weight: bold;
   }
   .mdc-dialog__title
   {
-    background-color: #243c74;
+    background-color: #A9D08F;
     color: white;
   }
   

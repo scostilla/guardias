@@ -1,1 +1,97 @@
-<p>ministerio-edit works!</p>
+<h2 mat-dialog-title>MODIFICAR MINISTERIO
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="ministerio">
+    <mat-dialog-content>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre del ministerio</mat-label>
+            <input matInput placeholder="Ingresar Nombre del ministerio" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="ministerio.nombre" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Domicilio del ministerio</mat-label>
+            <input matInput placeholder="Ingresar Nombre del ministerio" autocomplete="off" id="domicilio" name="domicilio" [(ngModel)]="ministerio.domicilio" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre de la Localidad</mat-label>
+            <mat-select id="idLocalidad" name="idLocalidad" [(ngModel)]="ministerio.localidad.nombre" required>
+              <mat-option *ngFor="let localidad of localidades" [value]="localidad.nombre">
+                {{ localidad.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Región</mat-label>
+            <mat-select id="idRegion" name="idRegion" [(ngModel)]="ministerio.region.nombre" required>
+              <mat-option *ngFor="let region of regiones" [value]="region.nombre">
+                {{ region.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Teléfono</mat-label>
+            <input matInput placeholder="Ingresar Tel. del ministerio" autocomplete="off" id="telefono" name="telefono" [(ngModel)]="ministerio.telefono" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Observación</mat-label>
+            <input matInput placeholder="Ingresar observación" autocomplete="off" id="observacion" name="observacion" [(ngModel)]="ministerio.observacion" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Estado</mat-label>
+            <input matInput placeholder="Ingresar estado" autocomplete="off" id="estado" name="estado" [(ngModel)]="ministerio.estado" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Cabecera</mat-label>
+            <input matInput placeholder="Es cabecera" autocomplete="off" id="idCabecera" name="idCabecera" [(ngModel)]="ministerio.idCabecera" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+    </mat-dialog-content>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+      </button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
+    </div>
+  </form>
+
+

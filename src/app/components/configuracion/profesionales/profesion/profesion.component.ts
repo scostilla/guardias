@@ -2,49 +2,37 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Hospital } from 'src/app/models/Hospital';
-import { HospitalService } from 'src/app/services/hospital.service';
+import { Profesion } from 'src/app/models/Profesion';
+import { ProfesionService } from 'src/app/services/profesion.service';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { HospitalDetailComponent } from '../hospital-detail/hospital-detail.component';
-import { HospitalEditComponent } from '../hospital-edit/hospital-edit.component';
-import { HospitalNewComponent } from '../hospital-new/hospital-new.component';
+import { ProfesionDetailComponent } from '../profesion-detail/profesion-detail.component';
+import { ProfesionEditComponent } from '../profesion-edit/profesion-edit.component';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 
 export interface UserData {
   id: number;
-  domicilio: string;
-  estado: number;
-  idLocalidad: number;
-  localidad: string;
-  idRegion: number;
-  region: string;
+  asistencial: number;
   nombre: string;
-  observacion: string;
-  telefono: number;
-  esCabecera: number;
-  nivelComplejidad: number;
 }
 
 
 @Component({
-  selector: 'app-hospital',
-  templateUrl: './hospital.component.html',
-  styleUrls: ['./hospital.component.css']
+  selector: 'app-profesion',
+  templateUrl: './profesion.component.html',
+  styleUrls: ['./profesion.component.css']
 })
 
-export class HospitalComponent implements OnInit, AfterViewInit {
+export class ProfesionComponent implements OnInit, AfterViewInit {
 
-  hospitales: Hospital[] = [];
-  localidades: Hospital[] = [];
-  regiones: Hospital[] = [];
-  displayedColumns: string[] = ['id', 'domicilio', 'estado', 'localidad', 'region', 'nombre', 'observacion', 'telefono', 'esCabecera', 'nivelComplejidad', 'actions'];
+  profesiones: Profesion[] = [];
+  displayedColumns: string[] = ['id', 'asistencial', 'nombre', 'actions'];
   dataSource: MatTableDataSource<UserData>;
   suscription?: Subscription;
 
@@ -52,7 +40,7 @@ export class HospitalComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private hospitalService: HospitalService,
+    private profesionService: ProfesionService,
     private toastr: ToastrService,
     public dialog: MatDialog,
     public dialogNew: MatDialog,
@@ -71,10 +59,10 @@ export class HospitalComponent implements OnInit, AfterViewInit {
     }
 
   ngOnInit() {
-    this.cargarHospitales();
+    this.cargarProfesiones();
 
-    this.suscription = this.hospitalService.refresh$.subscribe(() => {
-      this.cargarHospitales();
+    this.suscription = this.profesionService.refresh$.subscribe(() => {
+      this.cargarProfesiones();
     })
   }
 
@@ -82,7 +70,7 @@ export class HospitalComponent implements OnInit, AfterViewInit {
     this.suscription?.unsubscribe();
     console.log('Observable cerrado');
   }
-
+  
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -92,22 +80,13 @@ export class HospitalComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  cargarHospitales(): void {
-    this.hospitalService.lista().subscribe(
-      (data: Hospital[]) => {
-        const userDataArray: UserData[] = data.map(hospital => ({
-          id: hospital.id || 0,
-          domicilio: hospital.domicilio || '',
-          estado: hospital.estado || 0,
-          idLocalidad: hospital.localidad ? hospital.localidad.id || 0 : 0,
-          localidad: hospital.localidad ? hospital.localidad.nombre || '' : '',
-          idRegion: hospital.region ? hospital.region.id || 0 : 0,
-          region: hospital.region ? hospital.region.nombre || '' : '',
-          nombre: hospital.nombre || '',
-          observacion: hospital.observacion || '',
-          telefono: hospital.telefono,
-          esCabecera: hospital.esCabecera,
-          nivelComplejidad: hospital.nivelComplejidad,
+  cargarProfesiones(): void {
+    this.profesionService.lista().subscribe(
+      (data: Profesion[]) => {
+        const userDataArray: UserData[] = data.map(profesion => ({
+          id: profesion.id || 0,
+          asistencial: profesion.asistencial,
+          nombre: profesion.nombre || '',
         }));
 
         this.dataSource.data = userDataArray;
@@ -124,7 +103,7 @@ export class HospitalComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(HospitalComponent, {
+    this.dialog.open(ProfesionComponent, {
       width: '250px',
       enterAnimationDuration,
       exitAnimationDuration,
@@ -143,12 +122,12 @@ export class HospitalComponent implements OnInit, AfterViewInit {
     .subscribe((confirm: Boolean) => {
       if (confirm) {
 
-    this.hospitalService.delete(id).subscribe(
+    this.profesionService.delete(id).subscribe(
       data=> {
-        this.toastr.success('Hospital eliminado', 'OK', {
+        this.toastr.success('Profesion eliminada', 'OK', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
-        this.cargarHospitales();
+        this.cargarProfesiones();
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
@@ -162,40 +141,32 @@ export class HospitalComponent implements OnInit, AfterViewInit {
 });
   }
 
-  addNewHospital() {
-    this.dialogNew.open(HospitalNewComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-
-  }
-
-  addDetailHospital(id: number) {
-    const dialogDetail = this.dialog.open(HospitalDetailComponent, {
+  addDetailProfesion(id: number) {
+    const dialogDetail = this.dialog.open(ProfesionDetailComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
 
     dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 152: "+this.dataSharingService.getHospitalFormData());
-      this.dataSource.data.push(this.dataSharingService.getHospitalFormData());
-      console.log("id recibido: "+this.dataSharingService.getHospitalId());
+      console.log("linea 152: "+this.dataSharingService.getProfesionFormData());
+      this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
+      console.log("id recibido: "+this.dataSharingService.getProfesionId());
     });
   }
 
 
-  addEditHospital(id: number) {
-    const dialogEdit = this.dialog.open(HospitalEditComponent, {
+  addEditProfesion(id: number) {
+    const dialogEdit = this.dialog.open(ProfesionEditComponent, {
       width: '600px',
       disableClose: true,
       data: { id: id },
     });
 
     dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getHospitalFormData());
-      this.dataSource.data.push(this.dataSharingService.getHospitalFormData());
-      console.log("id recibido: "+this.dataSharingService.getHospitalId());
+      console.log("linea 167: "+this.dataSharingService.getProfesionFormData());
+      this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
+      console.log("id recibido: "+this.dataSharingService.getProfesionId());
     });
   }
 

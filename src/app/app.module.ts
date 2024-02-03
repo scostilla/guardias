@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatCardModule} from '@angular/material/card';
+import {MatRadioModule} from '@angular/material/radio';
 
 //Components
 import { AppComponent } from './app.component';
@@ -153,6 +154,9 @@ import { FeriadoDetailComponent } from './components/configuracion/calendario/fe
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 import { NotificacionComponent } from './components/notificacion/notificacion.component';
 import { NotificacionEditComponent } from './components/notificacion/notificacion-edit/notificacion-edit.component';
+import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
+import { ProfesionDetailComponent } from './components/configuracion/profesionales/profesion-detail/profesion-detail.component';
+import { ProfesionEditComponent } from './components/configuracion/profesionales/profesion-edit/profesion-edit.component';
 
 
 registerLocaleData(localePy,'es');
@@ -280,6 +284,9 @@ registerLocaleData(localePy,'es');
     FeriadoEditComponent,
     NotificacionComponent,
     NotificacionEditComponent,
+    ProfesionComponent,
+    ProfesionDetailComponent,
+    ProfesionEditComponent,
     
   ],
 
@@ -316,6 +323,7 @@ registerLocaleData(localePy,'es');
     MatDatepickerModule,
     MatNativeDateModule, 
     MatCardModule,   
+    MatRadioModule,
     ToastrModule.forRoot() // ToastrModule added
     
   ],

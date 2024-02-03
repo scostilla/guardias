@@ -88,8 +88,11 @@ import { RegionDetailComponent } from './components/configuracion/establecimient
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
 import { FeriadoNewComponent } from './components/configuracion/calendario/feriado-new/feriado-new.component';
-import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail//feriado-detail.component';
+import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
+import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
+import { ProfesionDetailComponent } from './components/configuracion/profesionales/profesion-detail/profesion-detail.component';
+import { ProfesionEditComponent } from './components/configuracion/profesionales/profesion-edit/profesion-edit.component';
 
 
 
@@ -196,6 +199,9 @@ const routes: Routes = [
  {path: 'feriado-new', component:FeriadoNewComponent},
  {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
  {path: 'feriado-edit/:id', component:FeriadoEditComponent},
+ {path: 'profesion', component:ProfesionComponent},
+ {path: 'profesion-detail/:id', component:ProfesionDetailComponent},
+ {path: 'profesion-edit/:id', component:ProfesionEditComponent},
 
 
 

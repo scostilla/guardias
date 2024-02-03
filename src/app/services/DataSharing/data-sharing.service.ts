@@ -188,5 +188,21 @@ export class DataSharingService {
     return this.id;
   }
 
+  setProfesionFormData(data: any) {
+    this.formData = data;
+  }
+
+  getProfesionFormData() {
+    return this.formData;
+  }
+
+  setProfesionId(id: number) {
+    this.id = id;
+  }
+
+  getProfesionId() {
+    return this.id;
+  }
+
 
 }
