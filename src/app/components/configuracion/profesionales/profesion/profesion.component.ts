@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 
 export interface UserData {
   id: number;
-  asistencial: number;
+  asistencial: boolean;
   nombre: string;
 }
 
@@ -36,7 +36,7 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<UserData>;
   suscription?: Subscription;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator; 
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(

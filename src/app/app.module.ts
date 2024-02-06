@@ -157,6 +157,9 @@ import { NotificacionEditComponent } from './components/notificacion/notificacio
 import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
 import { ProfesionDetailComponent } from './components/configuracion/profesionales/profesion-detail/profesion-detail.component';
 import { ProfesionEditComponent } from './components/configuracion/profesionales/profesion-edit/profesion-edit.component';
+import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
+import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
+import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 
 
 registerLocaleData(localePy,'es');
@@ -287,6 +290,9 @@ registerLocaleData(localePy,'es');
     ProfesionComponent,
     ProfesionDetailComponent,
     ProfesionEditComponent,
+    EspecialidadComponent,
+    EspecialidadEditComponent,
+    EspecialidadDetailComponent,
     
   ],
 

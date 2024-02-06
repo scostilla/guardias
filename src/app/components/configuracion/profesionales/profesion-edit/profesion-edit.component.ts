@@ -14,8 +14,9 @@ import { ProfesionService } from 'src/app/services/profesion.service';
 export class ProfesionEditComponent implements OnInit {
 
   profesion?: Profesion;
-  asistencial?: number;
+  asistencial?: boolean;
   nombre: string = '';
+  id: any;
 
   constructor(
     private profesionService: ProfesionService,
@@ -26,11 +27,11 @@ export class ProfesionEditComponent implements OnInit {
   @Inject(MAT_DIALOG_DATA) public data: { id: number }
   ) {}
 
+
   ngOnInit() {
     const id = this.data.id;
     if (id === -1) {
-      // asignar un valor inicial vacío a la variable profesion
-      this.profesion = new Profesion();
+      this.onCreate();
     } else {
     this.profesionService.detalle(id).subscribe(
       data=> {
@@ -49,38 +50,41 @@ export class ProfesionEditComponent implements OnInit {
     const id = this.data.id;
     console.log("onUpdate "+id);
     if(this.profesion) {
-      if (id === -1) {
-        this.profesionService.create(this.profesion).subscribe(
-          data => {
-            this.toastr.success('Profesion Creada', 'OK', {
-              timeOut: 7000, positionClass: 'toast-top-center'
-            });
-          },
-          err => {
-            this.toastr.error(err.error.mensaje, 'Error', {
-              timeOut: 7000, positionClass: 'toast-top-center'
-            });
-          }
-        )
-      } else {      
-        this.profesionService.update(id, this.profesion).subscribe(
-        data => {
-          this.toastr.success('Profesion Modificada', 'OK', {
-            timeOut: 7000, positionClass: 'toast-top-center'
-          });
-        },
-        err => {
-          this.toastr.error(err.error.mensaje, 'Error', {
-            timeOut: 7000, positionClass: 'toast-top-center'
-          });
-        }
-      )
+    this.profesionService.update(id, this.profesion).subscribe(
+      data=> {
+        this.toastr.success('Profesion Modificada', 'OK', {
+          timeOut: 7000, positionClass: 'toast-top-center'
+        });
+      },
+      err => {
+        this.toastr.error(err.error.mensaje, 'Error', {
+          timeOut: 7000, positionClass: 'toast-top-center'
+        });
+      }
+    )
     }
-  }
-
   this.dialogRef.close();
 
-}
+  }
+
+  onCreate(): void {
+    const profesion = new Profesion(this.asistencial!, this.nombre);
+    this.profesionService.save(profesion).subscribe(
+      data=> {
+        this.toastr.success('Profesion Agregada', 'OK', {
+          timeOut: 7000, positionClass: 'toast-top-center'
+        });
+      },
+      err => {
+        this.toastr.error(err.error.mensaje, 'Error', {
+          timeOut: 7000, positionClass: 'toast-top-center'
+        });
+      }
+    )
+
+    this.dialogRef.close();
+  }
+
 
 
   cancel() {

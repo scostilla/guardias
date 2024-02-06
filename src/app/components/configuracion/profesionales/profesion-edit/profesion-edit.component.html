@@ -1,16 +1,18 @@
-<h2 mat-dialog-title>MODIFICAR PROFESION
+<h2 mat-dialog-title>{{id === -1 ? 'AGREGAR' : 'MODIFICAR'}} PROFESION
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="profesion">
+  <form (ngSubmit)="id === -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="profesion">
     <mat-dialog-content>
 
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Categoría</mat-label>
-            <input matInput placeholder="¿Es asistencial?" autocomplete="off" id="asistencial" name="asistencial" [(ngModel)]="profesion.asistencial" required/>
-          </mat-form-field>
-        </div>
+            <mat-select [(ngModel)]="profesion.asistencial" name="asistencial" id="asistencial" required>
+              <mat-option value="true">Asistencial</mat-option>
+              <mat-option value="false">No asistencial</mat-option>
+            </mat-select>
+          </mat-form-field>        </div>
       </div>
   
       <div class="row" style="margin-top: 20px">
@@ -25,6 +27,6 @@
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
       </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">{{id === -1 ? 'Guardar' : 'Modificar'}}</button>
     </div>
   </form>

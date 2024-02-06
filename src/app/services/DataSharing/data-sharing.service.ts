@@ -204,5 +204,20 @@ export class DataSharingService {
     return this.id;
   }
 
+  setEspecialidadFormData(data: any) {
+    this.formData = data;
+  }
+
+  getEspecialidadFormData() {
+    return this.formData;
+  }
+
+  setEspecialidadId(id: number) {
+    this.id = id;
+  }
+
+  getEspecialidadId() {
+    return this.id;
+  }
 
 }

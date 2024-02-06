@@ -1,9 +1,9 @@
 export class Profesion {
     id?: number;
-    asistencial: number;
+    asistencial: boolean;
     nombre: string;
   
-    constructor(codigo: string, asistencial: number, nombre: string) {
+    constructor(asistencial: boolean, nombre: string) {
       this.asistencial = asistencial;
       this.nombre = nombre;
     }
