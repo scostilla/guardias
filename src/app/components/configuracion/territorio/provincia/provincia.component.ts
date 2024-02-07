@@ -33,8 +33,8 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
   router: any;
   displayedColumns: string[] = [
     'id',
-    'gentilicio',
     'nombre',
+    'gentilicio',
     'pais',
     'actions',
   ];
@@ -89,8 +89,8 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
       (data: Provincia[]) => {
         const userDataArray: UserData[] = data.map((provincia) => ({
           id: provincia.id || 0,
-          gentilicio: provincia.gentilicio || '',
           nombre: provincia.nombre || '',
+          gentilicio: provincia.gentilicio || '',
           id_pais: provincia.pais.id !== undefined ? provincia.pais.id : 0,
           pais: provincia.pais.nombre !== undefined ? provincia.pais.nombre : '',
         }));

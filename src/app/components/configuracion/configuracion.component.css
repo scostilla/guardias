@@ -62,7 +62,7 @@ section {
     font-size:400% !important;
   }
 
-  div.boton {
+  div.btnMenu {
     width: 100%;
 	height: 50px;
 	margin: 1%;
@@ -77,13 +77,13 @@ section {
 	transition: all 0.5s;
   }
 
-div.boton span {
+div.btnMenu span {
 	cursor: pointer;
 	display: inline-block;
 	position: relative;
 	transition: 0.5s;
   }
-  div.boton span:after {
+  div.btnMenu span:after {
 	content: '\00bb';
 	position: absolute;
 	opacity: 0;
@@ -92,16 +92,16 @@ div.boton span {
 	transition: 0.5s;
   }
   
-  div.boton:hover span {
+  div.btnMenu:hover span {
 	padding-right: 25px;
   }
   
-  div.boton:hover span:after {
+  div.btnMenu:hover span:after {
 	opacity: 1;
 	right: 0;
   }
 
-.icon1_boton, .icon2_boton, .icon3_boton, .icon4_boton, .icon5_boton, .icon6_boton {
+.icon1_btnMenu, .icon2_btnMenu, .icon3_btnMenu, .icon4_btnMenu, .icon5_btnMenu, .icon6_btnMenu {
     -moz-border-radius: 10px 10px 0 0;
     -webkit-border-radius: 10px 10px 0 0;
     border-radius: 10px 10px 0 0;
@@ -111,12 +111,12 @@ div.boton span {
 	text-align:center; 
 	padding:3%;
 }
-.icon1_boton {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
-.icon2_boton {background-color: #1B497B; border-bottom: 9px solid #123253;}
-.icon3_boton {background-color: #C0CF50; border-bottom: 9px solid #909b3c;}
-.icon4_boton {background-color: #F2953E; border-bottom: 9px solid #b8712e;}
-.icon5_boton {background-color: #EB428F; border-bottom: 9px solid #c73778;}
-.icon6_boton {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
+.icon1_btnMenu {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
+.icon2_btnMenu {background-color: #1B497B; border-bottom: 9px solid #123253;}
+.icon3_btnMenu {background-color: #C0CF50; border-bottom: 9px solid #909b3c;}
+.icon4_btnMenu {background-color: #F2953E; border-bottom: 9px solid #b8712e;}
+.icon5_btnMenu {background-color: #EB428F; border-bottom: 9px solid #c73778;}
+.icon6_btnMenu {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
 
 .text_boton {text-align: center;
 	font-size: 80%;
