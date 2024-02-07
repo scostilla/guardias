@@ -1,1 +1,44 @@
-<p>especialidad-edit works!</p>
+<h2 mat-dialog-title>MODIFICAR ESPECIALIDAD
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="especialidad">
+    <mat-dialog-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>¿Es pasiva?</mat-label>
+            <input matInput placeholder="Si o No" autocomplete="off" id="esPasiva" name="esPasiva" [(ngModel)]="especialidad.esPasiva" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre de la especialidad</mat-label>
+            <input matInput placeholder="Ingresar Nombre de la especialidad" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="especialidad.nombre" required/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Pertenece a la Profesion</mat-label>
+            <mat-select id="idProfesion" name="idProfesion" [(ngModel)]="especialidad.profesion.nombre" required>
+              <mat-option *ngFor="let profesion of profesiones" [value]="profesion.nombre">
+                {{ profesion.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
+      </button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
+    </div>
+  </form>
+
+
