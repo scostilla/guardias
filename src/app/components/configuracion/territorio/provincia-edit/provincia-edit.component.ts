@@ -104,13 +104,11 @@ export class ProvinciaEditComponent implements OnInit {
               this.toastr.success('Provincia Agregada', 'OK', {
                 timeOut: 6000, positionClass: 'toast-top-center'
               });
-              this.router.navigate(['/provincia']);
             },
             err => {
               this.toastr.error(err.error.mensaje, 'Error', {
                 timeOut: 7000, positionClass: 'toast-top-center'
               });
-              this.router.navigate(['/provincia']);
             }
           );
         },

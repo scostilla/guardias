@@ -5,10 +5,11 @@
     <mat-dialog-content>
       <div class="row">
         <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>¿Es pasiva?</mat-label>
-            <input matInput placeholder="Si o No" autocomplete="off" id="esPasiva" name="esPasiva" [(ngModel)]="especialidad.esPasiva" required/>
-          </mat-form-field>
+          <mat-label>¿Es pasiva?</mat-label>
+            <mat-radio-group matInput id="esPasiva" name="esPasiva" [(ngModel)]="especialidad.esPasiva" required>
+              <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
+              <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
+            </mat-radio-group>
         </div>
       </div>
 

@@ -6,13 +6,11 @@
 
       <div class="row" style="margin-top: 20px">
         <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Categoría</mat-label>
-            <mat-select [(ngModel)]="profesion.asistencial" name="asistencial" id="asistencial" required>
-              <mat-option value="true">Asistencial</mat-option>
-              <mat-option value="false">No asistencial</mat-option>
-            </mat-select>
-          </mat-form-field>        </div>
+          <mat-label>Categoría: </mat-label>
+          <mat-radio-group matInput id="asistencial" name="asistencial" [(ngModel)]="profesion.asistencial" required>
+            <mat-radio-button [value]="true" color="primary">Asistencial</mat-radio-button>
+            <mat-radio-button [value]="false" color="primary">No asistencial</mat-radio-button>
+          </mat-radio-group>        </div>
       </div>
   
       <div class="row" style="margin-top: 20px">

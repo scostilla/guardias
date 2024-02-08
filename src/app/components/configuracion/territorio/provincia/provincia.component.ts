@@ -13,7 +13,6 @@ import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.se
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { ProvinciaDetailComponent } from '../provincia-detail/provincia-detail.component';
 import { ProvinciaEditComponent } from '../provincia-edit/provincia-edit.component';
-import { ProvinciaNewComponent } from '../provincia-new/provincia-new.component';
 
 export interface UserData {
   id: number;
