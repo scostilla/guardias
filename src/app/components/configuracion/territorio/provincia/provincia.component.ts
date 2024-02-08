@@ -151,13 +151,6 @@ export class ProvinciaComponent implements OnInit, AfterViewInit {
       });
   }
 
-  addNewProvincia() {
-    this.dialogNew.open(ProvinciaNewComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-  }
-
   addDetailProvincia(id: number) {
     const dialogDetail = this.dialog.open(ProvinciaDetailComponent, {
       width: '600px',

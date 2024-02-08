@@ -7,6 +7,7 @@ import { Provincia } from 'src/app/models/Provincia';
 import { PaisService } from 'src/app/services/pais.service';
 import { ProvinciaService } from 'src/app/services/provincia.service';
 
+
 @Component({
   selector: 'app-provincia-edit',
   templateUrl: './provincia-edit.component.html',
@@ -16,6 +17,12 @@ export class ProvinciaEditComponent implements OnInit {
   provincia?: Provincia;
   paises: Pais[] = [];
   paisEncontrado?: Pais;
+  gentilicio: string = '';
+  nombre: string = '';
+  id_pais?: number;
+  pais?: Pais;
+  id?: number;
+
 
   constructor(
     private provinciaService: ProvinciaService,
@@ -28,8 +35,11 @@ export class ProvinciaEditComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.data.id;
-    this.provinciaService.detalle(id).subscribe(
+    this.id = this.data.id; 
+  if (this.id === -1){
+    this.onCreate();
+  }else{
+    this.provinciaService.detalle(this.id).subscribe(
       (data) => {
         this.provincia = data;
         this.provincia.pais.id = data.pais.id;
@@ -45,6 +55,7 @@ export class ProvinciaEditComponent implements OnInit {
       this.paises = data;
       console.log(this.paises);
     });
+  }
   }
 
   paisChange() {
@@ -78,6 +89,39 @@ export class ProvinciaEditComponent implements OnInit {
 
     this.dialogRef.close();
   }
+
+  onCreate(): void {
+    this.paisService.lista().subscribe((data: Pais[]) => {
+      this.paises = data;
+    });
+
+    if (this.id_pais) {
+      this.paisService.detalle(this.id_pais).subscribe(
+        pais => {
+          this.provincia = new Provincia(this.gentilicio, this.nombre, pais);
+          this.provinciaService.save(this.provincia).subscribe(
+            data => {
+              this.toastr.success('Provincia Agregada', 'OK', {
+                timeOut: 6000, positionClass: 'toast-top-center'
+              });
+              this.router.navigate(['/provincia']);
+            },
+            err => {
+              this.toastr.error(err.error.mensaje, 'Error', {
+                timeOut: 7000, positionClass: 'toast-top-center'
+              });
+              this.router.navigate(['/provincia']);
+            }
+          );
+        },
+        error => {
+          console.error('Error al obtener el detalle del país:', error);
+        }
+      );
+    }
+    this.dialogRef.close();
+  }
+
 
   cancel() {
     this.dialogRef.close();

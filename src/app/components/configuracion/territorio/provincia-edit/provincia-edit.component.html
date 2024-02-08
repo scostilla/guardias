@@ -1,7 +1,7 @@
-<h2 mat-dialog-title>MODIFICAR PROVINCIA
+<h2 mat-dialog-title>{{id === -1 ? 'AGREGAR' : 'MODIFICAR'}} PROVINCIA
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="provincia">
+  <form (ngSubmit)="id === -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="provincia">
     <mat-dialog-content>
       <div class="row">
         <div class="col">
@@ -40,6 +40,6 @@
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
       </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">{{id === -1 ? 'Guardar' : 'Modificar'}}</button>
     </div>
   </form>
