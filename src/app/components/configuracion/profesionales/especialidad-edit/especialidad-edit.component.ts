@@ -29,10 +29,12 @@ export class EspecialidadEditComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     public dialogRef: MatDialogRef<EspecialidadEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
+  @Inject(MAT_DIALOG_DATA) public data: { id: number, isAdding: boolean }
   ) {}
 
   ngOnInit() {
+    if (!this.data.isAdding) { // Si no se está agregando, entonces estamos editando
+      
     const id = this.data.id;
     this.especialidadService.detalle(id).subscribe(
       data=> {
@@ -45,6 +47,7 @@ export class EspecialidadEditComponent implements OnInit {
         });
       }
     );
+  }
     this.profesionService.lista().subscribe((data: Profesion[]) => {
       this.profesiones = data;
       console.log(this.profesiones);

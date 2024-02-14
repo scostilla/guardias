@@ -159,10 +159,11 @@ export class EspecialidadComponent implements OnInit, AfterViewInit {
   }
 
   addEditEspecialidad(id: number) {
+    const isAdding = id === -1;
     const dialogEdit = this.dialog.open(EspecialidadEditComponent, {
       width: '600px',
       disableClose: true,
-      data: { id: id },
+      data: { id: id, isAdding: isAdding },
     });
 
     dialogEdit.afterClosed().subscribe((result) => {
