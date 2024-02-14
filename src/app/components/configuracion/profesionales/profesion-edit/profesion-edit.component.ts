@@ -16,7 +16,7 @@ export class ProfesionEditComponent implements OnInit {
   profesion?: Profesion;
   asistencial?: boolean;
   nombre: string = '';
-  id: any;
+  id?: number;
 
   constructor(
     private profesionService: ProfesionService,

@@ -14,6 +14,7 @@ import { ProvinciaService } from 'src/app/services/provincia.service';
   templateUrl: './departamento-edit.component.html',
   styleUrls: ['./departamento-edit.component.css']
 })
+
 export class DepartamentoEditComponent implements OnInit {
 
   departamento?: Departamento;
