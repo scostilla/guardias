@@ -22,7 +22,6 @@ export class DepartamentoEditComponent implements OnInit {
   provinciasEncontrado?: Provincia;
 
 
-
   constructor(
     private departamentoService: DepartamentoService,
     private provinciaService: ProvinciaService,

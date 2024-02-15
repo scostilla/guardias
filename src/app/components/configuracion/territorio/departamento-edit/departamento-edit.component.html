@@ -25,8 +25,8 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre de la Provincia</mat-label>
-            <mat-select id="idProvincia" name="idProvincia" [(ngModel)]="departamento.provincia.nombre" required>
-              <mat-option *ngFor="let provincia of provincias" [value]="provincia.nombre">
+            <mat-select id="idProvincia" name="idProvincia" [(ngModel)]="departamento.provincia.id" required>
+              <mat-option *ngFor="let provincia of provincias" [value]="provincia.id">
                 {{ provincia.nombre }}
               </mat-option>
             </mat-select>
@@ -37,7 +37,7 @@
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
       </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
+      <button mat-raised-button color="primary" [disabled]="!f.valid || !f.dirty">Modificar</button>
     </div>
   </form>
 
