@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{id === -1 ? 'AGREGAR' : 'MODIFICAR'}} PROVINCIA
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
-<form (ngSubmit)="id === -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="id !== -1 && provincia">
+<form (ngSubmit)="id === -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="provincia">
   <mat-dialog-content>
     <div class="row">
       <div class="col">
