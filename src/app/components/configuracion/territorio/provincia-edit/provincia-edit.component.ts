@@ -19,7 +19,7 @@ export class ProvinciaEditComponent implements OnInit {
   paisEncontrado?: Pais;
   gentilicio: string = '';
   nombre: string = '';
-  id_pais?: number;
+  idPais?: number;
   pais?: Pais;
   id?: number;
 
@@ -36,7 +36,7 @@ export class ProvinciaEditComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.data.id; 
-  if (this.id === -1){
+  if (this.id == -1){
     this.onCreate();
   }else{
     this.provinciaService.detalle(this.id).subscribe(
@@ -94,8 +94,8 @@ export class ProvinciaEditComponent implements OnInit {
     this.paisService.lista().subscribe((data: Pais[]) => {
       this.paises = data;
     });
-    if (this.id_pais) {
-      this.paisService.detalle(this.id_pais).subscribe(
+    if (this.idPais) {
+      this.paisService.detalle(this.idPais).subscribe(
         pais => {
           this.provincia = new Provincia(this.gentilicio, this.nombre, pais);
           this.provinciaService.save(this.provincia).subscribe(

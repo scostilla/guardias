@@ -1,13 +1,13 @@
-<h2 mat-dialog-title>{{id === -1 ? 'AGREGAR' : 'MODIFICAR'}} PROVINCIA
+<h2 mat-dialog-title>{{id == -1 ? 'AGREGAR' : 'MODIFICAR'}} PROVINCIA
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
-<form (ngSubmit)="id === -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="provincia">
+<form (ngSubmit)="id == -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="provincia">
   <mat-dialog-content>
     <div class="row">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Gentilicio</mat-label>
-          <input matInput placeholder="Ingresar gentilicio" autocomplete="off" id="gentilicio" name="gentilicio" [(ngModel)]="id === -1 ? gentilicio : provincia.gentilicio" required/>
+          <input matInput placeholder="Ingresar gentilicio" autocomplete="off" id="gentilicio" name="gentilicio" [(ngModel)]="id == -1 ? gentilicio : provincia.gentilicio" required/>
         </mat-form-field>
       </div>
     </div>
@@ -16,7 +16,7 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
-          <input matInput placeholder="Ingresar nombre de la provincia" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="id === -1 ? nombre: provincia.nombre" required/>
+          <input matInput placeholder="Ingresar nombre de la provincia" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="id == -1 ? nombre: provincia.nombre" required/>
         </mat-form-field>
       </div>
     </div>
@@ -25,7 +25,7 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>País</mat-label>
-          <mat-select id="id_pais" name="id_pais" [(ngModel)]="id === -1 ? id_pais : provincia.pais.id" (selectionChange)="paisChange()" required>
+          <mat-select id="idPais" name="idPais" [(ngModel)]="id == -1 ? idPais : provincia.pais.id" (selectionChange)="paisChange()" required>
             <mat-option *ngFor="let pais of paises" [value]="pais.id">
               {{ pais.nombre }}
             </mat-option>
@@ -37,6 +37,6 @@
   <div mat-dialog-actions class="action mt-4">
     <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
     </button>
-    <button mat-raised-button color="primary" [disabled]="!f.valid">{{id === -1 ? 'Guardar' : 'Modificar'}}</button>
+    <button mat-raised-button color="primary" [disabled]="!f.valid">{{id == -1 ? 'Guardar' : 'Modificar'}}</button>
   </div>
 </form>

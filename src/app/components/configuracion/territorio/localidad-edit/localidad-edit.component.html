@@ -16,8 +16,8 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre del departamento</mat-label>
-            <mat-select id="idDepartamento" name="idDepartamento" [(ngModel)]="localidad.departamento.nombre" required>
-              <mat-option *ngFor="let departamento of departamentos" [value]="departamento.nombre">
+            <mat-select id="idDepartamento" name="idDepartamento" [(ngModel)]="localidad.departamento.id" required>
+              <mat-option *ngFor="let departamento of departamentos" [value]="departamento.id">
                 {{ departamento.nombre }}
               </mat-option>
             </mat-select>
