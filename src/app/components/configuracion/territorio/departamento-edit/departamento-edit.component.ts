@@ -6,7 +6,8 @@ import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
 import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { isEqual } from "lodash";
 
 
 @Component({
@@ -20,7 +21,9 @@ export class DepartamentoEditComponent implements OnInit {
   departamento?: Departamento;
   provincias: Provincia[] = [];
   provinciasEncontrado?: Provincia;
-
+  formVal!: FormGroup;  
+  formInicial: any;
+  
 
   constructor(
     private departamentoService: DepartamentoService,
@@ -28,8 +31,9 @@ export class DepartamentoEditComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<DepartamentoEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
+    @Inject(MAT_DIALOG_DATA) public data: { id: number },
   ) {}
 
   ngOnInit() {
@@ -38,6 +42,11 @@ export class DepartamentoEditComponent implements OnInit {
       data=> {
         this.departamento = data;
         this.departamento.provincia.id = data.provincia.id;
+        this.formInicial = {
+          codigoPostal: this.departamento?.codigoPostal,
+          nombre: this.departamento?.nombre,
+          idProvincia: this.departamento?.provincia.id
+        };    
       },
       err => {
         this.toastr.error(err.error.mensaje, 'Error', {
@@ -49,6 +58,18 @@ export class DepartamentoEditComponent implements OnInit {
       this.provincias = data;
       console.log(this.provincias);
     });
+
+    this.formVal = this.fb.group ({
+      codigoPostal: ['', [Validators.required, Validators.pattern('^[0-9]{2,8}$')]],
+      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      idProvincia: ['', [Validators.required]]
+    });
+
+  }
+
+  compararValores(): boolean {
+    const valoresActuales = this.formVal.value;
+    return isEqual(valoresActuales, this.formInicial);
   }
 
   provinciaChange() {
@@ -77,14 +98,10 @@ export class DepartamentoEditComponent implements OnInit {
       }
     )
   }
-
   this.dialogRef.close();
-
   }
 
   cancel() {
     this.dialogRef.close();
   }
-
   }
-

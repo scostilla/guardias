@@ -1,13 +1,19 @@
 <h2 mat-dialog-title>MODIFICAR DEPARTAMENTO
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="departamento">
+  <form [formGroup]="formVal" (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="departamento">
     <mat-dialog-content>
       <div class="row">
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Código postal</mat-label>
-            <input matInput placeholder="Ingresar código postal del País" autocomplete="off" id="codigoPostal" name="codigoPostal" [(ngModel)]="departamento.codigoPostal" required/>
+            <input matInput placeholder="Ingresar código postal del País" autocomplete="off" id="codigoPostal" name="codigoPostal" formControlName="codigoPostal" [(ngModel)]="departamento.codigoPostal" required/>
+            <mat-error *ngIf="formVal.get('codigoPostal')!.hasError('required')">
+              El código postal es obligatorio
+            </mat-error>
+            <mat-error *ngIf="formVal.get('codigoPostal')!.hasError('pattern')">
+              El código postal debe tener solo números entre 2 y 8 dígitos
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -16,7 +22,13 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre del Departamento</mat-label>
-            <input matInput placeholder="Ingresar Nombre del departamento" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="departamento.nombre" required/>
+            <input matInput placeholder="Ingresar Nombre del departamento" autocomplete="off" id="nombre" name="nombre" formControlName="nombre" [(ngModel)]="departamento.nombre" required/>
+            <mat-error *ngIf="formVal.get('nombre')!.hasError('required')">
+              El nombre es obligatorio
+            </mat-error>
+            <mat-error *ngIf="formVal.get('nombre')!.hasError('pattern')">
+              El nombre debe tener solo letras y entre 2 y 50 caracteres
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -25,11 +37,14 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre de la Provincia</mat-label>
-            <mat-select id="idProvincia" name="idProvincia" [(ngModel)]="departamento.provincia.id" required>
+            <mat-select id="idProvincia" name="idProvincia" formControlName="idProvincia" [(ngModel)]="departamento.provincia.id" required>
               <mat-option *ngFor="let provincia of provincias" [value]="provincia.id">
                 {{ provincia.nombre }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="formVal.get('idProvincia')!.hasError('required')">
+              La provincia es obligatoria
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -37,7 +52,7 @@
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
       </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid || !f.dirty">Modificar</button>
+      <button mat-raised-button color="primary" [disabled]="formVal.invalid || compararValores()">Modificar</button>
     </div>
   </form>
 

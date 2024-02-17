@@ -6,6 +6,8 @@ import { Pais } from 'src/app/models/Pais';
 import { Provincia } from 'src/app/models/Provincia';
 import { PaisService } from 'src/app/services/pais.service';
 import { ProvinciaService } from 'src/app/services/provincia.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { isEqual } from 'lodash';
 
 
 @Component({
@@ -13,6 +15,7 @@ import { ProvinciaService } from 'src/app/services/provincia.service';
   templateUrl: './provincia-edit.component.html',
   styleUrls: ['./provincia-edit.component.css'],
 })
+
 export class ProvinciaEditComponent implements OnInit {
   provincia?: Provincia;
   paises: Pais[] = [];
@@ -22,6 +25,10 @@ export class ProvinciaEditComponent implements OnInit {
   idPais?: number;
   pais?: Pais;
   id?: number;
+  MyForm: FormGroup;
+  initialForm: any;
+  formChanged?: boolean;
+
 
 
   constructor(
@@ -30,9 +37,23 @@ export class ProvinciaEditComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<ProvinciaEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+  ) {
+    this.MyForm = this.fb.group({
+      nombre: [
+        '',
+        [Validators.required, Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*')],
+      ],
+      gentilicio: [
+        '',
+        [Validators.required, Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*')],
+      ],
+      idPais: ['', Validators.required],
+    });
+
+  }
 
   ngOnInit() {
     this.id = this.data.id; 
@@ -43,7 +64,13 @@ export class ProvinciaEditComponent implements OnInit {
       (data) => {
         this.provincia = data;
         this.provincia.pais.id = data.pais.id;
-      },
+       this.MyForm.patchValue({
+        nombre: this.provincia.nombre,
+        gentilicio: this.provincia.gentilicio,
+        idPais: this.provincia.pais.id
+      });
+      this.initialForm = this.MyForm.value;
+        },
       (err) => {
         this.toastr.error(err.error.mensaje, 'Error', {
           timeOut: 6000,
@@ -56,7 +83,10 @@ export class ProvinciaEditComponent implements OnInit {
       console.log(this.paises);
     });
   }
-  }
+  this.MyForm.valueChanges.subscribe(values => {
+    this.formChanged = this.MyForm.valid && !isEqual(this.MyForm.value, this.initialForm);
+  });
+ }
 
   paisChange() {
     if (this.provincia) {
@@ -73,7 +103,7 @@ export class ProvinciaEditComponent implements OnInit {
       this.provincia.pais = this.paisEncontrado ? this.paisEncontrado : this.provincia.pais;
       this.provinciaService.update(id, this.provincia).subscribe(
         (data) => {
-          this.toastr.success('Provincia Modificado', 'OK', {
+          this.toastr.success('Provincia Modificada', 'OK', {
             timeOut: 7000,
             positionClass: 'toast-top-center',
           });
@@ -116,6 +146,18 @@ export class ProvinciaEditComponent implements OnInit {
         }
       );
     }
+  }
+
+  onSubmit (form: any): void {
+    this.MyForm.markAllAsTouched (); 
+    this.onValueChanged (); 
+    if (this.MyForm.valid) { 
+      console.log (form); 
+    }
+  }
+  
+  onValueChanged() {
+    throw new Error('Method not implemented.');
   }
 
   cancel() {
