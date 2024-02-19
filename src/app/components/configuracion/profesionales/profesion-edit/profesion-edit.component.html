@@ -1,23 +1,39 @@
-<h2 mat-dialog-title>{{id === -1 ? 'AGREGAR' : 'MODIFICAR'}} PROFESION
+<h2 mat-dialog-title>{{id !=-1 ? 'MODIFICAR' : 'AGREGAR'}} PROFESION
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
-  <form (ngSubmit)="id === -1 ? onCreate() : onUpdate()" novalidate #f="ngForm" *ngIf="profesion">
+  <form [formGroup]="formVal" (ngSubmit)="id != -1 ? onUpdate() : onCreate()" novalidate #f="ngForm"  >
     <mat-dialog-content>
 
       <div class="row" style="margin-top: 20px">
         <div class="col">
-          <mat-label>Categoría: </mat-label>
-          <mat-radio-group matInput id="asistencial" name="asistencial" [(ngModel)]="profesion.asistencial" required>
-            <mat-radio-button [value]="true" color="primary">Asistencial</mat-radio-button>
-            <mat-radio-button [value]="false" color="primary">No asistencial</mat-radio-button>
-          </mat-radio-group>        </div>
+            <mat-label>Categoría</mat-label>
+            <mat-radio-group matInput formControlName="asistencial" [(ngModel)]="profesion.asistencial" name="asistencial" id="asistencial" *ngIf="id != -1">
+              <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
+              <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
+            </mat-radio-group>
+            <mat-radio-group matInput formControlName="asistencial" [(ngModel)]="asistencial" name="asistencial" id="asistencial" *ngIf="id == -1">
+              <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
+              <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="getAsistencial.hasError('required')">
+              La categoría es obligatoria
+            </mat-error>
+        </div>
       </div>
   
       <div class="row" style="margin-top: 20px">
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre</mat-label>
-            <input matInput placeholder="Ingresar nombre de la Profesión" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="profesion.nombre" required/>
+            <input matInput placeholder="Ingresar nombre de la Profesión" formControlName="nombre" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="profesion.nombre" *ngIf="id != -1"/>
+            <input matInput placeholder="Ingresar nombre de la Profesión" formControlName="nombre" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="nombre" *ngIf="id == -1"/>
+            <mat-error *ngIf="getNombre.hasError('required')">
+              El nombre es obligatorio
+            </mat-error>
+            <mat-error *ngIf="getNombre.hasError('pattern')">
+              El nombre debe tener solo letras y entre 2 y 50 caracteres
+            </mat-error>
+
           </mat-form-field>
         </div>
       </div>
@@ -25,6 +41,6 @@
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
       </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">{{id === -1 ? 'Guardar' : 'Modificar'}}</button>
+      <button mat-raised-button color="primary" [disabled]="formVal.invalid || compararValores()">{{id === -1 ? 'Guardar' : 'Modificar'}}</button>
     </div>
   </form>

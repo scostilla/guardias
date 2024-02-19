@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Profesion } from 'src/app/models/Profesion';
 import { ProfesionService } from 'src/app/services/profesion.service';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { isEqual } from "lodash";
 
 
 @Component({
@@ -13,82 +15,110 @@ import { ProfesionService } from 'src/app/services/profesion.service';
 })
 export class ProfesionEditComponent implements OnInit {
 
-  profesion?: Profesion;
+  profesion: Profesion = new Profesion();
   asistencial?: boolean;
-  nombre: string = '';
+  nombre?: string;
   id?: number;
+  formVal!: FormGroup;  
+  formInicial: any;
+
+  get getAsistencial(){
+    return this.formVal.get('asistencial') as FormControl;
+  }
+  get getNombre(){
+    return this.formVal.get('nombre') as FormControl;
+  }
 
   constructor(
     private profesionService: ProfesionService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private router: Router,
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<ProfesionEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: { id: number, isAdding: boolean }
+  ) {
+    
+  }
 
 
   ngOnInit() {
-    const id = this.data.id;
-    if (id === -1) {
+
+
+    this.id = this.data.id;
+    if (this.data.isAdding) {
       this.onCreate();
     } else {
-    this.profesionService.detalle(id).subscribe(
-      data=> {
-        this.profesion = data;
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
+      this.profesionService.detalle(this.id).subscribe(
+        data => {
+          this.profesion = data;
+          this.formInicial = {
+            asistencial: this.profesion.asistencial,
+            nombre: this.profesion.nombre,
+          };    
+  
+        },
+        err => {
+          this.toastr.error(err.error.mensaje, 'Error al cargar la profesion', {
+            timeOut: 6000, positionClass: 'toast-top-center'
+          });
+        }
+      );
     }
+    this.formVal = this.fb.group ({
+      asistencial: ['', [Validators.required]],
+      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,30}$')]],
+    });
   }
 
   onUpdate(): void {
     const id = this.data.id;
-    console.log("onUpdate "+id);
-    if(this.profesion) {
-    this.profesionService.update(id, this.profesion).subscribe(
-      data=> {
-        this.toastr.success('Profesion Modificada', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
+    console.log("onUpdate " + id);
+    if (this.profesion) {
+      this.profesionService.update(id, this.profesion).subscribe(
+        data => {
+          this.toastr.success('Profesion Modificada', 'OK', {
+            timeOut: 7000, positionClass: 'toast-top-center'
+          });
+        },
+        err => {
+          this.toastr.error(err.error.mensaje, 'Error', {
+            timeOut: 7000, positionClass: 'toast-top-center'
+          });
+        }
+      )
     }
-  this.dialogRef.close();
+    this.dialogRef.close();
 
   }
 
   onCreate(): void {
-    const profesion = new Profesion(this.asistencial!, this.nombre);
-    this.profesionService.save(profesion).subscribe(
-      data=> {
-        this.toastr.success('Profesion Agregada', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
+    let profesion = new Profesion(this.asistencial!, this.nombre);
+    if (profesion.nombre != null) {
+      this.profesionService.save(profesion).subscribe(
+        data => {
+          this.toastr.success('Profesion Agregada', 'OK', {
+            timeOut: 7000, positionClass: 'toast-top-center'
+          });
+          this.dialogRef.close();
+        },
+        err => {
+          this.toastr.error(err.error.mensaje, 'Error al guardar la profesion', {
+            timeOut: 7000, positionClass: 'toast-top-center'
+          });
+        }
 
-    this.dialogRef.close();
+      )
+    }
   }
 
-
+  compararValores(): boolean {
+    const valoresActuales = this.formVal.value;
+    return isEqual(valoresActuales, this.formInicial);
+  }
 
   cancel() {
     this.dialogRef.close();
   }
 
-  }
+}

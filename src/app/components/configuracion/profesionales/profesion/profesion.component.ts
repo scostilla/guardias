@@ -18,8 +18,8 @@ import { Subscription } from 'rxjs';
 
 export interface UserData {
   id: number;
-  asistencial: boolean;
-  nombre: string;
+  asistencial?: boolean;
+  nombre?: string;
 }
 
 
@@ -74,6 +74,7 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
   get<T>(arg0: any) {
     throw new Error('Method not implemented.');
   }
+  
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -142,6 +143,7 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
   }
 
   addDetailProfesion(id: number) {
+    const isAdding:boolean = id === 0;
     const dialogDetail = this.dialog.open(ProfesionDetailComponent, {
       width: '600px',
       disableClose: true,
@@ -155,19 +157,18 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
     });
   }
 
-
   addEditProfesion(id: number) {
+    const isAdding:boolean = id === -1;
+    console.log("linea bool???????: "+ isAdding);
     const dialogEdit = this.dialog.open(ProfesionEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
+        width: '600px',
+        disableClose: true,
+        data: { id: id, isAdding: isAdding },
     });
-
+    console.log("linea bool2???????: "+ isAdding);
+    console.log("linea id???????: "+ id);
     dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getProfesionFormData());
       this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
-      console.log("id recibido: "+this.dataSharingService.getProfesionId());
     });
   }
-
 }
