@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class DataSharingService {
   
   private formData: any;
-  private id: number = -1;
+  private id: any;
 
   constructor() {}
 

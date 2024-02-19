@@ -142,6 +142,7 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
   }
 
   addDetailProfesion(id: number) {
+    const isAdding:boolean = id === 0;
     const dialogDetail = this.dialog.open(ProfesionDetailComponent, {
       width: '600px',
       disableClose: true,
@@ -157,16 +158,20 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
 
 
   addEditProfesion(id: number) {
+    
+    const isAdding:boolean = id === -1;
+    console.log("linea bool???????: "+ isAdding);
     const dialogEdit = this.dialog.open(ProfesionEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
+        width: '600px',
+        disableClose: true,
+        data: { id: id, isAdding: isAdding },
     });
-
+    console.log("linea bool2???????: "+ isAdding);
+    console.log("linea id???????: "+ id);
     dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getProfesionFormData());
+      //console.log("linea 167???????: "+this.dataSharingService.getProfesionFormData());
       this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
-      console.log("id recibido: "+this.dataSharingService.getProfesionId());
+      //console.log("id recibido fabi: "+this.dataSharingService.getProfesionId());
     });
   }
 

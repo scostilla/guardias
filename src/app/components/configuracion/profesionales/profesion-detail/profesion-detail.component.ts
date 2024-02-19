@@ -22,18 +22,19 @@ export class ProfesionDetailComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     public dialogo: MatDialogRef<ProfesionDetailComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
+  @Inject(MAT_DIALOG_DATA) public data: { id: number, isAdding: boolean }
 
   ) {}
 
   ngOnInit() {
     const id = this.data.id;
+    console.log("id recibido para editar: "+id);
     this.profesionService.detalle(id).subscribe(
       data=> {
         this.profesion = data;
       },
       err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
+        this.toastr.error(err.error.mensaje, 'Error fabitaaa', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
         this.dialogo.close();

@@ -15,7 +15,7 @@ export class ProfesionEditComponent implements OnInit {
 
   profesion?: Profesion;
   asistencial?: boolean;
-  nombre: string = '';
+  nombre: string ;
   id: any;
 
   constructor(
@@ -24,21 +24,27 @@ export class ProfesionEditComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     public dialogRef: MatDialogRef<ProfesionEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+  @Inject(MAT_DIALOG_DATA) public data: { id: number, isAdding: boolean  }
+  ) {
+    //this.asistencial = false; // Inicializar asistencial
+    this.nombre = ""; // Inicializar nombre
+  }
 
 
   ngOnInit() {
-    const id = this.data.id;
-    if (id === -1) {
+
+    
+    this.id = this.data.id;
+    if (this.data.isAdding) {
+      //this.profesion = new Profesion(false, "");
       this.onCreate();
     } else {
-    this.profesionService.detalle(id).subscribe(
+    this.profesionService.detalle(this.id).subscribe(
       data=> {
         this.profesion = data;
       },
       err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
+        this.toastr.error(err.error.mensaje, 'Error al cargar la profesion', {
           timeOut: 6000, positionClass: 'toast-top-center'
         });
       }
@@ -68,21 +74,28 @@ export class ProfesionEditComponent implements OnInit {
   }
 
   onCreate(): void {
+    console.log( "nombre de la prof");
     const profesion = new Profesion(this.asistencial!, this.nombre);
+    console.log(profesion.nombre + "nombre de la prof");
+    console.log(profesion.asistencial + " estado asistencial");
+    if(profesion.nombre != "") {
     this.profesionService.save(profesion).subscribe(
       data=> {
         this.toastr.success('Profesion Agregada', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
+        this.dialogRef.close();
       },
       err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
+        this.toastr.error(err.error.mensaje, 'Error al guardar la profesion', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
       }
+      
     )
+    }
 
-    this.dialogRef.close();
+    //this.dialogRef.close();
   }
 
 
