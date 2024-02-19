@@ -8,11 +8,11 @@
           <mat-form-field appearance="fill">
             <mat-label>Código postal</mat-label>
             <input matInput placeholder="Ingresar código postal del País" autocomplete="off" id="codigoPostal" name="codigoPostal" formControlName="codigoPostal" [(ngModel)]="departamento.codigoPostal" required/>
-            <mat-error *ngIf="formVal.get('codigoPostal')!.hasError('required')">
+            <mat-error *ngIf="codigoPostal.hasError('required')">
               El código postal es obligatorio
             </mat-error>
-            <mat-error *ngIf="formVal.get('codigoPostal')!.hasError('pattern')">
-              El código postal debe tener solo números entre 2 y 8 dígitos
+            <mat-error *ngIf="codigoPostal.hasError('pattern')">
+              El código postal debe tener solo números y debe contener 4 dígitos
             </mat-error>
           </mat-form-field>
         </div>
@@ -23,10 +23,10 @@
           <mat-form-field appearance="fill">
             <mat-label>Nombre del Departamento</mat-label>
             <input matInput placeholder="Ingresar Nombre del departamento" autocomplete="off" id="nombre" name="nombre" formControlName="nombre" [(ngModel)]="departamento.nombre" required/>
-            <mat-error *ngIf="formVal.get('nombre')!.hasError('required')">
+            <mat-error *ngIf="nombre.hasError('required')">
               El nombre es obligatorio
             </mat-error>
-            <mat-error *ngIf="formVal.get('nombre')!.hasError('pattern')">
+            <mat-error *ngIf="nombre.hasError('pattern')">
               El nombre debe tener solo letras y entre 2 y 50 caracteres
             </mat-error>
           </mat-form-field>
@@ -42,7 +42,7 @@
                 {{ provincia.nombre }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="formVal.get('idProvincia')!.hasError('required')">
+            <mat-error *ngIf="idProvincia.hasError('required')">
               La provincia es obligatoria
             </mat-error>
           </mat-form-field>

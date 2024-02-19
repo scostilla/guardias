@@ -46,10 +46,8 @@ export class DepartamentoNewComponent implements OnInit {
           this.DepartamentoService.save(this.departamento).subscribe(
             data => {
               this.toastr.success('Departamento agendado','OK',{timeOut:6000,positionClass:'toast-top-center'});
-              this.router.navigate(['/departamento']);
             },err => {
               this.toastr.error(err.error.message,'Error',{timeOut:7000,positionClass:'toast-top-center'});
-              this.router.navigate(['/departamento']);
             }
           );
         },

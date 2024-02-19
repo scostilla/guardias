@@ -6,7 +6,7 @@ import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
 import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { isEqual } from "lodash";
 
 
@@ -23,6 +23,17 @@ export class DepartamentoEditComponent implements OnInit {
   provinciasEncontrado?: Provincia;
   formVal!: FormGroup;  
   formInicial: any;
+
+  get codigoPostal(){
+    return this.formVal.get('codigoPostal') as FormControl;
+  }
+  get nombre(){
+    return this.formVal.get('nombre') as FormControl;
+  }
+  get idProvincia(){
+    return this.formVal.get('idProvincia') as FormControl;
+  }
+
   
 
   constructor(
@@ -60,7 +71,7 @@ export class DepartamentoEditComponent implements OnInit {
     });
 
     this.formVal = this.fb.group ({
-      codigoPostal: ['', [Validators.required, Validators.pattern('^[0-9]{2,8}$')]],
+      codigoPostal: ['', [Validators.required, Validators.pattern('^[0-9]{4,4}$')]],
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
       idProvincia: ['', [Validators.required]]
     });
