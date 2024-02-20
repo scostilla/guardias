@@ -6,7 +6,7 @@
 </button>
 
 <!-- Tabla para mostrar la lista de profesiones -->
-<table mat-table [dataSource]="dataSource!" matSort #empTbSort="matSort"> <!-- Agregar la directiva matSort -->
+<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort"> <!-- Agregar la directiva matSort -->
 
   <!-- Columna de id -->
   <ng-container matColumnDef="id">
@@ -35,6 +35,9 @@
       </button>
       <button mat-icon-button color="warn" (click)="eliminarProfesion(profesion)">
         <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="abrirDetalle(profesion)">
+        <mat-icon>description</mat-icon>
       </button>
     </td>
   </ng-container>

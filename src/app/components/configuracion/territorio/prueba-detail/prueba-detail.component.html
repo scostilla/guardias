@@ -1,0 +1,11 @@
+<h1>Detalle de la profesión</h1>
+
+<!-- Mostrar la información de la profesión en un formato de solo lectura -->
+<p><strong>Id:</strong> {{profesion.id}}</p>
+<p><strong>Nombre:</strong> {{profesion.nombre}}</p>
+<p><strong>Asistencial:</strong> {{profesion.asistencial ? 'Sí' : 'No'}}</p>
+
+<!-- Botón para cerrar el diálogo -->
+<button mat-raised-button color="secondary" (click)="cerrar()">
+  Cerrar
+</button>

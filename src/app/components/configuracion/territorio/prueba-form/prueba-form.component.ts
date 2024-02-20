@@ -29,7 +29,7 @@ export class PruebaFormComponent implements OnInit {
     this.form = this.formBuilder.group({
       id: [this.data ? this.data.id : null],
       nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.maxLength(50)]],
-      asistencial: [this.data ? this.data.asistencial : false, Validators.required]
+      asistencial: [this.data ? this.data.asistencial : '', Validators.required]
     });
 
     // Determinar si se trata de una edición o una creación según los datos recibidos

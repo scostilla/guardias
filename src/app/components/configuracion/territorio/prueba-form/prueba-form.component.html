@@ -9,16 +9,14 @@
       El nombre es obligatorio y debe tener máximo 50 caracteres
     </mat-error>
   </mat-form-field>
-  <mat-form-field>
     <mat-label>Asistencial</mat-label>
-    <mat-select formControlName="asistencial">
-      <mat-option value="true">Sí</mat-option>
-      <mat-option value="false">No</mat-option>
-    </mat-select>
+    <mat-radio-group formControlName="asistencial">
+        <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
+        <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
+      </mat-radio-group>
     <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
       El campo asistencial es obligatorio
     </mat-error>
-  </mat-form-field>
   <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
     {{esEdicion ? 'Guardar' : 'Crear'}}
   </button>
