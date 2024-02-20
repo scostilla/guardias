@@ -1,0 +1,28 @@
+<h1>{{esEdicion ? 'Editar' : 'Crear'}} profesión</h1>
+
+<!-- Formulario para editar o crear una profesión -->
+<form [formGroup]="form!" (ngSubmit)="guardarProfesion()">
+  <mat-form-field>
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre">
+    <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+      El nombre es obligatorio y debe tener máximo 50 caracteres
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Asistencial</mat-label>
+    <mat-select formControlName="asistencial">
+      <mat-option value="true">Sí</mat-option>
+      <mat-option value="false">No</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
+      El campo asistencial es obligatorio
+    </mat-error>
+  </mat-form-field>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
+    {{esEdicion ? 'Guardar' : 'Crear'}}
+  </button>
+  <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+    Cancelar
+  </button>
+</form>

@@ -103,6 +103,8 @@ import { EspecialidadEditComponent } from './components/configuracion/profesiona
 
 
 import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
+import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
+
 
 
 
@@ -219,6 +221,7 @@ const routes: Routes = [
 
 
  {path: 'prueba-territorio', component:PruebaTerritorioComponent},
+ {path: 'prueba-form', component:PruebaFormComponent},
 
 
 

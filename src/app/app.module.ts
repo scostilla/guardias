@@ -160,6 +160,7 @@ import { ProfesionEditComponent } from './components/configuracion/profesionales
 import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
+import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
 
 
 registerLocaleData(localePy,'es');
@@ -293,6 +294,7 @@ registerLocaleData(localePy,'es');
     EspecialidadComponent,
     EspecialidadEditComponent,
     EspecialidadDetailComponent,
+    PruebaFormComponent,
     
   ],
 
