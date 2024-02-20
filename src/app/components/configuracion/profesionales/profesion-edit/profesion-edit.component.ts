@@ -22,12 +22,6 @@ export class ProfesionEditComponent implements OnInit {
   formVal!: FormGroup;  
   formInicial: any;
 
-  get getAsistencial(){
-    return this.formVal.get('asistencial') as FormControl;
-  }
-  get getNombre(){
-    return this.formVal.get('nombre') as FormControl;
-  }
 
   constructor(
     private profesionService: ProfesionService,
@@ -43,7 +37,10 @@ export class ProfesionEditComponent implements OnInit {
 
 
   ngOnInit() {
-
+    this.formVal = this.fb.group ({
+      asistencial: ['', [Validators.required]],
+      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,30}$')]],
+    });
 
     this.id = this.data.id;
     if (this.data.isAdding) {
@@ -65,10 +62,6 @@ export class ProfesionEditComponent implements OnInit {
         }
       );
     }
-    this.formVal = this.fb.group ({
-      asistencial: ['', [Validators.required]],
-      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,30}$')]],
-    });
   }
 
   onUpdate(): void {
@@ -115,6 +108,13 @@ export class ProfesionEditComponent implements OnInit {
   compararValores(): boolean {
     const valoresActuales = this.formVal.value;
     return isEqual(valoresActuales, this.formInicial);
+  }
+
+    get getAsistencial(){
+    return this.formVal.get('asistencial') as FormControl;
+  }
+  get getNombre(){
+    return this.formVal.get('nombre') as FormControl;
   }
 
   cancel() {
