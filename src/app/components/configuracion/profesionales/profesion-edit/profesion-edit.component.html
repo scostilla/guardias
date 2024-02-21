@@ -15,7 +15,10 @@
               <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
               <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
             </mat-radio-group>
-            
+            <mat-error *ngIf="getAsistencial.hasError('required') &&
+            formVal.get('asistencial')?.touched">
+              La categ es obligatoria
+            </mat-error>
         </div>
       </div>
   
