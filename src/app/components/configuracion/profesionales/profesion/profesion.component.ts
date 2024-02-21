@@ -4,7 +4,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Profesion } from 'src/app/models/Profesion';
 import { ProfesionService } from 'src/app/services/profesion.service';
-
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
@@ -158,14 +157,14 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
   }
 
   addEditProfesion(id: number) {
-    const isAdding:boolean = id === -1;
-    console.log("linea bool???????: "+ isAdding);
+    //const isAdding:boolean = id === -1;
+    /* console.log("linea bool???????: "+ isAdding); */
     const dialogEdit = this.dialog.open(ProfesionEditComponent, {
         width: '600px',
         disableClose: true,
-        data: { id: id, isAdding: isAdding },
+        data: { id: id},
     });
-    console.log("linea bool2???????: "+ isAdding);
+   // console.log("linea bool2???????: "+ isAdding);
     console.log("linea id???????: "+ id);
     dialogEdit.afterClosed().subscribe((result) => {
       this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
