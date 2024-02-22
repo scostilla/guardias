@@ -23,12 +23,12 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Nombre</mat-label>
-            <input matInput formControlName="nombre" placeholder="Ingresar nombre de la Profesión" autocomplete="off" id="nombre"/>
+            <input matInput formControlName="nombre"  placeholder="Ingresar nombre de la Profesión" autocomplete="off" id="nombre"/>
             <mat-error *ngIf="formVal?.get('nombre')?.invalid &&
             formVal?.get('nombre')?.touched">
               El nombre es obligatorio
             </mat-error>
-            <mat-error *ngIf="formInicial?.get('nombre')?.hasError('pattern')">
+            <mat-error *ngIf="formVal?.get('nombre')?.hasError('pattern')">
               El nombre debe tener solo letras y entre 2 y 50 caracteres
             </mat-error>
 

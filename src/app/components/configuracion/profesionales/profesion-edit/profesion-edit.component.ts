@@ -39,56 +39,37 @@ export class ProfesionEditComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.data.id != -1) {
-      console.log(this.data.id + "entraaaa id");
+    this.formVal = this.fb.group({
+      id: [this.data ? this.data.id : null],
+      asistencial: [null, Validators.required],
+      nombre: [null, [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,30}$')]],
+    });
+
+    this.esEdicion = this.data.id != -1;
+   
+    if (this.data.id != null) {
       this.profesionService.detalle(this.data.id).subscribe(
         data => {
           this.profesion = data;
-          this.formInicial = {
-            asistencial: this.profesion.asistencial,
-            nombre: this.profesion.nombre,
-          }; 
-          console.log("valor de nombre cargado "+ this.profesion.nombre); 
-          console.log("valor de asistencial  "+ this.profesion.asistencial); 
+          if (this.formVal){
+            this.formVal.patchValue ({
+             asistencial: this.profesion.asistencial,
+              nombre: this.profesion.nombre,
+            }); 
           }
+        }
         )
       }
-      console.log("$$$$$$$ "+ this.profesion.nombre); 
-      console.log("%%%%%%"+ this.profesion.asistencial); 
-    this.formVal = this.fb.group ({
-      id: [this.data ? this.data.id : null],
-      asistencial: [this.data ? this.profesion.asistencial : '', Validators.required],
-      nombre: [this.data ? this.profesion.nombre: '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,30}$')]],
-      
-    });
-    this.esEdicion = this.data.id != -1;
-
-    console.log("id###########" );
-    console.log("nombre###########" + this.profesion.nombre);
-      console.log("asis#######" + this.profesion.asistencial);
   }
 
   guardarProfesion(): void {
-    console.log("ENTROO");
     
-    // Obtener los valores del formulario
     const nombre = this.formVal?.get('nombre')?.value;
-    
     const asistencial = this.formVal?.get('asistencial')?.value;
-    
-    // Crear un objeto de tipo Profesion
     const profesion = new Profesion(asistencial, nombre);
-    //profesion.id = this.data.id;
-
-    // Enviar el objeto al servicio para guardarlo o actualizarlo en el backend según el caso
-    console.log("es edicion " + this.esEdicion);
+    
     if (this.esEdicion) {
-      // Si es una edición, usar el método update del servicio
-      console.log("nombre" + profesion.nombre);
-      console.log("asis" + profesion.asistencial);
-      console.log("id" + this.data.id);
       this.profesionService.update(this.data.id, profesion).subscribe(data => {
-        // Cerrar el diálogo y retornar el objeto actualizado
         this.toastr.success('Profesion Modificada', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
@@ -101,9 +82,7 @@ export class ProfesionEditComponent implements OnInit {
       }
       );
     } else {
-      // Si es una creación, usar el método save del servicio
       this.profesionService.save(profesion).subscribe(data => {
-        // Cerrar el diálogo y retornar el objeto creado
         this.toastr.success('Profesion Agregada', 'OK', {
           timeOut: 7000, positionClass: 'toast-top-center'
         });
