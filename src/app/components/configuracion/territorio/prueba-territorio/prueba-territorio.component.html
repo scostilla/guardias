@@ -1,54 +1,57 @@
-<h1>Registro de profesiones</h1>
+<div class="container">
+  <div class="row">
+  <div class="col-7">
+    <div class="titulos">.:: PROFESIÓN</div>
+  </div>
+  <div class="col-1 align-items-right">
+    <button mat-fab color="primary" (click)="abrirFormulario()" matTooltip="Agregar Profesión">
+      <mat-icon>library_add</mat-icon>
+    </button>
+  </div>
+  <div class="col-4">
+    <mat-form-field>
+      <mat-label>Filtro</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+    </mat-form-field>
+  </div>
+</div>
 
-<!-- Botón para crear una nueva profesión -->
-<button mat-raised-button color="primary" (click)="abrirFormulario()">
-  Crear
-</button>
-
-<!-- Tabla para mostrar la lista de profesiones -->
-<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort"> <!-- Agregar la directiva matSort -->
-
-  <!-- Columna de id -->
+<div class="row">
+<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z8"> 
   <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th> <!-- Agregar la directiva mat-sort-header -->
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th> 
     <td mat-cell *matCellDef="let profesion"> {{profesion.id}} </td>
   </ng-container>
 
-  <!-- Columna de nombre -->
   <ng-container matColumnDef="nombre">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th> <!-- Agregar la directiva mat-sort-header -->
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th> 
     <td mat-cell *matCellDef="let profesion"> {{profesion.nombre}} </td>
   </ng-container>
 
-  <!-- Columna de asistencial -->
   <ng-container matColumnDef="asistencial">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Asistencial </th> <!-- Agregar la directiva mat-sort-header -->
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Asistencial </th> 
     <td mat-cell *matCellDef="let profesion"> {{profesion.asistencial ? 'Sí' : 'No'}} </td>
   </ng-container>
 
-  <!-- Columna de acciones -->
   <ng-container matColumnDef="acciones">
     <th mat-header-cell *matHeaderCellDef> Acciones </th>
     <td mat-cell *matCellDef="let profesion">
-      <button mat-icon-button color="primary" (click)="abrirFormulario(profesion)">
-        <mat-icon>edit</mat-icon>
+      <button mat-icon-button (click)="abrirDetalle(profesion)">
+        <mat-icon class="btnDetail">zoom_in</mat-icon>
       </button>
-      <button mat-icon-button color="warn" (click)="eliminarProfesion(profesion)">
-        <mat-icon>delete</mat-icon>
+      <button mat-icon-button (click)="abrirFormulario(profesion)">
+        <mat-icon class="btnEdit">edit</mat-icon>
       </button>
-      <button mat-icon-button color="warn" (click)="abrirDetalle(profesion)">
-        <mat-icon>description</mat-icon>
+      <button mat-icon-button (click)="eliminarProfesion(profesion)">
+        <mat-icon class="btnRemove">delete</mat-icon>
       </button>
     </td>
   </ng-container>
 
-  <!-- Fila de cabecera -->
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-
-  <!-- Fila de datos -->
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
 </table>
 
-<!-- Paginador de la tabla -->
 <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+</div>
+</div>

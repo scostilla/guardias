@@ -183,7 +183,6 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 
 .btnEdit, .btnRemove, .btnDetail, .btnDh {
   cursor: pointer;
-  margin: 10px;
 }
 
 .btnEdit{
