@@ -6,7 +6,7 @@
 
       <div class="row" style="margin-top: 20px">
         <div class="col">
-            <mat-label>Categoría</mat-label>
+            <mat-label>Categoría*</mat-label>
             <mat-radio-group matInput *ngIf="id != -1" formControlName="asistencial" [(ngModel)]="profesion.asistencial" name="asistencial" id="asistencial">
               <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
               <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
@@ -15,9 +15,7 @@
               <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
               <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
             </mat-radio-group>
-            <mat-error *ngIf="getAsistencial.hasError('required')">
-              La categoría es obligatoria
-            </mat-error>
+            
         </div>
       </div>
   

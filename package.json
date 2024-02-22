@@ -24,6 +24,7 @@
     "bootstrap": "^5.2.3",
     "jquery": "^3.6.4",
     "lodash": "^4.17.21",
+    "lodash.isequal": "^4.5.0",
     "luxon": "^3.3.0",
     "ngx-bootstrap": "^10.2.0",
     "ngx-mat-timepicker": "^15.1.7",

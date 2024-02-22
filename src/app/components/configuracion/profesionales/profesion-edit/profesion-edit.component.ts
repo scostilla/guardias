@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Profesion } from 'src/app/models/Profesion';
 import { ProfesionService } from 'src/app/services/profesion.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { isEqual } from "lodash";
+import { isEqual } from 'lodash';
 
 
 @Component({
@@ -109,8 +109,7 @@ export class ProfesionEditComponent implements OnInit {
     const valoresActuales = this.formVal.value;
     return isEqual(valoresActuales, this.formInicial);
   }
-
-    get getAsistencial(){
+  get getAsistencial(){
     return this.formVal.get('asistencial') as FormControl;
   }
   get getNombre(){
