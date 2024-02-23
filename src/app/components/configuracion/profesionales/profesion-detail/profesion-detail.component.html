@@ -2,24 +2,24 @@
     <h5>PROFESIÓN</h5>
 </h1>
 <mat-dialog-content>
-    <table class="table" *ngIf="profesion">
+    <table class="table">
         <tbody>
           <tr>
             <th scope="row">ID</th>
             <td>{{profesion.id}}</td>
           </tr>
           <tr>
-            <th scope="row">Categoría</th>
-            <td>{{profesion.asistencial ? 'Asistencial' : 'No asistencial'}}</td>
+            <th scope="row">Nombre</th>
+            <td>{{profesion.nombre}}</td>
           </tr>
           <tr>
-            <th scope="row">Nombre País</th>
-            <td>{{profesion.nombre}}</td>
+            <th scope="row">Asistencial</th>
+            <td>{{profesion.asistencial ? 'Si' : 'No'}}</td>
           </tr>
         </tbody>
       </table>
 
     <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cerrar</button>
+        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cerrar()">Cerrar</button>
     </div>
   </mat-dialog-content>

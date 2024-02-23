@@ -1,7 +1,7 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
@@ -10,6 +10,7 @@ import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 //Components
 import { AppComponent } from './app.component';
@@ -162,6 +163,8 @@ import { EspecialidadEditComponent } from './components/configuracion/profesiona
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
 import { PruebaDetailComponent } from './components/configuracion/territorio/prueba-detail/prueba-detail.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
+import { SpinnerInterceptor } from './services/spinner-interceptor.service';
 
 
 registerLocaleData(localePy,'es');
@@ -297,6 +300,7 @@ registerLocaleData(localePy,'es');
     EspecialidadDetailComponent,
     PruebaFormComponent,
     PruebaDetailComponent,
+    SpinnerComponent,
     
   ],
 
@@ -334,12 +338,18 @@ registerLocaleData(localePy,'es');
     MatNativeDateModule, 
     MatCardModule,   
     MatRadioModule,
+    MatProgressSpinnerModule,
     ToastrModule.forRoot() // ToastrModule added
     
   ],
   providers: [
     ProfessionalDataServiceService,
-    {provide: LOCALE_ID,useValue:'es'}
+    {provide: LOCALE_ID,useValue:'es'},
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SpinnerInterceptor,
+      multi: true
+    }
   ],
   
   bootstrap: [AppComponent],

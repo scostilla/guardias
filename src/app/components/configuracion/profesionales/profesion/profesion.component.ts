@@ -1,27 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Profesion } from 'src/app/models/Profesion';
 import { ProfesionService } from 'src/app/services/profesion.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { ProfesionDetailComponent } from '../profesion-detail/profesion-detail.component';
 import { ProfesionEditComponent } from '../profesion-edit/profesion-edit.component';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-
-
-export interface UserData {
-  id: number;
-  asistencial?: boolean;
-  nombre?: string;
-}
-
+import { ProfesionDetailComponent } from '../profesion-detail/profesion-detail.component'; 
 
 @Component({
   selector: 'app-profesion',
@@ -29,73 +17,43 @@ export interface UserData {
   styleUrls: ['./profesion.component.css']
 })
 
-export class ProfesionComponent implements OnInit, AfterViewInit {
+export class ProfesionComponent implements OnInit, OnDestroy {
 
-  profesiones: Profesion[] = [];
-  displayedColumns: string[] = ['id', 'asistencial', 'nombre', 'actions'];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator; 
+  @ViewChild(MatTable) table!: MatTable<Profesion>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  dialogRef!: MatDialogRef<ProfesionDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'asistencial', 'acciones'];
+  dataSource!: MatTableDataSource<Profesion>;
+  suscription!: Subscription;
 
   constructor(
     private profesionService: ProfesionService,
-    private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    private router: Router,
-    ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    private dialog: MatDialog,
+    private toastr: ToastrService
+  ) { }
 
-  ngOnInit() {
-    this.cargarProfesiones();
+  ngOnInit(): void {
+    this.cargarProfesion();
 
     this.suscription = this.profesionService.refresh$.subscribe(() => {
-      this.cargarProfesiones();
+      this.cargarProfesion();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
-  }
-  
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-  
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  cargarProfesion(): void {
+    this.profesionService.lista().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  cargarProfesiones(): void {
-    this.profesionService.lista().subscribe(
-      (data: Profesion[]) => {
-        const userDataArray: UserData[] = data.map(profesion => ({
-          id: profesion.id || 0,
-          asistencial: profesion.asistencial,
-          nombre: profesion.nombre || '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+  ngOnDestroy(): void {
+      this.suscription.unsubscribe();
+      console.log('Observable cerrado.');
   }
 
   applyFilter(event: Event) {
@@ -103,72 +61,77 @@ export class ProfesionComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(ProfesionComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  abrirFormulario(profesion?: Profesion): void {
+    const esEdicion = profesion != null;
+    const dialogRef = this.dialog.open(ProfesionEditComponent, {
+      width: '600px',
+      data: esEdicion ? profesion : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.profesionService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('Profesion eliminada', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Profesión editada con éxito' : 'Profesión creada con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-        this.cargarProfesiones();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar la profesión', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
       }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
-  }
-
-  addDetailProfesion(id: number) {
-    const isAdding:boolean = id === 0;
-    const dialogDetail = this.dialog.open(ProfesionDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 152: "+this.dataSharingService.getProfesionFormData());
-      this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
-      console.log("id recibido: "+this.dataSharingService.getProfesionId());
+    }
     });
   }
 
-  addEditProfesion(id: number) {
-    const isAdding:boolean = id === -1;
-    console.log("linea bool???????: "+ isAdding);
-    const dialogEdit = this.dialog.open(ProfesionEditComponent, {
-        width: '600px',
-        disableClose: true,
-        data: { id: id, isAdding: isAdding },
+  abrirDetalle(profesion: Profesion): void {
+    this.dialogRef = this.dialog.open(ProfesionDetailComponent, { 
+      width: '400px',
+      data: profesion
     });
-    console.log("linea bool2???????: "+ isAdding);
-    console.log("linea id???????: "+ id);
-    dialogEdit.afterClosed().subscribe((result) => {
-      this.dataSource.data.push(this.dataSharingService.getProfesionFormData());
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
     });
-  }
+    }
+
+  eliminar(profesion: Profesion): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + profesion.nombre,
+        title: 'Eliminar',
+      },
+    });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.profesionService.delete(profesion.id!).subscribe(data => {
+        this.toastr.success('Profesión eliminada con éxito', 'ELIMINADA', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        const index = this.dataSource.data.findIndex(p => p.id === profesion.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la profesión', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
+    }
+  });
+}
 }

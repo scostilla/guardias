@@ -1,12 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Profesion } from 'src/app/models/Profesion';
 import { ProfesionService } from 'src/app/services/profesion.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { isEqual } from 'lodash';
-
 
 @Component({
   selector: 'app-profesion-edit',
@@ -15,108 +11,60 @@ import { isEqual } from 'lodash';
 })
 export class ProfesionEditComponent implements OnInit {
 
-  profesion: Profesion = new Profesion();
-  asistencial?: boolean;
-  nombre?: string;
-  id?: number;
-  formVal!: FormGroup;  
-  formInicial: any;
+  // Formulario para editar o crear una profesión
+  form?: FormGroup;
 
+  // Bandera para indicar si se trata de una edición o una creación
+  esEdicion?: boolean;
 
   constructor(
+    private formBuilder: FormBuilder,
     private profesionService: ProfesionService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
-    private fb: FormBuilder,
-    public dialogRef: MatDialogRef<ProfesionEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number, isAdding: boolean }
-  ) {
-    
-  }
+    private dialogRef: MatDialogRef<ProfesionEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Profesion // Inyectar los datos de la profesión si es una edición
+  ) { }
 
-
-  ngOnInit() {
-    this.formVal = this.fb.group ({
-      asistencial: ['', [Validators.required]],
-      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,30}$')]],
+  ngOnInit(): void {
+    // Inicializar el formulario con valores vacíos o con los datos de la profesión si es una edición
+    this.form = this.formBuilder.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.maxLength(50)]],
+      asistencial: [this.data ? this.data.asistencial : '', Validators.required]
     });
 
-    this.id = this.data.id;
-    if (this.data.isAdding) {
-      this.onCreate();
+    // Determinar si se trata de una edición o una creación según los datos recibidos
+    this.esEdicion = this.data != null;
+  }
+
+  // Método para guardar o actualizar la profesión según el caso
+  guardarProfesion(): void {
+    // Obtener los valores del formulario
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+    const asistencial = this.form?.get('asistencial')?.value;
+
+    // Crear un objeto de tipo Profesion
+    const profesion = new Profesion(asistencial, nombre);
+    profesion.id = id;
+
+    // Enviar el objeto al servicio para guardarlo o actualizarlo en el backend según el caso
+    if (this.esEdicion) {
+      // Si es una edición, usar el método update del servicio
+      this.profesionService.update(id, profesion).subscribe(data => {
+        // Cerrar el diálogo y retornar el objeto actualizado
+        this.dialogRef.close(data);
+      });
     } else {
-      this.profesionService.detalle(this.id).subscribe(
-        data => {
-          this.profesion = data;
-          this.formInicial = {
-            asistencial: this.profesion.asistencial,
-            nombre: this.profesion.nombre,
-          };    
-  
-        },
-        err => {
-          this.toastr.error(err.error.mensaje, 'Error al cargar la profesion', {
-            timeOut: 6000, positionClass: 'toast-top-center'
-          });
-        }
-      );
+      // Si es una creación, usar el método save del servicio
+      this.profesionService.save(profesion).subscribe(data => {
+        // Cerrar el diálogo y retornar el objeto creado
+        this.dialogRef.close(data);
+      });
     }
   }
 
-  onUpdate(): void {
-    const id = this.data.id;
-    console.log("onUpdate " + id);
-    if (this.profesion) {
-      this.profesionService.update(id, this.profesion).subscribe(
-        data => {
-          this.toastr.success('Profesion Modificada', 'OK', {
-            timeOut: 7000, positionClass: 'toast-top-center'
-          });
-        },
-        err => {
-          this.toastr.error(err.error.mensaje, 'Error', {
-            timeOut: 7000, positionClass: 'toast-top-center'
-          });
-        }
-      )
-    }
-    this.dialogRef.close();
-
-  }
-
-  onCreate(): void {
-    let profesion = new Profesion(this.asistencial!, this.nombre);
-    if (profesion.nombre != null) {
-      this.profesionService.save(profesion).subscribe(
-        data => {
-          this.toastr.success('Profesion Agregada', 'OK', {
-            timeOut: 7000, positionClass: 'toast-top-center'
-          });
-          this.dialogRef.close();
-        },
-        err => {
-          this.toastr.error(err.error.mensaje, 'Error al guardar la profesion', {
-            timeOut: 7000, positionClass: 'toast-top-center'
-          });
-        }
-
-      )
-    }
-  }
-
-  compararValores(): boolean {
-    const valoresActuales = this.formVal.value;
-    return isEqual(valoresActuales, this.formInicial);
-  }
-  get getAsistencial(){
-    return this.formVal.get('asistencial') as FormControl;
-  }
-  get getNombre(){
-    return this.formVal.get('nombre') as FormControl;
-  }
-
-  cancel() {
+  // Método para cerrar el diálogo sin retornar ningún resultado
+  cancelar(): void {
     this.dialogRef.close();
   }
 

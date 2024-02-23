@@ -1,44 +1,26 @@
-<h2 mat-dialog-title>{{id !=-1 ? 'MODIFICAR' : 'AGREGAR'}} PROFESION
-    <h5 class="requiredField">*Campos Obligatorios</h5>
-  </h2>
-  <form [formGroup]="formVal" (ngSubmit)="id != -1 ? onUpdate() : onCreate()" novalidate #f="ngForm"  >
-    <mat-dialog-content>
+<h1>{{esEdicion ? 'Editar' : 'Crear'}} profesión</h1>
 
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-            <mat-label>Categoría*</mat-label>
-            <mat-radio-group matInput *ngIf="id != -1" formControlName="asistencial" [(ngModel)]="profesion.asistencial" name="asistencial" id="asistencial">
-              <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
-              <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
-            </mat-radio-group>
-            <mat-radio-group matInput *ngIf="id == -1" formControlName="asistencial" [(ngModel)]="asistencial" name="asistencial" id="asistencial">
-              <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
-              <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
-            </mat-radio-group>
-            
-        </div>
-      </div>
-  
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre</mat-label>
-            <input matInput placeholder="Ingresar nombre de la Profesión" *ngIf="id != -1" formControlName="nombre" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="profesion.nombre"/>
-            <input matInput placeholder="Ingresar nombre de la Profesión" *ngIf="id == -1" formControlName="nombre" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="nombre"/>
-            <mat-error *ngIf="getNombre.hasError('required')">
-              El nombre es obligatorio
-            </mat-error>
-            <mat-error *ngIf="getNombre.hasError('pattern')">
-              El nombre debe tener solo letras y entre 2 y 50 caracteres
-            </mat-error>
-
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-dialog-content>
-    <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
-      </button>
-      <button mat-raised-button color="primary" [disabled]="formVal.invalid || compararValores()">{{id === -1 ? 'Guardar' : 'Modificar'}}</button>
-    </div>
-  </form>
+<!-- Formulario para editar o crear una profesión -->
+<form [formGroup]="form!" (ngSubmit)="guardarProfesion()">
+  <mat-form-field>
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre">
+    <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+      El nombre es obligatorio y debe tener máximo 50 caracteres
+    </mat-error>
+  </mat-form-field>
+    <mat-label>Asistencial</mat-label>
+    <mat-radio-group formControlName="asistencial">
+        <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
+        <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
+      </mat-radio-group>
+    <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
+      El campo asistencial es obligatorio
+    </mat-error>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
+    {{esEdicion ? 'Guardar' : 'Crear'}}
+  </button>
+  <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+    Cancelar
+  </button>
+</form>
