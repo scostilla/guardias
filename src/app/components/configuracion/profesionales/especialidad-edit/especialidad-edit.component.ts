@@ -16,12 +16,12 @@ export class EspecialidadEditComponent implements OnInit {
   form?: FormGroup;
   esEdicion?: boolean;
   esIgual: boolean = false;
-  profesiones: Profesion[] = []; // lista de profesion
+  profesiones: Profesion[] = []; 
 
   constructor(
     private formBuilder: FormBuilder,
     private especialidadService: EspecialidadService,
-    private profesionService: ProfesionService, // servicio de profesion
+    private profesionService: ProfesionService, 
     private dialogRef: MatDialogRef<EspecialidadEditComponent>,
     @Inject(MAT_DIALOG_DATA) private data: Especialidad 
   ) { 
@@ -45,7 +45,6 @@ export class EspecialidadEditComponent implements OnInit {
   }
 
   cargarProfesiones(): void {
-    // obtener la lista de profesion del servicio
     this.profesionService.lista().subscribe(data => {
       this.profesiones = data;
     }, error => {
