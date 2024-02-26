@@ -1,38 +1,49 @@
-<h2 mat-dialog-title>MODIFICAR PAIS
-    <h5 class="requiredField">*Campos Obligatorios</h5>
-  </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="pais">
-    <mat-dialog-content>
-      <div class="row">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Código</mat-label>
-            <input matInput placeholder="Ingresar código del País" autocomplete="off" id="codigo" name="codigo" [(ngModel)]="pais.codigo" required/>
-          </mat-form-field>
-        </div>
-      </div>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Pais
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
 
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nacionalidad</mat-label>
-            <input matInput placeholder="Ingresar Nacionalidad" autocomplete="off" id="nacionalidad" name="nacionalidad" [(ngModel)]="pais.nacionalidad" required/>
-          </mat-form-field>
-        </div>
+<form [formGroup]="form!" (ngSubmit)="savePais()">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre">
+          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+          </mat-error>
+        </mat-form-field>
       </div>
-  
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre del País</mat-label>
-            <input matInput placeholder="Ingresar nombre del País" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="pais.nombre" required/>
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-dialog-content>
-    <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
-      </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
     </div>
-  </form>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Código</mat-label>
+            <input matInput formControlName="codigo">
+          <mat-error *ngIf="form?.get('codigo')?.invalid && form?.get('codigo')?.touched">
+            El campo es obligatorio y debe tener solo letras (3 caracteres).
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nacionalidad</mat-label>
+            <input matInput formControlName="nacionalidad">
+          <mat-error *ngIf="form?.get('nacionalidad')?.invalid && form?.get('nacionalidad')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      </button>
+      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </mat-dialog-content>
+</form>

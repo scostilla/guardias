@@ -1,13 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Especialidad } from 'src/app/models/Especialidad';
 import { EspecialidadService } from 'src/app/services/especialidad.service';
 import { Profesion } from 'src/app/models/Profesion';
 import { ProfesionService } from 'src/app/services/profesion.service';
-
-
 
 @Component({
   selector: 'app-especialidad-edit',
@@ -16,75 +13,72 @@ import { ProfesionService } from 'src/app/services/profesion.service';
 })
 export class EspecialidadEditComponent implements OnInit {
 
-  especialidad?: Especialidad;
-  profesiones: Profesion[] = [];
-  profesionesEncontrado?: Profesion;
-
-
+  form?: FormGroup;
+  esEdicion?: boolean;
+  esIgual: boolean = false;
+  profesiones: Profesion[] = []; // lista de profesion
 
   constructor(
+    private formBuilder: FormBuilder,
     private especialidadService: EspecialidadService,
-    private profesionService: ProfesionService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
-    public dialogRef: MatDialogRef<EspecialidadEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+    private profesionService: ProfesionService, // servicio de profesion
+    private dialogRef: MatDialogRef<EspecialidadEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Especialidad 
+  ) { 
+    this.cargarProfesiones();
+  }
 
-  ngOnInit() {
-    const id = this.data.id;
-    this.especialidadService.detalle(id).subscribe(
-      data=> {
-        this.especialidad = data;
-        this.especialidad.profesion.id = data.profesion.id;
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
-    this.profesionService.lista().subscribe((data: Profesion[]) => {
+  ngOnInit(): void {
+    this.form = this.formBuilder.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      esPasiva: [this.data ? this.data.esPasiva : '', Validators.required],
+      profesion: [this.data ? this.data.profesion : '', Validators.required]
+    });
+
+    this.esEdicion = this.data != null;
+    
+    this.form.valueChanges.subscribe(val => {
+    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.esPasiva !== this.data?.esPasiva || val.profesion !== this.data?.profesion;
+    });
+
+  }
+
+  cargarProfesiones(): void {
+    // obtener la lista de profesion del servicio
+    this.profesionService.lista().subscribe(data => {
       this.profesiones = data;
-      console.log(this.profesiones);
+    }, error => {
+      console.log(error);
     });
   }
 
-  profesionChange() {
-    if (this.especialidad) {
-      const nombre = this.especialidad.profesion.nombre;
-      this.profesionesEncontrado = this.profesiones.find((profesion) => profesion.nombre === nombre);
+  saveEspecialidad(): void {
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+    const esPasiva = this.form?.get('esPasiva')?.value;
+    const profesion = this.form?.get('profesion')?.value;
+
+    const especialidad = new Especialidad(esPasiva, nombre, profesion);
+    especialidad.id = id;
+
+    if (this.esEdicion) {
+      this.especialidadService.update(id, especialidad).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    } else {
+      this.especialidadService.save(especialidad).subscribe(data => {
+        this.dialogRef.close(data);
+      });
     }
   }
 
-
-  onUpdate(): void {
-    const id = this.data.id;
-    console.log("onUpdate "+id);
-    if(this.especialidad) {
-      this.especialidad.profesion = this.profesionesEncontrado ? this.profesionesEncontrado : this.especialidad.profesion;
-    this.especialidadService.update(id, this.especialidad).subscribe(
-      data=> {
-        this.toastr.success('Especialidad Modificada', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
+  compareProfesion(p1: Profesion, p2: Profesion): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  this.dialogRef.close();
-
-  }
-
-  cancel() {
+  cancelar(): void {
     this.dialogRef.close();
   }
 
-  }
-
+}

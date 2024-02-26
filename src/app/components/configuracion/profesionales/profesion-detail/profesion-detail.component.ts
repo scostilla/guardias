@@ -9,7 +9,6 @@ import { Profesion } from 'src/app/models/Profesion';
 })
 export class ProfesionDetailComponent implements OnInit {
 
-  // Profesión que se muestra en el detalle
   profesion!: Profesion;
 
   constructor(

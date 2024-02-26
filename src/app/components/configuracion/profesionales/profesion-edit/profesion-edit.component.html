@@ -1,26 +1,41 @@
-<h1>{{esEdicion ? 'Editar' : 'Crear'}} profesión</h1>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Profesión
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
 
-<!-- Formulario para editar o crear una profesión -->
-<form [formGroup]="form!" (ngSubmit)="guardarProfesion()">
-  <mat-form-field>
-    <mat-label>Nombre</mat-label>
-    <input matInput formControlName="nombre">
-    <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
-      El nombre es obligatorio y debe tener máximo 50 caracteres
-    </mat-error>
-  </mat-form-field>
-    <mat-label>Asistencial</mat-label>
-    <mat-radio-group formControlName="asistencial">
-        <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
-        <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
-      </mat-radio-group>
-    <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
-      El campo asistencial es obligatorio
-    </mat-error>
-  <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
-    {{esEdicion ? 'Guardar' : 'Crear'}}
-  </button>
-  <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
-    Cancelar
-  </button>
+<form [formGroup]="form!" (ngSubmit)="saveProfesion()">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre">
+          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Asistencial</mat-label>
+          <mat-select formControlName="asistencial">
+            <mat-option [value]="true">Si</mat-option>
+            <mat-option [value]="false">No</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      </button>
+      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </mat-dialog-content>
 </form>

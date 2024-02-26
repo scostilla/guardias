@@ -1,29 +1,28 @@
 <h1 mat-dialog-title>DETALLE
-    <h5>ESPECIALIDAD</h5>
-  </h1>
-  <mat-dialog-content>
-    <table class="table" *ngIf="especialidad">
-        <tbody>
-          <tr>
-            <th scope="row">ID</th>
-            <td>{{especialidad.id}}</td>
-          </tr>
-          <tr>
-            <th scope="row">¿Es pasiva?</th>
-            <td>{{especialidad.esPasiva ? 'Si' : 'No'}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Nombre especialidad</th>
-            <td>{{especialidad.nombre}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Profesión</th>
-            <td>{{especialidad.profesion.nombre}}</td>
-          </tr>
-        </tbody>
-      </table>
-  
-    <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cerrar</button>
-    </div>
-  </mat-dialog-content>
+  <h5>PROFESIÓN</h5>
+</h1>
+<mat-dialog-content>
+  <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">ID</th>
+          <td>{{especialidad.id}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Nombre</th>
+          <td>{{especialidad.nombre}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Pasiva</th>
+          <td>{{especialidad.esPasiva ? 'Si' : 'No'}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Profesión</th>
+          <td>{{especialidad.profesion.nombre}}</td>
+        </tr>
+      </tbody>
+    </table>
+  <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>

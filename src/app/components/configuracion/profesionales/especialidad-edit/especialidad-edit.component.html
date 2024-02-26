@@ -1,45 +1,54 @@
-<h2 mat-dialog-title>MODIFICAR ESPECIALIDAD
-    <h5 class="requiredField">*Campos Obligatorios</h5>
-  </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="especialidad">
-    <mat-dialog-content>
-      <div class="row">
-        <div class="col">
-          <mat-label>¿Es pasiva?</mat-label>
-            <mat-radio-group matInput id="esPasiva" name="esPasiva" [(ngModel)]="especialidad.esPasiva" required>
-              <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
-              <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
-            </mat-radio-group>
-        </div>
-      </div>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Especialidad
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
 
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre de la especialidad</mat-label>
-            <input matInput placeholder="Ingresar Nombre de la especialidad" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="especialidad.nombre" required/>
-          </mat-form-field>
-        </div>
+<form [formGroup]="form!" (ngSubmit)="saveEspecialidad()">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre">
+          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+          </mat-error>
+        </mat-form-field>
       </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Pertenece a la Profesion</mat-label>
-            <mat-select id="idProfesion" name="idProfesion" [(ngModel)]="especialidad.profesion.nombre" required>
-              <mat-option *ngFor="let profesion of profesiones" [value]="profesion.nombre">
-                {{ profesion.nombre }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-dialog-content>
-    <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
-      </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
     </div>
-  </form>
-
-
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Pasiva</mat-label>
+          <mat-select formControlName="esPasiva">
+            <mat-option [value]="true">Si</mat-option>
+            <mat-option [value]="false">No</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form?.get('esPasiva')?.invalid && form?.get('esPasiva')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Profesión</mat-label>
+          <mat-select formControlName="profesion" [compareWith]="compareProfesion">
+            <mat-option *ngFor="let profesion of profesiones" [value]="profesion" >{{ profesion.nombre }}</mat-option>
+          </mat-select>
+                    <mat-error *ngIf="form?.get('profesion')?.invalid && form?.get('profesion')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      </button>
+      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </mat-dialog-content>
+</form>

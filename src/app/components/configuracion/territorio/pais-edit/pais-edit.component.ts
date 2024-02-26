@@ -1,10 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Pais } from 'src/app/models/Pais';
 import { PaisService } from 'src/app/services/pais.service';
-
 
 @Component({
   selector: 'app-pais-edit',
@@ -13,55 +11,54 @@ import { PaisService } from 'src/app/services/pais.service';
 })
 export class PaisEditComponent implements OnInit {
 
-  pais?: Pais;
+  form?: FormGroup;
+  esEdicion?: boolean;
+  esIgual: boolean = false;
 
   constructor(
+    private formBuilder: FormBuilder,
     private paisService: PaisService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
-    public dialogRef: MatDialogRef<PaisEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+    private dialogRef: MatDialogRef<PaisEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Pais 
+  ) { }
 
-  ngOnInit() {
-    const id = this.data.id;
-    this.paisService.detalle(id).subscribe(
-      data=> {
-        this.pais = data;
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
+  ngOnInit(): void {
+    this.form = this.formBuilder.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      codigo: [this.data ? this.data.codigo : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{3,3}$')]],
+      nacionalidad: [this.data ? this.data.nacionalidad : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]]
+    });
+
+    this.esEdicion = this.data != null;
+    
+    this.form.valueChanges.subscribe(val => {
+    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.codigo !== this.data?.codigo || val.nacionalidad !== this.data?.nacionalidad;
+    });
   }
 
-  onUpdate(): void {
-    const id = this.data.id;
-    console.log("onUpdate "+id);
-    if(this.pais) {
-    this.paisService.update(id, this.pais).subscribe(
-      data=> {
-        this.toastr.success('Pais Modificado', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
+  savePais(): void {
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+    const codigo = this.form?.get('codigo')?.value;
+    const nacionalidad = this.form?.get('nacionalidad')?.value;
+
+    const pais = new Pais(nombre, codigo, nacionalidad);
+    pais.id = id;
+
+    if (this.esEdicion) {
+      this.paisService.update(id, pais).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    } else {
+      this.paisService.save(pais).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    }
   }
 
-  this.dialogRef.close();
-
-  }
-
-  cancel() {
+  cancelar(): void {
     this.dialogRef.close();
   }
 
-  }
+}

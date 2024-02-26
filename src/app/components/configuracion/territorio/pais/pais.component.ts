@@ -1,29 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Pais } from 'src/app/models/Pais';
 import { PaisService } from 'src/app/services/pais.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { PaisDetailComponent } from '../pais-detail/pais-detail.component';
 import { PaisEditComponent } from '../pais-edit/pais-edit.component';
-import { PaisNewComponent } from '../pais-new/pais-new.component';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-
-
-export interface UserData {
-  id: number;
-  codigo: string;
-  nacionalidad: string;
-  nombre: string;
-}
-
+import { PaisDetailComponent } from '../pais-detail/pais-detail.component'; 
 
 @Component({
   selector: 'app-pais',
@@ -31,73 +17,53 @@ export interface UserData {
   styleUrls: ['./pais.component.css']
 })
 
-export class PaisComponent implements OnInit, AfterViewInit {
+export class PaisComponent implements OnInit, OnDestroy {
 
-  paises: Pais[] = [];
-  displayedColumns: string[] = ['id', 'codigo', 'nacionalidad', 'nombre', 'actions'];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
-
+  @ViewChild(MatTable) table!: MatTable<Pais>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<PaisDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'codigo', 'nacionalidad', 'acciones'];
+  dataSource!: MatTableDataSource<Pais>;
+  suscription!: Subscription;
+
   constructor(
     private paisService: PaisService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    private router: Router,
-    ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    private paginatorIntl: MatPaginatorIntl
+    ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente página";
+    this.paginatorIntl.previousPageLabel = "Página anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
+     }
 
-  ngOnInit() {
-    this.cargarPaises();
+  ngOnInit(): void {
+    this.listPaises();
 
     this.suscription = this.paisService.refresh$.subscribe(() => {
-      this.cargarPaises();
+      this.listPaises();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
-  }
-  
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  listPaises(): void {
+    this.paisService.lista().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  cargarPaises(): void {
-    this.paisService.lista().subscribe(
-      (data: Pais[]) => {
-        const userDataArray: UserData[] = data.map(pais => ({
-          id: pais.id || 0,
-          codigo: pais.codigo || '',
-          nacionalidad: pais.nacionalidad || '',
-          nombre: pais.nombre || '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
   }
 
   applyFilter(event: Event) {
@@ -105,80 +71,77 @@ export class PaisComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(PaisComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(pais?: Pais): void {
+    const esEdicion = pais != null;
+    const dialogRef = this.dialog.open(PaisEditComponent, {
+      width: '600px',
+      data: esEdicion ? pais : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.paisService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('Pais eliminado', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Pais editado con éxito' : 'Pais creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-        this.cargarPaises();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar el Pais', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
       }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
+    }
+    });
   }
 
-  addNewPais() {
-    this.dialogNew.open(PaisNewComponent, {
+  openDetail(pais: Pais): void {
+    this.dialogRef = this.dialog.open(PaisDetailComponent, { 
       width: '600px',
-      disableClose: true,
+      data: pais
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deletePais(pais: Pais): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + pais.nombre,
+        title: 'Eliminar',
+      },
     });
 
-  }
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.paisService.delete(pais.id!).subscribe(data => {
+        this.toastr.success('Profesión eliminada con éxito', 'ELIMINADA', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
 
-  addDetailPais(id: number) {
-    const dialogDetail = this.dialog.open(PaisDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 152: "+this.dataSharingService.getPaisFormData());
-      this.dataSource.data.push(this.dataSharingService.getPaisFormData());
-      console.log("id recibido: "+this.dataSharingService.getPaisId());
-    });
-  }
-
-
-  addEditPais(id: number) {
-    const dialogEdit = this.dialog.open(PaisEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getPaisFormData());
-      this.dataSource.data.push(this.dataSharingService.getPaisFormData());
-      console.log("id recibido: "+this.dataSharingService.getPaisId());
-    });
-  }
-
+        const index = this.dataSource.data.findIndex(p => p.id === pais.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la profesión', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
+    }
+  });
+}
 }

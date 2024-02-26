@@ -1,99 +1,69 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Especialidad } from 'src/app/models/Especialidad';
 import { EspecialidadService } from 'src/app/services/especialidad.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { EspecialidadDetailComponent } from '../especialidad-detail/especialidad-detail.component';
 import { EspecialidadEditComponent } from '../especialidad-edit/especialidad-edit.component';
-
-export interface UserData {
-  id: number;
-  esPasiva: boolean;
-  nombre: string;
-  idProfesion: number;
-  profesion: String;
-}
+import { EspecialidadDetailComponent } from '../especialidad-detail/especialidad-detail.component'; 
 
 @Component({
   selector: 'app-especialidad',
   templateUrl: './especialidad.component.html',
-  styleUrls: ['./especialidad.component.css'],
+  styleUrls: ['./especialidad.component.css']
 })
-export class EspecialidadComponent implements OnInit, AfterViewInit {
-  provincias: Especialidad[] = [];
-  router: any;
-  displayedColumns: string[] = [ 'id', 'esPasiva', 'nombre', 'profesion', 'actions',];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
 
+export class EspecialidadComponent implements OnInit, OnDestroy {
+
+  @ViewChild(MatTable) table!: MatTable<Especialidad>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<EspecialidadDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'esPasiva', 'profesion', 'acciones'];
+  dataSource!: MatTableDataSource<Especialidad>;
+  suscription!: Subscription;
+
   constructor(
     private especialidadService: EspecialidadService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService
-  ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-    this.dataSource = new MatTableDataSource<UserData>([]);
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
   }
 
-  ngOnInit() {
-    this.cargarEspecialidad();
+  ngOnInit(): void {
+    this.listEspecialidad();
 
     this.suscription = this.especialidadService.refresh$.subscribe(() => {
-      this.cargarEspecialidad();
+      this.listEspecialidad();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
+  listEspecialidad(): void {
+    this.especialidadService.lista().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  cargarEspecialidad(): void {
-    this.especialidadService.lista().subscribe(
-      (data: Especialidad[]) => {
-        const userDataArray: UserData[] = data.map((especialidad) => ({
-          id: especialidad.id || 0,
-          esPasiva: especialidad.esPasiva,
-          nombre: especialidad.nombre || '',
-          idProfesion: especialidad.profesion ? especialidad.profesion.id || 0 : 0,
-          profesion: especialidad.profesion ? especialidad.profesion.nombre || '' : '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
   }
 
   applyFilter(event: Event) {
@@ -101,74 +71,77 @@ export class EspecialidadComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(
-    enterAnimationDuration: string,
-    exitAnimationDuration: string
-  ): void {
-    this.dialog.open(EspecialidadComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(especialidad?: Especialidad): void {
+    const esEdicion = especialidad != null;
+    const dialogRef = this.dialog.open(EspecialidadEditComponent, {
+      width: '600px',
+      data: esEdicion ? especialidad : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-      .open(ConfirmDialogComponent, {
-        data: {
-          message: 'Confirma la eliminación de ' + nombre,
-          title: 'Eliminar',
-        },
-      })
-      .afterClosed()
-      .subscribe((confirm: Boolean) => {
-        if (confirm) {
-          this.especialidadService.delete(id).subscribe(
-            (data) => {
-              this.toastr.success('Especialidad eliminada', 'OK', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-              });
-              this.cargarEspecialidad();
-            },
-            (err) => {
-              this.toastr.error(err.error.mensaje, 'Error', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-              });
-            }
-          );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Especialidad editada con éxito' : 'Especialidad creada con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
         } else {
-          this.dialog.closeAll();
+          this.dataSource.data.push(result);
         }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar la profesión', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+    });
+  }
+
+  openDetail(especialidad: Especialidad): void {
+    this.dialogRef = this.dialog.open(EspecialidadDetailComponent, { 
+      width: '600px',
+      data: especialidad
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteEspecialidad(especialidad: Especialidad): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + especialidad.nombre,
+        title: 'Eliminar',
+      },
+    });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.especialidadService.delete(especialidad.id!).subscribe(data => {
+        this.toastr.success('Profesión eliminada con éxito', 'ELIMINADA', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        const index = this.dataSource.data.findIndex(p => p.id === especialidad.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la profesión', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       });
-  }
-
-  addDetailEspecialidad(id: number) {
-    const dialogDetail = this.dialog.open(EspecialidadDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 158: "+this.dataSharingService.getEspecialidadFormData());
-      this.dataSource.data.push(this.dataSharingService.getEspecialidadFormData());
-      console.log('id recibido: ' + this.dataSharingService.getEspecialidadId());
-    });
-  }
-
-  addEditEspecialidad(id: number) {
-    const dialogEdit = this.dialog.open(EspecialidadEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getEspecialidadFormData());
-      this.dataSource.data.push(this.dataSharingService.getEspecialidadFormData());
-      console.log('id recibido: ' + this.dataSharingService.getEspecialidadId());
-    });
-  }
+    }
+  });
+}
 }

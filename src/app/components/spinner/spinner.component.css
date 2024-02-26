@@ -1,18 +1,10 @@
-.overlay {
-    background-color: rgba(0, 0, 0, 0.8); /* Color negro con 50% de opacidad */
-    width: 100%; /* Ancho del 100% del contenedor */
-    height: 100%; /* Alto del 100% del contenedor */
-    position: absolute; /* Posición absoluta respecto al contenedor */
-    top: 0; /* Posición vertical al inicio del contenedor */
-    left: 0; /* Posición horizontal al inicio del contenedor */
-  }
-  
+ 
 .spinner {
     display: block;
-    position: fixed; /* Posición fija respecto al viewport */
-    top: 50%; /* Posición vertical al 50% del viewport */
-    left: 50%; /* Posición horizontal al 50% del viewport */
-    transform: translate(-50%, -50%); /* Desplazamiento del 50% del ancho y alto del elemento */
-    z-index: 9999; /* Índice de profundidad alto para que el spinner esté sobre los demás elementos */
+    position: fixed; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    z-index: 9999; 
   }
 

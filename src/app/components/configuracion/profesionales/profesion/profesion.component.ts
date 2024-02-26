@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -31,19 +31,30 @@ export class ProfesionComponent implements OnInit, OnDestroy {
   constructor(
     private profesionService: ProfesionService,
     private dialog: MatDialog,
-    private toastr: ToastrService
-  ) { }
+    private toastr: ToastrService,
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
+  }
 
   ngOnInit(): void {
-    this.cargarProfesion();
+    this.listProfesiones();
 
     this.suscription = this.profesionService.refresh$.subscribe(() => {
-      this.cargarProfesion();
+      this.listProfesiones();
     })
 
   }
 
-  cargarProfesion(): void {
+  listProfesiones(): void {
     this.profesionService.lista().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
@@ -52,8 +63,7 @@ export class ProfesionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.suscription.unsubscribe();
-      console.log('Observable cerrado.');
+      this.suscription?.unsubscribe();
   }
 
   applyFilter(event: Event) {
@@ -61,7 +71,7 @@ export class ProfesionComponent implements OnInit, OnDestroy {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  abrirFormulario(profesion?: Profesion): void {
+  openFormChanges(profesion?: Profesion): void {
     const esEdicion = profesion != null;
     const dialogRef = this.dialog.open(ProfesionEditComponent, {
       width: '600px',
@@ -94,9 +104,9 @@ export class ProfesionComponent implements OnInit, OnDestroy {
     });
   }
 
-  abrirDetalle(profesion: Profesion): void {
+  openDetail(profesion: Profesion): void {
     this.dialogRef = this.dialog.open(ProfesionDetailComponent, { 
-      width: '400px',
+      width: '600px',
       data: profesion
     });
     this.dialogRef.afterClosed().subscribe(() => {
@@ -104,7 +114,7 @@ export class ProfesionComponent implements OnInit, OnDestroy {
     });
     }
 
-  eliminar(profesion: Profesion): void {
+  deleteProfesiones(profesion: Profesion): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         message: 'Confirma la eliminación de ' + profesion.nombre,
