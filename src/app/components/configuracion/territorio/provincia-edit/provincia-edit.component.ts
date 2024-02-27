@@ -1,166 +1,83 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { Pais } from 'src/app/models/Pais';
-import { Provincia } from 'src/app/models/Provincia';
-import { PaisService } from 'src/app/services/pais.service';
-import { ProvinciaService } from 'src/app/services/provincia.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { isEqual } from 'lodash';
-
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Provincia } from 'src/app/models/Provincia';
+import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Pais } from 'src/app/models/Pais';
+import { PaisService } from 'src/app/services/pais.service';
 
 @Component({
   selector: 'app-provincia-edit',
   templateUrl: './provincia-edit.component.html',
-  styleUrls: ['./provincia-edit.component.css'],
+  styleUrls: ['./provincia-edit.component.css']
 })
-
 export class ProvinciaEditComponent implements OnInit {
-  provincia?: Provincia;
-  paises: Pais[] = [];
-  paisEncontrado?: Pais;
-  gentilicio: string = '';
-  nombre: string = '';
-  idPais?: number;
-  pais?: Pais;
-  id?: number;
-  MyForm: FormGroup;
-  initialForm: any;
-  formChanged?: boolean;
 
-
+  form?: FormGroup;
+  esEdicion?: boolean;
+  esIgual: boolean = false;
+  paises: Pais[] = []; 
 
   constructor(
-    private provinciaService: ProvinciaService,
-    private paisService: PaisService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<ProvinciaEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {
-    this.MyForm = this.fb.group({
-      nombre: [
-        '',
-        [Validators.required, Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*')],
-      ],
-      gentilicio: [
-        '',
-        [Validators.required, Validators.pattern('[a-zA-ZñÑáéíóúÁÉÍÓÚ ]*')],
-      ],
-      idPais: ['', Validators.required],
+    private provinciaService: ProvinciaService,
+    private paisService: PaisService, 
+    private dialogRef: MatDialogRef<ProvinciaEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Provincia 
+  ) { 
+    this.listPais();
+  }
+
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      gentilicio: [this.data ? this.data.gentilicio : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      pais: [this.data ? this.data.pais : '', Validators.required]
+    });
+
+    this.esEdicion = this.data != null;
+    
+    this.form.valueChanges.subscribe(val => {
+    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.gentilicio !== this.data?.gentilicio || val.pais !== this.data?.pais;
     });
 
   }
 
-  ngOnInit() {
-    this.id = this.data.id; 
-  if (this.id == -1){
-    this.onCreate();
-  }else{
-    this.provinciaService.detalle(this.id).subscribe(
-      (data) => {
-        this.provincia = data;
-        this.provincia.pais.id = data.pais.id;
-       this.MyForm.patchValue({
-        nombre: this.provincia.nombre,
-        gentilicio: this.provincia.gentilicio,
-        idPais: this.provincia.pais.id
+  listPais(): void {
+    this.paisService.lista().subscribe(data => {
+      this.paises = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  saveProvincia(): void {
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+    const gentilicio = this.form?.get('gentilicio')?.value;
+    const pais = this.form?.get('pais')?.value;
+
+    const provincia = new Provincia(gentilicio, nombre, pais);
+    provincia.id = id;
+
+    if (this.esEdicion) {
+      this.provinciaService.update(id, provincia).subscribe(data => {
+        this.dialogRef.close(data);
       });
-      this.initialForm = this.MyForm.value;
-        },
-      (err) => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-        });
-      }
-    );
-    this.paisService.lista().subscribe((data: Pais[]) => {
-      this.paises = data;
-      console.log(this.paises);
-    });
-  }
-  this.MyForm.valueChanges.subscribe(values => {
-    this.formChanged = this.MyForm.valid && !isEqual(this.MyForm.value, this.initialForm);
-  });
- }
-
-  paisChange() {
-    if (this.provincia) {
-      const nombre = this.provincia.pais.nombre;
-      this.paisEncontrado = this.paises.find((pais) => pais.nombre === nombre);
+    } else {
+      this.provinciaService.save(provincia).subscribe(data => {
+        this.dialogRef.close(data);
+      });
     }
   }
 
-  onUpdate(): void {
-    const id = this.data.id;
+  comparePais(p1: Pais, p2: Pais): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
 
-    console.log('onUpdate ' + id);
-    if (this.provincia) {
-      this.provincia.pais = this.paisEncontrado ? this.paisEncontrado : this.provincia.pais;
-      this.provinciaService.update(id, this.provincia).subscribe(
-        (data) => {
-          this.toastr.success('Provincia Modificada', 'OK', {
-            timeOut: 7000,
-            positionClass: 'toast-top-center',
-          });
-        },
-        (err) => {
-          this.toastr.error(err.error.mensaje, 'Error', {
-            timeOut: 7000,
-            positionClass: 'toast-top-center',
-          });
-        }
-      );
-    }
-
+  cancelar(): void {
     this.dialogRef.close();
   }
 
-  onCreate(): void {
-    this.paisService.lista().subscribe((data: Pais[]) => {
-      this.paises = data;
-    });
-    if (this.idPais) {
-      this.paisService.detalle(this.idPais).subscribe(
-        pais => {
-          this.provincia = new Provincia(this.gentilicio, this.nombre, pais);
-          this.provinciaService.save(this.provincia).subscribe(
-            data => {
-              this.toastr.success('Provincia Agregada', 'OK', {
-                timeOut: 6000, positionClass: 'toast-top-center'
-              });
-            },
-            err => {
-              this.toastr.error(err.error.mensaje, 'Error', {
-                timeOut: 7000, positionClass: 'toast-top-center'
-              });
-            }
-          );
-        },
-        error => {
-          console.error('Error al obtener el detalle del país:', error);
-        }
-      );
-    }
-  }
-
-  onSubmit (form: any): void {
-    this.MyForm.markAllAsTouched (); 
-    this.onValueChanged (); 
-    if (this.MyForm.valid) { 
-      console.log (form); 
-    }
-  }
-  
-  onValueChanged() {
-    throw new Error('Method not implemented.');
-  }
-
-  cancel() {
-    this.dialogRef.close();
-  }
 }

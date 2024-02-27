@@ -66,8 +66,30 @@ export class EspecialidadComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: Especialidad, filter: string) => {
+      const name = this.accentFilter(data.nombre.toLowerCase());
+      const profesion = this.accentFilter(data.profesion.nombre.toLowerCase());
+      const esPasiva = data.esPasiva ? 'si' : 'no';
+      filter = this.accentFilter(filter.toLowerCase());
+      return name.includes(filter) || profesion.includes(filter) || esPasiva.includes(filter);
+    };
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
@@ -94,7 +116,7 @@ export class EspecialidadComponent implements OnInit, OnDestroy {
         }
         this.dataSource._updateChangeSubscription();
       } else {
-        this.toastr.error('Ocurrió un error al crear o editar la profesión', 'Error', {
+        this.toastr.error('Ocurrió un error al crear o editar la especialidad', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -125,7 +147,7 @@ export class EspecialidadComponent implements OnInit, OnDestroy {
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
       this.especialidadService.delete(especialidad.id!).subscribe(data => {
-        this.toastr.success('Profesión eliminada con éxito', 'ELIMINADA', {
+        this.toastr.success('Especialidad eliminada con éxito', 'ELIMINADA', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -135,7 +157,7 @@ export class EspecialidadComponent implements OnInit, OnDestroy {
         this.dataSource.data.splice(index, 1);
         this.dataSource._updateChangeSubscription();
       }, err => {
-        this.toastr.error(err.message, 'Error, no se pudo eliminar la profesión', {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la especialidad', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

@@ -19,17 +19,17 @@ export class EspecialidadEditComponent implements OnInit {
   profesiones: Profesion[] = []; 
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private especialidadService: EspecialidadService,
     private profesionService: ProfesionService, 
     private dialogRef: MatDialogRef<EspecialidadEditComponent>,
     @Inject(MAT_DIALOG_DATA) private data: Especialidad 
   ) { 
-    this.cargarProfesiones();
+    this.listProfesion();
   }
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({
+    this.form = this.fb.group({
       id: [this.data ? this.data.id : null],
       nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
       esPasiva: [this.data ? this.data.esPasiva : '', Validators.required],
@@ -44,7 +44,7 @@ export class EspecialidadEditComponent implements OnInit {
 
   }
 
-  cargarProfesiones(): void {
+  listProfesion(): void {
     this.profesionService.lista().subscribe(data => {
       this.profesiones = data;
     }, error => {

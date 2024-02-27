@@ -16,14 +16,14 @@ export class ProfesionEditComponent implements OnInit {
   esIgual: boolean = false;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private profesionService: ProfesionService,
     private dialogRef: MatDialogRef<ProfesionEditComponent>,
     @Inject(MAT_DIALOG_DATA) private data: Profesion 
   ) { }
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({
+    this.form = this.fb.group({
       id: [this.data ? this.data.id : null],
       nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
       asistencial: [this.data ? this.data.asistencial : '', Validators.required]

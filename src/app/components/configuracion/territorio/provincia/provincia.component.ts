@@ -1,180 +1,165 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
-import { Subscription } from 'rxjs';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { ProvinciaDetailComponent } from '../provincia-detail/provincia-detail.component';
 import { ProvinciaEditComponent } from '../provincia-edit/provincia-edit.component';
-
-export interface UserData {
-  id: number;
-  gentilicio: string;
-  nombre: string;
-  id_pais: number;
-  pais: String;
-}
+import { ProvinciaDetailComponent } from '../provincia-detail/provincia-detail.component'; 
 
 @Component({
   selector: 'app-provincia',
   templateUrl: './provincia.component.html',
-  styleUrls: ['./provincia.component.css'],
+  styleUrls: ['./provincia.component.css']
 })
-export class ProvinciaComponent implements OnInit, AfterViewInit {
-  provincias: Provincia[] = [];
-  router: any;
-  displayedColumns: string[] = [
-    'id',
-    'nombre',
-    'gentilicio',
-    'pais',
-    'actions',
-  ];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
 
+export class ProvinciaComponent implements OnInit, OnDestroy {
+
+  @ViewChild(MatTable) table!: MatTable<Provincia>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<ProvinciaDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'gentilicio', 'pais', 'acciones'];
+  dataSource!: MatTableDataSource<Provincia>;
+  suscription!: Subscription;
+
   constructor(
     private provinciaService: ProvinciaService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService
-  ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-    this.dataSource = new MatTableDataSource<UserData>([]);
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
   }
 
-  ngOnInit() {
-    this.cargarProvincias();
+  ngOnInit(): void {
+    this.listProvincia();
 
     this.suscription = this.provinciaService.refresh$.subscribe(() => {
-      this.cargarProvincias();
+      this.listProvincia();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
+  listProvincia(): void {
+    this.provinciaService.lista().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  cargarProvincias(): void {
-    this.provinciaService.lista().subscribe(
-      (data: Provincia[]) => {
-        const userDataArray: UserData[] = data.map((provincia) => ({
-          id: provincia.id || 0,
-          nombre: provincia.nombre || '',
-          gentilicio: provincia.gentilicio || '',
-          id_pais: provincia.pais.id !== undefined ? provincia.pais.id : 0,
-          pais: provincia.pais.nombre !== undefined ? provincia.pais.nombre : '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    );
+    }
+    return output;
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Provincia, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || this.accentFilter(data.gentilicio.toLowerCase()).includes(this.accentFilter(filter)) || this.accentFilter(data.pais.nombre.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
-  openDialog(
-    enterAnimationDuration: string,
-    exitAnimationDuration: string
-  ): void {
-    this.dialog.open(ProvinciaComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(provincia?: Provincia): void {
+    const esEdicion = provincia != null;
+    const dialogRef = this.dialog.open(ProvinciaEditComponent, {
+      width: '600px',
+      data: esEdicion ? provincia : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-      .open(ConfirmDialogComponent, {
-        data: {
-          message: 'Confirma la eliminación de ' + nombre,
-          title: 'Eliminar',
-        },
-      })
-      .afterClosed()
-      .subscribe((confirm: Boolean) => {
-        if (confirm) {
-          this.provinciaService.delete(id).subscribe(
-            (data) => {
-              this.toastr.success('Provincia eliminada', 'OK', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-              });
-              this.cargarProvincias();
-            },
-            (err) => {
-              this.toastr.error(err.error.mensaje, 'Error', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-              });
-            }
-          );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Provincia editada con éxito' : 'Provincia creada con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
         } else {
-          this.dialog.closeAll();
+          this.dataSource.data.push(result);
         }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar la Provincia', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+    });
+  }
+
+  openDetail(provincia: Provincia): void {
+    this.dialogRef = this.dialog.open(ProvinciaDetailComponent, { 
+      width: '600px',
+      data: provincia
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteProvincia(provincia: Provincia): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + provincia.nombre,
+        title: 'Eliminar',
+      },
+    });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.provinciaService.delete(provincia.id!).subscribe(data => {
+        this.toastr.success('Provincia eliminada con éxito', 'ELIMINADA', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        const index = this.dataSource.data.findIndex(p => p.id === provincia.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la provincia', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       });
-  }
-
-  addDetailProvincia(id: number) {
-    const dialogDetail = this.dialog.open(ProvinciaDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 158: "+this.dataSharingService.getProvinciaFormData());
-      this.dataSource.data.push(this.dataSharingService.getProvinciaFormData());
-      console.log('id recibido: ' + this.dataSharingService.getProvinciaId());
-    });
-  }
-
-  addEditProvincia(id: number) {
-    const dialogEdit = this.dialog.open(ProvinciaEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getProvinciaFormData());
-      this.dataSource.data.push(this.dataSharingService.getProvinciaFormData());
-      console.log('id recibido: ' + this.dataSharingService.getProvinciaId());
-    });
-  }
+    }
+  });
+}
 }

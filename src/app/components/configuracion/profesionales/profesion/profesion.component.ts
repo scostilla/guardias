@@ -66,8 +66,29 @@ export class ProfesionComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: Profesion, filter: string) => {
+      const name = this.accentFilter(data.nombre.toLowerCase());
+      const asistencial = data.asistencial ? 'si' : 'no';
+      filter = this.accentFilter(filter.toLowerCase());
+      return name.includes(filter) || asistencial.includes(filter);
+    };
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 

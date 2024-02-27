@@ -1,118 +1,83 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
 import { Provincia } from 'src/app/models/Provincia';
 import { ProvinciaService } from 'src/app/services/provincia.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { isEqual } from "lodash";
-
 
 @Component({
   selector: 'app-departamento-edit',
   templateUrl: './departamento-edit.component.html',
   styleUrls: ['./departamento-edit.component.css']
 })
-
 export class DepartamentoEditComponent implements OnInit {
 
-  departamento?: Departamento;
-  provincias: Provincia[] = [];
-  provinciasEncontrado?: Provincia;
-  formVal!: FormGroup;  
-  formInicial: any;
-
-  get codigoPostal(){
-    return this.formVal.get('codigoPostal') as FormControl;
-  }
-  get nombre(){
-    return this.formVal.get('nombre') as FormControl;
-  }
-  get idProvincia(){
-    return this.formVal.get('idProvincia') as FormControl;
-  }
-
-  
+  form?: FormGroup;
+  esEdicion?: boolean;
+  esIgual: boolean = false;
+  provincias: Provincia[] = []; 
 
   constructor(
-    private departamentoService: DepartamentoService,
-    private provinciaService: ProvinciaService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<DepartamentoEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number },
-  ) {}
+    private departamentoService: DepartamentoService,
+    private provinciaService: ProvinciaService, 
+    private dialogRef: MatDialogRef<DepartamentoEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Departamento 
+  ) { 
+    this.listProvincia();
+  }
 
-  ngOnInit() {
-    const id = this.data.id;
-    this.departamentoService.detalle(id).subscribe(
-      data=> {
-        this.departamento = data;
-        this.departamento.provincia.id = data.provincia.id;
-        this.formInicial = {
-          codigoPostal: this.departamento?.codigoPostal,
-          nombre: this.departamento?.nombre,
-          idProvincia: this.departamento?.provincia.id
-        };    
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
-    this.provinciaService.lista().subscribe((data: Provincia[]) => {
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      codigoPostal: [this.data ? this.data.codigoPostal : '', [Validators.required, Validators.pattern('^[0-9]{4}$')]],
+      provincia: [this.data ? this.data.provincia : '', Validators.required]
+    });
+
+    this.esEdicion = this.data != null;
+    
+    this.form.valueChanges.subscribe(val => {
+    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.codigoPostal !== this.data?.codigoPostal || val.provincia !== this.data?.provincia;
+    });
+
+  }
+
+  listProvincia(): void {
+    this.provinciaService.lista().subscribe(data => {
       this.provincias = data;
-      console.log(this.provincias);
+    }, error => {
+      console.log(error);
     });
-
-    this.formVal = this.fb.group ({
-      codigoPostal: ['', [Validators.required, Validators.pattern('^[0-9]{4,4}$')]],
-      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
-      idProvincia: ['', [Validators.required]]
-    });
-
   }
 
-  compararValores(): boolean {
-    const valoresActuales = this.formVal.value;
-    return isEqual(valoresActuales, this.formInicial);
-  }
+  saveDepartamento(): void {
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+    const codigoPostal = this.form?.get('codigoPostal')?.value;
+    const provincia = this.form?.get('provincia')?.value;
 
-  provinciaChange() {
-    if (this.departamento) {
-      const nombre = this.departamento.provincia.nombre;
-      this.provinciasEncontrado = this.provincias.find((provincia) => provincia.nombre === nombre);
+    const departamento = new Departamento(codigoPostal, nombre, provincia);
+    departamento.id = id;
+
+    if (this.esEdicion) {
+      this.departamentoService.update(id, departamento).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    } else {
+      this.departamentoService.save(departamento).subscribe(data => {
+        this.dialogRef.close(data);
+      });
     }
   }
 
-
-  onUpdate(): void {
-    const id = this.data.id;
-    console.log("onUpdate "+id);
-    if(this.departamento) {
-      this.departamento.provincia = this.provinciasEncontrado ? this.provinciasEncontrado : this.departamento.provincia;
-    this.departamentoService.update(id, this.departamento).subscribe(
-      data=> {
-        this.toastr.success('Departamento Modificado', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
-  }
-  this.dialogRef.close();
+  compareProvincia(p1: Provincia, p2: Provincia): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  cancel() {
+  cancelar(): void {
     this.dialogRef.close();
   }
-  }
+
+}

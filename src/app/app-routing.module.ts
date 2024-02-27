@@ -68,7 +68,6 @@ import { PaisNewComponent } from './components/configuracion/territorio/pais-new
 import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
 import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
 import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
-import { ProvinciaNewComponent } from './components/configuracion/territorio/provincia-new/provincia-new.component';
 import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
 import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
 import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
@@ -185,7 +184,6 @@ const routes: Routes = [
  {path: 'pais-detail/:id', component:PaisDetailComponent},
  {path: 'pais-edit/:id', component:PaisEditComponent},
  {path: 'provincia', component:ProvinciaComponent},
- {path: 'provincia-new', component:ProvinciaNewComponent},
  {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
  {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
  {path: 'departamento', component:DepartamentoComponent},

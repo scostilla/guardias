@@ -185,6 +185,10 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   cursor: pointer;
 }
 
+.btnDetail{
+  transform: rotate(90deg);
+}
+
 .btnEdit{
 color: green;
 margin-left: 0px;

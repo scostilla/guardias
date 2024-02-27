@@ -1,29 +1,28 @@
 <h1 mat-dialog-title>DETALLE
-  <h5>Departamento</h5>
+  <h5>DEPARTAMENTO</h5>
 </h1>
 <mat-dialog-content>
-  <table class="table" *ngIf="departamento">
+  <table class="table">
       <tbody>
         <tr>
           <th scope="row">ID</th>
           <td>{{departamento.id}}</td>
         </tr>
         <tr>
+          <th scope="row">Nombre</th>
+          <td>{{departamento.nombre}}</td>
+        </tr>
+        <tr>
           <th scope="row">Código Postal</th>
           <td>{{departamento.codigoPostal}}</td>
         </tr>
         <tr>
-          <th scope="row">Nombre Departamento</th>
-          <td>{{departamento.nombre}}</td>
-        </tr>
-        <tr>
-          <th scope="row">Proivincia</th>
+          <th scope="row">Provincia</th>
           <td>{{departamento.provincia.nombre}}</td>
         </tr>
       </tbody>
     </table>
-
   <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cerrar</button>
+      <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
   </div>
 </mat-dialog-content>

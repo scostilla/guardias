@@ -1,28 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Localidad } from 'src/app/models/Localidad';
 import { LocalidadService } from 'src/app/services/localidad.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { LocalidadDetailComponent } from '../localidad-detail/localidad-detail.component';
 import { LocalidadEditComponent } from '../localidad-edit/localidad-edit.component';
-import { LocalidadNewComponent } from '../localidad-new/localidad-new.component';
-
-
-export interface UserData {
-  id: number;
-  nombre: string;
-  id_departamento: number;
-  departamento: string;
-}
-
+import { LocalidadDetailComponent } from '../localidad-detail/localidad-detail.component'; 
 
 @Component({
   selector: 'app-localidad',
@@ -30,155 +17,149 @@ export interface UserData {
   styleUrls: ['./localidad.component.css']
 })
 
-export class LocalidadComponent implements OnInit, AfterViewInit {
+export class LocalidadComponent implements OnInit, OnDestroy {
 
-  localidads: Localidad[] = [];
-  router: any;
-  displayedColumns: string[] = ['id', 'nombre', 'departamento', 'actions'];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
-
+  @ViewChild(MatTable) table!: MatTable<Localidad>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<LocalidadDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'departamento', 'acciones'];
+  dataSource!: MatTableDataSource<Localidad>;
+  suscription!: Subscription;
+
   constructor(
     private localidadService: LocalidadService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
+  }
 
-  ngOnInit() {
-    this.cargarLocalidad();
+  ngOnInit(): void {
+    this.listLocalidad();
 
     this.suscription = this.localidadService.refresh$.subscribe(() => {
-      this.cargarLocalidad();
+      this.listLocalidad();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
+  listLocalidad(): void {
+    this.localidadService.lista().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  cargarLocalidad(): void {
-    this.localidadService.lista().subscribe(
-      (data: Localidad[]) => {
-        const userDataArray: UserData[] = data.map(localidad => ({
-          id: localidad.id || 0,
-          nombre: localidad.nombre || '',
-          id_departamento: localidad.departamento ? localidad.departamento.id || 0 : 0,
-          departamento: localidad.departamento ? localidad.departamento.nombre || '' : '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    );
+    }
+    return output;
   }
-
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Localidad, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || this.accentFilter(data.departamento.nombre.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(LocalidadComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(localidad?: Localidad): void {
+    const esEdicion = localidad != null;
+    const dialogRef = this.dialog.open(LocalidadEditComponent, {
+      width: '600px',
+      data: esEdicion ? localidad : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.localidadService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('localidad eliminada', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Localidad editada con éxito' : 'Localidad creada con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-        this.cargarLocalidad();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar la Localidad', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
       }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
+    }
+    });
   }
 
-  addNewLocalidad() {
-    this.dialogNew.open(LocalidadNewComponent, {
+  openDetail(localidad: Localidad): void {
+    this.dialogRef = this.dialog.open(LocalidadDetailComponent, { 
       width: '600px',
-      disableClose: true,
+      data: localidad
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteLocalidad(localidad: Localidad): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + localidad.nombre,
+        title: 'Eliminar',
+      },
     });
 
-  }
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.localidadService.delete(localidad.id!).subscribe(data => {
+        this.toastr.success('Localidad eliminada con éxito', 'ELIMINADA', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
 
-  addDetailLocalidad(id: number) {
-    const dialogDetail = this.dialog.open(LocalidadDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getLocalidadFormData());
-      this.dataSource.data.push(this.dataSharingService.getLocalidadFormData());
-      console.log("id recibido: "+this.dataSharingService.getLocalidadId());
-    });
-  }
-
-
-  addEditLocalidad(id: number) {
-    const dialogEdit = this.dialog.open(LocalidadEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getLocalidadFormData());
-      this.dataSource.data.push(this.dataSharingService.getLocalidadFormData());
-      console.log("id recibido: "+this.dataSharingService.getLocalidadId());
-    });
-  }
-
+        const index = this.dataSource.data.findIndex(p => p.id === localidad.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la localidad', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
+    }
+  });
+}
 }

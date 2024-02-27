@@ -1,29 +1,28 @@
 <h1 mat-dialog-title>DETALLE
-    <h5>Provincia</h5>
+  <h5>PROVINCIA</h5>
 </h1>
 <mat-dialog-content>
-    <table class="table" *ngIf="provincia">
-        <tbody>
-          <tr>
-            <th scope="row">ID</th>
-            <td>{{provincia.id}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Gentilicio</th>
-            <td>{{provincia.gentilicio}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Nombre Provincia</th>
-            <td>{{provincia.nombre}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Nombre País</th>
-            <td>{{provincia.pais.nombre}}</td>
-          </tr>
-        </tbody>
-      </table>
-
-    <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cerrar</button>
-    </div>
-  </mat-dialog-content>
+  <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">ID</th>
+          <td>{{provincia.id}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Nombre</th>
+          <td>{{provincia.nombre}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Gentilicio</th>
+          <td>{{provincia.gentilicio}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Pais</th>
+          <td>{{provincia.pais.nombre}}</td>
+        </tr>
+      </tbody>
+    </table>
+  <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>

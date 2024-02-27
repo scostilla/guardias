@@ -1,188 +1,167 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Departamento } from 'src/app/models/Departamento';
 import { DepartamentoService } from 'src/app/services/departamento.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { DepartamentoDetailComponent } from '../departamento-detail/departamento-detail.component';
 import { DepartamentoEditComponent } from '../departamento-edit/departamento-edit.component';
-import { DepartamentoNewComponent } from '../departamento-new/departamento-new.component';
-
-export interface UserData {
-  id: number;
-  codigoPostal: string;
-  nombre: string;
-  id_provincia: number;
-  provincia: String;
-}
+import { DepartamentoDetailComponent } from '../departamento-detail/departamento-detail.component'; 
 
 @Component({
   selector: 'app-departamento',
   templateUrl: './departamento.component.html',
-  styleUrls: ['./departamento.component.css'],
+  styleUrls: ['./departamento.component.css']
 })
-export class DepartamentoComponent implements OnInit, AfterViewInit {
-  provincias: Departamento[] = [];
-  router: any;
-  displayedColumns: string[] = [
-    'id',
-    'codigoPostal',
-    'nombre',
-    'provincia',
-    'actions',
-  ];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
 
+export class DepartamentoComponent implements OnInit, OnDestroy {
+
+  @ViewChild(MatTable) table!: MatTable<Departamento>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<DepartamentoDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'codigoPostal', 'provincia', 'acciones'];
+  dataSource!: MatTableDataSource<Departamento>;
+  suscription!: Subscription;
+
   constructor(
     private departamentoService: DepartamentoService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService
-  ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-    this.dataSource = new MatTableDataSource<UserData>([]);
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
   }
 
-  ngOnInit() {
-    this.cargarDepartamento();
+  ngOnInit(): void {
+    this.listDepartamento();
 
     this.suscription = this.departamentoService.refresh$.subscribe(() => {
-      this.cargarDepartamento();
+      this.listDepartamento();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
+  listDepartamento(): void {
+    this.departamentoService.lista().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  cargarDepartamento(): void {
-    this.departamentoService.lista().subscribe(
-      (data: Departamento[]) => {
-        const userDataArray: UserData[] = data.map((departamento) => ({
-          id: departamento.id || 0,
-          codigoPostal: departamento.codigoPostal || '',
-          nombre: departamento.nombre || '',
-          id_provincia: departamento.provincia ? departamento.provincia.id || 0 : 0,
-          provincia: departamento.provincia ? departamento.provincia.nombre || '' : '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    );
+    }
+    return output;
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Departamento, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.codigoPostal.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.provincia.nombre.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
-  openDialog(
-    enterAnimationDuration: string,
-    exitAnimationDuration: string
-  ): void {
-    this.dialog.open(DepartamentoComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(departamento?: Departamento): void {
+    const esEdicion = departamento != null;
+    const dialogRef = this.dialog.open(DepartamentoEditComponent, {
+      width: '600px',
+      data: esEdicion ? departamento : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-      .open(ConfirmDialogComponent, {
-        data: {
-          message: 'Confirma la eliminación de ' + nombre,
-          title: 'Eliminar',
-        },
-      })
-      .afterClosed()
-      .subscribe((confirm: Boolean) => {
-        if (confirm) {
-          this.departamentoService.delete(id).subscribe(
-            (data) => {
-              this.toastr.success('Departamento eliminado', 'OK', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-              });
-              this.cargarDepartamento();
-            },
-            (err) => {
-              this.toastr.error(err.error.mensaje, 'Error', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-              });
-            }
-          );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Departamento editado con éxito' : 'Departamento creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
         } else {
-          this.dialog.closeAll();
+          this.dataSource.data.push(result);
         }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar el departamento', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+    });
+  }
+
+  openDetail(departamento: Departamento): void {
+    this.dialogRef = this.dialog.open(DepartamentoDetailComponent, { 
+      width: '600px',
+      data: departamento
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteDepartamento(departamento: Departamento): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + departamento.nombre,
+        title: 'Eliminar',
+      },
+    });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.departamentoService.delete(departamento.id!).subscribe(data => {
+        this.toastr.success('Departamento eliminado con éxito', 'ELIMINADO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        const index = this.dataSource.data.findIndex(p => p.id === departamento.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar el departamento', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       });
-  }
-
-  addNewDepartamento() {
-    this.dialogNew.open(DepartamentoNewComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-  }
-
-  addDetailDepartamento(id: number) {
-    const dialogDetail = this.dialog.open(DepartamentoDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 158: "+this.dataSharingService.getDepartamentoFormData());
-      this.dataSource.data.push(this.dataSharingService.getDepartamentoFormData());
-      console.log('id recibido: ' + this.dataSharingService.getDepartamentoId());
-    });
-  }
-
-  addEditDepartamento(id: number) {
-    const dialogEdit = this.dialog.open(DepartamentoEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log(this.dataSharingService.getDepartamentoFormData());
-      this.dataSource.data.push(this.dataSharingService.getDepartamentoFormData());
-      console.log('id recibido: ' + this.dataSharingService.getDepartamentoId());
-    });
-  }
+    }
+  });
+}
 }
