@@ -1,13 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { Departamento } from 'src/app/models/Departamento';
-import { DepartamentoService } from 'src/app/services/departamento.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Localidad } from 'src/app/models/Localidad';
 import { LocalidadService } from 'src/app/services/localidad.service';
-
-
+import { Departamento } from 'src/app/models/Departamento';
+import { DepartamentoService } from 'src/app/services/departamento.service';
 
 @Component({
   selector: 'app-localidad-edit',
@@ -16,64 +13,69 @@ import { LocalidadService } from 'src/app/services/localidad.service';
 })
 export class LocalidadEditComponent implements OnInit {
 
-  localidad?: Localidad;
-  departamentos: Departamento[] = [];
-
+  form?: FormGroup;
+  esEdicion?: boolean;
+  esIgual: boolean = false;
+  departamentos: Departamento[] = []; 
 
   constructor(
-    private LocalidadService: LocalidadService,
-    private departamentoService: DepartamentoService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
-    public dialogRef: MatDialogRef<LocalidadEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+    private fb: FormBuilder,
+    private localidadService: LocalidadService,
+    private departamentoService: DepartamentoService, 
+    private dialogRef: MatDialogRef<LocalidadEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Localidad 
+  ) { 
+    this.listDepartamento();
+  }
 
-  ngOnInit() {
-    const id = this.data.id;
-    this.LocalidadService.detalle(id).subscribe(
-      data=> {
-        this.localidad = data;
-        this.localidad.departamento.id = data.departamento.id;
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
-    this.departamentoService.lista().subscribe((data: Departamento[]) => {
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      departamento: [this.data ? this.data.departamento : '', Validators.required]
+    });
+
+    this.esEdicion = this.data != null;
+    
+    this.form.valueChanges.subscribe(val => {
+    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.departamento !== this.data?.departamento;
+    });
+
+  }
+
+  listDepartamento(): void {
+    this.departamentoService.lista().subscribe(data => {
       this.departamentos = data;
-      console.log(this.departamentos);
+    }, error => {
+      console.log(error);
     });
   }
 
-  onUpdate(): void {
-    const id = this.data.id;
-    console.log("onUpdate "+id);
-    if(this.localidad) {
-    this.LocalidadService.update(id, this.localidad).subscribe(
-      data=> {
-        this.toastr.success('Localidad Modificada', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
+  saveLocalidad(): void {
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+    const departamento = this.form?.get('departamento')?.value;
+
+    const localidad = new Localidad(nombre, departamento);
+    localidad.id = id;
+
+    if (this.esEdicion) {
+      this.localidadService.update(id, localidad).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    } else {
+      this.localidadService.save(localidad).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    }
   }
 
-  this.dialogRef.close();
-
+  compareDepartamento(p1: Departamento, p2: Departamento): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  cancel() {
+  cancelar(): void {
     this.dialogRef.close();
   }
 
-  }
-
+}

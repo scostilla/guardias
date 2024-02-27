@@ -83,10 +83,13 @@ export class LocalidadComponent implements OnInit, OnDestroy {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
     this.dataSource.filterPredicate = (data: Localidad, filter: string) => {
-      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || this.accentFilter(data.departamento.nombre.toLowerCase()).includes(this.accentFilter(filter));
+      const nombre = this.accentFilter(data.nombre.toLowerCase());
+      const departamento = this.accentFilter(data.departamento.nombre.toLowerCase());
+      filter = this.accentFilter(filter.toLowerCase());
+      return nombre.includes(filter) || departamento.includes(filter);
     };
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   openFormChanges(localidad?: Localidad): void {

@@ -1,35 +1,40 @@
-<h2 mat-dialog-title>MODIFICAR LOCALIDAD
-    <h5 class="requiredField">*Campos Obligatorios</h5>
-  </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="localidad">
-    <mat-dialog-content>
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre de la Localidad</mat-label>
-            <input matInput placeholder="Ingresar Nombre de la Localidad" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="localidad.nombre" required/>
-          </mat-form-field>
-        </div>
-      </div>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Localidad
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
 
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre del departamento</mat-label>
-            <mat-select id="idDepartamento" name="idDepartamento" [(ngModel)]="localidad.departamento.id" required>
-              <mat-option *ngFor="let departamento of departamentos" [value]="departamento.id">
-                {{ departamento.nombre }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+<form [formGroup]="form!" (ngSubmit)="saveLocalidad()">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label for="nombre">Nombre</mat-label>
+            <input id="nombre" matInput formControlName="nombre">
+          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+          </mat-error>
+        </mat-form-field>
       </div>
-    </mat-dialog-content>
-    <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
-      </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
     </div>
-  </form>
-
-
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Departamento</mat-label>
+          <mat-select id="mat-select-2" formControlName="departamento" [compareWith]="compareDepartamento">
+            <mat-option *ngFor="let departamento of departamentos" [value]="departamento" >{{ departamento.nombre }}</mat-option>
+          </mat-select>
+                    <mat-error *ngIf="form?.get('departamento')?.invalid && form?.get('departamento')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      </button>
+      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </mat-dialog-content>
+</form>
