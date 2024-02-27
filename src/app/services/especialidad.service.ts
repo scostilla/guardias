@@ -18,16 +18,16 @@ export class EspecialidadService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Especialidad[]> {
-      return this.httpClient.get<Especialidad[]>(this.especialidadesURL + 'lista');
+  public list(): Observable<Especialidad[]> {
+      return this.httpClient.get<Especialidad[]>(this.especialidadesURL + 'list');
   }
 
-  public detalle(id:number): Observable<Especialidad> {
-      return this.httpClient.get<Especialidad>(this.especialidadesURL + `detalle/${id}`);
+  public detail(id:number): Observable<Especialidad> {
+      return this.httpClient.get<Especialidad>(this.especialidadesURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Especialidad> {
-    return this.httpClient.get<Especialidad>(this.especialidadesURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Especialidad> {
+    return this.httpClient.get<Especialidad>(this.especialidadesURL + `detailnombre/${nombre}`);
 }
 
 public save(especialidades:Especialidad): Observable<any> {

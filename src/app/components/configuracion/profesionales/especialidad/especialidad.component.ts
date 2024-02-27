@@ -55,7 +55,7 @@ export class EspecialidadComponent implements OnInit, OnDestroy {
   }
 
   listEspecialidad(): void {
-    this.especialidadService.lista().subscribe(data => {
+    this.especialidadService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
