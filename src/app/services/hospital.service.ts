@@ -18,16 +18,16 @@ export class HospitalService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Hospital[]> {
-      return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'lista');
+  public list(): Observable<Hospital[]> {
+      return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'list');
   }
 
-  public detalle(id:number): Observable<Hospital> {
-      return this.httpClient.get<Hospital>(this.hospitalesURL + `detalle/${id}`);
+  public detail(id:number): Observable<Hospital> {
+      return this.httpClient.get<Hospital>(this.hospitalesURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Hospital> {
-    return this.httpClient.get<Hospital>(this.hospitalesURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Hospital> {
+    return this.httpClient.get<Hospital>(this.hospitalesURL + `detailnombre/${nombre}`);
 }
 
 public save(hospitales:Hospital): Observable<any> {

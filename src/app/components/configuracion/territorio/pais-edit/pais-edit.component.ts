@@ -16,17 +16,17 @@ export class PaisEditComponent implements OnInit {
   esIgual: boolean = false;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private paisService: PaisService,
     private dialogRef: MatDialogRef<PaisEditComponent>,
     @Inject(MAT_DIALOG_DATA) private data: Pais 
   ) { }
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({
+    this.form = this.fb.group({
       id: [this.data ? this.data.id : null],
       nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
-      codigo: [this.data ? this.data.codigo : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{3,3}$')]],
+      codigo: [this.data ? this.data.codigo : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
       nacionalidad: [this.data ? this.data.nacionalidad : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]]
     });
 
@@ -43,7 +43,7 @@ export class PaisEditComponent implements OnInit {
     const codigo = this.form?.get('codigo')?.value;
     const nacionalidad = this.form?.get('nacionalidad')?.value;
 
-    const pais = new Pais(nombre, codigo, nacionalidad);
+    const pais = new Pais(codigo, nacionalidad, nombre);
     pais.id = id;
 
     if (this.esEdicion) {

@@ -45,7 +45,7 @@ export class ProvinciaEditComponent implements OnInit {
   }
 
   listPais(): void {
-    this.paisService.lista().subscribe(data => {
+    this.paisService.list().subscribe(data => {
       this.paises = data;
     }, error => {
       console.log(error);

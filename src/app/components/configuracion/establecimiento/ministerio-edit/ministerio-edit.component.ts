@@ -36,7 +36,7 @@ export class MinisterioEditComponent implements OnInit {
 
   ngOnInit() {
     const id = this.data.id;
-    this.ministerioService.detalle(id).subscribe(
+    this.ministerioService.detail(id).subscribe(
       data=> {
         this.ministerio = data;
         this.ministerio.localidad.id = data.localidad.id;
@@ -48,11 +48,11 @@ export class MinisterioEditComponent implements OnInit {
         });
       }
     );
-    this.localidadService.lista().subscribe((data: Localidad[]) => {
+    this.localidadService.list().subscribe((data: Localidad[]) => {
       this.localidades = data;
       console.log(this.localidades);
     });
-    this.regionService.lista().subscribe((data: Region[]) => {
+    this.regionService.list().subscribe((data: Region[]) => {
       this.regiones = data;
       console.log(this.regiones);
     });

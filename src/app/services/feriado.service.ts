@@ -18,16 +18,16 @@ export class FeriadoService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Feriado[]> {
-      return this.httpClient.get<Feriado[]>(this.feriadosURL + 'lista');
+  public list(): Observable<Feriado[]> {
+      return this.httpClient.get<Feriado[]>(this.feriadosURL + 'list');
   }
 
-  public detalle(id:number): Observable<Feriado> {
-      return this.httpClient.get<Feriado>(this.feriadosURL + `detalle/${id}`);
+  public detail(id:number): Observable<Feriado> {
+      return this.httpClient.get<Feriado>(this.feriadosURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Feriado> {
-    return this.httpClient.get<Feriado>(this.feriadosURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Feriado> {
+    return this.httpClient.get<Feriado>(this.feriadosURL + `detailnombre/${nombre}`);
 }
 
 public save(feriados:Feriado): Observable<any> {

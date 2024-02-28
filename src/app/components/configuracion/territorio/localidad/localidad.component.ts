@@ -55,7 +55,7 @@ export class LocalidadComponent implements OnInit, OnDestroy {
   }
 
   listLocalidad(): void {
-    this.localidadService.lista().subscribe(data => {
+    this.localidadService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

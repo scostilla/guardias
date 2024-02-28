@@ -18,16 +18,16 @@ export class CapsService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Caps[]> {
-      return this.httpClient.get<Caps[]>(this.capsURL + 'lista');
+  public list(): Observable<Caps[]> {
+      return this.httpClient.get<Caps[]>(this.capsURL + 'list');
   }
 
-  public detalle(id:number): Observable<Caps> {
-      return this.httpClient.get<Caps>(this.capsURL + `detalle/${id}`);
+  public detail(id:number): Observable<Caps> {
+      return this.httpClient.get<Caps>(this.capsURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Caps> {
-    return this.httpClient.get<Caps>(this.capsURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Caps> {
+    return this.httpClient.get<Caps>(this.capsURL + `detailnombre/${nombre}`);
 }
 
 public save(caps:Caps): Observable<any> {

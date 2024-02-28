@@ -32,7 +32,7 @@ export class DepartamentoNewComponent implements OnInit {
     ) {}
 
   ngOnInit() {
-    this.provinciaService.lista().subscribe((data: Provincia[]) => {
+    this.provinciaService.list().subscribe((data: Provincia[]) => {
       this.Provincias = data;
     });
   }
@@ -40,7 +40,7 @@ export class DepartamentoNewComponent implements OnInit {
   onCreate(): void {
 
     if(this.idProvincia){
-      this. provinciaService.detalle(this.idProvincia).subscribe(
+      this. provinciaService.detail(this.idProvincia).subscribe(
         provincia => {
           this.departamento = new Departamento(this.codigoPostal, this.nombre, provincia);
           this.DepartamentoService.save(this.departamento).subscribe(

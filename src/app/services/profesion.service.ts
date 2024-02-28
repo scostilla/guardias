@@ -18,16 +18,16 @@ export class ProfesionService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Profesion[]> {
-      return this.httpClient.get<Profesion[]>(this.profesionesURL + 'lista');
+  public list(): Observable<Profesion[]> {
+      return this.httpClient.get<Profesion[]>(this.profesionesURL + 'list');
   }
 
-  public detalle(id:number): Observable<Profesion> {
-      return this.httpClient.get<Profesion>(this.profesionesURL + `detalle/${id}`);
+  public detail(id:number): Observable<Profesion> {
+      return this.httpClient.get<Profesion>(this.profesionesURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Profesion> {
-    return this.httpClient.get<Profesion>(this.profesionesURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Profesion> {
+    return this.httpClient.get<Profesion>(this.profesionesURL + `detailnombre/${nombre}`);
 }
 
 public save(profesiones:Profesion): Observable<any> {

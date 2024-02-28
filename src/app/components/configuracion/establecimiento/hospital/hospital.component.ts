@@ -93,7 +93,7 @@ export class HospitalComponent implements OnInit, AfterViewInit {
   }
 
   cargarHospitales(): void {
-    this.hospitalService.lista().subscribe(
+    this.hospitalService.list().subscribe(
       (data: Hospital[]) => {
         const userDataArray: UserData[] = data.map(hospital => ({
           id: hospital.id || 0,

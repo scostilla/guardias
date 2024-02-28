@@ -18,16 +18,16 @@ export class MinisterioService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Ministerio[]> {
-      return this.httpClient.get<Ministerio[]>(this.ministeriosURL + 'lista');
+  public list(): Observable<Ministerio[]> {
+      return this.httpClient.get<Ministerio[]>(this.ministeriosURL + 'list');
   }
 
-  public detalle(id:number): Observable<Ministerio> {
-      return this.httpClient.get<Ministerio>(this.ministeriosURL + `detalle/${id}`);
+  public detail(id:number): Observable<Ministerio> {
+      return this.httpClient.get<Ministerio>(this.ministeriosURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Ministerio> {
-    return this.httpClient.get<Ministerio>(this.ministeriosURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Ministerio> {
+    return this.httpClient.get<Ministerio>(this.ministeriosURL + `detailnombre/${nombre}`);
 }
 
 public save(ministerios:Ministerio): Observable<any> {

@@ -44,7 +44,7 @@ export class LocalidadEditComponent implements OnInit {
   }
 
   listDepartamento(): void {
-    this.departamentoService.lista().subscribe(data => {
+    this.departamentoService.list().subscribe(data => {
       this.departamentos = data;
     }, error => {
       console.log(error);

@@ -19,16 +19,16 @@ export class LocalidadService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Localidad[]> {
-      return this.httpClient.get<Localidad[]>(this.localidadesURL + 'lista');
+  public list(): Observable<Localidad[]> {
+      return this.httpClient.get<Localidad[]>(this.localidadesURL + 'list');
   }
 
-  public detalle(id:number): Observable<Localidad> {
-      return this.httpClient.get<Localidad>(this.localidadesURL + `detalle/${id}`);
+  public detail(id:number): Observable<Localidad> {
+      return this.httpClient.get<Localidad>(this.localidadesURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Localidad> {
-    return this.httpClient.get<Localidad>(this.localidadesURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Localidad> {
+    return this.httpClient.get<Localidad>(this.localidadesURL + `detailnombre/${nombre}`);
 }
 
 public save(localidad:Localidad): Observable<any> {

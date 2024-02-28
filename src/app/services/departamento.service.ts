@@ -19,16 +19,16 @@ export class DepartamentoService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Departamento[]> {
-      return this.httpClient.get<Departamento[]>(this.departamentosURL + 'lista');
+  public list(): Observable<Departamento[]> {
+      return this.httpClient.get<Departamento[]>(this.departamentosURL + 'list');
   }
 
-  public detalle(id:number): Observable<Departamento> {
-      return this.httpClient.get<Departamento>(this.departamentosURL + `detalle/${id}`);
+  public detail(id:number): Observable<Departamento> {
+      return this.httpClient.get<Departamento>(this.departamentosURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Departamento> {
-    return this.httpClient.get<Departamento>(this.departamentosURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Departamento> {
+    return this.httpClient.get<Departamento>(this.departamentosURL + `detailnombre/${nombre}`);
 }
 
 public save(departamento:Departamento): Observable<any> {

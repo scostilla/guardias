@@ -55,7 +55,7 @@ export class PaisComponent implements OnInit, OnDestroy {
   }
 
   listPaises(): void {
-    this.paisService.lista().subscribe(data => {
+    this.paisService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -66,9 +66,29 @@ export class PaisComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Pais, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.codigo.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.nacionalidad.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
   openFormChanges(pais?: Pais): void {

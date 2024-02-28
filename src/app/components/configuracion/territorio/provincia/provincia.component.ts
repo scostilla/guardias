@@ -55,7 +55,7 @@ export class ProvinciaComponent implements OnInit, OnDestroy {
   }
 
   listProvincia(): void {
-    this.provinciaService.lista().subscribe(data => {
+    this.provinciaService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -85,7 +85,9 @@ export class ProvinciaComponent implements OnInit, OnDestroy {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.dataSource.filterPredicate = (data: Provincia, filter: string) => {
-      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || this.accentFilter(data.gentilicio.toLowerCase()).includes(this.accentFilter(filter)) || this.accentFilter(data.pais.nombre.toLowerCase()).includes(this.accentFilter(filter));
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.gentilicio.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.pais.nombre.toLowerCase()).includes(this.accentFilter(filter));
     };
   }
 

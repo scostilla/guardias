@@ -84,7 +84,7 @@ export class NotificacionComponent implements OnInit, AfterViewInit {
   }
 
   cargarNotificaciones(): void {
-    this.notificacionService.lista().subscribe(
+    this.notificacionService.list().subscribe(
       (data: Notificacion[]) => {
         const userDataArray: UserData[] = data.map(notificacion => ({
           id: notificacion.id || 0,

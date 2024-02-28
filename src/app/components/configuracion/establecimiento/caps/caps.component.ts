@@ -89,7 +89,7 @@ export class CapsComponent implements OnInit, AfterViewInit {
   }
 
   cargarCaps(): void {
-    this.capsService.lista().subscribe(
+    this.capsService.list().subscribe(
       (data: Caps[]) => {
         const userDataArray: UserData[] = data.map(caps => ({
           id: caps.id || 0,

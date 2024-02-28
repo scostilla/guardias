@@ -18,16 +18,16 @@ export class NotificacionService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Notificacion[]> {
-      return this.httpClient.get<Notificacion[]>(this.notificacionesURL + 'lista');
+  public list(): Observable<Notificacion[]> {
+      return this.httpClient.get<Notificacion[]>(this.notificacionesURL + 'list');
   }
 
-  public detalle(id:number): Observable<Notificacion> {
-      return this.httpClient.get<Notificacion>(this.notificacionesURL + `detalle/${id}`);
+  public detail(id:number): Observable<Notificacion> {
+      return this.httpClient.get<Notificacion>(this.notificacionesURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Notificacion> {
-    return this.httpClient.get<Notificacion>(this.notificacionesURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Notificacion> {
+    return this.httpClient.get<Notificacion>(this.notificacionesURL + `detailnombre/${nombre}`);
 }
 
 public save(notificaciones:Notificacion): Observable<any> {

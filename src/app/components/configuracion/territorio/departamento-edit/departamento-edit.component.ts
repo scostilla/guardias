@@ -45,7 +45,7 @@ export class DepartamentoEditComponent implements OnInit {
   }
 
   listProvincia(): void {
-    this.provinciaService.lista().subscribe(data => {
+    this.provinciaService.list().subscribe(data => {
       this.provincias = data;
     }, error => {
       console.log(error);

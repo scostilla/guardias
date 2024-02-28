@@ -82,7 +82,7 @@ export class RegionComponent implements OnInit, AfterViewInit {
   }
 
   cargarRegion(): void {
-    this.regionService.lista().subscribe(
+    this.regionService.list().subscribe(
       (data: Region[]) => {
         const userDataArray: UserData[] = data.map(region => ({
           id: region.id || 0,

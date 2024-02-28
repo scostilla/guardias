@@ -55,7 +55,7 @@ export class DepartamentoComponent implements OnInit, OnDestroy {
   }
 
   listDepartamento(): void {
-    this.departamentoService.lista().subscribe(data => {
+    this.departamentoService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

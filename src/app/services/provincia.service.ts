@@ -19,16 +19,16 @@ export class ProvinciaService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Provincia[]> {
-      return this.httpClient.get<Provincia[]>(this.provinciasURL + 'lista');
+  public list(): Observable<Provincia[]> {
+      return this.httpClient.get<Provincia[]>(this.provinciasURL + 'list');
   }
 
-  public detalle(id:number): Observable<Provincia> {
-      return this.httpClient.get<Provincia>(this.provinciasURL + `detalle/${id}`);
+  public detail(id:number): Observable<Provincia> {
+      return this.httpClient.get<Provincia>(this.provinciasURL + `detail/${id}`);
   }
 
-  public detallenombre(nombre:string): Observable<Provincia> {
-    return this.httpClient.get<Provincia>(this.provinciasURL + `detallenombre/${nombre}`);
+  public detailnombre(nombre:string): Observable<Provincia> {
+    return this.httpClient.get<Provincia>(this.provinciasURL + `detailnombre/${nombre}`);
 }
 
 public save(provincias:Provincia): Observable<any> {

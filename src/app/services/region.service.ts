@@ -18,8 +18,8 @@ export class RegionService {
     return this._refresh$;
   }
 
-  public lista(): Observable<Region[]> {
-      return this.httpClient.get<Region[]>(this.regionesURL + 'lista');
+  public list(): Observable<Region[]> {
+      return this.httpClient.get<Region[]>(this.regionesURL + 'list');
   }
 
   public detail(id:number): Observable<Region> {

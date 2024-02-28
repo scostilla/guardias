@@ -45,7 +45,7 @@ export class EspecialidadEditComponent implements OnInit {
   }
 
   listProfesion(): void {
-    this.profesionService.lista().subscribe(data => {
+    this.profesionService.list().subscribe(data => {
       this.profesiones = data;
     }, error => {
       console.log(error);

@@ -19,16 +19,16 @@ export class PaisService {
       return this._refresh$;
     }
   
-    public lista(): Observable<Pais[]> {
-        return this.httpClient.get<Pais[]>(this.paisesURL + 'lista');
+    public list(): Observable<Pais[]> {
+        return this.httpClient.get<Pais[]>(this.paisesURL + 'list');
     }
   
-    public detalle(id:number): Observable<Pais> {
-        return this.httpClient.get<Pais>(this.paisesURL + `detalle/${id}`);
+    public detail(id:number): Observable<Pais> {
+        return this.httpClient.get<Pais>(this.paisesURL + `detail/${id}`);
     }
   
-    public detallenombre(nombre:string): Observable<Pais> {
-      return this.httpClient.get<Pais>(this.paisesURL + `detallenombre/${nombre}`);
+    public detailnombre(nombre:string): Observable<Pais> {
+      return this.httpClient.get<Pais>(this.paisesURL + `detailnombre/${nombre}`);
   }
   
   public save(paises:Pais): Observable<any> {

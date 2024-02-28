@@ -55,7 +55,7 @@ export class ProfesionComponent implements OnInit, OnDestroy {
   }
 
   listProfesiones(): void {
-    this.profesionService.lista().subscribe(data => {
+    this.profesionService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

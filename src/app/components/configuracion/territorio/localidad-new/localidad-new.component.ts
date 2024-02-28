@@ -31,7 +31,7 @@ export class LocalidadNewComponent implements OnInit {
     ) {}
 
   ngOnInit() {
-    this.DepartamentoService.lista().subscribe((data: Departamento[]) => {
+    this.DepartamentoService.list().subscribe((data: Departamento[]) => {
       this.Departamentos = data;
     });
   }
@@ -39,7 +39,7 @@ export class LocalidadNewComponent implements OnInit {
   onCreate(): void {
 
     if(this.idDepartamento){
-      this. DepartamentoService.detalle(this.idDepartamento).subscribe(
+      this. DepartamentoService.detail(this.idDepartamento).subscribe(
         departamento => {
           this.localidad = new Localidad(this.nombre, departamento);
           this.LocalidadService.save(this.localidad).subscribe(

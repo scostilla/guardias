@@ -93,7 +93,7 @@ export class MinisterioComponent implements OnInit, AfterViewInit {
   }
 
   cargarMinisterios(): void {
-    this.ministerioService.lista().subscribe(
+    this.ministerioService.list().subscribe(
       (data: Ministerio[]) => {
         const userDataArray: UserData[] = data.map(ministerio => ({
           id: ministerio.id || 0,

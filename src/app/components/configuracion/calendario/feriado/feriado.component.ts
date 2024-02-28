@@ -85,7 +85,7 @@ export class FeriadoComponent implements OnInit, AfterViewInit {
   }
 
   cargarFeriado(): void {
-    this.feriadoService.lista().subscribe(
+    this.feriadoService.list().subscribe(
       (data: Feriado[]) => {
         const userDataArray: UserData[] = data.map(feriado => ({
           id: feriado.id || 0,

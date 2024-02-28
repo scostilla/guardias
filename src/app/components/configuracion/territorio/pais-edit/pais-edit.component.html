@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Pais
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} País
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
@@ -21,7 +21,7 @@
           <mat-label>Código</mat-label>
             <input matInput formControlName="codigo">
           <mat-error *ngIf="form?.get('codigo')?.invalid && form?.get('codigo')?.touched">
-            El campo es obligatorio y debe tener solo letras (3 caracteres).
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
       </div>
