@@ -24,7 +24,7 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<MinisterioDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'ministerio', 'acciones'];
   dataSource!: MatTableDataSource<Ministerio>;
   suscription!: Subscription;
 

@@ -1,10 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Region } from 'src/app/models/Region';
 import { RegionService } from 'src/app/services/region.service';
-
 
 @Component({
   selector: 'app-region-edit',
@@ -13,55 +11,50 @@ import { RegionService } from 'src/app/services/region.service';
 })
 export class RegionEditComponent implements OnInit {
 
-  region?: Region;
+  form?: FormGroup;
+  esEdicion?: boolean;
+  esIgual: boolean = false;
 
   constructor(
+    private fb: FormBuilder,
     private regionService: RegionService,
-    private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService,
-    private router: Router,
-    public dialogRef: MatDialogRef<RegionEditComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id: number }
-  ) {}
+    private dialogRef: MatDialogRef<RegionEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: Region 
+  ) { }
 
-  ngOnInit() {
-    const id = this.data.id;
-    this.regionService.detail(id).subscribe(
-      data=> {
-        this.region = data;
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
-        });
-      }
-    );
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      id: [this.data ? this.data.id : null],
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,20}$')]]
+    });
+
+    this.esEdicion = this.data != null;
+    
+    this.form.valueChanges.subscribe(val => {
+    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre;
+    });
   }
 
-  onUpdate(): void {
-    const id = this.data.id;
-    console.log("onUpdate "+id);
-    if(this.region) {
-    this.regionService.update(id, this.region).subscribe(
-      data=> {
-        this.toastr.success('region Modificado', 'OK', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 7000, positionClass: 'toast-top-center'
-        });
-      }
-    )
+  saveRegion(): void {
+    const id = this.form?.get('id')?.value;
+    const nombre = this.form?.get('nombre')?.value;
+
+    const region = new Region(nombre);
+    region.id = id;
+
+    if (this.esEdicion) {
+      this.regionService.update(id, region).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    } else {
+      this.regionService.save(region).subscribe(data => {
+        this.dialogRef.close(data);
+      });
+    }
   }
 
-  this.dialogRef.close();
-
-  }
-
-  cancel() {
+  cancelar(): void {
     this.dialogRef.close();
   }
 
-  }
+}

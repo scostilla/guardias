@@ -88,6 +88,22 @@
         </mat-form-field>
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Es cabecera</mat-label>
+            <input matInput formControlName="idCabecera">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Autoridad</mat-label>
+            <input matInput formControlName="idAutoridad">
+        </mat-form-field>
+      </div>
+    </div>
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
         {{esEdicion ? 'Modificar' : 'Agregar'}}

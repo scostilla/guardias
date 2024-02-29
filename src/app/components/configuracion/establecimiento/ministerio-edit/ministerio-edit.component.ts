@@ -46,8 +46,8 @@ export class MinisterioEditComponent implements OnInit {
       localidad: [this.data ? this.data.localidad : '', Validators.required],
       region: [this.data ? this.data.region : '', Validators.required],
       estado: [this.data ? this.data.estado : '', Validators.required],
-      idCabecera: [this.data ? this.data.idCabecera : '', ],
-      idAutoridad: [this.data ? this.data.idAutoridad : '', ]
+      idCabecera: [this.data ? this.data.idCabecera : ''],
+      idAutoridad: [this.data ? this.data.idAutoridad : '']
     });
 
     this.esEdicion = this.data != null;
