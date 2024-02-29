@@ -49,7 +49,7 @@ public update(id:number, caps:Caps): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.capsURL + `delete/${id}`);
+  return this.httpClient.put<any>(this.capsURL + `delete/${id}`, {});
 }
 
 }

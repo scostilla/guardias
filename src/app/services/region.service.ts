@@ -49,7 +49,7 @@ public update(id:number, regiones:Region): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.regionesURL + `delete/${id}`);
+  return this.httpClient.put<any>(this.regionesURL + `delete/${id}`,{});
 }
 
 }

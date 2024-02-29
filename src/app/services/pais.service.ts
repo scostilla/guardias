@@ -50,7 +50,7 @@ export class PaisService {
   }
   
   public delete(id:number): Observable<any> {
-    return this.httpClient.delete<any>(this.paisesURL + `delete/${id}`);
+    return this.httpClient.put<any>(this.paisesURL + `delete/${id}`, {});
   }
   
   }

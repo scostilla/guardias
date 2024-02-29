@@ -120,36 +120,28 @@ import { PaisComponent } from './components/configuracion/territorio/pais/pais.c
 import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
 import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
 import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
-import { PaisNewComponent } from './components/configuracion/territorio/pais-new/pais-new.component';
 import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
 import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
 import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
-import { DepartamentoNewComponent } from './components/configuracion/territorio/departamento-new/departamento-new.component';
 import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
 import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
 import { LocalidadComponent } from './components/configuracion/territorio/localidad/localidad.component';
-import { LocalidadNewComponent } from './components/configuracion/territorio/localidad-new/localidad-new.component';
 import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
 import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
 import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
 import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
-import { MinisterioNewComponent } from './components/configuracion/establecimiento/ministerio-new/ministerio-new.component';
 import { MinisterioDetailComponent } from './components/configuracion/establecimiento/ministerio-detail/ministerio-detail.component';
 import { MinisterioEditComponent } from './components/configuracion/establecimiento/ministerio-edit/ministerio-edit.component';
 import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
 import { HospitalDetailComponent } from './components/configuracion/establecimiento/hospital-detail/hospital-detail.component';
 import { HospitalEditComponent } from './components/configuracion/establecimiento/hospital-edit/hospital-edit.component';
-import { HospitalNewComponent } from './components/configuracion/establecimiento/hospital-new/hospital-new.component';
 import { CapsComponent } from './components/configuracion/establecimiento/caps/caps.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
-import { RegionNewComponent } from './components/configuracion/establecimiento/region-new/region-new.component';
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail/region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
-import { CapsNewComponent } from './components/configuracion/establecimiento/caps-new/caps-new.component';
 import { CapsEditComponent } from './components/configuracion/establecimiento/caps-edit/caps-edit.component';
 import { CapsDetailComponent } from './components/configuracion/establecimiento/caps-detail/caps-detail.component';
 import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
-import { FeriadoNewComponent } from './components/configuracion/calendario/feriado-new/feriado-new.component';
 import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 import { NotificacionComponent } from './components/notificacion/notificacion.component';
@@ -256,36 +248,28 @@ registerLocaleData(localePy,'es');
     ProvinciaComponent,
     PaisEditComponent,
     PaisDetailComponent,
-    PaisNewComponent,
     ProvinciaDetailComponent,
     ProvinciaEditComponent,
     DepartamentoComponent,
-    DepartamentoNewComponent,
     DepartamentoEditComponent,
     DepartamentoDetailComponent,
     LocalidadComponent,
-    LocalidadNewComponent,
     LocalidadEditComponent,
     LocalidadDetailComponent,
     PruebaTerritorioComponent,
     MinisterioComponent,
-    MinisterioNewComponent,
     MinisterioDetailComponent,
     MinisterioEditComponent,
     HospitalComponent,
     HospitalDetailComponent,
     HospitalEditComponent,
-    HospitalNewComponent,
     CapsComponent,
     RegionComponent,
-    RegionNewComponent,
     RegionDetailComponent,
     RegionEditComponent,
-    CapsNewComponent,
     CapsEditComponent,
     CapsDetailComponent,
     FeriadoComponent,
-    FeriadoNewComponent,
     FeriadoDetailComponent,
     FeriadoEditComponent,
     NotificacionComponent,

@@ -3,6 +3,6 @@ export class Region{
   nombre: string;
 
   constructor(nombre: string) {
-    this.nombre=nombre;
+    this.nombre = nombre;
   }
 }

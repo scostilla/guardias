@@ -1,97 +1,100 @@
-<h2 mat-dialog-title>MODIFICAR MINISTERIO
-    <h5 class="requiredField">*Campos Obligatorios</h5>
-  </h2>
-  <form (ngSubmit)="onUpdate()" novalidate #f="ngForm" *ngIf="ministerio">
-    <mat-dialog-content>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Ministerio
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
 
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre del ministerio</mat-label>
-            <input matInput placeholder="Ingresar Nombre del ministerio" autocomplete="off" id="nombre" name="nombre" [(ngModel)]="ministerio.nombre" required/>
-          </mat-form-field>
-        </div>
+<form [formGroup]="form!" (ngSubmit)="saveMinisterio()">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre">
+          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+          </mat-error>
+        </mat-form-field>
       </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Domicilio del ministerio</mat-label>
-            <input matInput placeholder="Ingresar Nombre del ministerio" autocomplete="off" id="domicilio" name="domicilio" [(ngModel)]="ministerio.domicilio" required/>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre de la Localidad</mat-label>
-            <mat-select id="idLocalidad" name="idLocalidad" [(ngModel)]="ministerio.localidad.nombre" required>
-              <mat-option *ngFor="let localidad of localidades" [value]="localidad.nombre">
-                {{ localidad.nombre }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Región</mat-label>
-            <mat-select id="idRegion" name="idRegion" [(ngModel)]="ministerio.region.nombre" required>
-              <mat-option *ngFor="let region of regiones" [value]="region.nombre">
-                {{ region.nombre }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Teléfono</mat-label>
-            <input matInput placeholder="Ingresar Tel. del ministerio" autocomplete="off" id="telefono" name="telefono" [(ngModel)]="ministerio.telefono" required/>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Observación</mat-label>
-            <input matInput placeholder="Ingresar observación" autocomplete="off" id="observacion" name="observacion" [(ngModel)]="ministerio.observacion" required/>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Estado</mat-label>
-            <input matInput placeholder="Ingresar estado" autocomplete="off" id="estado" name="estado" [(ngModel)]="ministerio.estado" required/>
-          </mat-form-field>
-        </div>
-      </div>
-
-
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Cabecera</mat-label>
-            <input matInput placeholder="Es cabecera" autocomplete="off" id="idCabecera" name="idCabecera" [(ngModel)]="ministerio.idCabecera" required/>
-          </mat-form-field>
-        </div>
-      </div>
-
-
-    </mat-dialog-content>
-    <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button class="btnCancel" type="button" mat-button (click)="cancel()">Cancelar
-      </button>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">Modificar</button>
     </div>
-  </form>
-
-
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Domicilio</mat-label>
+            <input matInput formControlName="domicilio">
+          <mat-error *ngIf="form?.get('domicilio')?.invalid && form?.get('domicilio')?.touched">
+            El campo puede contener letras y números (entre 3 y 80 caracteres).
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono">
+          <mat-error *ngIf="form?.get('telefono')?.invalid && form?.get('telefono')?.touched">
+            El campo debe tener solo números (9 a 15 digitos).
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Observación</mat-label>
+            <input matInput formControlName="observacion">
+          <mat-error *ngIf="form?.get('observacion')?.invalid && form?.get('observacion')?.touched">
+            El campo puede contener letras y números (entre 3 y 80 caracteres).
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            <mat-option [value]="true">Activo</mat-option>
+            <mat-option [value]="false">Inactivo</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form?.get('esPasiva')?.invalid && form?.get('esPasiva')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Localidad</mat-label>
+          <mat-select formControlName="localidad" [compareWith]="compareLocalidad">
+            <mat-option *ngFor="let localidad of localidades" [value]="localidad" >{{ localidad.nombre }}</mat-option>
+          </mat-select>
+                    <mat-error *ngIf="form?.get('localidad')?.invalid && form?.get('localidad')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Región</mat-label>
+          <mat-select formControlName="region" [compareWith]="compareRegion">
+            <mat-option *ngFor="let region of regiones" [value]="region" >{{ region.nombre }}</mat-option>
+          </mat-select>
+                    <mat-error *ngIf="form?.get('region')?.invalid && form?.get('region')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      </button>
+      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </mat-dialog-content>
+</form>

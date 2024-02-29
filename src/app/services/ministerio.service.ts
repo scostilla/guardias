@@ -49,7 +49,7 @@ public update(id:number, ministerios:Ministerio): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.ministeriosURL + `delete/${id}`);
+  return this.httpClient.put<any>(this.ministeriosURL + `delete/${id}`, {});
 }
 
 }

@@ -1,37 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Ministerio } from 'src/app/models/Ministerio';
 import { MinisterioService } from 'src/app/services/ministerio.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component';
 import { MinisterioEditComponent } from '../ministerio-edit/ministerio-edit.component';
-import { MinisterioNewComponent } from '../ministerio-new/ministerio-new.component';
-
-
-export interface UserData {
-  id: number;
-  domicilio: string;
-  estado: boolean;
-  idLocalidad: number;
-  localidad: string;
-  idRegion: number;
-  region: string;
-  nombre: string;
-  observacion: string;
-  telefono: number;
-  idCabecera: number;
-
-}
-
+import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component'; 
 
 @Component({
   selector: 'app-ministerio',
@@ -39,163 +17,155 @@ export interface UserData {
   styleUrls: ['./ministerio.component.css']
 })
 
-export class MinisterioComponent implements OnInit, AfterViewInit {
+export class MinisterioComponent implements OnInit, OnDestroy {
 
-  ministerios: Ministerio[] = [];
-  localidades: Ministerio[] = [];
-  regiones: Ministerio[] = [];
-  displayedColumns: string[] = ['id', 'domicilio', 'estado', 'idLocalidad', 'idRegion', 'nombre', 'actions'];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
-
+  @ViewChild(MatTable) table!: MatTable<Ministerio>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<MinisterioDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'acciones'];
+  dataSource!: MatTableDataSource<Ministerio>;
+  suscription!: Subscription;
+
   constructor(
     private ministerioService: MinisterioService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    private router: Router,
-    ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
+  }
 
-  ngOnInit() {
-    this.cargarMinisterios();
+  ngOnInit(): void {
+    this.listMinisterio();
 
     this.suscription = this.ministerioService.refresh$.subscribe(() => {
-      this.cargarMinisterios();
+      this.listMinisterio();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
+  listMinisterio(): void {
+    this.ministerioService.list().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  cargarMinisterios(): void {
-    this.ministerioService.list().subscribe(
-      (data: Ministerio[]) => {
-        const userDataArray: UserData[] = data.map(ministerio => ({
-          id: ministerio.id || 0,
-          domicilio: ministerio.domicilio || '',
-          estado: ministerio.estado,
-          idLocalidad: ministerio.localidad ? ministerio.localidad.id || 0 : 0,
-          localidad: ministerio.localidad ? ministerio.localidad.nombre || '' : '',
-          idRegion: ministerio.region ? ministerio.region.id || 0 : 0,
-          region: ministerio.region ? ministerio.region.nombre || '' : '',
-          nombre: ministerio.nombre || '',
-          observacion: ministerio.observacion || '',
-          telefono: ministerio.telefono,
-          idCabecera: ministerio.idCabecera,
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    );
+    }
+    return output;
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: Ministerio, filter: string) => {
+      const nombre = this.accentFilter(data.nombre.toLowerCase());
+      const domicilio = this.accentFilter(data.domicilio.toLowerCase());
+      const localidad = this.accentFilter(data.localidad.nombre.toLowerCase());
+      const region = this.accentFilter(data.region.nombre.toLowerCase());
+      const estado = data.estado ? 'si' : 'no';
+      filter = this.accentFilter(filter.toLowerCase());
+      return nombre.includes(filter) || localidad.includes(filter) || region.includes(filter) || estado.includes(filter);
+    };
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(MinisterioComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(ministerio?: Ministerio): void {
+    const esEdicion = ministerio != null;
+    const dialogRef = this.dialog.open(MinisterioEditComponent, {
+      width: '600px',
+      data: esEdicion ? ministerio : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.ministerioService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('Ministerio eliminado', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Ministerio editado con éxito' : 'Ministerio creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-        this.cargarMinisterios();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar el ministerio', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
       }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
+    }
+    });
   }
 
-  addNewMinisterio() {
-    this.dialogNew.open(MinisterioNewComponent, {
+  openDetail(ministerio: Ministerio): void {
+    this.dialogRef = this.dialog.open(MinisterioDetailComponent, { 
       width: '600px',
-      disableClose: true,
+      data: ministerio
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteMinisterio(ministerio: Ministerio): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + ministerio.nombre,
+        title: 'Eliminar',
+      },
     });
 
-  }
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.ministerioService.delete(ministerio.id!).subscribe(data => {
+        this.toastr.success('Ministerio eliminado con éxito', 'ELIMINADO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
 
-  addDetailMinisterio(id: number) {
-    const dialogDetail = this.dialog.open(MinisterioDetailComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 152: "+this.dataSharingService.getMinisterioFormData());
-      this.dataSource.data.push(this.dataSharingService.getMinisterioFormData());
-      console.log("id recibido: "+this.dataSharingService.getMinisterioId());
-    });
-  }
-
-
-  addEditMinisterio(id: number) {
-    const dialogEdit = this.dialog.open(MinisterioEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getMinisterioFormData());
-      this.dataSource.data.push(this.dataSharingService.getMinisterioFormData());
-      console.log("id recibido: "+this.dataSharingService.getMinisterioId());
-    });
-  }
-
+        const index = this.dataSource.data.findIndex(p => p.id === ministerio.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar el ministerio', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
+    }
+  });
+}
 }

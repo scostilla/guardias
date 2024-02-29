@@ -50,7 +50,7 @@ public update(id:number, provincias:Provincia): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.provinciasURL + `delete/${id}`);
+  return this.httpClient.put<any>(this.provinciasURL + `delete/${id}`, {});
 }
 
 }

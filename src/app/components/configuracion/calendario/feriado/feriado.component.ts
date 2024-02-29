@@ -12,7 +12,6 @@ import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.se
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { FeriadoDetailComponent } from '../feriado-detail/feriado-detail.component';
 import { FeriadoEditComponent } from '../feriado-edit/feriado-edit.component';
-import { FeriadoNewComponent } from '../feriado-new/feriado-new.component';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -146,14 +145,6 @@ export class FeriadoComponent implements OnInit, AfterViewInit {
     this.dialog.closeAll();
   }
 });
-  }
-
-  addNewFeriado() {
-    this.dialogNew.open(FeriadoNewComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-
   }
 
   addDetailFeriado(id: number) {

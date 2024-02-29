@@ -64,29 +64,30 @@ import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.c
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
-import { PaisNewComponent } from './components/configuracion/territorio/pais-new/pais-new.component';
 import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
 import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
 import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
 import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
 import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
 import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
-import { DepartamentoNewComponent } from './components/configuracion/territorio/departamento-new/departamento-new.component';
 import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
 import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
 import { LocalidadComponent } from './components/configuracion/territorio/localidad/localidad.component';
-import { LocalidadNewComponent } from './components/configuracion/territorio/localidad-new/localidad-new.component';
 import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
 import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
 import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
+import { MinisterioDetailComponent } from './components/configuracion/establecimiento/ministerio-detail/ministerio-detail.component';
+import { MinisterioEditComponent } from './components/configuracion/establecimiento/ministerio-edit/ministerio-edit.component';
 import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
+import { HospitalDetailComponent } from './components/configuracion/establecimiento/hospital-detail/hospital-detail.component';
+import { HospitalEditComponent } from './components/configuracion/establecimiento/hospital-edit/hospital-edit.component';
 import { CapsComponent } from './components/configuracion/establecimiento/caps/caps.component';
+import { CapsDetailComponent } from './components/configuracion/establecimiento/caps-detail/caps-detail.component';
+import { CapsEditComponent } from './components/configuracion/establecimiento/caps-edit/caps-edit.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
-import { RegionNewComponent } from './components/configuracion/establecimiento/region-new/region-new.component';
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
-import { FeriadoNewComponent } from './components/configuracion/calendario/feriado-new/feriado-new.component';
 import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
@@ -180,29 +181,30 @@ const routes: Routes = [
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
  {path: 'configuracion', component:ConfiguracionComponent},
  {path: 'pais', component:PaisComponent},
- {path: 'pais-new', component:PaisNewComponent},
  {path: 'pais-detail/:id', component:PaisDetailComponent},
  {path: 'pais-edit/:id', component:PaisEditComponent},
  {path: 'provincia', component:ProvinciaComponent},
  {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
  {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
  {path: 'departamento', component:DepartamentoComponent},
- {path: 'departamento-new', component:DepartamentoNewComponent},
  {path: 'departamento-detail/:id', component:DepartamentoDetailComponent},
  {path: 'departamento-edit/:id', component:DepartamentoEditComponent},
  {path: 'localidad', component:LocalidadComponent},
- {path: 'localidad-new', component:LocalidadNewComponent},
  {path: 'localidad-detail/:id', component:LocalidadDetailComponent},
  {path: 'localidad-edit/:id', component:LocalidadEditComponent},
  {path: 'ministerio', component:MinisterioComponent},
+ {path: 'ministerio-detail/:id', component:MinisterioDetailComponent},
+ {path: 'ministerio-edit/:id', component:MinisterioEditComponent},
  {path: 'hospital', component:HospitalComponent},
+ {path: 'hospital-detail/:id', component:HospitalDetailComponent},
+ {path: 'hospital-edit/:id', component:HospitalEditComponent},
  {path: 'caps', component:CapsComponent},
+ {path: 'caps-detail/:id', component:CapsDetailComponent},
+ {path: 'caps-edit/:id', component:CapsEditComponent},
  {path: 'region', component:RegionComponent},
- {path: 'region-new', component:RegionNewComponent},
  {path: 'region-detail/:id', component:RegionDetailComponent},
  {path: 'region-edit/:id', component:RegionEditComponent},
  {path: 'feriado', component:FeriadoComponent},
- {path: 'feriado-new', component:FeriadoNewComponent},
  {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
  {path: 'feriado-edit/:id', component:FeriadoEditComponent},
  {path: 'profesion', component:ProfesionComponent},

@@ -49,7 +49,7 @@ public update(id:number, feriados:Feriado): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.feriadosURL + `delete/${id}`);
+  return this.httpClient.put<any>(this.feriadosURL + `delete/${id}`, {});
 }
 
 }

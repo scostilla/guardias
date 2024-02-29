@@ -12,9 +12,10 @@ export class Ministerio {
     observacion: string;
     telefono: number;
     idCabecera: number;
+    idAutoridad: number;
 
 
-constructor(domicilio: string, estado: boolean, localidad: Localidad, region: Region, nombre: string, observacion: string, telefono: number, idCabecera: number) {
+constructor(domicilio: string, estado: boolean, localidad: Localidad, region: Region, nombre: string, observacion: string, telefono: number, idCabecera: number, idAutoridad: number) {
     this.domicilio = domicilio;
     this.estado = estado;
     this.localidad = localidad;
@@ -23,5 +24,6 @@ constructor(domicilio: string, estado: boolean, localidad: Localidad, region: Re
     this.observacion = observacion;
     this.telefono = telefono;
     this.idCabecera = idCabecera;
+    this.idAutoridad = idAutoridad;
 }
 }

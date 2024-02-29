@@ -50,7 +50,7 @@ public update(id:number, localidad:Localidad): Observable<any> {
 }
 
 public delete(id:number): Observable<any> {
-  return this.httpClient.delete<any>(this.localidadesURL + `delete/${id}`);
+  return this.httpClient.put<any>(this.localidadesURL + `delete/${id}`, {});
 }
 
 }
