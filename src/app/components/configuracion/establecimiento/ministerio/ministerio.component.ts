@@ -19,14 +19,19 @@ import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detai
 
 export class MinisterioComponent implements OnInit, OnDestroy {
 
+  localidadVisible: boolean = false;
+  regionVisible: boolean = false;
+  idCabeceraVisible: boolean = false;
+
   @ViewChild(MatTable) table!: MatTable<Ministerio>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<MinisterioDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'ministerio', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'idCabecera', 'acciones'];
   dataSource!: MatTableDataSource<Ministerio>;
   suscription!: Subscription;
+  panelOpenState = false;
 
   constructor(
     private ministerioService: MinisterioService,
@@ -52,6 +57,7 @@ export class MinisterioComponent implements OnInit, OnDestroy {
       this.listMinisterio();
     })
 
+    this.actualizarColumnasVisibles();
   }
 
   listMinisterio(): void {
@@ -65,6 +71,31 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
+
+actualizarColumnasVisibles(): void {
+  let columnasBase = ['id', 'nombre', 'domicilio', 'telefono', 'estado', 'acciones'];
+
+  let columnasVisibles: string[] = [];
+
+  columnasBase.forEach(columna => {
+    columnasVisibles.push(columna);
+    if (columna === 'telefono' && this.localidadVisible) {
+      columnasVisibles.push('localidad');
+    }
+    if (columna === 'telefono' && this.regionVisible) {
+      columnasVisibles.push('region');
+    }
+    if (columna === 'telefono' && this.idCabeceraVisible) {
+      columnasVisibles.push('idCabecera');
+    }
+  });
+
+  this.displayedColumns = columnasVisibles;
+
+  if (this.table) {
+    this.table.renderRows();
+  }
+}
 
   accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";

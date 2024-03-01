@@ -13,10 +13,12 @@
           <div id="titulo"><h1 class="fw-bold title-header">GUARDIAS</h1></div>
         </div>
       </div>
+    </div>
+
       <div class="content-icon-header">
       <button mat-fab [matMenuTriggerFor]="menu_admin"
         type="submit"
-        class="icon-material"  *ngIf="showButtons">
+        class="icon-material">
         <mat-icon>settings</mat-icon>
       </button>
         <mat-menu #menu_admin="matMenu">
@@ -49,7 +51,6 @@
           </div>
         </mat-menu>
         </div>
-    </div>
   </div>
  </nav>
 <div *ngIf="showNavBar">

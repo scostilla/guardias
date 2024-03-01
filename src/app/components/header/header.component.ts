@@ -17,7 +17,6 @@ export class HeaderComponent implements OnDestroy {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.showNavBar = !(event.url === '/' || event.url === '/home-page');
-        this.showButtons= !(event.url === '/');
       }
     });
   }
