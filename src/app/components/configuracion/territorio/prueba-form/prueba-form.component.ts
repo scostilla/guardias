@@ -34,9 +34,7 @@ export class PruebaFormComponent {
       eventEndTime: ['', Validators.required],
       eventColor: ['', Validators.required]
     }, { validator: this.dateAndTimeValidator.bind(this) });
-      // Escuchar cambios en el campo 'eventEndDate'
   this.form.get('eventEndDate')?.valueChanges.subscribe(() => {
-    // Forzar la revalidación del campo 'eventEndTime'
     this.form?.get('eventEndTime')?.updateValueAndValidity();
   });
   }
@@ -58,14 +56,11 @@ export class PruebaFormComponent {
         end.setHours(parseInt(endTime[0]), parseInt(endTime[1]));
       }
   
-      // Si la fecha de inicio y finalización son iguales, solo verifica la hora
       if (start.toDateString() === end.toDateString()) {
         if (end.getTime() < start.getTime()) {
-          // Establece el error solo en el campo de hora de finalización
           group.controls['eventEndTime'].setErrors({ timeInvalid: true });
         }
       } else {
-        // Si la fecha de finalización es anterior a la fecha de inicio, establece el error en ambos campos
         if (end < start) {
           group.controls['eventEndDate'].setErrors({ dateInvalid: true });
           group.controls['eventEndTime'].setErrors({ timeInvalid: true });
