@@ -68,7 +68,7 @@
   }
   
 }
-@media (max-width:600px) {
+@media (max-width:768px) {
   .nav > .nav-btn {
     display: inline-block;
     position: absolute;
@@ -92,7 +92,7 @@
   }
   .nav > .nav-links {
     position: absolute;
-    z-index: 1;
+    z-index: 999;
     display: block;
     width: 100%;
     background-color: #243c74;

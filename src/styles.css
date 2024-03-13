@@ -1,10 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
-
 @charset "utf-8";
 @font-face {
     font-family: Ubuntu;
     src: url('src/assets/font/Ubuntu-Regular.ttf');
 }
+
+@import "node_modules/angular-calendar/css/angular-calendar.css";
+@import "calendar.css";
+
+
 html, body { height: 100%; }
 body { margin: 0; font-family: "Ubuntu", sans-serif; }
 
@@ -19,10 +22,15 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     color: #37BBED;
     font-size: 2em;
     padding: 20px 20px 0 1.4%;
+    line-height: 1;
 }
 
 .titulos-second {
   color: #243c74;
+}
+
+.titulos::before {
+  content: ".:: "; 
 }
 
 .titulos-second-def {
@@ -120,10 +128,16 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
     line-height: normal;
 }
 
-@media (max-width:600px) {
+@media (max-width:768px) {
     .text {
         font-size: 140%;
     }
+    .titulos {
+      padding: 0;
+  }  
+    .titulos::before {
+      content: ""; 
+  }
 }
 
 /* --botones circulares-- */
@@ -251,18 +265,20 @@ mat-label{
 
 /* --referencias-- */
 .ref {
-    font-weight: bold;
-    float: left;
-    margin: 10px 30px 10px 3px;
-  }
+  font-weight: bold;
+}
 
-  .ref-circulo {
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin: 10px 0 10px 0;
-  }
+.ref-circulo {
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: inline-block; 
+  vertical-align: middle; 
+}
+
+.ref-circulo + .ref {
+  margin-right: 17px;
+}
 
 /* -- colores guardias -- */
 .ref-extra {
@@ -349,7 +365,6 @@ th {
       font-family: "Ubuntu";
       font-size: 3.6em;
       padding: 40px 50px 20px 20px;
-      text-align: center;
       font-weight: bolder;
   }
 

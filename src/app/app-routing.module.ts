@@ -96,6 +96,7 @@ import { ProfesionEditComponent } from './components/configuracion/profesionales
 import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
+import { CronogramaNewComponent } from './components/cronograma-new/cronograma-new.component';
 
 
 
@@ -104,6 +105,7 @@ import { EspecialidadEditComponent } from './components/configuracion/profesiona
 
 import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
 import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
+import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
 import { PruebaDetailComponent } from './components/configuracion/territorio/prueba-detail/prueba-detail.component';
 
 
@@ -213,6 +215,8 @@ const routes: Routes = [
  {path: 'especialidad', component:EspecialidadComponent},
  {path: 'especialidad-detail/:id', component:EspecialidadDetailComponent},
  {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
+ {path: 'cronograma-new', component:CronogramaNewComponent},
+
 
 
 
@@ -222,6 +226,7 @@ const routes: Routes = [
 
  {path: 'prueba-territorio', component:PruebaTerritorioComponent},
  {path: 'prueba-form', component:PruebaFormComponent},
+ {path: 'prueba-form2', component:PruebaForm2Component},
  {path: 'prueba-detail', component:PruebaDetailComponent},
 
 

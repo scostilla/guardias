@@ -1,11 +1,17 @@
-<h1>Detalle de la profesión</h1>
-
-<!-- Mostrar la información de la profesión en un formato de solo lectura -->
-<p><strong>Id:</strong> {{profesion.id}}</p>
-<p><strong>Nombre:</strong> {{profesion.nombre}}</p>
-<p><strong>Asistencial:</strong> {{profesion.asistencial ? 'Sí' : 'No'}}</p>
-
-<!-- Botón para cerrar el diálogo -->
-<button mat-raised-button color="secondary" (click)="cerrar()">
-  Cerrar
-</button>
+<h1 mat-dialog-title>Listado profesionales
+  <h5 *ngIf="data.holidayName">
+    <p>Feriado: {{ data.holidayName }}</p>
+  </h5>
+</h1>
+<mat-dialog-content>
+  <mat-list *ngIf="data.events.length; else noData">
+    <ng-container *ngFor="let event of data.events">
+      <mat-list-item><span [style.color]="event.color.primary">{{ event.title }}</span> - Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span></mat-list-item>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </mat-list>
+</mat-dialog-content>
+<ng-template #noData><p>No hay profesionales cargados para la fecha seleccionada.</p></ng-template>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

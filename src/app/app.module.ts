@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -11,6 +11,10 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { CalendarCommonModule, CalendarMonthModule } from 'angular-calendar';
+import { MatListModule } from '@angular/material/list';
 
 //Components
 import { AppComponent } from './app.component';
@@ -156,6 +160,7 @@ import { PruebaFormComponent } from './components/configuracion/territorio/prueb
 import { PruebaDetailComponent } from './components/configuracion/territorio/prueba-detail/prueba-detail.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { SpinnerInterceptor } from './services/spinner-interceptor.service';
+import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
 
 
 registerLocaleData(localePy,'es');
@@ -283,6 +288,7 @@ registerLocaleData(localePy,'es');
     PruebaFormComponent,
     PruebaDetailComponent,
     SpinnerComponent,
+    PruebaForm2Component,
     
   ],
 
@@ -317,13 +323,23 @@ registerLocaleData(localePy,'es');
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule, 
     MatCardModule,   
     MatRadioModule,
     MatProgressSpinnerModule,
+    MatListModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
+    CalendarCommonModule, // Importa este módulo
+    CalendarMonthModule,
     ToastrModule.forRoot() // ToastrModule added
     
   ],
+  
+
   providers: [
     ProfessionalDataServiceService,
     {provide: LOCALE_ID,useValue:'es'},

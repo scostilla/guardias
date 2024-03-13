@@ -1,26 +1,75 @@
-<h1>{{esEdicion ? 'Editar' : 'Crear'}} profesión</h1>
+<h2 mat-dialog-title>Añadir Profesional
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
+<form (ngSubmit)="onSubmit()" #f="ngForm">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre del Profesional</mat-label>
+          <input matInput type="text" [(ngModel)]="eventTitle" name="eventTitle" required>
+        </mat-form-field>
+      </div>
+    </div>
 
-<!-- Formulario para editar o crear una profesión -->
-<form [formGroup]="form!" (ngSubmit)="guardarProfesion()">
-  <mat-form-field>
-    <mat-label>Nombre</mat-label>
-    <input matInput formControlName="nombre">
-    <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
-      El nombre es obligatorio y debe tener máximo 50 caracteres
-    </mat-error>
-  </mat-form-field>
-    <mat-label>Asistencial</mat-label>
-    <mat-radio-group formControlName="asistencial">
-        <mat-radio-button [value]="true" color="primary">Si</mat-radio-button>
-        <mat-radio-button [value]="false" color="primary">No</mat-radio-button>
-      </mat-radio-group>
-    <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
-      El campo asistencial es obligatorio
-    </mat-error>
-  <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
-    {{esEdicion ? 'Guardar' : 'Crear'}}
-  </button>
-  <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
-    Cancelar
-  </button>
+    <div class="row" style="margin-top: 20px">
+      <div class="col-6">
+        <mat-form-field appearance="fill">
+          <mat-label>Fecha de Inicio</mat-label>
+          <input matInput [matDatepicker]="fechaPicker" [(ngModel)]="eventStartDate" name="eventStartDate" required>
+          <mat-datepicker-toggle matSuffix [for]="fechaPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fechaPicker></mat-datepicker>
+        </mat-form-field>
+        
+      </div>
+      <div class="col-6">
+        <mat-form-field appearance="fill">
+          <mat-label>Hora de Inicio</mat-label>
+          <input matInput [ngxMatTimepicker]="horaPicker" [format]="24" [(ngModel)]="eventStartTime" name="eventStartTime" required>
+          <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+          <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px">
+      <div class="col-6">
+        <mat-form-field appearance="fill">
+          <mat-label>Fecha de Finalización</mat-label>
+          <input matInput [matDatepicker]="fechaPicker2" [min]="eventStartDate" [(ngModel)]="eventEndDate" name="eventEndDate" required>
+          <mat-datepicker-toggle matSuffix [for]="fechaPicker2"></mat-datepicker-toggle>
+          <mat-datepicker #fechaPicker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-6">
+        <mat-form-field appearance="fill">
+          <mat-label>Hora de Finalización</mat-label>
+          <input matInput [ngxMatTimepicker]="horaPicker2" [format]="24" [(ngModel)]="eventEndTime" name="eventEndTime" required>
+          <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+          <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Tipo de guardia</mat-label>
+          <mat-select [(ngModel)]="eventColor" name="eventColor" required>
+            <mat-option *ngFor="let color of predefinedColors" [value]="color.name">
+              {{ color.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  
+  <div mat-dialog-actions class="action mt-4">
+  <div class="actions">
+    <button mat-raised-button color="primary" type="submit" [disabled]="!f.form.valid">Guardar</button>
+    <button mat-raised-button color="secondary" (click)="dialogRef.close()">Cerrar</button>
+  </div>
+  </div>
+</mat-dialog-content>
+
 </form>

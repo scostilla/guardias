@@ -1,0 +1,16 @@
+  .cal-month-view .cal-day-cell:not(.holiday-class).cal-weekend {
+    background-color: #f8f6f6;  
+  }
+
+  .cal-month-view .cal-day-cell.cal-weekend:hover {
+    background-color: #ececec; 
+  }
+
+  .cal-month-view .cal-day-number {
+    font-weight: bold;
+  }
+
+  .holiday-class {
+    background-color: #dbafc9;
+  }
+

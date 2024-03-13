@@ -22,13 +22,14 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   localidadVisible: boolean = false;
   regionVisible: boolean = false;
   idCabeceraVisible: boolean = false;
+  idAutoridadVisible: boolean = false;
 
   @ViewChild(MatTable) table!: MatTable<Ministerio>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<MinisterioDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'idCabecera', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'idCabecera', 'idAutoridad', 'acciones'];
   dataSource!: MatTableDataSource<Ministerio>;
   suscription!: Subscription;
   panelOpenState = false;
@@ -87,6 +88,9 @@ actualizarColumnasVisibles(): void {
     }
     if (columna === 'telefono' && this.idCabeceraVisible) {
       columnasVisibles.push('idCabecera');
+    }
+    if (columna === 'telefono' && this.idAutoridadVisible) {
+      columnasVisibles.push('idAutoridad');
     }
   });
 
