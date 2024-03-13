@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-prueba-form',
@@ -8,6 +9,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 
 export class PruebaFormComponent {
+  form?: FormGroup;
   eventTitle!: string;
   eventStartDate!: Date; 
   eventStartTime!: string; 
@@ -21,32 +23,78 @@ export class PruebaFormComponent {
     { name: 'Contrafactura', primary: '#A9D08F', secondary: '#A9D08F' }
   ];
 
-  constructor(public dialogRef: MatDialogRef<PruebaFormComponent>) {}
+  constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<PruebaFormComponent>) {}
+
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      eventTitle: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{4,50}$')]],
+      eventStartDate: ['', Validators.required],
+      eventStartTime: ['', Validators.required],
+      eventEndDate: ['', Validators.required],
+      eventEndTime: ['', Validators.required],
+      eventColor: ['', Validators.required]
+    }, { validator: this.dateAndTimeValidator.bind(this) });
+      // Escuchar cambios en el campo 'eventEndDate'
+  this.form.get('eventEndDate')?.valueChanges.subscribe(() => {
+    // Forzar la revalidación del campo 'eventEndTime'
+    this.form?.get('eventEndTime')?.updateValueAndValidity();
+  });
+  }
+
+  dateAndTimeValidator(group: FormGroup): any {
+    const startDateControl = group.get('eventStartDate');
+    const endDateControl = group.get('eventEndDate');
+    const startTimeControl = group.get('eventStartTime');
+    const endTimeControl = group.get('eventEndTime');
+  
+    if (startDateControl && endDateControl && startTimeControl && endTimeControl) {
+      const start = new Date(startDateControl.value);
+      const end = new Date(endDateControl.value);
+      const startTime = startTimeControl.value ? startTimeControl.value.split(':') : null;
+      const endTime = endTimeControl.value ? endTimeControl.value.split(':') : null;
+  
+      if (startTime && endTime) {
+        start.setHours(parseInt(startTime[0]), parseInt(startTime[1]));
+        end.setHours(parseInt(endTime[0]), parseInt(endTime[1]));
+      }
+  
+      // Si la fecha de inicio y finalización son iguales, solo verifica la hora
+      if (start.toDateString() === end.toDateString()) {
+        if (end.getTime() < start.getTime()) {
+          // Establece el error solo en el campo de hora de finalización
+          group.controls['eventEndTime'].setErrors({ timeInvalid: true });
+        }
+      } else {
+        // Si la fecha de finalización es anterior a la fecha de inicio, establece el error en ambos campos
+        if (end < start) {
+          group.controls['eventEndDate'].setErrors({ dateInvalid: true });
+          group.controls['eventEndTime'].setErrors({ timeInvalid: true });
+        }
+      }
+    }
+  
+    return null;
+  }
 
   onSubmit(): void {
-    const selectedColor = this.predefinedColors.find(color => color.name === this.eventColor);
-
-  // Asumiendo que eventStartTime y eventEndTime están en formato 'HH:mm'
-  const startDateTime = new Date(this.eventStartDate);
-  const startTimeParts = this.eventStartTime.split(':');
-  startDateTime.setHours(parseInt(startTimeParts[0]), parseInt(startTimeParts[1]));
-
-  const endDateTime = new Date(this.eventEndDate);
-  const endTimeParts = this.eventEndTime.split(':');
-  endDateTime.setHours(parseInt(endTimeParts[0]), parseInt(endTimeParts[1]));
-
-  console.log({
-    title: this.eventTitle,
-    startDate: startDateTime,
-    endDate: endDateTime,
-    color: selectedColor 
-  });
-
-  // Cerrar el diálogo y enviar los datos sin convertir a UTC
-  this.dialogRef.close({
-    title: this.eventTitle,
-    startDate: startDateTime.toString(), // Usar toString() para mantener la zona horaria local
-    endDate: endDateTime.toString(),     // Usar toString() para mantener la zona horaria local
-    color: selectedColor 
-  });}
+    if (this.form?.valid) {
+      const formValue = this.form.value;
+      const selectedColor = this.predefinedColors.find(color => color.name === formValue.eventColor);
+  
+      const startDateTime = new Date(formValue.eventStartDate);
+      const startTimeParts = formValue.eventStartTime.split(':');
+      startDateTime.setHours(parseInt(startTimeParts[0]), parseInt(startTimeParts[1]));
+  
+      const endDateTime = new Date(formValue.eventEndDate);
+      const endTimeParts = formValue.eventEndTime.split(':');
+      endDateTime.setHours(parseInt(endTimeParts[0]), parseInt(endTimeParts[1]));
+    
+      this.dialogRef.close({
+        title: formValue.eventTitle,
+        startDate: startDateTime.toString(),
+        endDate: endDateTime.toString(),
+        color: selectedColor 
+      });
+    }
+  }
 }

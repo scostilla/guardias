@@ -1,13 +1,16 @@
 <h2 mat-dialog-title>Añadir Profesional
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
-<form (ngSubmit)="onSubmit()" #f="ngForm">
+<form [formGroup]="form!" (ngSubmit)="onSubmit()" #f="ngForm">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre del Profesional</mat-label>
-          <input matInput type="text" [(ngModel)]="eventTitle" name="eventTitle" required>
+          <input matInput formControlName="eventTitle" type="text" required>
+          <mat-error *ngIf="form?.get('eventTitle')?.invalid && form?.get('eventTitle')?.touched">
+            El campo es obligatorio y debe tener solo letras (entre 4 y 50 caracteres).
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -16,18 +19,24 @@
       <div class="col-6">
         <mat-form-field appearance="fill">
           <mat-label>Fecha de Inicio</mat-label>
-          <input matInput [matDatepicker]="fechaPicker" [(ngModel)]="eventStartDate" name="eventStartDate" required>
+          <input matInput formControlName="eventStartDate" [matDatepicker]="fechaPicker" readonly (click)="fechaPicker.open()">
           <mat-datepicker-toggle matSuffix [for]="fechaPicker"></mat-datepicker-toggle>
           <mat-datepicker #fechaPicker></mat-datepicker>
+          <mat-error *ngIf="form?.get('eventStartDate')?.invalid && form?.get('eventStartDate')?.touched">
+            El campo es obligatorio y debe ser una fecha.
+          </mat-error>
         </mat-form-field>
-        
       </div>
+
       <div class="col-6">
         <mat-form-field appearance="fill">
           <mat-label>Hora de Inicio</mat-label>
-          <input matInput [ngxMatTimepicker]="horaPicker" [format]="24" [(ngModel)]="eventStartTime" name="eventStartTime" required>
+          <input matInput formControlName="eventStartTime" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
           <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
           <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+          <mat-error *ngIf="form?.get('eventStartTime')?.invalid && form?.get('eventStartTime')?.touched">
+            El campo es obligatorio (HH:mm).
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -36,17 +45,24 @@
       <div class="col-6">
         <mat-form-field appearance="fill">
           <mat-label>Fecha de Finalización</mat-label>
-          <input matInput [matDatepicker]="fechaPicker2" [min]="eventStartDate" [(ngModel)]="eventEndDate" name="eventEndDate" required>
+          <input matInput formControlName="eventEndDate" [matDatepicker]="fechaPicker2" readonly (click)="fechaPicker2.open()" [min]="form?.get('eventStartDate')?.value">
           <mat-datepicker-toggle matSuffix [for]="fechaPicker2"></mat-datepicker-toggle>
           <mat-datepicker #fechaPicker2></mat-datepicker>
+          <mat-error *ngIf="form?.get('eventEndDate')?.invalid && form?.get('eventEndDate')?.touched">
+            El campo es obligatorio y no puede ser anterior a la fecha de inicio.
+          </mat-error>
         </mat-form-field>
       </div>
+
       <div class="col-6">
         <mat-form-field appearance="fill">
           <mat-label>Hora de Finalización</mat-label>
-          <input matInput [ngxMatTimepicker]="horaPicker2" [format]="24" [(ngModel)]="eventEndTime" name="eventEndTime" required>
+          <input matInput formControlName="eventEndTime" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly (click)="horaPicker2.open()">
           <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
           <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+          <mat-error *ngIf="form?.get('eventEndTime')?.invalid && form?.get('eventEndTime')?.touched">
+            El campo es obligatorio (HH:mm) y no puede ser anterior a la hora de inicio.
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -55,18 +71,21 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Tipo de guardia</mat-label>
-          <mat-select [(ngModel)]="eventColor" name="eventColor" required>
+          <mat-select formControlName="eventColor">
             <mat-option *ngFor="let color of predefinedColors" [value]="color.name">
               {{ color.name }}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="form?.get('eventColor')?.invalid && form?.get('eventColor')?.touched">
+            Debes seleccionar un tipo de guardia.
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
   
   <div mat-dialog-actions class="action mt-4">
   <div class="actions">
-    <button mat-raised-button color="primary" type="submit" [disabled]="!f.form.valid">Guardar</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!form?.valid">Guardar</button>
     <button mat-raised-button color="secondary" (click)="dialogRef.close()">Cerrar</button>
   </div>
   </div>
