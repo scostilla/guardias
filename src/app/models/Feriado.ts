@@ -2,17 +2,15 @@ export class Feriado {
 
     id?: number;
     descripcion: string;
-    dia: number;
     motivo: string;
-    tipo_feriado: string;
-    fecha: string;
+    tipoFeriado: string;
+    fecha: Date;
 
   
-    constructor(descripcion: string, dia: number, motivo: string, tipo_feriado: string, fecha: string) {
+    constructor(descripcion: string, motivo: string, tipoFeriado: string, fecha: Date) {
       this.descripcion = descripcion;
-      this.dia = dia;
       this.motivo = motivo;
-      this.tipo_feriado = tipo_feriado;
+      this.tipoFeriado = tipoFeriado;
       this.fecha = fecha;
 
     }

@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styles: []
 })
 
-export class PruebaFormComponent {
+export class PruebaFormComponent implements OnInit {
   form?: FormGroup;
   eventTitle!: string;
   eventStartDate!: Date; 

@@ -1,30 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Feriado } from 'src/app/models/Feriado';
 import { FeriadoService } from 'src/app/services/feriado.service';
-
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { FeriadoDetailComponent } from '../feriado-detail/feriado-detail.component';
 import { FeriadoEditComponent } from '../feriado-edit/feriado-edit.component';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-
-
-export interface UserData {
-  id: number;
-  descripcion: string;
-  dia: number;
-  motivo: string;
-  tipo_feriado: string;
-  fecha: string;
-}
-
+import { FeriadoDetailComponent } from '../feriado-detail/feriado-detail.component'; 
 
 @Component({
   selector: 'app-feriado',
@@ -32,148 +17,151 @@ export interface UserData {
   styleUrls: ['./feriado.component.css']
 })
 
-export class FeriadoComponent implements OnInit, AfterViewInit {
+export class FeriadoComponent implements OnInit, OnDestroy {
 
-  feriadoes: Feriado[] = [];
-  displayedColumns: string[] = ['id', 'descripcion', 'dia', 'motivo', 'tipo_feriado', 'fecha', 'actions'];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
-
+  @ViewChild(MatTable) table!: MatTable<Feriado>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<FeriadoDetailComponent>;
+  displayedColumns: string[] = ['id', 'fecha', 'motivo', 'tipoFeriado', 'acciones'];
+  dataSource!: MatTableDataSource<Feriado>;
+  suscription!: Subscription;
+
   constructor(
     private feriadoService: FeriadoService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    private router: Router,
-    ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
-    }
+    private paginatorIntl: MatPaginatorIntl
+    ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente página";
+    this.paginatorIntl.previousPageLabel = "Página anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
+     }
 
-  ngOnInit() {
-    this.cargarFeriado();
+  ngOnInit(): void {
+    this.listFeriados();
 
     this.suscription = this.feriadoService.refresh$.subscribe(() => {
-      this.cargarFeriado();
+      this.listFeriados();
     })
+
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
-  }
-  
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  listFeriados(): void {
+    this.feriadoService.list().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
-  cargarFeriado(): void {
-    this.feriadoService.list().subscribe(
-      (data: Feriado[]) => {
-        const userDataArray: UserData[] = data.map(feriado => ({
-          id: feriado.id || 0,
-          descripcion: feriado.descripcion || '',
-          dia: feriado.dia || 0,
-          motivo: feriado.motivo || '',
-          tipo_feriado: feriado.tipo_feriado || '',
-          fecha: feriado.fecha || '',
-        }));
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
+  }
 
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    );
+    }
+    return output;
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Feriado, filter: string) => {
+      return this.accentFilter(data.motivo.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.tipoFeriado.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.fecha.toISOString().toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(FeriadoComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(feriado?: Feriado): void {
+    const esEdicion = feriado != null;
+    const dialogRef = this.dialog.open(FeriadoEditComponent, {
+      width: '600px',
+      data: esEdicion ? feriado : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.feriadoService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('feriado eliminado', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Feriado editado con éxito' : 'Feriado creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-        this.cargarFeriado();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar el Feriado', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
       }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
+    }
+    });
   }
 
-  addDetailFeriado(id: number) {
-    const dialogDetail = this.dialog.open(FeriadoDetailComponent, {
+  openDetail(feriado: Feriado): void {
+    this.dialogRef = this.dialog.open(FeriadoDetailComponent, { 
       width: '600px',
-      disableClose: true,
-      data: { id: id },
+      data: feriado
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteFeriado(feriado: Feriado): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + feriado.motivo,
+        title: 'Eliminar',
+      },
     });
 
-    dialogDetail.afterClosed().subscribe((result) => {
-      console.log("linea 152: "+this.dataSharingService.getFeriadoFormData());
-      this.dataSource.data.push(this.dataSharingService.getFeriadoFormData());
-      console.log("id recibido: "+this.dataSharingService.getFeriadoId());
-    });
-  }
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.feriadoService.delete(feriado.id!).subscribe(data => {
+        this.toastr.success('Profesión eliminada con éxito', 'ELIMINADA', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
 
-
-  addEditFeriado(id: number) {
-    const dialogEdit = this.dialog.open(FeriadoEditComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { id: id },
-    });
-
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getFeriadoFormData());
-      this.dataSource.data.push(this.dataSharingService.getFeriadoFormData());
-      console.log("id recibido: "+this.dataSharingService.getFeriadoId());
-    });
-  }
-
+        const index = this.dataSource.data.findIndex(p => p.id === feriado.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la profesión', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
+    }
+  });
+}
 }

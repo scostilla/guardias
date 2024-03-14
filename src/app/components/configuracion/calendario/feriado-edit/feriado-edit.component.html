@@ -1,1 +1,69 @@
-<p>feriado-edit works!</p>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Feriado
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form [formGroup]="form!" (ngSubmit)="saveFeriado()">
+    <mat-dialog-content>
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Motivo</mat-label>
+              <input matInput formControlName="motivo">
+            <mat-error *ngIf="form?.get('motivo')?.invalid && form?.get('motivo')?.touched">
+              El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha</mat-label>
+              <input matInput formControlName="fecha" [matDatepicker]="fechaPicker" readonly (click)="fechaPicker.open()">
+              <mat-datepicker-toggle matSuffix [for]="fechaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #fechaPicker></mat-datepicker>
+            <mat-error *ngIf="form?.get('fecha')?.invalid && form?.get('fecha')?.touched">
+              El campo es obligatorio y debe ser una fecha.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+            <mat-form-field appearance="fill">
+                <mat-label>Tipo Feriado</mat-label>
+                <mat-select formControlName="tipoFeriado">
+                  <mat-option value="NACIONAL">Nacional</mat-option>
+                  <mat-option value="PROVINCIAL">Provincial</mat-option>
+                  <mat-option value="PUENTE">Puente</mat-option>
+                  <mat-option value="ASUETO">Asueto</mat-option>
+                  <mat-option value="RELIGIOSO">Religioso</mat-option>
+                  <mat-option value="OTRO">Otro</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form?.get('tipoFeriado')?.invalid && form?.get('tipoFeriado')?.touched">
+                  El campo es obligatorio.
+                </mat-error>
+              </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Descripción</mat-label>
+              <input matInput formControlName="descripcion">
+            <mat-error *ngIf="form?.get('descripcion')?.invalid && form?.get('descripcion')?.touched">
+              El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+          {{esEdicion ? 'Modificar' : 'Agregar'}}
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </mat-dialog-content>
+  </form>

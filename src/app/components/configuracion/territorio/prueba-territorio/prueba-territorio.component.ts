@@ -5,11 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { PruebaFormComponent } from '../prueba-form/prueba-form.component';
 import { PruebaForm2Component } from '../prueba-form2/prueba-form2.component';
 import { PruebaDetailComponent } from '../prueba-detail/prueba-detail.component';
-
-interface Holiday {
-  date: Date;
-  name: string;
-}
+import { Feriado } from 'src/app/models/Feriado'; 
+import { FeriadoService } from 'src/app/services/feriado.service'; 
 
 @Component({
   selector: 'app-prueba-territorio',
@@ -23,28 +20,43 @@ export class PruebaTerritorioComponent {
   viewDate: Date = new Date();
   events: any[] = [];
   CalendarView = CalendarView;
-  holidays: Holiday[] = [];
+  holidays: Feriado[] = [];
 
-  constructor(public dialog: MatDialog) {}
+  constructor(private feriadoService: FeriadoService, public dialog: MatDialog) {}
 
   changeView(view: CalendarView): void {
     this.view = view;
   }
 
-  ngOnInit(): void {
-    this.getHolidays();
+  parseDate(dateString: string): Date {
+    const parts = dateString.split('-');
+    return new Date(+parts[0], +parts[1] - 1, +parts[2]);
   }
 
+  ngOnInit(): void {
+    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+      this.holidays = feriados.map(feriado => ({
+        ...feriado,
+        fecha: this.parseDate(feriado.fecha as unknown as string)
+      }));
+      this.refreshView();
+    });
+  }
+  
+  refreshView(): void {
+    this.viewDate = new Date(this.viewDate.getTime());
+  }
+  
   getHolidays(): void {
-    this.holidays = [
-      { date: new Date(2024, 2, 28), name: 'Jueves Santo' },
-      { date: new Date(2024, 2, 29), name: 'Viernes Santo' },
-    ];
+    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+      this.holidays = feriados;
+    });
   }
 
   beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
     body.forEach(day => {
-      if (this.isHoliday(day.date)) {
+      const holiday = this.holidays.find(holiday => this.isSameDay(day.date, holiday.fecha));
+      if (holiday) {
         day.cssClass = 'holiday-class';
       }
     });
@@ -54,7 +66,8 @@ export class PruebaTerritorioComponent {
     renderEvent.hourColumns.forEach(column => {
       column.hours.forEach(hour => {
         hour.segments.forEach(segment => {
-          if (this.isHoliday(segment.date)) {
+          const holiday = this.holidays.find(holiday => this.isSameDay(segment.date, holiday.fecha));
+          if (holiday) {
             segment.cssClass = 'holiday-class';
           }
         });
@@ -63,12 +76,12 @@ export class PruebaTerritorioComponent {
   }
 
   isHoliday(date: Date): boolean {
-    return this.holidays.some(holiday => this.isSameDay(date, holiday.date));
+    return this.holidays.some(holiday => this.isSameDay(date, holiday.fecha));
   }
 
   getHolidayName(date: Date): string | null {
-    const holiday = this.holidays.find(holiday => this.isSameDay(date, holiday.date));
-    return holiday ? holiday.name : null;
+    const holiday = this.holidays.find(holiday => this.isSameDay(date, holiday.fecha));
+    return holiday ? holiday.motivo : null;
   }
 
   isSameDay(date1: Date, date2: Date): boolean {

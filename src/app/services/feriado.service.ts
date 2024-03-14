@@ -26,8 +26,8 @@ export class FeriadoService {
       return this.httpClient.get<Feriado>(this.feriadosURL + `detail/${id}`);
   }
 
-  public detailnombre(nombre:string): Observable<Feriado> {
-    return this.httpClient.get<Feriado>(this.feriadosURL + `detailnombre/${nombre}`);
+  public detailmotivo(motivo:string): Observable<Feriado> {
+    return this.httpClient.get<Feriado>(this.feriadosURL + `detailmotivo/${motivo}`);
 }
 
 public save(feriados:Feriado): Observable<any> {

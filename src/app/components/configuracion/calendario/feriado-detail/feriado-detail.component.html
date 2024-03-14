@@ -1,1 +1,32 @@
-<p>feriado-detail works!</p>
+<h1 mat-dialog-title>DETALLE
+    <h5>FERIADOS</h5>
+  </h1>
+  <mat-dialog-content>
+    <table class="table">
+        <tbody>
+          <tr>
+            <th scope="row">ID</th>
+            <td>{{feriado.id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Motivo</th>
+            <td>{{feriado.motivo}}</td>
+          </tr>
+          <tr>
+            <th scope="row">fecha</th>
+            <td>{{feriado.fecha}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Tipo Feriado</th>
+            <td>{{feriado.tipoFeriado}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Descripción</th>
+            <td>{{feriado.descripcion}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>
