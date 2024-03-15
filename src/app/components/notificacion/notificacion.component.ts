@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
@@ -6,24 +6,15 @@ import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { NotificacionEditComponent } from '../notificacion/notificacion-edit/notificacion-edit.component';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
-
-export interface UserData {
-  id: number;
-  categoria: string;
-  detalle: string;
-  fechanotificacion: Date;
-  posicion: number;
-  tipo: string;
-  url: string;
-}
+import { FormGroup } from '@angular/forms';
+import { NotificacionDetailComponent } from './notificacion-detail/notificacion-detail.component';
 
 
 @Component({
@@ -32,142 +23,150 @@ export interface UserData {
   styleUrls: ['./notificacion.component.css']
 })
 
-export class NotificacionComponent implements OnInit, AfterViewInit {
-
-  notificaciones: Notificacion[] = [];
-  displayedColumns: string[] = ['id', 'categoria', 'detalle', 'fechanotificacion', 'posicion', 'tipo', 'url', 'actions'];
-  dataSource: MatTableDataSource<UserData>;
-  suscription?: Subscription;
+export class NotificacionComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dialogRef!: MatDialogRef<NotificacionDetailComponent>;
+  displayedColumns: string[] = ['id', 'tipo', 'categoria', 'fechaNotificacion', 'detalle', 'url', 'activo', 'acciones'];
+  dataSource!: MatTableDataSource<Notificacion>;
+  suscription!: Subscription;
+  
+  
   constructor(
     private notificacionService: NotificacionService,
-    private toastr: ToastrService,
     public dialog: MatDialog,
-    public dialogNew: MatDialog,
-    public dialogEdit: MatDialog,
-    public dialogDetail: MatDialog,
-    private http: HttpClient,
-    private paginatorLabels: MatPaginatorIntl,
-    private dataSharingService: DataSharingService,
-    private router: Router,
+    private toastr: ToastrService,
+    private paginatorIntl: MatPaginatorIntl,
     ) {
-    paginatorLabels.itemsPerPageLabel = 'Items por pagina';
-    paginatorLabels.firstPageLabel = 'Primera Pagina';
-    paginatorLabels.nextPageLabel = 'Siguiente';
-    paginatorLabels.previousPageLabel = 'Anterior';
-      this.dataSource = new MatTableDataSource<UserData>([]);
+      this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+      this.paginatorIntl.nextPageLabel = "Siguiente";
+      this.paginatorIntl.previousPageLabel = "Anterior";
+      this.paginatorIntl.firstPageLabel = "Primera página";
+      this.paginatorIntl.lastPageLabel = "Última página";
+      this.paginatorIntl.getRangeLabel = (page, size, length) => {
+        const start = page * size + 1;
+        const end = Math.min((page + 1) * size, length);
+        return `${start} - ${end} de ${length}`; };
     }
 
   ngOnInit() {
-    this.cargarNotificaciones();
+    this.listNotificacion();
 
     this.suscription = this.notificacionService.refresh$.subscribe(() => {
-      this.cargarNotificaciones();
+      this.listNotificacion();
     })
+  }
+
+  listNotificacion(): void {
+    this.notificacionService.list().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   ngOnDestroy(): void{
     this.suscription?.unsubscribe();
-    console.log('Observable cerrado');
   }
   
-  get<T>(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  cargarNotificaciones(): void {
-    this.notificacionService.list().subscribe(
-      (data: Notificacion[]) => {
-        const userDataArray: UserData[] = data.map(notificacion => ({
-          id: notificacion.id || 0,
-          categoria: notificacion.categoria || '',
-          detalle: notificacion.detalle || '',
-          fechanotificacion: notificacion.fechanotificacion || new Date(),
-          posicion: notificacion.posicion || 0,
-          tipo: notificacion.tipo || '',
-          url: notificacion.url || '',
-        }));
-
-        this.dataSource.data = userDataArray;
-      },
-      (err) => {
-        console.log(err);
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    );
+    }
+    return output;
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
+    this.dataSource.filterPredicate = (data: Notificacion, filter: string) => {
+      return this.accentFilter(data.tipo.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.detalle.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.categoria.toLowerCase()).includes(this.accentFilter(filter));
+    };
+  } 
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(NotificacionComponent, {
-      width: '250px',
-      enterAnimationDuration,
-      exitAnimationDuration,
+  openFormChanges(notificacion?: Notificacion): void {
+    const esEdicion = notificacion != null;
+    const dialogRef = this.dialog.open(NotificacionEditComponent, {
+      width: '600px',
+      data: esEdicion ? notificacion : null
     });
-  }
 
-  borrar(id: number, nombre: string) {
-    this.dialog
-    .open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + nombre,
-        title: 'Eliminar',
-      },
-    })
-    .afterClosed()
-    .subscribe((confirm: Boolean) => {
-      if (confirm) {
-
-    this.notificacionService.delete(id).subscribe(
-      data=> {
-        this.toastr.success('notificacion eliminado', 'OK', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Notificacion editada con éxito' : 'Provincia creada con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-        this.cargarNotificaciones();
-      },
-      err => {
-        this.toastr.error(err.error.mensaje, 'Error', {
-          timeOut: 6000, positionClass: 'toast-top-center'
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else {
+        this.toastr.error('Ocurrió un error al crear o editar la notificacion', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
       }
-    );
-  } else {
-    this.dialog.closeAll();
-  }
-});
-  }
-
-  addNewNotificacion() {
-    this.dialogNew.open(NotificacionEditComponent, {
-      width: '600px',
-      disableClose: true,
+    }
     });
-
   }
 
-
-  addEditNotificacion(id: number) {
-    const dialogEdit = this.dialog.open(NotificacionEditComponent, {
+  openDetail(notificacion: Notificacion): void {
+    this.dialogRef = this.dialog.open(NotificacionDetailComponent, { 
       width: '600px',
-      disableClose: true,
-      data: { id: id },
+      data: notificacion
     });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
 
-    dialogEdit.afterClosed().subscribe((result) => {
-      console.log("linea 167: "+this.dataSharingService.getNotificacionFormData());
-      this.dataSource.data.push(this.dataSharingService.getNotificacionFormData());
-      console.log("id recibido: "+this.dataSharingService.getNotificacionId());
+  deleteNotificacion(notificacion: Notificacion): void {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: 'Confirma la eliminación ',
+          title: 'Eliminar',
+        },
+      });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.notificacionService.delete(notificacion.id!).subscribe(data => {
+          this.toastr.success('Notificacion eliminada con éxito', 'ELIMINADA', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+  
+          const index = this.dataSource.data.findIndex(p => p.id === notificacion.id);
+          this.dataSource.data.splice(index, 1);
+          this.dataSource._updateChangeSubscription();
+        }, err => {
+          this.toastr.error(err.message, 'Error, no se pudo eliminar la notificacion', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        });
+      }
     });
   }
 

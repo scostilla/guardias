@@ -1,1 +1,70 @@
-<p>notificacion-edit works!</p>
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Notificacion
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
+
+<form [formGroup]="form!" (ngSubmit)="saveNotificacion()">
+    <mat-dialog-content>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Tipo</mat-label>
+                    <mat-select formControlName="tipo">
+                        <mat-option value="NOTIFICACION">NOTIFICACION</mat-option>
+                        <mat-option value="DIGESTO">DIGESTO</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Categoria</mat-label>
+                    <input matInput formControlName="categoria">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 20px">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Fecha Notificacion</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="fechaNotificacion">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Detalle</mat-label>
+                    <input matInput formControlName="detalle">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Url</mat-label>
+                    <input matInput formControlName="url">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- <ng-container matColumnDef="region">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Region </th> 
+        <td mat-cell *matCellDef="let region"> {{region.}} </td>
+      </ng-container> -->
+
+        <div mat-dialog-actions class="action mt-4">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+                {{esEdicion ? 'Modificar' : 'Agregar'}}
+            </button>
+            <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+                Cancelar
+            </button>
+        </div>
+    </mat-dialog-content>
+</form>
