@@ -31,7 +31,7 @@
 
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha </th> 
-    <td mat-cell *matCellDef="let feriado"> {{feriado.fecha}} </td>
+    <td mat-cell *matCellDef="let feriado"> {{ feriado.fecha | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
   </ng-container>
 
   <ng-container matColumnDef="tipoFeriado">

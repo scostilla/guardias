@@ -96,6 +96,10 @@ import { ProfesionEditComponent } from './components/configuracion/profesionales
 import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
+import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
+import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
+import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
+
 import { CronogramaNewComponent } from './components/cronograma-new/cronograma-new.component';
 
 
@@ -215,6 +219,10 @@ const routes: Routes = [
  {path: 'especialidad', component:EspecialidadComponent},
  {path: 'especialidad-detail/:id', component:EspecialidadDetailComponent},
  {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
+ {path: 'person', component:PersonComponent},
+ {path: 'person-detail/:id', component:PersonDetailComponent},
+ {path: 'person-edit/:id', component:PersonEditComponent},
+
  {path: 'cronograma-new', component:CronogramaNewComponent},
 
 

@@ -14,7 +14,7 @@
           </tr>
           <tr>
             <th scope="row">fecha</th>
-            <td>{{feriado.fecha}}</td>
+            <td>{{ feriado.fecha | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>
           <tr>
             <th scope="row">Tipo Feriado</th>

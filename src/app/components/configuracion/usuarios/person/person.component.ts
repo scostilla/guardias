@@ -6,30 +6,31 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Pais } from 'src/app/models/Pais';
-import { PaisService } from 'src/app/services/pais.service';
-import { PaisEditComponent } from '../pais-edit/pais-edit.component';
-import { PaisDetailComponent } from '../pais-detail/pais-detail.component'; 
+import { Person } from 'src/app/models/Configuracion/Person';
+import { PersonService } from 'src/app/services/Configuracion/person.service';
+import { PersonEditComponent } from '../person-edit/person-edit.component';
+import { PersonDetailComponent } from '../person-detail/person-detail.component'; 
 
 @Component({
-  selector: 'app-pais',
-  templateUrl: './pais.component.html',
-  styleUrls: ['./pais.component.css']
+  selector: 'app-person',
+  templateUrl: './person.component.html',
+  styleUrls: ['./person.component.css']
 })
 
-export class PaisComponent implements OnInit, OnDestroy {
+export class PersonComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table!: MatTable<Pais>;
+  @ViewChild(MatTable) table!: MatTable<Person>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dialogRef!: MatDialogRef<PaisDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'codigo', 'nacionalidad', 'acciones'];
-  dataSource!: MatTableDataSource<Pais>;
+  dialogRef!: MatDialogRef<PersonDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'dni', 'cuil', 'fechaNacimiento', 'sexo', 'acciones'];
+  dataSource!: MatTableDataSource<Person>;
   suscription!: Subscription;
+  tipo?: string;
 
   constructor(
-    private paisService: PaisService,
+    private personService: PersonService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private paginatorIntl: MatPaginatorIntl
@@ -46,16 +47,16 @@ export class PaisComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
-    this.listPaises();
+    this.listPerson();
 
-    this.suscription = this.paisService.refresh$.subscribe(() => {
-      this.listPaises();
+    this.suscription = this.personService.refresh$.subscribe(() => {
+      this.listPerson();
     })
 
   }
 
-  listPaises(): void {
-    this.paisService.list().subscribe(data => {
+  listPerson(): void {
+    this.personService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -84,24 +85,27 @@ export class PaisComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.dataSource.filterPredicate = (data: Pais, filter: string) => {
+    this.dataSource.filterPredicate = (data: Person, filter: string) => {
       return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.codigo.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.nacionalidad.toLowerCase()).includes(this.accentFilter(filter));
+      this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.dni.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) || 
+      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) ||
+      this.accentFilter(data.fechaNacimiento.toISOString().toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.sexo.toLowerCase()).includes(this.accentFilter(filter));
     };
   }
 
-  openFormChanges(pais?: Pais): void {
-    const esEdicion = pais != null;
-    const dialogRef = this.dialog.open(PaisEditComponent, {
+  openFormChanges(person?: Person): void {
+    const esEdicion = person != null;
+    const dialogRef = this.dialog.open(PersonEditComponent, {
       width: '600px',
-      data: esEdicion ? pais : null
+      data: esEdicion ? person : null
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
       if (result) {
-        this.toastr.success(esEdicion ? 'Pais editado con éxito' : 'Pais creado con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Persona editada con éxito' : 'Persona creada con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -114,7 +118,7 @@ export class PaisComponent implements OnInit, OnDestroy {
         }
         this.dataSource._updateChangeSubscription();
       } else {
-        this.toastr.error('Ocurrió un error al crear o editar el Pais', 'Error', {
+        this.toastr.error('Ocurrió un error al crear o editar la Persona', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -124,38 +128,38 @@ export class PaisComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDetail(pais: Pais): void {
-    this.dialogRef = this.dialog.open(PaisDetailComponent, { 
+  openDetail(person: Person): void {
+    this.dialogRef = this.dialog.open(PersonDetailComponent, { 
       width: '600px',
-      data: pais
+      data: person
     });
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
     }
 
-  deletePais(pais: Pais): void {
+  deletePerson(person: Person): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Confirma la eliminación de ' + pais.nombre,
+        message: 'Confirma la eliminación de ' + person.nombre,
         title: 'Eliminar',
       },
     });
 
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
-      this.paisService.delete(pais.id!).subscribe(data => {
-        this.toastr.success('País eliminado con éxito', 'ELIMINADO', {
+      this.personService.delete(person.id!).subscribe(data => {
+        this.toastr.success('Persona eliminada con éxito', 'ELIMINADA', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
 
-        const index = this.dataSource.data.findIndex(p => p.id === pais.id);
+        const index = this.dataSource.data.findIndex(p => p.id === person.id);
         this.dataSource.data.splice(index, 1);
         this.dataSource._updateChangeSubscription();
       }, err => {
-        this.toastr.error(err.message, 'Error, no se pudo eliminar el país', {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la persona', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

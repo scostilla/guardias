@@ -19,7 +19,7 @@
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Fecha</mat-label>
-              <input matInput formControlName="fecha" [matDatepicker]="fechaPicker" readonly (click)="fechaPicker.open()">
+            <input matInput [value]="datePipe.transform(data.fecha, 'yyyy-MM-dd', 'UTC')" formControlName="fecha" [matDatepicker]="fechaPicker" readonly (click)="fechaPicker.open()">
               <mat-datepicker-toggle matSuffix [for]="fechaPicker"></mat-datepicker-toggle>
               <mat-datepicker #fechaPicker></mat-datepicker>
             <mat-error *ngIf="form?.get('fecha')?.invalid && form?.get('fecha')?.touched">

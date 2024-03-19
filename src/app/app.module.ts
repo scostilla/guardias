@@ -11,10 +11,10 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { CalendarCommonModule, CalendarMonthModule } from 'angular-calendar';
+import { CalendarModule, DateAdapter, CalendarCommonModule, CalendarMonthModule } from 'angular-calendar';
 import { MatListModule } from '@angular/material/list';
+
 
 //Components
 import { AppComponent } from './app.component';
@@ -162,9 +162,11 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { SpinnerInterceptor } from './services/spinner-interceptor.service';
 import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
 
-
-registerLocaleData(localePy,'es');
-
+import localeEsAr from '@angular/common/locales/es-AR';
+import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
+import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
+import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
+registerLocaleData(localeEsAr, 'es-AR');
 
 @NgModule({
   declarations: [
@@ -289,6 +291,9 @@ registerLocaleData(localePy,'es');
     PruebaDetailComponent,
     SpinnerComponent,
     PruebaForm2Component,
+    PersonComponent,
+    PersonDetailComponent,
+    PersonEditComponent,
     
   ],
 
@@ -342,7 +347,8 @@ registerLocaleData(localePy,'es');
 
   providers: [
     ProfessionalDataServiceService,
-    {provide: LOCALE_ID,useValue:'es'},
+    { provide: LOCALE_ID, useValue: 'es-AR' },
+    DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SpinnerInterceptor,
