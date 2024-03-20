@@ -99,6 +99,12 @@ import { EspecialidadEditComponent } from './components/configuracion/profesiona
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
+import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
+import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
+import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
+import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
+import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
+import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
 
 import { CronogramaNewComponent } from './components/cronograma-new/cronograma-new.component';
 
@@ -222,6 +228,14 @@ const routes: Routes = [
  {path: 'person', component:PersonComponent},
  {path: 'person-detail/:id', component:PersonDetailComponent},
  {path: 'person-edit/:id', component:PersonEditComponent},
+ {path: 'asistencial', component:AsistencialComponent},
+ {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
+ {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
+ {path: 'no-asistencial', component:NoAsistencialComponent},
+ {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
+ {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
+
+
 
  {path: 'cronograma-new', component:CronogramaNewComponent},
 

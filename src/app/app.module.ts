@@ -166,6 +166,12 @@ import localeEsAr from '@angular/common/locales/es-AR';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
+import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
+import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
+import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
+import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
+import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
+import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 @NgModule({
@@ -294,6 +300,12 @@ registerLocaleData(localeEsAr, 'es-AR');
     PersonComponent,
     PersonDetailComponent,
     PersonEditComponent,
+    AsistencialComponent,
+    AsistencialDetailComponent,
+    AsistencialEditComponent,
+    NoAsistencialComponent,
+    NoAsistencialEditComponent,
+    NoAsistencialDetailComponent,
     
   ],
 

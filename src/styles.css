@@ -181,10 +181,10 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
   width: 100%;
 }
 
-.boton {
+/*.boton {
   padding: 20px 20px 0 0;
   display: block;
-}
+}*/
 
 .mat-mdc-form-field {
   width: 100%;
@@ -205,11 +205,26 @@ body { margin: 0; font-family: "Ubuntu", sans-serif; }
 
 .btnEdit{
 color: green;
-margin-left: 0px;
 }
 
 .btnRemove{
 color:#9b0a0a;
+}
+
+.cell-actions {
+  display: flex; 
+  justify-content: flex-start;
+  align-items: center; 
+  flex-wrap: nowrap; 
+}
+
+.cell-actions button {
+  margin-top: 3px; /* Ajusta este valor según sea necesario */
+  vertical-align: middle;
+}
+
+td {
+  vertical-align: middle;
 }
 
 /* --Formularios-- */

@@ -1,0 +1,163 @@
+<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Asistencial
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form [formGroup]="form!" (ngSubmit)="saveAsistencial()">
+    <mat-dialog-content>
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre/s</mat-label>
+              <input matInput formControlName="nombre">
+            <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+              El campo es obligatorio y debe tener solo letras (entre 1 y 50 caracteres).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Apellido/s</mat-label>
+              <input matInput formControlName="apellido">
+            <mat-error *ngIf="form?.get('apellido')?.invalid && form?.get('apellido')?.touched">
+              El campo es obligatorio y debe tener solo letras (entre 1 y 50 caracteres).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Cuil</mat-label>
+              <input matInput formControlName="cuil">
+            <mat-error *ngIf="form?.get('cuil')?.invalid && form?.get('cuil')?.touched">
+              El campo es obligatorio y debe tener solo números (11).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Documento Nacional de Identidad</mat-label>
+              <input matInput formControlName="dni">
+            <mat-error *ngIf="form?.get('dni')?.invalid && form?.get('dni')?.touched">
+              El campo es obligatorio y debe tener solo letras (entre 8 y 20 caracteres).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Domicilio</mat-label>
+              <input matInput formControlName="domicilio">
+            <mat-error *ngIf="form?.get('domicilio')?.invalid && form?.get('domicilio')?.touched">
+              El campo puede tener letras y números (hasta 255 caracteres).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="telefono">
+            <mat-error *ngIf="form?.get('telefono')?.invalid && form?.get('telefono')?.touched">
+              El campo debe tener solo números (9 a 30 digitos).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Correo electrónico</mat-label>
+              <input matInput formControlName="email">
+            <mat-error *ngIf="form?.get('email')?.invalid && form?.get('email')?.touched">
+              El campo es obligatorio y debe ser un mail válido.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Nacimiento</mat-label>
+            <input matInput [value]="datePipe.transform(data.fechaNacimiento, 'yyyy-MM-dd', 'UTC')" formControlName="fechaNacimiento" [matDatepicker]="fechaPicker" readonly (click)="fechaPicker.open()">
+              <mat-datepicker-toggle matSuffix [for]="fechaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #fechaPicker></mat-datepicker>
+            <mat-error *ngIf="form?.get('fechaNacimiento')?.invalid && form?.get('fechaNacimiento')?.touched">
+              El campo es obligatorio y debe ser una fecha.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="estado">
+              <mat-option [value]="true">Activo</mat-option>
+              <mat-option [value]="false">Inactivo</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form?.get('estado')?.invalid && form?.get('estado')?.touched">
+              El campo es obligatorio.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Sexo</mat-label>
+            <mat-select formControlName="estado">
+                <mat-option value="M">Masculino</mat-option>
+                <mat-option value="F">Femenino</mat-option>
+                <mat-option value="X">Persona no binaria</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form?.get('estado')?.invalid && form?.get('estado')?.touched">
+              El campo es obligatorio.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Id tipo guardia</mat-label>
+              <input matInput formControlName="idTipoGuardia">
+            <mat-error *ngIf="form?.get('idTipoGuardia')?.invalid && form?.get('idTipoGuardia')?.touched">
+              El campo es obligatorio y debe tener solo números (11).
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Tipo de guardia</mat-label>
+                    <mat-select formControlName="tipoGuardia">
+                      <mat-option value="CONTRAFACTURA">CONTRAFACTURA</mat-option>
+                      <mat-option value="EXTRA">EXTRA</mat-option>
+                      <mat-option value="CARGO">CARGO</mat-option>
+                      <mat-option value="AGRUPACION">AGRUPACION</mat-option>
+                      <mat-option value="PASIVA">PASIVA</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form?.get('tipoGuardia')?.invalid && form?.get('tipoGuardia')?.touched">
+                      El campo es obligatorio.
+                    </mat-error>
+                  </mat-form-field>
+            </div>
+        </div>
+      <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+          {{esEdicion ? 'Modificar' : 'Agregar'}}
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </mat-dialog-content>
+  </form>

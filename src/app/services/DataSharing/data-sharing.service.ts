@@ -220,4 +220,34 @@ export class DataSharingService {
     return this.id;
   }
 
+  setAsistencialFormData(data: any) {
+    this.formData = data;
+  }
+
+  getAsistencialFormData() {
+    return this.formData;
+  }
+
+  setAsistencialId(id: number) {
+    this.id = id;
+  }
+
+  getAsistencialId() {
+    return this.id;
+  }
+  setNoAsistencialFormData(data: any) {
+    this.formData = data;
+  }
+
+  getNoAsistencialFormData() {
+    return this.formData;
+  }
+
+  setNoAsistencialId(id: number) {
+    this.id = id;
+  }
+
+  getNoAsistencialId() {
+    return this.id;
+  }
 }
