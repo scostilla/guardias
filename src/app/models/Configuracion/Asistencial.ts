@@ -10,10 +10,10 @@ export class Asistencial {
     fechaNacimiento: Date;
     sexo: string;
     telefono: number;
-    idTipoGuardia: number;
     tipoGuardia: string;
+    
 
-    constructor(nombre: string, apellido: string, dni: number,  domicilio: string, email: string, estado: boolean, cuil: string, fechaNacimiento: Date, sexo: string, telefono: number, idTipoGuardia: number, tipoGuardia: string) {
+    constructor(nombre: string, apellido: string, dni: number,  domicilio: string, email: string, estado: boolean, cuil: string, fechaNacimiento: Date, sexo: string, telefono: number, tipoGuardia: string) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -24,7 +24,6 @@ export class Asistencial {
         this.fechaNacimiento = fechaNacimiento;
         this.sexo = sexo;
         this.telefono = telefono;
-        this.idTipoGuardia = idTipoGuardia;
         this.tipoGuardia = tipoGuardia;
     }
 

@@ -37,8 +37,7 @@ export class AsistencialEditComponent implements OnInit {
       estado: [this.data ? this.data.estado : '', Validators.required],
       fechaNacimiento: [this.data ? this.transformDate(this.data.fechaNacimiento) : '', [Validators.required]],
       sexo: [this.data ? this.data.sexo : '', Validators.required],
-      idTipoGuardia: [this.data ? this.data.idTipoGuardia : '', [Validators.pattern('^[0-9]{1,11}$')]],
-      tipoGuardia: [this.data ? this.data.tipoGuardia : '', Validators.required]
+      tipoGuardia: [this.data ? this.data.tipoGuardia : '', Validators.required],
     });
 
     this.esEdicion = this.data != null;
@@ -46,12 +45,12 @@ export class AsistencialEditComponent implements OnInit {
     this.form.valueChanges.subscribe(val => {
     this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.apellido !== this.data?.apellido || val.cuil !== this.data?.cuil ||
     val.dni !== this.data?.dni || val.domicilio !== this.data?.domicilio || val.telefono !== this.data?.telefono || val.email !== this.data?.email ||
-    val.estado !== this.data?.estado  || val.fechaNacimiento !== this.data?.fechaNacimiento || val.sexo !== this.data?.sexo || val.idTipoGuardia !== this.data?.idTipoGuardia || val.tipoGuardia !== this.data?.tipoGuardia;
+    val.estado !== this.data?.estado  || val.fechaNacimiento !== this.data?.fechaNacimiento || val.sexo !== this.data?.sexo || val.tipoGuardia !== this.data?.tipoGuardia;
     });
   }
 
   transformDate(date: Date): string {
-    return this.datePipe.transform(date, 'yyyy-MM-dd')!;
+    return this.datePipe.transform(date, 'yyyy-MM-dd') || '';
   }
 
   saveAsistencial(): void {
@@ -64,15 +63,27 @@ export class AsistencialEditComponent implements OnInit {
     const telefono = this.form?.get('telefono')?.value;
     const email = this.form?.get('email')?.value;
     const estado = this.form?.get('estado')?.value;
-    const fechaNacimiento = this.form?.get('fechaNacimiento')?.value;
+    const fechaNacimientoTransformada = this.transformDate(this.form?.get('fechaNacimiento')?.value);
     const sexo = this.form?.get('sexo')?.value;
-    const idTipoGuardia = this.form?.get('idTipoGuardia')?.value;
     const tipoGuardia = this.form?.get('tipoGuardia')?.value;
 
-
-
-    const asistencial = new Asistencial(nombre, apellido, cuil, dni, domicilio, telefono, email, estado, fechaNacimiento, sexo, idTipoGuardia, tipoGuardia);
+    const asistencial = new Asistencial(nombre, apellido, cuil, dni, domicilio, telefono, email, estado, fechaNacimientoTransformada, sexo, tipoGuardia);
     asistencial.id = id;
+
+    console.log('Guardando asistencial con los siguientes datos:', {
+      id,
+      nombre,
+      apellido,
+      cuil,
+      dni,
+      domicilio,
+      telefono,
+      email,
+      estado,
+      fechaNacimientoTransformada,
+      sexo,
+      tipoGuardia
+    });
 
     if (this.esEdicion) {
       this.asistencialService.update(id, asistencial).subscribe(data => {

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Noasistencial } from "src/app/models/Configuracion/NoAsistencial";
+import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 
 @Injectable({
   providedIn: 'root'
@@ -19,20 +19,20 @@ export class NoNoasistencialService {
       return this._refresh$;
     }
   
-    public list(): Observable<Noasistencial[]> {
-        return this.httpClient.get<Noasistencial[]>(this.noasistencialesURL + 'list');
+    public list(): Observable<NoAsistencial[]> {
+        return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + 'list');
     }
   
-    public detail(id:number): Observable<Noasistencial> {
-        return this.httpClient.get<Noasistencial>(this.noasistencialesURL + `detail/${id}`);
+    public detail(id:number): Observable<NoAsistencial> {
+        return this.httpClient.get<NoAsistencial>(this.noasistencialesURL + `detail/${id}`);
     }
   
-    public detailnombre(nombre:string): Observable<Noasistencial> {
-      return this.httpClient.get<Noasistencial>(this.noasistencialesURL + `detailnombre/${nombre}`);
+    public detailnombre(nombre:string): Observable<NoAsistencial> {
+      return this.httpClient.get<NoAsistencial>(this.noasistencialesURL + `detailnombre/${nombre}`);
   }
   
-  public save(nonoasistenciales:Noasistencial): Observable<any> {
-    return this.httpClient.post<any>(this.noasistencialesURL + 'create', nonoasistenciales)
+  public save(noasistenciales:NoAsistencial): Observable<any> {
+    return this.httpClient.post<any>(this.noasistencialesURL + 'create', noasistenciales)
     .pipe(
       tap(() => {
        this._refresh$.next(); 
@@ -40,8 +40,8 @@ export class NoNoasistencialService {
     )
   }
   
-  public update(id:number, nonoasistenciales:Noasistencial): Observable<any> {
-    return this.httpClient.put<any>(this.noasistencialesURL + `update/${id}`, nonoasistenciales)
+  public update(id:number, noasistenciales:NoAsistencial): Observable<any> {
+    return this.httpClient.put<any>(this.noasistencialesURL + `update/${id}`, noasistenciales)
     .pipe(
       tap(() => {
        this._refresh$.next(); 
