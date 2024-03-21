@@ -1,0 +1,17 @@
+mat-accordion .mat-expansion-panel {
+    box-shadow: none;
+    border: none; 
+  }
+  
+  mat-expansion-panel-header {
+    border: none; 
+  }
+
+  ul {
+    list-style-type: none;
+    margin-top: 4px;
+  }
+
+  .mat-expansion-panel-header:hover {
+    background-color: transparent !important; 
+  }

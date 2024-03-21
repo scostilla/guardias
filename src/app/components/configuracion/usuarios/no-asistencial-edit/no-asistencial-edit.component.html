@@ -1,1 +1,95 @@
-<p>no-asistencial-edit works!</p>
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} No Asistencial
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+  </h2>
+  <mat-dialog-content class="mat-typography">
+    <form [formGroup]="asistencialForm" (ngSubmit)="saveNoAsistencial()">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+        <mat-error *ngIf="asistencialForm.get('nombre')?.errors?.['required']">El nombre es requerido.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('nombre')?.errors?.['pattern']">El nombre debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="apellido">
+        <mat-error *ngIf="asistencialForm.get('apellido')?.errors?.['required']">El apellido es requerido.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('apellido')?.errors?.['pattern']">El apellido debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>DNI</mat-label>
+        <input matInput formControlName="dni">
+        <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['required']">El DNI es requerido.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['pattern']">El DNI debe tener solo números (entre 8 y 20 dígitos).</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Domicilio</mat-label>
+        <input matInput formControlName="domicilio">
+        <mat-error *ngIf="asistencialForm.get('domicilio')?.errors?.['required']">El domicilio es requerido.</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email">
+        <mat-error *ngIf="asistencialForm.get('email')?.errors?.['required']">El email es requerido.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('email')?.errors?.['email']">Debe ser un email válido.</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="estado">
+          <mat-option [value]="true">Activo</mat-option>
+          <mat-option [value]="false">Inactivo</mat-option>
+        </mat-select>
+  </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>CUIL</mat-label>
+        <input matInput formControlName="cuil">
+        <mat-error *ngIf="asistencialForm.get('cuil')?.errors?.['required']">El CUIL es requerido.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Fecha de Nacimiento</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="asistencialForm.get('fechaNacimiento')?.errors?.['required']">La fecha de nacimiento es requerida.</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Sexo</mat-label>
+        <mat-select formControlName="sexo">
+          <mat-option value="M">Masculino</mat-option>
+          <mat-option value="F">Femenino</mat-option>
+          <mat-option value="X">Persona no binaria</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="telefono">
+        <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['required']">El teléfono es requerido.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
+      </mat-form-field>
+    
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="descripcion">
+        <mat-error *ngIf="asistencialForm.get('descripcion')?.errors?.['required']">La descripción es requerida.</mat-error>
+        <mat-error *ngIf="asistencialForm.get('descripcion')?.errors?.['pattern']">La descripción debe tener solo letras (entre 2 y 255 caracteres).</mat-error>
+      </mat-form-field>
+  
+      <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid || !isModified()">
+          {{data ? 'Modificar' : 'Agregar'}}
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </mat-dialog-content>

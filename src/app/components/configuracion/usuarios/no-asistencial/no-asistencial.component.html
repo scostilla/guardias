@@ -1,1 +1,138 @@
-<p>no-asistencial works!</p>
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+  <div class="col-7">
+    <div class="titulos">NO ASISTENCIAL</div>
+  </div>
+  <div class="col-1 align-items-right">
+    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar No Asistencial">
+      <mat-icon>library_add</mat-icon>
+    </button>
+  </div>
+  <div class="col-4">
+    <mat-form-field>
+      <mat-label>Filtro</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.id}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.nombre}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="apellido">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Apellido </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.apellido}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="dni">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> DNI </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.dni}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="domicilio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Domicilio </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.domicilio}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> E-mail </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.email}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="estado">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Estado </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.estado ? 'Activo' : 'Inactivo'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="cuil">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> CUIL </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.cuil}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="fechaNacimiento">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Nacimiento </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.fechaNacimiento | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="sexo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Sexo </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.sexo}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="telefono">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Teléfono </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.telefono}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="descripcion">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Descripción </th> 
+    <td mat-cell *matCellDef="let noasistencial"> {{noasistencial.descripcion}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
+    <td mat-cell *matCellDef="let asistencial" class="cell-actions">
+      <button mat-icon-button matTooltip="Ver {{asistencial.nombre}}" (click)="openDetail(asistencial)">
+        <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="openFormChanges(asistencial)">
+        <mat-icon class="btnEdit">edit</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteNoAsistencial(asistencial)">
+        <mat-icon class="btnRemove">delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<div class="row mt-3">
+  <div class="col-3">
+    <mat-accordion>
+      <mat-expansion-panel #miPanel hideToggle>
+        <mat-expansion-panel-header style="pointer-events: none;">
+          <mat-panel-title>
+            <button mat-icon-button color="primary" aria-label="Agregar columnas" matTooltip="Agregar columnas" (click)="miPanel.toggle(); $event.stopPropagation()" style="pointer-events: auto;">
+              <mat-icon>menu</mat-icon>
+            </button>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul>
+          <li>
+            <input type="checkbox" [(ngModel)]="domicilioVisible" (change)="actualizarColumnasVisibles()"> Domicilio
+          </li>
+          <li>
+            <input type="checkbox" [(ngModel)]="estadoVisible" (change)="actualizarColumnasVisibles()"> Estado
+          </li>
+          <li>
+            <input type="checkbox" [(ngModel)]="fechaNacimientoVisible" (change)="actualizarColumnasVisibles()"> Fecha Nacimiento
+          </li>
+          <li>
+            <input type="checkbox" [(ngModel)]="sexoVisible" (change)="actualizarColumnasVisibles()"> Sexo
+          </li>
+          <li>
+            <input type="checkbox" [(ngModel)]="descripcionVisible" (change)="actualizarColumnasVisibles()"> descripcion
+          </li>
+      </ul>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div class="col-9">
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+  </div>
+</div>
+</div>
+

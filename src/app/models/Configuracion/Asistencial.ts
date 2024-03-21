@@ -9,11 +9,11 @@ export class Asistencial {
     cuil: string;
     fechaNacimiento: Date;
     sexo: string;
-    telefono: number;
+    telefono: string;
     tipoGuardia: string;
     
 
-    constructor(nombre: string, apellido: string, dni: number,  domicilio: string, email: string, estado: boolean, cuil: string, fechaNacimiento: Date, sexo: string, telefono: number, tipoGuardia: string) {
+    constructor(nombre: string, apellido: string, dni: number,  domicilio: string, email: string, estado: boolean, cuil: string, fechaNacimiento: Date, sexo: string, telefono: string, tipoGuardia: string) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;

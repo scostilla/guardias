@@ -4,46 +4,32 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
-  // Usuario y contraseña por defecto para la autenticación básica
-  private readonly defaultUser = {
-    username: 'usuario',
-    password: 'contraseña'
-  };
-
-  // Variable para almacenar si el usuario está autenticado
+  // Este sería un ejemplo de cómo podrías manejar los roles y la autenticación
+  // En un caso real, aquí integrarías con tu backend y JWT
   private isAuthenticated = false;
+  private userRole = 'guest'; // 'user', 'admin'
 
   constructor() { }
 
-  // Método para verificar las credenciales del usuario
   login(username: string, password: string): boolean {
-    if (username === this.defaultUser.username && password === this.defaultUser.password) {
+    if (username === 'user' && password === 'genericPassword') {
       this.isAuthenticated = true;
+      this.userRole = 'user'; // asignar el rol según la respuesta del backend
       return true;
-    } else {
-      this.isAuthenticated = false;
-      return false;
     }
+    return false;
   }
 
-  // Método para cerrar la sesión del usuario
   logout(): void {
     this.isAuthenticated = false;
+    this.userRole = 'guest';
   }
 
-  // Método para verificar si el usuario está autenticado
-  isLoggedIn(): boolean {
+  checkAuthentication(): boolean {
     return this.isAuthenticated;
   }
 
-  // Método para verificar si el usuario tiene un rol específico
-  // En este ejemplo, todos los usuarios tienen el rol 'user' por defecto
-  hasRole(role: string): boolean {
-    if (this.isLoggedIn()) {
-      // Aquí puedes agregar la lógica para manejar diferentes roles
-      // Por ahora, todos los usuarios tienen el rol 'user'
-      return role === 'user';
-    }
-    return false;
+  getUserRole(): string {
+    return this.userRole;
   }
 }

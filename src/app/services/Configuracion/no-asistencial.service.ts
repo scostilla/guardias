@@ -7,7 +7,7 @@ import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 @Injectable({
   providedIn: 'root'
 })
-export class NoNoasistencialService {
+export class NoAsistencialService {
 
   
     noasistencialesURL = 'http://localhost:8080/noasistencial/';
