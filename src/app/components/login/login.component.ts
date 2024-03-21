@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -7,19 +8,29 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  username!: string;
-  password!: string;
+  hide = true;
 
-  constructor(private authService: AuthService) {}
+  loginForm = this.fb.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]]
+  });
 
-  // Método para iniciar sesión
-  onLogin(): void {
-    if (this.authService.login(this.username, this.password)) {
-      console.log('Login exitoso');
-      // Aquí iría la lógica para redirigir al usuario a la página principal o dashboard
+  constructor(private fb: FormBuilder, private toastr: ToastrService) {}
+
+  onForgotPassword() {
+    this.toastr.info('Sigue las instrucciones enviadas a tu correo para restablecer tu contraseña', 'Restablecer contraseña', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+  }
+
+  onSubmit() {
+    if (this.loginForm.valid) {
+
+      this.toastr.success('Inicio de sesión exitoso', 'Bienvenido');
     } else {
-      console.log('Credenciales incorrectas');
+      this.toastr.error('Datos inválidos', 'Error');
     }
   }
 }
-

@@ -1,15 +1,21 @@
-.btn{
-    background-color: #37BBED; 
-    color: #fff;
-}
+.mat-card-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+  }
+  
+  .mat-card {
+    width: 50%; 
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
+    transition: 0.3s;
+    padding: 20px !important;
+  }
+  
+  .mat-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
 
-.btn:hover{
-background-color: #243c74;
-}
-
-.fuente{
-    
-        font-family: "Ubuntu";
-        
-
-}
+  .mat-form-field {
+    width: auto; 
+    margin: 10px; 
+  }
