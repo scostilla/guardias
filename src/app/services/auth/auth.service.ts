@@ -1,35 +1,33 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // Este sería un ejemplo de cómo podrías manejar los roles y la autenticación
-  // En un caso real, aquí integrarías con tu backend y JWT
-  private isAuthenticated = false;
-  private userRole = 'guest'; // 'user', 'admin'
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
-  constructor() { }
+  constructor() {}
+
+  isAuthenticated(): boolean {
+    return this.isAuthenticatedSubject.value;
+  }
 
   login(username: string, password: string): boolean {
-    if (username === 'user' && password === 'genericPassword') {
-      this.isAuthenticated = true;
-      this.userRole = 'user'; // asignar el rol según la respuesta del backend
-      return true;
-    }
-    return false;
+    const accessGranted = (username === 'admin' && password === 'admin');
+    this.isAuthenticatedSubject.next(accessGranted); // Corregido aquí
+    return accessGranted;
   }
 
   logout(): void {
-    this.isAuthenticated = false;
-    this.userRole = 'guest';
+    this.isAuthenticatedSubject.next(false);
   }
 
-  checkAuthentication(): boolean {
-    return this.isAuthenticated;
+  getAuthenticationStatus(): Observable<boolean> {
+    return this.isAuthenticatedSubject.asObservable();
   }
-
-  getUserRole(): string {
-    return this.userRole;
+    
+  updateAuthenticationStatus(status: boolean): void {
+    this.isAuthenticatedSubject.next(status);
   }
 }
