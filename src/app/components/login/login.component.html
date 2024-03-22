@@ -1,4 +1,47 @@
-<div class="mat-card-container">
+<div class="wrapper fadeInDown">
+  <div class="fadeIn first">
+    <img src="assets/img/pnglogo1.png" id="icon" alt="User Icon" />
+  </div>
+
+  <div id="formContent">
+    <h2 class="active"> Ingresar </h2>
+    <h2 class="inactive underlineHover">Solicitar usuario </h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill" class="fadeIn second">
+        <mat-icon matPrefix color="primary">person</mat-icon>
+        <mat-label>Usuario</mat-label>
+        <input matInput formControlName="username">
+        <mat-error *ngIf="loginForm.controls['username'].hasError('required')">
+          El usuario es <strong>requerido</strong>
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="fadeIn third">
+        <mat-icon matPrefix color="primary">lock</mat-icon>
+        <mat-label>Contraseña</mat-label>
+        <input matInput formControlName="password" [type]="hide ? 'password' : 'text'">
+        <mat-icon matSuffix color="primary" (click)="hide = !hide">
+          {{hide ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+        <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+          La contraseña es <strong>requerida</strong>
+        </mat-error>
+      </mat-form-field>
+  
+      <input type="submit" class="fadeIn fourth" value="Ingresar" [disabled]="!loginForm.valid">
+    </form>
+
+    <div id="formFooter">
+      <a class="underlineHover" href="#" (click)="onForgotPassword()">¿Olviaste tu contraseña?</a>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- <div class="mat-card-container">
 <mat-card>
   <mat-card-content>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -28,3 +71,4 @@
 </mat-card-content>
 </mat-card>
 </div>
+-->

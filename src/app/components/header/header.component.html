@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg fond-celeste shadow">
   <div class="logo container mt-2 mb-2">
-    <div class="align-items-right"  *ngIf="showButtons">
+    <div class="align-items-right">
       <a routerLink="/home-page">
         <img src="assets/img/pnglogo1.png" width="170" height="100" />
       </a>
@@ -16,7 +16,7 @@
     </div>
 
       <div class="content-icon-header">
-      <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showButtons">
+      <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material">
         <mat-icon>settings</mat-icon>
       </button>
         <mat-menu #menu_admin="matMenu">
@@ -27,7 +27,7 @@
             <button mat-menu-item routerLink="/digesto"><mat-icon>picture_as_pdf</mat-icon><span>Digesto</span></button>
           </div>
         </mat-menu>
-      <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material" *ngIf="showButtons">
+      <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material">
         <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
