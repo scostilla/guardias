@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/app/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -15,10 +14,10 @@ export class HeaderComponent implements OnDestroy {
   showNavBar: boolean = true;
   showButtons: boolean = true;
 
-  constructor(private authService: AuthService, private router: Router, private toastr: ToastrService) {
+  constructor(private router: Router, private toastr: ToastrService) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        this.showNavBar = !(event.url === '/home-page');
+        this.showNavBar = !(event.url === '/' || event.url === '/home-page');
       }
     });
   }
@@ -29,13 +28,4 @@ export class HeaderComponent implements OnDestroy {
     }
   }
 
-  logout() {
-    this.authService.logout();
-    this.toastr.success('Sesión cerrada con éxito','', {
-      timeOut: 6000,
-      positionClass: 'toast-top-center',
-      progressBar: true
-    });
-    this.router.navigate(['/']);
-  }
 }

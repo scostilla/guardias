@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from 'src/app/services/auth/auth.guard'; 
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
@@ -130,7 +129,7 @@ import { PruebaDetailComponent } from './components/configuracion/territorio/pru
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
-  {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard]},
+  {path:"home-page", component:HomePageComponent},
   { path: 'professional-form', component: ProfessionalFormComponent },
   { path: 'professional-form-edit', component: ProfessionalFormEditComponent },
   { path: 'professional-form-delet', component: ProfessionalFormDeletComponent },
