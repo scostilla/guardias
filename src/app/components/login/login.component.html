@@ -9,7 +9,7 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="fill" class="fadeIn second">
-        <mat-icon matPrefix color="primary">person</mat-icon>
+        <mat-icon class="mat-icon-size" matPrefix color="primary">person</mat-icon>
         <mat-label>Usuario</mat-label>
         <input matInput formControlName="username">
         <mat-error *ngIf="loginForm.controls['username'].hasError('required')">
@@ -18,10 +18,10 @@
       </mat-form-field>
   
       <mat-form-field appearance="fill" class="fadeIn third">
-        <mat-icon matPrefix color="primary">lock</mat-icon>
+        <mat-icon class="mat-icon-size" matPrefix color="primary">lock</mat-icon>
         <mat-label>Contraseña</mat-label>
         <input matInput formControlName="password" [type]="hide ? 'password' : 'text'">
-        <mat-icon matSuffix color="primary" (click)="hide = !hide">
+        <mat-icon class="mat-icon-size mat-icon-color" matSuffix (click)="hide = !hide">
           {{hide ? 'visibility_off' : 'visibility'}}
         </mat-icon>
         <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
