@@ -3,74 +3,66 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Feriado } from 'src/app/models/Feriado';
 import { FeriadoService } from 'src/app/services/feriado.service';
-import { DatePipe } from '@angular/common';
-
-
 
 @Component({
   selector: 'app-feriado-edit',
   templateUrl: './feriado-edit.component.html',
   styleUrls: ['./feriado-edit.component.css']
 })
-
 export class FeriadoEditComponent implements OnInit {
-
-  form?: FormGroup;
-  esEdicion?: boolean;
-  esIgual: boolean = false;
-
+  feriadoForm: FormGroup;
+  initialData: any;
+  
   constructor(
     private fb: FormBuilder,
+    public dialogRef: MatDialogRef<FeriadoEditComponent>,
     private feriadoService: FeriadoService,
-    private dialogRef: MatDialogRef<FeriadoEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Feriado,
-    public datePipe: DatePipe
-  ) { }
-
-  ngOnInit(): void {
-    this.form = this.fb.group({
-      id: [this.data ? this.data.id : null],
-      motivo: [this.data ? this.data.motivo : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
-      fecha: [this.data ? this.transformDate(this.data.fecha) : '', [Validators.required]],
-      tipoFeriado: [this.data ? this.data.tipoFeriado : '', [Validators.required]],
-      descripcion: [this.data ? this.data.descripcion : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]]
+    @Inject(MAT_DIALOG_DATA) public data: Feriado
+  ) {
+    this.feriadoForm = this.fb.group({
+      motivo: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
+      fecha: ['', Validators.required],
+      tipoFeriado: ['', Validators.required],
+      descripcion: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]]
     });
 
-    this.esEdicion = this.data != null;
-    
-    this.form.valueChanges.subscribe(val => {
-    this.esIgual = val.id !== this.data?.id || val.motivo !== this.data?.motivo || val.fecha !== this.data?.fecha || val.tipoFeriado !== this.data?.tipoFeriado || val.descripcion !== this.data?.descripcion;
-    });
-  }
-
-  transformDate(date: Date): string {
-    return this.datePipe.transform(date, 'yyyy-MM-dd')!;
-  }
-
-
-  saveFeriado(): void {
-    const id = this.form?.get('id')?.value;
-    const motivo = this.form?.get('motivo')?.value;
-    const fecha = this.form?.get('fecha')?.value;
-    const tipoFeriado = this.form?.get('tipoFeriado')?.value;
-    const descripcion = this.form?.get('descripcion')?.value;
-
-    const feriado = new Feriado(motivo, fecha, tipoFeriado, descripcion);
-    feriado.id = id;
-
-    if (this.esEdicion) {
-      this.feriadoService.update(id, feriado).subscribe(data => {
-        this.dialogRef.close(data);
-      });
-    } else {
-      this.feriadoService.save(feriado).subscribe(data => {
-        this.dialogRef.close(data);
-      });
+    if (data) {
+      this.feriadoForm.patchValue(data);
     }
   }
 
-  cancelar(): void {
-    this.dialogRef.close();
+  ngOnInit(): void {
+    this.initialData = this.feriadoForm.value;
   }
 
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.feriadoForm.value);
+  }
+
+  saveFeriado(): void {
+    if (this.feriadoForm.valid) {
+      const feriadoData = this.feriadoForm.value;
+      if (this.data && this.data.id) {
+        this.feriadoService.update(this.data.id, feriadoData).subscribe(
+          result => {
+            this.dialogRef.close(result);
+          },
+          error => {
+          }
+        );
+      } else {
+        this.feriadoService.save(feriadoData).subscribe(
+          result => {
+            this.dialogRef.close(result);
+          },
+          error => {
+          }
+        );
+      }
+    }
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
+  }
 }

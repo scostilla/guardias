@@ -8,6 +8,7 @@ import { SharedModule } from './components/shared/shared.module';
 import { MatDividerModule } from '@angular/material/divider';
 import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -346,6 +347,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     MatListModule,
     BrowserModule,
     BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatMomentDateModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,

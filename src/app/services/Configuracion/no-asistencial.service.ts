@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 
 @Injectable({
@@ -20,9 +20,12 @@ export class NoAsistencialService {
     }
   
     public list(): Observable<NoAsistencial[]> {
-        return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + 'list');
+      return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + 'list')
+        .pipe(
+          map(noAsistenciales => noAsistenciales.map(na => ({ ...na, tipo: 'No Asistencial' })))
+        );
     }
-  
+      
     public detail(id:number): Observable<NoAsistencial> {
         return this.httpClient.get<NoAsistencial>(this.noasistencialesURL + `detail/${id}`);
     }

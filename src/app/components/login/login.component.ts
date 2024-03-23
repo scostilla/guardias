@@ -12,7 +12,7 @@ export class LoginComponent {
   hide = true; 
 
   loginForm: FormGroup = this.fb.group({
-    username: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
 

@@ -145,7 +145,7 @@ export class FeriadoComponent implements OnInit, OnDestroy {
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
       this.feriadoService.delete(feriado.id!).subscribe(data => {
-        this.toastr.success('Profesión eliminada con éxito', 'ELIMINADA', {
+        this.toastr.success('Feriado eliminado con éxito', 'ELIMINADO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -155,7 +155,7 @@ export class FeriadoComponent implements OnInit, OnDestroy {
         this.dataSource.data.splice(index, 1);
         this.dataSource._updateChangeSubscription();
       }, err => {
-        this.toastr.error(err.message, 'Error, no se pudo eliminar la profesión', {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar el feriado', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

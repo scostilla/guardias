@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 
 @Injectable({
@@ -20,9 +20,11 @@ export class AsistencialService {
     }
   
     public list(): Observable<Asistencial[]> {
-        return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list');
-    }
-  
+      return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list')
+        .pipe(
+          map(asistenciales => asistenciales.map(a => ({ ...a, tipo: 'Asistencial' })))
+        );
+    }  
     public detail(id:number): Observable<Asistencial> {
         return this.httpClient.get<Asistencial>(this.asistencialesURL + `detail/${id}`);
     }
