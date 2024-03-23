@@ -1,5 +1,5 @@
 :host {
-  background-color: #37BBED;
+  background: linear-gradient(to right, #37BBED, #3a8caa);
   display: flex;
   align-items: center;
   flex-direction: column; 
@@ -142,6 +142,7 @@ mat-form-field {
 
 .mat-icon-color {
   color: #b9b9b9;
+  cursor: pointer;
 }
 
 .mat-icon-color:hover {
