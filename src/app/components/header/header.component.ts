@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
@@ -12,12 +12,14 @@ import { ToastrService } from 'ngx-toastr';
 export class HeaderComponent implements OnDestroy {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
-  showButtons: boolean = true;
+  showHeader: boolean = true;
+
 
   constructor(private router: Router, private toastr: ToastrService) {
     this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.showNavBar = !(event.url === '/' || event.url === '/home-page');
+      if (event instanceof NavigationEnd) {
+        this.showNavBar = !(event.url === '/home-page');
+        this.showHeader = !(event.url === '/');
       }
     });
   }

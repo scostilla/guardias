@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
+import { Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +8,6 @@ import { Router, NavigationStart } from '@angular/router';
 })
 export class AppComponent {
   title = 'guardias';
-  mostrarHeader: boolean = true;
 
-  constructor(private router: Router) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.mostrarHeader = !(event.url === '/');
-      }
-    });
-  }
+  constructor(private router: Router) {}
 }

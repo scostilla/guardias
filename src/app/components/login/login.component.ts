@@ -15,7 +15,6 @@ export class LoginComponent {
     username: ['', [Validators.required]],
     password: ['', [Validators.required]]
   });
-  authService: any;
 
   constructor(
     private fb: FormBuilder,
