@@ -175,6 +175,7 @@ import { NoAsistencialEditComponent } from './components/configuracion/usuarios/
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -353,9 +354,9 @@ registerLocaleData(localeEsAr, 'es-AR');
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
-    CalendarCommonModule, // Importa este módulo
+    CalendarCommonModule,
     CalendarMonthModule,
-    ToastrModule.forRoot() // ToastrModule added
+    ToastrModule.forRoot(),
     
   ],
   

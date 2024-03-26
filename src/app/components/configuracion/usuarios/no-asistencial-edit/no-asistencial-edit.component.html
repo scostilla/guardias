@@ -79,7 +79,6 @@
       <mat-form-field appearance="fill">
         <mat-label>Descripción</mat-label>
         <input matInput formControlName="descripcion">
-        <mat-error *ngIf="asistencialForm.get('descripcion')?.errors?.['required']">La descripción es requerida.</mat-error>
         <mat-error *ngIf="asistencialForm.get('descripcion')?.errors?.['pattern']">La descripción debe tener solo letras (entre 2 y 255 caracteres).</mat-error>
       </mat-form-field>
   

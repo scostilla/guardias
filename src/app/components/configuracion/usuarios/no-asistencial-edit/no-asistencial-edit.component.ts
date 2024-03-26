@@ -30,7 +30,7 @@ export class NoAsistencialEditComponent implements OnInit {
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      descripcion: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{1,255}$')]]
+      descripcion: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{1,255}$')]]
     });
 
     if (data) {
@@ -52,24 +52,26 @@ export class NoAsistencialEditComponent implements OnInit {
       if (this.data && this.data.id) {
         this.noasistencialService.update(this.data.id, asistencialData).subscribe(
           result => {
-            this.dialogRef.close(result);
+            this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
+            this.dialogRef.close({ type: 'error', data: error });
           }
         );
       } else {
         this.noasistencialService.save(asistencialData).subscribe(
           result => {
-            this.dialogRef.close(result);
+            this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
+            this.dialogRef.close({ type: 'error', data: error });
           }
         );
       }
     }
   }
-
+  
   cancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ type: 'cancel' });
   }
 }

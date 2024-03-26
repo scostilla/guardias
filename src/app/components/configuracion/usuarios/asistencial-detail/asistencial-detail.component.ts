@@ -18,10 +18,18 @@ export class AsistencialDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.asistencial = this.data;
+    this.asistencial.cuil = this.formatearCuil(this.asistencial.cuil);
   }
 
   cerrar(): void {
     this.dialogRef.close();
+  }
+
+  formatearCuil(cuil: string): string {
+    if (cuil && cuil.length === 11) {
+      return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
+    }
+    return cuil;
   }
 
 }

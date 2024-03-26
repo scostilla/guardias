@@ -52,8 +52,14 @@ export class AsistencialService {
   }
   
   public delete(id:number): Observable<any> {
-    return this.httpClient.put<any>(this.asistencialesURL + `delete/${id}`, {});
+    return this.httpClient.put<any>(this.asistencialesURL + `delete/${id}`, {})
+    .pipe(
+      tap(() => {
+       this._refresh$.next(); 
+      })
+    )
+  }
+
   }
   
-  }
   

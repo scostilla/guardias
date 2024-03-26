@@ -53,8 +53,10 @@ export class NoAsistencialService {
   }
   
   public delete(id:number): Observable<any> {
-    return this.httpClient.put<any>(this.noasistencialesURL + `delete/${id}`, {});
+    return this.httpClient.put<any>(this.noasistencialesURL + `delete/${id}`, {})    .pipe(
+      tap(() => {
+       this._refresh$.next(); 
+      })
+    ) 
   }
-  
-  }
-  
+}

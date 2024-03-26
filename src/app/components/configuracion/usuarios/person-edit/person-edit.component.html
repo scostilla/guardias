@@ -1,1 +1,12 @@
-<p>person-edit works!</p>
+<h1 mat-dialog-title>Tipo de persona a agregar</h1>
+<div mat-dialog-content>
+  <p>Selecciona para continuar:</p>
+  <mat-radio-group aria-label="Selecciona un tipo" (change)="onSelectionChange($event.value)" color="primary">
+    <mat-radio-button value="Asistencial">Asistencial</mat-radio-button>
+    <mat-radio-button value="No Asistencial">No Asistencial</mat-radio-button>
+  </mat-radio-group>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="cerrar()">Cancelar</button>
+  <button mat-button color="primary" [disabled]="!selectedType" (click)="continuar()">Continuar</button>
+</div>

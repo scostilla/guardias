@@ -52,17 +52,19 @@ export class AsistencialEditComponent implements OnInit {
       if (this.data && this.data.id) {
         this.asistencialService.update(this.data.id, asistencialData).subscribe(
           result => {
-            this.dialogRef.close(result);
+            this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
+            this.dialogRef.close({ type: 'error', data: error });
           }
         );
       } else {
         this.asistencialService.save(asistencialData).subscribe(
           result => {
-            this.dialogRef.close(result);
+            this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
+            this.dialogRef.close({ type: 'error', data: error });
           }
         );
       }
@@ -70,7 +72,7 @@ export class AsistencialEditComponent implements OnInit {
   }
 
   cancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ type: 'cancel' });
   }
 }
 
