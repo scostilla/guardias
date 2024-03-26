@@ -105,6 +105,9 @@ import { AsistencialEditComponent } from './components/configuracion/usuarios/as
 import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
+import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
+import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
+import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 
 import { CronogramaNewComponent } from './components/cronograma-new/cronograma-new.component';
 
@@ -234,6 +237,9 @@ const routes: Routes = [
  {path: 'no-asistencial', component:NoAsistencialComponent},
  {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
  {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
+ {path: 'legajo', component:LegajoComponent},
+ {path: 'legajo-detail/:id', component:LegajoDetailComponent},
+ {path: 'legajo-edit/:id', component:LegajoEditComponent},
 
 
 

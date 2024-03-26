@@ -16,6 +16,16 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter, CalendarCommonModule, CalendarMonthModule } from 'angular-calendar';
 import { MatListModule } from '@angular/material/list';
 
+//Angular nativo
+
+//Componentes sistema
+
+//Librerias
+//Librerias--calendario
+//Libreria--fechas
+//Libreria--hora
+//
+
 
 //Components
 import { AppComponent } from './app.component';
@@ -174,6 +184,7 @@ import { NoAsistencialComponent } from './components/configuracion/usuarios/no-a
 import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
+import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -309,6 +320,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialComponent,
     NoAsistencialEditComponent,
     NoAsistencialDetailComponent,
+    LegajoComponent,
     
   ],
 
@@ -322,7 +334,6 @@ registerLocaleData(localeEsAr, 'es-AR');
     CommonModule,
     SharedModule,
     MatFormFieldModule,
-    MatInputModule,
     MatNativeDateModule,
     NgxMaterialTimepickerModule,
     MatSelectModule,
@@ -340,7 +351,6 @@ registerLocaleData(localeEsAr, 'es-AR');
     MatButtonModule,
     MatExpansionModule,
     MatIconModule,
-    MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
     MatCardModule,   

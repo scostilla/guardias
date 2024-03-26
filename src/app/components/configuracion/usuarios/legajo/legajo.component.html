@@ -1,0 +1,98 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+  <div class="col-7">
+    <div class="titulos">LEGAJOS</div>
+  </div>
+  <div class="col-1 align-items-right">
+    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Legajo">
+      <mat-icon>library_add</mat-icon>
+    </button>
+  </div>
+  <div class="col-4">
+    <mat-form-field>
+      <mat-label>Filtro</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.id}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actual">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Actual </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.actual ? 'Si' : 'No'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="fechaInicio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Inicio </th> 
+    <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="fechaFinal">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Final </th> 
+    <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="legal">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Legal </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.legal ? 'Si' : 'No'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="matriculaNacional">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Matricula Nacional </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.matriculaNacional}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="matriculaProvincial">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Matricula Provincial </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.matriculaProvincial}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="idPersona">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Persona </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.idPersona}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="idProfesion">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Profesion </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.idProfesion}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="idRevista">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Revista </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.idRevista}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="idCargo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Cargo </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.idCargo}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
+    <td mat-cell *matCellDef="let legajo">
+      <button mat-icon-button matTooltip="Ver {{legajo.motivo}}" (click)="openDetail(legajo)">
+        <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Editar {{legajo.motivo}}" (click)="openFormChanges(legajo)">
+        <mat-icon class="btnEdit">edit</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Eliminar {{legajo.motivo}}" (click)="deleteLegajo(legajo)">
+        <mat-icon class="btnRemove">delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+</div>
+</div>
