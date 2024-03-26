@@ -1,12 +1,12 @@
 <div id="container-title-hosp">
     <div class="text-title-hosp"><mat-icon>business</mat-icon> &nbsp;&nbsp;HOSPITAL PABLO SORIA</div>
 </div>
-<div class="container">
+<div class="container" *ngIf="isLogged">
   <section>
-    <div class="container">
+    <div class="container" >
       <!-- Page Features-->
       <div class="row mb-4 ">
-        <div class="col-lg">
+        <div class="col-lg" >
           <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-actividades">
             <div class="icon1_btnMenu">
               <img class="img-fluid" src="/assets/img/i_actividades.png" />

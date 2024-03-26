@@ -22,13 +22,25 @@
       </button>
         <mat-menu #menu_admin="matMenu">
             <div class="col" type="button">
-            <button mat-menu-item routerLink="/configuracion"><mat-icon>build</mat-icon><span>Configuraciones</span></button>
-            <button mat-menu-item><mat-icon>face</mat-icon><span>Usuario</span></button>
-            <button mat-menu-item routerLink="/novedades"><mat-icon  matBadge="2" matBadgeColor="warn">mail</mat-icon><span>Notificaciones</span></button>
-            <button mat-menu-item routerLink="/digesto"><mat-icon>picture_as_pdf</mat-icon><span>Digesto</span></button>
+            <button mat-menu-item routerLink="/configuracion">
+              <mat-icon>build</mat-icon>
+              <span>Configuraciones</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>face</mat-icon>
+              <span>Usuario</span>
+            </button>
+            <button mat-menu-item routerLink="/novedades">
+              <mat-icon  matBadge="2" matBadgeColor="warn">mail</mat-icon>
+              <span>Notificaciones</span>
+            </button>
+            <button mat-menu-item routerLink="/digesto">
+              <mat-icon>picture_as_pdf</mat-icon>
+              <span>Digesto</span>
+            </button>
           </div>
         </mat-menu>
-      <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material">
+      <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material" *ngIf="isLogged">
         <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
@@ -37,13 +49,13 @@
               <img src="assets/img/profile-user.jpg">
             </div>
             <div class="perfil-nom">
-              Nicolás Cruz
+              {{nombreUsuario}}
             </div>
             <div class="perfil-cargo">
               Administrativo
             </div>
           </div>
-          <div class="col" type="button" routerLink="/">
+          <div class="col" type="button" (click)="onLogOut()" >
             <button mat-menu-item><mat-icon>exit_to_app</mat-icon><span>Salir</span></button>
           </div>
         </mat-menu>

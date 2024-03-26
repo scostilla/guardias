@@ -173,6 +173,7 @@ import { AsistencialEditComponent } from './components/configuracion/usuarios/as
 import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
 import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
+import { interceptorProvider } from './interceptors/interceptor.service';
 registerLocaleData(localeEsAr, 'es-AR');
 
 @NgModule({
@@ -368,7 +369,8 @@ registerLocaleData(localeEsAr, 'es-AR');
       provide: HTTP_INTERCEPTORS,
       useClass: SpinnerInterceptor,
       multi: true
-    }
+    },
+    interceptorProvider
   ],
   
   bootstrap: [AppComponent],
