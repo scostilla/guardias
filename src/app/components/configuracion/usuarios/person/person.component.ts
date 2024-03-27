@@ -1,19 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef  } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { Subscription, forkJoin } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { PersonDetailComponent } from '../person-detail/person-detail.component';
 import { PersonEditComponent } from '../person-edit/person-edit.component';
-import { AsistencialEditComponent } from '../asistencial-edit/asistencial-edit.component';
-import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
-import { NoAsistencialEditComponent } from '../no-asistencial-edit/no-asistencial-edit.component';
-import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component';
-import { ComponentType } from '@angular/cdk/portal';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -21,23 +20,36 @@ import { ComponentType } from '@angular/cdk/portal';
   templateUrl: './person.component.html',
   styleUrls: ['./person.component.css']
 })
-export class PersonComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'dni', 'email', 'telefono', 'tipo', 'acciones'];
-  dataSource = new MatTableDataSource();
-  tipoFiltro: string = '';
-  subscriptions: { [key: string]: Subscription } = {};
+
+export class PersonComponent implements OnInit, OnDestroy {
+
+  dniVisible: boolean = false;
+  domicilioVisible: boolean = false;
+  estadoVisible: boolean = false;
+  fechaNacimientoVisible: boolean = false;
+  sexoVisible: boolean = false;
+  emailVisible: boolean = false;
 
 
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatTable) table!: MatTable<Asistencial>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  dialogRef!: MatDialogRef<PersonDetailComponent>;
+  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'dni', 'domicilio', 'email', 'estado', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'tipoGuardia', 'acciones'];
+  dataSource!: MatTableDataSource<Asistencial>;
+  suscription!: Subscription;
+  asistencial!: Asistencial;
+  legajos: Legajo[] = [];
 
   constructor(
     private asistencialService: AsistencialService,
-    private noAsistencialService: NoAsistencialService,
+    private dialog: MatDialog,
     private toastr: ToastrService,
-    private paginatorIntl: MatPaginatorIntl,
-    public dialog: MatDialog
-  ) {
+    private router: Router,
+    private legajoService: LegajoService,
+    private paginatorIntl: MatPaginatorIntl
+    ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
     this.paginatorIntl.previousPageLabel = "Página anterior";
@@ -47,170 +59,181 @@ export class PersonComponent implements OnInit {
       const start = page * size + 1;
       const end = Math.min((page + 1) * size, length);
       return `${start} - ${end} de ${length}`; };
-  }
+     }
 
   ngOnInit(): void {
-    this.listPerson();
-    this.subscriptions['asistencial'] = this.asistencialService.refresh$.subscribe(() => {
-      this.listPerson();
-    });
-    this.subscriptions['noAsistencial'] = this.noAsistencialService.refresh$.subscribe(() => {
-      this.listPerson();
-    });
-  }
-  
-  ngOnDestroy(): void {
-    Object.values(this.subscriptions).forEach(subscription => subscription.unsubscribe());
+    this.listLegajos();
+
+    this.listAsistencial();
+
+    this.suscription = this.asistencialService.refresh$.subscribe(() => {
+      this.listAsistencial();
+    })
+
+    this.actualizarColumnasVisibles();
+
   }
 
-  onTipoChange(newTipo: string) {
-    this.tipoFiltro = newTipo;
-    this.dataSource.filter = newTipo;
-  }
-
-  listPerson(): void {
-    forkJoin([
-      this.asistencialService.list(),
-      this.noAsistencialService.list()
-    ]).subscribe(results => {
-      const combinedData = [
-        ...results[0].map(item => ({ ...item, tipo: 'Asistencial' })),
-        ...results[1].map(item => ({ ...item, tipo: 'No Asistencial' }))
-      ];
-      this.dataSource.data = combinedData;
+  listAsistencial(): void {
+    this.asistencialService.list().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
 
-  openDetail(person: any): void {
-    if (person.tipo === 'Asistencial') {
-      const dialogRefAsistencial = this.dialog.open(AsistencialDetailComponent, {
-        width: '600px',
-        data: person
-      });
-      dialogRefAsistencial.afterClosed().subscribe(() => {
-      });
-    } else if (person.tipo === 'No Asistencial') {
-      const dialogRefNoAsistencial = this.dialog.open(NoAsistencialDetailComponent, {
-        width: '600px',
-        data: person
-      });
-      dialogRefNoAsistencial.afterClosed().subscribe(() => {
-      });
-    }
-  }
-  
-  openFormChanges(person: any): void {
-    let dialogRef;
-    if (person.tipo === 'Asistencial') {
-      dialogRef = this.dialog.open(AsistencialEditComponent, {
-        width: '600px',
-        data: person
-      });
-    } else if (person.tipo === 'No Asistencial') {
-      dialogRef = this.dialog.open(NoAsistencialEditComponent, {
-        width: '600px',
-        data: person
-      });
-    }
-  
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe(result => {
-        if (result && result.type === 'save') {
-          this.toastr.success('Los cambios en la persona se han guardado con éxito.', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        } else if (result && result.type === 'cancel') {
-          this.toastr.info('Se canceló la operación de edición.', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        } else {
-          this.toastr.error('No se guardaron los cambios de la persona.', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      });
-    }
+  listLegajos(): void {
+    this.legajoService.list().subscribe((legajos: Legajo[]) => {
+      this.legajos = legajos;
+    });
   }
 
-  openCreate(): void {
-    const dialogRef = this.dialog.open(PersonEditComponent, {
-      width: '600px',
-    });
+  hayLegajos(asistencial: Asistencial): boolean {
+    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
+  }
+
+  verLegajo(): void {
+    this.router.navigate(['/legajo-person'], { queryParams: { id: this.asistencial.id } });
+  }
+
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
+  }
+
+  actualizarColumnasVisibles(): void {
+    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'telefono', 'acciones'];
   
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        let dialogComponent: ComponentType<any> | null = null;
+    let columnasVisibles: string[] = [];
   
-        if (result === 'Asistencial') {
-          dialogComponent = AsistencialEditComponent as ComponentType<AsistencialEditComponent>;
-        } else if (result === 'No Asistencial') {
-          dialogComponent = NoAsistencialEditComponent as ComponentType<NoAsistencialEditComponent>;
-        }
-  
-        if (dialogComponent) {
-          const editDialogRef = this.dialog.open(dialogComponent, {
-            width: '600px',
-            data: {}
-          });
-  
-          editDialogRef.afterClosed().subscribe(editResult => {
-            if (editResult && editResult.type === 'save') {
-              this.toastr.success('La persona fue creada con éxito.', 'EXITO', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
-              });
-            } else if (editResult && editResult.type === 'cancel') {
-              this.toastr.info('Cancelaste el proceso de creación de una nueva persona.');
-            } else {
-              this.toastr.error('Hubo un error al crear la persona.', 'Error', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
-              });
-            }
-          });
-        }
-      } else {
-        this.toastr.info('Cancelaste el proceso de creación de una nueva persona.');
+    columnasBase.forEach(columna => {
+      columnasVisibles.push(columna);
+      if (columna === 'cuil' && this.dniVisible) {
+        columnasVisibles.push('dni');
+      }
+      if (columna === 'apellido' && this.domicilioVisible) {
+        columnasVisibles.push('domicilio');
+      }
+      if (columna === 'apellido' && this.estadoVisible) {
+        columnasVisibles.push('estado');
+      }
+      if (columna === 'telefono' && this.fechaNacimientoVisible) {
+        columnasVisibles.push('fechaNacimiento');
+      }
+      if (columna === 'telefono' && this.sexoVisible) {
+        columnasVisibles.push('sexo');
+      }
+      if (columna === 'telefono' && this.emailVisible) {
+        columnasVisibles.push('email');
       }
     });
+  
+    this.displayedColumns = columnasVisibles;
+  
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }  
+
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
   }
 
-  deletePerson(item: any): void {
-    const service = item.tipo === 'Asistencial' ? this.asistencialService : this.noAsistencialService;
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + item.nombre,
-        title: 'Eliminar',
-      },
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.dni.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) || 
+      this.accentFilter(data.domicilio.toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) ||
+      this.accentFilter(data.fechaNacimiento.toISOString().toLowerCase()).includes(this.accentFilter(filter)) || 
+      this.accentFilter(data.sexo.toLowerCase()).includes(this.accentFilter(filter));
+    };
+  }
+
+  openFormChanges(asistencial?: Asistencial): void {
+    const esEdicion = asistencial != null;
+    const dialogRef = this.dialog.open(PersonEditComponent, {
+      width: '600px',
+      data: esEdicion ? asistencial : null
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        service.delete(item.id).subscribe(() => {
-          
-        this.toastr.success('Persona eliminada con éxito', 'ELIMINADA', {
+      if (result && result.type === 'save') {
+        this.toastr.success(esEdicion ? 'Asistencial editado con éxito' : 'Asistencial creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        }, err => {
-          this.toastr.error(err.message, 'Error, no se pudo eliminar la persona', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });  
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+          this.dataSource.data[index] = result.data;
+        } else {
+          this.dataSource.data.push(result.data);
+        }
+        this.dataSource._updateChangeSubscription();
+      } else if (result && result.type === 'error') {
+        this.toastr.error('Ocurrió un error al crear o editar Asistencial', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
+      } else if (result && result.type === 'cancel') {
       }
     });
   }
+
+  openDetail(asistencial: Asistencial): void {
+    this.dialogRef = this.dialog.open(PersonDetailComponent, { 
+      width: '600px',
+      data: asistencial
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteAsistencial(asistencial: Asistencial): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + asistencial.nombre,
+        title: 'Eliminar',
+      },
+    });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.asistencialService.delete(asistencial.id!).subscribe(data => {
+        this.toastr.success('Asistencial eliminado con éxito', 'ELIMINADO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        const index = this.dataSource.data.findIndex(p => p.id === asistencial.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar el asistencial', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
+    }
+  });
 }
+}
+

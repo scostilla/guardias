@@ -21,9 +21,6 @@ export class NoAsistencialService {
   
     public list(): Observable<NoAsistencial[]> {
       return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + 'list')
-        .pipe(
-          map(noAsistenciales => noAsistenciales.map(na => ({ ...na, tipo: 'No Asistencial' })))
-        );
     }
       
     public detail(id:number): Observable<NoAsistencial> {

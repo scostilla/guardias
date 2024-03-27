@@ -126,9 +126,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.accentFilter(data.domicilio.toLowerCase()).includes(this.accentFilter(filter)) || 
       this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) ||
       this.accentFilter(data.fechaNacimiento.toISOString().toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.sexo.toLowerCase()).includes(this.accentFilter(filter)) ||
-      this.accentFilter(data.tipoGuardia.toLowerCase()).includes(this.accentFilter(filter));
-
+      this.accentFilter(data.sexo.toLowerCase()).includes(this.accentFilter(filter));
     };
   }
 

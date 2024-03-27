@@ -235,6 +235,7 @@ export class DataSharingService {
   getAsistencialId() {
     return this.id;
   }
+
   setNoAsistencialFormData(data: any) {
     this.formData = data;
   }
@@ -250,4 +251,38 @@ export class DataSharingService {
   getNoAsistencialId() {
     return this.id;
   }
+
+  setPersonFormData(data: any) {
+    this.formData = data;
+  }
+
+  getPersonFormData() {
+    return this.formData;
+  }
+
+  setPersonId(id: number) {
+    this.id = id;
+  }
+
+  getPersonId() {
+    return this.id;
+  }
+
+  setLegajoFormData(data: any) {
+    this.formData = data;
+  }
+
+  getLegajoFormData() {
+    return this.formData;
+  }
+
+  setLegajoId(id: number) {
+    this.id = id;
+  }
+
+  getLegajoId() {
+    return this.id;
+  }
+
+
 }

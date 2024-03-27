@@ -19,10 +19,12 @@ import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asiste
 
 export class NoAsistencialComponent implements OnInit, OnDestroy {
 
+  dniVisible: boolean = false;
   domicilioVisible: boolean = false;
   estadoVisible: boolean = false;
   fechaNacimientoVisible: boolean = false;
   sexoVisible: boolean = false;
+  emailVisible: boolean = false;
   descripcionVisible: boolean = false;
 
   @ViewChild(MatTable) table!: MatTable<NoAsistencial>;
@@ -75,12 +77,15 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'dni', 'email', 'telefono', 'acciones'];
+    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'telefono', 'acciones'];
   
     let columnasVisibles: string[] = [];
   
     columnasBase.forEach(columna => {
       columnasVisibles.push(columna);
+      if (columna === 'cuil' && this.dniVisible) {
+        columnasVisibles.push('dni');
+      }
       if (columna === 'apellido' && this.domicilioVisible) {
         columnasVisibles.push('domicilio');
       }
@@ -92,6 +97,9 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       }
       if (columna === 'telefono' && this.sexoVisible) {
         columnasVisibles.push('sexo');
+      }
+      if (columna === 'telefono' && this.emailVisible) {
+        columnasVisibles.push('email');
       }
       if (columna === 'telefono' && this.descripcionVisible) {
         columnasVisibles.push('descripcion');
@@ -140,30 +148,29 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       width: '600px',
       data: esEdicion ? noasistencial : null
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-      if (result) {
-        this.toastr.success(esEdicion ? 'No Asistencial editado con éxito' : 'No Asistencial creado con éxito', 'EXITO', {
+      if (result && result.type === 'save') {
+        this.toastr.success(esEdicion ? 'Asistencial editado con éxito' : 'Asistencial creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
         if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
+          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+          this.dataSource.data[index] = result.data;
         } else {
-          this.dataSource.data.push(result);
+          this.dataSource.data.push(result.data);
         }
         this.dataSource._updateChangeSubscription();
-      } else {
-        this.toastr.error('Ocurrió un error al crear o editar No Asistencial', 'Error', {
+      } else if (result && result.type === 'error') {
+        this.toastr.error('Ocurrió un error al crear o editar Asistencial', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
+      } else if (result && result.type === 'cancel') {
       }
-    }
     });
   }
 

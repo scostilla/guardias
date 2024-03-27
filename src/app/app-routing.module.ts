@@ -57,6 +57,7 @@ import { NoAsistencialEditComponent } from './components/configuracion/usuarios/
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
+import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 
 
 //Configuraciones: Calendario
@@ -206,6 +207,8 @@ const routes: Routes = [
   {path: 'legajo', component:LegajoComponent},
   {path: 'legajo-detail/:id', component:LegajoDetailComponent},
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
+  {path: 'legajo-person/:id', component:LegajoPersonComponent},
+
 
   //Configuraciones: Calendario
   {path: 'feriado', component:FeriadoComponent},

@@ -21,10 +21,8 @@ export class AsistencialService {
   
     public list(): Observable<Asistencial[]> {
       return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list')
-        .pipe(
-          map(asistenciales => asistenciales.map(a => ({ ...a, tipo: 'Asistencial' })))
-        );
     }  
+    
     public detail(id:number): Observable<Asistencial> {
         return this.httpClient.get<Asistencial>(this.asistencialesURL + `detail/${id}`);
     }

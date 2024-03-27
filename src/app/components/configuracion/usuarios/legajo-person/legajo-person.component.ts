@@ -9,15 +9,16 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component'; 
+import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-legajo',
-  templateUrl: './legajo.component.html',
-  styleUrls: ['./legajo.component.css']
+  selector: 'app-legajo-person',
+  templateUrl: './legajo-person.component.html',
+  styleUrls: ['./legajo-person.component.css']
 })
 
-export class LegajoComponent implements OnInit, OnDestroy {
+export class LegajoPersonComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatTable) table!: MatTable<Legajo>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -27,11 +28,14 @@ export class LegajoComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'persona', 'profesion', 'udo', 'idCargo', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
+  legajos: Legajo[] = [];
+  id?: string;
 
   constructor(
     private legajoService: LegajoService,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private route: ActivatedRoute,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -46,6 +50,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id')!;
     this.listLegajos();
 
     this.suscription = this.legajoService.refresh$.subscribe(() => {
@@ -54,13 +59,16 @@ export class LegajoComponent implements OnInit, OnDestroy {
 
   }
 
-  listLegajos(): void {
-    this.legajoService.list().subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
-  }
+    listLegajos(): void {
+      this.legajoService.list().subscribe(data => {
+        // Filtra los legajos según el ID de la persona
+        this.legajos = data.filter(legajo => legajo.persona.id === this.id);
+  
+        this.dataSource = new MatTableDataSource(this.legajos);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+    }
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();

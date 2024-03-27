@@ -2,10 +2,10 @@
 <div class="container">
   <div class="row">
   <div class="col-7">
-    <div class="titulos">NO ASISTENCIAL</div>
+    <div class="titulos">PERSONAS</div>
   </div>
   <div class="col-1 align-items-right">
-    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar No Asistencial">
+    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Persona No Asistencial">
       <mat-icon>library_add</mat-icon>
     </button>
   </div>
@@ -18,6 +18,16 @@
 </div>
 
 <div class="row">
+  <div class="row">
+    <div class="col-6">Estás viendo:
+      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">No Asistenciales <mat-icon>expand_more</mat-icon></button>
+      <mat-menu #menug="matMenu">
+        <button mat-menu-item routerLink="/person">Ver <span class="negrita">Asistenciales</span></button>
+      </mat-menu>
+    
+    </div>
+
+  </div>
 <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
@@ -111,6 +121,9 @@
         </mat-expansion-panel-header>
         <ul>
           <li>
+            <input type="checkbox" [(ngModel)]="dniVisible" (change)="actualizarColumnasVisibles()"> DNI
+          </li>
+          <li>
             <input type="checkbox" [(ngModel)]="domicilioVisible" (change)="actualizarColumnasVisibles()"> Domicilio
           </li>
           <li>
@@ -123,7 +136,10 @@
             <input type="checkbox" [(ngModel)]="sexoVisible" (change)="actualizarColumnasVisibles()"> Sexo
           </li>
           <li>
-            <input type="checkbox" [(ngModel)]="descripcionVisible" (change)="actualizarColumnasVisibles()"> descripcion
+            <input type="checkbox" [(ngModel)]="emailVisible" (change)="actualizarColumnasVisibles()"> E-mail
+          </li>
+          <li>
+            <input type="checkbox" [(ngModel)]="descripcionVisible" (change)="actualizarColumnasVisibles()"> Descripción
           </li>
       </ul>
       </mat-expansion-panel>

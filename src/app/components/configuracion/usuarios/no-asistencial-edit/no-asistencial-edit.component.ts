@@ -70,7 +70,7 @@ export class NoAsistencialEditComponent implements OnInit {
       }
     }
   }
-  
+
   cancel(): void {
     this.dialogRef.close({ type: 'cancel' });
   }
