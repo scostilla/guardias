@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Caps } from "src/app/models/Caps";
+import { Caps } from "src/app/models/Configuracion/Caps";
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Provincia } from 'src/app/models/Provincia';
+import { Provincia } from 'src/app/models/Configuracion/Provincia';
 
 @Component({
   selector: 'app-provincia-detail',

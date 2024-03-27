@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Feriado } from 'src/app/models/Feriado';
-import { FeriadoService } from 'src/app/services/feriado.service';
+import { Feriado } from 'src/app/models/Configuracion/Feriado';
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 
 @Component({
   selector: 'app-feriado-edit',

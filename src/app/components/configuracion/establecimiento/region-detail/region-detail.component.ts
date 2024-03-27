@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Region } from 'src/app/models/Region';
+import { Region } from 'src/app/models/Configuracion/Region';
 
 @Component({
   selector: 'app-region-detail',

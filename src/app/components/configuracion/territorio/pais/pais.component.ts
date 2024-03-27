@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Pais } from 'src/app/models/Pais';
-import { PaisService } from 'src/app/services/pais.service';
+import { Pais } from 'src/app/models/Configuracion/Pais';
+import { PaisService } from 'src/app/services/Configuracion/pais.service';
 import { PaisEditComponent } from '../pais-edit/pais-edit.component';
 import { PaisDetailComponent } from '../pais-detail/pais-detail.component'; 
 

@@ -5,8 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { PruebaFormComponent } from '../prueba-form/prueba-form.component';
 import { PruebaForm2Component } from '../prueba-form2/prueba-form2.component';
 import { PruebaDetailComponent } from '../prueba-detail/prueba-detail.component';
-import { Feriado } from 'src/app/models/Feriado'; 
-import { FeriadoService } from 'src/app/services/feriado.service'; 
+import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
 
 @Component({
   selector: 'app-prueba-territorio',

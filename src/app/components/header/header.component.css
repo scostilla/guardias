@@ -1,10 +1,19 @@
+.margen-global {
+  margin-bottom: 1.5em;
+  position: relative; 
+}
+
+.header-container {
+  position: relative; 
+  z-index: 999;
+}
+
 .fond-celeste {
     background-color: #37BBED !important;
 }
 
-.margen-global {
-  margin-bottom: 1.5em;
-
+.row-container {
+  height: 170px;
 }
 
 nav{
@@ -39,6 +48,7 @@ h3 {
     margin-left: auto;
     padding-left: 0px;
 }
+
 .logo{
   width: 100%;
   margin-top: 0;

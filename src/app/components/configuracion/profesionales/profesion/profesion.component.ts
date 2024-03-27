@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Profesion } from 'src/app/models/Profesion';
-import { ProfesionService } from 'src/app/services/profesion.service';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 import { ProfesionEditComponent } from '../profesion-edit/profesion-edit.component';
 import { ProfesionDetailComponent } from '../profesion-detail/profesion-detail.component'; 
 

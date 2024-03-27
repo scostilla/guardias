@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Ministerio } from 'src/app/models/Ministerio';
-import { MinisterioService } from 'src/app/services/ministerio.service';
-import { Localidad } from 'src/app/models/Localidad';
-import { LocalidadService } from 'src/app/services/localidad.service';
-import { Region } from 'src/app/models/Region';
-import { RegionService } from 'src/app/services/region.service';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { Region } from 'src/app/models/Configuracion/Region';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
 
 
 @Component({

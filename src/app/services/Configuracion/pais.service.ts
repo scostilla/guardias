@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Pais } from "src/app/models/Pais";
+import { Pais } from "src/app/models/Configuracion/Pais";
 
 @Injectable({
   providedIn: 'root'

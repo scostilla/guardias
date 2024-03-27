@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Region } from 'src/app/models/Region';
-import { RegionService } from 'src/app/services/region.service';
+import { Region } from 'src/app/models/Configuracion/Region';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
 
 @Component({
   selector: 'app-region-edit',

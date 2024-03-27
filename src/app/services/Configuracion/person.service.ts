@@ -26,30 +26,4 @@ export class PersonService {
       return this.httpClient.get<Person>(this.personsURL + `detail/${id}`);
   }
 
-  public detailmotivo(motivo:string): Observable<Person> {
-    return this.httpClient.get<Person>(this.personsURL + `detailmotivo/${motivo}`);
-}
-
-public save(persons:Person): Observable<any> {
-  return this.httpClient.post<any>(this.personsURL + 'create', persons)
-  .pipe(
-    tap(() => {
-     this._refresh$.next(); 
-    })
-  )
-}
-
-public update(id:number, persons:Person): Observable<any> {
-  return this.httpClient.put<any>(this.personsURL + `update/${id}`, persons)
-  .pipe(
-    tap(() => {
-     this._refresh$.next(); 
-    })
-  )
-}
-
-public delete(id:number): Observable<any> {
-  return this.httpClient.put<any>(this.personsURL + `delete/${id}`, {});
-}
-
 }

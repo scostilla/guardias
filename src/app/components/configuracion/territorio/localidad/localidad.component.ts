@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Localidad } from 'src/app/models/Localidad';
-import { LocalidadService } from 'src/app/services/localidad.service';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { LocalidadEditComponent } from '../localidad-edit/localidad-edit.component';
 import { LocalidadDetailComponent } from '../localidad-detail/localidad-detail.component'; 
 

@@ -24,7 +24,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'idPersona', 'idProfesion', 'idRevista', 'idCargo', 'acciones'];
+  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'persona', 'profesion', 'revista', 'idCargo', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
 
@@ -86,7 +86,7 @@ applyFilter(event: Event) {
   this.dataSource.filter = filterValue;
   this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
     const actualString = data.actual ? 'si' : 'no';
-    const idPersonaString = data.idPersona.toString();
+    const idPersonaString = data.profesion.nombre.toString();
     const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
     // Aplicar el filtro a los valores convertidos

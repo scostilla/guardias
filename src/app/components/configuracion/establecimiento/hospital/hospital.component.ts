@@ -2,8 +2,8 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Hospital } from 'src/app/models/Hospital';
-import { HospitalService } from 'src/app/services/hospital.service';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';

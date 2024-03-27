@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Feriado } from "src/app/models/Feriado";
+import { Feriado } from "src/app/models/Configuracion/Feriado";
 
 @Injectable({
   providedIn: 'root'

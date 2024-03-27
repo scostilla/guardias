@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Provincia } from 'src/app/models/Provincia';
-import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Provincia } from 'src/app/models/Configuracion/Provincia';
+import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
 import { ProvinciaEditComponent } from '../provincia-edit/provincia-edit.component';
 import { ProvinciaDetailComponent } from '../provincia-detail/provincia-detail.component'; 
 

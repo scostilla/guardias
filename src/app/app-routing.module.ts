@@ -1,6 +1,73 @@
+//COMPONENTES SISTEMA GUARDIAS
+
+//Principales
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LoginComponent } from './components/login/login.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
+
+
+//Configuraciones: Territorio
+import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
+import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
+import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
+import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
+import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
+import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
+import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
+import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
+import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
+import { LocalidadComponent } from './components/configuracion/territorio/localidad/localidad.component';
+import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
+import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
+
+//Configuraciones: Establecimientos
+import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
+import { MinisterioDetailComponent } from './components/configuracion/establecimiento/ministerio-detail/ministerio-detail.component';
+import { MinisterioEditComponent } from './components/configuracion/establecimiento/ministerio-edit/ministerio-edit.component';
+import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
+import { HospitalDetailComponent } from './components/configuracion/establecimiento/hospital-detail/hospital-detail.component';
+import { HospitalEditComponent } from './components/configuracion/establecimiento/hospital-edit/hospital-edit.component';
+import { CapsComponent } from './components/configuracion/establecimiento/caps/caps.component';
+import { CapsDetailComponent } from './components/configuracion/establecimiento/caps-detail/caps-detail.component';
+import { CapsEditComponent } from './components/configuracion/establecimiento/caps-edit/caps-edit.component';
+import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
+import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
+
+//Configuraciones: Profesionales
+import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
+import { ProfesionDetailComponent } from './components/configuracion/profesionales/profesion-detail/profesion-detail.component';
+import { ProfesionEditComponent } from './components/configuracion/profesionales/profesion-edit/profesion-edit.component';
+import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
+import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
+import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
+
+//Configuraciones: Personas
+import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
+import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
+import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
+import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
+import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
+import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
+import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
+import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
+import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
+import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
+import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
+import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
+
+
+//Configuraciones: Calendario
+import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
+import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
+import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
+
+
+
+
+
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
@@ -10,7 +77,6 @@ import { ProfessionalDhJunioComponent } from './components/professional-dh-junio
 import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
-import { LoginComponent } from './components/login/login.component';
 import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
 import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
@@ -62,52 +128,6 @@ import { PopupCalendarioDispComponent } from './components/popup-calendario-disp
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
-import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
-import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
-import { PaisDetailComponent } from './components/configuracion/territorio/pais-detail/pais-detail.component';
-import { PaisEditComponent } from './components/configuracion/territorio/pais-edit/pais-edit.component';
-import { ProvinciaComponent } from './components/configuracion/territorio/provincia/provincia.component';
-import { ProvinciaDetailComponent } from './components/configuracion/territorio/provincia-detail/provincia-detail.component';
-import { ProvinciaEditComponent } from './components/configuracion/territorio/provincia-edit/provincia-edit.component';
-import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
-import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
-import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
-import { LocalidadComponent } from './components/configuracion/territorio/localidad/localidad.component';
-import { LocalidadDetailComponent } from './components/configuracion/territorio/localidad-detail/localidad-detail.component';
-import { LocalidadEditComponent } from './components/configuracion/territorio/localidad-edit/localidad-edit.component';
-import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
-import { MinisterioDetailComponent } from './components/configuracion/establecimiento/ministerio-detail/ministerio-detail.component';
-import { MinisterioEditComponent } from './components/configuracion/establecimiento/ministerio-edit/ministerio-edit.component';
-import { HospitalComponent } from './components/configuracion/establecimiento/hospital/hospital.component';
-import { HospitalDetailComponent } from './components/configuracion/establecimiento/hospital-detail/hospital-detail.component';
-import { HospitalEditComponent } from './components/configuracion/establecimiento/hospital-edit/hospital-edit.component';
-import { CapsComponent } from './components/configuracion/establecimiento/caps/caps.component';
-import { CapsDetailComponent } from './components/configuracion/establecimiento/caps-detail/caps-detail.component';
-import { CapsEditComponent } from './components/configuracion/establecimiento/caps-edit/caps-edit.component';
-import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
-import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
-import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
-import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
-import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
-import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
-import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
-import { ProfesionDetailComponent } from './components/configuracion/profesionales/profesion-detail/profesion-detail.component';
-import { ProfesionEditComponent } from './components/configuracion/profesionales/profesion-edit/profesion-edit.component';
-import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
-import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
-import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
-import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
-import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
-import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
-import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
-import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
-import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
-import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
-import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
-import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
-import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
-import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 
 import { CronogramaNewComponent } from './components/cronograma-new/cronograma-new.component';
 
@@ -131,8 +151,68 @@ import { PruebaDetailComponent } from './components/configuracion/territorio/pru
 
 
 const routes: Routes = [
+  
+  //Principales
   { path: '', component: LoginComponent },
   {path:"home-page", component:HomePageComponent},
+  {path: 'configuracion', component:ConfiguracionComponent},
+
+  //Configuraciones: Territorio
+  {path: 'pais', component:PaisComponent},
+  {path: 'pais-detail/:id', component:PaisDetailComponent},
+  {path: 'pais-edit/:id', component:PaisEditComponent},
+  {path: 'provincia', component:ProvinciaComponent},
+  {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
+  {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
+  {path: 'departamento', component:DepartamentoComponent},
+  {path: 'departamento-detail/:id', component:DepartamentoDetailComponent},
+  {path: 'departamento-edit/:id', component:DepartamentoEditComponent},
+  {path: 'localidad', component:LocalidadComponent},
+  {path: 'localidad-detail/:id', component:LocalidadDetailComponent},
+  {path: 'localidad-edit/:id', component:LocalidadEditComponent},
+ 
+  //Configuraciones: Establecimientos
+  {path: 'ministerio', component:MinisterioComponent},
+  {path: 'ministerio-detail/:id', component:MinisterioDetailComponent},
+  {path: 'ministerio-edit/:id', component:MinisterioEditComponent},
+  {path: 'hospital', component:HospitalComponent},
+  {path: 'hospital-detail/:id', component:HospitalDetailComponent},
+  {path: 'hospital-edit/:id', component:HospitalEditComponent},
+  {path: 'caps', component:CapsComponent},
+  {path: 'caps-detail/:id', component:CapsDetailComponent},
+  {path: 'caps-edit/:id', component:CapsEditComponent},
+  {path: 'region', component:RegionComponent},
+  {path: 'region-detail/:id', component:RegionDetailComponent},
+  {path: 'region-edit/:id', component:RegionEditComponent}, 
+ 
+  //Configuraciones: Profesionales
+  {path: 'profesion', component:ProfesionComponent},
+  {path: 'profesion-detail/:id', component:ProfesionDetailComponent},
+  {path: 'profesion-edit/:id', component:ProfesionEditComponent},
+  {path: 'especialidad', component:EspecialidadComponent},
+  {path: 'especialidad-detail/:id', component:EspecialidadDetailComponent},
+  {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
+ 
+  //Configuraciones: Personas
+  {path: 'person', component:PersonComponent},
+  {path: 'person-detail/:id', component:PersonDetailComponent},
+  {path: 'person-edit/:id', component:PersonEditComponent},
+  {path: 'asistencial', component:AsistencialComponent},
+  {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
+  {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
+  {path: 'no-asistencial', component:NoAsistencialComponent},
+  {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
+  {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
+  {path: 'legajo', component:LegajoComponent},
+  {path: 'legajo-detail/:id', component:LegajoDetailComponent},
+  {path: 'legajo-edit/:id', component:LegajoEditComponent},
+
+  //Configuraciones: Calendario
+  {path: 'feriado', component:FeriadoComponent},
+  {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
+  {path: 'feriado-edit/:id', component:FeriadoEditComponent},
+
+
   { path: 'professional-form', component: ProfessionalFormComponent },
   { path: 'professional-form-edit', component: ProfessionalFormEditComponent },
   { path: 'professional-form-delet', component: ProfessionalFormDeletComponent },
@@ -194,52 +274,6 @@ const routes: Routes = [
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
- {path: 'configuracion', component:ConfiguracionComponent},
- {path: 'pais', component:PaisComponent},
- {path: 'pais-detail/:id', component:PaisDetailComponent},
- {path: 'pais-edit/:id', component:PaisEditComponent},
- {path: 'provincia', component:ProvinciaComponent},
- {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
- {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
- {path: 'departamento', component:DepartamentoComponent},
- {path: 'departamento-detail/:id', component:DepartamentoDetailComponent},
- {path: 'departamento-edit/:id', component:DepartamentoEditComponent},
- {path: 'localidad', component:LocalidadComponent},
- {path: 'localidad-detail/:id', component:LocalidadDetailComponent},
- {path: 'localidad-edit/:id', component:LocalidadEditComponent},
- {path: 'ministerio', component:MinisterioComponent},
- {path: 'ministerio-detail/:id', component:MinisterioDetailComponent},
- {path: 'ministerio-edit/:id', component:MinisterioEditComponent},
- {path: 'hospital', component:HospitalComponent},
- {path: 'hospital-detail/:id', component:HospitalDetailComponent},
- {path: 'hospital-edit/:id', component:HospitalEditComponent},
- {path: 'caps', component:CapsComponent},
- {path: 'caps-detail/:id', component:CapsDetailComponent},
- {path: 'caps-edit/:id', component:CapsEditComponent},
- {path: 'region', component:RegionComponent},
- {path: 'region-detail/:id', component:RegionDetailComponent},
- {path: 'region-edit/:id', component:RegionEditComponent},
- {path: 'feriado', component:FeriadoComponent},
- {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
- {path: 'feriado-edit/:id', component:FeriadoEditComponent},
- {path: 'profesion', component:ProfesionComponent},
- {path: 'profesion-detail/:id', component:ProfesionDetailComponent},
- {path: 'profesion-edit/:id', component:ProfesionEditComponent},
- {path: 'especialidad', component:EspecialidadComponent},
- {path: 'especialidad-detail/:id', component:EspecialidadDetailComponent},
- {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
- {path: 'person', component:PersonComponent},
- {path: 'person-detail/:id', component:PersonDetailComponent},
- {path: 'person-edit/:id', component:PersonEditComponent},
- {path: 'asistencial', component:AsistencialComponent},
- {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
- {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
- {path: 'no-asistencial', component:NoAsistencialComponent},
- {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
- {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
- {path: 'legajo', component:LegajoComponent},
- {path: 'legajo-detail/:id', component:LegajoDetailComponent},
- {path: 'legajo-edit/:id', component:LegajoEditComponent},
 
 
 

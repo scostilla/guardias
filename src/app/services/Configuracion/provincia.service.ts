@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Provincia } from "src/app/models/Provincia";
+import { Provincia } from "src/app/models/Configuracion/Provincia";
 import { tap } from 'rxjs/operators';
 
 

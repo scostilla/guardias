@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Profesion } from 'src/app/models/Profesion';
-import { ProfesionService } from 'src/app/services/profesion.service';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 
 @Component({
   selector: 'app-profesion-edit',

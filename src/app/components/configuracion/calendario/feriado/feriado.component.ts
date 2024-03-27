@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Feriado } from 'src/app/models/Feriado';
-import { FeriadoService } from 'src/app/services/feriado.service';
+import { Feriado } from 'src/app/models/Configuracion/Feriado';
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { FeriadoEditComponent } from '../feriado-edit/feriado-edit.component';
 import { FeriadoDetailComponent } from '../feriado-detail/feriado-detail.component'; 
 

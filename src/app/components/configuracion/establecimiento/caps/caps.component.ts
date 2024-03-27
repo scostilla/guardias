@@ -2,8 +2,8 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Caps } from 'src/app/models/Caps';
-import { CapsService } from 'src/app/services/caps.service';
+import { Caps } from 'src/app/models/Configuracion/Caps';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
 
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';

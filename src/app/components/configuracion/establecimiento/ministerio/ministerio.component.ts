@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Ministerio } from 'src/app/models/Ministerio';
-import { MinisterioService } from 'src/app/services/ministerio.service';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { MinisterioEditComponent } from '../ministerio-edit/ministerio-edit.component';
 import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component'; 
 

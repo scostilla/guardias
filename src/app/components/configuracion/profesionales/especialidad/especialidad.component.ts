@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Especialidad } from 'src/app/models/Especialidad';
-import { EspecialidadService } from 'src/app/services/especialidad.service';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { EspecialidadEditComponent } from '../especialidad-edit/especialidad-edit.component';
 import { EspecialidadDetailComponent } from '../especialidad-detail/especialidad-detail.component'; 
 

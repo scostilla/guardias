@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Localidad } from 'src/app/models/Localidad';
-import { LocalidadService } from 'src/app/services/localidad.service';
-import { Departamento } from 'src/app/models/Departamento';
-import { DepartamentoService } from 'src/app/services/departamento.service';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { Departamento } from 'src/app/models/Configuracion/Departamento';
+import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
 
 @Component({
   selector: 'app-localidad-edit',

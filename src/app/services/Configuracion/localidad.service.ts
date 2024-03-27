@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Localidad } from "src/app/models/Localidad";
+import { Localidad } from "src/app/models/Configuracion/Localidad";
 import { tap } from 'rxjs/operators';
 
 

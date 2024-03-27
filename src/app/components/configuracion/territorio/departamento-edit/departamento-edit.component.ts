@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Departamento } from 'src/app/models/Departamento';
-import { DepartamentoService } from 'src/app/services/departamento.service';
-import { Provincia } from 'src/app/models/Provincia';
-import { ProvinciaService } from 'src/app/services/provincia.service';
+import { Departamento } from 'src/app/models/Configuracion/Departamento';
+import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
+import { Provincia } from 'src/app/models/Configuracion/Provincia';
+import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
 
 @Component({
   selector: 'app-departamento-edit',

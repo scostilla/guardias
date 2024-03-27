@@ -82,7 +82,6 @@ import { ToastrModule } from 'ngx-toastr';
 
 
 //Date Import
-import localePy from '@angular/common/locales/es-PY';
 import { TablaComponent } from './components/tabla/tabla.component';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
@@ -185,6 +184,9 @@ import { NoAsistencialEditComponent } from './components/configuracion/usuarios/
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
+import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
+import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
+import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -321,6 +323,9 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialEditComponent,
     NoAsistencialDetailComponent,
     LegajoComponent,
+    RevistaComponent,
+    RevistaEditComponent,
+    RevistaDetailComponent,
     
   ],
 

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Departamento } from 'src/app/models/Departamento';
+import { Departamento } from 'src/app/models/Configuracion/Departamento';
 
 @Component({
   selector: 'app-departamento-detail',

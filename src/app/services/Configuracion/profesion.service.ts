@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Profesion } from "src/app/models/Profesion";
+import { Profesion } from "src/app/models/Configuracion/Profesion";
 
 @Injectable({
   providedIn: 'root'

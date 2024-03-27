@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Pais } from 'src/app/models/Pais';
-import { PaisService } from 'src/app/services/pais.service';
+import { Pais } from 'src/app/models/Configuracion/Pais';
+import { PaisService } from 'src/app/services/Configuracion/pais.service';
 
 @Component({
   selector: 'app-pais-edit',

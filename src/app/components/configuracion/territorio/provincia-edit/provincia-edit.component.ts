@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Provincia } from 'src/app/models/Provincia';
-import { ProvinciaService } from 'src/app/services/provincia.service';
-import { Pais } from 'src/app/models/Pais';
-import { PaisService } from 'src/app/services/pais.service';
+import { Provincia } from 'src/app/models/Configuracion/Provincia';
+import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
+import { Pais } from 'src/app/models/Configuracion/Pais';
+import { PaisService } from 'src/app/services/Configuracion/pais.service';
 
 @Component({
   selector: 'app-provincia-edit',

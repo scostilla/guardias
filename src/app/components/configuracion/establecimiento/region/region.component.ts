@@ -6,8 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Region } from 'src/app/models/Region';
-import { RegionService } from 'src/app/services/region.service';
+import { Region } from 'src/app/models/Configuracion/Region';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
 import { RegionEditComponent } from '../region-edit/region-edit.component';
 import { RegionDetailComponent } from '../region-detail/region-detail.component'; 
 

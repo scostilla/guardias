@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Feriado } from 'src/app/models/Feriado';
+import { Feriado } from 'src/app/models/Configuracion/Feriado';
 
 @Component({
   selector: 'app-feriado-detail',
