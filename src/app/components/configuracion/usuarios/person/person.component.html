@@ -97,10 +97,10 @@
         <mat-icon class="btnRemove">delete</mat-icon>
       </button>
 
-      <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo()" *ngIf="hayLegajos(asistencial)">
+      <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)" *ngIf="!isLoadingLegajos && hayLegajos(asistencial)">
         <mat-icon color="primary">playlist_play</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Agregar Legajo" *ngIf="!hayLegajos(asistencial)">
+      <button mat-icon-button matTooltip="Agregar Legajo" (click)="crearLegajo()" *ngIf="!isLoadingLegajos && !hayLegajos(asistencial)">
         <mat-icon color="primary">playlist_add</mat-icon>
       </button>
     </td>

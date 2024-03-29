@@ -12,6 +12,7 @@ import { PersonDetailComponent } from '../person-detail/person-detail.component'
 import { PersonEditComponent } from '../person-edit/person-edit.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { Router } from '@angular/router';
 
 
@@ -41,6 +42,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   asistencial!: Asistencial;
   legajos: Legajo[] = [];
+  isLoadingLegajos: boolean = true;
 
   constructor(
     private asistencialService: AsistencialService,
@@ -85,6 +87,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
+      this.isLoadingLegajos = false;
     });
   }
 
@@ -92,9 +95,40 @@ export class PersonComponent implements OnInit, OnDestroy {
     return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
   }
 
-  verLegajo(): void {
-    this.router.navigate(['/legajo-person'], { queryParams: { id: this.asistencial.id } });
+  verLegajo(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/legajo-person', asistencial.id]);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
   }
+
+  crearLegajo(): void {
+    const dialogRef = this.dialog.open(LegajoEditComponent, {
+      width: '600px',
+      data: null 
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        if (result) {
+          this.toastr.success('Legajo creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.dataSource.data.push(result);
+          this.dataSource._updateChangeSubscription();
+        } else {
+          this.toastr.error('No se creó el Legajo', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+      }
+    });
+  }  
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();

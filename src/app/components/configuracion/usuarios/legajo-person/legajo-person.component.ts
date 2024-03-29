@@ -29,7 +29,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
-  id?: string;
+  asistencialId?: number;
 
   constructor(
     private legajoService: LegajoService,
@@ -50,7 +50,11 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id')!;
+    this.route.params.subscribe(params => {
+      this.asistencialId = +params['id'];
+      this.listLegajos();
+    });
+
     this.listLegajos();
 
     this.suscription = this.legajoService.refresh$.subscribe(() => {
@@ -59,17 +63,17 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
 
   }
 
-    listLegajos(): void {
-      this.legajoService.list().subscribe(data => {
-        // Filtra los legajos según el ID de la persona
-        this.legajos = data.filter(legajo => legajo.persona.id === this.id);
+  listLegajos(): void {
+    this.legajoService.list().subscribe(data => {
+      // Filtra los legajos según el ID de la persona
+      this.legajos = data.filter(legajo => legajo.persona.id === this.asistencialId);
+    
+      this.dataSource = new MatTableDataSource(this.legajos);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+  }
   
-        this.dataSource = new MatTableDataSource(this.legajos);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      });
-    }
-
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
