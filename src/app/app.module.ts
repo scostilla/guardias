@@ -184,6 +184,8 @@ import { NoAsistencialEditComponent } from './components/configuracion/usuarios/
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
+import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
+import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
@@ -194,6 +196,9 @@ import { EfectorComponent } from './components/configuracion/establecimiento/efe
 import { EfectorEditComponent } from './components/configuracion/establecimiento/efector-edit/efector-edit.component';
 import { EfectorDetailComponent } from './components/configuracion/establecimiento/efector-detail/efector-detail.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
+import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
+import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
+import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -330,6 +335,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialEditComponent,
     NoAsistencialDetailComponent,
     LegajoComponent,
+    LegajoEditComponent,
+    LegajoDetailComponent,
     RevistaComponent,
     RevistaEditComponent,
     RevistaDetailComponent,
@@ -340,6 +347,9 @@ registerLocaleData(localeEsAr, 'es-AR');
     EfectorEditComponent,
     EfectorDetailComponent,
     LegajoPersonComponent,
+    CargoComponent,
+    CargoEditComponent,
+    CargoDetailComponent,
     
   ],
 

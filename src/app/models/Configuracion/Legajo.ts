@@ -1,6 +1,7 @@
 import { Profesion } from './Profesion';
 import { Person } from './Person';
 import { Efector } from './Efector';
+import { Cargo } from './Cargo';
 
 export class Legajo {
     id?: number;
@@ -14,10 +15,10 @@ export class Legajo {
     profesion: Profesion;
     udo: Efector;
     agrupacion: string;
-    idCargo: number;
+    cargo: Cargo;
     
 
-    constructor(actual: boolean, fechaFinal: Date, fechaInicio: Date,  legal: boolean, matriculaNacional: string, matriculaProvincial: string, persona: Person, profesion: Profesion, udo: Efector, agrupacion: string, idCargo: number) {
+    constructor(actual: boolean, fechaFinal: Date, fechaInicio: Date,  legal: boolean, matriculaNacional: string, matriculaProvincial: string, persona: Person, profesion: Profesion, udo: Efector, agrupacion: string, cargo: Cargo) {
         this.actual = actual;
         this.fechaFinal = fechaFinal;
         this.fechaInicio = fechaInicio;
@@ -28,7 +29,7 @@ export class Legajo {
         this.profesion = profesion;
         this.udo = udo;
         this.agrupacion = agrupacion;
-        this.idCargo = idCargo;
+        this.cargo = cargo;
     }
 
   }

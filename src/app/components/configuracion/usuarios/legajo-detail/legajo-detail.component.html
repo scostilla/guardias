@@ -1,1 +1,57 @@
-<p>legajo-detail works!</p>
+<h1 mat-dialog-title>DETALLE LEGAJO:
+</h1>
+
+  <mat-dialog-content>
+    <table class="table">
+        <tbody>
+          <tr class="bg-light">
+            <th scope="row">Apellido y nombre</th>
+            <td>{{legajo.persona.apellido}}, {{legajo.persona.nombre}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">ID</th>
+            <td>{{legajo.id}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">Actual</th>
+            <td>{{legajo.actual ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha final</th>
+            <td>{{legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha inicio</th>
+            <td>{{legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Legal</th>
+            <td>{{legajo.legal ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Matricula Nacional</th>
+            <td>{{legajo.matriculaNacional}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Matricula Provincial</th>
+            <td>{{legajo.matriculaProvincial}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Profesión</th>
+            <td>{{legajo.profesion.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">U.D.O.</th>
+            <td>{{legajo.udo.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Cargo</th>
+            <td>{{legajo.cargo.nombre}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>
+

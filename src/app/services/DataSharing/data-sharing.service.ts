@@ -284,5 +284,36 @@ export class DataSharingService {
     return this.id;
   }
 
+  setCargoFormData(data: any) {
+    this.formData = data;
+  }
+
+  getCargoFormData() {
+    return this.formData;
+  }
+
+  setCargoId(id: number) {
+    this.id = id;
+  }
+
+  getCargoId() {
+    return this.id;
+  }
+
+  setRevistaFormData(data: any) {
+    this.formData = data;
+  }
+
+  getRevistaFormData() {
+    return this.formData;
+  }
+
+  setRevistaId(id: number) {
+    this.id = id;
+  }
+
+  getRevistaId() {
+    return this.id;
+  }
 
 }

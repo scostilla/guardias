@@ -189,11 +189,8 @@ export class PersonComponent implements OnInit, OnDestroy {
     this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
       return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
       this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.dni.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) || 
-      this.accentFilter(data.domicilio.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) ||
-      this.accentFilter(data.fechaNacimiento.toISOString().toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.sexo.toLowerCase()).includes(this.accentFilter(filter));
+      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) || 
+      this.accentFilter(data.domicilio.toLowerCase()).includes(this.accentFilter(filter)); 
     };
   }
 

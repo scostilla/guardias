@@ -25,11 +25,12 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'persona', 'profesion', 'udo', 'idCargo', 'acciones'];
+  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'profesion', 'udo', 'cargo', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
   asistencialId?: number;
+  nombreCompleto: string = '';
 
   constructor(
     private legajoService: LegajoService,
@@ -65,8 +66,11 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
 
   listLegajos(): void {
     this.legajoService.list().subscribe(data => {
-      // Filtra los legajos según el ID de la persona
       this.legajos = data.filter(legajo => legajo.persona.id === this.asistencialId);
+
+      if (this.legajos.length > 0) {
+        this.nombreCompleto = `${this.legajos[0].persona.apellido}, ${this.legajos[0].persona.nombre}`;
+      }
     
       this.dataSource = new MatTableDataSource(this.legajos);
       this.dataSource.paginator = this.paginator;

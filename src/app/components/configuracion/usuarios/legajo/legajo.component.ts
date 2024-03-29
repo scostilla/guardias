@@ -24,7 +24,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'persona', 'profesion', 'udo', 'idCargo', 'acciones'];
+  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'persona', 'profesion', 'udo', 'cargo', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
 
