@@ -5,6 +5,28 @@
     <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
 
       <mat-form-field appearance="fill">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="tipo" (selectionChange)="onTipoChange($event.value)">
+          <mat-option [value]="'asistencial'">Asistencial</mat-option>
+          <mat-option [value]="'noAsistencial'">No Asistencial</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field *ngIf="tipoSeleccionado === 'asistencial'" appearance="fill">
+        <mat-label>Persona: Asistencial</mat-label>
+        <mat-select formControlName="persona">
+          <mat-option *ngFor="let asistencial of asistenciales" [value]="asistencial.id">{{ asistencial.nombre }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field *ngIf="tipoSeleccionado === 'noAsistencial'" appearance="fill">
+        <mat-label>Persona: No Asistencial</mat-label>
+        <mat-select formControlName="persona">
+          <mat-option *ngFor="let noAsistencial of noAsistenciales" [value]="noAsistencial.id">{{ noAsistencial.nombre }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
         <mat-label>Actual</mat-label>
         <mat-select formControlName="actual">
           <mat-option [value]="true">Si</mat-option>
@@ -62,13 +84,19 @@
 
       <mat-form-field appearance="fill">
         <mat-label>U.D.O.</mat-label>
-        <mat-select formControlName="udo" [compareWith]="compareEfector">
-          <mat-option *ngFor="let udo of efectores" [value]="udo" >{{ udo.nombre }}</mat-option>
+        <mat-select formControlName="udo" [compareWith]="compareHospital">
+          <mat-option *ngFor="let udo of hospitales" [value]="udo" >{{ udo.nombre }}</mat-option>
         </mat-select>
         <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
       </mat-form-field>
 
-      
+      <mat-form-field appearance="fill">
+        <mat-label>Cargo</mat-label>
+        <mat-select formControlName="cargo" [compareWith]="compareCargo">
+          <mat-option *ngFor="let cargo of cargos" [value]="cargo" >{{ cargo.nombre }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="legajoForm.get('cargo')?.errors?.['cargo']">El cargo es requerido.</mat-error>
+      </mat-form-field>
   
       <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()">

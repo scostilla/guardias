@@ -24,6 +24,11 @@
     <td mat-cell *matCellDef="let legajo"> {{legajo.id}} </td>
   </ng-container>
 
+  <ng-container matColumnDef="persona">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Persona </th> 
+    <td mat-cell *matCellDef="let legajo"> {{legajo.persona.apellido}}, {{legajo.persona.nombre}} </td>
+  </ng-container>
+
   <ng-container matColumnDef="actual">
     <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Actual </th> 
     <td mat-cell *matCellDef="let legajo"> {{legajo.actual ? 'Si' : 'No'}} </td>
@@ -37,26 +42,6 @@
   <ng-container matColumnDef="fechaFinal">
     <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Final </th> 
     <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="legal">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Legal </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.legal ? 'Si' : 'No'}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="matriculaNacional">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Matricula Nacional </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.matriculaNacional}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="matriculaProvincial">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Matricula Provincial </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.matriculaProvincial}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="persona">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Persona </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.persona.apellido}}, {{legajo.persona.nombre}} </td>
   </ng-container>
 
   <ng-container matColumnDef="profesion">
@@ -93,6 +78,7 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+<div class="row mt-3">
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
 </div>
 </div>

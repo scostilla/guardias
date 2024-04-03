@@ -102,11 +102,11 @@ applyFilter(event: Event) {
   this.dataSource.filter = filterValue;
   this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
     const actualString = data.actual ? 'si' : 'no';
-    const idPersonaString = data.profesion.nombre.toString();
+    const profesionString = data.profesion.nombre.toString();
     const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
     return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
+           this.accentFilter(profesionString).includes(this.accentFilter(filter)) || 
            this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
   };
 }

@@ -24,7 +24,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'legal', 'matriculaNacional', 'matriculaProvincial', 'persona', 'profesion', 'udo', 'cargo', 'acciones'];
+  displayedColumns: string[] = ['id', 'persona', 'actual', 'fechaFinal', 'fechaInicio', 'profesion', 'udo', 'cargo', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
 
@@ -89,7 +89,6 @@ applyFilter(event: Event) {
     const idPersonaString = data.profesion.nombre.toString();
     const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
-    // Aplicar el filtro a los valores convertidos
     return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
            this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
            this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
@@ -103,28 +102,26 @@ applyFilter(event: Event) {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-      if (result) {
+      if (result !== undefined && result.type === 'save') {
         this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
         if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
+          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+          this.dataSource.data[index] = result.data;
         } else {
-          this.dataSource.data.push(result);
+          this.dataSource.data.push(result.data);
         }
         this.dataSource._updateChangeSubscription();
-      } else {
+      } else if (result !== undefined && result.type === 'error') {
         this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
       }
-    }
     });
   }
 
