@@ -63,7 +63,7 @@
       <mat-form-field appearance="fill">
         <mat-label>U.D.O.</mat-label>
         <mat-select formControlName="udo" [compareWith]="compareEfector">
-          <mat-option *ngFor="let udo of udos" [value]="udo" >{{ udo.nombre }}</mat-option>
+          <mat-option *ngFor="let udo of efectores" [value]="udo" >{{ udo.nombre }}</mat-option>
         </mat-select>
         <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
       </mat-form-field>

@@ -21,7 +21,7 @@ export class LegajoEditComponent implements OnInit {
   legajoForm: FormGroup;
   initialData: any;
   profesiones: Profesion[] = [];
-  udos: Efector[] = [];
+  efectores: Efector[] = [];
 
 
   
@@ -75,7 +75,7 @@ export class LegajoEditComponent implements OnInit {
   listUdo(): void {
     this.efectorService.list().subscribe(data => {
       console.log('Lista de Efectores:', data);
-      this.udos = data;
+      this.efectores = data;
     }, error => {
       console.log(error);
     });
