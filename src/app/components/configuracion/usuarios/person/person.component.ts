@@ -110,25 +110,23 @@ export class PersonComponent implements OnInit, OnDestroy {
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) {
-          this.toastr.success('Legajo creado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.dataSource.data.push(result);
-          this.dataSource._updateChangeSubscription();
-        } else {
-          this.toastr.error('No se creó el Legajo', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
+      if (result !== undefined && result.type === 'save') {
+        this.toastr.success('Legajo creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.dataSource.data.push(result.data);
+        this.dataSource._updateChangeSubscription();
+      } else if (result !== undefined && result.type === 'error') {
+        this.toastr.error('No se creó el Legajo', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       }
     });
-  }  
+  }
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();

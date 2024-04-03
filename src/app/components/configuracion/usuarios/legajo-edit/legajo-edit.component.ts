@@ -17,6 +17,7 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
   templateUrl: './legajo-edit.component.html',
   styleUrls: ['./legajo-edit.component.css']
 })
+
 export class LegajoEditComponent implements OnInit {
   legajoForm: FormGroup;
   initialData: any;
@@ -30,6 +31,7 @@ export class LegajoEditComponent implements OnInit {
     public dialogRef: MatDialogRef<LegajoEditComponent>,
     private legajoService: LegajoService,
     private profesionService: ProfesionService,
+    private personService: PersonService,
     private efectorService: EfectorService,
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
@@ -40,7 +42,6 @@ export class LegajoEditComponent implements OnInit {
       legal: ['', Validators.required],
       matriculaNacional: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
       matriculaProvincial: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      persona: ['', Validators.required],
       profesion: ['', Validators.required],
       udo: ['', Validators.required],
       cargo: ['', Validators.required]
