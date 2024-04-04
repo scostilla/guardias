@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Asistencial } from "src/app/models/Configuracion/Asistencial";
+import { Person } from "src/app/models/Configuracion/Person";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,10 @@ export class AsistencialService {
       return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list')
     }  
     
+    public listPerson(): Observable<Person[]> {
+      return this.httpClient.get<Person[]>(this.asistencialesURL + 'listPerson');
+  }
+
     public detail(id:number): Observable<Asistencial> {
         return this.httpClient.get<Asistencial>(this.asistencialesURL + `detail/${id}`);
     }

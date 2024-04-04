@@ -5,16 +5,11 @@
     dni: number;
     cuil: string;
     fechaNacimiento: Date;
-    sexo?: string;
-    telefono?: string;
-    email?: string;
-    domicilio?: string;
-    estado?: boolean;
-    idNovedadesPersonales?: number;
-    idSuplentes?: number;
-    idDistribucionesHorarias?: number;
-    idAutoridades?: number;
-    idLegajos?: number;    
+    sexo: string;
+    telefono: string;
+    email: string;
+    domicilio: string;
+    estado: boolean;
 
     constructor(
         nombre: string,
@@ -22,16 +17,11 @@
         dni: number,
         cuil: string,
         fechaNacimiento: Date,
-        sexo?: string,
-        telefono?: string,
-        email?: string,
-        domicilio?: string,
-        estado?: boolean,
-        idNovedadesPersonales?: number,
-        idSuplentes?: number,
-        idDistribucionesHorarias?: number,
-        idAutoridades?: number,
-        idLegajos?: number,              
+        sexo: string,
+        telefono: string,
+        email: string,
+        domicilio: string,
+        estado: boolean,
         ) {
         this.nombre = nombre;
         this.apellido = apellido;
@@ -43,11 +33,6 @@
         this.email = email;
         this.domicilio = domicilio;
         this.estado = estado;
-        this.idNovedadesPersonales = idNovedadesPersonales;
-        this.idSuplentes = idSuplentes;
-        this.idDistribucionesHorarias = idDistribucionesHorarias;
-        this.idAutoridades = idAutoridades;
-        this.idLegajos = idLegajos;
     }
 
   }

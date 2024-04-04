@@ -1,28 +1,11 @@
-export class NoAsistencial {
-    id?: number;
-    nombre: string;
-    apellido: string;
-    dni: number;
-    domicilio: string;
-    email: string;
-    estado: boolean;
-    cuil: string;
-    fechaNacimiento: Date;
-    sexo: string;
-    telefono: number;
+import { Person } from "./Person";
+
+export class NoAsistencial extends Person {
+
     descripcion: string;
 
-    constructor(nombre: string, apellido: string, dni: number,  domicilio: string, email: string, estado: boolean, cuil: string, fechaNacimiento: Date, sexo: string, telefono: number, descripcion: string) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.domicilio = domicilio;
-        this.email = email;
-        this.estado = estado;
-        this.cuil = cuil;
-        this.fechaNacimiento = fechaNacimiento;
-        this.sexo = sexo;
-        this.telefono = telefono;
+    constructor(nombre: string, apellido: string, dni: number, cuil: string, fechaNacimiento: Date, sexo: string, telefono: string, email: string, domicilio: string, estado: boolean, descripcion: string) {
+        super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, estado);
         this.descripcion = descripcion;
     }
 

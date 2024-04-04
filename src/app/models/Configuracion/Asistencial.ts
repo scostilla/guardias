@@ -1,29 +1,11 @@
-export class Asistencial {
-    id?: number;
-    nombre: string;
-    apellido: string;
-    dni: number;
-    domicilio: string;
-    email: string;
-    estado: boolean;
-    cuil: string;
-    fechaNacimiento: Date;
-    sexo: string;
-    telefono: string;
-    tipoGuardia: string;
-    
+import { Person } from "./Person";
 
-    constructor(nombre: string, apellido: string, dni: number,  domicilio: string, email: string, estado: boolean, cuil: string, fechaNacimiento: Date, sexo: string, telefono: string, tipoGuardia: string) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.domicilio = domicilio;
-        this.email = email;
-        this.estado = estado;
-        this.cuil = cuil;
-        this.fechaNacimiento = fechaNacimiento;
-        this.sexo = sexo;
-        this.telefono = telefono;
+export class Asistencial extends Person {
+
+    tipoGuardia: string;
+
+    constructor(nombre: string, apellido: string, dni: number, cuil: string, fechaNacimiento: Date, sexo: string, telefono: string, email: string, domicilio: string, estado: boolean, tipoGuardia: string) {
+        super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, estado);
         this.tipoGuardia = tipoGuardia;
     }
 
