@@ -1,8 +1,10 @@
+import { extend } from "lodash";
 import { Localidad } from "./Localidad";
 import { Region } from "./Region";
+import { Efector } from "./Efector";
 
-export class Hospital {
-    id?: number;
+export class Hospital extends Efector {
+   /*  id?: number;
     domicilio: string;
     estado: number;
     localidad: Localidad;
@@ -27,4 +29,4 @@ constructor(domicilio: string, estado: number, localidad: Localidad, region: Reg
     this.nivelComplejidad = nivelComplejidad;
 
 }
-}
+ */}

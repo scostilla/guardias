@@ -1,15 +1,21 @@
+import { Efector } from "./Efector";
 import { Localidad } from "./Localidad";
 import { Region } from "./Region";
 
-export class Caps {
-    id?: number;
-    domicilio: string;
-    estado: number;
-    localidad: Localidad;
-    region: Region;
+export class Caps extends Efector {
+    /* id?: number;
     nombre: string;
-    observacion: string;
+    domicilio: string;
     telefono: number;
+    estado: number;
+    
+    observacion: string;
+    region: Region;
+    localidad: Localidad;
+    
+    
+    
+    
     idUdo: number;
     tipoCaps: string;
     areaProgramatica: number;
@@ -31,5 +37,5 @@ constructor(domicilio: string, estado: number, localidad: Localidad, region: Reg
     this.areaProgramatica = areaProgramatica;
     this.idCabecera = idCabecera;
 
-}
+} */
 }

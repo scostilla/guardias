@@ -199,6 +199,7 @@ import { LegajoPersonComponent } from './components/configuracion/usuarios/legaj
 import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
+import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -350,6 +351,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     CargoComponent,
     CargoEditComponent,
     CargoDetailComponent,
+    LegajoPersonEditComponent,
     
   ],
 

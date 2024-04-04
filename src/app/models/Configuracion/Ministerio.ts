@@ -1,29 +1,18 @@
+import { Efector } from "./Efector";
 import { Localidad } from "./Localidad";
 import { Region } from "./Region";
 
 
-export class Ministerio {
-    id?: number;
-    domicilio: string;
-    estado: boolean;
-    localidad: Localidad;
-    region: Region;
-    nombre: string;
-    observacion: string;
-    telefono: number;
+export class Ministerio extends Efector {
+    
     idCabecera: number;
     idAutoridad: number;
 
 
-constructor(domicilio: string, estado: boolean, localidad: Localidad, region: Region, nombre: string, observacion: string, telefono: number, idCabecera: number, idAutoridad: number) {
-    this.domicilio = domicilio;
-    this.estado = estado;
-    this.localidad = localidad;
-    this.region = region;
-    this.nombre = nombre;
-    this.observacion = observacion;
-    this.telefono = telefono;
-    this.idCabecera = idCabecera;
-    this.idAutoridad = idAutoridad;
-}
+    constructor(nombre:string,domicilio: string,telefono: string, estado: boolean, observacion: string, region: Region,localidad: Localidad,  idCabecera: number, idAutoridad: number) {
+        super(nombre,domicilio,telefono,estado,observacion,region,localidad);
+        this.idCabecera = idCabecera;
+        this.idAutoridad = idAutoridad;
+    }
+
 }
