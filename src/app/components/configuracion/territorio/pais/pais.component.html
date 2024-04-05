@@ -1,15 +1,15 @@
 <app-spinner></app-spinner>
 <div class="container">
-  <div class="row">
-  <div class="col-7">
-    <div class="titulos">.:: PAISES</div>
-  </div>
-  <div class="col-1 align-items-right">
-    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar País">
-      <mat-icon>library_add</mat-icon>
-    </button>
-  </div>
-  <div class="col-4">
+    <div class="row">
+    <div class="col-7">
+      <div class="titulos">PAISES</div>
+    </div>
+    <div class="col-1 d-flex justify-content-end">
+      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar País">
+        <mat-icon>library_add</mat-icon>
+      </button>
+    </div>
+  <div class="col-md-4">
     <mat-form-field>
       <mat-label>Filtro</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
@@ -58,6 +58,8 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+<div class="row mt-3">
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+</div>
 </div>
 </div>

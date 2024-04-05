@@ -7,6 +7,7 @@ import { Legajo } from "src/app/models/Configuracion/Legajo";
 @Injectable({
   providedIn: 'root'
 })
+
 export class LegajoService {
 
   legajosURL = 'http://localhost:8080/legajo/';

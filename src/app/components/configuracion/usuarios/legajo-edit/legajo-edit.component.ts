@@ -26,7 +26,7 @@ import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistenc
 })
 
 export class LegajoEditComponent implements OnInit {
-  legajoForm: FormGroup;
+  legajoForm!: FormGroup;
   initialData: any;
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
@@ -48,6 +48,13 @@ export class LegajoEditComponent implements OnInit {
     private noAsistencialService: NoAsistencialService,
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
+    this.listProfesion();
+    this.listUdo();
+    this.listCargo();
+  }
+
+  ngOnInit(): void {
+
     this.legajoForm = this.fb.group({
       tipo: ['', Validators.required],
       persona: ['', Validators.required],
@@ -62,19 +69,11 @@ export class LegajoEditComponent implements OnInit {
       cargo: ['', Validators.required]
     });
 
-    if (data) {
-      this.legajoForm.patchValue(data);
-    };
-
-    this.listProfesion();
-    this.listUdo();
-    this.listCargo();
+       if (this.data) {
+      this.legajoForm.patchValue(this.data);
+    }
 
 
-
-  }
-
-  ngOnInit(): void {
 
     this.initialData = this.legajoForm.value;
   }

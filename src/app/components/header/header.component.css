@@ -1,6 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
 .margen-global {
   margin-bottom: 1.5em;
-  position: relative; 
+  position: relative;
+  background-color: #37BBED !important;
 }
 
 .header-container {
@@ -8,12 +13,12 @@
   z-index: 999;
 }
 
-.fond-celeste {
-    background-color: #37BBED !important;
-}
-
 .row-container {
   height: 170px;
+}
+
+.display_movil {
+  display: block;
 }
 
 nav{
@@ -25,6 +30,7 @@ h1 {
     font-size:300%;
     color: #f8f9fa;
 }
+
 h3 {
   font-family: "Ubuntu", sans-serif;
   font-size:120%;
@@ -73,7 +79,7 @@ mat-menu{
 .menuNavbar{
   background-color: #243c74;
   min-height: 30px;
-  height: 30px;
+  height: 35px;
   margin: 0;
   padding-left: 0px;
 }
@@ -132,13 +138,17 @@ mat-menu{
 
 @media (max-width: 768px) {
   .content-icon-header {
-    width: auto; /* Cambia el ancho a auto para permitir la flexibilidad */
+    width: auto;
     display: flex;
-    justify-content: flex-end; /* Alinea los elementos al final del contenedor */
+    justify-content: flex-end;
   }
 
   .icon-material {
-    margin: 0 5px; /* Añade un margen a los lados para evitar que los botones se junten */
+    margin: 0 5px;
+  }
+
+  .display_movil {
+    display: none !important;
   }
 }
 

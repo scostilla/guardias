@@ -8,8 +8,26 @@
 @import "calendar.css";
 
 
-html, body { height: 100%; }
-body { margin: 0; font-family: "Ubuntu", sans-serif; }
+html, body {
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body { margin: 0;
+  font-family: "Ubuntu", sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto; /* El contenido principal ocupa el espacio necesario */
+}
+
+footer {
+  flex-shrink: 0; /* El footer no se encoge */
+}
 
 .title{
     --bs-text-opacity: 1;

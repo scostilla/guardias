@@ -1,4 +1,4 @@
-<div class="margen-global fond-celeste shadow" *ngIf="showHeader">
+<div class="margen-global shadow" *ngIf="showHeader">
  <div class="header-container">
  <div class="container">
   <div class="row row-container">
@@ -7,7 +7,7 @@
         <img src="assets/img/pnglogo1.png" width="170" height="100" />
       </a>
     </div>
-    <div class="col d-flex justify-content-end align-items-center">
+    <div class="col d-flex justify-content-end align-items-center display_movil">
       <div routerLink="/home-page">
         <div class="input-group">
           <div id="titulo"><h3 class="fw-bold title-header">SISTEMA PROVINCIAL DE</h3></div><br/>
@@ -62,11 +62,9 @@
   </div>
 </div>
 </div>  
-  <div class="row" *ngIf="showNavBar">
-    <nav class="menuNavbar">
+    <nav class="menuNavbar" *ngIf="showNavBar">
       <app-nav-bar></app-nav-bar>
     </nav>
-  </div>
 </div>
 <!--
   
