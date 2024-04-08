@@ -1,84 +1,85 @@
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
-  <div class="col-7">
-    <div class="titulos">LEGAJOS</div>
-  </div>
-  <div class="col-1 align-items-right">
-    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Legajo">
-      <mat-icon>library_add</mat-icon>
-    </button>
-  </div>
-  <div class="col-4">
-    <mat-form-field>
-      <mat-label>Filtro</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
-    </mat-form-field>
-  </div>
-</div>
-
-<div class="row">
-<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.id}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="persona">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Persona </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.persona.apellido}}, {{legajo.persona.nombre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actual">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Actual </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.actual ? 'Si' : 'No'}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="fechaInicio">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Inicio </th> 
-    <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="fechaFinal">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Final </th> 
-    <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="profesion">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Profesion </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.profesion.nombre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="udo">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> U.D.O. </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.udo.nombre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="cargo">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Cargo </th> 
-    <td mat-cell *matCellDef="let legajo"> {{legajo.cargo.nombre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="acciones">
-    <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
-    <td mat-cell *matCellDef="let legajo" class="cell-actions">
-      <button mat-icon-button matTooltip="Ver {{legajo.motivo}}" (click)="openDetail(legajo)">
-        <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+    <div class="col-6 col-md-7">
+      <div class="titulos">LEGAJOS</div>
+    </div>
+    <div class="col-6 col-md-1 m d-flex justify-content-end">
+      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Legajo">
+        <mat-icon>library_add</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Editar {{legajo.motivo}}" (click)="openFormChanges(legajo)">
-        <mat-icon class="btnEdit">edit</mat-icon>
-      </button>
-      <button mat-icon-button matTooltip="Eliminar {{legajo.motivo}}" (click)="deleteLegajo(legajo)">
-        <mat-icon class="btnRemove">delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+      </mat-form-field>
+    </div>
+  </div>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+  <div class="row">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
+        <td mat-cell *matCellDef="let legajo"> {{legajo.id}} </td>
+      </ng-container>
 
-<div class="row mt-3">
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
-</div>
+      <ng-container matColumnDef="persona">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Persona </th> 
+        <td mat-cell *matCellDef="let legajo"> {{legajo.persona.apellido}}, {{legajo.persona.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actual">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Actual </th> 
+        <td mat-cell *matCellDef="let legajo"> {{legajo.actual ? 'Si' : 'No'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Inicio </th> 
+        <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaFinal">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Final </th> 
+        <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="profesion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Profesion </th> 
+        <td mat-cell *matCellDef="let legajo"> {{legajo.profesion.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="udo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> U.D.O. </th> 
+        <td mat-cell *matCellDef="let legajo"> {{legajo.udo.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cargo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Cargo </th> 
+        <td mat-cell *matCellDef="let legajo"> {{legajo.cargo.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
+        <td mat-cell *matCellDef="let legajo" class="cell-actions">
+          <button mat-icon-button matTooltip="Ver {{legajo.motivo}}" (click)="openDetail(legajo)">
+            <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Editar {{legajo.motivo}}" (click)="openFormChanges(legajo)">
+            <mat-icon class="btnEdit">edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Eliminar {{legajo.motivo}}" (click)="deleteLegajo(legajo)">
+            <mat-icon class="btnRemove">delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div class="row mt-3">
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
 </div>
