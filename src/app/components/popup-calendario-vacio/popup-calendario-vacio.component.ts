@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CronogramaFormAgregarComponent} from '../cronograma-form-agregar/cronograma-form-agregar.component';
+import { CronogramaFormAgregarComponent} from '../cronogramas/cronograma-form-agregar/cronograma-form-agregar.component';
 
 @Component({
   selector: 'app-popup-calendario-vacio',

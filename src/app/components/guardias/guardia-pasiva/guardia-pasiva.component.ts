@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PopupComponent } from '../popup/popup.component';
+import { PopupComponent } from '../../popup/popup.component';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
 import { MatDialog } from '@angular/material/dialog';
 

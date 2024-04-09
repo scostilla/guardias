@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PopupCalendarioComponent} from '../popup-calendario/popup-calendario.component';
+import { PopupCalendarioComponent} from '../../popup-calendario/popup-calendario.component';
 
 
 @Component({

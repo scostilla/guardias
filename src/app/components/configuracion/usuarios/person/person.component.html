@@ -6,7 +6,7 @@
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
       <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Persona Asistencial">
-        <mat-icon>library_add</mat-icon>
+        <mat-icon>person_add</mat-icon>
       </button>
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
@@ -93,6 +93,10 @@
           </button>
           <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteAsistencial(asistencial)">
             <mat-icon class="btnRemove">delete</mat-icon>
+          </button>
+
+          <button mat-icon-button matTooltip="Dist. horaria de {{asistencial.nombre}}" (click)="openDetail(asistencial)">
+            <mat-icon>calendar_month</mat-icon>
           </button>
 
           <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)" *ngIf="!isLoadingLegajos && hayLegajos(asistencial)">

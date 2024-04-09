@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PopupComponent } from '../popup/popup.component';
-import { ProfessionalDataServiceService } from '../../services/ProfessionalDataService/professional-data-service.service';
+import { PopupComponent } from '../../popup/popup.component';
+import { ProfessionalDataServiceService } from '../../../services/ProfessionalDataService/professional-data-service.service';
 
 
 @Component({

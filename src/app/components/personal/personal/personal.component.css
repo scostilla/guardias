@@ -1,0 +1,127 @@
+section {
+    display: table;
+  }
+  
+  .example-label {
+    display: table-cell;
+    font-size: 14px;
+    margin-left: 8px;
+    min-width: 180px;
+  }
+  
+  .example-button-row {
+    display: table-cell;
+    max-width: 800px;
+  }
+  
+  .example-button-row .mat-mdc-button-base {
+    margin: 8px 8px 8px 0;
+  }
+  
+  .example-flex-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .example-button-container {
+    display: flex;
+    justify-content: center;
+    width: 180px;
+  }
+
+  .example-action-buttons {
+    padding-bottom: 20px;
+  }
+  
+  .example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+    margin-left: 8px;
+  }
+
+  .card {
+    max-width: 100%;
+    margin-bottom: 8px;
+    background-color: #edf2f3;
+    color: rgb(85, 87, 88)
+  }
+
+  .card:hover {
+    background-color: #d6dee0;
+
+  }
+
+  .panel-title {font-weight: bold;}
+
+  h2{
+    font-family: "Ubuntu", sans-serif;
+    font-size:400% !important;
+  }
+
+  div.btnMenu {
+    width: 100%;
+	height: 50px;
+	margin: 1%;
+	color:#f3f3f3;
+	text-decoration:none;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+    -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+    box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+	transition: all 0.5s;
+  }
+
+div.btnMenu span {
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+	transition: 0.5s;
+  }
+  div.btnMenu span:after {
+	content: '\00bb';
+	position: absolute;
+	opacity: 0;
+	top: 0;
+	right: -20px;
+	transition: 0.5s;
+  }
+  
+  div.btnMenu:hover span {
+	padding-right: 25px;
+  }
+  
+  div.btnMenu:hover span:after {
+	opacity: 1;
+	right: 0;
+  }
+
+.icon1_btnMenu, .icon2_btnMenu, .icon3_btnMenu, .icon4_btnMenu, .icon5_btnMenu, .icon6_btnMenu {
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+	width: 100%;
+	font-size: 0.3em;
+	font-weight:bold;
+	text-align:center; 
+	padding:3%;
+}
+.icon1_btnMenu {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
+.icon2_btnMenu {background-color: #1B497B; border-bottom: 9px solid #123253;}
+.icon3_btnMenu {background-color: #C0CF50; border-bottom: 9px solid #909b3c;}
+.icon4_btnMenu {background-color: #F2953E; border-bottom: 9px solid #b8712e;}
+.icon5_btnMenu {background-color: #EB428F; border-bottom: 9px solid #c73778;}
+.icon6_btnMenu {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
+
+.text_boton {text-align: center;
+	font-size: 80%;
+	padding: 0 6% 6% 6%;
+	display:block;
+	}
+
+	  

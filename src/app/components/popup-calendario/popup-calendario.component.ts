@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { CronogramaFormAgregarComponent} from '../cronograma-form-agregar/cronograma-form-agregar.component';
+import { CronogramaFormAgregarComponent} from '../cronogramas/cronograma-form-agregar/cronograma-form-agregar.component';
 
 export interface PeriodicElement {
   name: string;

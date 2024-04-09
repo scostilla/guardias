@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
-import { PopupComponent } from '../popup/popup.component';
+import { PopupComponent } from '../../popup/popup.component';
 
 @Component({
   selector: 'app-guardia-activa',

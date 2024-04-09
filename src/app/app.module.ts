@@ -41,21 +41,21 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { LoginComponent } from './components/login/login.component';
-import { RegistroDiarioComponent } from './components/registro-diario/registro-diario.component';
-import { RegistroActividadesComponent } from './components/registro-actividades/registro-actividades.component';
+import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
+import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
-import { NovedadesFormComponent } from './components/novedades-form/novedades-form.component';
-import { DistHorariaComponent } from './components/dist-horaria/dist-horaria.component';
+import { NovedadesFormComponent } from './components/actividades/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from './components/actividades/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
-import { GuardiasViewComponent } from './components/guardias-view/guardias-view.component';
+import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { GuardiaActivaComponent } from './components/guardia-activa/guardia-activa.component';
-import { GuardiaPasivaComponent } from './components/guardia-pasiva/guardia-pasiva.component';
-import { RegDiarioComponent } from './components/reg-diario/reg-diario.component';
+import { GuardiaActivaComponent } from './components/guardias/guardia-activa/guardia-activa.component';
+import { GuardiaPasivaComponent } from './components/guardias/guardia-pasiva/guardia-pasiva.component';
+import { RegDiarioComponent } from './components/actividades/reg-diario/reg-diario.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -65,7 +65,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { DdjjExtraComponent } from './components/ddjj-extra/ddjj-extra.component';
+import { DdjjExtraComponent } from './components/guardias/ddjj-extra/ddjj-extra.component';
 import {MatTableModule} from '@angular/material/table';
 import {NgFor} from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -73,8 +73,8 @@ import {MatBadgeModule} from '@angular/material/badge';
 
 
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
-import { DdjjContrafacturaComponent } from './components/ddjj-contrafactura/ddjj-contrafactura.component';
-import { DdjjCargoyagrupComponent } from './components/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+import { DdjjContrafacturaComponent } from './components/guardias/ddjj-contrafactura/ddjj-contrafactura.component';
+import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 
 //Toastr
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -86,45 +86,45 @@ import { TablaComponent } from './components/tabla/tabla.component';
 import { ArrayFecComponent } from './components/array-fec/array-fec.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
-import { CronogramaComponent } from './components/cronograma/cronograma.component';
+import { CronogramaComponent } from './components/cronogramas/cronograma/cronograma.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { HistorialComponent } from './components/historial/historial.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
-import { CronogramaDefComponent } from './components/cronograma-def/cronograma-def.component';
+import { CronogramaDefComponent } from './components/cronogramas/cronograma-def/cronograma-def.component';
 import { PopupCalendarioVacioComponent } from './components/popup-calendario-vacio/popup-calendario-vacio.component';
-import { CronogramaRegComponent } from './components/cronograma-reg/cronograma-reg.component';
+import { CronogramaRegComponent } from './components/cronogramas/cronograma-reg/cronograma-reg.component';
 import { PopupCalendarioDisp2Component } from './components/popup-calendario-disp2/popup-calendario-disp2.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
-import { CronogramaPComponent } from './components/cronograma-p/cronograma-p.component';
-import { CronogramaPDefComponent } from './components/cronograma-p-def/cronograma-p-def.component';
-import { CronogramaPHosComponent } from './components/cronograma-p-hos/cronograma-p-hos.component';
-import { GuardiasViewPComponent } from './components/guardias-view-p/guardias-view-p.component';
+import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cronograma-p.component';
+import { CronogramaPDefComponent } from './components/cronogramas/cronograma-p-def/cronograma-p-def.component';
+import { CronogramaPHosComponent } from './components/cronogramas/cronograma-p-hos/cronograma-p-hos.component';
+import { GuardiasViewPComponent } from './components/guardias/guardias-view-p/guardias-view-p.component';
 import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
-import { CronogramaPDefTotComponent } from './components/cronograma-p-def-tot/cronograma-p-def-tot.component';
-import { DdjjTentativoComponent } from './components/ddjj-tentativo/ddjj-tentativo.component';
-import { DdjjCargoyagrupTotComponent } from './components/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
-import { DdjjExtraTotComponent } from './components/ddjj-extra-tot/ddjj-extra-tot.component';
-import { DdjjContrafacturaTotComponent } from './components/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
-import { DistHorariaGuardiaComponent } from './components/dist-horaria-guardia/dist-horaria-guardia.component';
-import { DistHorariaConsComponent } from './components/dist-horaria-cons/dist-horaria-cons.component';
-import { DistHorariaGirasComponent } from './components/dist-horaria-giras/dist-horaria-giras.component';
-import { DistHorariaOtrasComponent } from './components/dist-horaria-otras/dist-horaria-otras.component';
+import { CronogramaPDefTotComponent } from './components/cronogramas/cronograma-p-def-tot/cronograma-p-def-tot.component';
+import { DdjjTentativoComponent } from './components/guardias/ddjj-tentativo/ddjj-tentativo.component';
+import { DdjjCargoyagrupTotComponent } from './components/guardias/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
+import { DdjjExtraTotComponent } from './components/guardias/ddjj-extra-tot/ddjj-extra-tot.component';
+import { DdjjContrafacturaTotComponent } from './components/guardias/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
+import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaConsComponent } from './components/actividades/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from './components/actividades/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria-otras/dist-horaria-otras.component';
 import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
 import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
-import { CronogramaFormAgregarComponent } from './components/cronograma-form-agregar/cronograma-form-agregar.component';
+import { CronogramaFormAgregarComponent } from './components/cronogramas/cronograma-form-agregar/cronograma-form-agregar.component';
 import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
-import { CronogramaDefMaternoComponent } from './components/cronograma-def-materno/cronograma-def-materno.component';
-import { CronogramaDefSroqueComponent } from './components/cronograma-def-sroque/cronograma-def-sroque.component';
-import { DdjjCargoyagrupTotalApComponent } from './components/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
-import { DdjjCargoyagrupTotalRecComponent } from './components/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
-import { DdjjExtraTotRecComponent } from './components/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
-import { DdjjExtraTotApComponent } from './components/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
-import { DdjjContrafacturaTotApComponent } from './components/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
-import { DdjjContrafacturaTotRecComponent } from './components/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
+import { CronogramaDefMaternoComponent } from './components/cronogramas/cronograma-def-materno/cronograma-def-materno.component';
+import { CronogramaDefSroqueComponent } from './components/cronogramas/cronograma-def-sroque/cronograma-def-sroque.component';
+import { DdjjCargoyagrupTotalApComponent } from './components/guardias/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
+import { DdjjCargoyagrupTotalRecComponent } from './components/guardias/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
+import { DdjjExtraTotRecComponent } from './components/guardias/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
+import { DdjjExtraTotApComponent } from './components/guardias/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
+import { DdjjContrafacturaTotApComponent } from './components/guardias/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
+import { DdjjContrafacturaTotRecComponent } from './components/guardias/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
 import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
 import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
 import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
@@ -200,6 +200,8 @@ import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
+import { CronogramaDetailComponent } from './components/cronogramas/cronograma-detail/cronograma-detail.component';
+import { PersonalComponent } from './components/personal/personal/personal.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -352,6 +354,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     CargoEditComponent,
     CargoDetailComponent,
     LegajoPersonEditComponent,
+    CronogramaDetailComponent,
+    PersonalComponent,
     
   ],
 
