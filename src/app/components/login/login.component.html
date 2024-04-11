@@ -5,7 +5,7 @@
 <ng-template #loggedOut>
 
   <div class="fadeIn first">
-    <img src="assets/img/pnglogo1.png" id="icon" alt="User Icon" />
+    <img src="assets/img/pnglogo1.png" id="icon" alt="User Icon" style="width: 160px;"/>
   </div>
 
   <div id="formContent">
@@ -14,7 +14,7 @@
 
     <form #f="ngForm" (ngSubmit)="onLogin()" novalidate>
       <mat-form-field appearance="fill" class="fadeIn second form-group">
-        <!-- <mat-icon class="mat-icon-size" matPrefix color="primary">email</mat-icon> -->
+        <mat-icon class="mat-icon-size" matPrefix color="primary">person</mat-icon>
         <mat-label>Nombre de Usuario</mat-label>
         
         <input matInput name="nombreUsuario" id="nombreUsuario" [(ngModel)]="nombreUsuario" required nombreUsuario #usernameInput="ngModel">

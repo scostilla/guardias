@@ -85,13 +85,8 @@ mat-menu{
 }
 
 /* Botones header */
-.content-icon-header {
-  width: 20%; 
-  text-align: right; 
-  float: left; 
-}
 .icon-material {
-  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-left: 5%;
+  color: #f3f5f8; background-color: #243c74; font-family: 'Ubuntu', sans-serif; margin-left: 3%;
 }
 .icon-material:hover {
   color: #37BBED; background-color: #314981;
@@ -137,12 +132,6 @@ mat-menu{
 }
 
 @media (max-width: 768px) {
-  .content-icon-header {
-    width: auto;
-    display: flex;
-    justify-content: flex-end;
-  }
-
   .icon-material {
     margin: 0 5px;
   }
@@ -151,30 +140,3 @@ mat-menu{
     display: none !important;
   }
 }
-
-/*
-
-.navbar-default{
-    position: relative;
-    border: 0;
-    box-shadow: none;
-    margin: 0;
-    z-index: 9;
-}
-
-.navbar-top{
-    border-radius: 0;
-}
-
-.navbar-brand{
-    padding: 10px 15px 10px 0;
-}
-
-.nav{
-    padding-left: 0;
-}
-
-.navbar-nav{
-    margin: 7.5px -15px;
-}
-*/
