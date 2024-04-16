@@ -38,12 +38,13 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Estado</mat-label>
-      <mat-select formControlName="estado">
-        <mat-option [value]="true">Activo</mat-option>
-        <mat-option [value]="false">Inactivo</mat-option>
+      <mat-label>Es asistencial?</mat-label>
+      <mat-select formControlName="esAsistencial">
+        <mat-option [value]="true">Si</mat-option>
+        <mat-option [value]="false">No</mat-option>
       </mat-select>
-</mat-form-field>
+      <mat-error *ngIf="asistencialForm.get('esAsistencial')?.errors?.['required']">El campo es requerido.</mat-error>
+    </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>CUIL</mat-label>
@@ -76,7 +77,7 @@
       <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="fill">
+    <!--<mat-form-field appearance="fill">
       <mat-label>Tipo de guardia</mat-label>
       <mat-select formControlName="tipoGuardia">
         <mat-option value="CONTRAFACTURA">CONTRAFACTURA</mat-option>
@@ -85,8 +86,7 @@
         <mat-option value="AGRUPACION">AGRUPACION</mat-option>
         <mat-option value="PASIVA">PASIVA</mat-option>
       </mat-select>
-<mat-error *ngIf="asistencialForm.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
-    </mat-form-field>
+    </mat-form-field>-->
 
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid || !isModified()">

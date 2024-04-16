@@ -28,7 +28,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   domicilioVisible: boolean = false;
   estadoVisible: boolean = false;
   fechaNacimientoVisible: boolean = false;
-  sexoVisible: boolean = false;
+  telefonoVisible: boolean = false;
   emailVisible: boolean = false;
 
 
@@ -37,7 +37,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<PersonDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'dni', 'domicilio', 'email', 'estado', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'tipoGuardia', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'apellido', /*  'dni', 'domicilio', 'email', 'estado', */'cuil',  /*'fechaNacimiento',  'sexo', 'telefono', 'tipoGuardia', */ 'acciones'];
   dataSource!: MatTableDataSource<Asistencial>;
   suscription!: Subscription;
   asistencial!: Asistencial;
@@ -110,30 +110,32 @@ export class PersonComponent implements OnInit, OnDestroy {
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined && result.type === 'save') {
-        this.toastr.success('Legajo creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        this.dataSource.data.push(result.data);
-        this.dataSource._updateChangeSubscription();
-      } else if (result !== undefined && result.type === 'error') {
-        this.toastr.error('No se creó el Legajo', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+      if (result !== undefined) {
+        if (result) {
+          this.toastr.success('Legajo creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.dataSource.data.push(result);
+          this.dataSource._updateChangeSubscription();
+        } else {
+          this.toastr.error('No se creó el Legajo', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
       }
     });
-  }
+  }  
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
 
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'telefono', 'acciones'];
+    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
   
     let columnasVisibles: string[] = [];
   
@@ -142,21 +144,21 @@ export class PersonComponent implements OnInit, OnDestroy {
       if (columna === 'cuil' && this.dniVisible) {
         columnasVisibles.push('dni');
       }
-      if (columna === 'apellido' && this.domicilioVisible) {
+      /* if (columna === 'apellido' && this.domicilioVisible) {
         columnasVisibles.push('domicilio');
       }
       if (columna === 'apellido' && this.estadoVisible) {
         columnasVisibles.push('estado');
-      }
-      if (columna === 'telefono' && this.fechaNacimientoVisible) {
+      } 
+      if (columna === 'cuil' && this.fechaNacimientoVisible) {
         columnasVisibles.push('fechaNacimiento');
+      }*/
+      if (columna === 'cuil' && this.telefonoVisible) {
+        columnasVisibles.push('telefono');
       }
-      if (columna === 'telefono' && this.sexoVisible) {
-        columnasVisibles.push('sexo');
-      }
-      if (columna === 'telefono' && this.emailVisible) {
+      /*if (columna === 'telefono' && this.emailVisible) {
         columnasVisibles.push('email');
-      }
+      } */
     });
   
     this.displayedColumns = columnasVisibles;
@@ -187,8 +189,7 @@ export class PersonComponent implements OnInit, OnDestroy {
     this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
       return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
       this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) || 
-      this.accentFilter(data.domicilio.toLowerCase()).includes(this.accentFilter(filter)); 
+      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase()))
     };
   }
 
@@ -265,4 +266,3 @@ export class PersonComponent implements OnInit, OnDestroy {
   });
 }
 }
-

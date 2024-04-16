@@ -25,12 +25,11 @@ export class NoAsistencialEditComponent implements OnInit {
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
       domicilio: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      estado: ['', Validators.required],
+      esAsistencial: ['', Validators.required],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      descripcion: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{1,255}$')]]
+      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]]
     });
 
     if (data) {

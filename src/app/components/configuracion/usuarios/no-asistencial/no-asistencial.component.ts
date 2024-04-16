@@ -23,7 +23,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   domicilioVisible: boolean = false;
   estadoVisible: boolean = false;
   fechaNacimientoVisible: boolean = false;
-  sexoVisible: boolean = false;
+  telefonoVisible: boolean = false;
   emailVisible: boolean = false;
   descripcionVisible: boolean = false;
 
@@ -32,7 +32,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NoAsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'dni', 'domicilio', 'email', 'estado', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'descripcion', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'apellido', /*'dni', 'domicilio', 'email', 'estado', */ 'cuil', /*'fechaNacimiento', 'sexo', 'telefono', 'descripcion', */ 'acciones'];
   dataSource!: MatTableDataSource<NoAsistencial>;
   suscription!: Subscription;
 
@@ -77,7 +77,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'telefono', 'acciones'];
+    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
   
     let columnasVisibles: string[] = [];
   
@@ -86,24 +86,24 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       if (columna === 'cuil' && this.dniVisible) {
         columnasVisibles.push('dni');
       }
-      if (columna === 'apellido' && this.domicilioVisible) {
+      /*if (columna === 'apellido' && this.domicilioVisible) {
         columnasVisibles.push('domicilio');
       }
       if (columna === 'apellido' && this.estadoVisible) {
         columnasVisibles.push('estado');
       }
-      if (columna === 'telefono' && this.fechaNacimientoVisible) {
+      if (columna === 'cuil' && this.fechaNacimientoVisible) {
         columnasVisibles.push('fechaNacimiento');
+      }*/
+      if (columna === 'cuil' && this.telefonoVisible) {
+        columnasVisibles.push('telefono');
       }
-      if (columna === 'telefono' && this.sexoVisible) {
-        columnasVisibles.push('sexo');
-      }
-      if (columna === 'telefono' && this.emailVisible) {
+      /*if (columna === 'telefono' && this.emailVisible) {
         columnasVisibles.push('email');
       }
       if (columna === 'telefono' && this.descripcionVisible) {
         columnasVisibles.push('descripcion');
-      }
+      }*/
     });
   
     this.displayedColumns = columnasVisibles;
@@ -134,7 +134,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
       return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
       this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())); 
+      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase()))
     };
   }
 
@@ -147,7 +147,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Asistencial editado con éxito' : 'Asistencial creado con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'No Asistencial editado con éxito' : 'No Asistencial creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -160,7 +160,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
         }
         this.dataSource._updateChangeSubscription();
       } else if (result && result.type === 'error') {
-        this.toastr.error('Ocurrió un error al crear o editar Asistencial', 'Error', {
+        this.toastr.error('Ocurrió un error al crear o editar No Asistencial', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

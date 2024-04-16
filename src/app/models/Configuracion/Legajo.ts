@@ -1,34 +1,38 @@
 import { Profesion } from './Profesion';
 import { Person } from './Person';
 import { Efector } from './Efector';
+
+import { Revista } from './Revista';
 import { Cargo } from './Cargo';
 
 export class Legajo {
     id?: number;
-    actual: boolean;
-    fechaFinal: Date;
     fechaInicio: Date;
+    fechaFinal: Date;
+    actual: boolean;
     legal: boolean;
+    activo:boolean;
     matriculaNacional: string;
     matriculaProvincial: string;
-    persona: Person;
     profesion: Profesion;
+    revista:Revista;
     udo: Efector;
-    agrupacion: string;
+    persona: Person;
     cargo: Cargo;
     
-
-    constructor(actual: boolean, fechaFinal: Date, fechaInicio: Date,  legal: boolean, matriculaNacional: string, matriculaProvincial: string, persona: Person, profesion: Profesion, udo: Efector, agrupacion: string, cargo: Cargo) {
-        this.actual = actual;
-        this.fechaFinal = fechaFinal;
+    constructor(fechaInicio: Date,fechaFinal: Date,actual: boolean,    legal: boolean, activo:boolean, matriculaNacional: string, matriculaProvincial: string,profesion: Profesion, revista: Revista, udo: Efector, persona: Person, cargo: Cargo) {
+        
         this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
+        this.actual = actual;
         this.legal = legal;
+        this.activo = activo;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
-        this.persona = persona;
         this.profesion = profesion;
+        this.revista = revista;
         this.udo = udo;
-        this.agrupacion = agrupacion;
+        this.persona = persona;
         this.cargo = cargo;
     }
 
