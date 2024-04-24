@@ -24,7 +24,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'persona', 'actual', 'fechaFinal', 'fechaInicio', 'profesion', 'udo', 'cargo', 'acciones'];
+  displayedColumns: string[] = ['id', 'persona', 'profesion','udo','actual', 'legal', 'fechaInicio',/* 'fechaFinal',  'matriculaNacional', 'matriculaProvincial', 'cargo', */ 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
 
@@ -89,6 +89,7 @@ applyFilter(event: Event) {
     const idPersonaString = data.profesion.nombre.toString();
     const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
+    // Aplicar el filtro a los valores convertidos
     return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
            this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
            this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
@@ -102,26 +103,28 @@ applyFilter(event: Event) {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined && result.type === 'save') {
+      if (result !== undefined) {
+      if (result) {
         this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
         if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
-          this.dataSource.data[index] = result.data;
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
         } else {
-          this.dataSource.data.push(result.data);
+          this.dataSource.data.push(result);
         }
         this.dataSource._updateChangeSubscription();
-      } else if (result !== undefined && result.type === 'error') {
+      } else {
         this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
       }
+    }
     });
   }
 
@@ -138,7 +141,7 @@ applyFilter(event: Event) {
   deleteLegajo(legajo: Legajo): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Confirma la eliminación de ' + legajo.id,
+        message: 'Confirma la eliminación de ' + legajo.persona?.nombre,
         title: 'Eliminar',
       },
     });

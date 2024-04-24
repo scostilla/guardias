@@ -1,19 +1,20 @@
 export class Notificacion {
-    id?: number;
-    categoria: string;
-    detalle: string;
-    fechanotificacion: Date;
-    posicion: number;
-    tipo: string;
-    url: string;
+  id?: number;
+  tipo: string;
+  categoria: string;
+  fechaNotificacion: Date;
+  detalle: string;
+  url: string;
+  activo: boolean;
   
-    constructor(categoria: string, detalle: string, fechanotificacion: Date, posicion: number, tipo: string, url: string) {
-      this.categoria = categoria;
-      this.detalle = detalle;
-      this.fechanotificacion = fechanotificacion;
-      this.posicion = posicion;
-      this.tipo = tipo;
-      this.url = url;
-    }
+  
+
+  constructor(tipo: string,categoria: string, fechaNotificacion: Date, detalle: string, url: string, activo: boolean) {
+    this.tipo = tipo;
+    this.categoria = categoria;
+    this.fechaNotificacion = fechaNotificacion;
+    this.detalle = detalle;
+    this.url = url;
+    this.activo = activo;
   }
-  
+}

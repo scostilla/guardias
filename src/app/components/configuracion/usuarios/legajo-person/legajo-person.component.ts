@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoPersonEditComponent } from '../legajo-person-edit/legajo-person-edit.component';
+import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
 import { ActivatedRoute } from '@angular/router';
 
@@ -25,7 +25,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'actual', 'fechaFinal', 'fechaInicio', 'profesion', 'udo', 'cargo', 'acciones'];
+  displayedColumns: string[] = ['id',  'profesion', 'udo','fechaInicio', 'actual', 'fechaFinal', /* 'cargo', */ 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
@@ -102,45 +102,47 @@ applyFilter(event: Event) {
   this.dataSource.filter = filterValue;
   this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
     const actualString = data.actual ? 'si' : 'no';
-    const profesionString = data.profesion.nombre.toString();
+    const idPersonaString = data.profesion.nombre.toString();
     const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
+    // Aplicar el filtro a los valores convertidos
     return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(profesionString).includes(this.accentFilter(filter)) || 
+           this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
            this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
   };
 }
+  openFormChanges(legajo?: Legajo): void {
+    const esEdicion = legajo != null;
+    const dialogRef = this.dialog.open(LegajoEditComponent, {
+      width: '600px',
+      data: esEdicion ? legajo : null
+    });
 
-openFormChanges(legajo?: Legajo): void {
-  const esEdicion = legajo != null;
-  const dialogRef = this.dialog.open(LegajoPersonEditComponent, {
-    width: '600px',
-    data: esEdicion ? legajo : { persona: { id: this.asistencialId }}
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result !== undefined && result.type === 'save') {
-      this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      if (esEdicion) {
-        const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
-        this.dataSource.data[index] = result.data;
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      if (result) {
+        this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.id);
+          this.dataSource.data[index] = result;
+        } else {
+          this.dataSource.data.push(result);
+        }
+        this.dataSource._updateChangeSubscription();
       } else {
-        this.dataSource.data.push(result.data);
+        this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       }
-      this.dataSource._updateChangeSubscription();
-    } else if (result !== undefined && result.type === 'error') {
-      this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
     }
-  });
-}
+    });
+  }
 
   openDetail(legajo: Legajo): void {
     this.dialogRef = this.dialog.open(LegajoDetailComponent, { 

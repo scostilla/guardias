@@ -1,51 +1,39 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Provincia
-  <h5 class="requiredField">*Campos Obligatorios</h5>
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Provincia
+  <h5 class="['required']Field">*Campos Obligatorios</h5>
 </h2>
+<mat-dialog-content class="mat-typography">
 
-<form [formGroup]="form!" (ngSubmit)="saveProvincia()">
-  <mat-dialog-content>
-    <div class="row" style="margin-top: 20px">
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Nombre</mat-label>
-            <input matInput formControlName="nombre">
-          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
-            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Gentilicio</mat-label>
-          <input matInput formControlName="gentilicio">
-          <mat-error *ngIf="form?.get('gentilicio')?.invalid && form?.get('gentilicio')?.touched">
-            El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Pais</mat-label>
-          <mat-select formControlName="pais" [compareWith]="comparePais">
-            <mat-option *ngFor="let pais of paises" [value]="pais" >{{ pais.nombre }}</mat-option>
-          </mat-select>
-                    <mat-error *ngIf="form?.get('pais')?.invalid && form?.get('pais')?.touched">
-            El campo es obligatorio.
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
+  <form [formGroup]="provinciaForm" (ngSubmit)="saveProvincia()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre">
+      <mat-error *ngIf="provinciaForm.get('nombre')?.errors?.['required']">el nombre es requerido.</mat-error>
+      <mat-error *ngIf="provinciaForm.get('nombre')?.errors?.['pattern']">El nombre solo puede tener letras (entre 2 y 60 caracteres).</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Gentilicio</mat-label>
+      <input matInput formControlName="gentilicio">
+      <mat-error *ngIf="provinciaForm.get('gentilicio')?.errors?.['required']">El gentilicio es requerido.</mat-error>
+      <mat-error *ngIf="provinciaForm.get('gentilicio')?.errors?.['pattern']">El gentilicio solo puede tener letras (entre 2 y 60 caracteres).</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>País</mat-label>
+      <mat-select formControlName="pais" [compareWith]="comparePais">
+        <mat-option *ngFor="let pais of paises" [value]="pais" >{{ pais.nombre }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="provinciaForm.get('pais')?.errors?.['required']">El país es requerido.</mat-error>
+    </mat-form-field>
+
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!provinciaForm.valid || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
-      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+      <button mat-raised-button color="secondary" type="button" (click)="cancel()">
         Cancelar
       </button>
     </div>
-  </mat-dialog-content>
-</form>
+  </form>
+</mat-dialog-content>

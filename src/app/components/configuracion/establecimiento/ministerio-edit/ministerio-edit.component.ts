@@ -16,9 +16,8 @@ import { RegionService } from 'src/app/services/Configuracion/region.service';
 })
 export class MinisterioEditComponent implements OnInit {
 
-  form?: FormGroup;
-  esEdicion?: boolean;
-  esIgual: boolean = false;
+  ministerioForm: FormGroup;
+  initialData: any;
   localidades: Localidad[] = []; 
   regiones: Region[] = []; 
   
@@ -26,18 +25,14 @@ export class MinisterioEditComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private dialogRef: MatDialogRef<MinisterioEditComponent>,
     private ministerioService: MinisterioService,
     private localidadService: LocalidadService, 
     private regionService: RegionService, 
-    private dialogRef: MatDialogRef<MinisterioEditComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: Ministerio 
+    @Inject(MAT_DIALOG_DATA) public data: Ministerio 
   ) { 
-    this.listLocalidad();
-    this.listRegion();
-  }
 
-  ngOnInit(): void {
-    this.form = this.fb.group({
+    this.ministerioForm = this.fb.group({
       id: [this.data ? this.data.id : null],
       nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
       domicilio: [this.data ? this.data.domicilio : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
@@ -50,14 +45,20 @@ export class MinisterioEditComponent implements OnInit {
       idAutoridad: [this.data ? this.data.idAutoridad : '']
     });
 
-    this.esEdicion = this.data != null;
-    
-    this.form.valueChanges.subscribe(val => {
-    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.domicilio !== this.data?.domicilio || val.observacion !== this.data?.observacion
-    || val.telefono !== this.data?.telefono || val.localidad !== this.data?.localidad || val.region !== this.data?.region || val.estado !== this.data?.estado
-    || val.idCabecera !== this.data?.idCabecera || val.idAutoridad !== this.data?.idAutoridad;
-    });
+    this.listLocalidad();
+    this.listRegion();
 
+    if (data) {
+      this.ministerioForm.patchValue(data);
+    }
+  }
+
+  ngOnInit(): void {
+    this.initialData = this.ministerioForm.value;
+  }
+
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.ministerioForm.value);
   }
 
   listLocalidad(): void {
@@ -77,31 +78,34 @@ export class MinisterioEditComponent implements OnInit {
   }
 
   saveMinisterio(): void {
-    const id = this.form?.get('id')?.value;
-    let nombre = this.form?.get('nombre')?.value;
-    const domicilio = this.form?.get('domicilio')?.value;
-    const observacion = this.form?.get('observacion')?.value;
-    const telefono = this.form?.get('telefono')?.value;
-    const localidad = this.form?.get('localidad')?.value;
-    const region = this.form?.get('region')?.value;
-    const estado = this.form?.get('estado')?.value;
-    const idCabecera = this.form?.get('idCabecera')?.value;
-    const idAutoridad = this.form?.get('idAutoridad')?.value;
 
-    nombre = nombre.toUpperCase();
+    if (this.ministerioForm.valid) {
+      const miniterioData = this.ministerioForm.value;
+      if (this.data && this.data.id) {
+        this.ministerioService.update(this.data.id, miniterioData).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      } else {
 
-    const ministerio = new Ministerio(domicilio, observacion, telefono, nombre, localidad, region, estado, idCabecera, idAutoridad);
-    ministerio.id = id;
-
-    if (this.esEdicion) {
-      this.ministerioService.update(id, ministerio).subscribe(data => {
-        this.dialogRef.close(data);
-      });
-    } else {
-      this.ministerioService.save(ministerio).subscribe(data => {
-        this.dialogRef.close(data);
-      });
+        this.ministerioService.save(miniterioData).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      }
     }
+  }
+
+  cancel(): void {
+    this.dialogRef.close({ type: 'cancel' });
   }
 
   compareLocalidad(p1: Localidad, p2: Localidad): boolean {

@@ -9,13 +9,12 @@ import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
-import { CargoService } from 'src/app/services/Configuracion/cargo.service';
+import { Revista } from 'src/app/models/Configuracion/Revista';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
-import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 
 
 
@@ -24,65 +23,67 @@ import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistenc
   templateUrl: './legajo-edit.component.html',
   styleUrls: ['./legajo-edit.component.css']
 })
-
 export class LegajoEditComponent implements OnInit {
-  legajoForm!: FormGroup;
+  legajoForm: FormGroup;
   initialData: any;
+  personas : Asistencial[] =[];
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
-  cargos: Cargo[] = [];
-  asistenciales: Asistencial[] = [];
-  noAsistenciales: NoAsistencial[] = [];
-  tipoSeleccionado?: string;
+  revistas: Revista[] = [];
 
+  
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<LegajoEditComponent>,
     private legajoService: LegajoService,
     private profesionService: ProfesionService,
-    private personService: PersonService,
-    private efectorService: EfectorService,
-    private hospitalService: HospitalService,
-    private cargoService: CargoService,
-    private asistencialService: AsistencialService,
-    private noAsistencialService: NoAsistencialService,
+    private revistaService : RevistaService,
+    private asistencialService : AsistencialService,
+    private hospitalService : HospitalService,
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
-    this.listProfesion();
-    this.listUdo();
-    this.listCargo();
+    this.legajoForm = this.fb.group({
+      persona: ['', Validators.required],
+      profesion: ['', Validators.required],
+      revista: ['', Validators.required],
+      udo: ['', Validators.required],
+      matriculaNacional: ['', [/* Validators.required, */ Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
+      matriculaProvincial: ['', [/* Validators.required,  */Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
+      actual: ['', Validators.required],
+      legal: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      fechaFinal: [''/* , Validators.required */],
+    });
+
+    this.listAsistenciales();
+    this.listProfesiones();
+    this.listRevistas();
+    this.listUdos();
+    
+    if (data) {
+      this.legajoForm.patchValue(data);
+    }
   }
 
   ngOnInit(): void {
-
-    this.legajoForm = this.fb.group({
-      tipo: ['', Validators.required],
-      persona: ['', Validators.required],
-      actual: ['', Validators.required],
-      fechaFinal: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      legal: ['', Validators.required],
-      matriculaNacional: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      profesion: ['', Validators.required],
-      udo: ['', Validators.required],
-      cargo: ['', Validators.required]
-    });
-
-       if (this.data) {
-      this.legajoForm.patchValue(this.data);
-    }
-
-
-
     this.initialData = this.legajoForm.value;
+    
   }
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
   }
 
-  listProfesion(): void {
+  listAsistenciales(): void {
+    this.asistencialService.list().subscribe(data => {
+      console.log('Lista de Asistenciales:', data);
+      this.personas = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
       console.log('Lista de Profesiones:', data);
       this.profesiones = data;
@@ -91,9 +92,18 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
+  listRevistas(): void {
+    this.revistaService.list().subscribe(data => {
+      console.log('Lista de Revistas:', data);
+      this.revistas = data;
+    }, error => {
+      console.log(error);
+    });
+  }
 
-  listUdo(): void {
-    this.hospitalService.listEfectores().subscribe(data => {
+  listUdos(): void {
+    /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
+    this.hospitalService.list().subscribe(data => {
       console.log('Lista de Efectores:', data);
       this.efectores = data;
     }, error => {
@@ -101,44 +111,27 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  listCargo(): void {
-    this.cargoService.list().subscribe(data => {
-      this.cargos = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  listAsistencial(): void {
-    this.asistencialService.list().subscribe(data => {
-      this.asistenciales = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  listNoAsistencial(): void {
-    this.noAsistencialService.list().subscribe(data => {
-      this.noAsistenciales = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  onTipoChange(tipo: string) {
-    this.tipoSeleccionado = tipo;
-    if (tipo === 'asistencial') {
-      this.listAsistencial();
-    } else if (tipo === 'noAsistencial') {
-      this.listNoAsistencial();
-    }
-  }
-
   saveLegajo(): void {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
+
+      const legajoDto = new LegajoDto(
+        legajoData.fechaInicio,
+        legajoData.fechaFinal,
+        legajoData.actual,
+        legajoData.legal,
+        legajoData.activo,
+        legajoData.matriculaNacional,
+        legajoData.matriculaProvincial,
+        legajoData.profesion.id,
+        legajoData.revista.id,
+        legajoData.udo.id,
+        legajoData.persona.id
+      );
+
+      /* AYUDA: si this.data tiene un valor y un ID asociado */
       if (this.data && this.data.id) {
-        this.legajoService.update(this.data.id, legajoData).subscribe(
+        this.legajoService.update(this.data.id, legajoDto).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });
           },
@@ -147,7 +140,13 @@ export class LegajoEditComponent implements OnInit {
           }
         );
       } else {
-        this.legajoService.save(legajoData).subscribe(
+        
+        
+
+        console.log("############ id persona " + legajoDto.idPersona)
+        console.log("############ id matricula " + legajoDto.matriculaNacional)
+        console.log("############ id udo " + legajoDto.idUdo)
+        this.legajoService.save(legajoDto).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });
           },
@@ -159,7 +158,7 @@ export class LegajoEditComponent implements OnInit {
     }
   }
 
-  comparePersona(p1: Person, p2: Person): boolean {
+  comparePersona(p1: Asistencial, p2: Asistencial): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
@@ -167,15 +166,16 @@ export class LegajoEditComponent implements OnInit {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
+  compareRevista(p1: Revista, p2: Revista): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
   compareEfector(p1: Efector, p2: Efector): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  compareCargo(p1: Cargo, p2: Cargo): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
 
   cancel(): void {
-    this.dialogRef.close({ type: 'cancel' });
+    this.dialogRef.close();
   }
 }

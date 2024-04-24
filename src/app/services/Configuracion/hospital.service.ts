@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from "src/app/models/Configuracion/Hospital";
 
 @Injectable({
@@ -21,10 +20,6 @@ export class HospitalService {
 
   public list(): Observable<Hospital[]> {
       return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'list');
-  }
-
-  public listEfectores(): Observable<Efector[]> {
-      return this.httpClient.get<Efector[]>(this.hospitalesURL + 'listEfectores');
   }
 
   public detail(id:number): Observable<Hospital> {

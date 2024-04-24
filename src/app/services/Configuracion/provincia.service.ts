@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Provincia } from "src/app/models/Configuracion/Provincia";
+import { ProvinciaDto } from "src/app/dto/Configuracion/ProvinciaDto";
 import { tap } from 'rxjs/operators';
 
 
@@ -31,7 +32,7 @@ export class ProvinciaService {
     return this.httpClient.get<Provincia>(this.provinciasURL + `detailnombre/${nombre}`);
 }
 
-public save(provincias:Provincia): Observable<any> {
+public save(provincias:ProvinciaDto): Observable<any> {
   return this.httpClient.post<any>(this.provinciasURL + 'create', provincias)
   .pipe(
     tap(() => {
@@ -40,7 +41,7 @@ public save(provincias:Provincia): Observable<any> {
   )
 }
 
-public update(id:number, provincias:Provincia): Observable<any> {
+public update(id:number, provincias:ProvinciaDto): Observable<any> {
   return this.httpClient.put<any>(this.provinciasURL + `update/${id}`, provincias)
   .pipe(
     tap(() => {

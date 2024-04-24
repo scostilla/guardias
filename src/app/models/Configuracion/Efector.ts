@@ -7,6 +7,7 @@ export class Efector {
     domicilio: string;
     telefono: string;
     estado: boolean;
+    activo: boolean;
     observacion: string;
     region: Region;
     localidad: Localidad;
@@ -16,6 +17,7 @@ export class Efector {
         domicilio: string,
         telefono: string,
         estado: boolean,
+        activo: boolean,
         observacion: string,
         region: Region,
         localidad: Localidad
@@ -24,6 +26,7 @@ export class Efector {
         this.domicilio = domicilio;
         this.telefono = telefono;
         this.estado = estado;
+        this.activo = activo;
         this.observacion = observacion;
         this.region = region;
         this.localidad = localidad;

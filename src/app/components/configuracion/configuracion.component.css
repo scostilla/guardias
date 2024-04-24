@@ -2,44 +2,44 @@ section {
     display: table;
   }
   
-  .example-label {
+  .btnMenu-label {
     display: table-cell;
     font-size: 14px;
     margin-left: 8px;
     min-width: 180px;
   }
   
-  .example-button-row {
+  .btnMenu-button-row {
     display: table-cell;
     max-width: 800px;
   }
   
-  .example-button-row .mat-mdc-button-base {
+  .btnMenu-button-row .mat-mdc-button-base {
     margin: 8px 8px 8px 0;
   }
   
-  .example-flex-container {
+  .btnMenu-flex-container {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
   }
   
-  .example-button-container {
+  .btnMenu-button-container {
     display: flex;
     justify-content: center;
     width: 180px;
   }
 
-  .example-action-buttons {
+  .btnMenu-action-buttons {
     padding-bottom: 20px;
   }
   
-  .example-headers-align .mat-expansion-panel-header-description {
+  .btnMenu-headers-align .mat-expansion-panel-header-description {
     justify-content: space-between;
     align-items: center;
   }
   
-  .example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+  .btnMenu-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
     margin-left: 8px;
   }
 
@@ -57,13 +57,14 @@ section {
 
   .panel-title {font-weight: bold;}
 
+
   h2{
     font-family: "Ubuntu", sans-serif;
     font-size:400% !important;
   }
 
-  div.btnMenu {
-    width: 100%;
+.btnMenu {
+  width: 100%;
 	height: 50px;
 	margin: 1%;
 	color:#f3f3f3;
@@ -77,7 +78,7 @@ section {
 	transition: all 0.5s;
   }
 
-div.btnMenu span {
+.btnMenu span {
 	cursor: pointer;
 	display: inline-block;
 	position: relative;
@@ -92,7 +93,7 @@ div.btnMenu span {
 	transition: 0.5s;
   }
   
-  div.btnMenu:hover span {
+.btnMenu:hover span {
 	padding-right: 25px;
   }
   
@@ -101,12 +102,12 @@ div.btnMenu span {
 	right: 0;
   }
 
-.icon1_btnMenu, .icon2_btnMenu, .icon3_btnMenu, .icon4_btnMenu, .icon5_btnMenu, .icon6_btnMenu {
+.icon1_btnMenu, .icon2_btnMenu, .icon3_btnMenu, .icon4_btnMenu, .icon5_btnMenu, .icon6_btnMenu, .icon_select_btnMenu {
     -moz-border-radius: 10px 10px 0 0;
     -webkit-border-radius: 10px 10px 0 0;
     border-radius: 10px 10px 0 0;
 	width: 100%;
-	font-size: 0.3em;
+	font-size: 0.26em;
 	font-weight:bold;
 	text-align:center; 
 	padding:3%;
@@ -117,6 +118,7 @@ div.btnMenu span {
 .icon4_btnMenu {background-color: #F2953E; border-bottom: 9px solid #b8712e;}
 .icon5_btnMenu {background-color: #EB428F; border-bottom: 9px solid #c73778;}
 .icon6_btnMenu {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
+.icon_select_btnMenu {background-color: #c8c8ca; border-bottom: 9px solid #b6b6b6;}
 
 .text_boton {text-align: center;
 	font-size: 80%;

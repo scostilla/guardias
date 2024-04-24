@@ -71,6 +71,12 @@ import { FeriadoDetailComponent } from './components/configuracion/calendario/fe
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 
 
+//Notificaciones
+import { NotificacionComponent } from './components/notificacion/notificacion.component';
+import { NotificacionDetailComponent } from './components/notificacion/notificacion-detail/notificacion-detail.component';
+import { NotificacionEditComponent } from './components/notificacion/notificacion-edit/notificacion-edit.component';
+
+
 //Sección: Actividades
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
@@ -83,6 +89,7 @@ import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria
 
 //Sección: Personal
 import { PersonalComponent } from './components/personal/personal/personal.component';
+import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 
 
 //Sección: Cronograma
@@ -151,7 +158,6 @@ import { MonthTableComponent } from './components/month-table/month-table.compon
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
-import { NotificacionComponent } from './components/notificacion/notificacion.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
 
@@ -237,6 +243,12 @@ const routes: Routes = [
   {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
   {path: 'feriado-edit/:id', component:FeriadoEditComponent},
 
+  
+  //Notificacion
+  {path: 'notificacion', component:NotificacionComponent}, 
+  {path: 'notificacion-detail', component:NotificacionDetailComponent}, 
+  {path: 'notificacion-edit', component:NotificacionEditComponent}, 
+
 
   //Sección: Actividades
   {path:"registro-diario",component: RegistroDiarioComponent},
@@ -250,6 +262,7 @@ const routes: Routes = [
 
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
+  {path: 'personal-legajo', component:PersonalLegajoComponent},
 
 
   //Sección: Cronograma
@@ -318,7 +331,6 @@ const routes: Routes = [
  {path: 'popup-calendario', component:PopupCalendarioComponent},
  {path: 'digesto', component:DigestoComponent},
  {path: 'novedades', component:NovedadesComponent}, 
- {path: 'notificacion', component:NotificacionComponent}, 
  {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
  {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 

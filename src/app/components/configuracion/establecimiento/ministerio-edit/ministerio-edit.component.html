@@ -1,15 +1,15 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Ministerio
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Ministerio
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
-<form [formGroup]="form!" (ngSubmit)="saveMinisterio()">
+<form [formGroup]="ministerioForm" (ngSubmit)="saveMinisterio()">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre">
-          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+          <mat-error *ngIf="ministerioForm?.get('nombre')?.invalid && ministerioForm?.get('nombre')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
@@ -20,7 +20,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Domicilio</mat-label>
             <input matInput formControlName="domicilio">
-          <mat-error *ngIf="form?.get('domicilio')?.invalid && form?.get('domicilio')?.touched">
+          <mat-error *ngIf="ministerioForm?.get('domicilio')?.invalid && ministerioForm?.get('domicilio')?.touched">
             El campo puede contener letras y números (entre 3 y 80 caracteres).
           </mat-error>
         </mat-form-field>
@@ -31,7 +31,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Teléfono</mat-label>
           <input matInput formControlName="telefono">
-          <mat-error *ngIf="form?.get('telefono')?.invalid && form?.get('telefono')?.touched">
+          <mat-error *ngIf="ministerioForm?.get('telefono')?.invalid && ministerioForm?.get('telefono')?.touched">
             El campo debe tener solo números (9 a 15 digitos).
           </mat-error>
         </mat-form-field>
@@ -42,7 +42,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Observación</mat-label>
             <input matInput formControlName="observacion">
-          <mat-error *ngIf="form?.get('observacion')?.invalid && form?.get('observacion')?.touched">
+          <mat-error *ngIf="ministerioForm?.get('observacion')?.invalid && ministerioForm?.get('observacion')?.touched">
             El campo puede contener letras y números (entre 3 y 80 caracteres).
           </mat-error>
         </mat-form-field>
@@ -56,7 +56,7 @@
             <mat-option [value]="true">Activo</mat-option>
             <mat-option [value]="false">Inactivo</mat-option>
           </mat-select>
-          <mat-error *ngIf="form?.get('esPasiva')?.invalid && form?.get('esPasiva')?.touched">
+          <mat-error *ngIf="ministerioForm?.get('esPasiva')?.invalid && ministerioForm?.get('esPasiva')?.touched">
             El campo es obligatorio.
           </mat-error>
         </mat-form-field>
@@ -69,7 +69,7 @@
           <mat-select formControlName="localidad" [compareWith]="compareLocalidad">
             <mat-option *ngFor="let localidad of localidades" [value]="localidad" >{{ localidad.nombre }}</mat-option>
           </mat-select>
-                    <mat-error *ngIf="form?.get('localidad')?.invalid && form?.get('localidad')?.touched">
+                    <mat-error *ngIf="ministerioForm?.get('localidad')?.invalid && ministerioForm?.get('localidad')?.touched">
             El campo es obligatorio.
           </mat-error>
         </mat-form-field>
@@ -82,7 +82,7 @@
           <mat-select formControlName="region" [compareWith]="compareRegion">
             <mat-option *ngFor="let region of regiones" [value]="region" >{{ region.nombre }}</mat-option>
           </mat-select>
-                    <mat-error *ngIf="form?.get('region')?.invalid && form?.get('region')?.touched">
+                    <mat-error *ngIf="ministerioForm?.get('region')?.invalid && ministerioForm?.get('region')?.touched">
             El campo es obligatorio.
           </mat-error>
         </mat-form-field>
@@ -105,8 +105,8 @@
       </div>
     </div>
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!ministerioForm.valid || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
       <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
         Cancelar

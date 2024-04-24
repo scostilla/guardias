@@ -3,11 +3,11 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Legajo } from "src/app/models/Configuracion/Legajo";
+import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class LegajoService {
 
   legajosURL = 'http://localhost:8080/legajo/';
@@ -27,7 +27,7 @@ export class LegajoService {
       return this.httpClient.get<Legajo>(this.legajosURL + `detail/${id}`);
   }
 
-public save(legajos:Legajo): Observable<any> {
+public save(legajos:LegajoDto): Observable<any> {
   return this.httpClient.post<any>(this.legajosURL + 'create', legajos)
   .pipe(
     tap(() => {
@@ -36,7 +36,7 @@ public save(legajos:Legajo): Observable<any> {
   )
 }
 
-public update(id:number, legajos:Legajo): Observable<any> {
+public update(id:number, legajos:LegajoDto): Observable<any> {
   return this.httpClient.put<any>(this.legajosURL + `update/${id}`, legajos)
   .pipe(
     tap(() => {

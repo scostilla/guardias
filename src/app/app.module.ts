@@ -160,6 +160,7 @@ import { FeriadoDetailComponent } from './components/configuracion/calendario/fe
 import { FeriadoEditComponent } from './components/configuracion/calendario/feriado-edit/feriado-edit.component';
 import { NotificacionComponent } from './components/notificacion/notificacion.component';
 import { NotificacionEditComponent } from './components/notificacion/notificacion-edit/notificacion-edit.component';
+import { NotificacionDetailComponent } from './components/notificacion/notificacion-detail/notificacion-detail.component';
 import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
 import { ProfesionDetailComponent } from './components/configuracion/profesionales/profesion-detail/profesion-detail.component';
 import { ProfesionEditComponent } from './components/configuracion/profesionales/profesion-edit/profesion-edit.component';
@@ -202,6 +203,7 @@ import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { CronogramaDetailComponent } from './components/cronogramas/cronograma-detail/cronograma-detail.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
+import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -318,6 +320,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     FeriadoEditComponent,
     NotificacionComponent,
     NotificacionEditComponent,
+    NotificacionDetailComponent,
     ProfesionComponent,
     ProfesionDetailComponent,
     ProfesionEditComponent,
@@ -356,6 +359,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     LegajoPersonEditComponent,
     CronogramaDetailComponent,
     PersonalComponent,
+    PersonalLegajoComponent,
     
   ],
 
