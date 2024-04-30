@@ -29,7 +29,7 @@ export class NotificacionComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NotificacionDetailComponent>;
-  displayedColumns: string[] = ['id', 'tipo', 'categoria', 'fechaNotificacion', 'detalle', 'url', 'acciones'];
+  displayedColumns: string[] = ['tipo', 'categoria', 'fechaNotificacion', 'detalle', 'url', 'acciones'];
   dataSource!: MatTableDataSource<Notificacion>;
   suscription!: Subscription;
   

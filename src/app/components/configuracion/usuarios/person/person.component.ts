@@ -76,6 +76,31 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   }
 
+  applyFilter(filterValue: string) {
+    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  
+    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return normalizedData.indexOf(normalizedFilterValue) != -1;
+    };
+  
+    this.dataSource.filter = normalizedFilterValue;
+  }
+
+  /*   applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return normalizedData.indexOf(normalizedFilterValue) != -1;
+    };
+
+    this.dataSource.filter = normalizedFilterValue;
+  } */
+        
   listAsistencial(): void {
     this.asistencialService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
@@ -135,7 +160,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
   
     let columnasVisibles: string[] = [];
   
@@ -167,31 +192,6 @@ export class PersonComponent implements OnInit, OnDestroy {
       this.table.renderRows();
     }
   }  
-
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
-      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase()))
-    };
-  }
 
   openFormChanges(asistencial?: Asistencial): void {
     const esEdicion = asistencial != null;

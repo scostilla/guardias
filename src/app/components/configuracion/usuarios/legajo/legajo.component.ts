@@ -24,7 +24,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'persona', 'profesion','udo','actual', 'legal', 'fechaInicio',/* 'fechaFinal',  'matriculaNacional', 'matriculaProvincial', 'cargo', */ 'acciones'];
+  displayedColumns: string[] = ['persona', 'profesion','udo','actual', 'legal', 'fechaInicio',/* 'fechaFinal',  'matriculaNacional', 'matriculaProvincial', 'cargo', */ 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
 
@@ -54,6 +54,54 @@ export class LegajoComponent implements OnInit, OnDestroy {
 
   }
 
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  
+    // Función para normalizar y remover acentos
+    const normalizeText = (text: string) => {
+      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+  
+    this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
+      // Convertir los valores booleanos a 'sí' o 'no'
+      const actualValue = data.actual ? 'sí' : 'no';
+      const legalValue = data.legal ? 'sí' : 'no';
+  
+      // Convertir la fecha de inicio a timestamp para la comparación
+      const fechaInicioTimestamp = data.fechaInicio ? new Date(data.fechaInicio).getTime() : null;
+  
+      // Normalizar los datos para la comparación
+      const dataStr = normalizeText(
+        data.persona?.nombre.toLowerCase() + ' ' +
+        data.persona?.apellido.toLowerCase() + ' ' +
+        data.profesion?.nombre.toLowerCase() + ' ' +
+        data.udo?.nombre.toLowerCase() + ' ' +
+        actualValue + ' ' + legalValue
+      );
+  
+      // Normalizar el valor del filtro
+      const normalizedFilter = normalizeText(filter);
+  
+      // Comprobar si el filtro es una fecha
+      const filterDate = normalizedFilter.split('/').reverse().join('-');
+      const filterTimestamp = Date.parse(filterDate);
+  
+      // Si el filtro es un número válido, comparar timestamps
+      if (!isNaN(filterTimestamp)) {
+        return fechaInicioTimestamp === filterTimestamp;
+      }
+  
+      // Si no es una fecha, realizar la búsqueda normal
+      return dataStr.indexOf(normalizedFilter) != -1;
+    };
+  
+    this.dataSource.filter = filterValue;
+  
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   listLegajos(): void {
     this.legajoService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
@@ -66,35 +114,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
-  }
 
-applyFilter(event: Event) {
-  const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-  this.dataSource.filter = filterValue;
-  this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
-    const actualString = data.actual ? 'si' : 'no';
-    const idPersonaString = data.profesion.nombre.toString();
-    const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
-
-    // Aplicar el filtro a los valores convertidos
-    return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
-  };
-}
   openFormChanges(legajo?: Legajo): void {
     const esEdicion = legajo != null;
     const dialogRef = this.dialog.open(LegajoEditComponent, {

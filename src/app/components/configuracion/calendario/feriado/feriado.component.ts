@@ -24,7 +24,7 @@ export class FeriadoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<FeriadoDetailComponent>;
-  displayedColumns: string[] = ['id', 'fecha', 'motivo', 'tipoFeriado', 'acciones'];
+  displayedColumns: string[] = ['fecha', 'motivo', 'tipoFeriado', 'acciones'];
   dataSource!: MatTableDataSource<Feriado>;
   suscription!: Subscription;
 
@@ -82,12 +82,14 @@ export class FeriadoComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
     this.dataSource.filterPredicate = (data: Feriado, filter: string) => {
-      return this.accentFilter(data.motivo.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.tipoFeriado.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.fecha.toISOString().toLowerCase()).includes(this.accentFilter(filter));
+      const formattedDate = data.fecha.toLocaleDateString().toLowerCase();
+      const formattedFilter = this.accentFilter(filter);
+      return this.accentFilter(data.motivo.toLowerCase()).includes(formattedFilter) || 
+             this.accentFilter(data.tipoFeriado.toLowerCase()).includes(formattedFilter) || 
+             formattedDate.includes(formattedFilter);
     };
   }
 
