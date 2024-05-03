@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { Person } from "src/app/models/Configuracion/Person";
 
@@ -36,8 +37,8 @@ export class AsistencialService {
       return this.httpClient.get<Asistencial>(this.asistencialesURL + `detailnombre/${nombre}`);
   }
   
-  public save(asistenciales:Asistencial): Observable<any> {
-    return this.httpClient.post<any>(this.asistencialesURL + 'create', asistenciales)
+  public save(asistencial:AsistencialDto): Observable<any> {
+    return this.httpClient.post<any>(this.asistencialesURL + 'create', asistencial)
     .pipe(
       tap(() => {
        this._refresh$.next(); 
@@ -45,8 +46,8 @@ export class AsistencialService {
     )
   }
   
-  public update(id:number, asistenciales:Asistencial): Observable<any> {
-    return this.httpClient.put<any>(this.asistencialesURL + `update/${id}`, asistenciales)
+  public update(id:number, asistencial:AsistencialDto): Observable<any> {
+    return this.httpClient.put<any>(this.asistencialesURL + `update/${id}`, asistencial)
     .pipe(
       tap(() => {
        this._refresh$.next(); 

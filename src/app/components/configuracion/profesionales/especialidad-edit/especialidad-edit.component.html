@@ -1,8 +1,8 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Especialidad
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Especialidad
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
-<form [formGroup]="form!" (ngSubmit)="saveEspecialidad()">
+<form [formGroup]="form" (ngSubmit)="saveEspecialidad()">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
@@ -43,8 +43,8 @@
       </div>
     </div>
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
       <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
         Cancelar

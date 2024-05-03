@@ -3,12 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { Person } from 'src/app/models/Configuracion/Person';
-import { PersonService } from 'src/app/services/Configuracion/person.service';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
-import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -40,6 +37,7 @@ export class LegajoEditComponent implements OnInit {
     private revistaService : RevistaService,
     private asistencialService : AsistencialService,
     private hospitalService : HospitalService,
+
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
     this.legajoForm = this.fb.group({
@@ -67,7 +65,6 @@ export class LegajoEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.initialData = this.legajoForm.value;
-    
   }
 
   isModified(): boolean {
@@ -141,11 +138,10 @@ export class LegajoEditComponent implements OnInit {
         );
       } else {
         
-        
-
         console.log("############ id persona " + legajoDto.idPersona)
         console.log("############ id matricula " + legajoDto.matriculaNacional)
         console.log("############ id udo " + legajoDto.idUdo)
+        
         this.legajoService.save(legajoDto).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });

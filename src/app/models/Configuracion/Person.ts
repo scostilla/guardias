@@ -10,12 +10,7 @@ export class Person {
   email: string;
   domicilio: string;
   esAsistencial:boolean;
-  activo: boolean;
-  /* idNovedadesPersonales?: number;
-  idSuplentes?: number;
-  idDistribucionesHorarias?: number;
-  idAutoridades?: number;
-  idLegajos?: number;  */   
+  activo: boolean; 
 
   constructor(
       nombre: string,
@@ -29,11 +24,7 @@ export class Person {
       domicilio: string,
       esAsistencial:boolean,
       activo: boolean,
-      /* idNovedadesPersonales: number,
-      idSuplentes: number,
-      idDistribucionesHorarias: number,
-      idAutoridades: number,
-      idLegajos: number,     */          
+             
       ) {
       this.nombre = nombre;
       this.apellido = apellido;
@@ -46,11 +37,6 @@ export class Person {
       this.domicilio = domicilio;
       this.esAsistencial=esAsistencial;
       this.activo = activo;
-     /*  this.idNovedadesPersonales = idNovedadesPersonales;
-      this.idSuplentes = idSuplentes;
-      this.idDistribucionesHorarias = idDistribucionesHorarias;
-      this.idAutoridades = idAutoridades;
-      this.idLegajos = idLegajos; */
   }
 
 }

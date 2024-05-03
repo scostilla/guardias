@@ -5,6 +5,7 @@ import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
 import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
+import { EspecialidadDto } from 'src/app/dto/Configuracion/EspecialidadDto';
 
 @Component({
   selector: 'app-especialidad-edit',
@@ -13,22 +14,18 @@ import { ProfesionService } from 'src/app/services/Configuracion/profesion.servi
 })
 export class EspecialidadEditComponent implements OnInit {
 
-  form?: FormGroup;
-  esEdicion?: boolean;
-  esIgual: boolean = false;
+  form: FormGroup;
+  initialData: any;
   profesiones: Profesion[] = []; 
 
   constructor(
     private fb: FormBuilder,
+    private dialogRef: MatDialogRef<EspecialidadEditComponent>,
     private especialidadService: EspecialidadService,
     private profesionService: ProfesionService, 
-    private dialogRef: MatDialogRef<EspecialidadEditComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: Especialidad 
+    
+    @Inject(MAT_DIALOG_DATA) public data: Especialidad 
   ) { 
-    this.listProfesion();
-  }
-
-  ngOnInit(): void {
     this.form = this.fb.group({
       id: [this.data ? this.data.id : null],
       nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
@@ -36,16 +33,24 @@ export class EspecialidadEditComponent implements OnInit {
       profesion: [this.data ? this.data.profesion : '', Validators.required]
     });
 
-    this.esEdicion = this.data != null;
-    
-    this.form.valueChanges.subscribe(val => {
-    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.esPasiva !== this.data?.esPasiva || val.profesion !== this.data?.profesion;
-    });
+    this.listProfesiones();
 
+    if (data) {
+      this.form.patchValue(data);
+    }
   }
 
-  listProfesion(): void {
+  ngOnInit(): void {
+    this.initialData = this.form.value;
+  }
+
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.form.value);
+  }
+
+  listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
+      console.log('Lista de Profesiones:', data);
       this.profesiones = data;
     }, error => {
       console.log(error);
@@ -53,24 +58,37 @@ export class EspecialidadEditComponent implements OnInit {
   }
 
   saveEspecialidad(): void {
-    const id = this.form?.get('id')?.value;
-    const nombre = this.form?.get('nombre')?.value;
-    const esPasiva = this.form?.get('esPasiva')?.value;
-    const profesion = this.form?.get('profesion')?.value;
+    if(this.form.valid){
+      const especialidadData = this.form.value;
 
-    const especialidad = new Especialidad(esPasiva, nombre, profesion);
-    especialidad.id = id;
+      const especialidadDto = new EspecialidadDto(
+        especialidadData.nombre,
+        especialidadData.profesion.id,
+        especialidadData.esPasiva,
+        especialidadData.activo
+      );
 
-    if (this.esEdicion) {
-      this.especialidadService.update(id, especialidad).subscribe(data => {
-        this.dialogRef.close(data);
-      });
+    if (this.data && this.data.id) {
+      this.especialidadService.update(this.data.id, especialidadDto).subscribe(
+        result => {
+          this.dialogRef.close({ type: 'save', data: result });
+        },
+        error => {
+          this.dialogRef.close({ type: 'error', data: error });
+        }
+      );
     } else {
-      this.especialidadService.save(especialidad).subscribe(data => {
-        this.dialogRef.close(data);
-      });
+      this.especialidadService.save(especialidadDto).subscribe(
+        result => {
+          this.dialogRef.close({ type: 'save', data: result });
+        },
+        error => {
+          this.dialogRef.close({ type: 'error', data: error });
+        }
+      );
     }
   }
+}
 
   compareProfesion(p1: Profesion, p2: Profesion): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;

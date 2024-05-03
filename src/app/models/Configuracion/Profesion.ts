@@ -1,10 +1,13 @@
 export class Profesion {
   id?: number;
-  asistencial: boolean;
   nombre: string;
+  asistencial: boolean;
+  activo: boolean;
+  
 
-  constructor(asistencial: boolean, nombre: string) {
-    this.asistencial = asistencial;
+  constructor(nombre: string, asistencial: boolean, activo: boolean) {
     this.nombre = nombre;
+    this.asistencial = asistencial;
+    this.activo = activo;
   }
 }

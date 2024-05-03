@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ProfesionDto } from 'src/app/dto/Configuracion/ProfesionDto';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 
@@ -10,52 +11,68 @@ import { ProfesionService } from 'src/app/services/Configuracion/profesion.servi
   styleUrls: ['./profesion-edit.component.css']
 })
 export class ProfesionEditComponent implements OnInit {
-
-  form?: FormGroup;
-  esEdicion?: boolean;
-  esIgual: boolean = false;
+  profesionForm: FormGroup;
+  initialData: any;
 
   constructor(
     private fb: FormBuilder,
-    private profesionService: ProfesionService,
     private dialogRef: MatDialogRef<ProfesionEditComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: Profesion 
-  ) { }
-
-  ngOnInit(): void {
-    this.form = this.fb.group({
-      id: [this.data ? this.data.id : null],
-      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
-      asistencial: [this.data ? this.data.asistencial : '', Validators.required]
-    });
-
-    this.esEdicion = this.data != null;
+    private profesionService: ProfesionService,
     
-    this.form.valueChanges.subscribe(val => {
-    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.asistencial !== this.data?.asistencial;
+    @Inject(MAT_DIALOG_DATA) public data: Profesion 
+  ) { 
+    this.profesionForm = this.fb.group({
+      //id: [this.data ? this.data.id : null],
+      nombre: [ '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
+      asistencial: [ '', Validators.required]
     });
-  }
 
-  saveProfesion(): void {
-    const id = this.form?.get('id')?.value;
-    const nombre = this.form?.get('nombre')?.value;
-    const asistencial = this.form?.get('asistencial')?.value;
-
-    const profesion = new Profesion(asistencial, nombre);
-    profesion.id = id;
-
-    if (this.esEdicion) {
-      this.profesionService.update(id, profesion).subscribe(data => {
-        this.dialogRef.close(data);
-      });
-    } else {
-      this.profesionService.save(profesion).subscribe(data => {
-        this.dialogRef.close(data);
-      });
+    if (data) {
+      this.profesionForm.patchValue(data);
     }
   }
 
-  cancelar(): void {
+  ngOnInit(): void {
+    this.initialData = this.profesionForm.value;
+  }
+
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.profesionForm.value);
+  }
+
+  saveProfesion(): void {
+    if(this.profesionForm.valid){
+      const profesionData = this.profesionForm.value;
+
+      const profesionDto = new ProfesionDto(
+        profesionData.nombre,
+        profesionData.asistencial,
+        profesionData.activo
+      );
+
+      if (this.data && this.data.id) {
+        this.profesionService.update(this.data.id, profesionDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      } else {
+        this.profesionService.save(profesionDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      }
+    }
+  }
+
+  cancel(): void {
     this.dialogRef.close();
   }
 

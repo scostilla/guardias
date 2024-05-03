@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ProfesionDto } from 'src/app/dto/Configuracion/ProfesionDto';
 import { Profesion } from "src/app/models/Configuracion/Profesion";
 
 @Injectable({
@@ -30,8 +31,8 @@ export class ProfesionService {
     return this.httpClient.get<Profesion>(this.profesionesURL + `detailnombre/${nombre}`);
 }
 
-public save(profesiones:Profesion): Observable<any> {
-  return this.httpClient.post<any>(this.profesionesURL + 'create', profesiones)
+public save(profesion:ProfesionDto): Observable<any> {
+  return this.httpClient.post<any>(this.profesionesURL + 'create', profesion)
   .pipe(
     tap(() => {
      this._refresh$.next(); 
@@ -39,8 +40,8 @@ public save(profesiones:Profesion): Observable<any> {
   )
 }
 
-public update(id:number, profesiones:Profesion): Observable<any> {
-  return this.httpClient.put<any>(this.profesionesURL + `update/${id}`, profesiones)
+public update(id:number, profesion:ProfesionDto): Observable<any> {
+  return this.httpClient.put<any>(this.profesionesURL + `update/${id}`, profesion)
   .pipe(
     tap(() => {
      this._refresh$.next(); 

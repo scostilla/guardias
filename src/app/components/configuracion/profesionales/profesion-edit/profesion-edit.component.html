@@ -1,15 +1,15 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Profesión
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Profesión
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
-<form [formGroup]="form!" (ngSubmit)="saveProfesion()">
+<form [formGroup]="profesionForm" (ngSubmit)="saveProfesion()">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre">
-          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+          <mat-error *ngIf="profesionForm.get('nombre')?.invalid && profesionForm.get('nombre')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
@@ -23,17 +23,15 @@
             <mat-option [value]="true">Si</mat-option>
             <mat-option [value]="false">No</mat-option>
           </mat-select>
-          <mat-error *ngIf="form?.get('asistencial')?.invalid && form?.get('asistencial')?.touched">
-            El campo es obligatorio.
-          </mat-error>
+          <mat-error *ngIf="profesionForm.get('asistencial')?.errors?.['required']">El campo es obligatorio.</mat-error>
         </mat-form-field>
       </div>
     </div>
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!profesionForm.valid || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
-      <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+      <button mat-raised-button color="secondary" type="button" (click)="cancel()">
         Cancelar
       </button>
     </div>

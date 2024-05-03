@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { EspecialidadDto } from 'src/app/dto/Configuracion/EspecialidadDto';
 import { Especialidad } from "src/app/models/Configuracion/Especialidad";
 
 @Injectable({
@@ -30,8 +31,8 @@ export class EspecialidadService {
     return this.httpClient.get<Especialidad>(this.especialidadesURL + `detailnombre/${nombre}`);
 }
 
-public save(especialidades:Especialidad): Observable<any> {
-  return this.httpClient.post<any>(this.especialidadesURL + 'create', especialidades)
+public save(especialidad:EspecialidadDto): Observable<any> {
+  return this.httpClient.post<any>(this.especialidadesURL + 'create', especialidad)
   .pipe(
     tap(() => {
      this._refresh$.next();
@@ -39,8 +40,8 @@ public save(especialidades:Especialidad): Observable<any> {
   )
 }
 
-public update(id:number, especialidades:Especialidad): Observable<any> {
-  return this.httpClient.put<any>(this.especialidadesURL + `update/${id}`, especialidades)
+public update(id:number, especialidad:EspecialidadDto): Observable<any> {
+  return this.httpClient.put<any>(this.especialidadesURL + `update/${id}`, especialidad)
   .pipe(
     tap(() => {
      this._refresh$.next();

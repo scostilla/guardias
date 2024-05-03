@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
+import { PersonDto } from 'src/app/dto/Configuracion/PersonDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 
@@ -48,8 +50,23 @@ export class PersonEditComponent implements OnInit {
   saveAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
+
+      const asistencialDto = new AsistencialDto(
+        asistencialData.nombre,
+        asistencialData.apellido,
+        asistencialData.dni,
+        asistencialData.cuil,
+        asistencialData.fechaNacimiento,
+        asistencialData.sexo,
+        asistencialData.telefono,
+        asistencialData.email,
+        asistencialData.domicilio,
+        asistencialData.esAsistencial,
+        asistencialData.activo
+      );
+
       if (this.data && this.data.id) {
-        this.asistencialService.update(this.data.id, asistencialData).subscribe(
+        this.asistencialService.update(this.data.id, asistencialDto).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });
           },
@@ -58,7 +75,7 @@ export class PersonEditComponent implements OnInit {
           }
         );
       } else {
-        this.asistencialService.save(asistencialData).subscribe(
+        this.asistencialService.save(asistencialDto).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });
           },

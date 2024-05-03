@@ -27,8 +27,8 @@ export class LegajoService {
       return this.httpClient.get<Legajo>(this.legajosURL + `detail/${id}`);
   }
 
-public save(legajos:LegajoDto): Observable<any> {
-  return this.httpClient.post<any>(this.legajosURL + 'create', legajos)
+public save(legajo:LegajoDto): Observable<any> {
+  return this.httpClient.post<any>(this.legajosURL + 'create', legajo)
   .pipe(
     tap(() => {
      this._refresh$.next(); 
@@ -36,8 +36,8 @@ public save(legajos:LegajoDto): Observable<any> {
   )
 }
 
-public update(id:number, legajos:LegajoDto): Observable<any> {
-  return this.httpClient.put<any>(this.legajosURL + `update/${id}`, legajos)
+public update(id:number, legajo:LegajoDto): Observable<any> {
+  return this.httpClient.put<any>(this.legajosURL + `update/${id}`, legajo)
   .pipe(
     tap(() => {
      this._refresh$.next(); 
