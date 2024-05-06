@@ -1,8 +1,8 @@
 import { Time } from "@angular/common";
-import { Asistencial } from "./Asistencial";
-import { Servicio } from "./Servicio";
-import { Efector } from "./Efector";
-import { TipoGuardia } from "./TipoGuardia";
+import { Asistencial } from "./Configuracion/Asistencial";
+import { Servicio } from "./Configuracion/Servicio";
+import { Efector } from "./Configuracion/Efector";
+import { TipoGuardia } from "./Configuracion/TipoGuardia";
 
 export class RegistroActividad {
     id?: number;

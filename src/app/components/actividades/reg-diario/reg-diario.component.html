@@ -1,6 +1,49 @@
-<div mat-dialog-title class="backgroud">
+<h2 mat-dialog-title class="backgroud">
     <h1 class="font">Nuevo Registro fa</h1>
-</div>
+</h2>
+
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="registroForm" (ngSubmit)="saveLegajo()">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Tipo de Guardia</mat-label>
+            <mat-select formControlName="tipoGuardia" [compareWith]="compareTipoGuardia" (selectionChange)="onTipoGuardiaChange($event)">
+                <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia">{{ tipoGuardia.nombre
+                    }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registroForm.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es
+                requerido.</mat-error>
+        </mat-form-field>
+
+        <!-- Sección para mostrar asistenciales que pueden hacer guardia de "CARGO" -->
+        <ng-container *ngIf="registroForm.get('tipoGuardia')?.value.nombre === 'CARGO' ">
+            
+            <mat-form-field appearance="fill">
+                <mat-label>Profesional</mat-label>
+                <mat-select formControlName="asistencial" [compareWith]="compareAsistencial">
+                  <mat-option *ngFor="let asistencial of asistenciales" [value]="asistencial" >{{ asistencial.nombre }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="registroForm.get('asistencial')?.errors?.['required']">La persona es requerida.</mat-error>
+              </mat-form-field>
+
+        </ng-container>
+
+        <div mat-dialog-actions class="action mt-4">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!registroForm.valid || !isModified()">
+                {{data ? 'Modificar' : 'Agregar'}}
+            </button>
+            <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                Cancelar
+            </button>
+        </div>
+    </form>
+</mat-dialog-content>
+
+
+
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Registro
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Tipo de servicio</mat-label>
@@ -30,45 +73,46 @@
                 <mat-select [(ngModel)]="pasiva">
                     <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp}}</mat-option>
                 </mat-select>
-            </mat-form-field>    
+            </mat-form-field>
         </div>
         <div [ngSwitch]="pasiva" appearance="outline">
             <div *ngSwitchCase="'Dn. Pablo Soria'">
                 <mat-form-field appearance="outline">
-                 <mat-label>Especialidad</mat-label>
-                 <mat-select [(ngModel)]="alert">
-                    <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
-                </mat-select>
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div *ngSwitchCase="'San Roque'">
                 <mat-form-field appearance="outline">
-                 <mat-label>Especialidad</mat-label>
-                 <mat-select [(ngModel)]="alert">
-                    <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
-                </mat-select>
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div *ngSwitchCase="'Materno Infantil'">
                 <mat-form-field appearance="outline">
-                 <mat-label>Especialidad</mat-label>
-                 <mat-select [(ngModel)]="alert">
-                    <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
-                </mat-select>
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
-                <span [ngSwitch]="alert">
-                    <span *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
+            <span [ngSwitch]="alert">
+                <span
+                    *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
                     <div class="alert alert-danger" role="alert">
-                    Especialidad seleccionada sin requerimiento.
+                        Especialidad seleccionada sin requerimiento.
                     </div>
-                    </span>
                 </span>
+            </span>
         </div>
     </div>
     <div mat-dialog-actions class="action">
-        <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate"
-            color="primary" type="button">Buscar Profesional</button>
+        <button mat-raised-button (click)="openDialog('SearchProfessionalComponent')" class="btnupdate" color="primary"
+            type="button">Buscar Profesional</button>
     </div>
     <div mat-dialog-subtitle>
         <h2>Detalle del profesional</h2>
@@ -133,7 +177,6 @@
     </div>
 </div>
 <div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
 </div>
