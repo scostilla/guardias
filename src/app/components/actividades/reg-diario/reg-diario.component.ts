@@ -56,10 +56,10 @@ export class RegDiarioComponent {
       servicio: ['', Validators.required],
       efector: ['', Validators.required],
 
-      horaIngreso: '',
-      fecIngreso: '',
-      horaEngreso: '',
-      fecEgreso: '',
+      fecIngreso: ['', Validators.required],
+      eventStartTime: ['', Validators.required],
+      fecEgreso: ['', Validators.required],
+      eventEndTime: ['', Validators.required]
     })
     // Obteniendo la fecha actual y estableciéndola como la fecha mínima
     const currentDate = new Date();
@@ -136,20 +136,26 @@ export class RegDiarioComponent {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
-  saveLegajo(): void {
+  saveRegistro(): void {
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
 
+      // Obtener el valor del campo de hora de inicio
+      const horaInicio = this.registroForm.get('eventStartTime')?.value;
+      console.log('##############Hora de inicio seleccionada:', horaInicio);
+      
+
       const registroDto = new RegistroActividadDto(
-        registroData.fechaIngreso,
-        registroData.fechaEgreso,
-        registroData.horaIngreso,
-        registroData.horaEgreso,
+        registroData.fecIngreso,
+        registroData.fecEgreso,
+        registroData.eventStartTime,
+        registroData.eventEndTime,
         registroData.tipoGuardia.id,
         registroData.activo, 
         registroData.asistencial.id,
         registroData.servicio.id,
         registroData.efector.id
+        
     );
     if (this.data && this.data.id) {
       this.registroActividadService.update(this.data.id, registroDto).subscribe(
