@@ -39,7 +39,7 @@ export class RegDiarioComponent {
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<RegDiarioComponent>,
+    private dialogRef: MatDialogRef<RegDiarioComponent>,
     private registroActividadService: RegistroActividadService,
     private tipoGuardiaService: TipoGuardiaService,
     private asistencialService: AsistencialService,
@@ -58,13 +58,11 @@ export class RegDiarioComponent {
 
       fecIngreso: ['', Validators.required],
       eventStartTime: ['', Validators.required],
-      fecEgreso: ['', Validators.required],
-      eventEndTime: ['', Validators.required]
+      fecEgreso: [''],
+      eventEndTime: ['']
     })
     // Obteniendo la fecha actual y estableciéndola como la fecha mínima
     const currentDate = new Date();
-    //this.minDate = currentDate.toISOString().split('T')[0];// Formatear la fecha como 'YYYY-MM-DD'
-
 
     this.listTiposGuardias();
     this.listAsistenciales();
@@ -167,11 +165,6 @@ export class RegDiarioComponent {
         }
       );
     } else {
-      
-     /*  console.log("############ id persona " + legajoDto.idPersona)
-      console.log("############ id matricula " + legajoDto.matriculaNacional)
-      console.log("############ id udo " + legajoDto.idUdo) */
-      
       this.registroActividadService.save(registroDto).subscribe(
         result => {
           this.dialogRef.close({ type: 'save', data: result });

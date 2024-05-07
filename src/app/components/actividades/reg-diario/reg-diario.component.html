@@ -2,109 +2,111 @@
     <h1 class="font">Nuevo Registro fa</h1>
 </h2>
 
-<mat-dialog-content class="mat-typography">
-    <form [formGroup]="registroForm" (ngSubmit)="saveRegistro()">
+<form [formGroup]="registroForm" (ngSubmit)="saveRegistro()">
+
+    <mat-form-field appearance="fill">
+        <mat-label>Tipo de Guardia</mat-label>
+        <mat-select formControlName="tipoGuardia" [compareWith]="compareTipoGuardia"
+            (selectionChange)="onTipoGuardiaChange($event)">
+            <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia">{{ tipoGuardia.nombre
+                }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="registroForm.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es
+            requerido.</mat-error>
+    </mat-form-field>
+
+    <!-- Sección para mostrar asistenciales que pueden hacer guardia de "CARGO" -->
+    <ng-container *ngIf="registroForm.get('tipoGuardia')?.value.nombre === 'CARGO' ">
 
         <mat-form-field appearance="fill">
-            <mat-label>Tipo de Guardia</mat-label>
-            <mat-select formControlName="tipoGuardia" [compareWith]="compareTipoGuardia"
-                (selectionChange)="onTipoGuardiaChange($event)">
-                <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia">{{ tipoGuardia.nombre
+            <mat-label>Profesional</mat-label>
+            <mat-select formControlName="asistencial" [compareWith]="compareAsistencial">
+                <mat-option *ngFor="let asistencial of asistenciales" [value]="asistencial">{{ asistencial.nombre
                     }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="registroForm.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es
+            <mat-error *ngIf="registroForm.get('asistencial')?.errors?.['required']">La persona es
+                requerida.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Servicio</mat-label>
+            <mat-select formControlName="servicio" [compareWith]="compareServicio">
+                <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion
+                    }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registroForm.get('servicio')?.errors?.['required']">El servicio es
                 requerido.</mat-error>
         </mat-form-field>
 
-        <!-- Sección para mostrar asistenciales que pueden hacer guardia de "CARGO" -->
-        <ng-container *ngIf="registroForm.get('tipoGuardia')?.value.nombre === 'CARGO' ">
+        <mat-form-field appearance="fill">
+            <mat-label>Efector</mat-label>
+            <mat-select formControlName="efector" [compareWith]="compareEfector">
+                <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre
+                    }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registroForm.get('hospital')?.errors?.['required']">El hospital es
+                requerido.</mat-error>
+        </mat-form-field>
 
-            <mat-form-field appearance="fill">
-                <mat-label>Profesional</mat-label>
-                <mat-select formControlName="asistencial" [compareWith]="compareAsistencial">
-                    <mat-option *ngFor="let asistencial of asistenciales" [value]="asistencial">{{ asistencial.nombre
-                        }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="registroForm.get('asistencial')?.errors?.['required']">La persona es
-                    requerida.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-                <mat-label>Servicio</mat-label>
-                <mat-select formControlName="servicio" [compareWith]="compareServicio">
-                    <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion
-                        }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="registroForm.get('servicio')?.errors?.['required']">El servicio es
-                    requerido.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-                <mat-label>Efector</mat-label>
-                <mat-select formControlName="efector" [compareWith]="compareEfector">
-                    <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre
-                        }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="registroForm.get('hospital')?.errors?.['required']">El hospital es
-                    requerido.</mat-error>
-            </mat-form-field>
-
-            <div class="row">
-                <div class="col">
-                    <mat-form-field appearance="fill">
-                        <mat-label>Ingreso</mat-label>
-                        <input matInput [matDatepicker]="picker1" formControlName="fecIngreso" [min]="currentDate" [max]="currentDate" [readonly]="true">
-                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                        <mat-datepicker #picker1></mat-datepicker>
-                        <mat-hint>MM/DD/YYYY</mat-hint>
-                        <!-- <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Ingreso</mat-label>
+                    <input matInput [matDatepicker]="picker1" formControlName="fecIngreso" [min]="currentDate"
+                        [max]="currentDate" [readonly]="true">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <!-- <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                         <mat-datepicker #picker1></mat-datepicker> -->
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field appearance="fill">
-                        <mat-label>Hora de Inicio</mat-label>
-                        <input matInput formControlName="eventStartTime" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
-                        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
-                        <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
-                        <mat-error *ngIf="registroForm?.get('eventStartTime')?.invalid && registroForm?.get('eventStartTime')?.touched">
-                          El campo es obligatorio (HH:mm).
-                        </mat-error>
-                      </mat-form-field>
-                </div>
+                </mat-form-field>
             </div>
-            <div class="row">
-                <div class="col">
-                    <mat-form-field appearance="fill">
-                        <mat-label>Egreso</mat-label>
-                        <input matInput [matDatepicker]="picker2" formControlName="fecEgreso" [readonly]="true">
-                        <mat-hint>MM/DD/YYYY</mat-hint>
-                        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                        <mat-datepicker #picker2></mat-datepicker>
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field appearance="fill">
-                        <mat-label>Hora de Finalización</mat-label>
-                        <input matInput formControlName="eventEndTime" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly (click)="horaPicker2.open()">
-                        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
-                        <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-                        <mat-error *ngIf="registroForm?.get('eventEndTime')?.invalid && registroForm?.get('eventEndTime')?.touched">
-                          El campo es obligatorio (HH:mm) y no puede ser anterior a la hora de inicio.
-                        </mat-error>
-                      </mat-form-field>
-                </div>
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Hora de Inicio</mat-label>
+                    <input matInput formControlName="eventStartTime" [ngxMatTimepicker]="horaPicker" [format]="24"
+                        readonly (click)="horaPicker.open()">
+                    <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+                    <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+                    <mat-error
+                        *ngIf="registroForm?.get('eventStartTime')?.invalid && registroForm?.get('eventStartTime')?.touched">
+                        El campo es obligatorio (HH:mm).
+                    </mat-error>
+                </mat-form-field>
             </div>
-
-        </ng-container>
-
-        <div mat-dialog-actions class="action mt-4">
-            <button mat-raised-button color="primary" type="submit" [disabled]="!registroForm.valid || !isModified()">
-                {{data ? 'Modificar' : 'Agregar'}}
-            </button>
-            <button mat-raised-button color="secondary" type="button" (click)="cancel()">
-                Cancelar
-            </button>
         </div>
-    </form>
-</mat-dialog-content>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Egreso</mat-label>
+                    <input matInput [matDatepicker]="picker2" formControlName="fecEgreso" [readonly]="true">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Hora de Finalización</mat-label>
+                    <input matInput formControlName="eventEndTime" [ngxMatTimepicker]="horaPicker2" [format]="24"
+                        readonly (click)="horaPicker2.open()">
+                    <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+                    <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+                    <mat-error
+                        *ngIf="registroForm?.get('eventEndTime')?.invalid && registroForm?.get('eventEndTime')?.touched">
+                        El campo es obligatorio (HH:mm) y no puede ser anterior a la hora de inicio.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+    </ng-container>
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!registroForm.valid || !isModified()">
+            {{data ? 'Modificar' : 'Agregar'}}
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+            Cancelar
+        </button>
+    </div>
+</form>
