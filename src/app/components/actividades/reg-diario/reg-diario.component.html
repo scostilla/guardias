@@ -92,10 +92,10 @@
                             readonly (click)="horaPicker2.open()">
                         <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
                         <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-                        <mat-error
+                        <!-- <mat-error
                             *ngIf="registroForm?.get('eventEndTime')?.invalid && registroForm?.get('eventEndTime')?.touched">
                             El campo es obligatorio (HH:mm) y no puede ser anterior a la hora de inicio.
-                        </mat-error>
+                        </mat-error> -->
                     </mat-form-field>
                 </div>
             </div>

@@ -10,7 +10,7 @@ export class RegistroActividad {
     fechaIngreso: Date;
     fechaEgreso: Date;
     horaIngreso: Date;
-    horaEngreso: Date;
+    horaEgreso: Date;
     tipoGuardia: TipoGuardia;
     activo: boolean;
     asistencial: Asistencial;
@@ -18,12 +18,12 @@ export class RegistroActividad {
     efector: Efector;
     registroMensual: RegistroMensual;
 
-    constructor(fechaIngreso: Date, fechaEgreso: Date, horaIngreso: Date, horaEngreso: Date, tipoGuardia: TipoGuardia, activo: boolean, asistencial: Asistencial, servicio: Servicio, efector: Efector, registroMensual: RegistroMensual) {
+    constructor(fechaIngreso: Date, fechaEgreso: Date, horaIngreso: Date, horaEgreso: Date, tipoGuardia: TipoGuardia, activo: boolean, asistencial: Asistencial, servicio: Servicio, efector: Efector, registroMensual: RegistroMensual) {
 
         this.fechaIngreso = fechaIngreso;
         this.fechaEgreso = fechaEgreso;
         this.horaIngreso = horaIngreso;
-        this.horaEngreso = horaEngreso;
+        this.horaEgreso = horaEgreso;
         this.tipoGuardia = tipoGuardia;
         this.activo = activo;
         this.asistencial = asistencial;

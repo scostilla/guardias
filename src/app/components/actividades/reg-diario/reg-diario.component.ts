@@ -144,6 +144,10 @@ export class RegDiarioComponent {
       const horaInicio = this.registroForm.get('eventStartTime')?.value;
       console.log('##############Hora de inicio seleccionada:', horaInicio);
       
+      // Obtener el valor del campo de hora de inicio
+      const horaFin = this.registroForm.get('eventEndTime')?.value;
+      console.log('##############Hora de fin seleccionada:', horaInicio);
+      
 
       const registroDto = new RegistroActividadDto(
         registroData.fecIngreso,
