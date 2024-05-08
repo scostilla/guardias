@@ -15,6 +15,7 @@ import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-reg-diario',
@@ -45,6 +46,7 @@ export class RegDiarioComponent {
     private asistencialService: AsistencialService,
     private servicioService: ServicioService,
     private hospitalService: HospitalService,
+    private toastr: ToastrService,
 
     private dialog: MatDialog,
    
@@ -158,23 +160,35 @@ export class RegDiarioComponent {
     if (this.data && this.data.id) {
       this.registroActividadService.update(this.data.id, registroDto).subscribe(
         result => {
+          this.toastr.success('Legajo creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
           this.dialogRef.close({ type: 'save', data: result });
         },
         error => {
+          this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
           this.dialogRef.close({ type: 'error', data: error });
         }
       );
     } else {
       this.registroActividadService.save(registroDto).subscribe(
         result => {
+          this.toastr.success('Registro guardado con éxito');
           this.dialogRef.close({ type: 'save', data: result });
         },
         error => {
+          this.toastr.error('Error al guardar el registro');
           this.dialogRef.close({ type: 'error', data: error });
         }
       );
     }
-   }
+  }
   }
 
   compareTipoGuardia(p1: TipoGuardia, p2: TipoGuardia): boolean {

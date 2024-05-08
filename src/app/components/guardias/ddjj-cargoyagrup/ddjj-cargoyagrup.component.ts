@@ -30,7 +30,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'tipoGuardia', 'acciones'];
+  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'tipoGuardia', 'fechaIngreso', 'fechaEgreso', 'acciones'];
   dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;

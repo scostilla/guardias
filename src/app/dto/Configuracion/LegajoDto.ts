@@ -12,7 +12,7 @@ export class LegajoDto {
     idPersona: number;
    // idCargo: number;
     
-    constructor(fechaInicio: Date,fechaFinal: Date,actual: boolean,    legal: boolean, activo:boolean, matriculaNacional: string, matriculaProvincial: string,idProfesion:number, idRevista: number, idUdo: number, idPersona:number/* , idCargo:number */) {
+    constructor(fechaInicio: Date,fechaFinal: Date,actual: boolean, legal: boolean, activo:boolean, matriculaNacional: string, matriculaProvincial: string,idProfesion:number, idRevista: number, idUdo: number, idPersona:number/* , idCargo:number */) {
         
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
