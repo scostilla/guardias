@@ -179,11 +179,19 @@ export class RegDiarioComponent {
     } else {
       this.registroActividadService.save(registroDto).subscribe(
         result => {
-          this.toastr.success('Registro guardado con éxito');
+          this.toastr.success('Registro guardado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
           this.dialogRef.close({ type: 'save', data: result });
         },
         error => {
-          this.toastr.error('Error al guardar el registro');
+          this.toastr.error('Ocurrió un error al guardar el registro', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
           this.dialogRef.close({ type: 'error', data: error });
         }
       );

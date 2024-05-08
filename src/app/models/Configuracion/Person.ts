@@ -1,4 +1,5 @@
 import { Legajo } from "./Legajo";
+import { NovedadPersonal } from "../guardias/NovedadPersonal";
 
 export class Person {
   id?: number;
@@ -14,6 +15,7 @@ export class Person {
   esAsistencial:boolean;
   activo: boolean; 
   legajos: Legajo[];
+  NovedadPersonal: NovedadPersonal[];
 
   constructor(
       nombre: string,
@@ -27,7 +29,8 @@ export class Person {
       domicilio: string,
       esAsistencial:boolean,
       activo: boolean,
-      legajos: Legajo[]
+      legajos: Legajo[],
+      NovedadPersonal: NovedadPersonal[]
              
       ) {
       this.nombre = nombre;
@@ -42,6 +45,7 @@ export class Person {
       this.esAsistencial=esAsistencial;
       this.activo = activo;
       this.legajos = legajos;
+      this.NovedadPersonal = NovedadPersonal;
   }
 
 }
