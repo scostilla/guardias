@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { Router } from '@angular/router';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 
 
