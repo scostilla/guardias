@@ -35,8 +35,8 @@
         </ng-container>
 
         <ng-container matColumnDef="vinculo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Vínculo laboral </th> 
-          <td mat-cell *matCellDef="let registroActividad">  </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Vínculo laboral </th> 
+          <td mat-cell *matCellDef="let registroActividad"> {{getLegajoActualId(registroActividad.asistencial)}} </td>
         </ng-container>
 
         <ng-container matColumnDef="categoria">

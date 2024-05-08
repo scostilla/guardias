@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { Router } from '@angular/router';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 
 
 @Component({
@@ -91,11 +93,16 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-  abrirCalendario(): void { // Asegúrate de que 'registros' sea del tipo correcto
+  abrirCalendario(): void { 
     this.dialog.open(DdjjCargoyagrupCalendarComponent, {
       width: '300px',
     });
   }
+
+  getLegajoActualId(asistencial: Asistencial): number | undefined {
+    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+    return legajoActual ? legajoActual.id : undefined;
+  }  
 
   /*  today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
