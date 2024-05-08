@@ -1,3 +1,5 @@
+import { Legajo } from "./Legajo";
+
 export class Person {
   id?: number;
   nombre: string;
@@ -11,6 +13,7 @@ export class Person {
   domicilio: string;
   esAsistencial:boolean;
   activo: boolean; 
+  legajos: Legajo[];
 
   constructor(
       nombre: string,
@@ -24,6 +27,7 @@ export class Person {
       domicilio: string,
       esAsistencial:boolean,
       activo: boolean,
+      legajos: Legajo[]
              
       ) {
       this.nombre = nombre;
@@ -37,6 +41,7 @@ export class Person {
       this.domicilio = domicilio;
       this.esAsistencial=esAsistencial;
       this.activo = activo;
+      this.legajos = legajos;
   }
 
 }
