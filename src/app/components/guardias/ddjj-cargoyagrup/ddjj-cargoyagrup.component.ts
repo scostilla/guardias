@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 
 
+
 @Component({
   selector: 'app-ddjj-cargoyagrup',
   templateUrl: './ddjj-cargoyagrup.component.html',
@@ -26,6 +27,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   fechaNacimientoVisible: boolean = false;
   telefonoVisible: boolean = false;
   emailVisible: boolean = false;
+
+  fechaIngreso: Date | null = null;
+  horaIngreso: string | null = null;
+  fechaEgreso: Date | null = null;
+  horaEgreso: string | null = null;
 
 
   @ViewChild(MatTable) table!: MatTable<RegistroActividad>;
@@ -92,9 +98,21 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-  abrirCalendario(): void { 
-    this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-      width: '300px',
+  abrirCalendarioDialog(registro: RegistroActividad) {
+    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+      width: '700px',
+      data: {
+        fechaIngreso: registro.fechaIngreso,
+        horaIngreso: registro.horaIngreso,
+        fechaEgreso: registro.fechaEgreso,
+        horaEgreso: registro.horaEgreso,
+        nombreAsistencial: registro.asistencial.nombre,
+        apellidoAsistencial: registro.asistencial.apellido
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo se cerró');
     });
   }
 

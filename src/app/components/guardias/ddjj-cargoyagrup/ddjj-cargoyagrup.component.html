@@ -2,13 +2,14 @@
 <div class="container">
   <div class="row">
     <div class="col-6 col-md-7">
-      <div class="titulo_prueba">DDJJ Cargo y Agrupación</div>
+      <div class="titulos">DDJJ <span class="titulos-second">CARGO Y AGRUPACIÓN</span></div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" matTooltip="Agregar Persona RegistroActividad">
-        <mat-icon>library_add</mat-icon>
+      <button mat-fab extended color="primary" routerLink="/guardias-view">
+        <mat-icon>arrow_back_ios</mat-icon>
+        Volver
       </button>
-    </div>
+  </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
@@ -19,8 +20,25 @@
       </mat-form-field>
     </div>
   </div>
-
-
+      <table class="table table-sm  table-borderless">
+        <thead class="col-center thead-celeste">
+            <tr>
+                <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
+            </tr>
+            <tr>
+                <th>Julio 2023</th>
+            </tr>
+            <tr>
+                <th>MINISTERIO DE SALUD</th>
+            </tr>
+            <tr>
+                <th>"DN. PABLO SORIA"</th>
+            </tr>
+            <tr>
+                <th>REGION: CENTRO</th>
+            </tr>
+        </thead>
+      </table>
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
 
@@ -70,10 +88,10 @@
         </ng-container>
 
         <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef  class="negrita"></th>
-          <td mat-cell *matCellDef="let legajo" class="cell-actions">
-            <button mat-icon-button matTooltip="Ver guardias activas" (click)="abrirCalendario()">
-              <mat-icon class="btnEdit">date_range</mat-icon>
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let registro of registros" class="cell-actions">
+            <button mat-icon-button matTooltip="Ver guardias activas" (click)="abrirCalendarioDialog(registro)">
+              <mat-icon color="primary">date_range</mat-icon>
             </button>
           </td>
         </ng-container>
@@ -90,13 +108,9 @@
 
 
 
-<div class="tabla-center">
+<!-- <div class="tabla-center">
     <div class="row" style="margin-bottom: 10px;">
         <div class="col">
-          <button mat-fab extended color="primary" routerLink="/guardias-view">
-            <mat-icon>arrow_back_ios</mat-icon>
-            Volver
-          </button>
         </div>
     </div>
     <div class="row">
@@ -362,4 +376,4 @@
   </div>
 </div>
 
-</div>
+</div>--> 
