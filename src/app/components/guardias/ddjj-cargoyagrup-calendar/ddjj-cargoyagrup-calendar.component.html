@@ -1,0 +1,22 @@
+<div class="calendario-dialogo">
+    <h2>Calendario Mensual</h2>
+    <table>
+      <thead>
+        <tr>
+          <th *ngFor="let dia of diasDelMes">{{ dia | date: 'EEE dd' }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td *ngFor="let dia of diasDelMes">
+            <ng-container *ngFor="let registro of registros">
+              <div *ngIf="dia.toDateString() === registro.fechaIngreso.toDateString()">
+                {{ calcularHoras(registro.fechaIngreso, registro.horaIngreso, registro.fechaEgreso, registro.horaEgreso) }}
+              </div>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="cerrarDialogo()">Cerrar</button>
+  </div>

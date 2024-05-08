@@ -12,8 +12,8 @@ export class PersonDto {
     esAsistencial:boolean;
     activo: boolean;
     idLegajos: number[];
-    /* idNovedadesPersonales?: number;
-    idSuplentes?: number;
+    idNovedadPersonal?: number;
+    /* idSuplentes?: number;
     idDistribucionesHorarias?: number;
     idAutoridades?: number;*/ 
        
@@ -30,9 +30,9 @@ export class PersonDto {
         domicilio: string,
         esAsistencial:boolean,
         activo: boolean,
-        idLegajos: number[]
-        /* idNovedadesPersonales: number,
-        idSuplentes: number,
+        idLegajos: number[],
+        idNovedadPersonal: number,
+        /* idSuplentes: number,
         idDistribucionesHorarias: number,
         idAutoridades: number,
            */          
@@ -49,8 +49,8 @@ export class PersonDto {
         this.esAsistencial=esAsistencial;
         this.activo = activo;
         this.idLegajos = idLegajos;
-       /*  this.idNovedadesPersonales = idNovedadesPersonales;
-        this.idSuplentes = idSuplentes;
+        this.idNovedadPersonal = idNovedadPersonal;
+        /*  this.idSuplentes = idSuplentes;
         this.idDistribucionesHorarias = idDistribucionesHorarias;
         this.idAutoridades = idAutoridades;
          */

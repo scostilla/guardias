@@ -17,6 +17,7 @@ export class RegistroActividad {
     servicio: Servicio;
     efector: Efector;
     registroMensual: RegistroMensual;
+  personaId: any;
 
     constructor(fechaIngreso: Date, fechaEgreso: Date, horaIngreso: Date, horaEgreso: Date, tipoGuardia: TipoGuardia, activo: boolean, asistencial: Asistencial, servicio: Servicio, efector: Efector, registroMensual: RegistroMensual) {
 

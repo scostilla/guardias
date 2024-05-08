@@ -3,7 +3,7 @@ import { Articulo } from "./Articulo";
 import { Inciso } from "./Inciso";
 
 
-export class RegistroActividad {
+export class NovedadPersonal {
     id?: number;
     actual: boolean;
     cobraSueldo: boolean;

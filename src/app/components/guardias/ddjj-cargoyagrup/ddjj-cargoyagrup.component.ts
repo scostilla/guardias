@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DdjjCargoyagrupCalendarComponent } from '../ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -30,10 +31,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'tipoGuardia', 'fechaIngreso', 'fechaEgreso', 'acciones'];
+  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'vinculo', 'categoria', 'tipoGuardia', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
   dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;
+  registros!: any[];
 
   constructor(
     private registroActividadService: RegistroActividadService,
@@ -89,8 +91,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-
-
+  abrirCalendario(): void { // Asegúrate de que 'registros' sea del tipo correcto
+    this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+      width: '300px',
+    });
+  }
 
   /*  today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
