@@ -15,7 +15,7 @@ export class Person {
   esAsistencial:boolean;
   activo: boolean; 
   legajos: Legajo[];
-  NovedadPersonal: NovedadPersonal[];
+  novedadesPersonales: NovedadPersonal[];
 
   constructor(
       nombre: string,
@@ -30,7 +30,7 @@ export class Person {
       esAsistencial:boolean,
       activo: boolean,
       legajos: Legajo[],
-      NovedadPersonal: NovedadPersonal[]
+      novedadesPersonales: NovedadPersonal[]
              
       ) {
       this.nombre = nombre;
@@ -45,7 +45,7 @@ export class Person {
       this.esAsistencial=esAsistencial;
       this.activo = activo;
       this.legajos = legajos;
-      this.NovedadPersonal = NovedadPersonal;
+      this.novedadesPersonales = novedadesPersonales;
   }
 
 }

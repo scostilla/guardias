@@ -9,97 +9,102 @@
         <mat-icon>arrow_back_ios</mat-icon>
         Volver
       </button>
-  </div>
+    </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
-        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keydown.enter)="applyFilter(input.value)" #input>
+        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keydown.enter)="applyFilter(input.value)"
+          #input>
         <button mat-icon-button matSuffix (click)="applyFilter(input.value)">
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
     </div>
   </div>
-      <table class="table table-sm  table-borderless">
-        <thead class="col-center thead-celeste">
-            <tr>
-                <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
-            </tr>
-            <tr>
-                <th>Julio 2023</th>
-            </tr>
-            <tr>
-                <th>MINISTERIO DE SALUD</th>
-            </tr>
-            <tr>
-                <th>"DN. PABLO SORIA"</th>
-            </tr>
-            <tr>
-                <th>REGION: CENTRO</th>
-            </tr>
-        </thead>
-      </table>
-    <div class="table-responsive">
-      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+  <table class="table table-sm  table-borderless">
+    <thead class="col-center thead-celeste">
+      <tr>
+        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
+      </tr>
+      <tr>
+        <th>Julio 2023</th>
+      </tr>
+      <tr>
+        <th>MINISTERIO DE SALUD</th>
+      </tr>
+      <tr>
+        <th>"DN. PABLO SORIA"</th>
+      </tr>
+      <tr>
+        <th>REGION: CENTRO</th>
+      </tr>
+    </thead>
+  </table>
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
-        <ng-container matColumnDef="asistencial">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido y Nombre </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.apellido}}, {{registroActividad.asistencial.nombre}} </td>
-        </ng-container>
+      <ng-container matColumnDef="asistencial">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido y Nombre </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.apellido}},
+          {{registroActividad.asistencial.nombre}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="cuil">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> CUIL </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.cuil}} </td>
-        </ng-container>
+      <ng-container matColumnDef="cuil">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.cuil}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="vinculo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Vínculo laboral </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{getLegajoActualId(registroActividad.asistencial)}} </td>
-        </ng-container>
+      <ng-container matColumnDef="vinculo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Vínculo laboral </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{getTipoRevistaActual(registroActividad.asistencial)}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="categoria">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Categoria </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.servicio.descripcion}} </td>
-        </ng-container>
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoria </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{getCategoriaYAdicionalActual(registroActividad.asistencial)}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="tipoGuardia">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Tipo guardia </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.tipoGuardia.nombre}} </td>
-        </ng-container>
+      <ng-container matColumnDef="tipoGuardia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo guardia </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.tipoGuardia.nombre}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="servicio">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Servicio </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.servicio.descripcion}} </td>
-        </ng-container>
+      <ng-container matColumnDef="servicio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Servicio </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.servicio.descripcion}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="NovedadPersonal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Novedades </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.NovedadPersonal}} </td>
-        </ng-container>
+      <ng-container matColumnDef="NovedadPersonal">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Novedades </th>
+        <td mat-cell *matCellDef="let registroActividad">{{getNovedadActualDescripcion(registroActividad.asistencial)}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="fechaIngreso">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Ingreso</th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.fechaIngreso}} {{registroActividad.horaIngreso}} </td>
-        </ng-container>
+      <ng-container matColumnDef="fechaIngreso">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Fecha Ingreso</th>
+        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.fechaIngreso}}
+          {{registroActividad.horaIngreso}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="fechaEgreso">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Egreso </th> 
-          <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.fechaEgreso}} {{registroActividad.horaEgreso}} </td>
-        </ng-container>
+      <ng-container matColumnDef="fechaEgreso">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Fecha Egreso </th>
+        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.fechaEgreso}}
+          {{registroActividad.horaEgreso}} </td>
+      </ng-container>
 
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let registro of registros" class="cell-actions">
-            <button mat-icon-button matTooltip="Ver guardias activas" (click)="abrirCalendarioDialog(registro)">
-              <mat-icon color="primary">date_range</mat-icon>
-            </button>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <!-- <td mat-cell *matCellDef="let registro of registros" class="cell-actions"> -->
+        <td mat-cell *matCellDef="let registro" class="cell-actions">
+          <button mat-icon-button matTooltip="Ver guardias activas" (click)="abrirCalendarioDialog(registro)">
+            <mat-icon color="primary">date_range</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
   <div class="row mt-3">
     <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
   </div>
@@ -376,4 +381,4 @@
   </div>
 </div>
 
-</div>--> 
+</div>-->

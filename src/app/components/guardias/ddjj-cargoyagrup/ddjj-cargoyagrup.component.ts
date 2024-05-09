@@ -121,6 +121,26 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return legajoActual ? legajoActual.id : undefined;
   }  
 
+  getTipoRevistaActual(asistencial: Asistencial): string | undefined {
+    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+    return legajoActual ? legajoActual.revista.tipoRevista.nombre : undefined;
+  }
+
+  getCategoriaYAdicionalActual(asistencial: Asistencial): string | undefined {
+    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+    if (legajoActual && legajoActual.revista) {
+      const categoria = legajoActual.revista.categoria.nombre;
+      const adicional = legajoActual.revista.adicional.nombre;
+      return categoria +"("+ adicional+")";
+    }
+    return undefined;
+  }
+
+  getNovedadActualDescripcion(asistencial: Asistencial): string | undefined {
+    const novedadActual = asistencial.novedadesPersonales.find(novedad => novedad.actual);
+    return novedadActual ? novedadActual.descripcion : undefined;
+  }
+
   /*  today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
 
