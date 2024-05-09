@@ -24,20 +24,13 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 
 export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
-  dniVisible: boolean = false;
-  domicilioVisible: boolean = false;
-  estadoVisible: boolean = false;
-  fechaNacimientoVisible: boolean = false;
-  telefonoVisible: boolean = false;
-  emailVisible: boolean = false;
-
 
   @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
-  dataSource!: MatTableDataSource<RegistroMensual>;
+  displayedColumns: string[] = ['asistencial', 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
+  dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;
   registros!: any[];
@@ -91,13 +84,39 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.dataSource.filter = normalizedFilterValue;
   } */
         
-  listRegistroMensual(): void {
-    const anio = 2023; // Año fijo
+  /*listRegistroMensual(): void {
+    const anio = 2024; // Año fijo
     const mes = 'ENERO'; // Mes fijo
     const idEfector = 1; // ID de efector fijo
 
     this.registroMensualService.listByYearMonthAndEfector(anio,mes,idEfector).subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+  }*/
+
+  listRegistroMensual(): void {
+    const anio = 2024; // Año fijo
+    const mes = 'ENERO'; // Mes fijo
+    const idEfector = 1; // ID de efector fijo
+  
+    this.registroMensualService.listByYearMonthAndEfector(anio, mes, idEfector).subscribe(data => {
+      const asistencialesUnicos = new Map<number, RegistroActividad>();
+  
+      data.forEach(registroMensual => {
+        registroMensual.registroActividad.forEach(registroActividad => {
+          if (registroActividad.asistencial.id !== undefined) {
+            if (!asistencialesUnicos.has(registroActividad.asistencial.id)) {
+              asistencialesUnicos.set(registroActividad.asistencial.id, registroActividad);
+            }
+          }
+        });
+      });
+  
+      const registrosUnicos = Array.from(asistencialesUnicos.values());
+  
+      this.dataSource = new MatTableDataSource(registrosUnicos);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
@@ -124,6 +143,25 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
       width: '700px',
       data: {
+        nombreAsistencial: registro.asistencial.nombre,
+        apellidoAsistencial: registro.asistencial.apellido,
+        fechaIngreso: registro.fechaIngreso,
+        horaIngreso: registro.horaIngreso,
+        fechaEgreso: registro.fechaEgreso,
+        horaEgreso: registro.horaEgreso,
+        tipoGuardia: registro.tipoGuardia.id
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo se cerró');
+    });
+  }
+
+  /*abrirCalendarioDialog(registro: RegistroActividad) {
+    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+      width: '700px',
+      data: {
         fechaIngreso: registro.fechaIngreso,
         horaIngreso: registro.horaIngreso,
         fechaEgreso: registro.fechaEgreso,
@@ -137,7 +175,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       console.log('El diálogo se cerró');
     });
-  }
+  }*/
 
   getLegajoActualId(asistencial: Asistencial): number | undefined {
     const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
