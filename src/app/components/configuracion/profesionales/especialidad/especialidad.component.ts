@@ -24,7 +24,7 @@ export class EspecialidadComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<EspecialidadDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'esPasiva', 'profesion', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'esPasiva', 'profesion', 'acciones'];
   dataSource!: MatTableDataSource<Especialidad>;
   suscription!: Subscription;
 

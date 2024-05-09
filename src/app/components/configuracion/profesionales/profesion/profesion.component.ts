@@ -24,7 +24,7 @@ export class ProfesionComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<ProfesionDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'asistencial', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'asistencial', 'acciones'];
   dataSource!: MatTableDataSource<Profesion>;
   suscription!: Subscription;
 

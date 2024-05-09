@@ -290,13 +290,12 @@ color:#9b0a0a;
 }
 
 .cell-actions {
-  display: flex; 
-  justify-content: flex-start;
-  align-items: center; 
-  flex-wrap: nowrap; 
+  overflow-x: auto; /* Permite el desplazamiento horizontal si es necesario */
+  white-space: nowrap; /* Mantiene los botones en una sola línea */
 }
 
 .cell-actions button {
+  display: inline-block;
   margin-top: 3px;
   vertical-align: middle;
 }
