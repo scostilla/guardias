@@ -68,7 +68,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    // Función de normalización dentro de applyFilter
     const normalizeText = (text: string) => {
       return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     };
