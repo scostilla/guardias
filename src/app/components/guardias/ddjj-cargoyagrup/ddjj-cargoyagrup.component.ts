@@ -10,6 +10,9 @@ import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { RegistroMensual } from 'src/app/models/RegistroMensual';
+import { RegistroMensualService } from 'src/app/services/registroMensual.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 
 
 
@@ -29,18 +32,20 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   emailVisible: boolean = false;
 
 
-  @ViewChild(MatTable) table!: MatTable<RegistroActividad>;
+  @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
-  dataSource!: MatTableDataSource<RegistroActividad>;
+  dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;
   registros!: any[];
 
   constructor(
-    private registroActividadService: RegistroActividadService,
+    private registroMensualService: RegistroMensualService,
+    private asistencialService: AsistencialService,
+
     private dialog: MatDialog,
     private toastr: ToastrService,
     private router: Router,
@@ -59,15 +64,15 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.listRegistroActividad();
+    this.listRegistroMensual();
 
-    this.suscription = this.registroActividadService.refresh$.subscribe(() => {
-      this.listRegistroActividad();
+    this.suscription = this.registroMensualService.refresh$.subscribe(() => {
+      this.listRegistroMensual();
     })
 
   }
 
-  applyFilter(filterValue: string) {
+  /* applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
       return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     };
@@ -84,16 +89,32 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     };
   
     this.dataSource.filter = normalizedFilterValue;
-  }
+  } */
         
-  listRegistroActividad(): void {
-    this.registroActividadService.list().subscribe(data => {
+  listRegistroMensual(): void {
+    const anio = 2023; // Año fijo
+    const mes = 'ENERO'; // Mes fijo
+    const idEfector = 1; // ID de efector fijo
+
+    this.registroMensualService.listByYearMonthAndEfector(anio,mes,idEfector).subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
 
+  getNombreAsistencial(idAsistencial: number): string {
+    
+    let nombreAsistencial = ""; // Valor predeterminado
+
+    this.asistencialService.detail(idAsistencial).subscribe((asistencial: Asistencial) => {
+      nombreAsistencial = `${asistencial.nombre} ${asistencial.apellido}`; 
+    }, error => {
+      console.error("Error al recuperar el asistencial:", error);
+    });
+
+    return nombreAsistencial;
+  }
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();

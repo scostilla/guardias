@@ -13,10 +13,14 @@
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
-        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keydown.enter)="applyFilter(input.value)"
+        <input matInput placeholder="Buscar por nombre, apellido o cuil" 
+          #input>
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        <!-- <input matInput placeholder="Buscar por nombre, apellido o cuil" (keydown.enter)="applyFilter(input.value)"
           #input>
         <button mat-icon-button matSuffix (click)="applyFilter(input.value)">
-          <mat-icon>search</mat-icon>
+          <mat-icon>search</mat-icon> -->
         </button>
       </mat-form-field>
     </div>
@@ -45,7 +49,7 @@
 
       <ng-container matColumnDef="asistencial">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido y Nombre </th>
-        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.apellido}},
+        <td mat-cell *matCellDef="let registroMensual"> {{registroMensual.asistencial.apellido}},
           {{registroActividad.asistencial.nombre}} </td>
       </ng-container>
 

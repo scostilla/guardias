@@ -10,7 +10,14 @@ export class RegistroMensual {
     registroActividad: RegistroActividad[];
     efector: Efector;
 
-    constructor (mes: string, anio: number, idAsistencial: number, activo: boolean, registroActividad: RegistroActividad[], efector: Efector){
+    constructor (
+        mes: string, 
+        anio: number, 
+        idAsistencial: number, 
+        activo: boolean, 
+        registroActividad: RegistroActividad[], 
+        efector: Efector
+    ){
         this.mes = mes;
         this.anio= anio;
         this.idAsistencial = idAsistencial;
