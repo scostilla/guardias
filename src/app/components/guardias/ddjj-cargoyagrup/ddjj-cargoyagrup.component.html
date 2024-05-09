@@ -27,7 +27,7 @@
         <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
       </tr>
       <tr>
-        <th>Julio 2023</th>
+        <th>Mayo 2024</th>
       </tr>
       <tr>
         <th>MINISTERIO DE SALUD</th>
@@ -62,11 +62,6 @@
       <ng-container matColumnDef="categoria">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoria </th>
         <td mat-cell *matCellDef="let registroActividad"> {{getCategoriaYAdicionalActual(registroActividad.asistencial)}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="tipoGuardia">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo guardia </th>
-        <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.tipoGuardia.nombre}} </td>
       </ng-container>
 
       <ng-container matColumnDef="servicio">

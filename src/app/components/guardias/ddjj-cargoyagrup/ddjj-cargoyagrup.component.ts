@@ -28,17 +28,12 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   telefonoVisible: boolean = false;
   emailVisible: boolean = false;
 
-  fechaIngreso: Date | null = null;
-  horaIngreso: string | null = null;
-  fechaEgreso: Date | null = null;
-  horaEgreso: string | null = null;
-
 
   @ViewChild(MatTable) table!: MatTable<RegistroActividad>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'vinculo', 'categoria', 'tipoGuardia', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
+  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
   dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;
@@ -107,10 +102,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         fechaEgreso: registro.fechaEgreso,
         horaEgreso: registro.horaEgreso,
         nombreAsistencial: registro.asistencial.nombre,
-        apellidoAsistencial: registro.asistencial.apellido
+        apellidoAsistencial: registro.asistencial.apellido,
+        tipoGuardia: registro.tipoGuardia.id
       }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       console.log('El diálogo se cerró');
     });

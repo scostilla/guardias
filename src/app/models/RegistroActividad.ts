@@ -1,4 +1,3 @@
-import { Time } from "@angular/common";
 import { Asistencial } from "./Configuracion/Asistencial";
 import { Servicio } from "./Configuracion/Servicio";
 import { Efector } from "./Configuracion/Efector";
