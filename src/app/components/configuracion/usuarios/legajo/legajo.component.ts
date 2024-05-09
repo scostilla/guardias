@@ -57,20 +57,16 @@ export class LegajoComponent implements OnInit, OnDestroy {
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
   
-    // Función para normalizar y remover acentos
     const normalizeText = (text: string) => {
       return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
   
     this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
-      // Convertir los valores booleanos a 'sí' o 'no'
       const actualValue = data.actual ? 'sí' : 'no';
       const legalValue = data.legal ? 'sí' : 'no';
   
-      // Convertir la fecha de inicio a timestamp para la comparación
       const fechaInicioTimestamp = data.fechaInicio ? new Date(data.fechaInicio).getTime() : null;
   
-      // Normalizar los datos para la comparación
       const dataStr = normalizeText(
         data.persona?.nombre.toLowerCase() + ' ' +
         data.persona?.apellido.toLowerCase() + ' ' +
@@ -79,19 +75,15 @@ export class LegajoComponent implements OnInit, OnDestroy {
         actualValue + ' ' + legalValue
       );
   
-      // Normalizar el valor del filtro
       const normalizedFilter = normalizeText(filter);
   
-      // Comprobar si el filtro es una fecha
       const filterDate = normalizedFilter.split('/').reverse().join('-');
       const filterTimestamp = Date.parse(filterDate);
   
-      // Si el filtro es un número válido, comparar timestamps
       if (!isNaN(filterTimestamp)) {
         return fechaInicioTimestamp === filterTimestamp;
       }
   
-      // Si no es una fecha, realizar la búsqueda normal
       return dataStr.indexOf(normalizedFilter) != -1;
     };
   

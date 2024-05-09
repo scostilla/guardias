@@ -68,17 +68,24 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    // Función de normalización dentro de applyFilter
+    const normalizeText = (text: string) => {
+      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+  
+    const normalizedFilterValue = normalizeText(filterValue);
   
     this.dataSource.filterPredicate = (data: RegistroActividad, filter: string) => {
-      const normalizedData = (data.asistencial + ' ' + data.servicio + ' ' + data.tipoGuardia)
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return normalizedData.indexOf(normalizedFilterValue) != -1;
+      const dataStr = normalizeText(
+        data.asistencial?.nombre + ' ' +
+        data.asistencial?.apellido + ' ' +
+        data.asistencial?.cuil
+      );
+      return dataStr.indexOf(normalizedFilterValue) !== -1;
     };
   
     this.dataSource.filter = normalizedFilterValue;
   }
-
         
   listRegistroActividad(): void {
     this.registroActividadService.list().subscribe(data => {
