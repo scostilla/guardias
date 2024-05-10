@@ -48,46 +48,46 @@
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
       <ng-container matColumnDef="asistencial">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido y Nombre </th>
-        <td mat-cell *matCellDef="let registro"> {{registro.asistencial.apellido}}, {{registro.asistencial.nombre}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id -  Apellido y Nombre </th>
+        <td mat-cell *matCellDef="let registro">
+          {{registro.registroActividad[registroActividad.id].asistencial.nombre}}
+        </td>
       </ng-container>
       
       <ng-container matColumnDef="cuil">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
-        <td mat-cell *matCellDef="let registro"> {{registro.asistencial.cuil}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id -  CUIL </th>
+        <td mat-cell *matCellDef="let registro"> {{registro.idAsistencial}}</td>
       </ng-container>
 
 
       <ng-container matColumnDef="vinculo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Vínculo laboral </th>
-        <td mat-cell *matCellDef="let registroMensual"> {{getTipoRevistaActual(registroMensual.asistencial)}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id - Vínculo laboral </th>
+        <td mat-cell *matCellDef="let registro"> {{registro.idAsistencial}}</td>
       </ng-container>
 
       <ng-container matColumnDef="categoria">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoria </th>
-        <td mat-cell *matCellDef="let registroMensual"> {{getCategoriaYAdicionalActual(registroMensual.asistencial)}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id - Categoria </th>
+        <td mat-cell *matCellDef="let registro"> {{registro.idAsistencial}}</td>
       </ng-container>
 
       <ng-container matColumnDef="servicio">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Servicio </th>
-        <td mat-cell *matCellDef="let registroMensual"> {{registroMensual.servicio.descripcion}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id - Servicio </th>
+        <td mat-cell *matCellDef="let registro">{{registro.idAsistencial}}</td>
       </ng-container>
 
       <ng-container matColumnDef="NovedadPersonal">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Novedades </th>
-        <td mat-cell *matCellDef="let registroMensual">{{getNovedadActualDescripcion(registroMensual.asistencial)}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id -  Novedades </th>
+        <td mat-cell *matCellDef="let registro">{{registro.idAsistencial}}</td>
       </ng-container>
 
       <ng-container matColumnDef="fechaIngreso">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Fecha Ingreso</th>
-        <td mat-cell *matCellDef="let registroMensual"> {{registroMensual.fechaIngreso}}
-          {{registroMensual.horaIngreso}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">mes - Fecha Ingreso</th>
+        <td mat-cell *matCellDef="let registro"> {{registro.mes}}</td>
       </ng-container>
 
       <ng-container matColumnDef="fechaEgreso">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Fecha Egreso </th>
-        <td mat-cell *matCellDef="let registroMensual"> {{registroMensual.fechaEgreso}}
-          {{registroMensual.horaEgreso}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">anio - Fecha Egreso </th>
+        <td mat-cell *matCellDef="let registro"> {{registro.anio}}</td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">
