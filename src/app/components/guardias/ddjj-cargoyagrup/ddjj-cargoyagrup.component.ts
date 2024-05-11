@@ -10,6 +10,9 @@ import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import {TooltipPosition, MatTooltipModule} from '@angular/material/tooltip';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import * as moment from 'moment';
 
 
 
@@ -21,19 +24,17 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 
 export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
-  dniVisible: boolean = false;
-  domicilioVisible: boolean = false;
-  estadoVisible: boolean = false;
-  fechaNacimientoVisible: boolean = false;
-  telefonoVisible: boolean = false;
-  emailVisible: boolean = false;
+  positionOptions: TooltipPosition[] = ['after', 'before', 'above', 'below', 'left', 'right'];
+  position = new FormControl(this.positionOptions[0]);
+  diasEnMes?: moment.Moment[];
+  totalHoras?: number;
 
 
   @ViewChild(MatTable) table!: MatTable<RegistroActividad>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'servicio', 'cuil', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
+  displayedColumns: string[] = ['asistencial', 'servicio', 'fechas', /*'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
   dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;
@@ -58,6 +59,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
+    moment.locale('es');
+    this.generarDiasDelMes();
 
     this.listRegistroActividad();
 
@@ -98,6 +101,39 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
+
+  generarDiasDelMes(): void {
+    this.diasEnMes = [];
+    const startOfMonth = moment([2024, 4, 1]); // Mayo 2024
+    const endOfMonth = startOfMonth.clone().endOf('month');
+
+    let day = startOfMonth;
+
+    while(day <= endOfMonth) {
+      this.diasEnMes.push(day.clone());
+      day.add(1, 'day');
+    }
+  }
+
+  calcularTotalHoras(fecha: moment.Moment, data: RegistroActividad): string {
+    if (data.fechaEgreso && data.horaEgreso) {
+      const inicio = moment(data.fechaIngreso + 'T' + data.horaIngreso);
+      const fin = moment(data.fechaEgreso + 'T' + data.horaEgreso);
+      const duracion = fin.diff(inicio, 'hours', true);
+  
+      return Math.round(duracion).toString();
+    } else {
+      return "Falta Egreso";
+    }
+  }
+
+  /*getColor(fecha: moment.Moment, data: RegistroActividad): string {
+    if (fecha.isSame(data.fechaIngreso, 'day')) {
+      return data.tipoGuardia === 1 ? '#91A8DA' : data.tipoGuardia === 2 ? '#F4AF88' : '';
+    }
+    return '';
+  }*/
+
 
   abrirCalendarioDialog(registro: RegistroActividad) {
     const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
