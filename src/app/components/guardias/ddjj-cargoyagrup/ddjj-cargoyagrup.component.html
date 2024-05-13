@@ -48,31 +48,29 @@
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
       <ng-container matColumnDef="asistencial">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id -  Apellido y Nombre </th>
-        <td mat-cell *matCellDef="let registro">
-          {{registro.registroActividad[registroActividad.id].asistencial.nombre}}
-        </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Apellido y Nombre</th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.apellido +', '+ registro.asistencial.nombre}}</td>
       </ng-container>
       
       <ng-container matColumnDef="cuil">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id -  CUIL </th>
-        <td mat-cell *matCellDef="let registro"> {{registro.idAsistencial}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">CUIL </th>
+        <td mat-cell *matCellDef="let registro"> {{registro.asistencial.cuil}}</td>
       </ng-container>
 
 
       <ng-container matColumnDef="vinculo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id - Vínculo laboral </th>
-        <td mat-cell *matCellDef="let registro"> {{registro.idAsistencial}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Vínculo laboral </th>
+        <td mat-cell *matCellDef="let registro"> {{getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre}}</td>
       </ng-container>
 
       <ng-container matColumnDef="categoria">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id - Categoria </th>
-        <td mat-cell *matCellDef="let registro"> {{registro.idAsistencial}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Categoria </th>
+        <td mat-cell *matCellDef="let registro">{{getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre +'()'+getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre+')'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="servicio">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">id - Servicio </th>
-        <td mat-cell *matCellDef="let registro">{{registro.idAsistencial}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Servicio </th>
+        <td mat-cell *matCellDef="let registro">{{ registro.registroActividad[0]?.servicio?.descripcion }}</td>
       </ng-container>
 
       <ng-container matColumnDef="NovedadPersonal">

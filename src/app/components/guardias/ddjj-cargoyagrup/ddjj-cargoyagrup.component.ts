@@ -2,20 +2,15 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjCargoyagrupCalendarComponent } from '../ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 
 
 
@@ -35,8 +30,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['asistencial', 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
- /*  registroActividad!: RegistroActividad; */
   registros!: any[];
+
 
   registrosMensuales: RegistroMensual[] = [];
   asistentes: any[] = [];
@@ -47,10 +42,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private asistencialService: AsistencialService,
 
     private dialog: MatDialog,
-    private toastr: ToastrService,
-    private router: Router,
     private paginatorIntl: MatPaginatorIntl
-    ) { 
+  ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
     this.paginatorIntl.previousPageLabel = "Página anterior";
@@ -59,37 +52,45 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.paginatorIntl.getRangeLabel = (page, size, length) => {
       const start = page * size + 1;
       const end = Math.min((page + 1) * size, length);
-      return `${start} - ${end} de ${length}`; };
-     }
+      return `${start} - ${end} de ${length}`;
+    };
+  }
 
-     asistencialesMap: Map<number, Asistencial> = new Map<number, Asistencial>(); // Mapa para almacenar nombres y apellidos de asistenciales
+  asistencialesMap: Map<number, Asistencial> = new Map<number, Asistencial>(); // Mapa para almacenar nombres y apellidos de asistenciales
 
 
   ngOnInit(): void {
 
-    this.listRegistroMensual();
-
-    this.suscription = this.registroMensualService.refresh$.subscribe(() => {
-      this.listRegistroMensual();
-    })
-
     this.loadRegistrosMensuales();
 
+    this.suscription = this.registroMensualService.refresh$.subscribe(() => {
+      this.loadRegistrosMensuales();
+    })
   }
 
   loadRegistrosMensuales(): void {
-    // Aquí deberías cargar tus registros mensuales
-    // Supongamos que los registros ya están cargados en this.registrosMensuales
+    const anio = 2024; // Año fijo
+    const mes = 'ENERO'; // Mes fijo
+    const idEfector = 1; // ID de efector fijo
 
-    // Obtenemos los ids de los asistentes de los registros
+    this.registroMensualService.listByYearMonthAndEfector(anio, mes, idEfector).subscribe(
+      (data: RegistroMensual[]) => {
+        this.registrosMensuales = data;
+        this.loadAsistentesForRegistros();
+      },
+      error => {
+        console.error('Error al cargar los registros mensuales:', error);
+      }
+    );
+  }
+
+  loadAsistentesForRegistros(): void {
     const idsAsistentes = this.registrosMensuales.map(registro => registro.idAsistencial);
-
-    console.log("#### "+ idsAsistentes);
-
-    // Usamos el servicio para obtener los asistentes correspondientes
-    this.suscripcion = this.asistencialService.getByIds(idsAsistentes).subscribe(
-      (asistentes: any[]) => {
+    this.asistencialService.getByIds(idsAsistentes).subscribe(
+      (asistentes: Asistencial[]) => {
         this.asistentes = asistentes;
+        // Una vez que se cargan los asistentes, actualiza la tabla
+        this.updateTableDataSource();
       },
       error => {
         console.error('Error al cargar los asistentes:', error);
@@ -97,25 +98,46 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     );
   }
 
-  getNombreCompleto(idAsistencial: number): string {
-    const asistente = this.asistentes.find(as => as.id === idAsistencial);
-    if (asistente) {
-      return `${asistente.nombre} ${asistente.apellido}`;
-    } else {
-      return ''; // O manejar el caso en que el asistente no se encuentre
-    }
+  updateTableDataSource(): void {
+    const dataToShow = this.registrosMensuales.map(registro => {
+      const asistente = this.asistentes.find(as => as.id === registro.idAsistencial);
+      return {
+        ...registro,
+        asistencial: asistente ? asistente : null
+      };
+    });
+    this.dataSource = new MatTableDataSource<RegistroMensual>(dataToShow);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  /* loadAsistenciales(): void {
-    this.dataSource.data.forEach(registro => {
-      this.asistencialService.detail(registro.idAsistencial).subscribe(asistencial => {
-        if (asistencial) {
-          console.log("#######"+ registro.idAsistencial),
-          this.asistencialesMap.set(registro.idAsistencial, asistencial); // Almacenar el objeto asistencial en el mapa
-        }
-      });
+  getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
+    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+    return legajoActual ? legajoActual : undefined;
+  } 
+
+  ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
+  }
+
+  abrirCalendarioDialog(registro: RegistroActividad) {
+    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+      width: '700px',
+      data: {
+        nombreAsistencial: registro.asistencial.nombre,
+        apellidoAsistencial: registro.asistencial.apellido,
+        fechaIngreso: registro.fechaIngreso,
+        horaIngreso: registro.horaIngreso,
+        fechaEgreso: registro.fechaEgreso,
+        horaEgreso: registro.horaEgreso,
+        tipoGuardia: registro.tipoGuardia.id
+      }
     });
-  } */
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo se cerró');
+    });
+  }
 
   /* applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
@@ -135,50 +157,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   
     this.dataSource.filter = normalizedFilterValue;
   } */
-        
-  listRegistroMensual(): void {
-    const anio = 2024; // Año fijo
-    const mes = 'ENERO'; // Mes fijo
-    const idEfector = 1; // ID de efector fijo
 
-    this.registroMensualService.listByYearMonthAndEfector(anio,mes,idEfector).subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
-  }
-
-  getNombreApellido(idAsistencial: number): Observable<string> {
-    return this.asistencialService.detail(idAsistencial)
-      .pipe(
-        map((asistencial: Asistencial) => `${asistencial.nombre} ${asistencial.apellido}`),
-        catchError(() => of('Nombre no encontrado')) // Maneja el error si no se encuentra el asistencial
-      );
-  }
-
-
-  ngOnDestroy(): void {
-      this.suscription?.unsubscribe();
-  }
-
-  abrirCalendarioDialog(registro: RegistroActividad) {
-    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-      width: '700px',
-      data: {
-        nombreAsistencial: registro.asistencial.nombre,
-        apellidoAsistencial: registro.asistencial.apellido,
-        fechaIngreso: registro.fechaIngreso,
-        horaIngreso: registro.horaIngreso,
-        fechaEgreso: registro.fechaEgreso,
-        horaEgreso: registro.horaEgreso,
-        tipoGuardia: registro.tipoGuardia.id
-      }
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró');
-    });
-  }
 
   /*abrirCalendarioDialog(registro: RegistroActividad) {
     const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
@@ -256,14 +235,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   dia:number = new Date().getDay();
   numberOfMonth: Array<number> = new Array<number>();
   daysOfMonth: Array<string> = new Array<string>(); */
-/*   constructor(){
-    for(let i=1;i<= this.today; i++)
-    {
-      this.numberOfMonth.push(i)
-    } */
-/* 
-    for(let i=1;i<= this.today; i++)
-    {
-      this.numberOfMonth.push(i)
-    } */
+  /*   constructor(){
+      for(let i=1;i<= this.today; i++)
+      {
+        this.numberOfMonth.push(i)
+      } */
+  /* 
+      for(let i=1;i<= this.today; i++)
+      {
+        this.numberOfMonth.push(i)
+      } */
 }
