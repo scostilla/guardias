@@ -43,14 +43,14 @@
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
-      <ng-container matColumnDef="asistencial">
+      <ng-container matColumnDef="asistencial" sticky>
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido y Nombre </th>
         <td mat-cell *matCellDef="let registroActividad"><span matTooltip="Cuil: {{registroActividad.asistencial.cuil}}" [matTooltipPosition]="position.value!">
           {{registroActividad.asistencial.apellido}},
           {{registroActividad.asistencial.nombre}} </span></td>
       </ng-container>
 
-      <ng-container matColumnDef="fechas" >
+      <!--<ng-container matColumnDef="fechas" >
         <th mat-header-cell *matHeaderCellDef class="negrita">
           <div *ngFor="let fecha of diasEnMes">
             {{ fecha.format('ddd DD').replace('.', '') }}
@@ -58,7 +58,7 @@
         </th>
         <td mat-cell *matCellDef="let data">
           <td *ngFor="let fecha of diasEnMes">
-            <!--<span *ngIf="fecha.isSame(data.fechaIngreso, 'day')" [ngStyle]="{'font-weight': 'bold', 'color': getColor(fecha, data)}">
+            <span *ngIf="fecha.isSame(data.fechaIngreso, 'day')" [ngStyle]="{'font-weight': 'bold', 'color': getColor(fecha, data)}">
               <span *ngIf="data.fechaEgreso && data.horaEgreso; else faltaEgreso">
                 {{ calcularTotalHoras(fecha, data) }}
               </span>
@@ -67,11 +67,11 @@
                   S/E
                 </span>
               </ng-template>
-            </span>-->
+            </span>
           </td>
         </ng-container>
 
-      <!--<ng-container matColumnDef="cuil">
+      <ng-container matColumnDef="cuil">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
         <td mat-cell *matCellDef="let registroActividad"> {{registroActividad.asistencial.cuil}} </td>
       </ng-container>
@@ -108,16 +108,20 @@
           {{registroActividad.horaEgreso}} </td>
       </ng-container> -->
 
-      <ng-container matColumnDef="acciones">
+      <ng-container matColumnDef="acciones" sticky>
         <th mat-header-cell *matHeaderCellDef></th>
-         <!--<td mat-cell *matCellDef="let registro of registros" class="cell-actions"> -->
         <td mat-cell *matCellDef="let registro" class="cell-actions">
-          <button mat-icon-button matTooltip="Ver guardias activas" (click)="abrirCalendarioDialog(registro)">
-            <mat-icon color="primary">date_range</mat-icon>
+          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registroActividad)">
+            <mat-icon color="primary">zoom_in</mat-icon>
           </button>
         </td>
       </ng-container>
 
+      <ng-container *ngFor="let fechaColumna of displayedColumns.slice(2)" [matColumnDef]="fechaColumna">
+        <th mat-header-cell *matHeaderCellDef class="negrita"> {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }} </th>
+        <td mat-cell *matCellDef="let registro"> <!-- Aquí va el calculo de hs --> </td>
+      </ng-container>
+      
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>

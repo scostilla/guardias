@@ -4,11 +4,9 @@ import { DdjjCargoyagrupCalendarComponent } from '../ddjj-cargoyagrup-calendar/d
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
-import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import {TooltipPosition, MatTooltipModule} from '@angular/material/tooltip';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -26,25 +24,22 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   positionOptions: TooltipPosition[] = ['after', 'before', 'above', 'below', 'left', 'right'];
   position = new FormControl(this.positionOptions[0]);
-  diasEnMes?: moment.Moment[];
-  totalHoras?: number;
-
+  diasEnMes: moment.Moment[] = [];
 
   @ViewChild(MatTable) table!: MatTable<RegistroActividad>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'servicio', 'fechas', /*'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
+  displayedColumns: string[] = ['asistencial', 'acciones'];
   dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
   registroActividad!: RegistroActividad;
-  registros!: any[];
+  dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
+
 
   constructor(
     private registroActividadService: RegistroActividadService,
     private dialog: MatDialog,
-    private toastr: ToastrService,
-    private router: Router,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -59,7 +54,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
-    moment.locale('es');
     this.generarDiasDelMes();
 
     this.listRegistroActividad();
@@ -103,19 +97,32 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   generarDiasDelMes(): void {
-    this.diasEnMes = [];
     const startOfMonth = moment([2024, 4, 1]); // Mayo 2024
     const endOfMonth = startOfMonth.clone().endOf('month');
-
     let day = startOfMonth;
 
     while(day <= endOfMonth) {
-      this.diasEnMes.push(day.clone());
+      this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
   }
 
-  calcularTotalHoras(fecha: moment.Moment, data: RegistroActividad): string {
+  getFechaFromColumnId(columnId: string): Date {
+    return moment(columnId, 'YYYY_MM_DD').toDate();
+  }
+
+  openDetail(registroActividad: RegistroActividad): void {
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, { 
+      width: '600px',
+      data: registroActividad
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+
+   /*calcularTotalHoras(fecha: moment.Moment, data: RegistroActividad): string {
     if (data.fechaEgreso && data.horaEgreso) {
       const inicio = moment(data.fechaIngreso + 'T' + data.horaIngreso);
       const fin = moment(data.fechaEgreso + 'T' + data.horaEgreso);
@@ -127,7 +134,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*getColor(fecha: moment.Moment, data: RegistroActividad): string {
+ getColor(fecha: moment.Moment, data: RegistroActividad): string {
     if (fecha.isSame(data.fechaIngreso, 'day')) {
       return data.tipoGuardia === 1 ? '#91A8DA' : data.tipoGuardia === 2 ? '#F4AF88' : '';
     }
