@@ -11,7 +11,7 @@ import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
-
+import * as moment from 'moment';
 
 
 @Component({
@@ -35,7 +35,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   registrosMensuales: RegistroMensual[] = [];
   asistentes: any[] = [];
-  suscripcion!: Subscription;
+  
+  registroActividad!: RegistroActividad;
+  dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -116,6 +118,21 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return legajoActual ? legajoActual : undefined;
   } 
 
+  generarDiasDelMes(): void {
+    const startOfMonth = moment([2024, 4, 1]); // Mayo 2024
+    const endOfMonth = startOfMonth.clone().endOf('month');
+    let day = startOfMonth;
+
+    while(day <= endOfMonth) {
+      this.displayedColumns.push(day.format('YYYY_MM_DD'));
+      day.add(1, 'day');
+    }
+  }
+
+  getFechaFromColumnId(columnId: string): Date {
+    return moment(columnId, 'YYYY_MM_DD').toDate();
+  }
+
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }
@@ -136,6 +153,13 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('El diálogo se cerró');
+    });
+  }
+
+  openDetail(registroActividad: RegistroActividad): void {
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+      width: '600px',
+      data: registroActividad // Aquí pasas el objeto
     });
   }
 

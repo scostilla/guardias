@@ -1,38 +1,17 @@
-<h1 mat-dialog-title>GUARDIAS ACTIVAS
-  <h5>{{ data.nombreAsistencial }} {{ data.apellidoAsistencial }}</h5>
+
+<h1 mat-dialog-title>DETALLE PROFESIONAL:
 </h1>
-<div class="col-sm-10 offset-1">
-  <div class="center-content">
-    <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
-    <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
-  </div>
-<mat-dialog-content>
-  <div class="table-responsive">
-    <table class="table table-hover table-bordered table-sm caption-top">
-      <thead class="thead-gris">
-        <tr>
-          <th *ngFor="let fecha of diasEnMes">{{ fecha.format('ddd DD').replace('.', '') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td *ngFor="let fecha of diasEnMes">
-            <span *ngIf="fecha.isSame(data.fechaIngreso, 'day')" [ngStyle]="{'font-weight': 'bold', 'color': getColor(fecha)}">
-              <span *ngIf="data.fechaEgreso && data.horaEgreso; else faltaEgreso">
-                {{ calcularTotalHoras(fecha) }}
-              </span>
-              <ng-template #faltaEgreso>
-                <span matTooltip="Aún debe completarse el egreso del día" style="cursor: default;">
-                  S/E
-                </span>
-              </ng-template>
-            </span>
-                </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div mat-dialog-actions class="action mt-4">
-    <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
-</div>
-</mat-dialog-content>
+
+  <mat-dialog-content>
+    <table class="table">
+        <tbody>
+          <tr class="bg-light">
+            <th scope="row">Apellido y nombre</th>
+            <td>{{registroActividad.asistencial.apellido}}, {{registroActividad.asistencial.nombre}}</td>
+          </tr>    
+        </tbody>
+      </table>
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>
