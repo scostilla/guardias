@@ -8,18 +8,17 @@ import { RegistroActividad } from 'src/app/models/RegistroActividad';
   styleUrls: ['./ddjj-cargoyagrup-calendar.component.css']
 })
 export class DdjjCargoyagrupCalendarComponent implements OnInit {
-
   registroActividad!: RegistroActividad;
 
   constructor(
-    private dialogRef: MatDialogRef<DdjjCargoyagrupCalendarComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: RegistroActividad 
-  ) { }
+    public dialogRef: MatDialogRef<DdjjCargoyagrupCalendarComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: RegistroActividad
+  ) {}
 
   ngOnInit(): void {
     this.registroActividad = this.data;
   }
-
+  
   cerrar(): void {
     this.dialogRef.close();
   }

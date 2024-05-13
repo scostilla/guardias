@@ -2,14 +2,11 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjCargoyagrupCalendarComponent } from '../ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import {TooltipPosition, MatTooltipModule} from '@angular/material/tooltip';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import * as moment from 'moment';
 
 
@@ -22,14 +19,11 @@ import * as moment from 'moment';
 
 export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
-  positionOptions: TooltipPosition[] = ['after', 'before', 'above', 'below', 'left', 'right'];
-  position = new FormControl(this.positionOptions[0]);
-  diasEnMes: moment.Moment[] = [];
-
   @ViewChild(MatTable) table!: MatTable<RegistroActividad>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  diasEnMes: moment.Moment[] = [];
   displayedColumns: string[] = ['asistencial', 'acciones'];
   dataSource!: MatTableDataSource<RegistroActividad>;
   suscription!: Subscription;
@@ -112,15 +106,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   openDetail(registroActividad: RegistroActividad): void {
-    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, { 
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
       width: '600px',
-      data: registroActividad
+      data: registroActividad // Aquí pasas el objeto
     });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
-    });
-    }
-
+  }
 
    /*calcularTotalHoras(fecha: moment.Moment, data: RegistroActividad): string {
     if (data.fechaEgreso && data.horaEgreso) {
@@ -139,27 +129,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       return data.tipoGuardia === 1 ? '#91A8DA' : data.tipoGuardia === 2 ? '#F4AF88' : '';
     }
     return '';
-  }*/
-
-
-  abrirCalendarioDialog(registro: RegistroActividad) {
-    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-      width: '700px',
-      data: {
-        fechaIngreso: registro.fechaIngreso,
-        horaIngreso: registro.horaIngreso,
-        fechaEgreso: registro.fechaEgreso,
-        horaEgreso: registro.horaEgreso,
-        nombreAsistencial: registro.asistencial.nombre,
-        apellidoAsistencial: registro.asistencial.apellido,
-        tipoGuardia: registro.tipoGuardia.id
-      }
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró');
-    });
   }
+
 
   getLegajoActualId(asistencial: Asistencial): number | undefined {
     const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
@@ -186,7 +157,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return novedadActual ? novedadActual.descripcion : undefined;
   }
 
-  /*  today:number = new Date(2023,7,0).getDate();//31
+    today:number = new Date(2023,7,0).getDate();//31
   numberOfMonth: Array<number> = new Array<number>();
 
   daysOfMonth: Array<Date> = new Array<Date>(); 

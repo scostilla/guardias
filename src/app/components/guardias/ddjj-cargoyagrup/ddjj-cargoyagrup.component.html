@@ -45,9 +45,9 @@
 
       <ng-container matColumnDef="asistencial" sticky>
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido y Nombre </th>
-        <td mat-cell *matCellDef="let registroActividad"><span matTooltip="Cuil: {{registroActividad.asistencial.cuil}}" [matTooltipPosition]="position.value!">
+        <td mat-cell *matCellDef="let registroActividad">
           {{registroActividad.asistencial.apellido}},
-          {{registroActividad.asistencial.nombre}} </span></td>
+          {{registroActividad.asistencial.nombre}} </td>
       </ng-container>
 
       <!--<ng-container matColumnDef="fechas" >
