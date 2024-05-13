@@ -1,17 +1,14 @@
-
-<h1 mat-dialog-title>DETALLE PROFESIONAL:
-</h1>
-
-  <mat-dialog-content>
-    <table class="table">
-        <tbody>
-          <tr class="bg-light">
-            <th scope="row">Apellido y nombre</th>
-            <td>{{registroActividad.asistencial.apellido}}, {{registroActividad.asistencial.nombre}}</td>
-          </tr>    
-        </tbody>
-      </table>
-    <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
-    </div>
-  </mat-dialog-content>
+<h1 mat-dialog-title>DETALLE PROFESIONAL:</h1>
+<mat-dialog-content>
+  <table class="table">
+    <tbody>
+      <tr class="bg-light">
+        <th scope="row">Apellido y nombre</th>
+        <td>{{registroMensual.asistencial.apellido}}, {{registroMensual.asistencial.nombre}}</td>
+      </tr>    
+    </tbody>
+  </table>
+  <div mat-dialog-actions class="action mt-4">
+    <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>

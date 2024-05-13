@@ -22,15 +22,15 @@ import * as moment from 'moment';
 
 export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
-
   @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['asistencial', 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal', 'acciones'];
+  displayedColumns: string[] = ['asistencial', /*'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   registros!: any[];
+  diasEnMes: moment.Moment[] = [];
 
 
   registrosMensuales: RegistroMensual[] = [];
@@ -62,6 +62,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+
+    this.generarDiasDelMes();
 
     this.loadRegistrosMensuales();
 
@@ -137,31 +139,12 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.suscription?.unsubscribe();
   }
 
-  abrirCalendarioDialog(registro: RegistroActividad) {
-    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-      width: '700px',
-      data: {
-        nombreAsistencial: registro.asistencial.nombre,
-        apellidoAsistencial: registro.asistencial.apellido,
-        fechaIngreso: registro.fechaIngreso,
-        horaIngreso: registro.horaIngreso,
-        fechaEgreso: registro.fechaEgreso,
-        horaEgreso: registro.horaEgreso,
-        tipoGuardia: registro.tipoGuardia.id
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró');
-    });
-  }
-
-  openDetail(registroActividad: RegistroActividad): void {
-    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-      width: '600px',
-      data: registroActividad // Aquí pasas el objeto
-    });
-  }
+openDetail(registro: RegistroMensual): void {
+  this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+    width: '600px',
+    data: registro
+  });
+}
 
   /* applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
