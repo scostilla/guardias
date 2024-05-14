@@ -63,6 +63,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    moment.locale('es');
+
     this.generarDiasDelMes();
 
     this.loadRegistrosMensuales();
@@ -86,6 +88,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         console.error('Error al cargar los registros mensuales:', error);
       }
     );
+    console.log('Registros mensuales:', this.registrosMensuales);
   }
 
   loadAsistentesForRegistros(): void {
@@ -146,7 +149,49 @@ openDetail(asistencial: Asistencial): void {
   });
 }
 
-calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
+calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
+  console.log('Fecha proporcionada:', date);
+  let output = '';
+
+  // Buscar un registro que coincida con la fecha proporcionada
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+
+  // Si no hay registro, retornar celda vacía
+  if (!registro) {
+    return '';
+  }
+
+  // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
+  if (registro.fechaIngreso && !registro.fechaEgreso) {
+    return 'Sin egreso';
+  }
+
+  // Si hay fechas de ingreso y egreso, calcular las horas
+  if (registro.fechaIngreso && registro.fechaEgreso) {
+    const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
+    const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
+    // Asegurarse de que las horas de ingreso y egreso son válidas
+    if (hoursIn.isValid() && hoursOut.isValid()) {
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+      // Verificar que la diferencia de horas no sea cero
+      if (diffHours > 0) {
+        output = `${diffHours.toFixed(2)} hrs`; // Redondear a dos decimales
+      } else {
+        output = '0.00 hrs'; // Si la diferencia es cero, mostrar 0.00 hrs
+      }
+    } else {
+      output = 'Datos inválidos'; // Si las horas no son válidas, mostrar mensaje de error
+    }
+  }
+
+  // Devolver el total de horas o el texto correspondiente
+  return output;
+}
+
+/*calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
   let totalHours = 0;
   
   // Iterar sobre los registros de actividad
@@ -172,7 +217,7 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): num
 
   // Devolver el total de horas
   return totalHours;
-}
+}*/
 
 //6to intento
 /* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {

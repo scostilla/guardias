@@ -6,15 +6,15 @@
         <th scope="row">Apellido y nombre</th>
         <td>{{asistencial.apellido}}, {{asistencial.nombre}}</td>
       </tr>    
-      <tr class="bg-light">
+      <tr>
         <th scope="row">CUIL</th>
         <td>{{asistencial.cuil}}</td>
       </tr>    
-      <tr class="bg-light">
+      <tr>
         <th scope="row">Vínculo laboral</th>
         <td>{{getLegajoActualId(asistencial)?.revista?.tipoRevista?.nombre}}</td>
       </tr>    
-      <tr class="bg-light">
+      <tr>
         <th scope="row">Categoria</th>
         <td>
           {{getLegajoActualId(asistencial)?.revista?.categoria?.nombre +'('+getLegajoActualId(asistencial)?.revista?.adicional?.nombre+')'}}
