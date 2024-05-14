@@ -24,6 +24,17 @@
       </mat-form-field>
     </div>
   </div>
+
+  <div class="row">
+    <div class="row">
+      <div class="col-6">Estás viendo:
+        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Servicio 1 <mat-icon>expand_more</mat-icon></button>
+        <mat-menu #menug="matMenu">
+          <button mat-menu-item routerLink="/no-asistencial">Ver <span class="negrita">Servicio 2</span></button>
+        </mat-menu>
+      </div>
+    </div>
+
   <table class="table table-sm  table-borderless">
     <thead class="col-center thead-celeste">
       <tr>
