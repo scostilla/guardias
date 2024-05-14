@@ -124,10 +124,12 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   } 
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment([2024, 0, 1]); // Mayo 2024
+    const startOfMonth = moment([2024, 0, 1]); // Enero 2024
     const endOfMonth = startOfMonth.clone().endOf('month');
     let day = startOfMonth;
-
+  
+    this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
+  
     while(day <= endOfMonth) {
       this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
@@ -152,11 +154,15 @@ openDetail(asistencial: Asistencial): void {
 calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
   console.log('Fecha proporcionada:', date);
   let output = '';
+  const mesDeInteres = 0; // Enero es 0 en JavaScript Date
+  const anioDeInteres = 2024;
 
-  // Buscar un registro que coincida con la fecha proporcionada
+  // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
-    return ingresoDate.isSame(date, 'day');
+    return ingresoDate.isSame(date, 'day') &&
+           ingresoDate.month() === mesDeInteres &&
+           ingresoDate.year() === anioDeInteres;
   });
 
   // Si no hay registro, retornar celda vacía
