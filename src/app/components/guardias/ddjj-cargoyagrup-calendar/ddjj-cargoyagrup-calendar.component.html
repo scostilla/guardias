@@ -1,14 +1,28 @@
-<!-- <h1 mat-dialog-title>DETALLE PROFESIONAL:</h1>
+<h1 mat-dialog-title>DETALLE PROFESIONAL:</h1>
 <mat-dialog-content>
   <table class="table">
     <tbody>
       <tr class="bg-light">
         <th scope="row">Apellido y nombre</th>
-        <td>{{registroMensual.asistencial.apellido}}, {{registroMensual.asistencial.nombre}}</td>
+        <td>{{asistencial.apellido}}, {{asistencial.nombre}}</td>
       </tr>    
+      <tr class="bg-light">
+        <th scope="row">CUIL</th>
+        <td>{{asistencial.cuil}}</td>
+      </tr>    
+      <tr class="bg-light">
+        <th scope="row">Vínculo laboral</th>
+        <td>{{getLegajoActualId(asistencial)?.revista?.tipoRevista?.nombre}}</td>
+      </tr>    
+      <tr class="bg-light">
+        <th scope="row">Categoria</th>
+        <td>
+          {{getLegajoActualId(asistencial)?.revista?.categoria?.nombre +'('+getLegajoActualId(asistencial)?.revista?.adicional?.nombre+')'}}
+        </td>
+      </tr>      
     </tbody>
   </table>
   <div mat-dialog-actions class="action mt-4">
     <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
   </div>
-</mat-dialog-content> -->
+</mat-dialog-content>
