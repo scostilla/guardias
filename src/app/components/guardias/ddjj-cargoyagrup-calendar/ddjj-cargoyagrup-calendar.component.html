@@ -20,6 +20,12 @@
           {{getLegajoActualId(asistencial)?.revista?.categoria?.nombre +'('+getLegajoActualId(asistencial)?.revista?.adicional?.nombre+')'}}
         </td>
       </tr>      
+      <tr>
+        <th scope="row">Novedad</th>
+        <td>
+          {{getNovedadActualId(asistencial)?.descripcion}}
+        </td>
+      </tr>      
     </tbody>
   </table>
   <div mat-dialog-actions class="action mt-4">

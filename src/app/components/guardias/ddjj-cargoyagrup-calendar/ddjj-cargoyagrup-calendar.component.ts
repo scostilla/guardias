@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
+import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 
 @Component({
   selector: 'app-ddjj-cargoyagrup-calendar',
@@ -26,6 +27,11 @@ export class DdjjCargoyagrupCalendarComponent implements OnInit {
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
     const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
     return legajoActual ? legajoActual : undefined;
+  } 
+
+  getNovedadActualId(asistencial: Asistencial): NovedadPersonal | undefined {
+    const novedadActual = asistencial.novedadesPersonales.find(novedadPersonal => novedadPersonal.actual);
+    return novedadActual ? novedadActual : undefined;
   } 
   
   cerrar(): void {

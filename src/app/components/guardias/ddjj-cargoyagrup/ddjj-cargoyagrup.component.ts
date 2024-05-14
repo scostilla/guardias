@@ -26,7 +26,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['apellido', 'nombre', 'cuil', /*'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
+  displayedColumns: string[] = ['apellido', 'nombre',/* 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   registros!: any[];
@@ -160,6 +160,55 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
+    const egresoDate = moment(actividad.fechaEgreso);
+    return ingresoDate.isSame(date, 'day') &&
+           ingresoDate.month() === mesDeInteres &&
+           ingresoDate.year() === anioDeInteres ;
+  });
+
+  // Si no hay registro, retornar celda vacía
+  if (!registro) {
+    return '';
+  }
+
+  // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
+  if (registro.fechaIngreso && !registro.fechaEgreso) {
+    return 'Sin egreso';
+  }
+
+  // Si hay fechas de ingreso y egreso, calcular las horas
+  if (registro.fechaIngreso && registro.fechaEgreso) {
+    const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+    const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+    // Asegurarse de que las horas de ingreso y egreso son válidas
+    if (hoursIn.isValid() && hoursOut.isValid()) {
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+      // Verificar que la diferencia de horas no sea cero
+      if (diffHours > 0) {
+        // Muestra la diferencia de horas como un número entero
+        output = `${Math.round(diffHours)}`; 
+        //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
+      } else {
+        output = '0'; // Si la diferencia es cero, mostrar 0.00 hrs
+      }
+    } else {
+      output = 'Datos inválidos'; // Si las horas no son válidas, mostrar mensaje de error
+    }
+  }
+
+  // Devolver el total de horas o el texto correspondiente
+  return output;
+}
+
+/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
+  console.log('Fecha proporcionada:', date);
+  let output = '';
+  const mesDeInteres = 0; // Enero es 0 en JavaScript Date
+  const anioDeInteres = 2024;
+
+  // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
     return ingresoDate.isSame(date, 'day') &&
            ingresoDate.month() === mesDeInteres &&
            ingresoDate.year() === anioDeInteres;
@@ -179,6 +228,9 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   if (registro.fechaIngreso && registro.fechaEgreso) {
     const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
     const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
+
+    console.log('#######  ingreso: '+ hoursIn);
+
     // Asegurarse de que las horas de ingreso y egreso son válidas
     if (hoursIn.isValid() && hoursOut.isValid()) {
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
@@ -195,7 +247,7 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
 
   // Devolver el total de horas o el texto correspondiente
   return output;
-}
+} */
 
 /*calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
   let totalHours = 0;
@@ -224,154 +276,6 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   // Devolver el total de horas
   return totalHours;
 }*/
-
-//6to intento
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  
-  // Iterar sobre los registros de actividad
-  for (let i = 0; i < registroActividades.length; i++) {
-    const registro = registroActividades[i];
-    const ingresoDate = new Date(registro.fechaIngreso);
-    console.log('########## fecha date ' +  date.getTime());
-    console.log('########## fecha ingreso' + ingresoDate.getTime());
-    
-    // Verificar si la fecha de ingreso coincide con la fecha proporcionada
-    if (
-      ingresoDate.getTime() === date.getTime() // Comparar las fechas completas
-    ) {
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-      
-      // Si se encuentra un registro que coincide con la fecha, se detiene el bucle
-      break;
-    }
-  }
-
-  // Devolver el total de horas
-  return totalHours;
-} */
-
-//5to intento
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  
-  // Iterar sobre los registros de actividad
-  for (let i = 0; i < registroActividades.length; i++) {
-    const registro = registroActividades[i];
-    const ingresoDate = new Date(registro.fechaIngreso);
-    console.log('########## fecha date ' + date.getDate());
-    console.log('########## fecha ingreso' + registro.fechaIngreso);
-    
-    // Verificar si la fecha de ingreso coincide con la fecha proporcionada
-    if (
-      ingresoDate.getDate() === date.getDate() &&
-      ingresoDate.getMonth() === date.getMonth() &&
-      ingresoDate.getFullYear() === date.getFullYear()
-    ) {
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-      
-      // Si se encuentra un registro que coincide con la fecha, se detiene el bucle
-      break;
-    }
-  }
-
-  // Devolver el total de horas
-  return totalHours;
-} */
-
-//4to intnto
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  let hasMatchingRecord = false; // Flag para indicar si se encontró al menos un registro que coincida con la fecha
-  
-  // Iterar sobre los registros de actividad
-  registroActividades.forEach(registro => {
-    const ingresoDate = new Date(registro.fechaIngreso);
-    console.log('########## fecha date '+ date.getDate());
-    console.log('########## fecha ingreso'+ registro.fechaIngreso);
-    
-    // Verificar si la fecha de ingreso coincide con la fecha proporcionada
-    if (
-      ingresoDate.getDate() === date.getDate() &&
-      ingresoDate.getMonth() === date.getMonth() &&
-      ingresoDate.getFullYear() === date.getFullYear()
-    ) {
-      hasMatchingRecord = true;
-      
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-    }
-  });
-
-  // Si se encontró al menos un registro que coincida con la fecha, devolver el total de horas, de lo contrario, devolver 0
-  return hasMatchingRecord ? totalHours : 0;
-} */
-
-//3er intento
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  let hasMatchingRecord = false; // Flag para indicar si se encontró al menos un registro que coincida con la fecha
-  
-  // Iterar sobre los registros de actividad
-  registroActividades.forEach(registro => {
-    const ingresoDate = new Date(registro.fechaIngreso);
-    console.log('########## fecha date '+ date.getDate());
-    console.log('########## fecha ingreso'+ registro.fechaIngreso);
-    
-    // Verificar si la fecha de ingreso coincide con la fecha proporcionada
-    if (ingresoDate.getDate() === date.getDate() && ingresoDate.getMonth() === date.getMonth() && ingresoDate.getFullYear() === date.getFullYear()) {
-      hasMatchingRecord = true;
-      
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-    }
-  });
-
-  // Si se encontró al menos un registro que coincida con la fecha, devolver el total de horas, de lo contrario, devolver 0
-  return hasMatchingRecord ? totalHours : 0;
-} */
-
-//2do intento
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  registroActividades.forEach(registro => {
-    console.log('########## id '+ registro.id);
-    console.log('########## fecha ingreso'+ registro.fechaIngreso);
-    const ingresoDate = new Date(registro.fechaIngreso);
-    if (ingresoDate.getDate() === date.getDate() && ingresoDate.getMonth() === date.getMonth() && ingresoDate.getFullYear() === date.getFullYear()) {
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-    }
-  });
-  return totalHours;
-} */
-
-//primer intento
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  registroActividades.forEach(registro => {
-    console.log('##########'+ registro.fechaIngreso);
-    if (registro.fechaIngreso <= date && date <= registro.fechaEgreso) {
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-    }
-  });
-  return totalHours;
-} */
 
   /* applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
