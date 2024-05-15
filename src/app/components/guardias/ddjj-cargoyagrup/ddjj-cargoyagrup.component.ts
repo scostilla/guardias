@@ -14,6 +14,7 @@ import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import * as moment from 'moment';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 
 
 
@@ -32,12 +33,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['apellido', 'nombre',/* 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
-  registros!: any[];
 
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
-  asistentes: any[] = [];
+  asistenciales: any[] = [];
   
   registroActividad!: RegistroActividad;
   dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
@@ -60,9 +60,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       return `${start} - ${end} de ${length}`;
     };
   }
-
-  asistencialesMap: Map<number, Asistencial> = new Map<number, Asistencial>(); // Mapa para almacenar nombres y apellidos de asistenciales
-
 
   ngOnInit(): void {
 
@@ -95,14 +92,13 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         console.error('Error al cargar los registros mensuales:', error);
       }
     );
-    /*console.log('Registros mensuales:', this.registrosMensuales);*/
   }
 
   loadAsistentesForRegistros(): void {
-    const idsAsistentes = this.registrosMensuales.map(registro => registro.idAsistencial);
-    this.asistencialService.getByIds(idsAsistentes).subscribe(
-      (asistentes: Asistencial[]) => {
-        this.asistentes = asistentes;
+    const idsAsistenciales = this.registrosMensuales.map(registro => registro.idAsistencial);
+    this.asistencialService.getByIds(idsAsistenciales).subscribe(
+      (asistencial: Asistencial[]) => {
+        this.asistenciales = asistencial;
         // Una vez que se cargan los asistentes, actualiza la tabla
         this.updateTableDataSource();
       },
@@ -114,10 +110,10 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   updateTableDataSource(): void {
     const dataToShow = this.registrosMensuales.map(registro => {
-      const asistente = this.asistentes.find(as => as.id === registro.idAsistencial);
+      const asistencial = this.asistenciales.find(as => as.id === registro.idAsistencial);
       return {
         ...registro,
-        asistencial: asistente ? asistente : null
+        asistencial: asistencial ? asistencial : null
       };
     });
     this.dataSource = new MatTableDataSource<RegistroMensual>(dataToShow);
@@ -176,8 +172,61 @@ isWeekend(date: Date): boolean {
   return day === 0 || day === 6;
 }
 
+/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
+  let output = '';
+  const mesDeInteres = 0; // Enero es 0 en JavaScript Date
+  const anioDeInteres = 2024;
+
+  // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    const egresoDate = moment(actividad.fechaEgreso);
+    return ingresoDate.isSame(date, 'day') &&
+           ingresoDate.month() === mesDeInteres &&
+           ingresoDate.year() === anioDeInteres ;
+  });
+
+  // Si no hay registro, retornar celda vacía
+  if (!registro) {
+    return '';
+  }
+
+  // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
+  for (let actividad of registroActividades) {
+    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+      return 'sin egreso';
+    }
+  }
+  
+  // Verificar si registro.tipoGuardia y registro.tipoGuardia.id no son undefined
+  if (registro.tipoGuardia && registro.tipoGuardia.id !== undefined) {
+    const color = this.getColor(registro.tipoGuardia);
+
+    // Si hay fechas de ingreso y egreso, calcular las horas
+    if (registro.fechaIngreso && registro.fechaEgreso) {
+      const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+      const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+      // Asegurarse de que las horas de ingreso y egreso son válidas
+      if (hoursIn.isValid() && hoursOut.isValid()) {
+        const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+        // Verificar que la diferencia de horas no sea cero
+        if (diffHours > 0) {
+          // Muestra la diferencia de horas como un número entero
+          output = `${Math.round(diffHours)}`; 
+        } else {
+          output = '0'; // Si la diferencia es cero, mostrar 0.00 hrs
+        }
+      } else {
+        output = 'Datos inválidos'; // Si las horas no son válidas, mostrar mensaje de error
+      }
+    }
+  }
+
+  // Devolver el total de horas o el texto correspondiente
+  return output;
+} */
+
 calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-  /*console.log('Fecha proporcionada:', date);*/
   let output = '';
   const mesDeInteres = 0; // Enero es 0 en JavaScript Date
   const anioDeInteres = 2024;
@@ -212,9 +261,18 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
       // Verificar que la diferencia de horas no sea cero
       if (diffHours > 0) {
-        // Muestra la diferencia de horas como un número entero
-        output = `${Math.round(diffHours)}`; 
+        // Obtener el color de la fuente según el tipoGuardia
+        const color = this.getColor(registro.tipoGuardia);
+        // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
+        output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`; 
         //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
+      
+        
+        
+        
+        /* // Muestra la diferencia de horas como un número entero
+        output = `${Math.round(diffHours)}`; 
+        //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales */
       } else {
         output = '0'; // Si la diferencia es cero, mostrar 0.00 hrs
       }
@@ -227,7 +285,19 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   return output;
 }
 
-/*getColor(fecha: Date, tipoGuardia: TipoGuardia): string {
+getColor(tipoGuardia: TipoGuardia): string {
+  if (tipoGuardia && tipoGuardia.id) {
+    if (tipoGuardia.id === 1) {
+      return '#91A8DA'; // Color para CARGO
+    } else if (tipoGuardia.id === 2) {
+      return '#F4AF88'; // Color para REAGRUPACION DE HS
+    }
+  }
+  return ''; // Color por defecto
+}
+
+
+/* getColor(fecha: Date, tipoGuardia: TipoGuardia): string {
   let fechaMoment = moment(fecha);
   if (fechaMoment.isSame(moment(this.data.fechaIngreso), 'day')) {
     // Verificar que tipoGuardia está definido y tiene una propiedad 'id'
@@ -236,7 +306,7 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
     }
   }
   return '';
-}*/
+} */
 
 /* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
   console.log('Fecha proporcionada:', date);
