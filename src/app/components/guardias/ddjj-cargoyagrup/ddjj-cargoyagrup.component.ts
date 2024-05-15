@@ -12,11 +12,9 @@ import { RegistroMensualService } from 'src/app/services/registroMensual.service
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import * as moment from 'moment';
-import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
-import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
+import { Feriado } from 'src/app/models/Configuracion/Feriado';
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-
-
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
@@ -38,8 +36,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
   asistenciales: any[] = [];
-  
-  registroActividad!: RegistroActividad;
+
   dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
 
   constructor(
@@ -124,266 +121,129 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
     const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
     return legajoActual ? legajoActual : undefined;
-  } 
+  }
 
   generarDiasDelMes(): void {
     const startOfMonth = moment([2024, 0, 1]); // Enero 2024
     const endOfMonth = startOfMonth.clone().endOf('month');
     let day = startOfMonth;
-  
+
     this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
-  
-    while(day <= endOfMonth) {
+
+    while (day <= endOfMonth) {
       this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
   }
 
+  //ok
   getFechaFromColumnId(columnId: string): Date {
     return moment(columnId, 'YYYY_MM_DD').toDate();
+  }
+
+  openDetail(asistencial: Asistencial): void {
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+      width: '600px',
+      data: asistencial
+    });
+  }
+
+  isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
+    const dateMoment = moment(date).startOf('day');
+    const feriadoFound = this.feriados.find(feriado => {
+      const feriadoMoment = moment(feriado.fecha).startOf('day');
+      return dateMoment.isSame(feriadoMoment);
+    });
+
+    return {
+      isHoliday: !!feriadoFound,
+      motivo: feriadoFound ? feriadoFound.motivo : ''
+    };
+  }
+
+  isWeekend(date: Date): boolean {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+
+  calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
+    let output = '';
+    const mesDeInteres = 0; // Enero es 0 en JavaScript Date
+    const anioDeInteres = 2024;
+
+    const registro = registroActividades.find((actividad) => {
+      const ingresoDate = moment(actividad.fechaIngreso);
+      return ingresoDate.isSame(date, 'day') &&
+        ingresoDate.month() === mesDeInteres &&
+        ingresoDate.year() === anioDeInteres;
+    });
+    
+    if (!registro) return '';
+
+    for (let actividad of registroActividades) {
+      if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+        return 'sin egreso';
+      }
+    }
+    // Si hay fechas de ingreso y egreso, calcular las horas
+    if (registro.fechaIngreso && registro.fechaEgreso) {
+      const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+      const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+
+      if (hoursIn.isValid() && hoursOut.isValid()) {
+        const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+
+        if (diffHours > 0) {
+          // Obtener el color de la fuente según el tipoGuardia
+          const color = this.getColor(registro.tipoGuardia);
+          // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
+          output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`;
+          //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
+        } else {
+          output = '0';
+        }
+      } else {
+        output = 'Datos inválidos';
+      }
+    }
+    return output;
+  }
+
+  getColor(tipoGuardia: TipoGuardia): string {
+    if (tipoGuardia && tipoGuardia.id) {
+      if (tipoGuardia.id === 1) {
+        return '#91A8DA'; // Color para CARGO
+      } else if (tipoGuardia.id === 2) {
+        return '#F4AF88'; // Color para REAGRUPACION DE HS
+      }
+    }
+    return ''; // Color por defecto
+  }
+  
+  calculateHoursColor(registroActividad: RegistroActividad[], date: Date): string {
+    const registro = registroActividad.find((actividad) => {
+      const ingresoDate = moment(actividad.fechaIngreso);
+      return ingresoDate.isSame(date, 'day');
+    });
+
+    if (!registro) {
+      return '';
+    }
+
+    const tipoGuardia = registro.tipoGuardia;
+    if (tipoGuardia && tipoGuardia.id) {
+      if (tipoGuardia.id === 1) {
+        return '#91A8DA'; // Color para CARGO
+      } else if (tipoGuardia.id === 2) {
+        return '#F4AF88'; // Color para REAGRUPACION DE HS
+      }
+    }
+    return ''; // Color por defecto
   }
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }
-
-openDetail(asistencial: Asistencial): void {
-  this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-    width: '600px',
-    data: asistencial
-  });
-}
-
-isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
-  const dateMoment = moment(date).startOf('day');
-  const feriadoFound = this.feriados.find(feriado => {
-    const feriadoMoment = moment(feriado.fecha).startOf('day');
-    return dateMoment.isSame(feriadoMoment);
-  });
-
-  return {
-    isHoliday: !!feriadoFound,
-    motivo: feriadoFound ? feriadoFound.motivo : ''
-  };
-}
-
-isWeekend(date: Date): boolean {
-  const day = date.getDay();
-  return day === 0 || day === 6;
-}
-
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-  let output = '';
-  const mesDeInteres = 0; // Enero es 0 en JavaScript Date
-  const anioDeInteres = 2024;
-
-  // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
-  const registro = registroActividades.find((actividad) => {
-    const ingresoDate = moment(actividad.fechaIngreso);
-    const egresoDate = moment(actividad.fechaEgreso);
-    return ingresoDate.isSame(date, 'day') &&
-           ingresoDate.month() === mesDeInteres &&
-           ingresoDate.year() === anioDeInteres ;
-  });
-
-  // Si no hay registro, retornar celda vacía
-  if (!registro) {
-    return '';
-  }
-
-  // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
-  for (let actividad of registroActividades) {
-    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
-      return 'sin egreso';
-    }
-  }
-  
-  // Verificar si registro.tipoGuardia y registro.tipoGuardia.id no son undefined
-  if (registro.tipoGuardia && registro.tipoGuardia.id !== undefined) {
-    const color = this.getColor(registro.tipoGuardia);
-
-    // Si hay fechas de ingreso y egreso, calcular las horas
-    if (registro.fechaIngreso && registro.fechaEgreso) {
-      const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
-      const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
-      // Asegurarse de que las horas de ingreso y egreso son válidas
-      if (hoursIn.isValid() && hoursOut.isValid()) {
-        const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-        // Verificar que la diferencia de horas no sea cero
-        if (diffHours > 0) {
-          // Muestra la diferencia de horas como un número entero
-          output = `${Math.round(diffHours)}`; 
-        } else {
-          output = '0'; // Si la diferencia es cero, mostrar 0.00 hrs
-        }
-      } else {
-        output = 'Datos inválidos'; // Si las horas no son válidas, mostrar mensaje de error
-      }
-    }
-  }
-
-  // Devolver el total de horas o el texto correspondiente
-  return output;
-} */
-
-calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-  let output = '';
-  const mesDeInteres = 0; // Enero es 0 en JavaScript Date
-  const anioDeInteres = 2024;
-
-  // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
-  const registro = registroActividades.find((actividad) => {
-    const ingresoDate = moment(actividad.fechaIngreso);
-    const egresoDate = moment(actividad.fechaEgreso);
-    return ingresoDate.isSame(date, 'day') &&
-           ingresoDate.month() === mesDeInteres &&
-           ingresoDate.year() === anioDeInteres ;
-  });
-
-  // Si no hay registro, retornar celda vacía
-  if (!registro) {
-    return '';
-  }
-
-  // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
-  for (let actividad of registroActividades) {
-    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
-      return 'sin egreso';
-    }
-  }
-  
-  // Si hay fechas de ingreso y egreso, calcular las horas
-  if (registro.fechaIngreso && registro.fechaEgreso) {
-    const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
-    const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
-    // Asegurarse de que las horas de ingreso y egreso son válidas
-    if (hoursIn.isValid() && hoursOut.isValid()) {
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      // Verificar que la diferencia de horas no sea cero
-      if (diffHours > 0) {
-        // Obtener el color de la fuente según el tipoGuardia
-        const color = this.getColor(registro.tipoGuardia);
-        // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
-        output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`; 
-        //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
-      
-        
-        
-        
-        /* // Muestra la diferencia de horas como un número entero
-        output = `${Math.round(diffHours)}`; 
-        //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales */
-      } else {
-        output = '0'; // Si la diferencia es cero, mostrar 0.00 hrs
-      }
-    } else {
-      output = 'Datos inválidos'; // Si las horas no son válidas, mostrar mensaje de error
-    }
-  }
-
-  // Devolver el total de horas o el texto correspondiente
-  return output;
-}
-
-getColor(tipoGuardia: TipoGuardia): string {
-  if (tipoGuardia && tipoGuardia.id) {
-    if (tipoGuardia.id === 1) {
-      return '#91A8DA'; // Color para CARGO
-    } else if (tipoGuardia.id === 2) {
-      return '#F4AF88'; // Color para REAGRUPACION DE HS
-    }
-  }
-  return ''; // Color por defecto
-}
-
-
-/* getColor(fecha: Date, tipoGuardia: TipoGuardia): string {
-  let fechaMoment = moment(fecha);
-  if (fechaMoment.isSame(moment(this.data.fechaIngreso), 'day')) {
-    // Verificar que tipoGuardia está definido y tiene una propiedad 'id'
-    if (tipoGuardia && tipoGuardia.id) {
-      return tipoGuardia.id === 1 ? '#91A8DA' : tipoGuardia.id === 2 ? '#F4AF88' : '';
-    }
-  }
-  return '';
-} */
-
-/* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-  console.log('Fecha proporcionada:', date);
-  let output = '';
-  const mesDeInteres = 0; // Enero es 0 en JavaScript Date
-  const anioDeInteres = 2024;
-
-  // Buscar un registro que coincida con la fecha proporcionada y que esté dentro del mes y año de interés
-  const registro = registroActividades.find((actividad) => {
-    const ingresoDate = moment(actividad.fechaIngreso);
-    return ingresoDate.isSame(date, 'day') &&
-           ingresoDate.month() === mesDeInteres &&
-           ingresoDate.year() === anioDeInteres;
-  });
-
-  // Si no hay registro, retornar celda vacía
-  if (!registro) {
-    return '';
-  }
-
-  // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
-  if (registro.fechaIngreso && !registro.fechaEgreso) {
-    return 'Sin egreso';
-  }
-
-  // Si hay fechas de ingreso y egreso, calcular las horas
-  if (registro.fechaIngreso && registro.fechaEgreso) {
-    const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-    const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-
-    console.log('#######  ingreso: '+ hoursIn);
-
-    // Asegurarse de que las horas de ingreso y egreso son válidas
-    if (hoursIn.isValid() && hoursOut.isValid()) {
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      // Verificar que la diferencia de horas no sea cero
-      if (diffHours > 0) {
-        output = `${diffHours.toFixed(2)} hrs`; // Redondear a dos decimales
-      } else {
-        output = '0.00 hrs'; // Si la diferencia es cero, mostrar 0.00 hrs
-      }
-    } else {
-      output = 'Datos inválidos'; // Si las horas no son válidas, mostrar mensaje de error
-    }
-  }
-
-  // Devolver el total de horas o el texto correspondiente
-  return output;
-} */
-
-/*calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): number {
-  let totalHours = 0;
-  
-  // Iterar sobre los registros de actividad
-  for (let i = 0; i < registroActividades.length; i++) {
-    const registro = registroActividades[i];
-    const ingresoDate = new Date(registro.fechaIngreso);
-    console.log('########## fecha date ' +  date.toDateString());
-    console.log('########## fecha ingr ' + ingresoDate.toDateString());
-    
-    // Verificar si la fecha de ingreso coincide con la fecha proporcionada
-    if (
-      ingresoDate.toDateString() === date.toDateString() // Comparar las fechas como cadenas de texto en el mismo formato
-    ) {
-      const hoursIn = moment(registro.horaIngreso, 'HH:mm:ss');
-      const hoursOut = moment(registro.horaEgreso, 'HH:mm:ss');
-      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-      totalHours += diffHours;
-      
-      // Si se encuentra un registro que coincide con la fecha, se detiene el bucle
-      break;
-    }
-  }
-
-  // Devolver el total de horas
-  return totalHours;
-}*/
 
   /* applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
