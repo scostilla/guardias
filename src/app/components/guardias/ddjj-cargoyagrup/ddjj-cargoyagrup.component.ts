@@ -12,6 +12,9 @@ import { RegistroMensualService } from 'src/app/services/registroMensual.service
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import * as moment from 'moment';
+import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
+
 
 
 @Component({
@@ -30,9 +33,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   registros!: any[];
+
   diasEnMes: moment.Moment[] = [];
-
-
+  feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
   asistentes: any[] = [];
   
@@ -42,7 +45,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   constructor(
     private registroMensualService: RegistroMensualService,
     private asistencialService: AsistencialService,
-
+    private feriadoService: FeriadoService,
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -64,6 +67,10 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     moment.locale('es');
+
+    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+      this.feriados = feriados;
+    });
 
     this.generarDiasDelMes();
 
@@ -88,7 +95,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         console.error('Error al cargar los registros mensuales:', error);
       }
     );
-    console.log('Registros mensuales:', this.registrosMensuales);
+    /*console.log('Registros mensuales:', this.registrosMensuales);*/
   }
 
   loadAsistentesForRegistros(): void {
@@ -151,8 +158,26 @@ openDetail(asistencial: Asistencial): void {
   });
 }
 
+isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
+  const dateMoment = moment(date).startOf('day');
+  const feriadoFound = this.feriados.find(feriado => {
+    const feriadoMoment = moment(feriado.fecha).startOf('day');
+    return dateMoment.isSame(feriadoMoment);
+  });
+
+  return {
+    isHoliday: !!feriadoFound,
+    motivo: feriadoFound ? feriadoFound.motivo : ''
+  };
+}
+
+isWeekend(date: Date): boolean {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
+
 calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-  console.log('Fecha proporcionada:', date);
+  /*console.log('Fecha proporcionada:', date);*/
   let output = '';
   const mesDeInteres = 0; // Enero es 0 en JavaScript Date
   const anioDeInteres = 2024;
@@ -172,10 +197,12 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   }
 
   // Si hay fecha de ingreso pero no de egreso, retornar 'Sin egreso'
-  if (registro.fechaIngreso && !registro.fechaEgreso) {
-    return 'Sin egreso';
+  for (let actividad of registroActividades) {
+    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+      return 'sin egreso';
+    }
   }
-
+  
   // Si hay fechas de ingreso y egreso, calcular las horas
   if (registro.fechaIngreso && registro.fechaEgreso) {
     const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
@@ -199,6 +226,17 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   // Devolver el total de horas o el texto correspondiente
   return output;
 }
+
+/*getColor(fecha: Date, tipoGuardia: TipoGuardia): string {
+  let fechaMoment = moment(fecha);
+  if (fechaMoment.isSame(moment(this.data.fechaIngreso), 'day')) {
+    // Verificar que tipoGuardia está definido y tiene una propiedad 'id'
+    if (tipoGuardia && tipoGuardia.id) {
+      return tipoGuardia.id === 1 ? '#91A8DA' : tipoGuardia.id === 2 ? '#F4AF88' : '';
+    }
+  }
+  return '';
+}*/
 
 /* calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
   console.log('Fecha proporcionada:', date);
