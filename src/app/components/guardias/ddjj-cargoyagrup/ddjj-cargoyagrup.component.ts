@@ -29,7 +29,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['apellido', 'nombre',/* 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
+  displayedColumns: string[] = ['apellido', 'nombre', /* 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   registros!: any[];
@@ -226,6 +226,22 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): str
   // Devolver el total de horas o el texto correspondiente
   return output;
 }
+
+/*getColorPorTipoGuardia(registroActividad: RegistroActividad): string {
+  // Comprobar si registroActividad y tipoGuardia existen antes de acceder a 'id'
+  const tipoGuardiaId = registroActividad && registroActividad.tipoGuardia && registroActividad.tipoGuardia.id;
+  if (tipoGuardiaId) {
+    switch (tipoGuardiaId) {
+      case 1:
+        return '#91A8DA'; // Color para tipoGuardia con id 1
+      case 2:
+        return '#F4AF88'; // Color para tipoGuardia con id 2
+      default:
+        return ''; // Color por defecto o puedes definir otro color
+    }
+  }
+  return ''; // Retornar color por defecto si tipoGuardia es undefined o no tiene 'id'
+}*/
 
 /*getColor(fecha: Date, tipoGuardia: TipoGuardia): string {
   let fechaMoment = moment(fecha);
