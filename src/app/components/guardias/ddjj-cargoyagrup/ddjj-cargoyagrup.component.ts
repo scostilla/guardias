@@ -16,6 +16,12 @@ import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 
+const TIPO_GUARDIA_COLORS: { [key: number]: string } = {
+  1: '#91A8DA', // Color para CARGO
+  2: '#F4AF88', // Color para REAGRUPACION DE HS
+  // ... puedes agregar más tipos de guardia y sus colores aquí
+};
+
 @Component({
   selector: 'app-ddjj-cargoyagrup',
   templateUrl: './ddjj-cargoyagrup.component.html',
