@@ -16,6 +16,9 @@ import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+
 
 
 @Component({
@@ -38,6 +41,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
   asistenciales: any[] = [];
+  servicios: Servicio[] = []; 
 
   dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
 
@@ -50,6 +54,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private registroMensualService: RegistroMensualService,
     private asistencialService: AsistencialService,
     private feriadoService: FeriadoService,
+    private servicioService: ServicioService, 
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -63,6 +68,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       const end = Math.min((page + 1) * size, length);
       return `${start} - ${end} de ${length}`;
     };
+    this.listServicio();
   }
 
   ngOnInit(): void {
@@ -80,6 +86,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
     })
+  }
+
+  listServicio(): void {
+    this.servicioService.list().subscribe(data => {
+      this.servicios = data;
+    }, error => {
+      console.log(error);
+    });
   }
 
   updateDateAndLoadData(): void {
