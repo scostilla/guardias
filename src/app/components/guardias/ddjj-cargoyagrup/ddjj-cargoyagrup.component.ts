@@ -45,6 +45,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
 
+  selectedServicio: number | null = null; 
   selectedMonth: number = moment().month();
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
