@@ -12,15 +12,11 @@ import { RegistroMensualService } from 'src/app/services/registroMensual.service
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import * as moment from 'moment';
+import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 
-const TIPO_GUARDIA_COLORS: { [key: number]: string } = {
-  1: '#91A8DA', // Color para CARGO
-  2: '#F4AF88', // Color para REAGRUPACION DE HS
-  // ... puedes agregar más tipos de guardia y sus colores aquí
-};
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
@@ -34,7 +30,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['apellido', 'nombre', /* 'cuil', 'servicio', 'vinculo', 'categoria', 'fechaIngreso', 'fechaEgreso', 'NovedadPersonal',*/ 'acciones'];
+  displayedColumns: string[] = ['apellido', 'nombre', 'acciones'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
 
@@ -44,6 +40,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   asistenciales: any[] = [];
 
   dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
+
+  selectedMonth: number = moment().month();
+  selectedYear: number = moment().year();
+  months = moment.months().map((name, value) => ({ value, name }));
+  years: number[] = [2023, 2024];
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -81,9 +82,24 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     })
   }
 
+  updateDateAndLoadData(): void {
+    this.generarDiasDelMes();
+    this.loadRegistrosMensuales();
+  
+    this.updateTableDataSource();
+  }
+
+  getMonthName(monthIndex: number): string {
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    return monthNames[monthIndex];
+  }
+
   loadRegistrosMensuales(): void {
-    const anio = 2024; // Año fijo
-    const mes = 'ENERO'; // Mes fijo
+    const anio = this.selectedYear;
+    console.log(this.selectedYear);
+    console.log(this.selectedMonth);
+    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+    console.log(mes);
     const idEfector = 1; // ID de efector fijo
 
     this.registroMensualService.listByYearMonthAndEfector(anio, mes, idEfector).subscribe(
@@ -130,7 +146,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment([2024, 0, 1]); // Enero 2024
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
     const endOfMonth = startOfMonth.clone().endOf('month');
     let day = startOfMonth;
 
@@ -174,8 +190,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
-    const mesDeInteres = 0; // Enero es 0 en JavaScript Date
-    const anioDeInteres = 2024;
+    const mesDeInteres = this.selectedMonth;
+    const anioDeInteres = this.selectedYear;
 
     const registro = registroActividades.find((actividad) => {
       const ingresoDate = moment(actividad.fechaIngreso);
@@ -251,110 +267,4 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.suscription?.unsubscribe();
   }
 
-  /* applyFilter(filterValue: string) {
-    const normalizeText = (text: string) => {
-      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    };
-  
-    const normalizedFilterValue = normalizeText(filterValue);
-  
-    this.dataSource.filterPredicate = (data: RegistroActividad, filter: string) => {
-      const dataStr = normalizeText(
-        data.asistencial?.nombre + ' ' +
-        data.asistencial?.apellido + ' ' +
-        data.asistencial?.cuil
-      );
-      return dataStr.indexOf(normalizedFilterValue) !== -1;
-    };
-  
-    this.dataSource.filter = normalizedFilterValue;
-  } */
-
-
-  /*abrirCalendarioDialog(registro: RegistroActividad) {
-    const dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
-      width: '700px',
-      data: {
-        fechaIngreso: registro.fechaIngreso,
-        horaIngreso: registro.horaIngreso,
-        fechaEgreso: registro.fechaEgreso,
-        horaEgreso: registro.horaEgreso,
-        nombreAsistencial: registro.asistencial.nombre,
-        apellidoAsistencial: registro.asistencial.apellido,
-        tipoGuardia: registro.tipoGuardia.id
-      }
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró');
-    });
-  }*/
-
-  /* getLegajoActualId(asistencial: Asistencial): number | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
-    return legajoActual ? legajoActual.id : undefined;
-  }  
-
-  getTipoRevistaActual(asistencial: Asistencial): string | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
-    return legajoActual ? legajoActual.revista.tipoRevista.nombre : undefined;
-  }
-
-  getCategoriaYAdicionalActual(asistencial: Asistencial): string | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
-    if (legajoActual && legajoActual.revista) {
-      const categoria = legajoActual.revista.categoria.nombre;
-      const adicional = legajoActual.revista.adicional.nombre;
-      return categoria +"("+ adicional+")";
-    }
-    return undefined;
-  }
-
-  getNovedadActualDescripcion(asistencial: Asistencial): string | undefined {
-    const novedadActual = asistencial.novedadesPersonales.find(novedad => novedad.actual);
-    return novedadActual ? novedadActual.descripcion : undefined;
-  } */
-
-  /*  today:number = new Date(2023,7,0).getDate();//31
-  numberOfMonth: Array<number> = new Array<number>();
-
-  daysOfMonth: Array<Date> = new Array<Date>(); 
-  
-  constructor(
-    public dialogReg: MatDialog,
-  ){
-    for (var dia = 1; dia <= this.today; dia++) {
-      this.numberOfMonth.push(dia);
-    }
-
-    for (var di = 1; di <= this.numberOfMonth.length; di++) {
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const especificDate = new Date (year,month,di)
-      this.daysOfMonth.push(especificDate);
-      
-    }
-  }
-  openPopupCalendario(){
-    this.dialogReg.open(PopupCalendarioComponent, {
-      width: '600px',
-      disableClose: true,
-    })
-  }
-
-  /* today:number = new Date(2023,9,0).getDate();
-  dia:number = new Date().getDay();
-  numberOfMonth: Array<number> = new Array<number>();
-  daysOfMonth: Array<string> = new Array<string>(); */
-  /*   constructor(){
-      for(let i=1;i<= this.today; i++)
-      {
-        this.numberOfMonth.push(i)
-      } */
-  /* 
-      for(let i=1;i<= this.today; i++)
-      {
-        this.numberOfMonth.push(i)
-      } */
 }
