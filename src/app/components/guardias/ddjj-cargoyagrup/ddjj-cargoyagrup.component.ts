@@ -33,7 +33,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['apellido', 'nombre', 'acciones'];
+  displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
 
@@ -45,7 +45,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
 
-  selectedServicio: number | null = null; 
+  selectedServicio?: number | null = null; 
   selectedMonth: number = moment().month();
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
@@ -69,12 +69,13 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       const end = Math.min((page + 1) * size, length);
       return `${start} - ${end} de ${length}`;
     };
-    this.listServicio();
   }
 
   ngOnInit(): void {
 
     moment.locale('es');
+
+    this.listServicio();
 
     this.feriadoService.list().subscribe((feriados: Feriado[]) => {
       this.feriados = feriados;
@@ -86,12 +87,18 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
-    })
+    });
+
   }
 
   listServicio(): void {
     this.servicioService.list().subscribe(data => {
       this.servicios = data;
+      // Asegúrate de que la lista de servicios no esté vacía
+      if (this.servicios.length > 0) {
+        this.selectedServicio = this.servicios[0].id; // Usar el ID del primer servicio
+        this.updateTableDataSource(); // Actualizar la tabla con el filtro inicial
+      }
     }, error => {
       console.log(error);
     });
@@ -143,13 +150,25 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   updateTableDataSource(): void {
-    const dataToShow = this.registrosMensuales.map(registro => {
+    // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
+    const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
+      registroMensual.registroActividad.some(registroActividad =>
+        registroActividad.servicio.id === this.selectedServicio
+      )
+    );
+  
+    console.log('Servicio seleccionado:', this.selectedServicio);
+
+    // Mapear los registros filtrados para incluir la información asistencial
+    const dataToShow = filteredRegistros.map(registro => {
       const asistencial = this.asistenciales.find(as => as.id === registro.idAsistencial);
       return {
         ...registro,
         asistencial: asistencial ? asistencial : null
       };
     });
+  
+    // Actualizar la fuente de datos de la tabla
     this.dataSource = new MatTableDataSource<RegistroMensual>(dataToShow);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -205,7 +224,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
-    const mesDeInteres = this.selectedMonth;
+    const mesDeInteres = 0;
     const anioDeInteres = this.selectedYear;
 
     const registro = registroActividades.find((actividad) => {
@@ -278,6 +297,21 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return ''; // Color por defecto
   }
 
+  calculateTotalHoursForRow(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
+    let totalHours = 0;
+    // Iterar sobre cada día del mes de interés
+    for (let day = 1; day <= moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth(); day++) {
+      const date = new Date(anioDeInteres, mesDeInteres, day);
+      const hoursForDate = this.calculateHoursForDate(registroActividades, date);
+      // Asegurarse de que el resultado es un número y sumarlo al total
+      const hoursNumber = parseFloat(hoursForDate.replace(/<[^>]*>/g, '')); // Eliminar etiquetas HTML
+      if (!isNaN(hoursNumber)) {
+        totalHours += hoursNumber;
+      }
+    }
+    return totalHours;
+  }
+    
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }
