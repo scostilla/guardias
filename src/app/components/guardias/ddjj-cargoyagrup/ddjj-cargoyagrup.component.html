@@ -5,10 +5,8 @@
       <div class="titulos">DDJJ <span class="titulos-second">CARGO Y AGRUPACIÓN</span></div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab extended color="primary" routerLink="/guardias-view">
-        <mat-icon>arrow_back_ios</mat-icon>
-        Volver
-      </button>
+      <button mat-fab color="primary" matTooltip="Volver atrás" routerLink="/guardias-view">
+        <mat-icon>keyboard_arrow_left</mat-icon></button>
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
@@ -22,43 +20,49 @@
   </div>
 
   <div class="row">
-    <div class="row">
-      <div class="col-6">Servicio:
-        <select [(ngModel)]="selectedServicio" (change)="updateTableDataSource()">
-          <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <select [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
-        <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
-      </select>
-      <select [(ngModel)]="selectedYear" (change)="updateDateAndLoadData()">
-        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-      </select>
-      <button (click)="updateDateAndLoadData()">Actualizar</button>
-    </div>
-
     <table class="table table-sm  table-borderless">
       <thead class="col-center thead-celeste">
         <tr>
           <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
         </tr>
-        <tr>
+        <!--<tr>
           <th>{{ getMonthName(selectedMonth) }} {{ selectedYear }}</th>
-        </tr>
+        </tr>-->
         <tr>
-          <th>MINISTERIO DE SALUD</th>
-        </tr>
-        <tr>
-          <th>"DN. PABLO SORIA"</th>
+          <th>MINISTERIO DE SALUD | DN. PABLO SORIA</th>
         </tr>
         <tr>
           <th>REGION: CENTRO</th>
         </tr>
       </thead>
     </table>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 d-flex justify-content-start">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Servicio:</span>
+        <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateTableDataSource()">
+          <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-5 mt-md-0">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Fecha:</span>
+        <select class="select-tabla" [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
+          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+        </select>
+        <select class="select-tabla" [(ngModel)]="selectedYear" (change)="updateDateAndLoadData()">
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+        <!--<button mat-mini-fab color="primary" matTooltip="Actualizar" (click)="updateDateAndLoadData()"><mat-icon>refresh</mat-icon></button>-->
+      </div>
+    </div>  
+  </div>
+
+  <div class="row">
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 

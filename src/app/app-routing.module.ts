@@ -115,6 +115,7 @@ import { GuardiaPasivaComponent } from './components/guardias/guardia-pasiva/gua
 import { DdjjExtraComponent } from './components/guardias/ddjj-extra/ddjj-extra.component';
 import { DdjjContrafacturaComponent } from './components/guardias/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
+import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { DdjjCargoyagrupCalendarComponent } from './components/guardias/ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
 import { DdjjExtraTotComponent } from './components/guardias/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjExtraTotRecComponent } from './components/guardias/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
@@ -289,6 +290,7 @@ const routes: Routes = [
   {path:'ddjj-extra',component:DdjjExtraComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
+  {path:'ddjj-cargoyagrup-detail',component:DdjjCargoyagrupDetailComponent},
   {path:'ddjj-cargoyagrup-calendar',component:DdjjCargoyagrupCalendarComponent},
   {path:'ddjj-extra-tot',component:DdjjExtraTotComponent},
   {path:'ddjj-extra-tot-rec',component:DdjjExtraTotRecComponent},

@@ -205,6 +205,7 @@ import { CronogramaDetailComponent } from './components/cronogramas/cronograma-d
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { DdjjCargoyagrupCalendarComponent } from './components/guardias/ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
+import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -362,6 +363,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     PersonalComponent,
     PersonalLegajoComponent,
     DdjjCargoyagrupCalendarComponent,
+    DdjjCargoyagrupDetailComponent,
     
   ],
 

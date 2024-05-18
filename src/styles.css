@@ -252,6 +252,22 @@ footer {
   background-color: #b0b0b0 !important;
 }
 
+.select-tabla {
+  border: none;
+  border-top: 2px solid #243c74;
+  color: #243c74;
+}
+
+.contenedor-titulo-select-tabla {
+  border-top: 2px solid #243c74;
+  display: inline-block;
+}
+
+.titulo-select-tabla {
+  color: #243c74;
+  font-weight: bold;
+}
+
 .holiday {
   background-color: #dbafc9 !important;
 }

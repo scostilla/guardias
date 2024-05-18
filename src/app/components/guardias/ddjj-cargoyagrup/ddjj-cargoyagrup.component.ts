@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DdjjCargoyagrupCalendarComponent } from '../ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
+import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -43,7 +43,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   asistenciales: any[] = [];
   servicios: Servicio[] = []; 
 
-  dialogRef!: MatDialogRef<DdjjCargoyagrupCalendarComponent>;
+  dialogRef!: MatDialogRef<DdjjCargoyagrupDetailComponent>;
 
   selectedServicio?: number | null = null; 
   selectedMonth: number = moment().month();
@@ -198,7 +198,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   openDetail(asistencial: Asistencial): void {
-    this.dialogRef = this.dialog.open(DdjjCargoyagrupCalendarComponent, {
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
       width: '600px',
       data: asistencial
     });
