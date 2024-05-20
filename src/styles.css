@@ -88,6 +88,54 @@ footer {
   background-color: #243c74;
 }
 
+.contenedor-bocadillo{
+  width: 90px;
+  height: 90px;
+  background-color: #243c74; /* Color de fondo azul oscuro */
+  color: white; /* Color de texto blanco */
+  font-weight: bold;
+  text-align: center; /* Centrar texto horizontalmente */
+  border-radius: 100% 100% 0 100%; /* Forma de bocadillo */
+  display: flex; /* Usar flexbox para alinear los textos */
+  flex-direction: column; /* Organizar los textos en columna */
+  justify-content: center; /* Centrar contenido verticalmente */
+  align-items: center; /* Centrar contenido horizontalmente */
+  position: relative;
+  z-index: 999;
+  box-shadow: 0px -4px 6px -6px #333;
+}
+
+.contenedor-titulo-bocadillo, .contenedor-subtitulo-bocadillo {
+  height: 40px;
+  margin-left: -50px;
+  margin-top: 25px;
+  color: white;
+  font-weight: bold;
+  text-align: left;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+}
+
+.contenedor-titulo-bocadillo {
+  width: calc(70% + 50px);
+  padding: 5px 40px;
+  background-color: #37BBED;
+  z-index: 2;
+}
+
+.contenedor-subtitulo-bocadillo {
+  width: calc(30% + 50px);
+  padding: 5px 60px;
+  background-color: #73d2f5;
+  z-index: 1;
+}
+
 .menu-fond {
   width: 102%;
   height: 48px;
@@ -240,6 +288,15 @@ footer {
 .table-responsive {
   overflow-x: scroll;
   padding: 10px 0 15px 0;
+}
+
+.scroll-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.scrollable-columns {
+  display: block;
 }
 
 .linea-vertical-tabla {
