@@ -106,9 +106,11 @@ footer {
 }
 
 .contenedor-titulo-bocadillo, .contenedor-subtitulo-bocadillo {
+  width: calc(100% + 50px);
   height: 40px;
   margin-left: -50px;
   margin-top: 25px;
+  padding: 5px 40px;
   color: white;
   font-weight: bold;
   text-align: left;
@@ -123,15 +125,11 @@ footer {
 }
 
 .contenedor-titulo-bocadillo {
-  width: calc(70% + 50px);
-  padding: 5px 40px;
   background-color: #37BBED;
   z-index: 2;
 }
 
 .contenedor-subtitulo-bocadillo {
-  width: calc(30% + 50px);
-  padding: 5px 60px;
   background-color: #73d2f5;
   z-index: 1;
 }
@@ -242,6 +240,16 @@ footer {
     .titulos::before {
       content: ""; 
   }
+  .contenedor-titulo-bocadillo, .contenedor-subtitulo-bocadillo {
+    width: 100%;
+    height: 50px;
+    margin-left: 0;
+    margin-top: 5px;
+    padding: 20px 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+  }  
 }
 
 /* --botones circulares seccción actividades-- */

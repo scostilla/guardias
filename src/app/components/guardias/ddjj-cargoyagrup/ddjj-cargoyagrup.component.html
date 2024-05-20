@@ -20,16 +20,18 @@
   </div>
 
   <div class="row mb-3">
-    <div class="col-1">
+    <div class="col-md-1">
       <div class="contenedor-bocadillo">
         <div>{{ getMonthName(selectedMonth) }}</div>
         <div>{{ selectedYear }}</div>
       </div>
     </div>
-    <div class="col-11 d-flex justify-content-start">
+    <div class="col-md-8 d-flex justify-content-start">
       <div class="contenedor-titulo-bocadillo">
         MINISTERIO DE SALUD | DN. PABLO SORIA
       </div>
+    </div>
+    <div class="col-md-3 d-flex justify-content-start">
       <div class="contenedor-subtitulo-bocadillo">
         GUARDIAS ACTIVAS
       </div>  
@@ -109,7 +111,7 @@
         </ng-container>
 
         <ng-container *ngFor="let fechaColumna of displayedColumns.slice(4)" [matColumnDef]="fechaColumna">
-          <th mat-header-cell *matHeaderCellDef class="negrita">
+          <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
             {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
           </th>
           <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" 
