@@ -55,7 +55,7 @@
   </div>
 
   <div class="row">
-    <div class="col-md-6 d-flex justify-content-start">
+    <div class="col-md-6 d-flex justify-content-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Fecha:</span>
         <select class="select-tabla" [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
@@ -68,7 +68,7 @@
       </div>
     </div>
   
-    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-5 mt-md-0">
+    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
         <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateTableDataSource()">
@@ -78,7 +78,7 @@
     </div>  
   </div>
 
-  <div class="row">
+  <!--<div class="row">-->
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
@@ -104,7 +104,7 @@
         </ng-container>
 
         <ng-container matColumnDef="totalHoras">
-          <th mat-header-cell *matHeaderCellDef class="negrita" style="background-color: #d1d0d0;">Total mes</th>
+          <th mat-header-cell *matHeaderCellDef class="negrita">Total mes</th>
           <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
             {{ calculateTotalHoursForRow(registro.registroActividad, selectedMonth, selectedYear) }} hs
           </td>
@@ -134,4 +134,5 @@
     <div class="row mt-3">
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
     </div>
-  </div>
+  <!--</div>-->
+</div>
