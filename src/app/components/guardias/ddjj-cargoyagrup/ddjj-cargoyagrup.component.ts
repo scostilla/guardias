@@ -74,6 +74,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     moment.locale('es');
+    this.dataSource = new MatTableDataSource<RegistroMensual>([]);
 
     this.listServicio();
 
@@ -94,11 +95,10 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   listServicio(): void {
     this.servicioService.list().subscribe(data => {
       this.servicios = data;
-      // Asegúrate de que la lista de servicios no esté vacía
       if (this.servicios.length > 0) {
-        this.selectedServicio = this.servicios[0].id; // Usar el ID del primer servicio
-        this.updateTableDataSource(); // Actualizar la tabla con el filtro inicial
+        this.selectedServicio = this.servicios[0].id; 
       }
+      this.updateTableDataSource(); // Llama a updateTableDataSource sin importar si hay servicios o no
     }, error => {
       console.log(error);
     });
@@ -107,8 +107,28 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   updateDateAndLoadData(): void {
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
-  
     this.updateTableDataSource();
+    this.loadData();
+  }
+
+  updateService(): void {
+    this.updateTableDataSource();
+  }
+
+  loadData(){
+    this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
+    this.dataSource = new MatTableDataSource(this.registrosMensuales);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  filterDataByDate(month: number, year: number): RegistroMensual[] {
+    // Filtra los datos según el mes y año proporcionados
+    return this.registrosMensuales.filter(registro => {
+      // Convertir el mes a formato numérico
+    const monthNumber = moment().month(registro.mes).month();
+    return monthNumber === month && registro.anio === year;
+    });
   }
 
   getMonthName(monthIndex: number): string {
@@ -140,7 +160,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.asistencialService.getByIds(idsAsistenciales).subscribe(
       (asistencial: Asistencial[]) => {
         this.asistenciales = asistencial;
-        // Una vez que se cargan los asistentes, actualiza la tabla
         this.updateTableDataSource();
       },
       error => {
@@ -150,14 +169,28 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   updateTableDataSource(): void {
+
+    if (!this.registrosMensuales || !this.asistenciales) {
+      return; // Salir si los datos no están disponibles
+    }
+
+    console.log('Registros mensuales:', this.registrosMensuales);
+    console.log('Asistenciales:', this.asistenciales);
+    console.log('Servicio seleccionado:', this.selectedServicio);
+
+
+     // Convertir selectedServicio a número si es necesario
+     const servicioIdSeleccionado = Number(this.selectedServicio);
+
     // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
     const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
-      registroMensual.registroActividad.some(registroActividad =>
-        registroActividad.servicio.id === this.selectedServicio
-      )
-    );
+      registroMensual.registroActividad.some(registroActividad => {
+          console.log('Comparando servicio:', registroActividad.servicio.id, 'con seleccionado:', servicioIdSeleccionado);
+          return registroActividad.servicio.id === servicioIdSeleccionado;
+      })
+  );
   
-    console.log('Servicio seleccionado:', this.selectedServicio);
+    console.log('####Registros filtrados:', filteredRegistros);
 
     // Mapear los registros filtrados para incluir la información asistencial
     const dataToShow = filteredRegistros.map(registro => {
@@ -168,10 +201,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       };
     });
   
-    // Actualizar la fuente de datos de la tabla
-    this.dataSource = new MatTableDataSource<RegistroMensual>(dataToShow);
+    this.dataSource.data = dataToShow; 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    // Añadir esta línea para asegurarse de que la tabla se actualice visualmente
+    this.table.renderRows();
   }
 
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
@@ -192,7 +226,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
-  //ok
   getFechaFromColumnId(columnId: string): Date {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
@@ -224,14 +257,12 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
-    const mesDeInteres = 0;
-    const anioDeInteres = this.selectedYear;
+    /* const mesDeInteres = this.selectedMonth;
+    const anioDeInteres = this.selectedYear; */
 
     const registro = registroActividades.find((actividad) => {
       const ingresoDate = moment(actividad.fechaIngreso);
-      return ingresoDate.isSame(date, 'day') &&
-        ingresoDate.month() === mesDeInteres &&
-        ingresoDate.year() === anioDeInteres;
+      return ingresoDate.isSame(date, 'day');
     });
     
     if (!registro) return '';
