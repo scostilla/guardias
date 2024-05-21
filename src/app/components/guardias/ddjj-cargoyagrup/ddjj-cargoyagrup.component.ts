@@ -92,6 +92,24 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   }
 
+  /*applyFilter(filterValue: string) {
+    const normalizeText = (text: string) => {
+      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+  
+    const normalizedFilterValue = normalizeText(filterValue);
+  
+    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+      const dataStr = normalizeText(
+        data.asistencial?.nombre + ' ' +
+        data.asistencial?.apellido + ' '
+      );
+      return dataStr.indexOf(normalizedFilterValue) !== -1;
+    };
+  
+    this.dataSource.filter = normalizedFilterValue;
+  }*/
+
   listServicio(): void {
     this.servicioService.list().subscribe(data => {
       this.servicios = data;
