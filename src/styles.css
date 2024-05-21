@@ -132,6 +132,7 @@ footer {
 .contenedor-subtitulo-bocadillo {
   background-color: #73d2f5;
   z-index: 1;
+  font-size: 80%;
 }
 
 .menu-fond {
