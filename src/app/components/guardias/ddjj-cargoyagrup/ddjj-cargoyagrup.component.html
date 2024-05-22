@@ -5,8 +5,10 @@
       <div class="titulos">DDJJ <span class="titulos-second">CARGO Y AGRUPACIÓN</span></div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" matTooltip="Volver atrás" routerLink="/guardias-view">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/guardias-view">
         <mat-icon>keyboard_arrow_left</mat-icon></button>
+        <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;" (click)="exportarAExcel()">
+          <mat-icon>get_app</mat-icon></button>  
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
@@ -33,7 +35,7 @@
     </div>
     <div class="col-md-3 d-flex justify-content-start">
       <div class="contenedor-subtitulo-bocadillo">
-        GUARDIAS INACTIVAS
+        GUARDIAS ACTIVAS
       </div>  
     </div>
     <!--<table class="table table-sm  table-borderless">
@@ -132,7 +134,13 @@
       </table>
     </div>
     <div class="row mt-3">
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+      <div class="col-lg-3">  
+          <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
+          <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
+      </div>
+      <div class="col-lg-9">  
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+      </div>
     </div>
   <!--</div>-->
 </div>

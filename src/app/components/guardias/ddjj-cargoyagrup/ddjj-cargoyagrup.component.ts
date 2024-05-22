@@ -18,6 +18,7 @@ import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import * as XLSX from 'xlsx';
 
 
 
@@ -359,6 +360,22 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       }
     }
     return totalHours;
+  }
+
+  exportarAExcel() {
+    /*const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
+      return {
+        Apellido: registro.apellido,
+        Nombre: registro.nombre,
+        Acciones: registro.acciones,
+        TotalHoras: registro.totalHoras
+      };
+    });
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'MiHojaDeCalculo');
+    XLSX.writeFile(wb, 'mi-archivo-excel.xlsx'); */
   }
     
   ngOnDestroy(): void {

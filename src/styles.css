@@ -231,6 +231,21 @@ footer {
     line-height: normal;
 }
 
+.button-success {
+    background-color: #4f915e !important;
+    color: #fff !important;
+}
+
+.button-primary {
+  background-color: #243c74 !important;
+  color: #fff !important;
+}
+
+.button-success:hover, .button-primary:hover {
+  background-color: #37BBED !important;
+}
+
+
 @media (max-width:768px) {
     .text {
         font-size: 140%;
@@ -312,7 +327,7 @@ footer {
 }
 
 .linea-vertical-tabla:hover, .weekend:hover {
-  background-color: #b0b0b0 !important;
+  box-shadow: inset 0 0 0 2px #65c9ee;
 }
 
 .select-tabla {
@@ -332,7 +347,7 @@ footer {
 }
 
 .holiday {
-  background-color: #dbafc9 !important;
+  background-color: #d4c2cd !important;
 }
 
 .weekend {
