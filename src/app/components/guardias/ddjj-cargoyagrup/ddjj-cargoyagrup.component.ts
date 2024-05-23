@@ -4,7 +4,7 @@ import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, catchError, of, tap } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
@@ -90,10 +90,37 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
     });
-
   }
 
-  /*applyFilter(filterValue: string) {
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
+  //puse el filtro que funciona en ESPECIALIDAD
+  /*applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+      const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
+      const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
+      
+      filter = this.accentFilter(filter.toLowerCase());
+      return nombre.includes(filter) || apellido.includes(filter) ;
+    };
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }*/
+
+  applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
       return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     };
@@ -109,7 +136,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     };
   
     this.dataSource.filter = normalizedFilterValue;
-  }*/
+  } 
 
   listServicio(): void {
     this.servicioService.list().subscribe(data => {
@@ -122,8 +149,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       console.log(error);
     });
   }
-
+//AQUI
   updateDateAndLoadData(): void {
+
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
     this.updateTableDataSource();
@@ -157,47 +185,17 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
-    console.log(this.selectedYear);
-    console.log(this.selectedMonth);
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    console.log(mes);
     const idEfector = 1; // ID de efector fijo
 
-    this.registroMensualService.listByYearMonthAndEfector(anio, mes, idEfector).subscribe(
-      (data: RegistroMensual[]) => {
-        this.registrosMensuales = data;
-        this.loadAsistentesForRegistros();
-      },
-      error => {
-        console.error('Error al cargar los registros mensuales:', error);
-      }
-    );
-  }
-
-  loadAsistentesForRegistros(): void {
-    const idsAsistenciales = this.registrosMensuales.map(registro => registro.idAsistencial);
-    this.asistencialService.getByIds(idsAsistenciales).subscribe(
-      (asistencial: Asistencial[]) => {
-        this.asistenciales = asistencial;
-        this.updateTableDataSource();
-      },
-      error => {
-        console.error('Error al cargar los asistentes:', error);
-      }
-    );
+    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe( data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   updateTableDataSource(): void {
-
-    if (!this.registrosMensuales || !this.asistenciales) {
-      return; // Salir si los datos no están disponibles
-    }
-
-    console.log('Registros mensuales:', this.registrosMensuales);
-    console.log('Asistenciales:', this.asistenciales);
-    console.log('Servicio seleccionado:', this.selectedServicio);
-
-
      // Convertir selectedServicio a número si es necesario
      const servicioIdSeleccionado = Number(this.selectedServicio);
 
@@ -208,23 +206,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
           return registroActividad.servicio.id === servicioIdSeleccionado;
       })
   );
-  
-    console.log('####Registros filtrados:', filteredRegistros);
-
-    // Mapear los registros filtrados para incluir la información asistencial
-    const dataToShow = filteredRegistros.map(registro => {
-      const asistencial = this.asistenciales.find(as => as.id === registro.idAsistencial);
-      return {
-        ...registro,
-        asistencial: asistencial ? asistencial : null
-      };
-    });
-  
-    this.dataSource.data = dataToShow; 
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    // Añadir esta línea para asegurarse de que la tabla se actualice visualmente
-    this.table.renderRows();
   }
 
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
@@ -249,10 +230,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-  openDetail(asistencial: Asistencial): void {
+  openDetail(asistencial: Asistencial, selectedMonth: number, selectedYear: number): void {
     this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
       width: '600px',
-      data: asistencial
+      data:{ 
+        asistencial,
+        month: selectedMonth,
+        year: selectedYear
+      }
     });
   }
 
@@ -276,9 +261,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
-    /* const mesDeInteres = this.selectedMonth;
-    const anioDeInteres = this.selectedYear; */
-
+  
     const registro = registroActividades.find((actividad) => {
       const ingresoDate = moment(actividad.fechaIngreso);
       return ingresoDate.isSame(date, 'day');
@@ -363,19 +346,20 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   exportarAExcel() {
-    /*const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
+    const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
       return {
-        Apellido: registro.apellido,
-        Nombre: registro.nombre,
-        Acciones: registro.acciones,
-        TotalHoras: registro.totalHoras
+        Apellido: registro.asistencial.apellido,
+        Nombre: registro.asistencial.nombre,
+        Cuil: registro.asistencial.cuil,
+        VínculoLaboral: registro.asistencial.nombre,
+        /*TotalHoras: registro.totalHoras*/
       };
     });
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'MiHojaDeCalculo');
-    XLSX.writeFile(wb, 'mi-archivo-excel.xlsx'); */
+    XLSX.writeFile(wb, 'mi-archivo-excel.xlsx');
   }
     
   ngOnDestroy(): void {

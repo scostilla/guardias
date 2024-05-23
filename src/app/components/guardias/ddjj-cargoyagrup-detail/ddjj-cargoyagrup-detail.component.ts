@@ -12,16 +12,20 @@ import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 })
 export class DdjjCargoyagrupDetailComponent implements OnInit {
   asistencial!: Asistencial;
+  month: number;
+  year: number;
   registroMensual!: RegistroMensual;
 
   constructor(
     public dialogRef: MatDialogRef<DdjjCargoyagrupDetailComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Asistencial
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.asistencial = data.asistencial;
+    this.month = data.month;
+    this.year = data.year;
+  }
 
   ngOnInit(): void {
-    // Asigna los datos recibidos a registroMensual
-    this.asistencial = this.data;
   }
   
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
@@ -35,5 +39,21 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
     
   cerrar(): void {
     this.dialogRef.close();
+  }
+
+  getNovedadesActivas(asistencial: Asistencial): NovedadPersonal[] {
+    return asistencial.novedadesPersonales.filter(novedad => {
+      const inicio = new Date(novedad.fechaInicio);
+      console.log("###inicio.getMonth() + 1", inicio.getMonth() + 1);
+      console.log("###this.month", this.month);
+      console.log("###inicio.getFullYear()", inicio.getFullYear());
+      console.log("###this.year", this.year);
+
+      return (
+        (inicio.getMonth() + 1) === this.month &&
+        inicio.getFullYear() === this.year &&
+        novedad.actual
+      );
+    });
   }
 }

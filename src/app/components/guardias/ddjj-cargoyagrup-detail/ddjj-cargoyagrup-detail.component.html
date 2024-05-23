@@ -23,7 +23,7 @@
       <tr>
         <th scope="row">Novedades</th>
         <td>
-          <div *ngFor="let novedad of getNovedades(asistencial)">
+          <div *ngFor="let novedad of getNovedadesActivas(asistencial)">
             {{novedad.descripcion}}
           </div>
         </td>

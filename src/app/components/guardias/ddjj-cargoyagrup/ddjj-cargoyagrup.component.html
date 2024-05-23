@@ -13,8 +13,8 @@
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
-        <input matInput placeholder="Buscar por nombre o apellido" #input>
-        <button mat-icon-button matSuffix>
+        <input matInput placeholder="Buscar por nombre o apellido" (keydown.enter)="applyFilter(input.value)" #input>
+        <button mat-icon-button matSuffix (click)="applyFilter(input.value)">
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
@@ -38,22 +38,6 @@
         GUARDIAS ACTIVAS
       </div>  
     </div>
-    <!--<table class="table table-sm  table-borderless">
-      <thead class="col-center thead-celeste">
-        <tr>
-          <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS DEL CARGO Y AGRUPACION</th>
-        </tr>
-        <tr>
-          <th>{{ getMonthName(selectedMonth) }} {{ selectedYear }}</th>
-        </tr>
-        <tr>
-          <th>MINISTERIO DE SALUD | DN. PABLO SORIA</th>
-        </tr>
-        <tr>
-          <th>REGION: CENTRO</th>
-        </tr>
-      </thead>
-    </table>-->
   </div>
 
   <div class="row">
@@ -99,7 +83,7 @@
         <ng-container matColumnDef="acciones" sticky>
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let registro" class="cell-actions">
-            <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial)">
+            <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial, selectedMonth, selectedYear)">
               <mat-icon color="primary">zoom_in</mat-icon>
             </button>
           </td>
