@@ -92,34 +92,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
   }
 
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
-  }
-
-  //puse el filtro que funciona en ESPECIALIDAD
-  /*applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
-      const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
-      const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
-      
-      filter = this.accentFilter(filter.toLowerCase());
-      return nombre.includes(filter) || apellido.includes(filter) ;
-    };
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }*/
-
   applyFilter(filterValue: string) {
     const normalizeText = (text: string) => {
       return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -351,7 +323,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         Apellido: registro.asistencial.apellido,
         Nombre: registro.asistencial.nombre,
         Cuil: registro.asistencial.cuil,
-        VínculoLaboral: registro.asistencial.nombre,
         /*TotalHoras: registro.totalHoras*/
       };
     });
@@ -359,7 +330,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'MiHojaDeCalculo');
-    XLSX.writeFile(wb, 'mi-archivo-excel.xlsx');
+    XLSX.writeFile(wb, 'DDJJ-cargoyagrup.xlsx');
   }
     
   ngOnDestroy(): void {
