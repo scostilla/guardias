@@ -327,55 +327,174 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
     return totalHours;
   }
-
-  exportarAExcel() {
-    // Obtener el mes y el año seleccionados
-    const mesSeleccionado = this.getMonthName(this.selectedMonth);
-    const anioSeleccionado = this.selectedYear;
-  
-    // Generar el nombre del archivo con el mes y el año
-    const fileName = `DDJJ-cargoyagrup_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
-
-    // Crear la fila superior con el mes y el año
-    const headerRow = [[`Mes: ${mesSeleccionado}`, `Año: ${anioSeleccionado}`]];
-
-    // Formatear los títulos de las columnas de fechas para el Excel
-    const formattedColumnTitles = this.displayedColumns.slice(4).map(columnTitle => {
-    // Convertir el título de la columna a formato 'ddd DD' usando moment.js
-    return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
-    });
+/*
+  exportarTablaAExcel(nombreArchivo: string): void {
+    // Crear un nuevo libro de trabajo y una hoja de cálculo
+    const libro = XLSX.utils.book_new();
     
-  
+    // Agregar la fila de encabezado para el mes y el año
+    const encabezadoMesAnio = [[moment().format('MMMM YYYY')]]; // Usar el mes y el año actual
+    const hoja = XLSX.utils.aoa_to_sheet(encabezadoMesAnio);
+    
+    // Agregar los encabezados de las columnas
+    const encabezados = [['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades']];
+    XLSX.utils.sheet_add_aoa(hoja, encabezados, { origin: -1 });
+    
+    // Agregar los datos debajo de los encabezados
     const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
       const novedades = this.getNovedades(registro.asistencial);
       const novedadesString = novedades.map((novedad: NovedadPersonal) => novedad.descripcion).join('; ');
   
-      const exportData: any = {
+      return {
         Apellido: registro.asistencial.apellido,
         Nombre: registro.asistencial.nombre,
         Cuil: registro.asistencial.cuil,
         Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
         Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
-        Novedades: novedadesString || '-'
+        Novedades: novedadesString || '-',
+        ...this.generateDynamicColumns(registro), // Agregar columnas dinámicas
       };
-  
-      // Iterar sobre las columnas adicionales definidas en el HTML
-      this.displayedColumns.slice(4).forEach((fechaColumna: string, index: number) => {
-        // Aquí utilizamos this.getFechaFromColumnId
-        exportData[formattedColumnTitles[index]] = this.calculateHoursForDate(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
-      });
-
-      return exportData;
     });
   
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'MiHojaDeCalculo');
+    XLSX.utils.sheet_add_json(hoja, dataToExport, {
+      origin: -1,
+      skipHeader: true,
+    });
   
-    // Descargar el archivo con el nombre generado
-    XLSX.writeFile(wb, fileName);
+    // Estilizar la hoja de cálculo
+    hoja['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }]; // Combinar celdas para el encabezado del mes y el año
+    hoja['!cols'] = [{ width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }]; // Establecer ancho de columna
+  
+    // Añadir la hoja al libro
+    XLSX.utils.book_append_sheet(libro, hoja, 'Datos');
+  
+    // Generar el archivo Excel
+    const excelBuffer = XLSX.write(libro, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+  
+    // Guardar el archivo usando FileSaver
+    saveAs(blob, `${nombreArchivo}.xlsx`);
   }
+  
+  generateDynamicColumns(registro: RegistroMensual): Record<string, any> {
+    const formattedColumnTitles = this.displayedColumns.slice(4).map(columnTitle => {
+      return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
+    });
+  
+    const dynamicColumns: Record<string, any> = {};
+    this.displayedColumns.slice(4).forEach((fechaColumna: string, index: number) => {
+      dynamicColumns[formattedColumnTitles[index]] = this.calculateHoursForDate(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+    });
+  
+    return dynamicColumns;
+  }
+*/
 
+calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): string {
+  let output = '';
+
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+  
+  if (!registro) return '';
+
+  for (let actividad of registroActividades) {
+    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+      return 'sin egreso';
+    }
+  }
+  // Si hay fechas de ingreso y egreso, calcular las horas
+  if (registro.fechaIngreso && registro.fechaEgreso) {
+    const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+    const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+
+    if (hoursIn.isValid() && hoursOut.isValid()) {
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+
+      if (diffHours > 0) {
+        // Muestra la diferencia de horas como un número entero
+        output = `${Math.round(diffHours)}`;
+      } else {
+        output = '0';
+      }
+    } else {
+      output = 'Datos inválidos';
+    }
+  }
+  return output;
+}
+
+exportarAExcel() {
+  // Obtener el mes y el año seleccionados
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+
+  // Generar el nombre del archivo con el mes y el año
+  const fileName = `DDJJ-cargoyagrup_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+
+  // Crear la fila superior con el mes y el año
+  const headerRow = [[`${mesSeleccionado} ${anioSeleccionado}`]];
+
+  // Encabezados de las columnas de datos (Apellido, Nombre, etc.)
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades'];
+
+  // Formatear los títulos de las columnas de fechas para el Excel
+  const formattedColumnTitles = this.displayedColumns.slice(4).map(columnTitle => {
+    // Convertir el título de la columna a formato 'ddd DD' usando moment.js
+    return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
+  });
+
+  // Combinar los encabezados de datos con los títulos de columnas formateados
+  const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
+
+  // Crear un nuevo libro de trabajo
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+  // Agregar la fila de encabezado para el mes y el año a la hoja de cálculo
+  const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(headerRow);
+
+  // Agregar los encabezados combinados debajo de la fila de encabezado del mes y el año
+  XLSX.utils.sheet_add_aoa(ws, [combinedHeaders], { origin: -1 });
+
+  // Preparar los datos para exportar
+  const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
+    const novedades = this.getNovedades(registro.asistencial);
+    const novedadesString = novedades.map((novedad: NovedadPersonal) => novedad.descripcion).join('; ');
+
+    const exportData: any = {
+      Apellido: registro.asistencial.apellido,
+      Nombre: registro.asistencial.nombre,
+      Cuil: registro.asistencial.cuil,
+      Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
+      Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
+      Novedades: novedadesString || '-'
+    };
+
+    // Iterar sobre las columnas adicionales definidas en el HTML
+    this.displayedColumns.slice(4).forEach((fechaColumna: string, index: number) => {
+      // Aquí utilizamos this.getFechaFromColumnId
+      exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+    });
+
+    return exportData;
+  });
+
+  // Agregar los datos debajo de los encabezados combinados
+  XLSX.utils.sheet_add_json(ws, dataToExport, {
+    origin: -1,
+    skipHeader: true,
+  });
+
+  // Añadir la hoja al libro
+  XLSX.utils.book_append_sheet(wb, ws, 'Datos');
+
+  // Descargar el archivo con el nombre generado
+  XLSX.writeFile(wb, fileName);
+}
+
+/*
   exportarTablaAExcel(nombreArchivo: string): void {
     // Crear un nuevo libro de trabajo y una hoja de cálculo
     const libro = XLSX.utils.book_new();
@@ -407,7 +526,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   
     // Guardar el archivo usando FileSaver
     saveAs(blob, `${nombreArchivo}.xlsx`);
-  }
+  } */
 
   /*exportarTablaExcel(): void {
     // Crear un nuevo libro y hoja de Excel
