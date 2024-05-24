@@ -20,7 +20,8 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as XLSX from 'xlsx';
-
+import * as ExcelJS from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -52,6 +53,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024];
+
+  datosTabla = [
+    { apellido: 'gonzales', nombre: 'jose', cuil: '454545' },
+    { apellido: 'ramirez', nombre: 'pedro', cuil: '767876' }
+  ];
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -371,7 +377,89 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     // Descargar el archivo con el nombre generado
     XLSX.writeFile(wb, fileName);
   }
-          
+
+  /*exportarTablaAExcel(nombreArchivo: string): void {
+    // Crear un nuevo libro de trabajo y una hoja de cálculo
+    const libro = XLSX.utils.book_new();
+    
+    // Agregar la fila de encabezado para el mes y el año
+    const encabezadoMesAnio = [['Marzo 2024']];
+    const hoja = XLSX.utils.aoa_to_sheet(encabezadoMesAnio);
+  
+    // Agregar los encabezados de las columnas
+    const encabezados = [['Apellido', 'Nombre', 'Cuil']];
+    XLSX.utils.sheet_add_aoa(hoja, encabezados, { origin: -1 });
+  
+    // Agregar los datos debajo de los encabezados
+    XLSX.utils.sheet_add_json(hoja, this.datos, {
+      origin: -1,
+      skipHeader: true
+    });
+  
+    // Estilizar la hoja de cálculo
+    hoja['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }]; // Combinar celdas para el encabezado del mes y el año
+    hoja['!cols'] = [{ width: 20 }, { width: 20 }, { width: 20 }]; // Establecer ancho de columna
+  
+    // Añadir la hoja al libro
+    XLSX.utils.book_append_sheet(libro, hoja, 'Datos');
+  
+    // Generar el archivo Excel
+    const excelBuffer = XLSX.write(libro, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+  
+    // Guardar el archivo usando FileSaver
+    saveAs(blob, `${nombreArchivo}.xlsx`);
+  }*/
+
+  exportarTablaExcel(): void {
+    // Crear un nuevo libro y hoja de Excel
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet('Datos');
+
+    // Agregar fila de encabezado con estilo
+    const header = ['Apellido', 'Nombre', 'Cuil'];
+    const headerRow = worksheet.addRow(header);
+    headerRow.eachCell((cell, colNumber) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFFF00' } // Color de fondo amarillo
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    // Agregar las filas de datos
+    this.datosTabla.forEach(dato => {
+      const row = worksheet.addRow([dato.apellido, dato.nombre, dato.cuil]);
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+
+    // Ajustar el ancho de las columnas
+    worksheet.columns.forEach(column => {
+      column.width = 20;
+    });
+
+    // Guardar en buffer y exportar
+    workbook.xlsx.writeBuffer().then(data => {
+      const blob = new Blob([data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      FileSaver.saveAs(blob, `Tabla_${moment().format('DD_MM_YYYY_HH_mm_ss')}.xlsx`);
+    });
+  }
+
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }
