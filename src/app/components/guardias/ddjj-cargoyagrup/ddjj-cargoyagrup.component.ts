@@ -18,6 +18,7 @@ import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as XLSX from 'xlsx';
 
 
@@ -168,21 +169,27 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   updateTableDataSource(): void {
-     // Convertir selectedServicio a número si es necesario
-     const servicioIdSeleccionado = Number(this.selectedServicio);
-
-    // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
+    // Convertir selectedServicio a número si es necesario
+    const servicioIdSeleccionado = Number(this.selectedServicio);
+ 
+    // Filtrar los registros mensuales por el servicio seleccionado
     const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
-      registroMensual.registroActividad.some(registroActividad => {
-          console.log('Comparando servicio:', registroActividad.servicio.id, 'con seleccionado:', servicioIdSeleccionado);
-          return registroActividad.servicio.id === servicioIdSeleccionado;
-      })
-  );
-  }
-
+      registroMensual.registroActividad.some(registroActividad => 
+        registroActividad.servicio.id === servicioIdSeleccionado
+      )
+    );
+ 
+    // Asignar los registros filtrados a la fuente de datos de la tabla
+    this.dataSource.data = filteredRegistros;
+ }
+  
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
     const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
     return legajoActual ? legajoActual : undefined;
+  }
+
+  getNovedades(asistencial: Asistencial): NovedadPersonal[] {
+    return asistencial.novedadesPersonales;
   }
 
   generarDiasDelMes(): void {
@@ -318,21 +325,53 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   exportarAExcel() {
+    // Obtener el mes y el año seleccionados
+    const mesSeleccionado = this.getMonthName(this.selectedMonth);
+    const anioSeleccionado = this.selectedYear;
+  
+    // Generar el nombre del archivo con el mes y el año
+    const fileName = `DDJJ-cargoyagrup_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+
+    // Crear la fila superior con el mes y el año
+    const headerRow = [[`Mes: ${mesSeleccionado}`, `Año: ${anioSeleccionado}`]];
+
+    // Formatear los títulos de las columnas de fechas para el Excel
+    const formattedColumnTitles = this.displayedColumns.slice(4).map(columnTitle => {
+    // Convertir el título de la columna a formato 'ddd DD' usando moment.js
+    return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
+    });
+    
+  
     const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
-      return {
+      const novedades = this.getNovedades(registro.asistencial);
+      const novedadesString = novedades.map((novedad: NovedadPersonal) => novedad.descripcion).join('; ');
+  
+      const exportData: any = {
         Apellido: registro.asistencial.apellido,
         Nombre: registro.asistencial.nombre,
         Cuil: registro.asistencial.cuil,
-        /*TotalHoras: registro.totalHoras*/
+        Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
+        Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
+        Novedades: novedadesString || '-'
       };
-    });
+  
+      // Iterar sobre las columnas adicionales definidas en el HTML
+      this.displayedColumns.slice(4).forEach((fechaColumna: string, index: number) => {
+        // Aquí utilizamos this.getFechaFromColumnId
+        exportData[formattedColumnTitles[index]] = this.calculateHoursForDate(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+      });
 
+      return exportData;
+    });
+  
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'MiHojaDeCalculo');
-    XLSX.writeFile(wb, 'DDJJ-cargoyagrup.xlsx');
+  
+    // Descargar el archivo con el nombre generado
+    XLSX.writeFile(wb, fileName);
   }
-    
+          
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }

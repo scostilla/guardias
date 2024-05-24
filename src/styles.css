@@ -327,7 +327,7 @@ footer {
 }
 
 .linea-vertical-tabla:hover, .weekend:hover {
-  box-shadow: inset 0 0 0 2px #65c9ee;
+  box-shadow: inset 0 0 0 2px #909091;
 }
 
 .select-tabla {
