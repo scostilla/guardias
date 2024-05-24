@@ -20,9 +20,7 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as XLSX from 'xlsx';
-import * as ExcelJS from 'exceljs';
-import * as FileSaver from 'file-saver';
-
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
@@ -54,7 +52,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024];
 
-  datosTabla = [
+  datos = [
     { apellido: 'gonzales', nombre: 'jose', cuil: '454545' },
     { apellido: 'ramirez', nombre: 'pedro', cuil: '767876' }
   ];
@@ -378,7 +376,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     XLSX.writeFile(wb, fileName);
   }
 
-  /*exportarTablaAExcel(nombreArchivo: string): void {
+  exportarTablaAExcel(nombreArchivo: string): void {
     // Crear un nuevo libro de trabajo y una hoja de cálculo
     const libro = XLSX.utils.book_new();
     
@@ -409,9 +407,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   
     // Guardar el archivo usando FileSaver
     saveAs(blob, `${nombreArchivo}.xlsx`);
-  }*/
+  }
 
-  exportarTablaExcel(): void {
+  /*exportarTablaExcel(): void {
     // Crear un nuevo libro y hoja de Excel
     let workbook = new ExcelJS.Workbook();
     let worksheet = workbook.addWorksheet('Datos');
@@ -458,7 +456,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       });
       FileSaver.saveAs(blob, `Tabla_${moment().format('DD_MM_YYYY_HH_mm_ss')}.xlsx`);
     });
-  }
+  }*/
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
