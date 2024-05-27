@@ -21,6 +21,9 @@ import { ServicioService } from 'src/app/services/Configuracion/servicio.service
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+/*import * as FileSaver from 'file-saver';
+import * as ExcelJS from 'exceljs'; */
+
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
