@@ -13,8 +13,8 @@
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
-        <input matInput placeholder="Buscar por nombre o apellido" (keydown.enter)="applyFilter(input.value)" #input>
-        <button mat-icon-button matSuffix (click)="applyFilter(input.value)">
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre o apellido">
+        <button mat-icon-button matSuffix>
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
@@ -57,7 +57,7 @@
     <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
-        <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateTableDataSource()">
+        <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
           <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</option>
         </select>
       </div>

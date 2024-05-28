@@ -20,7 +20,7 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+// aqui comentooooo    ######  import { saveAs } from 'file-saver';
 /*import * as FileSaver from 'file-saver';
 import * as ExcelJS from 'exceljs'; */
 
@@ -55,14 +55,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024];
 
-  datos = [
-    { apellido: 'gonzales', nombre: 'jose', cuil: '454545' },
-    { apellido: 'ramirez', nombre: 'pedro', cuil: '767876' }
-  ];
-
   constructor(
     private registroMensualService: RegistroMensualService,
-    private asistencialService: AsistencialService,
     private feriadoService: FeriadoService,
     private servicioService: ServicioService, 
     private dialog: MatDialog,
@@ -83,120 +77,25 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     moment.locale('es');
+    
     this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-
-    this.listServicio();
-
+    
+    this.generarDiasDelMes();
+    
     this.feriadoService.list().subscribe((feriados: Feriado[]) => {
       this.feriados = feriados;
     });
 
-    this.generarDiasDelMes();
-
-    this.loadRegistrosMensuales();
+    this.listServicio();
 
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
     });
-  }
 
-  applyFilter(filterValue: string) {
-    const normalizeText = (text: string) => {
-      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    };
-  
-    const normalizedFilterValue = normalizeText(filterValue);
-  
-    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
-      const dataStr = normalizeText(
-        data.asistencial?.nombre + ' ' +
-        data.asistencial?.apellido + ' '
-      );
-      return dataStr.indexOf(normalizedFilterValue) !== -1;
-    };
-  
-    this.dataSource.filter = normalizedFilterValue;
-  } 
-
-  listServicio(): void {
-    this.servicioService.list().subscribe(data => {
-      this.servicios = data;
-      if (this.servicios.length > 0) {
-        this.selectedServicio = this.servicios[0].id; 
-      }
-      this.updateTableDataSource(); // Llama a updateTableDataSource sin importar si hay servicios o no
-    }, error => {
-      console.log(error);
-    });
-  }
-//AQUI
-  updateDateAndLoadData(): void {
-
-    this.generarDiasDelMes();
     this.loadRegistrosMensuales();
-    this.updateTableDataSource();
+
     this.loadData();
-  }
-
-  updateService(): void {
-    this.updateTableDataSource();
-  }
-
-  loadData(){
-    this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
-    this.dataSource = new MatTableDataSource(this.registrosMensuales);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  filterDataByDate(month: number, year: number): RegistroMensual[] {
-    // Filtra los datos según el mes y año proporcionados
-    return this.registrosMensuales.filter(registro => {
-      // Convertir el mes a formato numérico
-    const monthNumber = moment().month(registro.mes).month();
-    return monthNumber === month && registro.anio === year;
-    });
-  }
-
-  getMonthName(monthIndex: number): string {
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    return monthNames[monthIndex];
-  }
-
-  loadRegistrosMensuales(): void {
-    const anio = this.selectedYear;
-    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = 1; // ID de efector fijo
-
-    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe( data => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
-  }
-
-  updateTableDataSource(): void {
-    // Convertir selectedServicio a número si es necesario
-    const servicioIdSeleccionado = Number(this.selectedServicio);
- 
-    // Filtrar los registros mensuales por el servicio seleccionado
-    const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
-      registroMensual.registroActividad.some(registroActividad => 
-        registroActividad.servicio.id === servicioIdSeleccionado
-      )
-    );
- 
-    // Asignar los registros filtrados a la fuente de datos de la tabla
-    this.dataSource.data = filteredRegistros;
- }
-  
-  getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
-    return legajoActual ? legajoActual : undefined;
-  }
-
-  getNovedades(asistencial: Asistencial): NovedadPersonal[] {
-    return asistencial.novedadesPersonales;
+    
   }
 
   generarDiasDelMes(): void {
@@ -212,6 +111,73 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
+  updateTableDataSource(): void {
+
+    if (this.selectedServicio !== null && this.selectedServicio !== undefined) {
+      const servicioIdSeleccionado = Number(this.selectedServicio);
+
+      // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
+      const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
+        registroMensual.registroActividad.some(registroActividad =>
+          registroActividad.servicio.id === servicioIdSeleccionado
+        )
+      );
+      this.dataSource.data = filteredRegistros;
+    } else {
+      this.dataSource.data = this.registrosMensuales;
+    }
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  loadRegistrosMensuales(): void {
+    const anio = this.selectedYear;
+    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+    const idEfector = 1; // ID de efector fijo
+
+    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe(data => {
+      this.registrosMensuales = data;
+      this.updateTableDataSource(); // Filtrar los datos después de cargarlos
+    });
+  }
+
+  updateDateAndLoadData(): void {
+
+    this.generarDiasDelMes();
+    this.loadRegistrosMensuales();
+  }
+
+  listServicio(): void {
+    this.servicioService.list().subscribe(data => {
+      this.servicios = data;
+      if (this.servicios.length > 0) {
+        this.selectedServicio = this.servicios[0].id;
+      }
+      this.updateDateAndLoadData();
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  filterDataByDate(month: number, year: number): RegistroMensual[] {
+    // Filtra los datos según el mes y año proporcionados
+    return this.registrosMensuales.filter(registro => {
+      // Convertir el mes a formato numérico
+    const monthNumber = moment().month(registro.mes).month();
+    return monthNumber === month && registro.anio === year;
+    });
+  }
+
+  loadData() {
+    this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
+    this.updateTableDataSource();
+  }
+
+  getMonthName(monthIndex: number): string {
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    return monthNames[monthIndex];
+  }
+
   getFechaFromColumnId(columnId: string): Date {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
@@ -219,7 +185,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   openDetail(asistencial: Asistencial, selectedMonth: number, selectedYear: number): void {
     this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
       width: '600px',
-      data:{ 
+      data: {
         asistencial,
         month: selectedMonth,
         year: selectedYear
@@ -330,6 +296,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
     return totalHours;
   }
+
+  
 /*
   exportarTablaAExcel(nombreArchivo: string): void {
     // Crear un nuevo libro de trabajo y una hoja de cálculo
@@ -427,6 +395,15 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
     }
   }
   return output;
+}
+
+getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
+  const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+  return legajoActual ? legajoActual : undefined;
+}
+
+getNovedades(asistencial: Asistencial): NovedadPersonal[] {
+  return asistencial.novedadesPersonales;
 }
 
 exportarAExcel() {
@@ -579,6 +556,33 @@ exportarAExcel() {
       FileSaver.saveAs(blob, `Tabla_${moment().format('DD_MM_YYYY_HH_mm_ss')}.xlsx`);
     });
   }*/
+
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+      const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
+      const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
+
+      filter = this.accentFilter(filter.toLowerCase());
+      return nombre.includes(filter) || apellido.includes(filter);
+    };
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();

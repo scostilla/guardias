@@ -44,16 +44,28 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
   getNovedadesActivas(asistencial: Asistencial): NovedadPersonal[] {
     return asistencial.novedadesPersonales.filter(novedad => {
       const inicio = new Date(novedad.fechaInicio);
-      console.log("###inicio.getMonth() + 1", inicio.getMonth() + 1);
-      console.log("###this.month", this.month);
-      console.log("###inicio.getFullYear()", inicio.getFullYear());
-      console.log("###this.year", this.year);
+        const fin = new Date(novedad.fechaFinal);
 
-      return (
-        (inicio.getMonth() + 1) === this.month &&
-        inicio.getFullYear() === this.year &&
-        novedad.actual
-      );
+        const inicioMes = inicio.getMonth() + 1;
+        const inicioAnio = inicio.getFullYear();
+        const finMes = fin.getMonth() + 1;
+        const finAnio = fin.getFullYear();
+
+        const selectedMonth = this.month;
+        const selectedYear = this.year;
+
+        console.log("###inicioMes: ", inicioMes);
+        console.log("###inicioAnio: ", inicioAnio);
+        console.log("###finMes: ", finMes);
+        console.log("###finAnio: ", finAnio);
+        console.log("###selectedMonth: %%%%%%%%%%%%% TOMA EL MES ANTERIOR.... CORREGIR y para anio NO FUNCIONA INTENTAR MOSTRAR NOVEDAD 1 ", selectedMonth);
+        console.log("###selectedYear: ", selectedYear);
+
+        return (
+            ((inicioAnio < selectedYear) || (inicioAnio === selectedYear && inicioMes <= selectedMonth)) &&
+            ((finAnio > selectedYear) || (finAnio === selectedYear && finMes >= selectedMonth)) &&
+            novedad.actual
+        );
     });
   }
 }
