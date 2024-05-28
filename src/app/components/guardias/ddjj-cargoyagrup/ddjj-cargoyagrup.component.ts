@@ -20,9 +20,9 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as XLSX from 'xlsx';
-// aqui comentooooo    ######  import { saveAs } from 'file-saver';
-/*import * as FileSaver from 'file-saver';
-import * as ExcelJS from 'exceljs'; */
+import { saveAs } from 'file-saver';
+import * as FileSaver from 'file-saver';
+import * as ExcelJS from 'exceljs';
 
 
 @Component({
