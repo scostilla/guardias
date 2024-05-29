@@ -354,6 +354,25 @@ footer {
   background-color: #f8f6f6 !important;
 }
 
+.novedad-personal-compensatorio {
+  background-color: #d195d1 !important;
+}
+.novedad-personal-lao {
+  background-color: #fafa99 !important;
+}
+.novedad-personal-maternidad {
+  background-color: #99c799 !important;
+}
+.novedad-personal-parte-enfermo {
+  background-color: #eedfc4 !important;
+}
+.novedad-personal-familiar-enfermo {
+  background-color: #c9ab73 !important;
+}
+.novedad-personal-falta-sin-aviso {
+  background-color: #ad6060 !important;
+}
+
 .mat-cell,
 .mat-header-cell {
   word-wrap: initial;

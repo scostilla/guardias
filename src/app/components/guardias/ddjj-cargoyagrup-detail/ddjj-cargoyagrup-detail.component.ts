@@ -4,6 +4,7 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-ddjj-cargoyagrup-detail',
@@ -43,29 +44,30 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
 
   getNovedadesActivas(asistencial: Asistencial): NovedadPersonal[] {
     return asistencial.novedadesPersonales.filter(novedad => {
-      const inicio = new Date(novedad.fechaInicio);
-        const fin = new Date(novedad.fechaFinal);
+      const inicio = moment(novedad.fechaInicio);
+      const fin = moment(novedad.fechaFinal);
+  
+      const inicioMes = inicio.month();
+      const inicioAnio = inicio.year();
+      const finMes = fin.month();      const finAnio = fin.year();
+  
+      const selectedMonth = this.month;
+      const selectedYear = this.year;
 
-        const inicioMes = inicio.getMonth() + 1;
-        const inicioAnio = inicio.getFullYear();
-        const finMes = fin.getMonth() + 1;
-        const finAnio = fin.getFullYear();
-
-        const selectedMonth = this.month;
-        const selectedYear = this.year;
-
-        console.log("###inicioMes: ", inicioMes);
-        console.log("###inicioAnio: ", inicioAnio);
-        console.log("###finMes: ", finMes);
-        console.log("###finAnio: ", finAnio);
-        console.log("###selectedMonth: %%%%%%%%%%%%% TOMA EL MES ANTERIOR.... CORREGIR y para anio NO FUNCIONA INTENTAR MOSTRAR NOVEDAD 1 ", selectedMonth);
-        console.log("###selectedYear: ", selectedYear);
-
-        return (
-            ((inicioAnio < selectedYear) || (inicioAnio === selectedYear && inicioMes <= selectedMonth)) &&
-            ((finAnio > selectedYear) || (finAnio === selectedYear && finMes >= selectedMonth)) &&
-            novedad.actual
-        );
+      console.log("### Fecha de inicio: ", inicio.format("YYYY-MM-DD"));
+      console.log("### Fecha de fin: ", fin.format("YYYY-MM-DD"));
+      console.log("### Mes de inicio (ajustado): ", inicioMes + 1);
+      console.log("### Año de inicio: ", inicioAnio);
+      console.log("### Mes de fin (ajustado): ", finMes + 1);
+      console.log("### Año de fin: ", finAnio);
+      console.log("### Mes seleccionado: ", selectedMonth + 1);
+      console.log("### Año seleccionado: ", selectedYear);
+  
+      return (
+        inicio.isSameOrBefore(moment({ year: selectedYear, month: selectedMonth })) &&
+        fin.isSameOrAfter(moment({ year: selectedYear, month: selectedMonth })) &&
+        novedad.actual
+      );
     });
   }
 }

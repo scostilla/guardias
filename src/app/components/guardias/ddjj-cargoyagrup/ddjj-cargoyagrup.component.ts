@@ -211,6 +211,60 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
+  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string, color: string } {
+    const dateMoment = moment(date).startOf('day');
+    const novedadFound = novedades.find(novedad => {
+      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
+      const finMoment = moment(novedad.fechaFinal).startOf('day');
+      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
+    });
+  
+    let color = '';
+    if (novedadFound) {
+      switch (novedadFound.descripcion) {
+        case 'Compensatorio':
+          color = '#d195d1';
+          break;
+        case 'L.A.O.':
+          color = '#fafa99';
+          break;
+        case 'Maternidad':
+          color = '#99c799';
+          break;
+        case 'Parte de enfermo':
+          color = '#eec881';
+          break;
+        case 'Familiar enfermo':
+          color = '#c9ab73';
+          break;
+        case 'Falta sin aviso':
+          color = '#ad6060'; 
+          break;
+      }
+    }
+  
+    return {
+      isNovedad: !!novedadFound,
+      descripcion: novedadFound ? novedadFound.descripcion : '',
+      color: color // Devuelve el color basado en la descripción
+    };
+  }
+
+  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string, idNovedad: number } {
+    const dateMoment = moment(date).startOf('day');
+    const novedadFound = novedades.find(novedad => {
+      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
+      const finMoment = moment(novedad.fechaFinal).startOf('day');
+      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
+    });
+  
+    return {
+      isNovedad: !!novedadFound,
+      descripcion: novedadFound ? novedadFound.descripcion : '',
+      idNovedad: novedadFound?.id ?? 0 
+    };
+  }*/
+
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
   
