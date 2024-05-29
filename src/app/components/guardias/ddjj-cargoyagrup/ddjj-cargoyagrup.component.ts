@@ -23,6 +23,8 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import * as FileSaver from 'file-saver';
 import * as ExcelJS from 'exceljs';
+import { ActivatedRoute } from '@angular/router';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
 
 @Component({
@@ -55,12 +57,17 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024];
 
+  selectedHospitalId: number | null = null;
+  selectedHospitalNombre: string = '';
+
   constructor(
     private registroMensualService: RegistroMensualService,
     private feriadoService: FeriadoService,
     private servicioService: ServicioService, 
     private dialog: MatDialog,
-    private paginatorIntl: MatPaginatorIntl
+    private paginatorIntl: MatPaginatorIntl,
+    private hospitalService: HospitalService,
+    private route: ActivatedRoute
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
@@ -86,8 +93,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       this.feriados = feriados;
     });
 
-    this.listServicio();
-
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
     });
@@ -95,7 +100,33 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.loadRegistrosMensuales();
 
     this.loadData();
-    
+
+    this.obtenerParametroRuta();
+     
+
+   // this.listServicio();
+  }
+
+  obtenerParametroRuta(){
+    // Obtener el parámetro de la ruta
+    this.route.queryParams.subscribe(params => {
+      this.selectedHospitalId = params['hospital'] ? +params['hospital'] : null;
+      if (this.selectedHospitalId) {
+        this.loadHospitalDetails(this.selectedHospitalId);
+      }
+    });
+  }
+
+  loadHospitalDetails(hospitalId: number) {
+    this.hospitalService.getById(hospitalId).subscribe(hospital => {
+      this.selectedHospitalNombre = hospital.nombre;
+      this.servicios = hospital.servicios;
+      if (this.servicios.length > 0) {
+        this.selectedServicio = this.servicios[0].id;
+      }
+    }, error => {
+      console.log(error);
+    });
   }
 
   generarDiasDelMes(): void {

@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
 @Component({
   selector: 'app-guardias-view',
@@ -10,19 +13,20 @@ export class GuardiasViewComponent {
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
-  selectedHospital: string = 'DN. PABLO SORIA';
+  selectedHospital?: number | null = null; 
+  hospitales: Hospital[]=[];
 
   constructor(
+    private hospitalService: HospitalService,
     private http: HttpClient,
+    private router: Router
   ) {
   }
 
   ngOnInit() {
-    this.http
-      .get<any[]>('../assets/jsonFiles/hospitales.json')
-      .subscribe((data) => {
-        this.options = data;
-      });
+    
+    this.listHospitales();
+    
     this.http
       .get<any[]>('../assets/jsonFiles/servicios.json')
       .subscribe((data) => {
@@ -30,8 +34,23 @@ export class GuardiasViewComponent {
       });
   }
 
+  listHospitales(): void {
+    this.hospitalService.list().subscribe(data => {
+      this.hospitales = data;
+      if (this.hospitales.length > 0) {
+        this.selectedHospital = this.hospitales[0].id;
+      }
+    }, error => {
+      console.log("Error en carga de hospitales: " + error) ;
+    });
+  }
+
+  navigateToCargoyAgrup() {
+    console.log('#### hospital que se envía: #####'+this.selectedHospital);
+    this.router.navigate(['/ddjj-cargoyagrup'], { queryParams: { hospital: this.selectedHospital } });
+  }
+
   updateHospital() {
-    //console.log('update hospital');
     if (this.services) {
       const filteredData = this.services.filter(
         (item) => item.hospital === this.selectedHospital

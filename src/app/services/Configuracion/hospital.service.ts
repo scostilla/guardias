@@ -22,9 +22,9 @@ export class HospitalService {
       return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'list');
   }
 
-  public detail(id:number): Observable<Hospital> {
-      return this.httpClient.get<Hospital>(this.hospitalesURL + `detail/${id}`);
-  }
+  public getById( id:number): Observable<Hospital> {
+    return this.httpClient.get<Hospital>(this.hospitalesURL + `detail/${id}`);
+}
 
   public detailnombre(nombre:string): Observable<Hospital> {
     return this.httpClient.get<Hospital>(this.hospitalesURL + `detailnombre/${nombre}`);
