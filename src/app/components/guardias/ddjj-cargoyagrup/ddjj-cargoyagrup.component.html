@@ -90,35 +90,40 @@
         </ng-container>
 
         <ng-container matColumnDef="totalHoras">
-          <th mat-header-cell *matHeaderCellDef class="negrita">Total mes</th>
-          <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+          <th mat-header-cell *matHeaderCellDef class="negrita" style="background-color: #bdbdbd;">Total mes</th>
+          <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
             {{ calculateTotalHoursForRow(registro.registroActividad, selectedMonth, selectedYear) }} hs
           </td>
         </ng-container>
 
-        <ng-container *ngFor="let fechaColumna of displayedColumns.slice(4)" [matColumnDef]="fechaColumna">
+        <ng-container matColumnDef="weekdaysTotal">
+          <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L-V</th>
+          <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+            {{ calculateWeekdaysTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+          </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="weekendsTotal">
+          <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total S-D</th>
+          <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+            {{ calculateWeekendsTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+          </td>
+        </ng-container>
+
+        <ng-container *ngFor="let fechaColumna of displayedColumns.slice(6)" [matColumnDef]="fechaColumna">
           <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
             {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
           </th>
           <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-              [ngClass]="{
-                'holiday': isHoliday(getFechaFromColumnId(fechaColumna)).isHoliday,
-                'weekend': isWeekend(getFechaFromColumnId(fechaColumna)),
-                'novedad-personal-compensatorio': isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion === 'Compensatorio',
-                'novedad-personal-lao': isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion === 'L.A.O.',
-                'novedad-personal-maternidad': isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion === 'Maternidad',
-                'novedad-personal-parte-enfermo': isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion === 'Parte de enfermo',
-                'novedad-personal-familiar-enfermo': isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion === 'Familiar enfermo',
-                'novedad-personal-falta-sin-aviso': isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion === 'Falta sin aviso'
-              }"
-              [matTooltip]="isHoliday(getFechaFromColumnId(fechaColumna)).isHoliday ? isHoliday(getFechaFromColumnId(fechaColumna)).motivo : isNovedad(getFechaFromColumnId(fechaColumna), registro.asistencial.novedadesPersonales).descripcion">
+          [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
+          [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
             <span 
                 [style.color]="calculateHoursColor(registro.registroActividad, getFechaFromColumnId(fechaColumna))"
                 [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
             </span>
           </td>
         </ng-container>
-                        
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>

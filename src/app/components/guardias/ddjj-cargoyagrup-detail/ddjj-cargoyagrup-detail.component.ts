@@ -43,31 +43,32 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
   }
 
   getNovedadesActivas(asistencial: Asistencial): NovedadPersonal[] {
+    const selectedMonth = this.month;
+    const selectedYear = this.year;
+  
     return asistencial.novedadesPersonales.filter(novedad => {
       const inicio = moment(novedad.fechaInicio);
       const fin = moment(novedad.fechaFinal);
   
-      const inicioMes = inicio.month();
-      const inicioAnio = inicio.year();
-      const finMes = fin.month();      const finAnio = fin.year();
+      if (
+        (inicio.year() < selectedYear || (inicio.year() === selectedYear && inicio.month() <= selectedMonth)) &&
+        (fin.year() > selectedYear || (fin.year() === selectedYear && fin.month() >= selectedMonth))
+      ) {
+        return true;
+      }
   
-      const selectedMonth = this.month;
-      const selectedYear = this.year;
-
-      console.log("### Fecha de inicio: ", inicio.format("YYYY-MM-DD"));
-      console.log("### Fecha de fin: ", fin.format("YYYY-MM-DD"));
-      console.log("### Mes de inicio (ajustado): ", inicioMes + 1);
-      console.log("### Año de inicio: ", inicioAnio);
-      console.log("### Mes de fin (ajustado): ", finMes + 1);
-      console.log("### Año de fin: ", finAnio);
-      console.log("### Mes seleccionado: ", selectedMonth + 1);
-      console.log("### Año seleccionado: ", selectedYear);
-  
-      return (
-        inicio.isSameOrBefore(moment({ year: selectedYear, month: selectedMonth })) &&
-        fin.isSameOrAfter(moment({ year: selectedYear, month: selectedMonth })) &&
-        novedad.actual
-      );
+      return false;
     });
+  }  
+
+  formatDate(startDate: Date, endDate: Date): string {
+    const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
+    const formattedEndDate = moment(endDate).format('DD/MM/YYYY');
+  
+    if (formattedStartDate === formattedEndDate) {
+      return formattedStartDate;
+    } else {
+      return `${formattedStartDate} - ${formattedEndDate}`;
+    }
   }
 }

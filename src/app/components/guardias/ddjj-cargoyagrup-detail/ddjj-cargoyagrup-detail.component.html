@@ -4,27 +4,26 @@
     <tbody>
       <tr class="bg-light">
         <th scope="row">Apellido y nombre</th>
-        <td>{{asistencial.apellido}}, {{asistencial.nombre}}</td>
+        <td>{{ asistencial.apellido }}, {{ asistencial.nombre }}</td>
       </tr>    
       <tr>
         <th scope="row">CUIL</th>
-        <td>{{asistencial.cuil}}</td>
+        <td>{{ asistencial.cuil }}</td>
       </tr>    
       <tr>
         <th scope="row">Vínculo laboral</th>
-        <td>{{getLegajoActualId(asistencial)?.revista?.tipoRevista?.nombre}}</td>
+        <td>{{ getLegajoActualId(asistencial)?.revista?.tipoRevista?.nombre }}</td>
       </tr>    
       <tr>
         <th scope="row">Categoria</th>
-        <td>
-          {{getLegajoActualId(asistencial)?.revista?.categoria?.nombre +'('+getLegajoActualId(asistencial)?.revista?.adicional?.nombre+')'}}
-        </td>
+        <td>{{ getLegajoActualId(asistencial)?.revista?.categoria?.nombre +'('+getLegajoActualId(asistencial)?.revista?.adicional?.nombre+')' }}</td>
       </tr>      
       <tr>
         <th scope="row">Novedades</th>
         <td>
           <div *ngFor="let novedad of getNovedadesActivas(asistencial)">
-            {{novedad.descripcion}}
+            {{ novedad.descripcion }} 
+            <span>({{ formatDate(novedad.fechaInicio, novedad.fechaFinal) }})</span>
           </div>
         </td>
       </tr>
