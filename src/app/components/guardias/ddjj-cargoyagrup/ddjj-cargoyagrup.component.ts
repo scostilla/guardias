@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -111,7 +111,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
 
     this.obtenerParametroRuta();
-    
+
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
     });
@@ -119,9 +119,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.loadRegistrosMensuales();
 
     this.loadData();
-
-    
-     
 
    // this.listServicio();
   }
@@ -138,8 +135,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   loadHospitalDetails(hospitalId: number) {
     this.hospitalService.getById(hospitalId).subscribe(hospital => {
-      //aqui asigno el nombre
-      //ver de asignar el id
       this.selectedHospitalNombre = hospital.nombre;
       this.servicios = hospital.servicios;
       if (this.servicios.length > 0) {
