@@ -110,6 +110,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       this.feriados = feriados;
     });
 
+    this.obtenerParametroRuta();
+    
     this.suscription = this.registroMensualService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
     });
@@ -118,7 +120,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     this.loadData();
 
-    this.obtenerParametroRuta();
+    
      
 
    // this.listServicio();
@@ -136,6 +138,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   loadHospitalDetails(hospitalId: number) {
     this.hospitalService.getById(hospitalId).subscribe(hospital => {
+      //aqui asigno el nombre
+      //ver de asignar el id
       this.selectedHospitalNombre = hospital.nombre;
       this.servicios = hospital.servicios;
       if (this.servicios.length > 0) {
@@ -181,7 +185,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = 1; // ID de efector fijo
+    const idEfector = this.selectedHospitalId;
+    
+    console.log("id del efector que se usa para cargar reg mensuales"+ idEfector);
+
+    if (idEfector === null) {
+      console.error("El ID del hospital no puede ser null");
+      return; // ver de que manera manejar si sucede que sea null
+    }
 
     this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe(data => {
       this.registrosMensuales = data;
