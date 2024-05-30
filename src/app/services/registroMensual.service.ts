@@ -23,11 +23,11 @@ import { RegistroMensualDto } from "../dto/RegistroMensualDto";
     }
 
     public listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion( anio:number, mes:string,idEfector:number): Observable<RegistroMensual[]> {
-        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAnioMesEfector/${anio}/${mes}/${idEfector}`);
+        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEcargoyagrup/${anio}/${mes}/${idEfector}`);
     }
 
     public listByYearMonthEfectorAndTipoGuardiaExtra( anio:number, mes:string,idEfector:number): Observable<RegistroMensual[]> {
-        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAnioMesEfector/${anio}/${mes}/${idEfector}`);
+        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEextra/${anio}/${mes}/${idEfector}`);
     }
   
     public detail(id:number): Observable<RegistroMensual> {
