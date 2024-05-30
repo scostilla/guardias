@@ -25,6 +25,24 @@ import * as ExcelJS from 'exceljs';
 import { ActivatedRoute } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
+interface ClasesNovedad {
+  Compensatorio: string;
+  'L.A.O.': string;
+  Maternidad: string;
+  'Parte de enfermo': string;
+  'Familiar enfermo': string;
+  'Falta sin aviso': string;
+  [key: string]: string;
+}
+
+const clases: ClasesNovedad = {
+  Compensatorio: 'novedad-personal-compensatorio',
+  'L.A.O.': 'novedad-personal-lao',
+  Maternidad: 'novedad-personal-maternidad',
+  'Parte de enfermo': 'novedad-personal-parte-enfermo',
+  'Familiar enfermo': 'novedad-personal-familiar-enfermo',
+  'Falta sin aviso': 'novedad-personal-falta-sin-aviso'
+};
 
 @Component({
   selector: 'app-ddjj-cargoyagrup',
@@ -38,7 +56,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras'];
+  displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
 
@@ -241,7 +259,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string, color: string } {
+  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string } {
     const dateMoment = moment(date).startOf('day');
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
@@ -249,37 +267,44 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
     });
   
-    let color = '';
-    if (novedadFound) {
-      switch (novedadFound.descripcion) {
-        case 'Compensatorio':
-          color = '#d195d1';
-          break;
-        case 'L.A.O.':
-          color = '#fafa99';
-          break;
-        case 'Maternidad':
-          color = '#99c799';
-          break;
-        case 'Parte de enfermo':
-          color = '#eec881';
-          break;
-        case 'Familiar enfermo':
-          color = '#c9ab73';
-          break;
-        case 'Falta sin aviso':
-          color = '#ad6060'; 
-          break;
-      }
-    }
-  
     return {
       isNovedad: !!novedadFound,
-      descripcion: novedadFound ? novedadFound.descripcion : '',
-      color: color // Devuelve el color basado en la descripción
+      descripcion: novedadFound ? novedadFound.descripcion : ''
     };
   }
+  
+  getNovedadCssClass(descripcion: string): string {
+    return clases[descripcion] || '';
+  }
 
+  isNovedadClass(date: Date, registro: any): string {
+    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+    if (novedad.isNovedad) {
+      return this.getNovedadCssClass(novedad.descripcion);
+    } else {
+      const holiday = this.isHoliday(date);
+      if (holiday.isHoliday) {
+        return 'holiday';
+      } else if (this.isWeekend(date)) {
+        return 'weekend';
+      }
+    }
+    return '';
+  }
+
+  calculateTooltip(date: Date, registro: any): string {
+    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+    if (novedad.isNovedad) {
+      return novedad.descripcion;
+    } else {
+      const holiday = this.isHoliday(date);
+      if (holiday.isHoliday) {
+        return holiday.motivo;
+      }
+    }
+    return '';
+  }
+  
   /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string, idNovedad: number } {
     const dateMoment = moment(date).startOf('day');
     const novedadFound = novedades.find(novedad => {
@@ -380,6 +405,44 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
     return totalHours;
   }
+
+  calculateWeekdaysTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
+    let totalWeekdaysHours = 0;
+    const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
+
+    // Iterar sobre cada día del mes de interés
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(anioDeInteres, mesDeInteres, day);
+      if (date.getDay() !== 0 && date.getDay() !== 6) { // Si el día no es sábado ni domingo
+        const hoursForDate = this.calculateHoursForDate(registroActividades, date);
+        // Asegurarse de que el resultado es un número y sumarlo al total de horas de días laborales
+        const hoursNumber = parseFloat(hoursForDate.replace(/<[^>]*>/g, '')); // Eliminar etiquetas HTML
+        if (!isNaN(hoursNumber)) {
+          totalWeekdaysHours += hoursNumber;
+        }
+      }
+    }
+    return totalWeekdaysHours;
+}
+
+calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
+    let totalWeekendsHours = 0;
+    const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
+
+    // Iterar sobre cada día del mes de interés
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(anioDeInteres, mesDeInteres, day);
+      if (date.getDay() === 0 || date.getDay() === 6) { // Si el día es sábado o domingo
+        const hoursForDate = this.calculateHoursForDate(registroActividades, date);
+        // Asegurarse de que el resultado es un número y sumarlo al total de horas de fines de semana
+        const hoursNumber = parseFloat(hoursForDate.replace(/<[^>]*>/g, '')); // Eliminar etiquetas HTML
+        if (!isNaN(hoursNumber)) {
+          totalWeekendsHours += hoursNumber;
+        }
+      }
+    }
+    return totalWeekendsHours;
+}
 
   
 /*
