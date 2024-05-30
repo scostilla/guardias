@@ -4,12 +4,11 @@ import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { Observable, Subscription, catchError, of, tap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import * as moment from 'moment';
 import 'moment/locale/es';

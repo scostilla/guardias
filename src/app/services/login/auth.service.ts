@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Usuario } from 'src/app/models/login/Usuario';
 import { JwtDTO } from 'src/app/models/login/jwt-dto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
-import { NuevoUsuario } from 'src/app/models/login/nuevo-usuario';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public nuevo(nuevoUsuario : NuevoUsuario): Observable<any>{
+  public nuevo(nuevoUsuario : Usuario): Observable<any>{
     return this.httpClient.post<any>(this.authURl + 'create',nuevoUsuario);
   }
 

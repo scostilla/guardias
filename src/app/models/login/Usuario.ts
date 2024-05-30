@@ -1,4 +1,4 @@
-export class NuevoUsuario {
+export class Usuario {
 
     nombre: string;
     nombreUsuario: string;
