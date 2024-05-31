@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-guardias-view',
@@ -15,6 +16,7 @@ export class GuardiasViewComponent {
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital?: number | null = null; 
   hospitales: Hospital[]=[];
+  fechaActual?: string;
 
   constructor(
     private hospitalService: HospitalService,
@@ -24,6 +26,8 @@ export class GuardiasViewComponent {
   }
 
   ngOnInit() {
+
+    this.fechaActual = moment().format('dddd, D [de] MMMM [de] YYYY');
     
     this.listHospitales();
     
@@ -33,6 +37,7 @@ export class GuardiasViewComponent {
         this.services = data;
       });
   }
+  
 
   listHospitales(): void {
     this.hospitalService.list().subscribe(data => {
@@ -48,6 +53,11 @@ export class GuardiasViewComponent {
   navigateToCargoyAgrup() {
     console.log('#### hospital que se envía: #####'+this.selectedHospital);
     this.router.navigate(['/ddjj-cargoyagrup'], { queryParams: { hospital: this.selectedHospital } });
+  }
+
+  navigateToExtra() {
+    console.log('#### hospital que se envía: #####'+this.selectedHospital);
+    this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
   }
 
   updateHospital() {

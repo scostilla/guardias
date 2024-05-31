@@ -241,7 +241,12 @@ footer {
   color: #fff !important;
 }
 
-.button-success:hover, .button-primary:hover {
+.button-pase {
+  background-color: #F44A3E !important;
+  color: #fff !important;
+}
+
+.button-success:hover, .button-primary:hover, .button-pase:hover {
   background-color: #37BBED !important;
 }
 

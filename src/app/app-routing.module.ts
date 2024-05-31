@@ -113,10 +113,10 @@ import { GuardiasViewPComponent } from './components/guardias/guardias-view-p/gu
 import { GuardiaActivaComponent } from './components/guardias/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardias/guardia-pasiva/guardia-pasiva.component';
 import { DdjjExtraComponent } from './components/guardias/ddjj-extra/ddjj-extra.component';
+import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detail/ddjj-extra-detail.component';
 import { DdjjContrafacturaComponent } from './components/guardias/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
-import { DdjjCargoyagrupCalendarComponent } from './components/guardias/ddjj-cargoyagrup-calendar/ddjj-cargoyagrup-calendar.component';
 import { DdjjExtraTotComponent } from './components/guardias/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjExtraTotRecComponent } from './components/guardias/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
 import { DdjjExtraTotApComponent } from './components/guardias/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
@@ -288,10 +288,10 @@ const routes: Routes = [
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
   {path:'ddjj-extra',component:DdjjExtraComponent},
+  {path:'ddjj-extra-detail',component:DdjjExtraDetailComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
   {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
   {path:'ddjj-cargoyagrup-detail',component:DdjjCargoyagrupDetailComponent},
-  {path:'ddjj-cargoyagrup-calendar',component:DdjjCargoyagrupCalendarComponent},
   {path:'ddjj-extra-tot',component:DdjjExtraTotComponent},
   {path:'ddjj-extra-tot-rec',component:DdjjExtraTotRecComponent},
   {path:'ddjj-extra-tot-ap',component:DdjjExtraTotApComponent},
