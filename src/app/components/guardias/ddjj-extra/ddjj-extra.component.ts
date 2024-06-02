@@ -187,7 +187,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       return;
     }
   
-    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe(data => {
+    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaExtra(anio, mes, idEfector).subscribe(data => {
       this.registrosMensuales = data.filter(registro => 
         registro.registroActividad.some(registroActividad => 
           registroActividad.tipoGuardia.id === 3
