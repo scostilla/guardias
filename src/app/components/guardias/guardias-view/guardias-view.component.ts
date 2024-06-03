@@ -57,9 +57,9 @@ export class GuardiasViewComponent {
 
   navigateToExtra() {
     console.log('#### hospital que se envía: #####'+this.selectedHospital);
-    this.router.navigate(['/ddjj-extra']);
+    this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
   }
-  
+
   updateHospital() {
     if (this.services) {
       const filteredData = this.services.filter(
