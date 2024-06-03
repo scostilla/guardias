@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Confirmación de pase:</h1>
+<div mat-dialog-content>
+    <p class="negrita">¿Estás seguro que deseas enviar la información como finalizada para su revisión en la DPH?</p>
+    <p class="btnRemove">Esta acción no podrá deshacerse.</p>
+</div>
+<div mat-dialog-actions class="center-content">
+    <button mat-raised-button (click)="cancelar()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="confirmar()" cdkFocusInitial>Confirmar</button>
+</div>

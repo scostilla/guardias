@@ -206,6 +206,7 @@ import { PersonalComponent } from './components/personal/personal/personal.compo
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detail/ddjj-extra-detail.component';
+import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -364,6 +365,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     PersonalLegajoComponent,
     DdjjCargoyagrupDetailComponent,
     DdjjExtraDetailComponent,
+    DialogConfirmDdjjComponent,
     
   ],
 

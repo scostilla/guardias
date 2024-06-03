@@ -11,8 +11,10 @@
       <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;" (click)="exportarAExcel()">
         <mat-icon>get_app</mat-icon>
       </button>
-      <button mat-fab class="button-pase" matTooltip="Pase a DPH" style="margin-left: 5px;" routerLink="/guardias-view">
-        <mat-icon>assignment_turned_in</mat-icon>
+      <button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openDdjjConfirm()" [disabled]="!botonDph" [ngClass]="{'disabled-button-ddjj': !botonDph}"  
+        matTooltip="Pase a DPH">
+        <mat-icon *ngIf="botonDph" style="transform: scaleX(-1)">assignment_return</mat-icon>
+        <mat-icon *ngIf="!botonDph">assignment_turned_in</mat-icon>
       </button>
     </div>
 
@@ -68,6 +70,9 @@
       </div>
     </div>  
   </div>
+
+  <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste el pase de la DDJJ de guardias EXTRAS para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por la DPH.</div>
+
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
@@ -140,7 +145,7 @@
     </div>
   </div>
 
-  <div class="row mt-3">
+  <!--<div class="row mt-3">
     <button mat-fab extended color="warn" routerLink="/ddjj-extra-tot">
       <mat-icon>assignment_turned_in</mat-icon>
       Pase a DPH
@@ -149,7 +154,7 @@
 </div>
 
 
-<!--<div class="tabla-center">
+<div class="tabla-center">
     <div class="row" style="margin-bottom: 10px;">
         <div class="col">
           <button mat-fab extended color="primary" routerLink="/guardias-view">

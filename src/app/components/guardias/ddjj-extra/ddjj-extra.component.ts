@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
+import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -22,7 +23,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import * as FileSaver from 'file-saver';
 import * as ExcelJS from 'exceljs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
 interface ClasesNovedad {
@@ -76,6 +77,9 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
 
   selectedHospitalId: number | null = null;
   selectedHospitalNombre: string = '';
+  botonDph = true;
+  revisandoDPH: boolean = false;
+
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -84,7 +88,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
@@ -99,9 +104,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     moment.locale('es');
-    
+
     this.dataSource = new MatTableDataSource<RegistroMensual>([]);
     
     this.generarDiasDelMes();
@@ -111,16 +115,6 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     });
 
     this.obtenerParametroRuta();
-
-    this.suscription = this.registroMensualService.refresh$.subscribe(() => {
-      this.loadRegistrosMensuales();
-    });
-
-    this.loadRegistrosMensuales();
-
-    this.loadData();
-
-   // this.listServicio();
   }
 
   obtenerParametroRuta(){
@@ -140,41 +134,10 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       if (this.servicios.length > 0) {
         this.selectedServicio = this.servicios[0].id;
       }
+      this.loadRegistrosMensuales(); // Llama aquí después de obtener los servicios
     }, error => {
       console.log(error);
     });
-  }
-
-  generarDiasDelMes(): void {
-    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
-    const endOfMonth = startOfMonth.clone().endOf('month');
-    let day = startOfMonth;
-
-    this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
-
-    while (day <= endOfMonth) {
-      this.displayedColumns.push(day.format('YYYY_MM_DD'));
-      day.add(1, 'day');
-    }
-  }
-
-  updateTableDataSource(): void {
-
-    if (this.selectedServicio !== null && this.selectedServicio !== undefined) {
-      const servicioIdSeleccionado = Number(this.selectedServicio);
-
-      // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
-      const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
-        registroMensual.registroActividad.some(registroActividad =>
-          registroActividad.servicio.id === servicioIdSeleccionado
-        )
-      );
-      this.dataSource.data = filteredRegistros;
-    } else {
-      this.dataSource.data = this.registrosMensuales;
-    }
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   loadRegistrosMensuales(): void {
@@ -193,8 +156,39 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
           registroActividad.tipoGuardia.id === 3
         )
       );
-      this.updateTableDataSource();
+      this.updateTableDataSource(); // Llama aquí después de obtener los registros
     });
+  }
+
+  updateTableDataSource(): void {
+    if (this.selectedServicio !== null && this.selectedServicio !== undefined) {
+      const servicioIdSeleccionado = Number(this.selectedServicio);
+
+      // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
+      const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
+        registroMensual.registroActividad.some(registroActividad =>
+          registroActividad.servicio.id === servicioIdSeleccionado
+        )
+      );
+      this.dataSource.data = filteredRegistros;
+    } else {
+      this.dataSource.data = this.registrosMensuales;
+    }
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  generarDiasDelMes(): void {
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
+    const endOfMonth = startOfMonth.clone().endOf('month');
+    let day = startOfMonth;
+
+    this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
+
+    while (day <= endOfMonth) {
+      this.displayedColumns.push(day.format('YYYY_MM_DD'));
+      day.add(1, 'day');
+    }
   }
   
   updateDateAndLoadData(): void {
@@ -245,6 +239,19 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         asistencial,
         month: selectedMonth,
         year: selectedYear
+      }
+    });
+  }
+
+  openDdjjConfirm(): void {
+    const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
+      width: '500px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.revisandoDPH = true;
+        this.botonDph = false;
       }
     });
   }
