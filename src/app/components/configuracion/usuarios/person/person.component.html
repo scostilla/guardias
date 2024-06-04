@@ -5,8 +5,11 @@
       <div class="titulo_prueba">PERSONAL</div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Persona Asistencial">
+      <button mat-fab class="button-primary" (click)="openFormChanges()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab class="button-pase" style="margin-left: 5px;" routerLink="/autoridad" matTooltip="Agregar Autoridad">
+        <mat-icon>person_add</mat-icon>
       </button>
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">

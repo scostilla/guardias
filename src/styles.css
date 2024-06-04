@@ -247,12 +247,13 @@ footer {
 }
 
 .text-pase {
-  background-color: #F44A3E !important;
-  color: #fff;
+  background-color: #ffdc13 !important;
+  color: #775906;
   font-weight: bold;
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
+  text-align: center;
 }
 
 .button-success:hover, .button-primary:hover, .button-pase:hover {

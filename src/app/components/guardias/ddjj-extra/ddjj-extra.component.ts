@@ -382,8 +382,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
 
     const tipoGuardia = registro.tipoGuardia;
     if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 1) {
-        return '#91A8DA'; // Color para CARGO
+      if (tipoGuardia.id === 3) {
+        return '#fcc932'; // Color para CARGO
       } else if (tipoGuardia.id === 2) {
         return '#F4AF88'; // Color para REAGRUPACION DE HS
       }
