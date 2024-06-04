@@ -8,48 +8,14 @@
         <mat-form-field appearance="fill">
             <mat-label>Persona</mat-label>
             <mat-select formControlName="persona" [compareWith]="comparePersona">
-                <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.apellido }}</mat-option>
+                <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.apellido +', '+ persona.nombre }}</mat-option>
             </mat-select>
-            <!-- <mat-error *ngIf="autoridadForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error> -->
+            <mat-error *ngIf="autoridadForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
             <mat-label>Autoridad</mat-label>
-            <input matInput formControlName="autoridad">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Fecha Inicio</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <!-- <mat-error *ngIf="autoridadForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error> -->
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Fecha Fin</mat-label>
-            <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
-            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-            <mat-datepicker #picker2></mat-datepicker>
-            <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Actual</mat-label>
-            <mat-select formControlName="actual">
-                <mat-option [value]="true">Si</mat-option>
-                <mat-option [value]="false">No</mat-option>
-            </mat-select>
-            <!-- <mat-error *ngIf="autoridadForm.get('actual')?.errors?.['required']">El campo es requerido.</mat-error> -->
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Regional</mat-label>
-            <mat-select formControlName="regional">
-                <mat-option [value]="true">Si</mat-option>
-                <mat-option [value]="false">No</mat-option>
-            </mat-select>
-            <!-- <mat-error *ngIf="autoridadForm.get('regional')?.errors?.['required']">El campo es requerido.</mat-error> -->
+            <input matInput formControlName="nombre">
         </mat-form-field>
 
         <mat-form-field appearance="fill">
@@ -57,7 +23,41 @@
             <mat-select formControlName="efector" [compareWith]="compareEfector">
                 <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre }}</mat-option>
             </mat-select>
-            <!-- <mat-error *ngIf="autoridadForm.get('efector')?.errors?.['required']">El efector es requerida.</mat-error> -->
+            <mat-error *ngIf="autoridadForm.get('efector')?.errors?.['required']">El efector es requerida.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Fecha Inicio</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="autoridadForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Fecha Fin</mat-label>
+            <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+            <mat-error *ngIf="autoridadForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Actual</mat-label>
+            <mat-select formControlName="esActual">
+                <mat-option [value]="true">Si</mat-option>
+                <mat-option [value]="false">No</mat-option>
+            </mat-select>
+            <mat-error *ngIf="autoridadForm.get('esActual')?.errors?.['required']">El campo es requerido.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Regional</mat-label>
+            <mat-select formControlName="esRegional">
+                <mat-option [value]="true">Si</mat-option>
+                <mat-option [value]="false">No</mat-option>
+            </mat-select>
+            <mat-error *ngIf="autoridadForm.get('esRegional')?.errors?.['required']">El campo es requerido.</mat-error>
         </mat-form-field>
 
         <div mat-dialog-actions class="action mt-4">

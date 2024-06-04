@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AutoridadDto } from 'src/app/dto/Configuracion/AutoridadDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -31,8 +31,23 @@ export class AutoridadEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
   ){
     this.autoridadForm = this.fb.group({
-
+      persona: ['', Validators.required],
+      nombre: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      fechaFinal: [''/* , Validators.required */],
+      esActual: ['', Validators.required],
+      esRegional: ['', Validators.required],
+      efector: ['', Validators.required]
     });
+
+    this.listAsistenciales();
+    this.listEfectores();
+
+    if (data) {
+      this.autoridadForm.patchValue(data);
+    }
+
+    
   }
 
   ngOnInit(): void {
@@ -52,7 +67,7 @@ export class AutoridadEditComponent implements OnInit {
     });
   }
 
-  listUdos(): void {
+  listEfectores(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
     this.hospitalService.list().subscribe(data => {
       console.log('Lista de Efectores:', data);
@@ -72,9 +87,8 @@ export class AutoridadEditComponent implements OnInit {
         autoridadData.fechaFinal,
         autoridadData.esActual,
         autoridadData.esRegional,
-        autoridadData.activo,
-        autoridadData.idEfector,
-        autoridadData.idPersona
+        autoridadData.efector.id,
+        autoridadData.persona.id
         
        /* 
         autoridadData.udo.id,
@@ -114,6 +128,6 @@ export class AutoridadEditComponent implements OnInit {
   }
 
   cancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ type: 'cancel' });
   }
 }

@@ -111,27 +111,26 @@ export class AutoridadComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) {
-          this.toastr.success(esEdicion ? 'Autoridad editada con éxito' : 'Autoridad creada con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          if (esEdicion) {
-            const index = this.dataSource.data.findIndex(p => p.id === result.id);
-            this.dataSource.data[index] = result;
-          } else {
-            this.dataSource.data.push(result);
-          }
-          this.dataSource._updateChangeSubscription();
+      if (result && result.type === 'save') {
+        this.toastr.success(esEdicion ? 'Autoridad editada con éxito' : 'Autoridad creada con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        if (esEdicion) {
+          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+          this.dataSource.data[index] = result.data;
         } else {
-          this.toastr.error('Ocurrió un error al crear o editar la autoridad', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
+          this.dataSource.data.push(result.data);
         }
+        this.dataSource._updateChangeSubscription();
+      } else if (result && result.type === 'error') {
+        this.toastr.error('Ocurrió un error al crear o editar Autoridad', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      } else if (result && result.type === 'cancel') {
       }
     });
   }

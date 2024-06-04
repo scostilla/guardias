@@ -4,7 +4,6 @@ export class AutoridadDto {
     fechaFinal: Date;
     esActual: boolean;
     esRegional: boolean
-    activo: boolean;
     idEfector: number;
     idPersona: number;
 
@@ -14,7 +13,6 @@ export class AutoridadDto {
         fechaFinal: Date,
         esActual: boolean,
         esRegional: boolean,
-        activo: boolean,
         idEfector: number,
         idPersona: number
     ) { 
@@ -23,7 +21,6 @@ export class AutoridadDto {
         this.fechaFinal = fechaFinal;
         this.esActual = esActual;
         this.esRegional = esRegional;
-        this.activo = activo;
         this.idEfector = idEfector;
         this.idPersona = idPersona;
     }
