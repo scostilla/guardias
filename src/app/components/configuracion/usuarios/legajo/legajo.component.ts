@@ -106,7 +106,6 @@ export class LegajoComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-
   openFormChanges(legajo?: Legajo): void {
     const esEdicion = legajo != null;
     const dialogRef = this.dialog.open(LegajoEditComponent, {

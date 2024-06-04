@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>DETALLE AUTORIDAD:
+</h1>
+
+  <mat-dialog-content>
+    <table class="table">
+        <tbody>
+          <tr class="bg-light">
+            <th scope="row">Apellido y nombre</th>
+            <td>{{autoridad.persona.apellido}}, {{autoridad.persona.nombre}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">Autoridad</th>
+            <td>{{autoridad.nombre}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">Fecha Inicio</th>
+            <td>{{autoridad.fechaInicio}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">Fecha Final</th>
+            <td>{{autoridad.fechaFinal}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">Actual</th>
+            <td>{{autoridad.esActual ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Regional</th>
+            <td>{{autoridad.esRegional ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Efector</th>
+            <td>{{autoridad.efector.nombre}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>

@@ -207,6 +207,9 @@ import { PersonalLegajoComponent } from './components/personal/personal-legajo/p
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
+import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
+import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -366,6 +369,9 @@ registerLocaleData(localeEsAr, 'es-AR');
     DdjjCargoyagrupDetailComponent,
     DdjjExtraDetailComponent,
     DialogConfirmDdjjComponent,
+    AutoridadComponent,
+    AutoridadEditComponent,
+    AutoridadDetailComponent,
     
   ],
 

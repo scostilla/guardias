@@ -174,6 +174,9 @@ import { PruebaTerritorioComponent } from './components/configuracion/territorio
 import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
 import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
 import { PruebaDetailComponent } from './components/configuracion/territorio/prueba-detail/prueba-detail.component';
+import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
+import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
+import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
 
 
 
@@ -238,6 +241,11 @@ const routes: Routes = [
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},
+  
+  //Autoridad
+  {path: 'autoridad', component:AutoridadComponent},
+  {path: 'autoridad-detail/:id', component:AutoridadDetailComponent},
+  {path: 'autoridad-edit/:id', component:AutoridadEditComponent},
 
 
   //Configuraciones: Calendario
