@@ -46,20 +46,22 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
     const selectedMonth = this.month;
     const selectedYear = this.year;
   
-    return asistencial.novedadesPersonales.filter(novedad => {
+    const novedadesActivas = asistencial.novedadesPersonales.filter(novedad => {
       const inicio = moment(novedad.fechaInicio);
       const fin = moment(novedad.fechaFinal);
   
-      if (
+      return (
         (inicio.year() < selectedYear || (inicio.year() === selectedYear && inicio.month() <= selectedMonth)) &&
         (fin.year() > selectedYear || (fin.year() === selectedYear && fin.month() >= selectedMonth))
-      ) {
-        return true;
-      }
-  
-      return false;
+      );
     });
-  }  
+  
+    novedadesActivas.sort((a, b) => {
+      return moment(a.fechaInicio).valueOf() - moment(b.fechaInicio).valueOf();
+    });
+  
+    return novedadesActivas;
+  }
 
   formatDate(startDate: Date, endDate: Date): string {
     const formattedStartDate = moment(startDate).format('DD/MM/YYYY');

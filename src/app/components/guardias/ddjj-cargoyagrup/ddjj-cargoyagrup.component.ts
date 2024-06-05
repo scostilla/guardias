@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
+import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -76,6 +77,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   selectedHospitalId: number | null = null;
   selectedHospitalNombre: string = '';
+  botonDph = true;
+  revisandoDPH: boolean = false;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -99,9 +102,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     moment.locale('es');
-    
+
     this.dataSource = new MatTableDataSource<RegistroMensual>([]);
     
     this.generarDiasDelMes();
@@ -111,16 +113,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
 
     this.obtenerParametroRuta();
-
-    this.suscription = this.registroMensualService.refresh$.subscribe(() => {
-      this.loadRegistrosMensuales();
-    });
-
-    this.loadRegistrosMensuales();
-
-    this.loadData();
-
-   // this.listServicio();
   }
 
   obtenerParametroRuta(){
@@ -140,6 +132,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       if (this.servicios.length > 0) {
         this.selectedServicio = this.servicios[0].id;
       }
+      this.loadRegistrosMensuales(); // Llama aquí después de obtener los servicios
     }, error => {
       console.log(error);
     });
@@ -246,6 +239,20 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  openDdjjConfirm(): void {
+    const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
+      width: '500px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.revisandoDPH = true;
+        this.botonDph = false;
+      }
+    });
+  }
+
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
     const dateMoment = moment(date).startOf('day');
