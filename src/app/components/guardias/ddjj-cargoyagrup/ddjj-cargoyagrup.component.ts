@@ -19,10 +19,8 @@ import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-import * as FileSaver from 'file-saver';
 import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { ActivatedRoute } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
@@ -566,122 +564,76 @@ getNovedades(asistencial: Asistencial): NovedadPersonal[] {
   return asistencial.novedadesPersonales;
 }
 
+formatDate(startDate: Date, endDate: Date): string {
+  const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
+  const formattedEndDate = moment(endDate).format('DD/MM/YYYY');
+
+  if (formattedStartDate === formattedEndDate) {
+    return formattedStartDate;
+  } else {
+    return `${formattedStartDate} - ${formattedEndDate}`;
+  }
+}
+
 exportarAExcel() {
-  // Obtener el mes y el año seleccionados
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Datos');
+
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
 
-  // Generar el nombre del archivo con el mes y el año
-  const fileName = `DDJJ-cargoyagrup_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`]).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFADD8E6' }
+  };
+  worksheet.getRow(1).font = { bold: true };
 
-  // Crear la fila superior con el mes y el año
-  const headerRow = [[`${mesSeleccionado} ${anioSeleccionado}`]];
-
-  // Encabezados de las columnas de datos (Apellido, Nombre, etc.)
-  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades'];
-
-  // Formatear los títulos de las columnas de fechas para el Excel
-  const formattedColumnTitles = this.displayedColumns.slice(4).map(columnTitle => {
-    // Convertir el título de la columna a formato 'ddd DD' usando moment.js
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D'];
+  const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
     return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
   });
-
-  // Combinar los encabezados de datos con los títulos de columnas formateados
   const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
+  worksheet.addRow(combinedHeaders).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFFFFF00' }
+  };
+  worksheet.getRow(2).font = { bold: true };
 
-  // Crear un nuevo libro de trabajo
-  const wb: XLSX.WorkBook = XLSX.utils.book_new();
-
-  // Agregar la fila de encabezado para el mes y el año a la hoja de cálculo
-  const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(headerRow);
-
-  // Agregar los encabezados combinados debajo de la fila de encabezado del mes y el año
-  XLSX.utils.sheet_add_aoa(ws, [combinedHeaders], { origin: -1 });
-
-  // Preparar los datos para exportar
-  const dataToExport = this.dataSource.data.map((registro: RegistroMensual) => {
-    const novedades = this.getNovedades(registro.asistencial);
-    const novedadesString = novedades.map((novedad: NovedadPersonal) => novedad.descripcion).join('; ');
-
+  this.dataSource.data.forEach((registro: RegistroMensual) => {
     const exportData: any = {
       Apellido: registro.asistencial.apellido,
       Nombre: registro.asistencial.nombre,
       Cuil: registro.asistencial.cuil,
       Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
       Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
-      Novedades: novedadesString || '-'
     };
 
-    // Iterar sobre las columnas adicionales definidas en el HTML
-    this.displayedColumns.slice(4).forEach((fechaColumna: string, index: number) => {
-      // Aquí utilizamos this.getFechaFromColumnId
+    const novedades = this.getNovedades(registro.asistencial);
+    const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.descripcion} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
+
+    exportData['Novedades'] = novedadesString || '-';
+
+    const totalMes = this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear);
+    const totalLV = this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
+    const totalSD = this.calculateWeekendsTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
+
+    exportData['Total mes'] = totalMes;
+    exportData['Total L-V'] = totalLV;
+    exportData['Total S-D'] = totalSD;
+
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
       exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
     });
 
-    return exportData;
+    worksheet.addRow(Object.values(exportData));
   });
 
-  // Agregar los datos debajo de los encabezados combinados
-  XLSX.utils.sheet_add_json(ws, dataToExport, {
-    origin: -1,
-    skipHeader: true,
-  });
+  const fileName = `ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
 
-  // Añadir la hoja al libro
-  XLSX.utils.book_append_sheet(wb, ws, 'Datos');
-
-  // Descargar el archivo con el nombre generado
-  XLSX.writeFile(wb, fileName);
-}
-
-/*
-  exportarTablaAExcel(nombreArchivo: string): void {
-    // Crear un nuevo libro de trabajo y una hoja de cálculo
-    const libro = XLSX.utils.book_new();
-    
-    // Agregar la fila de encabezado para el mes y el año
-    const encabezadoMesAnio = [['Marzo 2024']];
-    const hoja = XLSX.utils.aoa_to_sheet(encabezadoMesAnio);
-  
-    // Agregar los encabezados de las columnas
-    const encabezados = [['Apellido', 'Nombre', 'Cuil']];
-    XLSX.utils.sheet_add_aoa(hoja, encabezados, { origin: -1 });
-  
-    // Agregar los datos debajo de los encabezados
-    XLSX.utils.sheet_add_json(hoja, this.datos, {
-      origin: -1,
-      skipHeader: true
-    });
-  
-    // Estilizar la hoja de cálculo
-    hoja['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }]; // Combinar celdas para el encabezado del mes y el año
-    hoja['!cols'] = [{ width: 20 }, { width: 20 }, { width: 20 }]; // Establecer ancho de columna
-  
-    // Añadir la hoja al libro
-    XLSX.utils.book_append_sheet(libro, hoja, 'Datos');
-  
-    // Generar el archivo Excel
-    const excelBuffer = XLSX.write(libro, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-  
-    // Guardar el archivo usando FileSaver
-    saveAs(blob, `${nombreArchivo}.xlsx`);
-  } */
-
-  /*exportarTablaExcel(): void {
-    // Crear un nuevo libro y hoja de Excel
-    let workbook = new ExcelJS.Workbook();
-    let worksheet = workbook.addWorksheet('Datos');
-
-    // Agregar fila de encabezado con estilo
-    const header = ['Apellido', 'Nombre', 'Cuil'];
-    const headerRow = worksheet.addRow(header);
-    headerRow.eachCell((cell, colNumber) => {
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FFFF00' } // Color de fondo amarillo
-      };
+  worksheet.eachRow((row, rowNumber) => {
+    row.eachCell((cell, colNumber) => {
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -689,33 +641,13 @@ exportarAExcel() {
         right: { style: 'thin' }
       };
     });
+  });
 
-    // Agregar las filas de datos
-    this.datosTabla.forEach(dato => {
-      const row = worksheet.addRow([dato.apellido, dato.nombre, dato.cuil]);
-      row.eachCell((cell) => {
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-      });
-    });
-
-    // Ajustar el ancho de las columnas
-    worksheet.columns.forEach(column => {
-      column.width = 20;
-    });
-
-    // Guardar en buffer y exportar
-    workbook.xlsx.writeBuffer().then(data => {
-      const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      FileSaver.saveAs(blob, `Tabla_${moment().format('DD_MM_YYYY_HH_mm_ss')}.xlsx`);
-    });
-  }*/
+  workbook.xlsx.writeBuffer().then((buffer: ArrayBuffer) => {
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, fileName);
+  });
+}
 
   accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
