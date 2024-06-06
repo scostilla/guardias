@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 
 
@@ -79,6 +80,7 @@ import { NotificacionEditComponent } from './components/notificacion/notificacio
 
 //Sección: Actividades
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
+import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
 import { DistHorariaComponent } from './components/actividades/dist-horaria/dist-horaria.component';
 import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
@@ -185,6 +187,7 @@ const routes: Routes = [
   //Principales
   { path: '', component: LoginComponent },
   {path:"home-page", component:HomePageComponent},
+  {path:"home-profesional", component:HomeProfesionalComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
 
   //Configuraciones: Territorio
@@ -262,6 +265,7 @@ const routes: Routes = [
 
   //Sección: Actividades
   {path:"registro-diario",component: RegistroDiarioComponent},
+  {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},

@@ -1,0 +1,39 @@
+<div id="container-title-hosp" >
+    <div class="text-title-hosp"><mat-icon>person_pin</mat-icon> &nbsp;&nbsp;BIENVENIDO</div>
+</div>
+<div class="container" *ngIf="isLogged">
+  <section>
+    <div class="container" >
+        <div class="row mb-4 ">
+            <div class="col-lg-2"></div>
+                <div class="col-lg-4">
+                <div class="btnMenu card border-0 align-items-center" type="button" (click)="openRegistroDiarioProfesional()" (mouseenter)="toggleRegistro()" (mouseleave)="toggleRegistro()">
+                    <div class="icon2_btnMenu">
+                    <img class="img-fluid" src="/assets/img/i_profesionales.png" />
+                    </div>
+                    <div class="card-body text-center">
+                    <h2 class="fs-4 fw-bold"><span>REGISTRO DIARIO</span></h2>
+                    </div>
+                    <div *ngIf="showRegistro">
+                        Registra tu ingreso o egreso a la guardia.
+                    </div>
+                </div>
+                </div>
+                <div class="col-lg-4">
+                <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/cronograma" (mouseenter)="toggleAsistencia()" (mouseleave)="toggleAsistencia()">
+                    <div class="icon3_btnMenu">
+                    <img class="img-fluid" src="/assets/img/i_cronogramas.png" />
+                    </div>
+                    <div class="card-body text-center">
+                    <h2 class="fs-4 fw-bold"><span>MI ASISTENCIA</span></h2>
+                    </div>
+                    <div *ngIf="showAsistencia">
+                        Revisa tu historial de asistencia.
+                    </div>
+                </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+  </section>
+</div>

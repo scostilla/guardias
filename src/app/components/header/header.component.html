@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="col d-flex justify-content-end align-items-center">
-        <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material">
+        <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showConfig">
           <mat-icon>settings</mat-icon>
         </button>
           <mat-menu #menu_admin="matMenu">

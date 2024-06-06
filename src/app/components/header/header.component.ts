@@ -13,6 +13,7 @@ import { TokenService } from 'src/app/services/login/token.service';
 export class HeaderComponent implements OnDestroy , OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
+  showConfig: boolean = true;
   showHeader: boolean = true;
 
   isLogged = false;
@@ -25,7 +26,8 @@ export class HeaderComponent implements OnDestroy , OnInit {
     ) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.showNavBar = !(event.url === '/home-page');
+        this.showNavBar = !(event.url === '/home-page' || event.url === '/home-profesional');
+        this.showConfig = !(event.url === '/home-profesional');
         this.showHeader = !(event.url === '/');
       }
     });

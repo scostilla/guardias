@@ -256,6 +256,27 @@ footer {
   text-align: center;
 }
 
+.text-rechazo {
+  background-color: #ce230c !important;
+  color: #ffffff;
+  font-weight: bold;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.text-aprobado {
+  background-color: #72cf06 !important;
+  color: #ffffff;
+  font-weight: bold;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+
 .button-success:hover, .button-primary:hover, .button-pase:hover {
   background-color: #37BBED !important;
 }

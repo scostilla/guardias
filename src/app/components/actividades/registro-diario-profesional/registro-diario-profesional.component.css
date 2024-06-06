@@ -1,0 +1,40 @@
+
+.content{
+    padding-top: 10px; 
+    
+}
+
+
+.row {
+    display: flex;
+}
+
+
+mat-form-field{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+
+.action{
+    padding: 0px 25px 20px;
+    }
+
+    
+    
+.btnupdate{
+    flex: 1;
+}
+
+.backgroud{
+    background-color: #243c74;
+    color: white;
+}
+
+.font{
+    font-family: "Ubuntu";
+    font-size:170%;
+}
+
+

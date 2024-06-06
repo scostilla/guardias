@@ -210,6 +210,8 @@ import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm
 import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
 import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
+import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
+import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -372,6 +374,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     AutoridadComponent,
     AutoridadEditComponent,
     AutoridadDetailComponent,
+    HomeProfesionalComponent,
+    RegistroDiarioProfesionalComponent,
     
   ],
 
