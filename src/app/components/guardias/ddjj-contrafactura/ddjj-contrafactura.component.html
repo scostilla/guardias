@@ -1,66 +1,345 @@
-<table mat-table class="mat-elevation-z8" [dataSource]="dataSource">
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6 col-md-7">
+      <div class="titulos">DDJJ <span class="titulos-second">CONTRA FACTURA</span></div>
+    </div>
+    <div class="col-6 col-md-2 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/guardias-view">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;" (click)="exportarAExcel()">
+        <mat-icon>get_app</mat-icon>
+      </button>
+      <button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openDdjjConfirm()" [disabled]="!botonDph" [ngClass]="{'disabled-button-ddjj': !botonDph}"  
+        matTooltip="Pase a DPH">
+        <mat-icon *ngIf="botonDph" style="transform: scaleX(-1)">assignment_return</mat-icon>
+        <mat-icon *ngIf="!botonDph">assignment_turned_in</mat-icon>
+      </button>
+    </div>
 
-  <!-- Número de orden -->
-  <ng-container matColumnDef="numeroOrden">
-    <th mat-header-cell *matHeaderCellDef>N° ORDEN</th>
-    <td mat-cell *matCellDef="let element">{{element.numeroOrden}}</td>
-  </ng-container>
+    <div class="col-12 col-md-3 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre o apellido">
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
 
-  <!-- Profesional -->
-  <ng-container matColumnDef="profesional">
-    <th mat-header-cell *matHeaderCellDef>PROFESIONAL</th>
-    <td mat-cell *matCellDef="let element">{{element.profesional}}</td>
-  </ng-container>
+  <div class="row mb-3">
+    <div class="col-md-1">
+      <div class="contenedor-bocadillo">
+        <div>{{ getMonthName(selectedMonth) }}</div>
+        <div>{{ selectedYear }}</div>
+      </div>
+    </div>
+    <div class="col-md-8 d-flex justify-content-start">
+      <div class="contenedor-titulo-bocadillo">
+        {{selectedHospitalNombre}}
+      </div>
+    </div>
+    <div class="col-md-3 d-flex justify-content-start">
+      <div class="contenedor-subtitulo-bocadillo">
+        GUARDIAS ACTIVAS
+      </div>  
+    </div>
+  </div>
 
-  <!-- Comprobante -->
-  <ng-container matColumnDef="comprobante">
-    <th mat-header-cell *matHeaderCellDef>COMPROBANTE</th>
-    <td mat-cell *matCellDef="let element">{{element.comprobante}}</td>
-  </ng-container>
+  <div class="row">
+    <div class="col-md-6 d-flex justify-content-start mt-sm-3">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Fecha:</span>
+        <select class="select-tabla" [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
+          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+        </select>
+        <select class="select-tabla" [(ngModel)]="selectedYear" (change)="updateDateAndLoadData()">
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Servicio:</span>
+        <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
+          <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</option>
+        </select>
+      </div>
+    </div>  
+  </div>
 
-  <!-- Día de guardia -->
-  <ng-container matColumnDef="diaGuardia">
-    <th mat-header-cell *matHeaderCellDef>DÍA DE GUARDIA</th>
-    <td mat-cell *matCellDef="let element">{{element.diaGuardia}}</td>
-  </ng-container>
+  <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste el pase de la DDJJ de guardias EXTRAS para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por la DPH.</div>
 
-  <!-- Cantidad de horas de guardia -->
-  <ng-container matColumnDef="cantidadHorasGuardia">
-    <th mat-header-cell *matHeaderCellDef>CANTIDAD DE HS. GUARDIA</th>
-    <td mat-cell *matCellDef="let element">{{element.cantidadHorasGuardia}}</td>
-  </ng-container>
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
-  <!-- Monto por guardia -->
-  <ng-container matColumnDef="montoGuardia">
-    <th mat-header-cell *matHeaderCellDef>MONTO POR GUARDIA</th>
-    <td mat-cell *matCellDef="let element">{{element.montoGuardia}}</td>
-  </ng-container>
+      <ng-container matColumnDef="apellido" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido </th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.apellido}}
+        </td>
+      </ng-container>
 
-  <!-- Cantidad de horas de bono -->
-  <ng-container matColumnDef="cantidadHorasBono">
-    <th mat-header-cell *matHeaderCellDef>CANTIDAD DE HS. BONO</th>
-    <td mat-cell *matCellDef="let element">{{element.cantidadHorasBono}}</td>
-  </ng-container>
+      <ng-container matColumnDef="nombre" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.nombre}}</td>
+      </ng-container>
 
-  <!-- Monto de bono -->
-  <ng-container matColumnDef="montoBono">
-    <th mat-header-cell *matHeaderCellDef>MONTO BONO</th>
-    <td mat-cell *matCellDef="let element">{{element.montoBono}}</td>
-  </ng-container>
+      <ng-container matColumnDef="acciones" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let registro" class="cell-actions">
+          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial, selectedMonth, selectedYear)">
+            <mat-icon color="primary">zoom_in</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial, selectedMonth, selectedYear)">
+            <mat-icon color="primary">note_add</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-  <!-- Total de horas a liquidar -->
-  <ng-container matColumnDef="totalHorasLiquidar">
-    <th mat-header-cell *matHeaderCellDef style="background-color: rgb(78, 233, 168);">TOTAL HS. A LIQUIDAR</th>
-    <td mat-cell *matCellDef="let element" style="background-color: rgb(78, 233, 168);">{{element.totalHorasLiquidar}}</td>
-  </ng-container>
+      <ng-container matColumnDef="totalHoras">
+        <th mat-header-cell *matHeaderCellDef class="negrita" style="background-color: #bdbdbd;">Total hs. a liquidar</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
+          {{ calculateTotalHoursForRow(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
 
-  <!-- Total -->
-  <ng-container matColumnDef="total">
-    <th mat-header-cell *matHeaderCellDef>TOTAL</th>
-    <td mat-cell *matCellDef="let element">{{element.total}}</td>
-  </ng-container>
+      <ng-container matColumnDef="weekdaysTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L-V</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+          {{ calculateWeekdaysTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
+        
+      <ng-container matColumnDef="weekendsTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total S-D-F</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+          {{ calculateWeekendsTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
 
-  <!-- Columnas definidas -->
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+      <ng-container matColumnDef="weekdays">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">Guardia L-V</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita">
+          Fecha: <br/>
+          Cantidad hs:<br/>
+          Monto:
+        </td>
+      </ng-container>
+        
+      <ng-container matColumnDef="weekends">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">Guardia S-D-F</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita">
+          {{ calculateWeekendsTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="bonoL">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">Bono L-V</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita">
+          Fecha: <br/>
+          Cantidad hs:<br/>
+          Monto:
+        </td>
+      </ng-container>
+        
+      <ng-container matColumnDef="bonoS">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">Bono S-D-F</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita">
+          {{ calculateWeekendsTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
+
+      <!--<ng-container *ngFor="let fechaColumna of displayedColumns.slice(10)" [matColumnDef]="fechaColumna">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
+          {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
+        </th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+        [ngClass]="{
+          'holiday': isHoliday(getFechaFromColumnId(fechaColumna)).isHoliday,
+          'weekend': isWeekend(getFechaFromColumnId(fechaColumna))
+          }"
+        [matTooltip]="isHoliday(getFechaFromColumnId(fechaColumna)).motivo">
+          <span 
+              [style.color]="calculateHoursColor(registro.registroActividad, getFechaFromColumnId(fechaColumna))"
+              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
+          </span>
+        </td>
+      </ng-container>-->
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <div class="row mt-3">
+    <div class="col-lg-3">  
+        <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contra factura</span>
+    </div>
+    <div class="col-lg-9">  
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+
+
+
+<div class="tabla-center">
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col">
+          <button mat-fab extended color="primary" routerLink="/guardias-view">
+            <mat-icon>arrow_back_ios</mat-icon>
+            Volver
+          </button>
+        </div>
+        <div class="col offset-9">
+          <button mat-fab extended color="primary" routerLink="/ddjj-tentativo">
+            <mat-icon>assignment</mat-icon>
+            DDJJ Tentativo
+          </button>        
+        </div>
+    </div>
+    <div class="row">
+        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA</span>
+      </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm scroll">
+          <table class="table table-sm  table-borderless">
+                <thead class="col-center thead-celeste">
+                    <tr>
+                        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS CONTRA FACTURA</th>
+                    </tr>
+                    <tr>
+                        <th>Julio 2023</th>
+                    </tr>
+                    <tr>
+                        <th>MINISTERIO DE SALUD</th>
+                    </tr>
+                    <tr>
+                        <th>"DN. PABLO SORIA"</th>
+                    </tr>
+                    <tr>
+                        <th>REGION: CENTRO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="16">
+                            <table class="table table-hover table-bordered table-sm caption-top">
+                                <thead class="thead-gris">
+                                  <tr>
+                                    <th rowspan="2">N° ORDEN</th>
+                                    <th colspan="3">PROFESIONAL</th>
+                                    <th colspan="4">COMPROBANTE</th>
+                                    <th colspan="2">DÍA DE GUARDIA</th>
+                                    <th colspan="2">CANTIDAD DE HS. GUARDIA</th>
+                                    <th colspan="2">MONTO POR GUARDIA</th>
+                                    <th colspan="2">CANTIDAD DE HS. BONO</th>
+                                    <th colspan="2">MONTO BONO</th>
+                                    <th colspan="2" style="background-color: rgb(78, 233, 168);">TOTAL HS. A LIQUIDAR</th>
+                                    <th rowspan="2">TOTAL</th>
+                                  </tr>
+                                  <tr>
+                                    <th>APELLIDO Y NOMBRE</th>
+                                    <th>CUIL</th>
+                                    <th>ESPECIALIDAD</th>
+                                    <td>Contribuyente</td>
+                                    <td>Factura</td>
+                                    <td>Fecha de emisión</td>
+                                    <td></td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td style="background-color: rgb(78, 233, 168);;">L-V</td>
+                                    <td style="background-color: rgb(78, 233, 168);;">S-D-F</td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>1</td>
+                                    <td>HUERTAS CLEMENTE</td>
+                                    <td>20-45368456-5</td>
+                                    <td>GENERALISTA</td>
+                                    <td>Responsable Inscripto</td>
+                                    <td>B-2-56</td>
+                                    <td>4/4/2023</td>
+                                    <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;" >edit</mat-icon></td>
+                                    <td>27/7/2023</td>
+                                    <td></td>
+                                    <td>8</td>
+                                    <td></td>
+                                    <td>$12.696,98</td>
+                                    <td></td>
+                                    <td>24</td>
+                                    <td></td>
+                                    <td>$18.481,80</td>
+                                    <td></td>
+                                    <td>$31.178,78</td>
+                                    <td></td>
+                                    <td style="background-color: #eee;">$31.178,78</td>
+                                  <tr>
+                                    <td>2</td>
+                                    <td>ARRAYA PEDRO ADEMIR</td>
+                                    <td>20-20675037-3</td>
+                                    <td>GENERALISTA</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><mat-icon color="primary" matTooltip="Agregar factura" style="cursor: pointer;">note_add</mat-icon></td>
+                                    <td>30/6/2023</td>
+                                    <td>2/7/2023</td>
+                                    <td>24</td>
+                                    <td>24</td>
+                                    <td>$38.090,94</td>
+                                    <td>$41.900,03</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>$38.090,94</td>
+                                    <td>$41.900,03</td>
+                                    <td style="background-color: #eee;">$79.990,97</td>
+                                  </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>OBSERV.:</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="col offset-1">
+</div>
+<div class="col-auto">
+  <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
+    <mat-icon>get_app</mat-icon>
+    Descargar
+  </button>
+  <mat-menu #menu2="matMenu">
+    <button mat-menu-item>PDF</button>
+    <button mat-menu-item>XLS</button>
+  </mat-menu>
+    <button mat-fab extended color="warn" routerLink="/ddjj-contrafactura-tot">
+    <mat-icon>assignment_turned_in</mat-icon>
+    Pase a DPH
+  </button>
+</div>
+<div class="col-1">
+</div>
+</div>
+</div>

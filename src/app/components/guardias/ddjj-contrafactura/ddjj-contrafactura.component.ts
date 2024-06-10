@@ -38,7 +38,7 @@ export class DdjjContrafacturaComponent {
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     @ViewChild(MatSort) sort!: MatSort;
   
-    displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
+    displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal', 'weekdays', 'weekends', 'bonoL', 'bonoS'];
     dataSource!: MatTableDataSource<RegistroMensual>;
     suscription!: Subscription;
   
@@ -160,7 +160,7 @@ export class DdjjContrafacturaComponent {
     }
   
     generarDiasDelMes(): void {
-      const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
+      /*const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
       const endOfMonth = startOfMonth.clone().endOf('month');
       let day = startOfMonth;
   
@@ -169,7 +169,7 @@ export class DdjjContrafacturaComponent {
       while (day <= endOfMonth) {
         this.displayedColumns.push(day.format('YYYY_MM_DD'));
         day.add(1, 'day');
-      }
+      }*/
     }
     
     updateDateAndLoadData(): void {

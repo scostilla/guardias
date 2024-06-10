@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import * as moment from 'moment';
+import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 
 @Component({
   selector: 'app-guardias-view',
@@ -18,10 +19,15 @@ export class GuardiasViewComponent {
   hospitales: Hospital[]=[];
   fechaActual?: string;
 
+  extraButtonDisabled: boolean = true;
+  cargoAgrupButtonDisabled: boolean = true;
+  contraFacturaButtonDisabled: boolean = true;
+
   constructor(
     private hospitalService: HospitalService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private registroActividadService: RegistroActividadService
   ) {
   }
 
@@ -62,21 +68,19 @@ export class GuardiasViewComponent {
 
   updateHospital() {
     if (this.services) {
-      const filteredData = this.services.filter(
-        (item) => item.hospital === this.selectedHospital
-      );
+      // Lógica existente para obtener servicios y profesionales
 
-      const groupedData = this.groupBy(filteredData, 'servicio');
+      // Obtener registros de actividad del efector seleccionado
+      this.registroActividadService.list().subscribe(registros => {
+        // Verificar tipo de guardia y habilitar/deshabilitar botones
+        const tipoGuardiaIds = [1, 2, 3, 4];
+        const tieneTipoGuardia = registros.some(registro => registro.tipoGuardia?.id && tipoGuardiaIds.includes(registro.tipoGuardia.id));
 
-      this.professionalGroups = Object.keys(groupedData).map((service) => ({
-        service,
-        professionals: groupedData[service].map((professional: any) => ({
-          apellido: professional.apellido,
-          nombre: professional.nombre,
-          hs: professional.hs || null,
-          type: professional.tipo,
-        })),
-      }));
+        // Habilitar o deshabilitar botones según corresponda
+        this.extraButtonDisabled = !tieneTipoGuardia || !tipoGuardiaIds.includes(3);
+        this.cargoAgrupButtonDisabled = !tieneTipoGuardia || !(tipoGuardiaIds.includes(1) || tipoGuardiaIds.includes(2));
+        this.contraFacturaButtonDisabled = !tieneTipoGuardia || !tipoGuardiaIds.includes(4);
+      });
     } else {
       this.professionalGroups = [];
     }
