@@ -66,22 +66,24 @@ export class GuardiasViewComponent {
     this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
   }
 
-  updateHospital() {
+  /*updateHospital() {
     if (this.services) {
       // Lógica existente para obtener servicios y profesionales
 
       // Obtener registros de actividad del efector seleccionado
       this.registroActividadService.list().subscribe(registros => {
-        // Verificar tipo de guardia y habilitar/deshabilitar botones
         const tipoGuardiaIds = [1, 2, 3, 4];
-        const tieneTipoGuardia = registros.some(registro => registro.tipoGuardia?.id && tipoGuardiaIds.includes(registro.tipoGuardia.id));
-
-        // Habilitar o deshabilitar botones según corresponda
+        const tieneTipoGuardia = registros.some(registro =>
+          registro.efector.id === this.selectedHospital &&
+          registro.tipoGuardia?.id !== undefined &&
+          tipoGuardiaIds.includes(registro.tipoGuardia!.id)
+        );
+      
         this.extraButtonDisabled = !tieneTipoGuardia || !tipoGuardiaIds.includes(3);
         this.cargoAgrupButtonDisabled = !tieneTipoGuardia || !(tipoGuardiaIds.includes(1) || tipoGuardiaIds.includes(2));
         this.contraFacturaButtonDisabled = !tieneTipoGuardia || !tipoGuardiaIds.includes(4);
       });
-    } else {
+      } else {
       this.professionalGroups = [];
     }
   }
@@ -95,5 +97,5 @@ export class GuardiasViewComponent {
       result[key].push(currentValue);
       return result;
     }, {});
-  }
+  }*/
 }
