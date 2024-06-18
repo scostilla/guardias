@@ -188,7 +188,7 @@ import { AutoridadEditComponent } from './components/configuracion/usuarios/auto
 const routes: Routes = [
   
   //Principales
-  { path: '', component: LoginComponent },
+  {path: '', component: LoginComponent },
   {path:"home-page", component:HomePageComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path: 'configuracion', component:ConfiguracionComponent},

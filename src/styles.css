@@ -91,13 +91,14 @@ footer {
 }
 
 .contenedor-montos {
-  width: 350px;
+  width: 450px;
 }
 
 .fondo-montos {
   background-color: #69ad1b;
   color: #fff;
-  padding: 10px 0;
+  padding: 10px 0 10px 0;
+  margin-left: 10px;
   border-top-right-radius: 25px;
   border-bottom-right-radius: 25px;
   font-weight: bold;
