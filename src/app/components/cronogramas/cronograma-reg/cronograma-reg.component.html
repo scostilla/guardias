@@ -1,3 +1,89 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 d-flex justify-content-md-start justify-content-center">
+        <div class="titulos">Cronograma <span class="titulos-second-reg">Regional</span></div>
+    </div>
+    <div class="col-md-6 d-flex justify-content-md-end justify-content-center align-items-start mt-3 mt-md-0">
+      <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
+        <mat-button-toggle value="tentativo" routerLink="/cronograma">Tentativo</mat-button-toggle>
+        <mat-button-toggle value="definitivo" routerLink="/cronograma-def">Definitivo</mat-button-toggle>
+        <mat-button-toggle value="regional" disabled>Regional</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+  <div class="row mt-3 mt-md-0"> 
+    <div class="col-6 d-flex justify-content-start">
+      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
+      <mat-menu #menug="matMenu">
+        <button mat-menu-item routerLink="/cronograma-p">Guardias Pasivas</button>
+      </mat-menu>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+      <button mat-button [matMenuTriggerFor]="menu">» Estas viendo: Región Ramal</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Región Centro</button>
+        <button mat-menu-item>Región Valles</button>
+        <button mat-menu-item>Región Puna</button>
+        <button mat-menu-item>Región Quebrada</button>
+      </mat-menu>
+    </div>
+  </div>
+  <div class="row mb-3"> 
+    <div class="col-12 d-flex justify-content-center titulo-calendario">{{ viewDate | date: 'MMMM yyyy' | uppercase }}</div>
+  </div>
+  <div class="row d-float justify-content-center">
+    <div class="col-12 d-flex justify-content-center">
+      <span>Estas viendo: <strong>GUARDIAS DESCUBIERTAS</strong></span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6 d-flex justify-content-start">
+      <button mat-icon-button color="primary" (click)="EventDialog()" matTooltip="Añadir Profesional">
+        <mat-icon>library_add</mat-icon>
+      </button>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+      <button mat-icon-button (click)="previousView()" matTooltip="Anterior">
+        <mat-icon>navigate_before</mat-icon>
+      </button>
+      <button mat-icon-button (click)="currentView()" matTooltip="Fecha actual">
+        <mat-icon>today</mat-icon>
+      </button>
+      <button mat-icon-button (click)="nextView()" matTooltip="Próximo">
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" (click)="changeView(CalendarView.Month)" matTooltip="Ver mes">
+        <mat-icon>calendar_today</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" (click)="changeView(CalendarView.Week)" matTooltip="Ver semana">
+        <mat-icon>calendar_view_day</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="row"> 
+    <mwl-calendar-month-view
+      *ngIf="view === CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      (dayClicked)="dayClicked($event.day)"
+      [weekendDays]="[0, 6]"
+      (beforeViewRender)="beforeMonthViewRender($event)">
+    </mwl-calendar-month-view>
+
+    <mwl-calendar-week-view
+      *ngIf="view === CalendarView.Week"
+      [viewDate]="viewDate"
+      [events]="events"
+      (beforeViewRender)="beforeWeekViewRender($event)">
+    </mwl-calendar-week-view>
+  </div>
+</div>
+
+
+
+
+<!--
 <div class="row">
     <div class="col-8 offset-1 align-items-end">
       <div class="titulos">.:: Cronograma <span class="titulos-second-reg">Regional</span></div>
@@ -304,4 +390,4 @@
         <div class="calendar-dia__content"></div>
       </li>
     </ol>
-
+-->

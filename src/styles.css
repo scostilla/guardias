@@ -68,6 +68,7 @@ footer {
   padding-bottom: 15px;
   position: relative;
 }
+
 .titulo_prueba:before {
   content: "";
   position: absolute;
@@ -77,6 +78,7 @@ footer {
   width: 60px;
   background-color: #243c74;
 }
+
 .titulo_prueba:after {
   content: "";
   position: absolute;
@@ -86,6 +88,20 @@ footer {
   width: 95%;
   max-width: 255px;
   background-color: #243c74;
+}
+
+.contenedor-montos {
+  width: 350px;
+}
+
+.fondo-montos {
+  background-color: #69ad1b;
+  color: #fff;
+  padding: 10px 0;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  font-weight: bold;
+  display: block;
 }
 
 .contenedor-bocadillo{

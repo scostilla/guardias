@@ -1,0 +1,7 @@
+.mat-tab-group {
+    margin-bottom: 48px;
+}
+
+.mat-tab-group .mat-tab-labels .mat-tab-label {
+  font-weight: bold !important;
+}

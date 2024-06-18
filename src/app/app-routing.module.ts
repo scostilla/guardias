@@ -8,6 +8,9 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 
+//Configuraciones: Generales
+import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
+import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
 
 //Configuraciones: Territorio
 import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
@@ -189,6 +192,11 @@ const routes: Routes = [
   {path:"home-page", component:HomePageComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
+
+  //Configuraciones: Generales
+  {path: 'valores-g-cargoagrup', component:ValoresGCargoagrupComponent},
+  {path: 'valores-g-extra', component:ValoresGExtraComponent},
+
 
   //Configuraciones: Territorio
   {path: 'pais', component:PaisComponent},

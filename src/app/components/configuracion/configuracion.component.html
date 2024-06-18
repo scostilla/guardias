@@ -68,8 +68,11 @@
             Configuraciones varias
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>btnMenues</p>
-      </mat-expansion-panel>
+          <div class="btnMenu-button-row">
+            <button mat-raised-button color="primary" routerLink="/valores-g-cargoagrup">Valores Cargo y agrupación</button>
+            <button mat-raised-button color="accent" routerLink="/valores-g-extra">Valores Extra y Contrafactura</button>
+          </div>
+</mat-expansion-panel>
       <mat-expansion-panel (opened)="panelOpenState = true"
                            (closed)="panelOpenState = false">
         <mat-expansion-panel-header>

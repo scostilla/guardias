@@ -15,6 +15,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter, CalendarCommonModule, CalendarMonthModule } from 'angular-calendar';
 import { MatListModule } from '@angular/material/list';
+import {MatTabsModule} from '@angular/material/tabs';
 
 //Angular nativo
 
@@ -212,6 +213,8 @@ import { AutoridadEditComponent } from './components/configuracion/usuarios/auto
 import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
+import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
+import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -376,6 +379,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     AutoridadDetailComponent,
     HomeProfesionalComponent,
     RegistroDiarioProfesionalComponent,
+    ValoresGCargoagrupComponent,
+    ValoresGExtraComponent,
     
   ],
 
@@ -416,6 +421,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     BrowserAnimationsModule,
     MatDatepickerModule,
     MatMomentDateModule,
+    MatTabsModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
