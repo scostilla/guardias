@@ -155,6 +155,14 @@ export class PersonComponent implements OnInit, OnDestroy {
     });
   }  
 
+  verDistribucion(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/personal-dh', asistencial.id]);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }

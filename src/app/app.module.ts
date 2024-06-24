@@ -215,6 +215,7 @@ import { HomeProfesionalComponent } from './components/home-profesional/home-pro
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
 import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
+import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -381,6 +382,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     RegistroDiarioProfesionalComponent,
     ValoresGCargoagrupComponent,
     ValoresGExtraComponent,
+    PersonalDhComponent,
     
   ],
 

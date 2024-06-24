@@ -63,6 +63,7 @@ import { LegajoDetailComponent } from './components/configuracion/usuarios/legaj
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
+import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
@@ -249,6 +250,7 @@ const routes: Routes = [
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
   {path: 'legajo-person/:id', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
+  {path: 'personal-dh/:id', component:PersonalDhComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},
