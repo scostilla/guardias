@@ -96,6 +96,7 @@ import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria
 //Sección: Personal
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
+import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 
 
 //Sección: Cronograma
@@ -287,6 +288,7 @@ const routes: Routes = [
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
+  {path: 'asist-profesional', component:AsistProfesionalComponent},
 
 
   //Sección: Cronograma

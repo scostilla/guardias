@@ -1,0 +1,114 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6 col-md-7 mb-3">
+      <div class="titulos">ASISTENCIA <span class="titulos-second">CARGO Y AGRUPACIÓN</span></div>
+    </div>
+    <div class="col-6 col-md-5 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/home-profesional">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;" (click)="exportarAExcel()">
+        <mat-icon>get_app</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-1">
+      <div class="contenedor-bocadillo">
+        <div>{{ getMonthName(selectedMonth) }}</div>
+        <div>{{ selectedYear }}</div>
+      </div>
+    </div>
+    <div class="col-md-8 d-flex justify-content-start">
+      <div class="contenedor-titulo-bocadillo">
+        {{selectedHospitalNombre}}
+      </div>
+    </div>
+    <div class="col-md-3 d-flex justify-content-start">
+      <div class="contenedor-subtitulo-bocadillo">
+        GUARDIAS ACTIVAS
+      </div>  
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-start mt-sm-3">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Fecha:</span>
+        <select class="select-tabla" [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
+          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+        </select>
+        <select class="select-tabla" [(ngModel)]="selectedYear" (change)="updateDateAndLoadData()">
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste el pase de la DDJJ de guardias de CARGO y AGRUPACIÓN para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por la DPH.</div>
+
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
+
+      <ng-container matColumnDef="apellido" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido </th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.apellido}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.nombre}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalHoras">
+        <th mat-header-cell *matHeaderCellDef class="negrita" style="background-color: #bdbdbd;">Total mes</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
+          {{ calculateTotalHoursForRow(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="weekdaysTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L-V</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+          {{ calculateWeekdaysTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
+        
+      <ng-container matColumnDef="weekendsTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total S-D</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+          {{ calculateWeekendsTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+        </td>
+      </ng-container>
+
+      <ng-container *ngFor="let fechaColumna of displayedColumns.slice(6)" [matColumnDef]="fechaColumna">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
+          {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
+        </th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+          [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
+          [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
+          <span 
+              [style.color]="calculateHoursColor(registro.registroActividad, getFechaFromColumnId(fechaColumna))"
+              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <div class="row mt-3">
+    <div class="col-lg-3">  
+        <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
+        <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
+    </div>
+    <div class="col-lg-9">  
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

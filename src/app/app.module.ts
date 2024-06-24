@@ -216,6 +216,7 @@ import { RegistroDiarioProfesionalComponent } from './components/actividades/reg
 import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
 import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -383,6 +384,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     ValoresGCargoagrupComponent,
     ValoresGExtraComponent,
     PersonalDhComponent,
+    AsistProfesionalComponent,
     
   ],
 
