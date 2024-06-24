@@ -4,7 +4,7 @@
     <div class="col-6 col-md-7">
       <div class="titulos">DISTRIBUCIÓN <span class="titulos-second">HORARIA</span></div>
     </div>
-    <div class="col-6 col-md-2 m d-flex justify-content-end">
+    <div class="col-6 col-md-5 m d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
@@ -15,16 +15,6 @@
         matTooltip="Ver historial">
         <mat-icon>calendar_month</mat-icon>
       </button>
-    </div>
-
-    <div class="col-12 col-md-3 mt-3 mt-md-0">
-      <mat-form-field>
-        <mat-label>Filtro</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre o apellido">
-        <button mat-icon-button matSuffix>
-          <mat-icon>search</mat-icon>
-        </button>
-      </mat-form-field>
     </div>
   </div>
 

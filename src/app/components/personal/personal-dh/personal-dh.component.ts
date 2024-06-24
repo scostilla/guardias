@@ -47,37 +47,10 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       }
     );
   }
-  
+
   getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     return monthNames[monthIndex];
-  }
-
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    /*this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
-      const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
-      const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
-
-      filter = this.accentFilter(filter.toLowerCase());
-      return nombre.includes(filter) || apellido.includes(filter);
-    };
-    this.dataSource.filter = filterValue.trim().toLowerCase();*/
   }
 
   ngOnDestroy(): void {
