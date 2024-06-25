@@ -6,13 +6,30 @@ export class LegajoDto {
     activo:boolean;
     matriculaNacional: string;
     matriculaProvincial: string;
-    idProfesion: number;
     idRevista:number;
     idUdo: number;
     idPersona: number;
-   // idCargo: number;
+    idCargo: number;
+    idEfectores: number[];
+    idEspecialidades: number[];
+    idProfesion: number;
     
-    constructor(fechaInicio: Date,fechaFinal: Date,actual: boolean, legal: boolean, activo:boolean, matriculaNacional: string, matriculaProvincial: string,idProfesion:number, idRevista: number, idUdo: number, idPersona:number/* , idCargo:number */) {
+    constructor(
+        fechaInicio: Date,
+        fechaFinal: Date,
+        actual: boolean, 
+        legal: boolean, 
+        activo:boolean, 
+        matriculaNacional: string, 
+        matriculaProvincial: string,
+        idRevista:number,
+        idUdo: number,
+        idPersona: number,
+        idCargo: number,
+        idEfectores: number[],
+        idEspecialidades: number[],
+        idProfesion: number
+    ) {
         
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
@@ -21,11 +38,13 @@ export class LegajoDto {
         this.activo = activo;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
-        this.idProfesion = idProfesion;
         this.idRevista = idRevista;
         this.idUdo = idUdo;
         this.idPersona = idPersona;
-        //this.idCargo = idCargo;
+        this.idCargo = idCargo;
+        this.idEfectores=idEfectores;
+        this.idEspecialidades=idEspecialidades;
+        this.idProfesion = idProfesion;
     }
 
   }

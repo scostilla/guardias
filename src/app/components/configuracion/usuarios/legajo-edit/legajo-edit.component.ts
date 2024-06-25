@@ -12,8 +12,10 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
-
-
+import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { CargoService } from 'src/app/services/Configuracion/cargo.service';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
 
 @Component({
   selector: 'app-legajo-edit',
@@ -23,20 +25,23 @@ import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 export class LegajoEditComponent implements OnInit {
   legajoForm: FormGroup;
   initialData: any;
-  personas : Asistencial[] =[];
+  personas: Asistencial[] = [];
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   revistas: Revista[] = [];
+  cargos: Cargo[] = [];
+  especialidades: Especialidad[] = [];
 
-  
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<LegajoEditComponent>,
     private legajoService: LegajoService,
     private profesionService: ProfesionService,
-    private revistaService : RevistaService,
-    private asistencialService : AsistencialService,
-    private hospitalService : HospitalService,
+    private revistaService: RevistaService,
+    private asistencialService: AsistencialService,
+    private hospitalService: HospitalService,
+    private cargoService: CargoService,
+    private especialidadService: EspecialidadService,
 
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
@@ -45,21 +50,30 @@ export class LegajoEditComponent implements OnInit {
       profesion: ['', Validators.required],
       revista: ['', Validators.required],
       udo: ['', Validators.required],
-      matriculaNacional: ['', [/* Validators.required, */ Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      matriculaProvincial: ['', [/* Validators.required,  */Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
+      efectores: [[]],
+      especialidades: [[]],
+      matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
+      matriculaProvincial: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
       actual: ['', Validators.required],
       legal: ['', Validators.required],
       fechaInicio: ['', Validators.required],
-      fechaFinal: [''/* , Validators.required */],
+      fechaFinal: [''],
+      cargo: ['', Validators.required],
     });
 
     this.listAsistenciales();
     this.listProfesiones();
     this.listRevistas();
     this.listUdos();
-    
+    this.listCargos();
+    this.listEspecialidades();
+
     if (data) {
-      this.legajoForm.patchValue(data);
+      this.legajoForm.patchValue({
+        ...data,
+        efectores: data.efectores ? data.efectores.map((efector: any) => efector.id) : [],
+        especialidades: data.especialidades ? data.especialidades.map((especialidad: any) => especialidad.id) : []
+      });
     }
   }
 
@@ -73,7 +87,6 @@ export class LegajoEditComponent implements OnInit {
 
   listAsistenciales(): void {
     this.asistencialService.list().subscribe(data => {
-      console.log('Lista de Asistenciales:', data);
       this.personas = data;
     }, error => {
       console.log(error);
@@ -82,7 +95,6 @@ export class LegajoEditComponent implements OnInit {
 
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
-      console.log('Lista de Profesiones:', data);
       this.profesiones = data;
     }, error => {
       console.log(error);
@@ -91,7 +103,6 @@ export class LegajoEditComponent implements OnInit {
 
   listRevistas(): void {
     this.revistaService.list().subscribe(data => {
-      console.log('Lista de Revistas:', data);
       this.revistas = data;
     }, error => {
       console.log(error);
@@ -101,8 +112,22 @@ export class LegajoEditComponent implements OnInit {
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
     this.hospitalService.list().subscribe(data => {
-      console.log('Lista de Efectores:', data);
       this.efectores = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listCargos(): void {
+    this.cargoService.list().subscribe(data => {
+      this.cargos = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+  listEspecialidades(): void {
+    this.especialidadService.list().subscribe(data => {
+      this.especialidades = data;
     }, error => {
       console.log(error);
     });
@@ -111,7 +136,6 @@ export class LegajoEditComponent implements OnInit {
   saveLegajo(): void {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
-
       const legajoDto = new LegajoDto(
         legajoData.fechaInicio,
         legajoData.fechaFinal,
@@ -120,12 +144,16 @@ export class LegajoEditComponent implements OnInit {
         legajoData.activo,
         legajoData.matriculaNacional,
         legajoData.matriculaProvincial,
-        legajoData.profesion.id,
         legajoData.revista.id,
         legajoData.udo.id,
-        legajoData.persona.id
+        legajoData.persona.id,
+        legajoData.cargo.id,
+        legajoData.efectores,
+        legajoData.especialidades,
+        legajoData.profesion.id
       );
 
+      console.log("id efectores###", legajoDto)
       /* AYUDA: si this.data tiene un valor y un ID asociado */
       if (this.data && this.data.id) {
         this.legajoService.update(this.data.id, legajoDto).subscribe(
@@ -137,11 +165,7 @@ export class LegajoEditComponent implements OnInit {
           }
         );
       } else {
-        
-        console.log("############ id persona " + legajoDto.idPersona)
-        console.log("############ id matricula " + legajoDto.matriculaNacional)
-        console.log("############ id udo " + legajoDto.idUdo)
-        
+
         this.legajoService.save(legajoDto).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });
@@ -166,10 +190,17 @@ export class LegajoEditComponent implements OnInit {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
+  compareUdo(p1: Efector, p2: Efector): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
   compareEfector(p1: Efector, p2: Efector): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
+  compareCargo(p1: Cargo, p2: Cargo): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
 
   cancel(): void {
     this.dialogRef.close();
