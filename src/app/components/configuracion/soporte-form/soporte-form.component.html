@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>SOPORTE
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form>
+    <mat-dialog-content>
+      <div class="row" style="margin-top: 20px">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Apellido y Nombre</mat-label>
+              <input matInput formControlName="nombre">
+            <!--<mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+              El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+            </mat-error>-->
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Establecimiento</mat-label>
+            <input matInput formControlName="codigoPostal">
+            <!--<mat-error *ngIf="form?.get('codigoPostal')?.invalid && form?.get('codigoPostal')?.touched">
+              El campo es obligatorio y debe tener solo números (4 digitos).
+            </mat-error>-->
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Motivo</mat-label>
+            <input matInput formControlName="codigoPostal">
+            <!--<mat-error *ngIf="form?.get('codigoPostal')?.invalid && form?.get('codigoPostal')?.touched">
+              El campo es obligatorio y debe tener solo números (4 digitos).
+            </mat-error>-->
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Detalle</mat-label>
+            <input matInput formControlName="codigoPostal">
+            <!--<mat-error *ngIf="form?.get('codigoPostal')?.invalid && form?.get('codigoPostal')?.touched">
+              El campo es obligatorio y debe tener solo números (4 digitos).
+            </mat-error>-->
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit">
+          Enviar
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </mat-dialog-content>
+  </form>

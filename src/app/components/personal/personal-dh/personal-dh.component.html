@@ -1,0 +1,188 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6 col-md-7 mb-3">
+      <div class="titulos">DISTRIBUCIÓN <span class="titulos-second">HORARIA</span></div>
+    </div>
+    <div class="col-6 col-md-5 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
+        <mat-icon>get_app</mat-icon>
+      </button>
+      <button mat-fab class="button-pase" style="margin-left: 5px;"  
+        matTooltip="Ver historial">
+        <mat-icon>calendar_month</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-1">
+      <div class="contenedor-bocadillo">
+        <div>{{ nombreMes }}</div>
+        <div>{{ anoActual }}</div>
+      </div>
+    </div>
+    <div class="col-md-8 d-flex justify-content-start">
+      <div class="contenedor-titulo-bocadillo">
+        PROFESIONAL
+      </div>
+    </div>
+    <div class="col-md-3 d-flex justify-content-start">
+      <div class="contenedor-subtitulo-bocadillo">
+        ACTUAL
+      </div>  
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered table-sm caption-top">
+        <thead style="background-color: #bbb9b9;">
+        <tr>
+            <th rowspan="3">DATOS PROFESIONAL</th>
+            <th colspan="14">DISTRIBUCIÓN HORARIA</th>
+            <th rowspan="3">TOTAL HS. SEMANALES</th>
+        </tr>
+        <tr>
+            <td colspan="2" style="background-color: #eee;">Sa</td>
+            <td colspan="2" style="background-color: #eee;">Do</td>
+            <td colspan="2">Lu</td>
+            <td colspan="2">Ma</td>
+            <td colspan="2">Mi</td>
+            <td colspan="2">Ju</td>
+            <td colspan="2">Vi</td>
+        </tr>
+        <tr>
+            <td style="background-color: #eee;">Mañana</td>
+            <td style="background-color: #eee;">Tarde</td>
+            <td style="background-color: #eee;">Mañana</td>
+            <td style="background-color: #eee;">Tarde</td>
+            <td>Mañana</td>
+            <td>Tarde</td>
+            <td>Mañana</td>
+            <td>Tarde</td>
+            <td>Mañana</td>
+            <td>Tarde</td>
+            <td>Mañana</td>
+            <td>Tarde</td>
+            <td>Mañana</td>
+            <td>Tarde</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td rowspan="4">
+                <tr>
+                <td>Apellido y nombre: </td>
+                <td style="font-weight: bold;">{{asistencial.apellido}}, {{asistencial.nombre}}</td>
+                </tr>
+                <tr>
+                <td>CUIL: </td>
+                <td style="font-weight: bold;">{{asistencial.cuil}}</td>
+                </tr>
+                <tr>
+                <td>Especialidad: </td>
+                <td style="font-weight: bold;">especialidad </td>
+                </tr>
+                <tr>
+                <td>U.D.O: </td>
+                <td style="font-weight: bold;">udo</td>
+                
+                </tr>
+                <tr>
+                <td>Situación de revista: </td>
+                <td style="font-weight: bold;">sit. Revista</td>
+                </tr>
+                <tr>
+                <td>Categoria: </td>
+                <td style="font-weight: bold;">Categoria</td>
+                </tr>
+                <tr>
+                <td>Carga horaria: </td>
+                <td style="font-weight: bold;">40 </td>
+                </tr>
+                <tr>
+                <td>Adicional: </td>
+                <td style="font-weight: bold;">adicional</td>
+                </tr>
+            </td>
+            <td>CE <br/>(8 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>-</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td  style="font-weight: bold;">40</td>
+        </tr>
+        <tr>
+            <td>CE <br/>(8 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>-</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td  style="font-weight: bold;">40</td>
+        </tr>
+        <tr>
+            <td>CE <br/>(8 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>-</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td  style="font-weight: bold;">40</td>
+        </tr>
+        <tr>
+            <td>CE <br/>(8 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(4 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>CE <br/>(2 hs.)</td>
+            <td>-</td>
+            <td>-</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td>CE <br/>(6 hs.)</td>
+            <td  style="font-weight: bold;">40</td>
+        </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>OBSERV.:</td>
+            </tr>
+        </tfoot>
+    </table>
+  </div>
+  <div class="text-aprobado">El total de horas semanales cargadas para {{ nombreMes }} {{ anoActual }}, coincide con la carga horaria informada (40).</div>
+
+</div>

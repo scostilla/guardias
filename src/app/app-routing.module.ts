@@ -9,8 +9,9 @@ import { HomeProfesionalComponent } from './components/home-profesional/home-pro
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 
 //Configuraciones: Generales
-import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
-import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
+import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
+import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
+
 
 //Configuraciones: Territorio
 import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
@@ -63,10 +64,13 @@ import { LegajoDetailComponent } from './components/configuracion/usuarios/legaj
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
+import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
-
+import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
+import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
+import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 
 
 //Configuraciones: Calendario
@@ -95,6 +99,9 @@ import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria
 //Sección: Personal
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
+import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
+import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+
 
 
 //Sección: Cronograma
@@ -188,14 +195,14 @@ import { AutoridadEditComponent } from './components/configuracion/usuarios/auto
 const routes: Routes = [
   
   //Principales
-  { path: '', component: LoginComponent },
+  {path: '', component: LoginComponent },
   {path:"home-page", component:HomePageComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
 
   //Configuraciones: Generales
-  {path: 'valores-g-cargoagrup', component:ValoresGCargoagrupComponent},
-  {path: 'valores-g-extra', component:ValoresGExtraComponent},
+  {path: 'valores-guardias', component:ValoresGuardiasComponent},
+  {path: 'soporte-form', component:SoporteFormComponent},
 
 
   //Configuraciones: Territorio
@@ -249,9 +256,13 @@ const routes: Routes = [
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
   {path: 'legajo-person/:id', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
+  {path: 'personal-dh/:id', component:PersonalDhComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},
+  {path: 'revista', component: RevistaComponent},
+  {path: 'revista-detail/:id', component:RevistaDetailComponent},
+  {path:'revista-edit/:id', component: RegionEditComponent},
   
   //Autoridad
   {path: 'autoridad', component:AutoridadComponent},
@@ -285,6 +296,8 @@ const routes: Routes = [
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
+  {path: 'asist-profesional', component:AsistProfesionalComponent},
+  {path: 'personal-autoridad', component:PersonalAutoridadComponent},
 
 
   //Sección: Cronograma
