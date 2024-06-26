@@ -1,0 +1,77 @@
+<!--<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6 col-md-7">
+      <div class="titulos">REVISTAS</div>
+    </div>
+    <div class="col-6 col-md-1 m d-flex justify-content-end">
+      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Revista">
+        <mat-icon>library_add</mat-icon>
+      </button>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por agrupación o tipo de revista" #input>
+      </mat-form-field>
+    </div>
+  </div>
+
+<div class="row">
+<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
+    <td mat-cell *matCellDef="let revista"> {{revista.id}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="agrupacion">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th> 
+    <td mat-cell *matCellDef="let revista"> {{revista.agrupacion}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="categoria">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoría </th> 
+    <td mat-cell *matCellDef="let revista"> {{revista.categoria?.nombre}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="adicional">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Adicional </th> 
+    <td mat-cell *matCellDef="let revista"> {{revista.adicional?.nombre}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="cargaHoraria">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Carga horaria </th> 
+    <td mat-cell *matCellDef="let revista"> {{revista.cargaHoraria?.descripcion}} </td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="tipoRevista">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo revista </th> 
+    <td mat-cell *matCellDef="let revista"> {{revista.tipoRevista?.nombre}} </td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
+    <td mat-cell *matCellDef="let revista" class="cell-actions">
+      <button mat-icon-button matTooltip="Ver {{revista.agrupacion}}" (click)="openDetail(revista)">
+        <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Editar {{revista.agrupacion}}" (click)="openFormChanges(revista)">
+        <mat-icon class="btnEdit">edit</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Eliminar {{revista.agrupacion}}" (click)="deleteRevista(revista)">
+        <mat-icon class="btnRemove">delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<div class="row mt-3">
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+</div>
+</div>
+</div>-->

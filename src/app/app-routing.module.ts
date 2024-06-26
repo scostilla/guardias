@@ -9,8 +9,9 @@ import { HomeProfesionalComponent } from './components/home-profesional/home-pro
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 
 //Configuraciones: Generales
-import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
-import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
+import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
+import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
+
 
 //Configuraciones: Territorio
 import { PaisComponent } from './components/configuracion/territorio/pais/pais.component';
@@ -97,6 +98,10 @@ import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
+import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { RevistaComponent } from './components/personal/abm/revista/revista.component';
+import { RevistaDetailComponent } from './components/personal/abm/revista-detail/revista-detail.component';
+import { RevistaEditComponent } from './components/personal/abm/revista-edit/revista-edit.component';
 
 
 //Sección: Cronograma
@@ -196,8 +201,8 @@ const routes: Routes = [
   {path: 'configuracion', component:ConfiguracionComponent},
 
   //Configuraciones: Generales
-  {path: 'valores-g-cargoagrup', component:ValoresGCargoagrupComponent},
-  {path: 'valores-g-extra', component:ValoresGExtraComponent},
+  {path: 'valores-guardias', component:ValoresGuardiasComponent},
+  {path: 'soporte-form', component:SoporteFormComponent},
 
 
   //Configuraciones: Territorio
@@ -289,6 +294,10 @@ const routes: Routes = [
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
+  {path: 'personal-autoridad', component:PersonalAutoridadComponent},
+  {path: 'revista', component:RevistaComponent},
+  {path: 'revista-detail', component:RevistaDetailComponent},
+  {path: 'revista-edit', component:RevistaEditComponent},
 
 
   //Sección: Cronograma

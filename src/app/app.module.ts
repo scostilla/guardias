@@ -213,10 +213,11 @@ import { AutoridadEditComponent } from './components/configuracion/usuarios/auto
 import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
-import { ValoresGCargoagrupComponent } from './components/configuracion/info/valores-g-cargoagrup/valores-g-cargoagrup.component';
-import { ValoresGExtraComponent } from './components/configuracion/info/valores-g-extra/valores-g-extra.component';
+import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
+import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
+import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -381,10 +382,11 @@ registerLocaleData(localeEsAr, 'es-AR');
     AutoridadDetailComponent,
     HomeProfesionalComponent,
     RegistroDiarioProfesionalComponent,
-    ValoresGCargoagrupComponent,
-    ValoresGExtraComponent,
+    ValoresGuardiasComponent,
     PersonalDhComponent,
     AsistProfesionalComponent,
+    SoporteFormComponent,
+    PersonalAutoridadComponent,
     
   ],
 
