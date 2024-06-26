@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import * as moment from 'moment';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 
 @Component({
@@ -11,7 +11,8 @@ import { RegistroActividadService } from 'src/app/services/registroActividad.ser
   templateUrl: './guardias-view.component.html',
   styleUrls: ['./guardias-view.component.css']
 })
-export class GuardiasViewComponent {
+// se agrego implements OnInit
+export class GuardiasViewComponent implements OnInit{
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
@@ -44,16 +45,21 @@ export class GuardiasViewComponent {
       });
   }
   
-
+  // se aumento this.updateButtonStates();
   listHospitales(): void {
     this.hospitalService.list().subscribe(data => {
       this.hospitales = data;
       if (this.hospitales.length > 0) {
         this.selectedHospital = this.hospitales[0].id;
+        this.updateButtonStates();
       }
     }, error => {
       console.log("Error en carga de hospitales: " + error) ;
     });
+  }
+ // se agrego onHospitalChange
+  onHospitalChange() {
+    this.updateButtonStates();
   }
 
   navigateToCargoyAgrup() {
@@ -64,6 +70,27 @@ export class GuardiasViewComponent {
   navigateToExtra() {
     console.log('#### hospital que se envía: #####'+this.selectedHospital);
     this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
+  }
+  
+  // se agrego updateButtonStates
+  updateButtonStates() {
+    if (this.selectedHospital) {
+      this.registroActividadService.list().subscribe((registros) => {
+        const registrosHospital = registros.filter(
+          (registro) => registro.efector.id === this.selectedHospital
+        );
+
+        this.extraButtonDisabled = !registrosHospital.some((registro) => registro.tipoGuardia?.id === 3);
+        this.cargoAgrupButtonDisabled = !registrosHospital.some(
+          (registro) => registro.tipoGuardia?.id === 1 || registro.tipoGuardia?.id === 2
+        );
+        this.contraFacturaButtonDisabled = !registrosHospital.some((registro) => registro.tipoGuardia?.id === 4);
+      });
+    } else {
+      this.extraButtonDisabled = true;
+      this.cargoAgrupButtonDisabled = true;
+      this.contraFacturaButtonDisabled = true;
+    }
   }
 
   /*updateHospital() {
