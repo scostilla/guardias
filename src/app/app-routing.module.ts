@@ -99,9 +99,7 @@ import { PersonalComponent } from './components/personal/personal/personal.compo
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
-import { RevistaComponent } from './components/personal/abm/revista/revista.component';
-import { RevistaDetailComponent } from './components/personal/abm/revista-detail/revista-detail.component';
-import { RevistaEditComponent } from './components/personal/abm/revista-edit/revista-edit.component';
+
 
 
 //Sección: Cronograma
@@ -295,9 +293,6 @@ const routes: Routes = [
   {path: 'personal-legajo', component:PersonalLegajoComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
-  {path: 'revista', component:RevistaComponent},
-  {path: 'revista-detail', component:RevistaDetailComponent},
-  {path: 'revista-edit', component:RevistaEditComponent},
 
 
   //Sección: Cronograma
