@@ -23,7 +23,7 @@ export class RevistaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<RevistaDetailComponent>;
-  displayedColumns: string[] = ['id', 'agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'acciones'];
+  displayedColumns: string[] = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'acciones'];
   dataSource!: MatTableDataSource<Revista>;
   suscription!: Subscription;
 

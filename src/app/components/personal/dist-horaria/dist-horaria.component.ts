@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { DistHorariaGuardiaComponent } from '../dist-horaria-guardia/dist-horaria-guardia.component';
-import { DistHorariaConsComponent } from '../dist-horaria-cons/dist-horaria-cons.component';
-import { DistHorariaGirasComponent } from '../dist-horaria-giras/dist-horaria-giras.component';
-import { DistHorariaOtrasComponent } from '../dist-horaria-otras/dist-horaria-otras.component';
+import { DistHorariaGuardiaComponent } from '../../actividades/dist-horaria-guardia/dist-horaria-guardia.component';
+import { DistHorariaConsComponent } from '../../actividades/dist-horaria-cons/dist-horaria-cons.component';
+import { DistHorariaGirasComponent } from '../../actividades/dist-horaria-giras/dist-horaria-giras.component';
+import { DistHorariaOtrasComponent } from '../../actividades/dist-horaria-otras/dist-horaria-otras.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({

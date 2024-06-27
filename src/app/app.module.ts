@@ -48,8 +48,8 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
-import { NovedadesFormComponent } from './components/actividades/novedades-form/novedades-form.component';
-import { DistHorariaComponent } from './components/actividades/dist-horaria/dist-horaria.component';
+import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';

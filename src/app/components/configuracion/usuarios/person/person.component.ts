@@ -13,6 +13,9 @@ import { PersonEditComponent } from '../person-edit/person-edit.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
+import { NovedadesFormComponent } from '../../../personal/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from '../../../personal/dist-horaria/dist-horaria.component';
+
 import { Router } from '@angular/router';
 
 
@@ -47,6 +50,8 @@ export class PersonComponent implements OnInit, OnDestroy {
   constructor(
     private asistencialService: AsistencialService,
     private dialog: MatDialog,
+    public dialogNov: MatDialog,
+    public dialogDistrib: MatDialog,
     private toastr: ToastrService,
     private router: Router,
     private legajoService: LegajoService,
@@ -241,7 +246,21 @@ export class PersonComponent implements OnInit, OnDestroy {
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
-    }
+  }
+
+  openNovedades(){
+    this.dialogNov.open(NovedadesFormComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
+  openDistribucion(){
+    this.dialogDistrib.open(DistHorariaComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
 
   deleteAsistencial(asistencial: Asistencial): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

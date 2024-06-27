@@ -29,7 +29,7 @@
     <div class="row">
       <div class="col">
         <mat-form-field appearance="fill">
-          <mat-label>Pais</mat-label>
+          <mat-label>Provincia</mat-label>
           <mat-select formControlName="provincia" [compareWith]="compareProvincia">
             <mat-option *ngFor="let provincia of provincias" [value]="provincia" >{{ provincia.nombre }}</mat-option>
           </mat-select>
