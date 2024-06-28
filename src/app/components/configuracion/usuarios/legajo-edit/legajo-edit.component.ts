@@ -48,7 +48,11 @@ export class LegajoEditComponent implements OnInit {
     this.legajoForm = this.fb.group({
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
-      revista: ['', Validators.required],
+      agrupacion: ['', Validators.required],
+      categoria: ['', Validators.required],
+      adicional: ['', Validators.required],
+      cargaHoraria: ['', Validators.required],
+      tipoRevista: ['', Validators.required],
       udo: ['', Validators.required],
       efectores: [[]],
       especialidades: [[]],

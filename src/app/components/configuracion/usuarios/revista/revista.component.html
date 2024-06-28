@@ -2,7 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-6 col-md-7">
-      <div class="titulos">REVISTAS</div>
+      <div class="titulos">SITUACIÓN DE REVISTA</div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
       <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Revista">
@@ -22,28 +22,48 @@
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
 
       <ng-container matColumnDef="agrupacion">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Agrupación </th> 
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Agrupación 
+          <button mat-icon-button matTooltip="Agregar/editar">
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+        </th> 
         <td mat-cell *matCellDef="let revista"> {{revista.agrupacion}} </td>
       </ng-container>
 
       <ng-container matColumnDef="categoria">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoría </th> 
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoría 
+          <button mat-icon-button matTooltip="Agregar/editar">
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+        </th> 
         <td mat-cell *matCellDef="let revista"> {{revista.categoria?.nombre}} </td>
       </ng-container>
 
       <ng-container matColumnDef="adicional">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Adicional </th> 
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Adicional 
+          <button mat-icon-button matTooltip="Agregar/editar">
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+        </th> 
         <td mat-cell *matCellDef="let revista"> {{revista.adicional?.nombre}} </td>
       </ng-container>
 
       <ng-container matColumnDef="cargaHoraria">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Carga horaria </th> 
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Carga horaria 
+          <button mat-icon-button matTooltip="Agregar/editar">
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+        </th> 
         <td mat-cell *matCellDef="let revista"> {{revista.cargaHoraria?.cantidad}} </td>
       </ng-container>
 
 
       <ng-container matColumnDef="tipoRevista">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo revista </th> 
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo revista 
+          <button mat-icon-button matTooltip="Agregar/editar" (click)="openEditTipoRevista()">
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+        </th> 
         <td mat-cell *matCellDef="let revista"> {{revista.tipoRevista?.nombre}} </td>
       </ng-container>
 

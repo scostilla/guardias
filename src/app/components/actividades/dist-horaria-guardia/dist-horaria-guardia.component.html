@@ -1,10 +1,19 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Guardias</h1>
 </div>
-
+<mat-dialog-content class="mat-typography">
 <form [formGroup]="distribForm">
-    <div mat-dialog-content class="content">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="fill">
+            <mat-label>Servicio</mat-label>
+            <mat-select formControlName="servicio">
+                <mat-option *ngFor="let service of servicio" [value]="service"> {{service}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="error">
+            <mat-error *ngIf="distribForm.get('servicio')?.errors?.['servicio']">El servicio es un campo requerido</mat-error>
+        </div>
+
+        <mat-form-field appearance="fill">
             <mat-label>Tipo de guardia</mat-label>
             <mat-select formControlName="guardia">
                 <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
@@ -19,7 +28,7 @@
             </span>
         </div>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="fill">
             <mat-label>Día de guardia</mat-label>
             <mat-select formControlName="dia">
                 <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
@@ -34,7 +43,7 @@
             </span>
         </div>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="fill">
             <mat-label>Cantidad Hs.</mat-label>
             <input matInput  placeholder="Numero"  formControlName="horas">
         </mat-form-field>
@@ -57,5 +66,5 @@
             <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
             <button mat-raised-button class="btnupdate" color="primary" type="submit" [disabled]="distribForm.invalid" [mat-dialog-close]="false">Agregar guardia</button>
         </div>
-    </div>
 </form>
+</mat-dialog-content>

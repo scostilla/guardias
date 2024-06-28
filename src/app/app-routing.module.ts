@@ -69,7 +69,6 @@ import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
-import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 
 
@@ -261,7 +260,6 @@ const routes: Routes = [
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},
   {path: 'revista', component: RevistaComponent},
-  {path: 'revista-detail/:id', component:RevistaDetailComponent},
   {path:'revista-edit/:id', component: RegionEditComponent},
   
   //Autoridad

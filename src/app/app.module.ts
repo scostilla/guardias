@@ -190,7 +190,6 @@ import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
-import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { UdoComponent } from './components/configuracion/establecimiento/udo/udo.component';
 import { UdoEditComponent } from './components/configuracion/establecimiento/udo-edit/udo-edit.component';
 import { UdoDetailComponent } from './components/configuracion/establecimiento/udo-detail/udo-detail.component';
@@ -218,6 +217,7 @@ import { PersonalDhComponent } from './components/personal/personal-dh/personal-
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -359,7 +359,6 @@ registerLocaleData(localeEsAr, 'es-AR');
     LegajoDetailComponent,
     RevistaComponent,
     RevistaEditComponent,
-    RevistaDetailComponent,
     UdoComponent,
     UdoEditComponent,
     UdoDetailComponent,
@@ -387,6 +386,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     AsistProfesionalComponent,
     SoporteFormComponent,
     PersonalAutoridadComponent,
+    TipoRevistaEditComponent,
     
   ],
 

@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./dist-horaria-giras.component.css']
 })
 export class DistHorariaGirasComponent {
-  hospitales:string[]= ['DN. PABLO SORIA'];
+  puestosSalud:string[]= ['Puestos de salud segun el lugar'];
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
   guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
