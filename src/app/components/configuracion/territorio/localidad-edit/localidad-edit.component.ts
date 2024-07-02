@@ -32,16 +32,11 @@ export class LocalidadEditComponent implements OnInit {
     this.localidadform = this.fb.group({
       nombre: ['', Validators.required],
       departamento: ['', Validators.required],
-      efectores: [[]],
     });
     this.listDepartamento();
 
     if (this.data) {
-      this.localidadform.patchValue({
-        ...data,
-        efectores: data.efectores ? data.efectores.map((efector:any) => efector.id) : [],
-        departamento: data.departamento ? data.departamento.map((departamento:any) => departamento.id) : []
-      });
+      this.localidadform.patchValue(data);
       }
     }
   
@@ -68,9 +63,8 @@ export class LocalidadEditComponent implements OnInit {
       const localidadData = this.localidadform.value;
       const localidadDto = new LocalidadDto(
         localidadData.nombre,
-        localidadData.departamento,
-        localidadData.activo,
-        localidadData.efectores
+        localidadData.departamento.id,
+        localidadData.activo
       );
 
       console.log("id efectores###",localidadDto)
