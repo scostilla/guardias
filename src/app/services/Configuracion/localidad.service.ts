@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Localidad } from "src/app/models/Configuracion/Localidad";
 import { tap } from 'rxjs/operators';
+import { LocalidadDto } from 'src/app/dto/Configuracion/LocalidadDto';
+import { Localidad } from "src/app/models/Configuracion/Localidad";
 
 
 @Injectable({
@@ -31,7 +32,7 @@ export class LocalidadService {
     return this.httpClient.get<Localidad>(this.localidadesURL + `detailnombre/${nombre}`);
 }
 
-public save(localidad:Localidad): Observable<any> {
+public save(localidad:LocalidadDto): Observable<any> {
   return this.httpClient.post<any>(this.localidadesURL + 'create', localidad)
   .pipe(
     tap(() => {
@@ -40,7 +41,7 @@ public save(localidad:Localidad): Observable<any> {
   )
 }
 
-public update(id:number, localidad:Localidad): Observable<any> {
+public update(id:number, localidad:LocalidadDto): Observable<any> {
   return this.httpClient.put<any>(this.localidadesURL + `update/${id}`, localidad)
   .pipe(
     tap(() => {

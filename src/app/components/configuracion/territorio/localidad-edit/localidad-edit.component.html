@@ -1,15 +1,16 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Localidad
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Localidad
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
-<form [formGroup]="form!" (ngSubmit)="saveLocalidad()">
+
+<form [formGroup]="localidadform" (ngSubmit)="saveLocalidad()">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label for="nombre">Nombre</mat-label>
             <input id="nombre" matInput formControlName="nombre">
-          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+          <mat-error *ngIf="localidadform.get('nombre')?.invalid && localidadform.get('nombre')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
@@ -20,17 +21,17 @@
         <mat-form-field appearance="fill">
           <mat-label>Departamento</mat-label>
           <mat-select id="mat-select-2" formControlName="departamento" [compareWith]="compareDepartamento">
-            <mat-option *ngFor="let departamento of departamentos" [value]="departamento" >{{ departamento.nombre }}</mat-option>
+            <mat-option *ngFor="let departamento of departamento" [value]="departamento" >{{ departamento.nombre }}</mat-option>
           </mat-select>
-                    <mat-error *ngIf="form?.get('departamento')?.invalid && form?.get('departamento')?.touched">
+                    <mat-error *ngIf="localidadform.get('departamento')?.invalid && localidadform.get('departamento')?.touched">
             El campo es obligatorio.
           </mat-error>
         </mat-form-field>
       </div>
     </div>
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!localidadform.valid || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
       <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
         Cancelar

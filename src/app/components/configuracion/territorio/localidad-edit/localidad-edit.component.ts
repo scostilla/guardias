@@ -1,10 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Localidad } from 'src/app/models/Configuracion/Localidad';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { LocalidadDto } from 'src/app/dto/Configuracion/LocalidadDto';
 import { Departamento } from 'src/app/models/Configuracion/Departamento';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 
 @Component({
   selector: 'app-localidad-edit',
@@ -13,46 +15,88 @@ import { DepartamentoService } from 'src/app/services/Configuracion/departamento
 })
 export class LocalidadEditComponent implements OnInit {
 
-  form?: FormGroup;
-  esEdicion?: boolean;
-  esIgual: boolean = false;
-  departamentos: Departamento[] = []; 
+  localidadform: FormGroup;
+  initialData: any;
+  departamento: Departamento[] = []; 
+  efectores: Efector[] = [];
+
 
   constructor(
     private fb: FormBuilder,
+    public dialogRef: MatDialogRef<LocalidadEditComponent>,
     private localidadService: LocalidadService,
     private departamentoService: DepartamentoService, 
-    private dialogRef: MatDialogRef<LocalidadEditComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: Localidad 
+
+    @Inject(MAT_DIALOG_DATA) public data: Localidad 
   ) { 
+    this.localidadform = this.fb.group({
+      nombre: ['', Validators.required],
+      departamento: ['', Validators.required],
+      efectores: [[]],
+    });
     this.listDepartamento();
-  }
+
+    if (this.data) {
+      this.localidadform.patchValue({
+        ...data,
+        efectores: data.efectores ? data.efectores.map((efector:any) => efector.id) : [],
+        departamento: data.departamento ? data.departamento.map((departamento:any) => departamento.id) : []
+      });
+      }
+    }
+  
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      id: [this.data ? this.data.id : null],
-      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,50}$')]],
-      departamento: [this.data ? this.data.departamento : '', Validators.required]
-    });
+   this.initialData = this.localidadform.value;
 
-    this.esEdicion = this.data != null;
-    
-    this.form.valueChanges.subscribe(val => {
-    this.esIgual = val.id !== this.data?.id || val.nombre !== this.data?.nombre || val.departamento !== this.data?.departamento;
-    });
+  }
 
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.localidadform.value);
   }
 
   listDepartamento(): void {
     this.departamentoService.list().subscribe(data => {
-      this.departamentos = data;
+      this.departamento = data;
     }, error => {
       console.log(error);
     });
   }
 
   saveLocalidad(): void {
-    const id = this.form?.get('id')?.value;
+    if (this.localidadform.valid) {
+      const localidadData = this.localidadform.value;
+      const localidadDto = new LocalidadDto(
+        localidadData.nombre,
+        localidadData.departamento,
+        localidadData.activo,
+        localidadData.efectores
+      );
+
+      console.log("id efectores###",localidadDto)
+      if (this.data && this.data.id) {
+        this.localidadService.update(this.data.id, localidadDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+
+  } else{
+    this.localidadService.save(localidadDto).subscribe(
+      result => {
+        this.dialogRef.close({ type: 'save', data: result });
+      },
+      error => {
+        this.dialogRef.close({ type: 'error', data: error });
+      }
+    );
+  }
+}
+  }
+    /* const id = this.form?.get('id')?.value;
     const nombre = this.form?.get('nombre')?.value;
     const departamento = this.form?.get('departamento')?.value;
 
@@ -68,9 +112,14 @@ export class LocalidadEditComponent implements OnInit {
         this.dialogRef.close(data);
       });
     }
-  }
+  } */
+  
 
   compareDepartamento(p1: Departamento, p2: Departamento): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  compareEfector(p1: Efector, p2: Efector): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
