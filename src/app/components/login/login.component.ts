@@ -38,11 +38,11 @@ export class LoginComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
+    /* comprobar si estoy logeado */
     if(this.tokenService.getToken()){
       this.isLogged = true;
       this.isLoginFail = false;
       this.roles = this.tokenService.getAuthorities();
-      console.log("roless" + this.roles);
     }
   }
 
@@ -52,9 +52,9 @@ export class LoginComponent implements OnInit {
     console.log("pass " + this.password);
     this.authService.login(this.loginUsuario).subscribe(
       data => {
-
         this.isLogged = true;
         this.isLoginFail = false;
+
         this.tokenService.setToken(data.token);
         this.tokenService.setUserName(data.nombreUsuario);
         this.tokenService.setAuthorities(data.authorities);
@@ -63,12 +63,15 @@ export class LoginComponent implements OnInit {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
         this.router.navigate(['/home-page']);
+
+        /* aqui debería de tomar los datos de person? */
       },
       err => {
         this.isLogged = false;
         this.isLoginFail = true;
         this.errMsj = err.error.message;
-        console.log('fabiana #######'+ err.error.message);
+        /* debería mostrarme el mensaje "campos mal puestos.. ver porque no lo hace"*/
+        console.log('Mensaje de error: '+ this.errMsj);
         this.toastr.error(this.errMsj, 'Fail msj', {
           timeOut: 3000,  positionClass: 'toast-top-center',
         });

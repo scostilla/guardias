@@ -10,6 +10,7 @@ import { TokenService } from 'src/app/services/login/token.service';
 export class HomePageComponent implements OnInit{
 
   isLogged = false;
+  
   constructor(
     private router: Router,
     private tokenService: TokenService
