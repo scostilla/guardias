@@ -1,15 +1,15 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Departamento
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Departamento
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
-<form [formGroup]="form!" (ngSubmit)="saveDepartamento()">
+<form [formGroup]="departamentoform" (ngSubmit)="saveDepartamento()">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre">
-          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+          <mat-error *ngIf="departamentoform.get('nombre')?.invalid && departamentoform.get('nombre')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
@@ -20,7 +20,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Código Postal</mat-label>
           <input matInput formControlName="codigoPostal">
-          <mat-error *ngIf="form?.get('codigoPostal')?.invalid && form?.get('codigoPostal')?.touched">
+          <mat-error *ngIf="departamentoform.get('codigoPostal')?.invalid && departamentoform.get('codigoPostal')?.touched">
             El campo es obligatorio y debe tener solo números (4 digitos).
           </mat-error>
         </mat-form-field>
@@ -29,19 +29,19 @@
     <div class="row">
       <div class="col">
         <mat-form-field appearance="fill">
-          <mat-label>Pais</mat-label>
+          <mat-label>Provincia</mat-label>
           <mat-select formControlName="provincia" [compareWith]="compareProvincia">
-            <mat-option *ngFor="let provincia of provincias" [value]="provincia" >{{ provincia.nombre }}</mat-option>
+            <mat-option *ngFor="let provincia of provincia" [value]="provincia" >{{ provincia.nombre }}</mat-option>
           </mat-select>
-                    <mat-error *ngIf="form?.get('provincia')?.invalid && form?.get('provincia')?.touched">
+                    <mat-error *ngIf="departamentoform.get('provincia')?.invalid && departamentoform.get('provincia')?.touched">
             El campo es obligatorio.
           </mat-error>
         </mat-form-field>
       </div>
     </div>
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!departamentoform || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
       <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
         Cancelar

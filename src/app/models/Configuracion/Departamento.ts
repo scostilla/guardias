@@ -5,13 +5,25 @@ export class Departamento {
     throw new Error('Method not implemented.');
   }
   id?: number;
-  codigoPostal: string;
   nombre: string;
+  codigoPostal: string;
+  activo: boolean;
   provincia: Provincia;
+  
 
-  constructor(codigoPostal: string, nombre: string, provincia: Provincia) {
-    this.codigoPostal = codigoPostal;
+  constructor(
+   nombre: string,
+    codigoPostal: string,
+    activo: boolean,
+    provincia: Provincia,
+   
+
+  ) {
+
     this.nombre = nombre;
+    this.codigoPostal = codigoPostal;
+    this.activo = activo;
     this.provincia = provincia;
+   
   }
 }

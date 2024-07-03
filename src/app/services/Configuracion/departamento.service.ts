@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Departamento } from "src/app/models/Configuracion/Departamento";
 import { tap } from 'rxjs/operators';
+import { DepartamentoDto } from 'src/app/dto/Configuracion/DepartamentoDto';
+import { Departamento } from "src/app/models/Configuracion/Departamento";
+
 
 
 @Injectable({
@@ -31,7 +33,7 @@ export class DepartamentoService {
     return this.httpClient.get<Departamento>(this.departamentosURL + `detailnombre/${nombre}`);
 }
 
-public save(departamento:Departamento): Observable<any> {
+public save(departamento:DepartamentoDto): Observable<any> {
   return this.httpClient.post<any>(this.departamentosURL + 'create', departamento)
   .pipe(
     tap(() => {
@@ -40,7 +42,7 @@ public save(departamento:Departamento): Observable<any> {
   )
 }
 
-public update(id:number, departamento:Departamento): Observable<any> {
+public update(id:number, departamento:DepartamentoDto): Observable<any> {
   return this.httpClient.put<any>(this.departamentosURL + `update/${id}`, departamento)
   .pipe(
     tap(() => {
