@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { PaisDto } from 'src/app/dto/Configuracion/PaisDto';
 import { Pais } from "src/app/models/Configuracion/Pais";
 
 @Injectable({
@@ -31,7 +32,7 @@ export class PaisService {
       return this.httpClient.get<Pais>(this.paisesURL + `detailnombre/${nombre}`);
   }
   
-  public save(paises:Pais): Observable<any> {
+  public save(paises:PaisDto): Observable<any> {
     return this.httpClient.post<any>(this.paisesURL + 'create', paises)
     .pipe(
       tap(() => {
@@ -40,7 +41,7 @@ export class PaisService {
     )
   }
   
-  public update(id:number, paises:Pais): Observable<any> {
+  public update(id:number, paises:PaisDto): Observable<any> {
     return this.httpClient.put<any>(this.paisesURL + `update/${id}`, paises)
     .pipe(
       tap(() => {

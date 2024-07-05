@@ -3,11 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DepartamentoDto } from 'src/app/dto/Configuracion/DepartamentoDto';
 import { Departamento } from 'src/app/models/Configuracion/Departamento';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { Provincia } from 'src/app/models/Configuracion/Provincia';
 import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
 @Component({
   selector: 'app-departamento-edit',
@@ -19,23 +16,23 @@ export class DepartamentoEditComponent implements OnInit {
   departamentoform: FormGroup;
   initialData: any;
   provincia: Provincia[] = [];
-  localidades: Localidad[] = [];
-  efectores: Efector[] = [];
+  
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<DepartamentoEditComponent>,
     private departamentoService: DepartamentoService,
     private provinciaService: ProvinciaService, 
-    private localidadService: LocalidadService,
+   
     
     @Inject(MAT_DIALOG_DATA) public data: Departamento 
   ) { 
     this.departamentoform = this.fb.group({
+      id: [this.data ? this.data.id : null],
       nombre: ['', Validators.required],
       codigoPostal: ['', Validators.required],
       provincia: ['', Validators.required],
-      localidades: ['', Validators.required],
+    
     });
     this.listProvincia();
 
@@ -43,15 +40,8 @@ export class DepartamentoEditComponent implements OnInit {
       this.departamentoform.patchValue(data);
       }
 
-      this.listLocalidad();
-      if (this.data) {
-        this.departamentoform.patchValue(data);
-        }
-
     }
 
-
-  
 
   ngOnInit(): void {
     this.initialData = this.departamentoform.value;
@@ -63,6 +53,7 @@ export class DepartamentoEditComponent implements OnInit {
 
   listProvincia(): void {
     this.provinciaService.list().subscribe(data => {
+      console.log('Lista de Provincias:', data);
       this.provincia = data;
     }, error => {
       console.log(error);
@@ -70,26 +61,18 @@ export class DepartamentoEditComponent implements OnInit {
   }
 
 
-  listLocalidad(): void {
-    this.localidadService.list().subscribe(data => {
-      this.localidades = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
   saveDepartamento(): void {
   if (this.departamentoform.valid) {
     const departamentoData = this.departamentoform.value;
+
     const departamentoDto = new DepartamentoDto(
       departamentoData.nombre,
       departamentoData.codigoPostal,
       departamentoData.activo,
       departamentoData.provincia.id,
-      departamentoData.localidades.id
+     
     );
 
-    console.log("id_efectores###",departamentoDto)
     if (this.data && this.data.id) {
       this.departamentoService.update(this.data.id, departamentoDto).subscribe(
         result => {

@@ -1,12 +1,19 @@
 export class Pais {
   id?: number;
-  codigo: string;
-  nacionalidad: string;
   nombre: string;
+  nacionalidad: string;
+  codigo: string;
 
-  constructor(codigo: string, nacionalidad: string, nombre: string) {
-    this.codigo = codigo;
-    this.nacionalidad = nacionalidad;
+
+  constructor(
+    nombre: string,
+    nacionalidad: string,
+    codigo: string
+   
+   ) {
     this.nombre = nombre;
+    this.nacionalidad = nacionalidad;
+    this.codigo = codigo;
+   
   }
 }

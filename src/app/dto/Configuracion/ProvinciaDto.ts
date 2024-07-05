@@ -1,12 +1,19 @@
 export class ProvinciaDto {
-    gentilicio: string;
     nombre: string;
+    gentilicio: string;
     idPais: number;
+    activo: boolean;
 
 
-constructor(gentilicio: string, nombre: string, idPais: number) {
-    this.gentilicio = gentilicio;
+constructor(
+    nombre: string,
+    gentilicio: string,
+    idPais: number,
+    activo: boolean
+) {
     this.nombre = nombre;
+    this.gentilicio = gentilicio;
     this.idPais = idPais;
+    this.activo = activo;
 }
 }

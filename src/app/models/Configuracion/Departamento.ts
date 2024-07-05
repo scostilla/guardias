@@ -7,14 +7,12 @@ export class Departamento {
   id?: number;
   nombre: string;
   codigoPostal: string;
-  activo: boolean;
   provincia: Provincia;
   
 
   constructor(
    nombre: string,
     codigoPostal: string,
-    activo: boolean,
     provincia: Provincia,
    
 
@@ -22,7 +20,6 @@ export class Departamento {
 
     this.nombre = nombre;
     this.codigoPostal = codigoPostal;
-    this.activo = activo;
     this.provincia = provincia;
    
   }

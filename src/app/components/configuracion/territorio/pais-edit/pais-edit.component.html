@@ -1,15 +1,15 @@
-<h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} País
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} País
   <h5 class="requiredField">*Campos Obligatorios</h5>
 </h2>
 
-<form [formGroup]="form!" (ngSubmit)="savePais()">
+<form [formGroup]="paisForm" (ngSubmit)="savePais()">
   <mat-dialog-content>
     <div class="row" style="margin-top: 20px">
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre">
-          <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
+          <mat-error *ngIf="paisForm.get('nombre')?.invalid && paisForm.get('nombre')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
@@ -20,7 +20,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Código</mat-label>
             <input matInput formControlName="codigo">
-          <mat-error *ngIf="form?.get('codigo')?.invalid && form?.get('codigo')?.touched">
+          <mat-error *ngIf="paisForm.get('codigo')?.invalid && paisForm.get('codigo')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
@@ -31,15 +31,15 @@
         <mat-form-field appearance="fill">
           <mat-label>Nacionalidad</mat-label>
             <input matInput formControlName="nacionalidad">
-          <mat-error *ngIf="form?.get('nacionalidad')?.invalid && form?.get('nacionalidad')?.touched">
+          <mat-error *ngIf="paisForm.get('nacionalidad')?.invalid && paisForm.get('nacionalidad')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
           </mat-error>
         </mat-form-field>
       </div>
     </div>
     <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
-        {{esEdicion ? 'Modificar' : 'Agregar'}}
+      <button mat-raised-button color="primary" type="submit" [disabled]="!paisForm.valid || !isModified()">
+        {{data ? 'Modificar' : 'Agregar'}}
       </button>
       <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
         Cancelar
