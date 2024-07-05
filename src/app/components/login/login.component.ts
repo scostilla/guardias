@@ -12,16 +12,16 @@ import { TokenService } from 'src/app/services/login/token.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  
+
   isLogged = false;
   isLoginFail = false;
   loginUsuario?: LoginUsuario;
   nombreUsuario?: string;
   password?: string;
-  roles: string[] =[];
+  roles: string[] = [];
   errMsj?: string;
-  
-  hide = true; 
+
+  hide = true;
 
   /* loginForm: FormGroup = this.fb.group({
     nombreUsuario: ['', [Validators.required, Validators.email]],
@@ -35,11 +35,11 @@ export class LoginComponent implements OnInit {
 
     private tokenService: TokenService,
     private authService: AuthService,
-  ) {}
-  
+  ) { }
+
   ngOnInit(): void {
     /* comprobar si estoy logeado */
-    if(this.tokenService.getToken()){
+    if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.isLoginFail = false;
       this.roles = this.tokenService.getAuthorities();
@@ -48,8 +48,6 @@ export class LoginComponent implements OnInit {
 
   onLogin(): void {
     this.loginUsuario = new LoginUsuario(this.nombreUsuario!, this.password!);
-    console.log("Usuario " + this.nombreUsuario);
-    console.log("pass " + this.password);
     this.authService.login(this.loginUsuario).subscribe(
       data => {
         this.isLogged = true;
@@ -58,30 +56,32 @@ export class LoginComponent implements OnInit {
         this.tokenService.setToken(data.token);
         this.tokenService.setUserName(data.nombreUsuario);
         this.tokenService.setAuthorities(data.authorities);
-        this.roles = data.authorities;
+        this.roles = this.tokenService.getAuthorities();
+
         this.toastr.success('Bienvenido ' + data.nombreUsuario, 'OK', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/home-page']);
 
-        /* aqui debería de tomar los datos de person? */
+        // Redireccionnamiento segun roles
+        if (this.roles.includes('ROLE_ADMIN')) {
+          this.router.navigate(['/home-page']);
+        } else if (this.roles.includes('ROLE_USER')) {
+          this.router.navigate(['/home-profesional']);
+        };
       },
       err => {
         this.isLogged = false;
         this.isLoginFail = true;
         this.errMsj = err.error.message;
         /* debería mostrarme el mensaje "campos mal puestos.. ver porque no lo hace"*/
-        console.log('Mensaje de error: '+ this.errMsj);
+        console.log('Mensaje de error: ' + this.errMsj);
         this.toastr.error(this.errMsj, 'Fail msj', {
-          timeOut: 3000,  positionClass: 'toast-top-center',
+          timeOut: 3000, positionClass: 'toast-top-center',
         });
-        
+
       }
     );
-  } 
-
-
-
+  }
   onForgotPassword() {
     this.toastr.info('Sigue las instrucciones enviadas a tu correo para restablecer tu contraseña', 'Restablecer contraseña', {
       timeOut: 6000,
