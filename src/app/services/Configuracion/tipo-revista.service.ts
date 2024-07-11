@@ -9,7 +9,7 @@ import { TipoRevista } from "src/app/models/Configuracion/TipoRevista";
 })
 export class TipoRevistaService {
 
-  revistasURL = 'http://localhost:8080/tipo-revista/';
+  revistasURL = 'http://localhost:8080/tipoRevista/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
