@@ -43,7 +43,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Categoría</mat-label>
         <mat-select formControlName="categoria" [compareWith]="compareRevista">
-          <mat-option *ngFor="let revista of revistas" [value]="revista" >{{ revista.agrupacion }}</mat-option>
+          <mat-option *ngFor="let categoria of categorias" [value]="categoria" >{{ categoria.nombre }}</mat-option>
         </mat-select>
         <mat-error *ngIf="legajoForm.get('categoria')?.errors?.['categoria']">La categoría es requerida.</mat-error>
       </mat-form-field>
@@ -51,7 +51,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Adicional</mat-label>
         <mat-select formControlName="adicional" [compareWith]="compareRevista">
-          <mat-option *ngFor="let revista of revistas" [value]="revista" >{{ revista.agrupacion }}</mat-option>
+          <mat-option *ngFor="let adicional of adicionales" [value]="adicional" >{{ adicional.nombre }}</mat-option>
         </mat-select>
         <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['adicional']">Adicional es requerido.</mat-error>
       </mat-form-field>
@@ -59,15 +59,15 @@
       <mat-form-field appearance="fill">
         <mat-label>Carga Horaria</mat-label>
         <mat-select formControlName="cargaHoraria" [compareWith]="compareRevista">
-          <mat-option *ngFor="let revista of revistas" [value]="revista" >{{ revista.agrupacion }}</mat-option>
+          <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria" >{{ cargaHoraria.cantidad }}</mat-option>
         </mat-select>
         <mat-error *ngIf="legajoForm.get('cargaHoraria')?.errors?.['cargaHoraria']">La carga horaria es requerida.</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
         <mat-label>Tipo de revista</mat-label>
-        <mat-select formControlName="tipoRevista" [compareWith]="compareRevista">
-          <mat-option *ngFor="let revista of revistas" [value]="revista" >{{ revista.agrupacion }}</mat-option>
+        <mat-select formControlName="tipoRevista" [compareWith]="compareTipoRevista">
+          <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista" >{{ tipoRevista.nombre }}</mat-option>
         </mat-select>
         <mat-error *ngIf="legajoForm.get('tipoRevista')?.errors?.['tipoRevista']">El tipo de revista es requerido.</mat-error>
       </mat-form-field>
@@ -143,7 +143,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Cago</mat-label>
+      <mat-label>Cargo</mat-label>
       <mat-select formControlName="cargo" [compareWith]="compareCargo">
         <mat-option *ngFor="let cargo of cargos" [value]="cargo" >{{ cargo.nombre }}</mat-option>
       </mat-select>

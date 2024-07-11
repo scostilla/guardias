@@ -16,6 +16,16 @@ import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
 import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
+import { Adicional } from 'src/app/models/Configuracion/Adicional';
+import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
+import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
+import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
+import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
+
+
 
 @Component({
   selector: 'app-legajo-edit',
@@ -31,6 +41,11 @@ export class LegajoEditComponent implements OnInit {
   revistas: Revista[] = [];
   cargos: Cargo[] = [];
   especialidades: Especialidad[] = [];
+  categorias: Categoria[] = [];
+  adicionales: Adicional[] = [];
+  cargasHorarias: CargaHoraria[] = [];
+  tiposRevistas: TipoRevista[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +57,12 @@ export class LegajoEditComponent implements OnInit {
     private hospitalService: HospitalService,
     private cargoService: CargoService,
     private especialidadService: EspecialidadService,
+    private categoriaService: CategoriaService,
+    private adicionalService: AdicionalService,
+    private cargaHorariaService: CargaHorariaService,
+    private tipoRevistaService: TipoRevistaService,
+
+
 
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
@@ -71,6 +92,11 @@ export class LegajoEditComponent implements OnInit {
     this.listUdos();
     this.listCargos();
     this.listEspecialidades();
+    this.listCategorias();
+    this.listAdicionales();
+    this.listCargaHoraria();
+    this.listTipoRevista();
+
 
     if (data) {
       this.legajoForm.patchValue({
@@ -129,9 +155,44 @@ export class LegajoEditComponent implements OnInit {
       console.log(error);
     });
   }
+
   listEspecialidades(): void {
     this.especialidadService.list().subscribe(data => {
       this.especialidades = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  /* Form de revista */
+
+  listCategorias(): void {
+    this.categoriaService.list().subscribe(data => {
+      this.categorias = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listAdicionales(): void {
+    this.adicionalService.list().subscribe(data => {
+      this.adicionales = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listCargaHoraria(): void {
+    this.cargaHorariaService.list().subscribe(data => {
+      this.cargasHorarias = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listTipoRevista(): void {
+    this.tipoRevistaService.list().subscribe(data => {
+      this.tiposRevistas = data;
     }, error => {
       console.log(error);
     });
@@ -191,6 +252,10 @@ export class LegajoEditComponent implements OnInit {
   }
 
   compareRevista(p1: Revista, p2: Revista): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  compareTipoRevista(p1: TipoRevista, p2: TipoRevista): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
