@@ -102,6 +102,19 @@ export class LegajoComponent implements OnInit, OnDestroy {
     });
   }
 
+  /*
+  hayRevista(legajo: Legajo): boolean {
+    return this.revistas.some(revista => revista.persona.id === legajo.id);
+  }
+
+  verRevista(legajo: Legajo): void {
+    if (legajo && legajo.id) {
+      this.router.navigate(['/revista-person', revista.id]);
+    } else {
+      console.error('El objeto legajo no tiene un id.');
+    }
+  } */
+
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }

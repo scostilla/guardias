@@ -6,8 +6,6 @@ import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Revista } from 'src/app/models/Configuracion/Revista';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
@@ -24,7 +22,12 @@ import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horari
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 
+interface Agrup {
+  value: string;
+  viewValue: string;
+}
 
 
 @Component({
@@ -33,12 +36,12 @@ import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
   styleUrls: ['./legajo-edit.component.css']
 })
 export class LegajoEditComponent implements OnInit {
+  revistaForm: FormGroup;
   legajoForm: FormGroup;
   initialData: any;
   personas: Asistencial[] = [];
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
-  revistas: Revista[] = [];
   cargos: Cargo[] = [];
   especialidades: Especialidad[] = [];
   categorias: Categoria[] = [];
@@ -46,13 +49,14 @@ export class LegajoEditComponent implements OnInit {
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
 
+  revistaFormEnabled: boolean = true;
+
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<LegajoEditComponent>,
     private legajoService: LegajoService,
     private profesionService: ProfesionService,
-    private revistaService: RevistaService,
     private asistencialService: AsistencialService,
     private hospitalService: HospitalService,
     private cargoService: CargoService,
@@ -61,19 +65,24 @@ export class LegajoEditComponent implements OnInit {
     private adicionalService: AdicionalService,
     private cargaHorariaService: CargaHorariaService,
     private tipoRevistaService: TipoRevistaService,
+    private revistaService: RevistaService,
 
 
 
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
-    this.legajoForm = this.fb.group({
-      persona: ['', Validators.required],
-      profesion: ['', Validators.required],
+    this.revistaForm = this.fb.group({
       agrupacion: ['', Validators.required],
       categoria: ['', Validators.required],
       adicional: ['', Validators.required],
       cargaHoraria: ['', Validators.required],
       tipoRevista: ['', Validators.required],
+    });
+
+    this.legajoForm = this.fb.group({
+      persona: ['', Validators.required],
+      profesion: ['', Validators.required],
+      revista: [''],
       udo: ['', Validators.required],
       efectores: [[]],
       especialidades: [[]],
@@ -88,7 +97,6 @@ export class LegajoEditComponent implements OnInit {
 
     this.listAsistenciales();
     this.listProfesiones();
-    this.listRevistas();
     this.listUdos();
     this.listCargos();
     this.listEspecialidades();
@@ -131,13 +139,6 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  listRevistas(): void {
-    this.revistaService.list().subscribe(data => {
-      this.revistas = data;
-    }, error => {
-      console.log(error);
-    });
-  }
 
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
@@ -165,6 +166,14 @@ export class LegajoEditComponent implements OnInit {
   }
 
   /* Form de revista */
+
+  agrupaciones: Agrup[] = [
+    {value: 'ADMINISTRATIVO', viewValue: 'Administrativo'},
+    {value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción'},
+    {value: 'PROFESIONALES', viewValue: 'Profesionales'},
+    {value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales'},
+    {value: 'TECNICOS', viewValue: 'Técnicos'},
+  ];
 
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
@@ -196,6 +205,40 @@ export class LegajoEditComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+  
+  isLegajoFormValid(): boolean {
+    return this.legajoForm.valid;
+  }
+
+  isRevistaFormValid(): boolean {
+    return this.revistaForm.valid;
+  }
+
+  crearRevista(): void {
+    if (this.isRevistaFormValid()) {
+      const revistaData = this.revistaForm.value;
+      this.revistaService.save(revistaData).subscribe(
+        (response) => {
+          this.legajoForm.patchValue({ revista: response.id }); // Asignar ID de la revista creada
+          console.log('Revista creada exitosamente con ID:', response.id);
+  
+          // Deshabilitar el formulario de revista y habilitar el formulario de legajo
+          this.revistaFormEnabled = false;
+          this.legajoForm.enable();
+        },
+        (error) => {
+          console.error('Error al crear la revista', error);
+          // Manejar el error según tus necesidades
+        }
+      );
+    } else {
+      console.error('Formulario de revista inválido');
+    }
+  }
+
+  isRevistaSelected(): boolean {
+    return !!this.legajoForm.get('revista')?.value;
   }
 
   saveLegajo(): void {
@@ -248,10 +291,6 @@ export class LegajoEditComponent implements OnInit {
   }
 
   compareProfesion(p1: Profesion, p2: Profesion): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
-
-  compareRevista(p1: Revista, p2: Revista): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
