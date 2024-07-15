@@ -1,6 +1,6 @@
 import { RegistroMensual } from "../RegistroMensual";
 import { Efector } from "./Efector";
-import { ValorGmi } from "./ValorGmi";
+import { ValorGmi } from "../ValorGmi";
 
 export class Ddjj {
     id?: number;
