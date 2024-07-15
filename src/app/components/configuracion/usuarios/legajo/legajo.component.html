@@ -77,7 +77,7 @@
             <button mat-icon-button matTooltip="Ver detalle {{legajo.persona?.apellido}}" (click)="openDetail(legajo)">
               <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Ver Revista">
+            <button mat-icon-button matTooltip="Ver Revista" (click)="verRevista(legajo)">
               <mat-icon color="primary">playlist_play</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Editar legajo de {{legajo.persona?.apellido}}" (click)="openFormChanges(legajo)">

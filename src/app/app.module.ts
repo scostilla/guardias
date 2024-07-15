@@ -218,6 +218,7 @@ import { AsistProfesionalComponent } from './components/personal/asist-profesion
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
+import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -387,6 +388,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     SoporteFormComponent,
     PersonalAutoridadComponent,
     TipoRevistaEditComponent,
+    RevistaDetailComponent,
     
   ],
 
