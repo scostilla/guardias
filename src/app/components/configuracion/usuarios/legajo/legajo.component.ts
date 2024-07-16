@@ -10,6 +10,11 @@ import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component'; 
+import { Revista } from 'src/app/models/Configuracion/Revista';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { RevistaDetailComponent } from '../revista-detail/revista-detail.component'; 
+
+
 
 @Component({
   selector: 'app-legajo',
@@ -23,13 +28,18 @@ export class LegajoComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dialogRef!: MatDialogRef<LegajoDetailComponent>;
+  dialogRefLegajo!: MatDialogRef<LegajoDetailComponent>;
+  dialogRefRevista!: MatDialogRef<RevistaDetailComponent>;
   displayedColumns: string[] = ['persona', 'profesion','udo','actual', 'legal', 'fechaInicio',/* 'fechaFinal',  'matriculaNacional', 'matriculaProvincial', 'cargo', */ 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
+  legajo!: Legajo;
+  revistas: Revista[] = [];
+  isLoadingRevistas: boolean = true;
 
   constructor(
     private legajoService: LegajoService,
+    private revistaService: RevistaService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private paginatorIntl: MatPaginatorIntl
@@ -47,6 +57,8 @@ export class LegajoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listLegajos();
+    this.listRevistas();
+
 
     this.suscription = this.legajoService.refresh$.subscribe(() => {
       this.listLegajos();
@@ -102,6 +114,13 @@ export class LegajoComponent implements OnInit, OnDestroy {
     });
   }
 
+  listRevistas(): void {
+    this.revistaService.list().subscribe((revistas: Revista[]) => {
+      this.revistas = revistas;
+      this.isLoadingRevistas = false;
+    });
+  }
+
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
@@ -140,14 +159,24 @@ export class LegajoComponent implements OnInit, OnDestroy {
   }
 
   openDetail(legajo: Legajo): void {
-    this.dialogRef = this.dialog.open(LegajoDetailComponent, { 
+    this.dialogRefLegajo = this.dialog.open(LegajoDetailComponent, { 
       width: '600px',
       data: legajo
     });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
+    this.dialogRefLegajo.afterClosed().subscribe(() => {
+      this.dialogRefLegajo.close();
     });
-    }
+  }
+  
+  verRevista(legajo: Legajo): void {
+    this.dialogRefRevista = this.dialog.open(RevistaDetailComponent, { 
+      width: '600px',
+      data: { legajoId: legajo.id }
+    });
+    this.dialogRefRevista.afterClosed().subscribe(() => {
+      this.dialogRefRevista.close();
+    });
+  }
 
   deleteLegajo(legajo: Legajo): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

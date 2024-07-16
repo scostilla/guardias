@@ -1,18 +1,28 @@
 <div mat-dialog-title class="backgroud">
     <h1 class="font">Giras Médicas</h1>
 </div>
-<div mat-dialog-content class="content">
-    <mat-form-field appearance="outline">
+
+<mat-dialog-content class="mat-typography">
+    <Form>
+    <mat-form-field appearance="fill">
+        <mat-label>Puesto de Salud</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let puestosSalud of puestosSalud" [value]="puestosSalud"> {{puestosSalud}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
         <mat-label>Día de gira médica</mat-label>
         <mat-select>
             <mat-option *ngFor="let dia of dia" [value]="dia"> {{dia}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="fill">
         <mat-label>Cantidad Hs.</mat-label>
         <input matInput type="number" placeholder="Numero" value="">
     </mat-form-field>
-</div>
+</Form>
+</mat-dialog-content>
+
 <div mat-dialog-actions class="action">
     <button mat-raised-button class="btnupdate" type="button"
         [mat-dialog-close]="false">Cancelar</button>

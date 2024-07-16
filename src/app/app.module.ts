@@ -48,8 +48,8 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
-import { NovedadesFormComponent } from './components/actividades/novedades-form/novedades-form.component';
-import { DistHorariaComponent } from './components/actividades/dist-horaria/dist-horaria.component';
+import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';
@@ -190,7 +190,6 @@ import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
-import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { UdoComponent } from './components/configuracion/establecimiento/udo/udo.component';
 import { UdoEditComponent } from './components/configuracion/establecimiento/udo-edit/udo-edit.component';
 import { UdoDetailComponent } from './components/configuracion/establecimiento/udo-detail/udo-detail.component';
@@ -218,6 +217,8 @@ import { PersonalDhComponent } from './components/personal/personal-dh/personal-
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
+import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -359,7 +360,6 @@ registerLocaleData(localeEsAr, 'es-AR');
     LegajoDetailComponent,
     RevistaComponent,
     RevistaEditComponent,
-    RevistaDetailComponent,
     UdoComponent,
     UdoEditComponent,
     UdoDetailComponent,
@@ -387,6 +387,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     AsistProfesionalComponent,
     SoporteFormComponent,
     PersonalAutoridadComponent,
+    TipoRevistaEditComponent,
+    RevistaDetailComponent,
     
   ],
 

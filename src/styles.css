@@ -541,8 +541,12 @@ mat-label{
 
 .action{
   padding: 0px 25px 20px;
-  }
+}
 
+.grupo-form {
+  background-color: #f8f6f6;
+  margin-bottom: 20px;
+}
 
 
 /* --referencias-- */

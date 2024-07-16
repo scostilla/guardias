@@ -1,5 +1,5 @@
-import { Ddjj } from "./Ddjj";
-import { TipoGuardia } from "./TipoGuardia";
+import { Ddjj } from "./Configuracion/Ddjj";
+import { TipoGuardia } from "./Configuracion/TipoGuardia";
 
 export class ValorGmi {
     id?: number;

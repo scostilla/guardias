@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { RegistroDiarioComponent } from '../registro-diario/registro-diario.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RegDiarioComponent } from '../reg-diario/reg-diario.component';
-import { NovedadesFormComponent } from '../novedades-form/novedades-form.component';
-import { DistHorariaComponent } from '../dist-horaria/dist-horaria.component';
+import { NovedadesFormComponent } from '../../personal/novedades-form/novedades-form.component';
+import { DistHorariaComponent } from '../../personal/dist-horaria/dist-horaria.component';
 
 @Component({
   selector: 'app-registro-actividades',
