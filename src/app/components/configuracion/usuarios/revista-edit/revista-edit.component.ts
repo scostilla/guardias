@@ -55,7 +55,7 @@ export class RevistaEditComponent implements OnInit {
   }
 
   saveRevista(): void {
-    const id = this.form?.get('id')?.value;
+    /* const id = this.form?.get('id')?.value;
     const agrupacion = this.form?.get('agrupacion')?.value;
     const categoria = this.form?.get('categoria')?.value;
     const adicional = this.form?.get('adicional')?.value;
@@ -74,7 +74,7 @@ export class RevistaEditComponent implements OnInit {
       this.revistaService.save(revista).subscribe(data => {
         this.dialogRef.close(data);
       });
-    }
+    } */
   }
 
   compareTipoRevista(p1: TipoRevista, p2: TipoRevista): boolean {

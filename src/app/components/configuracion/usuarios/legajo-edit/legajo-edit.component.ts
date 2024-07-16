@@ -23,20 +23,19 @@ import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 
 interface Agrup {
   value: string;
   viewValue: string;
 }
-
-
 @Component({
   selector: 'app-legajo-edit',
   templateUrl: './legajo-edit.component.html',
   styleUrls: ['./legajo-edit.component.css']
 })
 export class LegajoEditComponent implements OnInit {
-  revistaForm: FormGroup;
+
   legajoForm: FormGroup;
   initialData: any;
   personas: Asistencial[] = [];
@@ -48,9 +47,6 @@ export class LegajoEditComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
-
-  revistaFormEnabled: boolean = true;
-
 
   constructor(
     private fb: FormBuilder,
@@ -67,22 +63,18 @@ export class LegajoEditComponent implements OnInit {
     private tipoRevistaService: TipoRevistaService,
     private revistaService: RevistaService,
 
-
-
     @Inject(MAT_DIALOG_DATA) public data: Legajo
   ) {
-    this.revistaForm = this.fb.group({
+
+    this.legajoForm = this.fb.group({
       agrupacion: ['', Validators.required],
       categoria: ['', Validators.required],
       adicional: ['', Validators.required],
       cargaHoraria: ['', Validators.required],
       tipoRevista: ['', Validators.required],
-    });
-
-    this.legajoForm = this.fb.group({
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
-      revista: [''],
+      //revista: [''],
       udo: ['', Validators.required],
       efectores: [[]],
       especialidades: [[]],
@@ -139,7 +131,6 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
     this.hospitalService.list().subscribe(data => {
@@ -168,11 +159,11 @@ export class LegajoEditComponent implements OnInit {
   /* Form de revista */
 
   agrupaciones: Agrup[] = [
-    {value: 'ADMINISTRATIVO', viewValue: 'Administrativo'},
-    {value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción'},
-    {value: 'PROFESIONALES', viewValue: 'Profesionales'},
-    {value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales'},
-    {value: 'TECNICOS', viewValue: 'Técnicos'},
+    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
+    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
+    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
+    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
+    { value: 'TECNICOS', viewValue: 'Técnicos' },
   ];
 
   listCategorias(): void {
@@ -206,83 +197,108 @@ export class LegajoEditComponent implements OnInit {
       console.log(error);
     });
   }
-  
+
   isLegajoFormValid(): boolean {
     return this.legajoForm.valid;
-  }
-
-  isRevistaFormValid(): boolean {
-    return this.revistaForm.valid;
-  }
-
-  crearRevista(): void {
-    if (this.isRevistaFormValid()) {
-      const revistaData = this.revistaForm.value;
-      this.revistaService.save(revistaData).subscribe(
-        (response) => {
-          this.legajoForm.patchValue({ revista: response.id }); // Asignar ID de la revista creada
-          console.log('Revista creada exitosamente con ID:', response.id);
-  
-          // Deshabilitar el formulario de revista y habilitar el formulario de legajo
-          this.revistaFormEnabled = false;
-          this.legajoForm.enable();
-        },
-        (error) => {
-          console.error('Error al crear la revista', error);
-          // Manejar el error según tus necesidades
-        }
-      );
-    } else {
-      console.error('Formulario de revista inválido');
-    }
-  }
-
-  isRevistaSelected(): boolean {
-    return !!this.legajoForm.get('revista')?.value;
   }
 
   saveLegajo(): void {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
-      const legajoDto = new LegajoDto(
-        legajoData.fechaInicio,
-        legajoData.fechaFinal,
-        legajoData.actual,
-        legajoData.legal,
-        legajoData.activo,
-        legajoData.matriculaNacional,
-        legajoData.matriculaProvincial,
-        legajoData.revista.id,
-        legajoData.udo.id,
-        legajoData.persona.id,
-        legajoData.cargo.id,
-        legajoData.efectores,
-        legajoData.especialidades,
-        legajoData.profesion.id
+
+      const revistaDto = new RevistaDto(
+        legajoData.tipoRevista,
+        legajoData.categoria,
+        legajoData.adicional,
+        legajoData.cargaHoraria,
+        legajoData.agrupacion
       );
-
-      console.log("id efectores###", legajoDto)
-      /* AYUDA: si this.data tiene un valor y un ID asociado */
-      if (this.data && this.data.id) {
-        this.legajoService.update(this.data.id, legajoDto).subscribe(
-          result => {
-            this.dialogRef.close({ type: 'save', data: result });
-          },
-          error => {
-            this.dialogRef.close({ type: 'error', data: error });
-          }
-        );
-      } else {
-
-        this.legajoService.save(legajoDto).subscribe(
-          result => {
-            this.dialogRef.close({ type: 'save', data: result });
-          },
-          error => {
-            this.dialogRef.close({ type: 'error', data: error });
-          }
-        );
+      // Verifica si existe una revista con los atributos especificados
+      this.revistaService.checkRevista(revistaDto).subscribe(
+        (existingRevista) => {
+          // Si existe, usa su ID
+          if (existingRevista && existingRevista.id !== undefined) {
+            this.createLegajoDtoAndSave(legajoData, existingRevista.id);
+        } else {
+          console.error('La revista existente no tiene un ID.');
       }
+        },
+        (error) => {
+          // Si no existe, crea una nueva revista
+          console.log('##### Revista no encontrada, creando una nueva.');
+          this.revistaService.save(revistaDto).subscribe(
+            () => {
+              // Una vez creada, busca la revista nuevamente
+              this.revistaService.checkRevista(revistaDto).subscribe(
+                (newRevista) => {
+                  if (newRevista && newRevista.id !== undefined) {
+                    console.log('%%%Nueva revista creada y encontrada:', newRevista);
+                    this.createLegajoDtoAndSave(legajoData, newRevista.id);
+                  } else {
+                    console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
+                  }
+                },
+                (error) => {
+                  console.error('Error al buscar la revista después de crearla', error);
+                }
+              );
+            },
+            (error) => {
+              console.error('%%%%%%%Error al crear la revista', error);
+            }
+          );
+        }
+      );
+    }
+  }
+
+  createLegajoDtoAndSave(legajoData: any, revistaId: number): void {
+    const legajoDto = new LegajoDto(
+      legajoData.fechaInicio,
+      legajoData.fechaFinal,
+      legajoData.actual,
+      legajoData.legal,
+      legajoData.activo,
+      legajoData.matriculaNacional,
+      legajoData.matriculaProvincial,
+      revistaId, // Usa el ID de la revista (existente o nueva)
+      legajoData.udo.id,
+      legajoData.persona.id,
+      legajoData.cargo.id,
+      legajoData.efectores,
+      legajoData.especialidades,
+      legajoData.profesion.id
+    );
+  
+    console.log("#### legajoDto que viene ", legajoDto);
+    console.log("#### legajoDto id de la revista  ", legajoDto.idRevista);
+    console.log("#### data y data.id ", this.data);
+  
+    this.saveOrUpdateLegajo(legajoDto);
+  }
+
+
+  saveOrUpdateLegajo(legajoDto: LegajoDto): void {
+
+    /* AYUDA: si this.data tiene un valor y un ID asociado */
+    if (this.data && this.data.id) {
+      this.legajoService.update(this.data.id, legajoDto).subscribe(
+        result => {
+          this.dialogRef.close({ type: 'save', data: result });
+        },
+        error => {
+          this.dialogRef.close({ type: 'error', data: error });
+        }
+      );
+    } else {
+      this.legajoService.save(legajoDto).subscribe(
+        result => {
+          this.dialogRef.close({ type: 'save', data: result });
+        },
+        error => {
+          this.dialogRef.close({ type: 'error', data: error });
+        }
+      );
     }
   }
 
