@@ -1,21 +1,17 @@
-
 <div class="container" *ngIf="isLogged">
-  <div id="container-title-hosp" >
-    <div class="text-title-hosp" *ngIf="nombrePersonaAsociada; else selectEfectores">
-      <mat-icon>business</mat-icon> &nbsp;&nbsp;{{ nombrePersonaAsociada }}
-    </div>
-    <ng-template #selectEfectores>
-      <label for="efectorSelect">Seleccione un Efector:</label>
-      <select id="efectorSelect" class="select-tabla" [(ngModel)]="selectedEfector">
+  <div id="container-title-hosp">
+    <div class="text-title-hosp" >
+      <mat-icon>business</mat-icon> &nbsp;&nbsp;
+      <select class="select-tabla" [(ngModel)]="selectedEfector">
         <option *ngFor="let efector of nombresEfectores" [value]="efector">{{ efector }}</option>
       </select>
-    </ng-template>
-</div>
+    </div>
+  </div>
   <section>
-    <div class="container" >
+    <div class="container">
       <!-- Page Features-->
       <div class="row mb-4 ">
-        <div class="col-lg" >
+        <div class="col-lg">
           <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-actividades">
             <div class="icon1_btnMenu">
               <img class="img-fluid" src="/assets/img/i_actividades.png" />
@@ -68,7 +64,7 @@
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button"  routerLink="/historial">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/historial">
             <div class="icon6_btnMenu">
               <img class="img-fluid" src="/assets/img/i_historial.png" />
             </div>

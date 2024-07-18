@@ -13,7 +13,6 @@ import { TokenService } from 'src/app/services/login/token.service';
 export class HomePageComponent implements OnInit{
 
   isLogged = false;
-  nombrePersonaAsociada: string = '';
   nombresEfectores: string[] = [];
   selectedEfector: string | null = null;
 
@@ -28,19 +27,17 @@ export class HomePageComponent implements OnInit{
     if(this.tokenService.getToken()){
     this.isLogged = true;
 
-     // Obtener nombre de la persona asociada
+     // Obtener nombres efectores asociados
      this.authService.detailPersonBasicPanel()
      .subscribe(
        response => {
-         if (response.nombreUdo) {
-           this.nombrePersonaAsociada = response.nombreUdo;
-         }else if ( response.nombresEfectores.length > 0) {
+         if ( response.nombresEfectores.length > 0) {
           this.nombresEfectores = response.nombresEfectores;
+          this.selectedEfector = this.nombresEfectores[0];
         }
        },
        error => {
-         console.error('Error al obtener la persona asociada:', error);
-         // Manejar errores según tu lógica de frontend
+         console.error('Error al obtener efectores asociados:', error);
        }
      );
     }else {
