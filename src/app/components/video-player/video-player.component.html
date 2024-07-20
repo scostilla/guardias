@@ -1,0 +1,9 @@
+<div>
+  <video #videoElement
+  (loadedMetadata)="loadedMetadata()"
+  (play)="listenerPlay()"
+  *ngIf="stream"
+  autoplay
+  [srcObject]="stream">
+  </video>
+</div>

@@ -218,6 +218,7 @@ import { PersonalDhComponent } from './components/personal/personal-dh/personal-
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { VideoPlayerComponent } from './components/video-player/video-player.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -387,6 +388,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     AsistProfesionalComponent,
     SoporteFormComponent,
     PersonalAutoridadComponent,
+    VideoPlayerComponent,
     
   ],
 

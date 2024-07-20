@@ -1,28 +1,28 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PopupComponent } from '../../popup/popup.component';
-import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
-import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { RegistroActividadService } from 'src/app/services/registroActividad.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/servicio.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { ToastrService } from 'ngx-toastr';
+import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { RegistroActividad } from 'src/app/models/RegistroActividad';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { RegistroActividadService } from 'src/app/services/registroActividad.service';
+import { ServicioService } from 'src/app/services/servicio.service';
+import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
+import { PopupComponent } from '../../popup/popup.component';
+
+
 
 @Component({
   selector: 'app-reg-diario',
   templateUrl: './reg-diario.component.html',
   styleUrls: ['./reg-diario.component.css']
 })
-export class RegDiarioComponent {
+export class RegDiarioComponent implements OnInit, OnDestroy {
   registroForm: FormGroup;
   initialData: any;
   tiposGuardias: TipoGuardia[] = [];
@@ -35,7 +35,9 @@ export class RegDiarioComponent {
   defaultSelected: string = '';
   pasiva: string = '';
   alert: string = '';
- 
+  public currentStream: any;
+  public dimensionVideo: any;
+
   currentDate: Date = new Date();
 
   constructor(
@@ -49,7 +51,7 @@ export class RegDiarioComponent {
     private toastr: ToastrService,
 
     private dialog: MatDialog,
-   
+
     @Inject(MAT_DIALOG_DATA) public data: RegistroActividad
   ) {
     this.registroForm = this.fb.group({
@@ -76,6 +78,45 @@ export class RegDiarioComponent {
     }
   }
 
+
+
+
+
+
+
+  ngOnInit(): void {
+    //this.listenerEvents();
+    this.checkMediaSource();
+   }
+
+   checkMediaSource = () => {
+    if (navigator && navigator.mediaDevices) {
+
+      navigator.mediaDevices.getUserMedia({
+        video: true
+      }).then(stream => {
+        this.currentStream = stream;
+      }).catch(() => {
+        console.log('**** ERROR video no permitido *****');
+      });
+
+    } else {
+      console.log('******* ERROR NOT FOUND MEDIA DEVICES');
+    }
+  };
+
+   ngOnDestroy(): void {
+     //this.listEvents.forEach(event => event.unsubscribe());
+   }
+
+
+
+
+
+
+
+
+
   openDialog(componentParameter: any) {
     const dialogRef = this.dialog.open(PopupComponent, {
       width: '800px'
@@ -89,10 +130,6 @@ export class RegDiarioComponent {
 
   onTipoGuardiaChange(event: any) {
     console.log("Tipo de guardia seleccionado:", event.value);
-  }
-  
-  ngOnInit() {
-
   }
 
   listTiposGuardias(): void{
@@ -143,11 +180,11 @@ export class RegDiarioComponent {
       // Obtener el valor del campo de hora de inicio
       const horaInicio = this.registroForm.get('eventStartTime')?.value;
       console.log('##############Hora de inicio seleccionada:', horaInicio);
-      
+
       // Obtener el valor del campo de hora de inicio
       const horaFin = this.registroForm.get('eventEndTime')?.value;
       console.log('##############Hora de fin seleccionada:', horaInicio);
-      
+
 
       const registroDto = new RegistroActividadDto(
         registroData.fecIngreso,
@@ -155,11 +192,11 @@ export class RegDiarioComponent {
         registroData.eventStartTime,
         registroData.eventEndTime,
         registroData.tipoGuardia.id,
-        registroData.activo, 
+        registroData.activo,
         registroData.asistencial.id,
         registroData.servicio.id,
         registroData.efector.id
-        
+
     );
     if (this.data && this.data.id) {
       this.registroActividadService.update(this.data.id, registroDto).subscribe(
@@ -230,12 +267,12 @@ export class RegDiarioComponent {
     const dialogRef = this.dialog.open(PopupComponent,{
       width:'1000px',
     });
-    
+
     dialogRef.componentInstance.componentParameter = componentParameter;
     dialogRef.afterClosed().subscribe((result) => {
       console.log('popup closed');
     })
-  } 
-  
+  }
+
 */
 
