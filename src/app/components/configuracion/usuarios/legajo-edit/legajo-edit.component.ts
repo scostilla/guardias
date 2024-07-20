@@ -1,4 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NativeDateAdapter } from '@angular/material/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -24,6 +31,7 @@ import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
+import { Revista } from 'src/app/models/Configuracion/Revista';
 
 interface Agrup {
   value: string;
@@ -32,8 +40,10 @@ interface Agrup {
 @Component({
   selector: 'app-legajo-edit',
   templateUrl: './legajo-edit.component.html',
-  styleUrls: ['./legajo-edit.component.css']
+  styleUrls: ['./legajo-edit.component.css'],  
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class LegajoEditComponent implements OnInit {
 
   legajoForm: FormGroup;
@@ -47,6 +57,8 @@ export class LegajoEditComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
+  revistas: Revista[] = [];
+  step = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -86,6 +98,13 @@ export class LegajoEditComponent implements OnInit {
       fechaFinal: [''],
       cargo: ['', Validators.required],
     });
+
+    this.revistaService.list().subscribe(data => {
+      this.revistas = data;
+    }, error => {
+      console.log(error);
+    });
+
 
     this.listAsistenciales();
     this.listProfesiones();
@@ -155,6 +174,19 @@ export class LegajoEditComponent implements OnInit {
       console.log(error);
     });
   }
+
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  prevStep() {
+    this.step--;
+  }
+
 
   /* Form de revista */
 

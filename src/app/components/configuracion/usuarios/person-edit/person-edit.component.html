@@ -77,6 +77,14 @@
       <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>Tipo guardia</mat-label>
+      <mat-select formControlName="tiposGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
+        <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia.id">{{ tipoGuardia.nombre }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="asistencialForm.get('tiposGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+    </mat-form-field>
+        
     <!--<mat-form-field appearance="fill">
       <mat-label>Tipo de guardia</mat-label>
       <mat-select formControlName="tipoGuardia">
