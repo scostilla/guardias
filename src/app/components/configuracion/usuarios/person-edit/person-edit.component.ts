@@ -36,7 +36,7 @@ export class PersonEditComponent implements OnInit {
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: [[]] 
+      tiposGuardias: ['', [Validators.required]] 
     });
 
     this.listTipoGuardia();
