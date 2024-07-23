@@ -36,7 +36,7 @@ export class PersonEditComponent implements OnInit {
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: ['', [Validators.required]] 
+      tiposGuardias: [[], [Validators.required]] 
     });
 
     this.listTipoGuardia();
@@ -110,21 +110,23 @@ export class PersonEditComponent implements OnInit {
     this.dialogRef.close({ type: 'cancel' });
   }
 
-  // Manejar el cambio de selección en el mat-select de tipos de guardias
   onTipoGuardiaSelectionChange(event: any): void {
     const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
-
+  
     // Si se selecciona CONTRAFACTURA, deseleccionar las demás opciones
     if (selectedValues.includes(1)) {
       this.asistencialForm.patchValue({
         tiposGuardias: [1]
       });
-    }
-
-    // Si se selecciona PASIVA, deseleccionar las demás opciones
-    if (selectedValues.includes(5)) {
+    } else if (selectedValues.includes(5)) {
+      // Si se selecciona PASIVA, deseleccionar las demás opciones
       this.asistencialForm.patchValue({
         tiposGuardias: [5]
+      });
+    } else {
+      // Si se seleccionan las opciones 2, 3 o 4, permitir que se elijan juntas
+      this.asistencialForm.patchValue({
+        tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
       });
     }
   }
