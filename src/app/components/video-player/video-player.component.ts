@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { FaceApiService } from '../../services/FaceApi/face-api.service';
 
 @Component({
   selector: 'app-video-player',
@@ -9,16 +10,26 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
 @ViewChild('videoElement') videoElement!: ElementRef;
   @Input() stream: any;
 
-constructor(private render2: Renderer2, private elementRef: ElementRef){
+  listEvents:Array<any> = [];
+
+constructor(private render2: Renderer2, private elementRef: ElementRef, private faceApiService:FaceApiService){
 
 }
 
 ngOnInit(): void {
- //this.listenerEvents();
+ this.listenerEvents();
 }
 
+listenerEvents=() => {
+  // const observer1$ = this.faceApiService.cbModels.subscribe(next: res => {
+  //   //algo
+  // })
+  // this.listEvents = [observer1$]
+  console.log("listenerEvents");
+};
+
 ngOnDestroy(): void {
-  //this.listEvents.forEach(event => event.unsubscribe());
+  this.listEvents.forEach(event => event.unsubscribe());
 }
 
 loadedMetadata(): void{
