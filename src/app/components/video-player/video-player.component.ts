@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FaceApiService } from '../../services/FaceApi/face-api.service';
+import { VideoPlayerService } from '../../services/FaceApi/video-player.service';
 
 @Component({
   selector: 'app-video-player',
@@ -9,10 +10,14 @@ import { FaceApiService } from '../../services/FaceApi/face-api.service';
 export class VideoPlayerComponent implements OnInit, OnDestroy {
 @ViewChild('videoElement') videoElement!: ElementRef;
   @Input() stream: any;
-
+  modelsReady?: boolean;
   listEvents:Array<any> = [];
 
-constructor(private render2: Renderer2, private elementRef: ElementRef, private faceApiService:FaceApiService){
+constructor(private render2: Renderer2,
+  private elementRef: ElementRef,
+  private faceApiService:FaceApiService,
+  private videoPlayerService:VideoPlayerService
+){
 
 }
 
@@ -21,11 +26,18 @@ ngOnInit(): void {
 }
 
 listenerEvents=() => {
-  // const observer1$ = this.faceApiService.cbModels.subscribe(next: res => {
-  //   //algo
-  // })
-  // this.listEvents = [observer1$]
+  const observer1$ = this.faceApiService.cbModels.subscribe(res => {
+    this.modelsReady = true;
+    this.checkFace();
+  })
+  this.listEvents = [observer1$]
   console.log("listenerEvents");
+};
+
+checkFace = () => {
+  setInterval(async () => {
+    await this.videoPlayerService.getLandMark(this.videoElement);
+  }, 100);
 };
 
 ngOnDestroy(): void {

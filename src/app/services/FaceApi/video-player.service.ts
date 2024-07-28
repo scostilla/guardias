@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { FaceApiService } from './face-api.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VideoPlayerService {
 
-  constructor(private faceApiService: FaceApiService) { }
+  constructor(private faceApiService: FaceApiService) {
 
-  getLandMark = (videoElement:any) => {
-const {globalFace} = this.faceApiService;
   }
 
+  getLandMark = (videoElement: any) => {
+    const { globalFace } = this.faceApiService;
+  };
 }
