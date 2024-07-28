@@ -8,11 +8,12 @@ export class FaceApiService {
   public globalFace: any;
 
   private modelsForLoad = [
-    faceapi.nets.ssdMobilenetv1.loadFromUri('/assets/models'),
-    faceapi.nets.faceLandmark68Net.loadFromUri('/assets/models'),
-    faceapi.nets.faceRecognitionNet.loadFromUri('/assets/models'),
-    faceapi.nets.faceExpressionNet.loadFromUri('/assets/models'),
+    faceapi.nets.ssdMobilenetv1.loadFromUri('/assets/faceApiModels'),
+    faceapi.nets.faceLandmark68Net.loadFromUri('/assets/faceApiModels'),
+    faceapi.nets.faceRecognitionNet.loadFromUri('/assets/faceApiModels'),
+    faceapi.nets.faceExpressionNet.loadFromUri('/assets/faceApiModels'),
   ];
+
 
   constructor() {
     this.globalFace = faceapi;
