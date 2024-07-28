@@ -8,7 +8,7 @@ import { VideoPlayerService } from '../../services/FaceApi/video-player.service'
   styleUrls: ['./video-player.component.css']
 })
 export class VideoPlayerComponent implements OnInit, OnDestroy {
-@ViewChild('videoElement') videoElement!: ElementRef;
+@ViewChild('videoElement') videoElement?: ElementRef;
   @Input() stream: any;
   modelsReady?: boolean;
   listEvents:Array<any> = [];
@@ -37,6 +37,7 @@ listenerEvents=() => {
 checkFace = () => {
   setInterval(async () => {
     await this.videoPlayerService.getLandMark(this.videoElement);
+    console.log("checkFace");
   }, 100);
 };
 
@@ -49,5 +50,12 @@ loadedMetadata(): void{
   //this.videoElement.nativeElement.play();
 }
 
-listenerPlay(): void{}
+listenerPlay(): void{
+  const {globalFace} = this.faceApiService;
+    // this.overCanvas = globalFace.createCanvasFromMedia(this.videoElement.nativeElement);
+    // this.renderer2.setProperty(this.overCanvas, 'id', 'new-canvas-over');
+    // this.renderer2.setStyle(this.overCanvas, 'width', `${this.width}px`);
+    // this.renderer2.setStyle(this.overCanvas, 'height', `${this.height}px`);
+    // this.renderer2.appendChild(this.elementRef.nativeElement, this.overCanvas);
+}
 }

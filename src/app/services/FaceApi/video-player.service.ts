@@ -11,6 +11,10 @@ export class VideoPlayerService {
   }
 
   getLandMark = (videoElement: any) => {
+    console.log("getLandMark");
     const { globalFace } = this.faceApiService;
+    const {videoWidth, videoHeight} = videoElement.nativeElement;
+    const displaySize = {width: videoWidth, height: videoHeight};
+    console.log(displaySize);
   };
 }
