@@ -204,19 +204,19 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
   }
 
-  filterDataByDate(month: number, year: number): RegistroMensual[] {
+  /* filterDataByDate(month: number, year: number): RegistroMensual[] {
     // Filtra los datos según el mes y año proporcionados
     return this.registrosMensuales.filter(registro => {
       // Convertir el mes a formato numérico
     const monthNumber = moment().month(registro.mes).month();
     return monthNumber === month && registro.anio === year;
     });
-  }
+  } */
 
-  loadData() {
+  /* loadData() {
     this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
     this.updateTableDataSource();
-  }
+  } */
 
   getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -396,9 +396,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     const tipoGuardia = registro.tipoGuardia;
     if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 1) {
+      if (tipoGuardia.nombre === "CARGO") {
         return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.id === 2) {
+      } else if (tipoGuardia.nombre === "AGRUPACION") {
         return '#F4AF88'; // Color para REAGRUPACION DE HS
       }
     }

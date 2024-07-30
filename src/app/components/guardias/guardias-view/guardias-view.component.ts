@@ -66,6 +66,11 @@ export class GuardiasViewComponent {
     this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
   }
 
+  navigateToCF() {
+    console.log('#### hospital que se envía: #####'+this.selectedHospital);
+    this.router.navigate(['/ddjj-contrafactura'], { queryParams: { hospital: this.selectedHospital } });
+  }
+
   /*updateHospital() {
     if (this.services) {
       // Lógica existente para obtener servicios y profesionales
