@@ -1,3 +1,4 @@
+
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
@@ -61,111 +62,20 @@
       </div>
     </div>
   
-    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
+    <!-- <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
         <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
           <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</option>
         </select>
       </div>
-    </div>  
+    </div> -->  
   </div>
 
   <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste el pase de la DDJJ de guardias EXTRAS para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por la DPH.</div>
 
   <div class="table-responsive">
-    <table class="table table-hover table-bordered table-sm caption-top">
-      <thead class="thead-gris">
-        <tr>
-          <th rowspan="2">N° ORDEN</th>
-          <th colspan="3">PROFESIONAL</th>
-          <th colspan="4">COMPROBANTE</th>
-          <th colspan="2">DÍA DE GUARDIA</th>
-          <th colspan="2">CANTIDAD DE HS. GUARDIA</th>
-          <th colspan="2">MONTO POR GUARDIA</th>
-          <th colspan="2">CANTIDAD DE HS. BONO</th>
-          <th colspan="2">MONTO BONO</th>
-          <th colspan="2" style="background-color: rgb(78, 233, 168);">TOTAL HS. A LIQUIDAR</th>
-          <th rowspan="2">TOTAL</th>
-        </tr>
-        <tr>
-          <th>APELLIDO Y NOMBRE</th>
-          <th>CUIL</th>
-          <th>ESPECIALIDAD</th>
-          <td>Contribuyente</td>
-          <td>Factura</td>
-          <td>Fecha de emisión</td>
-          <td></td>
-          <td>L-V</td>
-          <td>S-D-F</td>
-          <td>L-V</td>
-          <td>S-D-F</td>
-          <td>L-V</td>
-          <td>S-D-F</td>
-          <td>L-V</td>
-          <td>S-D-F</td>
-          <td>L-V</td>
-          <td>S-D-F</td>
-          <td style="background-color: rgb(78, 233, 168);;">L-V</td>
-          <td style="background-color: rgb(78, 233, 168);;">S-D-F</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>HUERTAS CLEMENTE</td>
-          <td>20-45368456-5</td>
-          <td>GENERALISTA</td>
-          <td>Responsable Inscripto</td>
-          <td>B-2-56</td>
-          <td>4/4/2023</td>
-          <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;" >edit</mat-icon></td>
-          <td>27/7/2023</td>
-          <td></td>
-          <td>8</td>
-          <td></td>
-          <td>$12.696,98</td>
-          <td></td>
-          <td>24</td>
-          <td></td>
-          <td>$18.481,80</td>
-          <td></td>
-          <td>$31.178,78</td>
-          <td></td>
-          <td style="background-color: #eee;">$31.178,78</td>
-        <tr>
-          <td>2</td>
-          <td>ARRAYA PEDRO ADEMIR</td>
-          <td>20-20675037-3</td>
-          <td>GENERALISTA</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><mat-icon color="primary" matTooltip="Agregar factura" style="cursor: pointer;">note_add</mat-icon></td>
-          <td>30/6/2023</td>
-          <td>2/7/2023</td>
-          <td>24</td>
-          <td>24</td>
-          <td>$38.090,94</td>
-          <td>$41.900,03</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>$38.090,94</td>
-          <td>$41.900,03</td>
-          <td style="background-color: #eee;">$79.990,97</td>
-        </tr>
-      </tbody>
-      <tfoot>
-          <tr>
-              <td>OBSERV.:</td>
-          </tr>
-      </tfoot>
-  </table>
-
-
-    <!--<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
       <ng-container matColumnDef="apellido" sticky>
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido </th>
@@ -243,7 +153,7 @@
         </td>
       </ng-container>
 
-      <ng-container *ngFor="let fechaColumna of displayedColumns.slice(10)" [matColumnDef]="fechaColumna">
+      <!--<ng-container *ngFor="let fechaColumna of displayedColumns.slice(10)" [matColumnDef]="fechaColumna">
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
@@ -258,11 +168,11 @@
               [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
           </span>
         </td>
-      </ng-container>
+      </ng-container>-->
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>-->
+    </table>
   </div>
   <div class="row mt-3">
     <div class="col-lg-3">  
@@ -278,6 +188,10 @@
 <div class="tabla-center">
     <div class="row" style="margin-bottom: 10px;">
         <div class="col">
+          <button mat-fab extended color="primary" routerLink="/guardias-view">
+            <mat-icon>arrow_back_ios</mat-icon>
+            Volver
+          </button>
         </div>
         <div class="col offset-9">
           <button mat-fab extended color="primary" routerLink="/ddjj-tentativo">
@@ -286,4 +200,147 @@
           </button>        
         </div>
     </div>
+    <div class="row">
+        <div class="titulos"> DDJJ <span class="titulos-second">CONTRA FACTURA</span>
+      </div>
   
+    <div class="row mt-3">
+      <div class="col-sm scroll">
+          <table class="table table-sm  table-borderless">
+                <thead class="col-center thead-celeste">
+                    <tr>
+                        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS CONTRA FACTURA</th>
+                    </tr>
+                    <tr>
+                        <th>Julio 2023</th>
+                    </tr>
+                    <tr>
+                        <th>MINISTERIO DE SALUD</th>
+                    </tr>
+                    <tr>
+                        <th>"DN. PABLO SORIA"</th>
+                    </tr>
+                    <tr>
+                        <th>REGION: CENTRO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="16">
+                            <table class="table table-hover table-bordered table-sm caption-top">
+                                <thead class="thead-gris">
+                                  <tr>
+                                    <th rowspan="2">N° ORDEN</th>
+                                    <th colspan="3">PROFESIONAL</th>
+                                    <th colspan="4">COMPROBANTE</th>
+                                    <th colspan="2">DÍA DE GUARDIA</th>
+                                    <th colspan="2">CANTIDAD DE HS. GUARDIA</th>
+                                    <th colspan="2">MONTO POR GUARDIA</th>
+                                    <th colspan="2">CANTIDAD DE HS. BONO</th>
+                                    <th colspan="2">MONTO BONO</th>
+                                    <th colspan="2" style="background-color: rgb(78, 233, 168);">TOTAL HS. A LIQUIDAR</th>
+                                    <th rowspan="2">TOTAL</th>
+                                  </tr>
+                                  <tr>
+                                    <th>APELLIDO Y NOMBRE</th>
+                                    <th>CUIL</th>
+                                    <th>ESPECIALIDAD</th>
+                                    <td>Contribuyente</td>
+                                    <td>Factura</td>
+                                    <td>Fecha de emisión</td>
+                                    <td></td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td>L-V</td>
+                                    <td>S-D-F</td>
+                                    <td style="background-color: rgb(78, 233, 168);;">L-V</td>
+                                    <td style="background-color: rgb(78, 233, 168);;">S-D-F</td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>1</td>
+                                    <td>HUERTAS CLEMENTE</td>
+                                    <td>20-45368456-5</td>
+                                    <td>GENERALISTA</td>
+                                    <td>Responsable Inscripto</td>
+                                    <td>B-2-56</td>
+                                    <td>4/4/2023</td>
+                                    <td><mat-icon color="primary" matTooltip="Modificar factura" style="cursor: pointer;" >edit</mat-icon></td>
+                                    <td>27/7/2023</td>
+                                    <td></td>
+                                    <td>8</td>
+                                    <td></td>
+                                    <td>$12.696,98</td>
+                                    <td></td>
+                                    <td>24</td>
+                                    <td></td>
+                                    <td>$18.481,80</td>
+                                    <td></td>
+                                    <td>$31.178,78</td>
+                                    <td></td>
+                                    <td style="background-color: #eee;">$31.178,78</td>
+                                  <tr>
+                                    <td>2</td>
+                                    <td>ARRAYA PEDRO ADEMIR</td>
+                                    <td>20-20675037-3</td>
+                                    <td>GENERALISTA</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><mat-icon color="primary" matTooltip="Agregar factura" style="cursor: pointer;">note_add</mat-icon></td>
+                                    <td>30/6/2023</td>
+                                    <td>2/7/2023</td>
+                                    <td>24</td>
+                                    <td>24</td>
+                                    <td>$38.090,94</td>
+                                    <td>$41.900,03</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>$38.090,94</td>
+                                    <td>$41.900,03</td>
+                                    <td style="background-color: #eee;">$79.990,97</td>
+                                  </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>OBSERV.:</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="col offset-1">
+</div>
+<div class="col-auto">
+  <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
+    <mat-icon>get_app</mat-icon>
+    Descargar
+  </button>
+  <mat-menu #menu2="matMenu">
+    <button mat-menu-item>PDF</button>
+    <button mat-menu-item>XLS</button>
+  </mat-menu>
+    <button mat-fab extended color="warn" routerLink="/ddjj-contrafactura-tot">
+    <mat-icon>assignment_turned_in</mat-icon>
+    Pase a DPH
+  </button>
+</div>
+<div class="col-1">
+</div>
+</div>
+</div>
