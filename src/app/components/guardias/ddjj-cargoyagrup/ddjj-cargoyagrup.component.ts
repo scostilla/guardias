@@ -173,7 +173,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
     const idEfector = this.selectedHospitalId;
     
-    console.log("id del efector que se usa para cargar reg mensuales"+ idEfector);
+    console.log("id del efector que se usa para cargar reg mensuales ES: "+ idEfector);
 
     if (idEfector === null) {
       console.error("El ID del hospital no puede ser null");
@@ -357,6 +357,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         if (diffHours > 0) {
           // Obtener el color de la fuente según el tipoGuardia
           const color = this.getColor(registro.tipoGuardia);
+          console.log("COLOR que trae " + color)
           // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
           output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`;
           //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
@@ -372,9 +373,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   getColor(tipoGuardia: TipoGuardia): string {
     if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 1) {
+      console.log("id de guardia: " + tipoGuardia.nombre)
+      if (tipoGuardia.nombre === "CARGO") {
+        console.log("PASOO: " + tipoGuardia.nombre)
         return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.id === 2) {
+      } else if (tipoGuardia.nombre === "AGRUPACION") {
         return '#F4AF88'; // Color para REAGRUPACION DE HS
       }
     }
