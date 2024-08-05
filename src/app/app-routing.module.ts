@@ -247,6 +247,7 @@ const routes: Routes = [
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
   {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
+  {path: 'person-edit', component: PersonEditComponent },
   {path: 'no-asistencial', component:NoAsistencialComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},

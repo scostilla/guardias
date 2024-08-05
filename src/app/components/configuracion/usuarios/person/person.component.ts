@@ -204,9 +204,17 @@ export class PersonComponent implements OnInit, OnDestroy {
     if (this.table) {
       this.table.renderRows();
     }
-  }  
-
+  } 
+  
   openFormChanges(asistencial?: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/person-edit', asistencial.id]);
+    } else {
+      this.router.navigate(['/person-edit']);
+    }
+  }
+
+ /* openFormChanges(asistencial?: Asistencial): void {
     const esEdicion = asistencial != null;
     const dialogRef = this.dialog.open(PersonEditComponent, {
       width: '600px',
@@ -236,7 +244,7 @@ export class PersonComponent implements OnInit, OnDestroy {
       } else if (result && result.type === 'cancel') {
       }
     });
-  }
+  } */
 
   openDetail(asistencial: Asistencial): void {
     this.dialogRef = this.dialog.open(PersonDetailComponent, { 

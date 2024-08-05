@@ -321,6 +321,14 @@ footer {
     margin-top: 5px;
     padding: 20px 20px;
   }  
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-field {
+    width: 100%;
+  }
 }
 
 /* --botones circulares seccción actividades-- */
@@ -499,6 +507,15 @@ mat-form-field{
   align-items: center;
   width: 100%;
 }
+
+.form-row {
+  display: flex;
+}
+
+.form-field {
+  flex: 1;
+}
+
 .mdc-dialog__title
 {
   background-color: #243c74;
