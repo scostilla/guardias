@@ -11,14 +11,14 @@ import { RegistroActividadService } from 'src/app/services/registroActividad.ser
   templateUrl: './guardias-view.component.html',
   styleUrls: ['./guardias-view.component.css']
 })
-// se agrego implements OnInit
-export class GuardiasViewComponent implements OnInit{
+export class GuardiasViewComponent implements OnInit {
   services: any[] | undefined;
   options: any[] | undefined;
   professionalGroups: { service: string; professionals: any[] }[] = [];
   selectedHospital?: number | null = null; 
-  hospitales: Hospital[]=[];
+  hospitales: Hospital[] = [];
   fechaActual?: string;
+  registrosHospital: any[] = [];
 
   extraButtonDisabled: boolean = true;
   cargoAgrupButtonDisabled: boolean = true;
@@ -29,72 +29,77 @@ export class GuardiasViewComponent implements OnInit{
     private http: HttpClient,
     private router: Router,
     private registroActividadService: RegistroActividadService
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
-
     this.fechaActual = moment().format('dddd, D [de] MMMM [de] YYYY');
-    
-    this.listHospitales();
-    
-    this.http
-      .get<any[]>('../assets/jsonFiles/servicios.json')
-      .subscribe((data) => {
-        this.services = data;
-      });
+    this.loadHospitales();
+    this.loadServices();
   }
-  
-  // se aumento this.updateButtonStates();
-  listHospitales(): void {
+
+  private loadHospitales() {
     this.hospitalService.list().subscribe(data => {
       this.hospitales = data;
       if (this.hospitales.length > 0) {
         this.selectedHospital = this.hospitales[0].id;
-        this.updateButtonStates();
+        this.updateButtonStates(); // Actualizar estados de botones al cargar los hospitales
       }
     }, error => {
-      console.log("Error en carga de hospitales: " + error) ;
+      console.log("Error en carga de hospitales: " + error);
     });
   }
- // se agrego onHospitalChange
-  onHospitalChange() {
-    this.updateButtonStates();
+
+  private loadServices() {
+    this.http.get<any[]>('../assets/jsonFiles/servicios.json')
+      .subscribe((data) => {
+        this.services = data;
+      }, error => {
+        console.log("Error en carga de servicios: " + error);
+      });
+  }
+
+  onHospitalChange(event: any) {
+    this.selectedHospital = +event.target.value;
+    this.updateButtonStates(); // Actualizar datos cuando cambie la selección del hospital
+  }
+
+  private updateButtonStates() {
+    if (this.selectedHospital) {
+      this.registroActividadService.list().subscribe(registros => {
+        this.registrosHospital = registros.filter(
+          (registro) => registro.efector.id === this.selectedHospital
+        );
+
+        // Verificar la existencia de cada tipo de guardia
+        const tieneTipoGuardiaExtra = this.registrosHospital.some((registro) => registro.tipoGuardia?.id === 2);
+        const tieneTipoGuardiaCargoAgrup = this.registrosHospital.some((registro) => registro.tipoGuardia?.id === 3 || registro.tipoGuardia?.id === 4);
+        const tieneTipoGuardiaContraFactura = this.registrosHospital.some((registro) => registro.tipoGuardia?.id === 1);
+
+        // Deshabilitar los botones según la existencia de cada tipo de guardia
+        this.extraButtonDisabled = !tieneTipoGuardiaExtra;
+        this.cargoAgrupButtonDisabled = !tieneTipoGuardiaCargoAgrup;
+        this.contraFacturaButtonDisabled = !tieneTipoGuardiaContraFactura;
+      }, error => {
+        console.log("Error en carga de registros de actividad: " + error);
+      });
+    } else {
+      // Deshabilitar todos los botones si no hay un hospital seleccionado
+      this.extraButtonDisabled = true;
+      this.cargoAgrupButtonDisabled = true;
+      this.contraFacturaButtonDisabled = true;
+      this.registrosHospital = []; // Limpiar registros si no hay hospital seleccionado
+    }
   }
 
   navigateToCargoyAgrup() {
-    console.log('#### hospital que se envía: #####'+this.selectedHospital);
     this.router.navigate(['/ddjj-cargoyagrup'], { queryParams: { hospital: this.selectedHospital } });
   }
 
   navigateToExtra() {
-    console.log('#### hospital que se envía: #####'+this.selectedHospital);
     this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
-  }
-  
-  // se agrego updateButtonStates
-  updateButtonStates() {
-    if (this.selectedHospital) {
-      this.registroActividadService.list().subscribe((registros) => {
-        const registrosHospital = registros.filter(
-          (registro) => registro.efector.id === this.selectedHospital
-        );
-
-        this.extraButtonDisabled = !registrosHospital.some((registro) => registro.tipoGuardia?.id === 3);
-        this.cargoAgrupButtonDisabled = !registrosHospital.some(
-          (registro) => registro.tipoGuardia?.id === 1 || registro.tipoGuardia?.id === 2
-        );
-        this.contraFacturaButtonDisabled = !registrosHospital.some((registro) => registro.tipoGuardia?.id === 4);
-      });
-    } else {
-      this.extraButtonDisabled = true;
-      this.cargoAgrupButtonDisabled = true;
-      this.contraFacturaButtonDisabled = true;
-    }
   }
 
   navigateToCF() {
-    console.log('#### hospital que se envía: #####'+this.selectedHospital);
     this.router.navigate(['/ddjj-contrafactura'], { queryParams: { hospital: this.selectedHospital } });
   }
 

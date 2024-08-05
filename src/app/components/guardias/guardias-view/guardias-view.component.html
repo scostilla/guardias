@@ -6,9 +6,9 @@
     </div>
     <div class="col-md-5 d-flex justify-content-md-end justify-content-center align-items-start mt-3 mt-md-0">
       <mat-button-toggle-group name="tipoddjj">
-        <mat-button-toggle value="ddjjextra" (click)="navigateToExtra()" >Extras</mat-button-toggle>
-        <mat-button-toggle value="cargoyagrup" (click)="navigateToCargoyAgrup()" >Cargo y agrupación</mat-button-toggle>
-        <mat-button-toggle value="contrafactura" (click)="navigateToCF()">Contra Factura</mat-button-toggle>
+        <mat-button-toggle value="ddjjextra" (click)="navigateToExtra()" [disabled]="extraButtonDisabled">Extras</mat-button-toggle>
+        <mat-button-toggle value="cargoyagrup" (click)="navigateToCargoyAgrup()" [disabled]="cargoAgrupButtonDisabled">Cargo y agrupación</mat-button-toggle>
+        <mat-button-toggle value="contrafactura" (click)="navigateToCF()" [disabled]="contraFacturaButtonDisabled">Contra Factura</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
     </div>
@@ -41,7 +41,7 @@
           <span class="titulo-select-tabla">Selecciona un hospital:</span>
 
           <!--aumente la parte de (change)="onHospitalChange()"-->
-          <select class="select-tabla" placeholder="Cargando hospitales" [(ngModel)]="selectedHospital" (change)="onHospitalChange()"> 
+          <select class="select-tabla" placeholder="Cargando hospitales" [(ngModel)]="selectedHospital" (change)="onHospitalChange($event)"> 
             <option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</option>
           </select>
         </div>
@@ -52,5 +52,29 @@
         </div>
       </div>
     </div>
+    <!-- solo para verificar si trae los datos segun el hospital seleccionado-->
+    <!-- <div class="row mt-3">
+      <div class="col-12">
+        <h4>Registros de Actividad</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Descripción</th>
+              <th>Tipo de Guardia</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let registro of registrosHospital">
+              <td>{{ registro.id }}</td>
+              <td>{{ registro.descripcion }}</td>
+              <td>{{ registro.tipoGuardia?.nombre || 'N/A' }}</td>
+              <td>{{ registro.fecha | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div> -->
   </div>
 
