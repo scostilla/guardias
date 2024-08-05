@@ -1,5 +1,5 @@
-import { Ddjj } from "./Ddjj";
-import { TipoGuardia } from "./TipoGuardia";
+import { Ddjj } from "./Configuracion/Ddjj";
+import { TipoGuardia } from "./Configuracion/TipoGuardia";
 
 export class ValorGmi {
     id?: number;
@@ -7,7 +7,8 @@ export class ValorGmi {
     fechaInicio: Date;
     fechaFin: Date;
     monto: number;
-    tipoGuardia: TipoGuardia;
+    tipoGuardia: string;
+    esLav:boolean;
     ddjjs: Ddjj[];
 
     constructor(
@@ -15,7 +16,8 @@ export class ValorGmi {
         fechaInicio: Date,
         fechaFin: Date,
         monto: number,
-        tipoGuardia: TipoGuardia,
+        tipoGuardia: string,
+        esLav:boolean,
         ddjjs: Ddjj[]
     ) {
         this.activo = activo;
@@ -23,6 +25,7 @@ export class ValorGmi {
         this.fechaFin = fechaFin;
         this.monto = monto;
         this.tipoGuardia = tipoGuardia;
+        this.esLav = esLav;
         this.ddjjs = ddjjs;
     }
 }

@@ -7,9 +7,10 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Revista } from 'src/app/models/Configuracion/Revista';
-import { RevistaDetailComponent } from '../revista-detail/revista-detail.component';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaEditComponent } from '../revista-edit/revista-edit.component';
+import { TipoRevistaEditComponent } from '../tipo-revista-edit/tipo-revista-edit.component';
+
 
 @Component({
   selector: 'app-revista',
@@ -22,8 +23,8 @@ export class RevistaComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dialogRef!: MatDialogRef<RevistaDetailComponent>;
-  displayedColumns: string[] = ['id', 'agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'acciones'];
+  dialogRef!: MatDialogRef<TipoRevistaEditComponent>;
+  displayedColumns: string[] = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'acciones'];
   dataSource!: MatTableDataSource<Revista>;
   suscription!: Subscription;
 
@@ -122,15 +123,14 @@ export class RevistaComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDetail(revista: Revista): void {
-    this.dialogRef = this.dialog.open(RevistaDetailComponent, { 
+  openEditTipoRevista(): void {
+    this.dialogRef = this.dialog.open(TipoRevistaEditComponent, { 
       width: '600px',
-      data: revista
     });
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
-    }
+  } 
 
   deleteRevista(revista: Revista): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

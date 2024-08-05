@@ -8,11 +8,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./dist-horaria-cons.component.css']
 })
 export class DistHorariaConsComponent {
-  hospitales:string[]= ['DN. PABLO SORIA'];
+  hospitales:string[]= ['Hospital', 'Puestos de salud'];
   profesional:string[]= ['FIGUEROA	ELIO','ARRAYA	PEDRO ADEMIR','MORALES	RICARDO','ALFARO	FIDEL','MARTINEZ	YANINA VANESA G.'];
+  servicio:string[]= ['Clínica','Cardiología'];
   guardia:string[]= ['Cargo','Agrupacion'];
   dia:string[]= ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-  cons:string[]= ['Consultorio externo','Comisión'];
+  cons:string[]= ['Consultorio externo'];
   turno:string[]= ['Mañana','Tarde'];
 
   selectedService: string = 'Cargo';

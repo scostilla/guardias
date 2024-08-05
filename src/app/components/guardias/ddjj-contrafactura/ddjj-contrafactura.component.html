@@ -61,14 +61,14 @@
       </div>
     </div>
   
-    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
+    <!-- <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
         <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
           <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</option>
         </select>
       </div>
-    </div>  
+    </div> -->  
   </div>
 
   <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste el pase de la DDJJ de guardias EXTRAS para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por la DPH.</div>

@@ -7,7 +7,7 @@
     <span class="titulos-second">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Circular N° 16/2024 - Contaduría de la provincia</span>
   </div>
   <div class="row mt-3 contenedor-montos">
-    <span class="fondo-montos">VALOR GMI CARGO = $ 45.739,46</span>
+    <span class="fondo-montos">VALOR GMI CARGO = $ {{ valorGmiCargo | number:'1.2-2' }}</span>
     <span class="titulo-select-tabla">bono uti (+9%)-D = $ 8.400,82</span>
 </div>
   
@@ -29,8 +29,8 @@
                 <tr>
                   <td rowspan="5">CARGO O AGRUPACIÓN DE HORAS</td>
                   <td>S/DECRETO N° 1178</td>
-                  <td>91.478,92</td>
-                  <td>100.626,81</td>
+                  <td>{{ valorGmiLV | number:'1.2-2' }}</td>
+                  <td>{{ valorGmiSDF | number:'1.2-2' }}</td>
                 </tr>
                 <tr>
                   <td>BONO GUARDIA COVID DECRETO N°1657</td>
@@ -39,18 +39,18 @@
                 </tr>
                 <tr>
                   <td>SUB TOTAL</td>
-                  <td>91.478,92</td>
-                  <td>100.626,81</td>
+                  <td>{{ valorGmiLV | number:'1.2-2' }}</td>
+                  <td>{{ valorGmiSDF | number:'1.2-2' }}</td>
                 </tr>
                 <tr>
                   <td>BONO DECRETO N° 1580 </td>
-                  <td>16.801,63</td>
-                  <td>18.481,79</td>
+                  <td>{{ valorB1580LV | number:'1.2-2' }}</td>
+                  <td>{{ valorB1580SDF | number:'1.2-2' }}</td>
                 </tr>
                 <tr>
                   <td class="negrita" style="background-color: #eee;">TOTAL</td>
-                  <td class="negrita" style="background-color: #eee;">108.280,55</td>
-                  <td class="negrita" style="background-color: #eee;">119.108,61</td>
+                  <td class="negrita" style="background-color: #eee;">{{ (valorGmiLV + valorB1580LV) | number:'1.2-2' }}</td>
+                  <td class="negrita" style="background-color: #eee;">{{ (valorGmiSDF + valorB1580SDF) | number:'1.2-2' }}</td>
                 </tr>
 
                 <tr>

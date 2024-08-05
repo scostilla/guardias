@@ -69,7 +69,6 @@ import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
-import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 
 
@@ -89,7 +88,7 @@ import { NotificacionEditComponent } from './components/notificacion/notificacio
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
-import { DistHorariaComponent } from './components/actividades/dist-horaria/dist-horaria.component';
+import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaConsComponent } from './components/actividades/dist-horaria-cons/dist-horaria-cons.component';
 import { DistHorariaGirasComponent } from './components/actividades/dist-horaria-giras/dist-horaria-giras.component';
@@ -166,7 +165,7 @@ import { DailyScheduleComponent } from './components/daily-schedule/daily-schedu
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
-import { NovedadesFormComponent } from './components/actividades/novedades-form/novedades-form.component';
+import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
@@ -261,7 +260,6 @@ const routes: Routes = [
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},
   {path: 'revista', component: RevistaComponent},
-  {path: 'revista-detail/:id', component:RevistaDetailComponent},
   {path:'revista-edit/:id', component: RegionEditComponent},
   
   //Autoridad

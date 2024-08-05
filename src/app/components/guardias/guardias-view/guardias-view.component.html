@@ -6,10 +6,9 @@
     </div>
     <div class="col-md-5 d-flex justify-content-md-end justify-content-center align-items-start mt-3 mt-md-0">
       <mat-button-toggle-group name="tipoddjj">
-        <!--aumente [disabled]="extraButtonDisabled" en los 3 botones -->
-        <mat-button-toggle value="ddjjextra" (click)="navigateToExtra()" [disabled]="extraButtonDisabled">Extras</mat-button-toggle>
-        <mat-button-toggle value="cargoyagrup" (click)="navigateToCargoyAgrup()" [disabled]="cargoAgrupButtonDisabled">Cargo y agrupación</mat-button-toggle>
-        <mat-button-toggle value="contrafactura" routerLink="/ddjj-contrafactura" [disabled]="contraFacturaButtonDisabled">Contra Factura</mat-button-toggle>
+        <mat-button-toggle value="ddjjextra" (click)="navigateToExtra()" >Extras</mat-button-toggle>
+        <mat-button-toggle value="cargoyagrup" (click)="navigateToCargoyAgrup()" >Cargo y agrupación</mat-button-toggle>
+        <mat-button-toggle value="contrafactura" (click)="navigateToCF()">Contra Factura</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
     </div>
