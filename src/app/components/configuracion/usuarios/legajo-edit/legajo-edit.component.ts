@@ -39,6 +39,7 @@ export class LegajoEditComponent implements OnInit {
   legajoForm: FormGroup;
   initialData: any;
   personas: Asistencial[] = [];
+  selectedPersona: Asistencial | null = null; // Para guardar la persona seleccionada que viene desde componente person 
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -47,6 +48,14 @@ export class LegajoEditComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
+  /* Form de revista */
+  agrupaciones: Agrup[] = [
+    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
+    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
+    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
+    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
+    { value: 'TECNICOS', viewValue: 'Técnicos' },
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -63,7 +72,7 @@ export class LegajoEditComponent implements OnInit {
     private tipoRevistaService: TipoRevistaService,
     private revistaService: RevistaService,
 
-    @Inject(MAT_DIALOG_DATA) public data: Legajo
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
 
     this.legajoForm = this.fb.group({
@@ -74,12 +83,11 @@ export class LegajoEditComponent implements OnInit {
       tipoRevista: ['', Validators.required],
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
-      //revista: [''],
       udo: ['', Validators.required],
-      efectores: [[]],
+      efectores: [[],Validators.required],
       especialidades: [[]],
       matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      matriculaProvincial: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
+      matriculaProvincial: ['',Validators.required, [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
       actual: ['', Validators.required],
       legal: ['', Validators.required],
       fechaInicio: ['', Validators.required],
@@ -87,7 +95,6 @@ export class LegajoEditComponent implements OnInit {
       cargo: ['', Validators.required],
     });
 
-    this.listAsistenciales();
     this.listProfesiones();
     this.listUdos();
     this.listCargos();
@@ -97,6 +104,11 @@ export class LegajoEditComponent implements OnInit {
     this.listCargaHoraria();
     this.listTipoRevista();
 
+    if (data && data.persona) {
+      this.legajoForm.patchValue({
+        persona: data.persona
+      });
+    }
 
     if (data) {
       this.legajoForm.patchValue({
@@ -108,7 +120,19 @@ export class LegajoEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initialData = this.legajoForm.value;
+
+    //this.initialData = this.legajoForm.value;
+
+    // Cargar la lista de asistenciales
+    this.listAsistenciales();
+    // Si se ha recibido una persona
+    if (this.data && this.data.asistencial) {
+      this.selectedPersona = this.data.asistencial;
+      // lo carga en el formulario
+      this.legajoForm.patchValue({
+        persona: this.selectedPersona
+      });
+    }
   }
 
   isModified(): boolean {
@@ -118,6 +142,10 @@ export class LegajoEditComponent implements OnInit {
   listAsistenciales(): void {
     this.asistencialService.list().subscribe(data => {
       this.personas = data;
+      // Si ya se ha cargado una persona, asegurarnos de que está en la lista
+      if (this.selectedPersona && !this.personas.includes(this.selectedPersona)) {
+        this.personas.push(this.selectedPersona);
+      }
     }, error => {
       console.log(error);
     });
@@ -156,15 +184,7 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  /* Form de revista */
-
-  agrupaciones: Agrup[] = [
-    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
-    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
-    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
-    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
-    { value: 'TECNICOS', viewValue: 'Técnicos' },
-  ];
+  
 
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {

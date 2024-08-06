@@ -31,13 +31,6 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email">
-      <mat-error *ngIf="asistencialForm.get('email')?.errors?.['required']">El email es requerido.</mat-error>
-      <mat-error *ngIf="asistencialForm.get('email')?.errors?.['email']">Debe ser un email válido.</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
       <mat-label>Es asistencial?</mat-label>
       <mat-select formControlName="esAsistencial">
         <mat-option [value]="true">Si</mat-option>
@@ -77,6 +70,17 @@
       <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>Tipo guardia</mat-label>
+      <mat-select formControlName="tiposGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
+        <div *ngIf="asistencialForm.get('tiposGuardias')?.value.includes(1) || asistencialForm.get('tiposGuardias')?.value.includes(5)">
+          <p style="color: rgb(180, 180, 180); font-size: 0.8em; margin-left: 15px;">La opción seleccionada no puede combinarse con las demás guardias.</p>
+        </div>    
+        <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia.id">{{ tipoGuardia.nombre }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="asistencialForm.get('tiposGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>  
+    </mat-form-field>
+        
     <!--<mat-form-field appearance="fill">
       <mat-label>Tipo de guardia</mat-label>
       <mat-select formControlName="tipoGuardia">
@@ -87,6 +91,32 @@
         <mat-option value="PASIVA">PASIVA</mat-option>
       </mat-select>
     </mat-form-field>-->
+
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="asistencialForm.get('email')?.errors?.['required']">El email es requerido.</mat-error>
+      <mat-error *ngIf="asistencialForm.get('email')?.errors?.['email']">Debe ser un email válido.</mat-error>
+    </mat-form-field>
+    
+    <mat-form-field appearance="fill">
+      <mat-label>nombreUsuario</mat-label>
+      <input matInput formControlName="nombreUsuario">
+      <mat-error *ngIf="asistencialForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>password</mat-label>
+      <input matInput formControlName="password">
+      <mat-error *ngIf="asistencialForm.get('password')?.errors?.['required']">El password es requerido.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Roles</mat-label>
+      <mat-select formControlName="roles" multiple>
+        <mat-option *ngFor="let rol of roles" [value]="rol.id">{{ rol.rolNombre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid || !isModified()">

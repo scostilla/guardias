@@ -11,11 +11,7 @@ export class PersonDto {
     domicilio: string;
     esAsistencial:boolean;
     activo: boolean;
-    idLegajos: number[];
-    idNovedadPersonal?: number;
-    /* idSuplentes?: number;
-    idDistribucionesHorarias?: number;
-    idAutoridades?: number;*/ 
+    idUsuario: number;
        
   
     constructor(
@@ -30,12 +26,7 @@ export class PersonDto {
         domicilio: string,
         esAsistencial:boolean,
         activo: boolean,
-        idLegajos: number[],
-        idNovedadPersonal: number,
-        /* idSuplentes: number,
-        idDistribucionesHorarias: number,
-        idAutoridades: number,
-           */          
+        idUsuario: number       
         ) {
         this.nombre = nombre;
         this.apellido = apellido;
@@ -48,12 +39,7 @@ export class PersonDto {
         this.domicilio = domicilio;
         this.esAsistencial=esAsistencial;
         this.activo = activo;
-        this.idLegajos = idLegajos;
-        this.idNovedadPersonal = idNovedadPersonal;
-        /*  this.idSuplentes = idSuplentes;
-        this.idDistribucionesHorarias = idDistribucionesHorarias;
-        this.idAutoridades = idAutoridades;
-         */
+        this.idUsuario = idUsuario;
     }
   
   }
