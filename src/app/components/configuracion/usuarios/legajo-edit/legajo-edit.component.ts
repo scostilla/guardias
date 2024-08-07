@@ -122,7 +122,6 @@ export class LegajoEditComponent implements OnInit {
   ngOnInit(): void {
 
     //this.initialData = this.legajoForm.value;
-
     // Cargar la lista de asistenciales
     this.listAsistenciales();
     // Si se ha recibido una persona
