@@ -5,6 +5,16 @@
 <mat-dialog-content class="mat-typography">
 
   <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Persona</mat-label>
+      <mat-select formControlName="persona" [compareWith]="comparePersona">
+        <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }} {{persona.apellido }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
+    </mat-form-field>
+
     <div class="container grupo-form">
       <div class="titulos-second negrita contenedor-titulo-select-tabla">Revista:</div>
 
@@ -52,13 +62,29 @@
           requerido.</mat-error>
       </mat-form-field>
 
-  </div>
-    <mat-form-field appearance="fill">
-      <mat-label>Persona</mat-label>
-      <mat-select formControlName="persona" [compareWith]="comparePersona">
-        <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }} {{persona.apellido }} </mat-option>
+    </div>
+
+    <mat-form-field *ngIf="!isContrafactura" appearance="fill">
+      <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
+      <mat-select formControlName="udo" [compareWith]="compareUdo">
+        <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
       </mat-select>
-      <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
+      <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Efectores</mat-label>
+      <mat-select formControlName="efectores" multiple>
+        <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Cargo</mat-label>
+      <mat-select formControlName="cargo" [compareWith]="compareCargo">
+        <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="legajoForm.get('cargo')?.errors?.['required']">El cargo es requerido.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
@@ -69,17 +95,12 @@
       <mat-error *ngIf="legajoForm.get('profesion')?.errors?.['required']">La profesión es requerida.</mat-error>
     </mat-form-field>
 
-    <!-- <mat-form-field appearance="fill">
-      <mat-label>Revista</mat-label>
-      <input matInput formControlName="revista">
-    </mat-form-field> -->
-
     <mat-form-field appearance="fill">
-      <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
-      <mat-select formControlName="udo" [compareWith]="compareUdo">
-        <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
+      <mat-label>Especialidades</mat-label>
+      <mat-select formControlName="especialidades" multiple>
+        <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre
+          }}</mat-option>
       </mat-select>
-      <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
@@ -127,30 +148,6 @@
       <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
-      <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Efectores</mat-label>
-      <mat-select formControlName="efectores" multiple>
-        <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Especialidades</mat-label>
-      <mat-select formControlName="especialidades" multiple>
-        <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre
-          }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Cargo</mat-label>
-      <mat-select formControlName="cargo" [compareWith]="compareCargo">
-        <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="legajoForm.get('cargo')?.errors?.['required']">El cargo es requerido.</mat-error>
     </mat-form-field>
 
     <div mat-dialog-actions class="action mt-4">

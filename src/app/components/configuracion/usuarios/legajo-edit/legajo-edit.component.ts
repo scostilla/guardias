@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -24,6 +24,7 @@ import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
+import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 
 interface Agrup {
   value: string;
@@ -38,8 +39,8 @@ export class LegajoEditComponent implements OnInit {
 
   legajoForm: FormGroup;
   initialData: any;
-  personas: Asistencial[] = [];
-  selectedPersona: Asistencial | null = null; // Para guardar la persona seleccionada que viene desde componente person 
+  personas: AsistencialSummaryDto[] = [];
+  selectedPersona: AsistencialSummaryDto | null = null; // Para guardar la persona seleccionada que viene desde componente person 
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -48,6 +49,7 @@ export class LegajoEditComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
+  isContrafactura: boolean = false;
   /* Form de revista */
   agrupaciones: Agrup[] = [
     { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
@@ -110,6 +112,10 @@ export class LegajoEditComponent implements OnInit {
       });
     }
 
+    if (this.selectedPersona) {
+      this.updateVisibilityBasedOnPersona(this.selectedPersona);
+    }
+
     if (data) {
       this.legajoForm.patchValue({
         ...data,
@@ -121,7 +127,6 @@ export class LegajoEditComponent implements OnInit {
 
   ngOnInit(): void {
 
-    //this.initialData = this.legajoForm.value;
     // Cargar la lista de asistenciales
     this.listAsistenciales();
     // Si se ha recibido una persona
@@ -131,20 +136,44 @@ export class LegajoEditComponent implements OnInit {
       this.legajoForm.patchValue({
         persona: this.selectedPersona
       });
+      if (this.selectedPersona) {
+        this.updateVisibilityBasedOnPersona(this.selectedPersona);
+      }
     }
+    this.legajoForm.get('persona')?.valueChanges.subscribe(selectedValue => {
+      const selectedPersona = this.personas.find(persona => persona.id === selectedValue);
+      if (selectedPersona) {
+        this.updateVisibilityBasedOnPersona(selectedPersona);
+      }
+    });
   }
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
   }
 
+  updateVisibilityBasedOnPersona(persona: AsistencialSummaryDto): void {
+    if (persona.nombresTiposGuardias && persona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
+      this.isContrafactura = true;
+      this.legajoForm.get('udo')?.clearValidators();
+    } else {
+      this.isContrafactura = false;
+      this.legajoForm.get('udo')?.setValidators(Validators.required);
+    }
+    this.legajoForm.get('udo')?.updateValueAndValidity();
+   // this.cd.detectChanges(); // Forzar la detección de cambios
+  }
+
   listAsistenciales(): void {
-    this.asistencialService.list().subscribe(data => {
+    this.asistencialService.listSummary().subscribe(data => {
       this.personas = data;
-      // Si ya se ha cargado una persona, asegurarnos de que está en la lista
-      if (this.selectedPersona && !this.personas.includes(this.selectedPersona)) {
-        this.personas.push(this.selectedPersona);
+      if (this.selectedPersona && !this.personas.find(p => p.id === this.selectedPersona!.id)) {
+        this.personas.push(this.selectedPersona as unknown as AsistencialSummaryDto);
       }
+      // Si ya se ha cargado una persona, asegurarnos de que está en la lista
+      /* if (this.selectedPersona && !this.personas.includes(this.selectedPersona)) {
+        this.personas.push(this.selectedPersona);
+      } */
     }, error => {
       console.log(error);
     });

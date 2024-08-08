@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ProfesionSummaryDto } from 'src/app/dto/Configuracion/profesion/ProfesionSummaryDto';
 import { ProfesionDto } from 'src/app/dto/Configuracion/ProfesionDto';
 import { Profesion } from "src/app/models/Configuracion/Profesion";
 
@@ -21,6 +22,10 @@ export class ProfesionService {
 
   public list(): Observable<Profesion[]> {
       return this.httpClient.get<Profesion[]>(this.profesionesURL + 'list');
+  }
+
+  public listProfesionesSummary(): Observable<ProfesionSummaryDto[]> {
+      return this.httpClient.get<ProfesionSummaryDto[]>(this.profesionesURL + 'listProfesionesSummary');
   }
 
   public detail(id:number): Observable<Profesion> {
