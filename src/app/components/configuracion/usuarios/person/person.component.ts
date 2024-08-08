@@ -93,6 +93,25 @@ export class PersonComponent implements OnInit, OnDestroy {
   
     this.dataSource.filter = normalizedFilterValue;
   }
+
+  // obtengo el tooltip del botón basado en la existencia de legajos
+  getTooltip(asistencial: Asistencial): string {
+    return this.hayLegajos(asistencial) ? 'Ver Legajo' : 'Agregar Legajo';
+  }
+
+  // Obtener el ícono del botón basado en la existencia de legajos
+  getIcon(asistencial: Asistencial): string {
+    return this.hayLegajos(asistencial) ? 'playlist_play' : 'playlist_add';
+  }
+
+  // Determinar la acción del botón basada en la existencia de legajos
+  getButtonAction(asistencial: Asistencial): void {
+    if (this.hayLegajos(asistencial)) {
+      this.verLegajo(asistencial);
+    } else {
+      this.crearLegajo(asistencial);
+    }
+  }
         
   listAsistencial(): void {
     this.asistencialService.listDtos().subscribe(data => {
@@ -103,9 +122,15 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   listLegajos(): void {
+    /* this.legajoService.list().subscribe((legajos: Legajo[]) => {
+      this.legajos = legajos;
+      this.isLoadingLegajos = false;
+    }); */
+    this.isLoadingLegajos = true;
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
+      this.dataSource.data = [...this.dataSource.data]; // Forzar la actualización de la tabla
     });
   }
 
@@ -135,8 +160,10 @@ export class PersonComponent implements OnInit, OnDestroy {
             positionClass: 'toast-top-center',
             progressBar: true
           });
-          this.dataSource.data.push(result);
-          this.dataSource._updateChangeSubscription();
+          // Actualizar la lista de legajos y la tabla
+        this.listLegajos();
+          /* this.dataSource.data.push(result);
+          this.dataSource._updateChangeSubscription(); */
         } else {
           this.toastr.error('No se creó el Legajo', 'Error', {
             timeOut: 6000,

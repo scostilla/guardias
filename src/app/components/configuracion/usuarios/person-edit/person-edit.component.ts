@@ -43,7 +43,7 @@ export class PersonEditComponent implements OnInit {
       cuil: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
+      telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
       tiposGuardias: [[], [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       nombreUsuario: ['', [Validators.required]],
