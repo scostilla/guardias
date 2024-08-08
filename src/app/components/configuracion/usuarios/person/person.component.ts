@@ -17,6 +17,7 @@ import { NovedadesFormComponent } from '../../../personal/novedades-form/novedad
 import { DistHorariaComponent } from '../../../personal/dist-horaria/dist-horaria.component';
 
 import { Router } from '@angular/router';
+import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 
 
 @Component({
@@ -41,7 +42,7 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<PersonDetailComponent>;
   displayedColumns: string[] = ['id', 'nombre', 'apellido', /*  'dni', 'domicilio', 'email', 'estado', */'cuil',  /*'fechaNacimiento',  'sexo', 'telefono', 'tipoGuardia', */ 'acciones'];
-  dataSource!: MatTableDataSource<Asistencial>;
+  dataSource!: MatTableDataSource<AsistencialListDto>;
   suscription!: Subscription;
   asistencial!: Asistencial;
   legajos: Legajo[] = [];
@@ -84,7 +85,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+    this.dataSource.filterPredicate = (data: AsistencialListDto, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       return normalizedData.indexOf(normalizedFilterValue) != -1;
@@ -94,7 +95,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
         
   listAsistencial(): void {
-    this.asistencialService.list().subscribe(data => {
+    this.asistencialService.listDtos().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -169,21 +170,9 @@ export class PersonComponent implements OnInit, OnDestroy {
       if (columna === 'cuil' && this.dniVisible) {
         columnasVisibles.push('dni');
       }
-      /* if (columna === 'apellido' && this.domicilioVisible) {
-        columnasVisibles.push('domicilio');
-      }
-      if (columna === 'apellido' && this.estadoVisible) {
-        columnasVisibles.push('estado');
-      } 
-      if (columna === 'cuil' && this.fechaNacimientoVisible) {
-        columnasVisibles.push('fechaNacimiento');
-      }*/
       if (columna === 'cuil' && this.telefonoVisible) {
         columnasVisibles.push('telefono');
       }
-      /*if (columna === 'telefono' && this.emailVisible) {
-        columnasVisibles.push('email');
-      } */
     });
   
     this.displayedColumns = columnasVisibles;

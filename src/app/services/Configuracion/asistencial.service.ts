@@ -7,6 +7,7 @@ import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { Person } from "src/app/models/Configuracion/Person";
 import { forkJoin } from 'rxjs';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,10 @@ export class AsistencialService {
 
     public listSummary(): Observable<AsistencialSummaryDto[]> {
       return this.httpClient.get<AsistencialSummaryDto[]>(this.asistencialesURL + 'listSummary')
+    }  
+
+    public listDtos(): Observable<AsistencialListDto[]> {
+      return this.httpClient.get<AsistencialListDto[]>(this.asistencialesURL + 'listDtos')
     }  
     
     public listPerson(): Observable<Person[]> {
