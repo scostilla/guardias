@@ -79,12 +79,6 @@
             <button mat-icon-button matTooltip="{{getTooltip(asistencial)}}" (click)="getButtonAction(asistencial)" *ngIf="!isLoadingLegajos">
               <mat-icon color="primary">{{getIcon(asistencial)}}</mat-icon>
             </button>
-            <!-- <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)" *ngIf="!isLoadingLegajos && hayLegajos(asistencial)">
-              <mat-icon color="primary">playlist_play</mat-icon>
-            </button>
-            <button mat-icon-button matTooltip="Agregar Legajo" (click)="crearLegajo(asistencial)" *ngIf="!isLoadingLegajos && !hayLegajos(asistencial)">
-              <mat-icon color="primary">playlist_add</mat-icon>
-            </button> -->
             <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)">
               <mat-icon>calendar_month</mat-icon>
             </button>

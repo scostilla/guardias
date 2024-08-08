@@ -41,7 +41,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<PersonDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', /*  'dni', 'domicilio', 'email', 'estado', */'cuil',  /*'fechaNacimiento',  'sexo', 'telefono', 'tipoGuardia', */ 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'apellido','cuil', 'acciones'];
   dataSource!: MatTableDataSource<AsistencialListDto>;
   suscription!: Subscription;
   asistencial!: Asistencial;
@@ -122,15 +122,12 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   listLegajos(): void {
-    /* this.legajoService.list().subscribe((legajos: Legajo[]) => {
-      this.legajos = legajos;
-      this.isLoadingLegajos = false;
-    }); */
     this.isLoadingLegajos = true;
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
-      this.dataSource.data = [...this.dataSource.data]; // Forzar la actualización de la tabla
+      //Forzar la actualización de la tabla
+      this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
     });
   }
 
