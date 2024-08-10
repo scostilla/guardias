@@ -12,8 +12,9 @@ import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component'; 
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { RevistaDetailComponent } from '../revista-detail/revista-detail.component'; 
+import { RevistaDetailComponent } from '../revista-detail/revista-detail.component';
 
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
     private revistaService: RevistaService,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -126,6 +128,14 @@ export class LegajoComponent implements OnInit, OnDestroy {
   }
 
   openFormChanges(legajo?: Legajo): void {
+    if (legajo && legajo.id) {
+      this.router.navigate(['/legajo-edit', legajo.id]);
+    } else {
+      this.router.navigate(['/legajo-edit']);
+    }
+  }
+
+  /*openFormChanges(legajo?: Legajo): void {
     const esEdicion = legajo != null;
     const dialogRef = this.dialog.open(LegajoEditComponent, {
       width: '600px',
@@ -156,7 +166,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
       }
     }
     });
-  }
+  }*/
 
   openDetail(legajo: Legajo): void {
     this.dialogRefLegajo = this.dialog.open(LegajoDetailComponent, { 

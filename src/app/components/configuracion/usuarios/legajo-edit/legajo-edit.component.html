@@ -1,207 +1,224 @@
-<h2 mat-dialog-title>
+<app-spinner></app-spinner>
+<div class="container">
   <div class="row">
-  <div class="col-11">
-    {{data ? 'Modificar' : 'Agregar'}} Legajo
-    <h5 class="['required']Field">*Campos Obligatorios</h5>
-  </div> 
-  <div class="col-1">
-    <button mat-icon-button class="close-button" (click)="cancel()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-  </div>
-</h2>
-
-<mat-dialog-content class="mat-typography">
-
-  <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
-
-    <mat-accordion class="example-headers-align">
-      <!-- Panel 1 -->
-      <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
-        <mat-expansion-panel-header color="primary">
-          <mat-panel-title>Datos personal</mat-panel-title>
-          <mat-panel-description>
-            <mat-icon>filter_1</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-    
-        <p></p>
-        <mat-form-field appearance="fill">
-          <mat-label>Persona</mat-label>
-          <mat-select formControlName="persona" [compareWith]="comparePersona">
-            <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
-        </mat-form-field>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Profesión</mat-label>
-          <mat-select formControlName="profesion" [compareWith]="compareProfesion">
-            <mat-option *ngFor="let profesion of profesiones" [value]="profesion">{{ profesion.nombre }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('profesion')?.errors?.['required']">La profesión es requerida.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-          <mat-label>Especialidades</mat-label>
-          <mat-select formControlName="especialidades" multiple>
-            <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre
-              }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Cargo</mat-label>
-          <mat-select formControlName="cargo" [compareWith]="compareCargo">
-            <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('cargo')?.errors?.['required']">El cargo es requerido.</mat-error>
-        </mat-form-field>    
-
-        <mat-form-field appearance="fill">
-          <mat-label>Matrícula Nacional</mat-label>
-          <input matInput formControlName="matriculaNacional">
-          <mat-error *ngIf="legajoForm.get('matriculaNacional')?.errors?.['pattern']">El n° de matrícula puede tener letras
-            y números (entre 5 y 20 caracteres).</mat-error>
-        </mat-form-field>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Matrícula Provincial</mat-label>
-          <input matInput formControlName="matriculaProvincial">
-          <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['pattern']">El n° de matrícula puede tener
-            letras y números (entre 5 y 20 caracteres).</mat-error>
-        </mat-form-field>
-        
-        <mat-action-row>
-          <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-    
-      <!-- Panel 2 -->
-      <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Situación de revista</mat-panel-title>
-          <mat-panel-description>
-            <mat-icon>filter_2</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Agrupación</mat-label>
-          <mat-select formControlName="agrupacion">
-            <mat-option *ngFor="let agrup of agrupaciones" [value]="agrup.value">{{ agrup.viewValue }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('agrupacion')?.errors?.['required']">La agrupación es requerida.</mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="fill">
-          <mat-label>Categoría</mat-label>
-          <mat-select formControlName="categoria" [compareWith]="compareTipoRevista">
-            <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('categoria')?.errors?.['required']">La categoría es requerida.</mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="fill">
-          <mat-label>Adicional</mat-label>
-          <mat-select formControlName="adicional" [compareWith]="compareTipoRevista">
-            <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="fill">
-          <mat-label>Carga Horaria</mat-label>
-          <mat-select formControlName="cargaHoraria" [compareWith]="compareTipoRevista">
-            <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria.id">{{ cargaHoraria.cantidad
-              }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('cargaHoraria')?.errors?.['required']">La carga horaria es
-            requerida.</mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="fill">
-          <mat-label>Tipo de revista</mat-label>
-          <mat-select formControlName="tipoRevista" [compareWith]="compareTipoRevista">
-            <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista.id">{{ tipoRevista.nombre
-              }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('tipoRevista')?.errors?.['required']">El tipo de revista es
-            requerido.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-          <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
-          <mat-select formControlName="udo" [compareWith]="compareUdo">
-            <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
-        </mat-form-field>
-
-v      
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Anterior</button>
-          <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-    
-      <!-- Panel 3 -->
-      <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Datos del legajo</mat-panel-title>
-          <mat-panel-description>
-            <mat-icon>filter_3</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Actual</mat-label>
-          <mat-select formControlName="actual">
-            <mat-option [value]="true">Si</mat-option>
-            <mat-option [value]="false">No</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('actual')?.errors?.['required']">El campo es requerido.</mat-error>
-        </mat-form-field>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Legal</mat-label>
-          <mat-select formControlName="legal">
-            <mat-option [value]="true">Si</mat-option>
-            <mat-option [value]="false">No</mat-option>
-          </mat-select>
-          <mat-error *ngIf="legajoForm.get('legal')?.errors?.['required']">El campo es requerido.</mat-error>
-        </mat-form-field>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Fecha Inicio</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-          <mat-error *ngIf="legajoForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
-        </mat-form-field>
-    
-        <mat-form-field appearance="fill">
-          <mat-label>Fecha Fin</mat-label>
-          <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
-          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-          <mat-datepicker #picker2></mat-datepicker>
-          <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
-        </mat-form-field>
-        
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Anterior</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()">
-            {{data ? 'Modificar' : 'Agregar Legajo'}}
-          </button>
-        </mat-action-row>
-      </mat-expansion-panel>
-    </mat-accordion>
-  
-    <div mat-dialog-actions class="action mt-4">
-      <button mat-raised-button color="secondary" type="button" (click)="cancel()">
-        Cancelar
+    <div class="col-6">
+      <div class="titulos">{{esEdicion ? 'Modificar' : 'Agregar'}} Legajo</div>
+    </div>
+    <div class="col-6 m mt-3 d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/legajo">
+        <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>
-  </form>
-</mat-dialog-content>
+  </div>
+
+  <div class="row">
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+  </div>
+
+  <div class="row">
+    <mat-dialog-content class="mat-typography">
+
+      <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
+
+        <mat-accordion class="example-headers-align">
+          <!-- Panel 1 -->
+          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
+            <mat-expansion-panel-header color="primary">
+              <mat-panel-title>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                  1
+                </button>
+                <span class="negrita">Datos personal</span>
+              </mat-panel-title>
+              <mat-panel-description>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+        
+            <p></p>
+            <mat-form-field appearance="fill">
+              <mat-label>Persona</mat-label>
+              <mat-select formControlName="persona" [compareWith]="compareFn">
+                <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Profesión</mat-label>
+              <mat-select formControlName="profesion" [compareWith]="compareFn">
+                <mat-option *ngFor="let profesion of profesiones" [value]="profesion">{{ profesion.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('profesion')?.errors?.['required']">La profesión es requerida.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Especialidades</mat-label>
+              <mat-select formControlName="especialidades" multiple>
+                <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre
+                  }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Cargo</mat-label>
+              <mat-select formControlName="cargo" [compareWith]="compareFn">
+                <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('cargo')?.errors?.['required']">El cargo es requerido.</mat-error>
+            </mat-form-field>    
+
+            <mat-form-field appearance="fill">
+              <mat-label>Matrícula Nacional</mat-label>
+              <input matInput formControlName="matriculaNacional">
+              <mat-error *ngIf="legajoForm.get('matriculaNacional')?.errors?.['pattern']">El n° de matrícula puede tener letras
+                y números (entre 5 y 20 caracteres).</mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Matrícula Provincial</mat-label>
+              <input matInput formControlName="matriculaProvincial">
+              <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['pattern']">El n° de matrícula puede tener
+                letras y números (entre 5 y 20 caracteres).</mat-error>
+            </mat-form-field>
+            
+            <mat-action-row>
+              <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        
+          <!-- Panel 2 -->
+          <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                  2
+                </button>
+                <span class="negrita">Situación de revista</span>
+              </mat-panel-title>
+              <mat-panel-description>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Agrupación</mat-label>
+              <mat-select formControlName="agrupacion">
+                <mat-option *ngFor="let agrup of agrupaciones" [value]="agrup.value">{{ agrup.viewValue }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('agrupacion')?.errors?.['required']">La agrupación es requerida.</mat-error>
+            </mat-form-field>
+      
+            <mat-form-field appearance="fill">
+              <mat-label>Categoría</mat-label>
+              <mat-select formControlName="categoria" [compareWith]="compareFn">
+                <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('categoria')?.errors?.['required']">La categoría es requerida.</mat-error>
+            </mat-form-field>
+      
+            <mat-form-field appearance="fill">
+              <mat-label>Adicional</mat-label>
+              <mat-select formControlName="adicional" [compareWith]="compareFn">
+                <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
+            </mat-form-field>
+      
+            <mat-form-field appearance="fill">
+              <mat-label>Carga Horaria</mat-label>
+              <mat-select formControlName="cargaHoraria" [compareWith]="compareFn">
+                <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria.id">{{ cargaHoraria.cantidad
+                  }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('cargaHoraria')?.errors?.['required']">La carga horaria es
+                requerida.</mat-error>
+            </mat-form-field>
+      
+            <mat-form-field appearance="fill">
+              <mat-label>Tipo de revista</mat-label>
+              <mat-select formControlName="tipoRevista" [compareWith]="compareFn">
+                <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista.id">{{ tipoRevista.nombre
+                  }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('tipoRevista')?.errors?.['required']">El tipo de revista es
+                requerido.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
+              <mat-select formControlName="udo" [compareWith]="compareFn">
+                <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
+            </mat-form-field>
+          
+            <mat-action-row>
+              <button mat-button color="warn" (click)="prevStep()">Anterior</button>
+              <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        
+          <!-- Panel 3 -->
+          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                  3
+                </button>
+                <span class="negrita">Datos del legajo</span>
+              </mat-panel-title>
+              <mat-panel-description>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Actual</mat-label>
+              <mat-select formControlName="actual">
+                <mat-option [value]="true">Si</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('actual')?.errors?.['required']">El campo es requerido.</mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Legal</mat-label>
+              <mat-select formControlName="legal">
+                <mat-option [value]="true">Si</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('legal')?.errors?.['required']">El campo es requerido.</mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+              <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
+            </mat-form-field>
+            
+            <mat-action-row>
+              <button mat-button color="warn" (click)="prevStep()">Anterior</button>
+              <button mat-raised-button color="primary" type="button" [disabled]="!legajoForm.valid || !isModified()">
+                {{esEdicion ? 'Modificar' : 'Agregar Legajo'}}
+              </button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </mat-accordion>
+      
+        <div mat-dialog-actions class="action mt-4">
+          <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </mat-dialog-content>
+  </div>
+</div>
