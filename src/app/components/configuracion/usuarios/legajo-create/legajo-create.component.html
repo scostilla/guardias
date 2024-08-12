@@ -15,7 +15,7 @@
         <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
       </mat-form-field>
   
-      <div class="container grupo-form">
+      <div class="container grupo-form" *ngIf="!isContrafactura">
         <div class="titulos-second negrita contenedor-titulo-select-tabla">Revista:</div>
   
         <mat-form-field appearance="fill">
@@ -64,7 +64,7 @@
   
       </div>
   
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="fill" *ngIf="!isContrafactura">
         <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
         <mat-select formControlName="udo" [compareWith]="compareUdo">
           <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
@@ -79,7 +79,7 @@
         </mat-select>
       </mat-form-field>
   
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="fill" *ngIf="!isContrafactura">
         <mat-label>Cargo</mat-label>
         <mat-select formControlName="cargo" [compareWith]="compareCargo">
           <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>

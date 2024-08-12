@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
@@ -24,10 +23,9 @@ import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
-import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 
-// Define la interfaz para los datos que esperas recibir
+// Defino la interfaz para los datos que espero recibir
 export interface DialogData {
   asistencial: AsistencialListDto;
   efectores?: Efector[]; // Define el tipo específico para efectores
@@ -46,9 +44,10 @@ interface Agrup {
 export class LegajoCreateComponent implements OnInit {
 
   legajoForm: FormGroup;
- // initialData: any;
+  // initialData: any;
   personas: AsistencialListDto[] = [];
-  selectedPersona: AsistencialListDto | null = null; // Para guardar la persona seleccionada que viene desde componente person 
+  // Para guardar la persona seleccionada que viene desde AsistencialComponent
+  selectedPersona: AsistencialListDto | null = null;
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -94,7 +93,7 @@ export class LegajoCreateComponent implements OnInit {
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
       udo: ['', Validators.required],
-      efectores: [[],Validators.required],
+      efectores: [[], Validators.required],
       especialidades: [[]],
       matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
       matriculaProvincial: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
@@ -131,46 +130,50 @@ export class LegajoCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.listAsistenciales();
+    this.setupFormValueChanges();
+
     // Si se ha recibido una persona
     if (this.data && this.data.asistencial) {
-       // Verificar qué contiene selectedPersona y nombresTiposGuardias
-       console.log('Received Data:', this.data.asistencial);
-
-       console.log("datos de this.data.asistencial" + this.data.asistencial);
       this.selectedPersona = this.data.asistencial;
-
-      // Verificar qué contiene selectedPersona y nombresTiposGuardias
-      console.log('Selected Persona:', this.selectedPersona);
-      console.log('NombresTiposGuardias:', this.selectedPersona!.nombresTiposGuardias);
-
-
       // lo carga en el formulario
       this.legajoForm.patchValue({
         persona: this.selectedPersona
       });
-
-       // Verificar si el array nombresTiposGuardias contiene "CONTRAFACTURA"
-       if (this.selectedPersona && this.selectedPersona.nombresTiposGuardias && this.selectedPersona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
-        console.log("ENTROOO")
-        // Deshabilitar el campo "udo" si se encuentra "CONTRAFACTURA"
-        this.legajoForm.get('udo')?.disable();
+      this.checkTipoGuardia(this.selectedPersona);
     }
-    }
-    
   }
 
- /*  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
-  } */
-    isModified(): boolean {
-      return this.legajoForm.dirty;
+  setupFormValueChanges(): void {
+    this.legajoForm.get('persona')?.valueChanges.subscribe((selectedPersona: AsistencialListDto) => {
+      if (selectedPersona) {
+        this.selectedPersona = selectedPersona;
+        this.checkTipoGuardia(selectedPersona);
+      }
+    });
+  }
+
+  checkTipoGuardia(persona: AsistencialListDto): void {
+    if (persona.nombresTiposGuardias && persona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
+      this.isContrafactura = true;
+    } else {
+      this.isContrafactura = false;
     }
+  }
+
+  /*  isModified(): boolean {
+     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
+   } */
+
+  isModified(): boolean {
+    return this.legajoForm.dirty;
+  }
+
   listAsistenciales(): void {
 
     this.asistencialService.listDtos().subscribe(data => {
       this.personas = data;
       console.log('Datos recibidos:', this.personas);
-  
+
       if (this.selectedPersona) {
         const selectedId = this.selectedPersona.id;
         if (!this.personas.find(p => p.id === selectedId)) {
@@ -180,17 +183,6 @@ export class LegajoCreateComponent implements OnInit {
     }, error => {
       console.log(error);
     });
-  
-
-    /* this.asistencialService.listSummary().subscribe(data => {
-      this.personas = data;
-      console.log('Datos recibidos:', this.personas); // Verifica la estructura y tipo de datos
-      if (this.selectedPersona && !this.personas.find(p => p.id === this.selectedPersona!.id)) {
-        this.personas.push(this.selectedPersona as unknown as AsistencialSummaryDto);
-      }
-    }, error => {
-      console.log(error);
-    }); */
   }
 
   listProfesiones(): void {
@@ -225,8 +217,6 @@ export class LegajoCreateComponent implements OnInit {
       console.log(error);
     });
   }
-
-  
 
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
@@ -281,9 +271,9 @@ export class LegajoCreateComponent implements OnInit {
           // Si existe, usa su ID
           if (existingRevista && existingRevista.id !== undefined) {
             this.createLegajoDtoAndSave(legajoData, existingRevista.id);
-        } else {
-          console.error('La revista existente no tiene un ID.');
-      }
+          } else {
+            console.error('La revista existente no tiene un ID.');
+          }
         },
         (error) => {
           // Si no existe, crea una nueva revista
@@ -331,7 +321,7 @@ export class LegajoCreateComponent implements OnInit {
       legajoData.especialidades,
       legajoData.profesion.id
     );
-  
+
     this.legajoService.save(legajoDto).subscribe(
       result => {
         this.dialogRef.close({ type: 'save', data: result });
