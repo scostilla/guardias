@@ -12,11 +12,11 @@ import { AuthService } from 'src/app/services/login/auth.service';
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 
 @Component({
-  selector: 'app-asistencial-edit',
-  templateUrl: './asistencial-edit.component.html',
-  styleUrls: ['./asistencial-edit.component.css']
+  selector: 'app-asistencial-create',
+  templateUrl: './asistencial-create.component.html',
+  styleUrls: ['./asistencial-create.component.css']
 })
-export class AsistencialEditComponent implements OnInit {
+export class AsistencialCreateComponent implements OnInit {
   asistencialForm: FormGroup;
   initialData: any;
   tiposGuardias: TipoGuardia[] = [];
@@ -24,7 +24,7 @@ export class AsistencialEditComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<AsistencialEditComponent>,
+    public dialogRef: MatDialogRef<AsistencialCreateComponent>,
     private asistencialService: AsistencialService,
     private tipoGuardiaService: TipoGuardiaService,
     private rolService: RolService,
@@ -32,6 +32,7 @@ export class AsistencialEditComponent implements OnInit {
 
     @Inject(MAT_DIALOG_DATA) public data: Asistencial
   ) {
+    // Inicializo el formulario
     this.asistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
@@ -62,8 +63,8 @@ export class AsistencialEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initialData = this.asistencialForm.value;
   }
+
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
@@ -95,58 +96,45 @@ export class AsistencialEditComponent implements OnInit {
         asistencialData.password,
         asistencialData.roles
       );
-
-      console.log('Verificando existencia del usuario:', nuevoUsuario.nombreUsuario);
-
       // Verifica si existe un usuario con el nombreUsuario especificado
       this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
         (existingUsuario) => {
-          if (existingUsuario && existingUsuario.id != undefined) {
+          if (!existingUsuario) {
+            // Usuario no encontrado, creamos
+            this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
+          } else {
             console.error('El nombre de usuario ya existe.');
-          }else {
-            console.error('Error: No se pudo encontrar el usuario, aunque la respuesta no fue un error 404.');
-        }
+          }
         },
         (error) => {
-          if (error.status === 404) {
-            console.log('Usuario no encontrado, procediendo a crear uno nuevo.');
-            // Usuario no encontrado, a crearlo
-            this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
-        } else {
-            console.error('Error al buscar el usuario existente', error);
-        }
+          console.log('Error al buscar el usuario existente', error);
         }
       );
     }
   }
 
   createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
-    console.log("nuevo usuario" , nuevoUsuario.nombreUsuario , nuevoUsuario.email, nuevoUsuario.password, nuevoUsuario.roles);
+    //creamos el usuario
     this.authService.create(nuevoUsuario).subscribe(
-        () => {
-
-          console.log('Usuario creado exitosamente:', nuevoUsuario.nombreUsuario);
-            // Una vez creado, buscar el usuario recién creado
-
-            this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
-                (newUsuario) => {
-                    if (newUsuario && newUsuario.id !== undefined) {
-                      console.log('Usuario encontrado después de la creación:', newUsuario);
-                        this.createAsistencialDtoAndSave(asistencialData, newUsuario.id);
-                    } else {
-                        console.error('Error: No se pudo encontrar el nuevo usuario después de crearlo.');
-                    }
-                },
-                (searchError) => {
-                    console.error('Error al buscar el usuario después de crearlo', searchError);
-                }
-            );
-        },
-        (createError) => {
-            console.error('Error al crear el usuario', createError);
-        }
+      () => {
+        // buscar el usuario recién creado
+        this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
+          (newUsuario) => {
+            if (newUsuario && newUsuario.id !== undefined) {
+              //creo el asistencial con el id de usuario creado
+              this.createAsistencialDtoAndSave(asistencialData, newUsuario.id);
+            }
+          },
+          (searchError) => {
+            console.error('Error al buscar el usuario después de crearlo', searchError);
+          }
+        );
+      },
+      (createError) => {
+        console.error('Error al crear el usuario', createError);
+      }
     );
-}
+  }
 
   createAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
     const asistencialDto = new AsistencialDto(
@@ -165,33 +153,16 @@ export class AsistencialEditComponent implements OnInit {
       asistencialData.tiposGuardias
     );
 
-    console.log('Guardando asistencial:', asistencialDto);
-    this.saveOrUpdateAsistencial(asistencialDto);
-  }
+    this.asistencialService.save(asistencialDto).subscribe(
+      result => {
+        this.dialogRef.close({ type: 'save', data: result });
+      },
+      error => {
+        console.error('Error al guardar el asistencial', error);
+        this.dialogRef.close({ type: 'error', data: error });
+      }
+    );
 
-  saveOrUpdateAsistencial(asistencialDto: AsistencialDto): void {
-
-    if (this.data && this.data.id) {
-      this.asistencialService.update(this.data.id, asistencialDto).subscribe(
-        result => {
-          this.dialogRef.close({ type: 'save', data: result });
-        },
-        error => {
-          console.error('Error al actualizar el asistencial', error);
-          this.dialogRef.close({ type: 'error', data: error });
-        }
-      );
-    } else {
-      this.asistencialService.save(asistencialDto).subscribe(
-        result => {
-          this.dialogRef.close({ type: 'save', data: result });
-        },
-        error => {
-          console.error('Error al guardar el asistencial', error);
-          this.dialogRef.close({ type: 'error', data: error });
-        }
-      );
-    }
   }
 
   cancel(): void {
@@ -218,5 +189,4 @@ export class AsistencialEditComponent implements OnInit {
       });
     }
   }
-
 }

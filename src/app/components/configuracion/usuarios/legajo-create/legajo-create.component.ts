@@ -24,21 +24,31 @@ import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
+import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+
+// Define la interfaz para los datos que esperas recibir
+export interface DialogData {
+  asistencial: AsistencialListDto;
+  efectores?: Efector[]; // Define el tipo específico para efectores
+  especialidades?: Especialidad[]; // Define el tipo específico para especialidades
+}
 
 interface Agrup {
   value: string;
   viewValue: string;
 }
 @Component({
-  selector: 'app-legajo-edit',
-  templateUrl: './legajo-edit.component.html',
-  styleUrls: ['./legajo-edit.component.css']
+  selector: 'app-legajo-create',
+  templateUrl: './legajo-create.component.html',
+  styleUrls: ['./legajo-create.component.css']
 })
-export class LegajoEditComponent implements OnInit {
+export class LegajoCreateComponent implements OnInit {
 
-  legajoForm!: FormGroup;
-  initialData: any;
-  personas: Asistencial[] = [];
+  legajoForm: FormGroup;
+ // initialData: any;
+  personas: AsistencialListDto[] = [];
+  selectedPersona: AsistencialListDto | null = null; // Para guardar la persona seleccionada que viene desde componente person 
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -47,10 +57,19 @@ export class LegajoEditComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
+  isContrafactura: boolean = false;
+  /* Form de revista */
+  agrupaciones: Agrup[] = [
+    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
+    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
+    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
+    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
+    { value: 'TECNICOS', viewValue: 'Técnicos' },
+  ];
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<LegajoEditComponent>,
+    public dialogRef: MatDialogRef<LegajoCreateComponent>,
     private legajoService: LegajoService,
     private profesionService: ProfesionService,
     private asistencialService: AsistencialService,
@@ -63,7 +82,7 @@ export class LegajoEditComponent implements OnInit {
     private tipoRevistaService: TipoRevistaService,
     private revistaService: RevistaService,
 
-    @Inject(MAT_DIALOG_DATA) public data: Legajo
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
 
     this.legajoForm = this.fb.group({
@@ -74,9 +93,8 @@ export class LegajoEditComponent implements OnInit {
       tipoRevista: ['', Validators.required],
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
-      //revista: [''],
       udo: ['', Validators.required],
-      efectores: [[]],
+      efectores: [[],Validators.required],
       especialidades: [[]],
       matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
       matriculaProvincial: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
@@ -87,7 +105,6 @@ export class LegajoEditComponent implements OnInit {
       cargo: ['', Validators.required],
     });
 
-    this.listAsistenciales();
     this.listProfesiones();
     this.listUdos();
     this.listCargos();
@@ -97,6 +114,11 @@ export class LegajoEditComponent implements OnInit {
     this.listCargaHoraria();
     this.listTipoRevista();
 
+    if (data && data.asistencial) {
+      this.legajoForm.patchValue({
+        persona: data.asistencial
+      });
+    }
 
     if (data) {
       this.legajoForm.patchValue({
@@ -108,19 +130,67 @@ export class LegajoEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initialData = this.legajoForm.value;
+    this.listAsistenciales();
+    // Si se ha recibido una persona
+    if (this.data && this.data.asistencial) {
+       // Verificar qué contiene selectedPersona y nombresTiposGuardias
+       console.log('Received Data:', this.data.asistencial);
+
+       console.log("datos de this.data.asistencial" + this.data.asistencial);
+      this.selectedPersona = this.data.asistencial;
+
+      // Verificar qué contiene selectedPersona y nombresTiposGuardias
+      console.log('Selected Persona:', this.selectedPersona);
+      console.log('NombresTiposGuardias:', this.selectedPersona!.nombresTiposGuardias);
+
+
+      // lo carga en el formulario
+      this.legajoForm.patchValue({
+        persona: this.selectedPersona
+      });
+
+       // Verificar si el array nombresTiposGuardias contiene "CONTRAFACTURA"
+       if (this.selectedPersona && this.selectedPersona.nombresTiposGuardias && this.selectedPersona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
+        console.log("ENTROOO")
+        // Deshabilitar el campo "udo" si se encuentra "CONTRAFACTURA"
+        this.legajoForm.get('udo')?.disable();
+    }
+    }
+    
   }
 
-  isModified(): boolean {
+ /*  isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
-  }
-
+  } */
+    isModified(): boolean {
+      return this.legajoForm.dirty;
+    }
   listAsistenciales(): void {
-    this.asistencialService.list().subscribe(data => {
+
+    this.asistencialService.listDtos().subscribe(data => {
       this.personas = data;
+      console.log('Datos recibidos:', this.personas);
+  
+      if (this.selectedPersona) {
+        const selectedId = this.selectedPersona.id;
+        if (!this.personas.find(p => p.id === selectedId)) {
+          this.personas.push(this.selectedPersona as AsistencialListDto);
+        }
+      }
     }, error => {
       console.log(error);
     });
+  
+
+    /* this.asistencialService.listSummary().subscribe(data => {
+      this.personas = data;
+      console.log('Datos recibidos:', this.personas); // Verifica la estructura y tipo de datos
+      if (this.selectedPersona && !this.personas.find(p => p.id === this.selectedPersona!.id)) {
+        this.personas.push(this.selectedPersona as unknown as AsistencialSummaryDto);
+      }
+    }, error => {
+      console.log(error);
+    }); */
   }
 
   listProfesiones(): void {
@@ -156,15 +226,7 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  /* Form de revista */
-
-  agrupaciones: Agrup[] = [
-    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
-    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
-    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
-    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
-    { value: 'TECNICOS', viewValue: 'Técnicos' },
-  ];
+  
 
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
@@ -270,33 +332,14 @@ export class LegajoEditComponent implements OnInit {
       legajoData.profesion.id
     );
   
-    console.log("#### legajoDto que viene ", legajoDto);
-    console.log("#### legajoDto id de la revista  ", legajoDto.idRevista);
-    console.log("#### data y data.id ", this.data);
-  
-    this.saveOrUpdateLegajo(legajoDto);
-  }
-
-
-  saveOrUpdateLegajo(legajoDto: LegajoDto): void {
-
-    if (this.legajoForm.valid){
-      /* AYUDA: si this.data tiene un valor y un ID asociado */
-    if (this.data && this.data.id) {
-      this.legajoService.update(this.data.id, legajoDto).subscribe(
-        result => {
-          this.dialogRef.close({ type: 'save', data: result });
-        },
-        error => {
-          this.dialogRef.close({ type: 'error', data: error });
-        }
-      );
-    } 
-    }
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close();
+    this.legajoService.save(legajoDto).subscribe(
+      result => {
+        this.dialogRef.close({ type: 'save', data: result });
+      },
+      error => {
+        this.dialogRef.close({ type: 'error', data: error });
+      }
+    );
   }
 
   comparePersona(p1: Asistencial, p2: Asistencial): boolean {

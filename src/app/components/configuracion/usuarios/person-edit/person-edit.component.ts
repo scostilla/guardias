@@ -48,7 +48,7 @@ export class PersonEditComponent implements OnInit {
   }
 
   saveAsistencial(): void {
-    if (this.asistencialForm.valid) {
+    /* if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
 
       const asistencialDto = new AsistencialDto(
@@ -84,7 +84,7 @@ export class PersonEditComponent implements OnInit {
           }
         );
       }
-    }
+    } */
   }
 
   cancel(): void {

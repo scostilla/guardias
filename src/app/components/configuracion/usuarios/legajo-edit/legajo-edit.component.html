@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Legajo
+<h2 mat-dialog-title>Modificar Legajo
   <h5 class="['required']Field">*Campos Obligatorios</h5>
 </h2>
 
@@ -163,3 +163,8 @@
     </div>
   </form>
 </mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancelar</button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid">Guardar Cambios</button>
+</mat-dialog-actions>

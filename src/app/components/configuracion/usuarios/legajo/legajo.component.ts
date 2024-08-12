@@ -13,8 +13,7 @@ import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component'
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDetailComponent } from '../revista-detail/revista-detail.component'; 
-
-
+import { LegajoCreateComponent } from '../legajo-create/legajo-create.component';
 
 @Component({
   selector: 'app-legajo',
@@ -30,7 +29,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
 
   dialogRefLegajo!: MatDialogRef<LegajoDetailComponent>;
   dialogRefRevista!: MatDialogRef<RevistaDetailComponent>;
-  displayedColumns: string[] = ['persona', 'profesion','udo','actual', 'legal', 'fechaInicio',/* 'fechaFinal',  'matriculaNacional', 'matriculaProvincial', 'cargo', */ 'acciones'];
+  displayedColumns: string[] = ['persona', 'profesion','udo','actual', 'legal', 'fechaInicio', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajo!: Legajo;
@@ -125,36 +124,58 @@ export class LegajoComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-  openFormChanges(legajo?: Legajo): void {
-    const esEdicion = legajo != null;
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
+  createLegajo(): void {
+    const dialogRef = this.dialog.open(LegajoCreateComponent, {
       width: '600px',
-      data: esEdicion ? legajo : null
+      data: null
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-      if (result) {
-        this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
+        if (result) {
+          this.toastr.success('Legajo creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.dataSource.data.push(result);
+          this.dataSource._updateChangeSubscription();
+        } else {
+          this.toastr.error('Ocurrió un error al crear el Legajo', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+      }
+    });
+  }
+
+  editLegajo(legajo: Legajo): void {
+    const dialogRef = this.dialog.open(LegajoEditComponent, {
+      width: '600px',
+      data: legajo
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        if (result) {
+          this.toastr.success('Legajo editado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
           const index = this.dataSource.data.findIndex(p => p.id === result.id);
           this.dataSource.data[index] = result;
+          this.dataSource._updateChangeSubscription();
         } else {
-          this.dataSource.data.push(result);
+          this.toastr.error('Ocurrió un error al editar el Legajo', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
         }
-        this.dataSource._updateChangeSubscription();
-      } else {
-        this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
       }
-    }
     });
   }
 
