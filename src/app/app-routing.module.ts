@@ -189,6 +189,7 @@ import { PruebaDetailComponent } from './components/configuracion/territorio/pru
 import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
 import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
+import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
 
 
 
@@ -249,6 +250,7 @@ const routes: Routes = [
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
   {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
   {path: 'no-asistencial', component:NoAsistencialComponent},
+  {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
   {path: 'legajo', component:LegajoComponent},

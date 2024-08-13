@@ -24,9 +24,11 @@ import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 
 // Defino la interfaz para los datos que espero recibir
 export interface DialogData {
+  noAsistencial: NoAsistencial;
   asistencial: AsistencialListDto;
   efectores?: Efector[]; // Define el tipo específico para efectores
   especialidades?: Especialidad[]; // Define el tipo específico para especialidades
@@ -116,6 +118,12 @@ export class LegajoCreateComponent implements OnInit {
     if (data && data.asistencial) {
       this.legajoForm.patchValue({
         persona: data.asistencial
+      });
+    }
+
+    if (data && data.noAsistencial) {
+      this.legajoForm.patchValue({
+        persona: data.noAsistencial
       });
     }
 

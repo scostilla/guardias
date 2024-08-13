@@ -221,6 +221,7 @@ import { TipoRevistaEditComponent } from './components/configuracion/usuarios/ti
 import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
+import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -393,6 +394,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     RevistaDetailComponent,
     LegajoCreateComponent,
     AsistencialCreateComponent,
+    NoAsistencialCreateComponent,
     
   ],
 

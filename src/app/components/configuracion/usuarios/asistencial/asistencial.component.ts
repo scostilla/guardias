@@ -8,10 +8,8 @@ import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { PersonDetailComponent } from '../person-detail/person-detail.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { NovedadesFormComponent } from '../../../personal/novedades-form/novedades-form.component';
 import { DistHorariaComponent } from '../../../personal/dist-horaria/dist-horaria.component';
 
@@ -21,7 +19,6 @@ import { AsistencialCreateComponent } from '../asistencial-create/asistencial-cr
 import { AsistencialEditComponent } from '../asistencial-edit/asistencial-edit.component';
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
 import { LegajoCreateComponent } from '../legajo-create/legajo-create.component';
-import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 
 @Component({
   selector: 'app-asistencial',
@@ -44,7 +41,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
   dataSource!: MatTableDataSource<AsistencialListDto>;
   suscription!: Subscription;
   asistencial!: AsistencialListDto;
@@ -106,13 +103,19 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   listLegajos(): void {
+    this.isLoadingLegajos = true;
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
+      this.legajos = legajos;
+      this.isLoadingLegajos = false;
+      this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
+    });
+    /* this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
       //Forzar la actualización de la tabla
       this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
     
-    });
+    }); */
   }
 
   verDistribucion(asistencial: Asistencial): void {

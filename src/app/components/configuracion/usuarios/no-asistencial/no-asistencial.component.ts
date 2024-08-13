@@ -10,6 +10,12 @@ import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { NoAsistencialEditComponent } from '../no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component'; 
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { LegajoCreateComponent } from '../legajo-create/legajo-create.component';
+import { Router } from '@angular/router';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { NoAsistencialListDto } from 'src/app/dto/Configuracion/noAsistencial/NoAsistencialListDto';
+import { NoAsistencialCreateComponent } from '../no-asistencial-create/no-asistencial-create.component';
 
 @Component({
   selector: 'app-no-asistencial',
@@ -32,14 +38,19 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NoAsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', /*'dni', 'domicilio', 'email', 'estado', */ 'cuil', /*'fechaNacimiento', 'sexo', 'telefono', 'descripcion', */ 'acciones'];
-  dataSource!: MatTableDataSource<NoAsistencial>;
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil',  'acciones'];
+  dataSource!: MatTableDataSource<NoAsistencialListDto>;
   suscription!: Subscription;
+  legajos: Legajo[] = [];
+  isLoadingLegajos: boolean = true;
+  //noasiasistencial!: NoAsistencialListDto;
 
   constructor(
     private noasistencialService: NoAsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
+    private legajoService: LegajoService,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -54,6 +65,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
+    this.listLegajos();
     this.listNoAsistencial();
 
     this.suscription = this.noasistencialService.refresh$.subscribe(() => {
@@ -65,7 +77,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   listNoAsistencial(): void {
-    this.noasistencialService.list().subscribe(data => {
+    this.noasistencialService.listDtos().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -77,7 +89,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
   
     let columnasVisibles: string[] = [];
   
@@ -86,24 +98,9 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       if (columna === 'cuil' && this.dniVisible) {
         columnasVisibles.push('dni');
       }
-      /*if (columna === 'apellido' && this.domicilioVisible) {
-        columnasVisibles.push('domicilio');
-      }
-      if (columna === 'apellido' && this.estadoVisible) {
-        columnasVisibles.push('estado');
-      }
-      if (columna === 'cuil' && this.fechaNacimientoVisible) {
-        columnasVisibles.push('fechaNacimiento');
-      }*/
       if (columna === 'cuil' && this.telefonoVisible) {
         columnasVisibles.push('telefono');
       }
-      /*if (columna === 'telefono' && this.emailVisible) {
-        columnasVisibles.push('email');
-      }
-      if (columna === 'telefono' && this.descripcionVisible) {
-        columnasVisibles.push('descripcion');
-      }*/
     });
   
     this.displayedColumns = columnasVisibles;
@@ -128,7 +125,19 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     return output;
   }
 
-  applyFilter(event: Event) {
+  applyFilter(filterValue: string) {
+    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  
+    this.dataSource.filterPredicate = (data: NoAsistencialListDto, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return normalizedData.indexOf(normalizedFilterValue) != -1;
+    };
+  
+    this.dataSource.filter = normalizedFilterValue;
+  }
+
+  /* applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
@@ -136,36 +145,31 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
       this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase()))
     };
-  }
+  } */
 
-  openFormChanges(noasistencial?: NoAsistencial): void {
-    const esEdicion = noasistencial != null;
-    const dialogRef = this.dialog.open(NoAsistencialEditComponent, {
+  createNoAsistencial(): void {
+    const dialogRef = this.dialog.open(NoAsistencialCreateComponent, {
       width: '600px',
-      data: esEdicion ? noasistencial : null
+      data: null
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'No Asistencial editado con éxito' : 'No Asistencial creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
-          this.dataSource.data[index] = result.data;
+      if (result !== undefined) {
+        if (result) {
+          this.toastr.success('No Asistencial creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.dataSource.data.push(result);
+          this.dataSource._updateChangeSubscription();
         } else {
-          this.dataSource.data.push(result.data);
+          this.toastr.error('Ocurrió un error al crear el No Asistencial', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
         }
-        this.dataSource._updateChangeSubscription();
-      } else if (result && result.type === 'error') {
-        this.toastr.error('Ocurrió un error al crear o editar No Asistencial', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-      } else if (result && result.type === 'cancel') {
       }
     });
   }
@@ -178,6 +182,35 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
+    }
+
+    editNoAsistencial(noAsistencial?: NoAsistencial): void {
+      const esEdicion = noAsistencial != null;
+      const dialogRef = this.dialog.open(NoAsistencialEditComponent, {
+        width: '600px',
+        data: noAsistencial
+      });
+    
+      dialogRef.afterClosed().subscribe(result => {
+        if (result !== undefined) {
+          if (result) {
+            this.toastr.success('Asistencial editado con éxito', 'EXITO', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+            const index = this.dataSource.data.findIndex(p => p.id === result.id);
+            this.dataSource.data[index] = result;
+            this.dataSource._updateChangeSubscription();
+          } else {
+            this.toastr.error('Ocurrió un error al editar el asistencial', 'Error', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+          }
+        }
+      });
     }
 
   deleteNoAsistencial(noasistencial: NoAsistencial): void {
@@ -210,4 +243,74 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     }
   });
 }
+
+// obtengo el tooltip del botón basado en la existencia de legajos
+getTooltip(noAsistencial: NoAsistencial): string {
+  return this.hayLegajos(noAsistencial) ? 'Ver Legajo' : 'Agregar Legajo';
+}
+
+// Obtener el ícono del botón basado en la existencia de legajos
+getIcon(noAsistencial: NoAsistencial): string {
+  return this.hayLegajos(noAsistencial) ? 'playlist_play' : 'playlist_add';
+}
+
+// Determinar la acción del botón basada en la existencia de legajos
+getButtonAction(noAsistencial: NoAsistencial): void {
+  if (this.hayLegajos(noAsistencial)) {
+    this.verLegajo(noAsistencial);
+  } else {
+    this.crearLegajo(noAsistencial);
+  }
+}
+
+hayLegajos(noAsistencial: NoAsistencial): boolean {
+  return this.legajos.some(legajo => legajo.persona.id === noAsistencial.id);
+}
+
+verLegajo(noAsistencial: NoAsistencial): void {
+  if (noAsistencial && noAsistencial.id) {
+    this.router.navigate(['/legajo-person', noAsistencial.id]);
+  } else {
+    console.error('El objeto no asistencial no tiene un id.');
+  }
+}
+
+listLegajos(): void {
+  this.isLoadingLegajos = true;
+  this.legajoService.list().subscribe((legajos: Legajo[]) => {
+    this.legajos = legajos;
+    this.isLoadingLegajos = false;
+    this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
+  });
+}
+
+crearLegajo(noAsistencial: NoAsistencial): void {
+  const dialogRef = this.dialog.open(LegajoCreateComponent, {
+    width: '600px',
+    data: {noAsistencial } // Envío la persona al componente
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result !== undefined) {
+      if (result) {
+        this.toastr.success('Legajo creado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        // Actualizar la lista de legajos y la tabla
+      this.listLegajos();
+        /* this.dataSource.data.push(result);
+        this.dataSource._updateChangeSubscription(); */
+      } else {
+        this.toastr.error('No se creó el Legajo', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+  });
+} 
+
 }
