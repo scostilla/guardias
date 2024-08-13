@@ -109,6 +109,9 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
+      //Forzar la actualización de la tabla
+      this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
+    
     });
   }
 

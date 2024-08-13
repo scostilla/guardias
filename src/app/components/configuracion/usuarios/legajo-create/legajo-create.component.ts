@@ -155,9 +155,34 @@ export class LegajoCreateComponent implements OnInit {
   checkTipoGuardia(persona: AsistencialListDto): void {
     if (persona.nombresTiposGuardias && persona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
       this.isContrafactura = true;
+      // Limpiar validadores de los campos que no son necesarios para CONTRAFACTURA
+    this.legajoForm.get('agrupacion')?.clearValidators();
+    this.legajoForm.get('categoria')?.clearValidators();
+    this.legajoForm.get('adicional')?.clearValidators();
+    this.legajoForm.get('cargaHoraria')?.clearValidators();
+    this.legajoForm.get('tipoRevista')?.clearValidators();
+    this.legajoForm.get('udo')?.clearValidators();
+    this.legajoForm.get('cargo')?.clearValidators();
     } else {
       this.isContrafactura = false;
+      // Restablecer validadores en caso de que no sea CONTRAFACTURA
+    this.legajoForm.get('agrupacion')?.setValidators(Validators.required);
+    this.legajoForm.get('categoria')?.setValidators(Validators.required);
+    this.legajoForm.get('adicional')?.setValidators(Validators.required);
+    this.legajoForm.get('cargaHoraria')?.setValidators(Validators.required);
+    this.legajoForm.get('tipoRevista')?.setValidators(Validators.required);
+    this.legajoForm.get('udo')?.setValidators(Validators.required);
+    this.legajoForm.get('cargo')?.setValidators(Validators.required);
     }
+
+    // Actualizar el estado de los campos en el formulario
+  this.legajoForm.get('agrupacion')?.updateValueAndValidity();
+  this.legajoForm.get('categoria')?.updateValueAndValidity();
+  this.legajoForm.get('adicional')?.updateValueAndValidity();
+  this.legajoForm.get('cargaHoraria')?.updateValueAndValidity();
+  this.legajoForm.get('tipoRevista')?.updateValueAndValidity();
+  this.legajoForm.get('udo')?.updateValueAndValidity();
+  this.legajoForm.get('cargo')?.updateValueAndValidity();
   }
 
   /*  isModified(): boolean {
@@ -258,6 +283,11 @@ export class LegajoCreateComponent implements OnInit {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
 
+       // Si es CONTRAFACTURA, no se crea ni se busca una revista
+    if (this.isContrafactura) {
+      this.createLegajoDtoAndSave(legajoData,null);
+    } else {
+
       const revistaDto = new RevistaDto(
         legajoData.tipoRevista,
         legajoData.categoria,
@@ -303,8 +333,9 @@ export class LegajoCreateComponent implements OnInit {
       );
     }
   }
+  }
 
-  createLegajoDtoAndSave(legajoData: any, revistaId: number): void {
+  createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
     const legajoDto = new LegajoDto(
       legajoData.fechaInicio,
       legajoData.fechaFinal,
@@ -313,7 +344,7 @@ export class LegajoCreateComponent implements OnInit {
       legajoData.activo,
       legajoData.matriculaNacional,
       legajoData.matriculaProvincial,
-      revistaId, // Usa el ID de la revista (existente o nueva)
+      revistaId!, // Usa el ID de la revista (existente o nueva)
       legajoData.udo.id,
       legajoData.persona.id,
       legajoData.cargo.id,

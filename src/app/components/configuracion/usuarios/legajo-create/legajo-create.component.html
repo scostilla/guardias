@@ -151,8 +151,8 @@
       </mat-form-field>
   
       <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()">
-          {{data ? 'Modificar' : 'Agregar'}}
+        <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid ">
+          Agregar
         </button>
         <button mat-raised-button color="secondary" type="button" (click)="cancel()">
           Cancelar

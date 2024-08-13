@@ -162,7 +162,6 @@ export class AsistencialCreateComponent implements OnInit {
         this.dialogRef.close({ type: 'error', data: error });
       }
     );
-
   }
 
   cancel(): void {
