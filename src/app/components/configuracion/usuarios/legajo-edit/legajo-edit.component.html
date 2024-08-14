@@ -23,11 +23,11 @@
         <mat-accordion class="example-headers-align">
           <!-- Panel 1 -->
           <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle >
-            <mat-expansion-panel-header color="primary" style="background-color: #c8e8f5;">
+            <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                  1
-                </button>
+                <div class="book-marker">
+                  <span class="marker-number">1</span>
+                </div>
                 <span class="negrita">Datos personal</span>
               </mat-panel-title>
               <mat-panel-description>
@@ -88,11 +88,11 @@
         
           <!-- Panel 2 -->
           <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                  2
-                </button>
+                <div class="book-marker">
+                  <span class="marker-number">2</span>
+                </div>
                 <span class="negrita">Situación de revista</span>
               </mat-panel-title>
               <mat-panel-description>
@@ -159,11 +159,11 @@
         
           <!-- Panel 3 -->
           <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                  3
-                </button>
+                <div class="book-marker">
+                  <span class="marker-number">3</span>
+                </div>
                 <span class="negrita">Datos del legajo</span>
               </mat-panel-title>
               <mat-panel-description>

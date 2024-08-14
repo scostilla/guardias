@@ -1,6 +1,5 @@
-export class Usuario {
-
-    id?: number;
+export class NuevoUsuario{
+    
     nombreUsuario: string;
     email: string;
     password: string;
@@ -13,4 +12,5 @@ export class Usuario {
         this.password = password;
         this.roles = roles;
     }
+
 }

@@ -115,6 +115,27 @@
           </mat-form-field>
         </div>
 
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Nombre de Usuario</mat-label>
+            <input matInput formControlName="nombreUsuario">
+            <mat-error *ngIf="asistencialForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
+          </mat-form-field>
+      
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Contraseña</mat-label>
+            <input matInput formControlName="password">
+            <mat-error *ngIf="asistencialForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
+          </mat-form-field>
+      
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Roles</mat-label>
+            <mat-select formControlName="roles" multiple>
+              <mat-option *ngFor="let rol of roles" [value]="rol.id">{{ rol.rolNombre }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
         <div mat-dialog-actions class="action mt-4">
           <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid || !isModified()">
             {{esEdicion ? 'Modificar' : 'Agregar'}}

@@ -1,18 +1,9 @@
-export class AsistencialDto {
-    
-    nombre: string;
-    apellido: string;
-    dni: number;
-    cuil: string;
-    fechaNacimiento: Date;
-    sexo: string;
-    telefono: string;
-    email: string;
-    domicilio: string;
-    esAsistencial:boolean;
+import { PersonDto } from "./PersonDto";
+
+export class AsistencialDto extends PersonDto {
+
     idTiposGuardias: number[];
-    activo: boolean;
-  
+
     constructor(
         nombre: string,
         apellido: string,
@@ -23,24 +14,13 @@ export class AsistencialDto {
         telefono: string,
         email: string,
         domicilio: string,
-        esAsistencial:boolean,
-        idTiposGuardias: number[],
+        esAsistencial: boolean,
         activo: boolean,
-               
-        ) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.cuil = cuil;
-        this.fechaNacimiento = fechaNacimiento;
-        this.sexo = sexo;
-        this.telefono = telefono;
-        this.email = email;
-        this.domicilio = domicilio;
-        this.esAsistencial=esAsistencial;
-        this.idTiposGuardias=idTiposGuardias;
-        this.activo = activo;
-      
+        idUsuario: number,
+        idTiposGuardias: number[]
+    ) {
+        super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, esAsistencial, activo, idUsuario);
+        this.idTiposGuardias = idTiposGuardias;
     }
-  
-  }
+
+}
