@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
@@ -25,14 +25,14 @@ import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 
 // Defino la interfaz para los datos que espero recibir
 export interface DialogData {
-  noAsistencial: NoAsistencial;
   asistencial: AsistencialListDto;
   efectores?: Efector[]; // Define el tipo específico para efectores
   especialidades?: Especialidad[]; // Define el tipo específico para especialidades
-}
+} 
 
 interface Agrup {
   value: string;
@@ -45,11 +45,16 @@ interface Agrup {
 })
 export class LegajoCreateComponent implements OnInit {
 
+  @Input() tipoPersona!: 'Asistencial' | 'NoAsistencial'; // Para determinar el tipo de persona
+  @Input() persona!: AsistencialListDto | NoAsistencial; // Recibe el dto correspondiente
+  selectedOption: 'asistencial' | 'noAsistencial' = 'asistencial';
+
   legajoForm: FormGroup;
   // initialData: any;
-  personas: AsistencialListDto[] = [];
-  // Para guardar la persona seleccionada que viene desde AsistencialComponent
-  selectedPersona: AsistencialListDto | null = null;
+  personasAsistenciales: AsistencialListDto[] = [];
+  personasNoAsistenciales: NoAsistencial[] = [];
+  selectedPersona: AsistencialListDto | NoAsistencial | undefined;
+
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -74,6 +79,7 @@ export class LegajoCreateComponent implements OnInit {
     private legajoService: LegajoService,
     private profesionService: ProfesionService,
     private asistencialService: AsistencialService,
+    private noAsistencialService: NoAsistencialService,
     private hospitalService: HospitalService,
     private cargoService: CargoService,
     private especialidadService: EspecialidadService,
@@ -92,6 +98,7 @@ export class LegajoCreateComponent implements OnInit {
       adicional: ['', Validators.required],
       cargaHoraria: ['', Validators.required],
       tipoRevista: ['', Validators.required],
+      //persona: [null],
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
       udo: ['', Validators.required],
@@ -105,7 +112,14 @@ export class LegajoCreateComponent implements OnInit {
       fechaFinal: [''],
       cargo: ['', Validators.required],
     });
+  }
 
+  ngOnInit(): void {
+    this.loadInitialData();
+    this.setupFormValueChanges();
+  }
+
+  loadInitialData(): void {
     this.listProfesiones();
     this.listUdos();
     this.listCargos();
@@ -115,40 +129,34 @@ export class LegajoCreateComponent implements OnInit {
     this.listCargaHoraria();
     this.listTipoRevista();
 
-    if (data && data.asistencial) {
+    if (this.persona) {
       this.legajoForm.patchValue({
-        persona: data.asistencial
+        persona: this.persona,
       });
+
+      if (this.tipoPersona === 'Asistencial' && this.selectedOption === 'asistencial') {
+        this.listAsistenciales();
+      } else {
+        this.listNoAsistenciales();
+      }
+
+      if (this.personaHasTipoGuardia(this.persona)) {
+        this.checkTipoGuardia(this.persona);
+      }
     }
 
-    if (data && data.noAsistencial) {
+    if (this.data) {
       this.legajoForm.patchValue({
-        persona: data.noAsistencial
-      });
-    }
-
-    if (data) {
-      this.legajoForm.patchValue({
-        ...data,
-        efectores: data.efectores ? data.efectores.map((efector: any) => efector.id) : [],
-        especialidades: data.especialidades ? data.especialidades.map((especialidad: any) => especialidad.id) : []
+        ...this.data,
+        efectores: this.data.efectores?.map(efector => efector.id) || [],
+        especialidades: this.data.especialidades?.map(especialidad => especialidad.id) || []
       });
     }
   }
 
-  ngOnInit(): void {
-    this.listAsistenciales();
-    this.setupFormValueChanges();
-
-    // Si se ha recibido una persona
-    if (this.data && this.data.asistencial) {
-      this.selectedPersona = this.data.asistencial;
-      // lo carga en el formulario
-      this.legajoForm.patchValue({
-        persona: this.selectedPersona
-      });
-      this.checkTipoGuardia(this.selectedPersona);
-    }
+  onOptionChange(option: 'asistencial' | 'noAsistencial') {
+    this.selectedOption = option;
+    this.loadInitialData();
   }
 
   setupFormValueChanges(): void {
@@ -160,10 +168,23 @@ export class LegajoCreateComponent implements OnInit {
     });
   }
 
+  personaHasTipoGuardia(persona: AsistencialListDto | NoAsistencial): persona is AsistencialListDto {
+    return 'nombresTiposGuardias' in persona;
+  }
+
   checkTipoGuardia(persona: AsistencialListDto): void {
     if (persona.nombresTiposGuardias && persona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
       this.isContrafactura = true;
       // Limpiar validadores de los campos que no son necesarios para CONTRAFACTURA
+      this.clearValidators();
+    } else {
+      this.isContrafactura = false;
+      // Restablecer validadores en caso de que no sea CONTRAFACTURA
+      this.setValidators();
+    }
+  }
+
+  clearValidators(): void {
     this.legajoForm.get('agrupacion')?.clearValidators();
     this.legajoForm.get('categoria')?.clearValidators();
     this.legajoForm.get('adicional')?.clearValidators();
@@ -171,9 +192,10 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('tipoRevista')?.clearValidators();
     this.legajoForm.get('udo')?.clearValidators();
     this.legajoForm.get('cargo')?.clearValidators();
-    } else {
-      this.isContrafactura = false;
-      // Restablecer validadores en caso de que no sea CONTRAFACTURA
+    this.updateValidators();
+  }
+
+  setValidators(): void {
     this.legajoForm.get('agrupacion')?.setValidators(Validators.required);
     this.legajoForm.get('categoria')?.setValidators(Validators.required);
     this.legajoForm.get('adicional')?.setValidators(Validators.required);
@@ -181,16 +203,17 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('tipoRevista')?.setValidators(Validators.required);
     this.legajoForm.get('udo')?.setValidators(Validators.required);
     this.legajoForm.get('cargo')?.setValidators(Validators.required);
-    }
+    this.updateValidators();
+  }
 
-    // Actualizar el estado de los campos en el formulario
-  this.legajoForm.get('agrupacion')?.updateValueAndValidity();
-  this.legajoForm.get('categoria')?.updateValueAndValidity();
-  this.legajoForm.get('adicional')?.updateValueAndValidity();
-  this.legajoForm.get('cargaHoraria')?.updateValueAndValidity();
-  this.legajoForm.get('tipoRevista')?.updateValueAndValidity();
-  this.legajoForm.get('udo')?.updateValueAndValidity();
-  this.legajoForm.get('cargo')?.updateValueAndValidity();
+  updateValidators(): void {
+    this.legajoForm.get('agrupacion')?.updateValueAndValidity();
+    this.legajoForm.get('categoria')?.updateValueAndValidity();
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+    this.legajoForm.get('cargaHoraria')?.updateValueAndValidity();
+    this.legajoForm.get('tipoRevista')?.updateValueAndValidity();
+    this.legajoForm.get('udo')?.updateValueAndValidity();
+    this.legajoForm.get('cargo')?.updateValueAndValidity();
   }
 
   /*  isModified(): boolean {
@@ -204,13 +227,29 @@ export class LegajoCreateComponent implements OnInit {
   listAsistenciales(): void {
 
     this.asistencialService.listDtos().subscribe(data => {
-      this.personas = data;
-      console.log('Datos recibidos:', this.personas);
+      this.personasAsistenciales = data;
+      console.log('Datos recibidos:', this.personasAsistenciales);
 
       if (this.selectedPersona) {
         const selectedId = this.selectedPersona.id;
-        if (!this.personas.find(p => p.id === selectedId)) {
-          this.personas.push(this.selectedPersona as AsistencialListDto);
+        if (!this.personasAsistenciales.find(p => p.id === selectedId)) {
+          this.personasAsistenciales.push(this.selectedPersona as AsistencialListDto);
+        }
+      }
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  private listNoAsistenciales(): void {
+    this.noAsistencialService.list().subscribe(data => {
+      this.personasNoAsistenciales = data;
+      console.log('Datos recibidos:', this.personasNoAsistenciales);
+
+      if (this.selectedPersona) {
+        const selectedId = this.selectedPersona.id;
+        if (!this.personasNoAsistenciales.find(p => p.id === selectedId)) {
+          this.personasNoAsistenciales.push(this.selectedPersona as NoAsistencial);
         }
       }
     }, error => {
@@ -371,7 +410,7 @@ export class LegajoCreateComponent implements OnInit {
     );
   }
 
-  comparePersona(p1: Asistencial, p2: Asistencial): boolean {
+  comparePersona(p1: AsistencialListDto | NoAsistencial, p2: AsistencialListDto | NoAsistencial): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 

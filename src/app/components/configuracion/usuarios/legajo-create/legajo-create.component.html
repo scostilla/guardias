@@ -4,13 +4,28 @@
   
   <mat-dialog-content class="mat-typography">
   
+    <div>
+      <label>
+        <input type="radio" name="tipo" value="asistencial" (change)="onOptionChange('asistencial')" [checked]="selectedOption === 'asistencial'">
+        Asistencial
+      </label>
+      <label>
+        <input type="radio" name="tipo" value="noAsistencial" (change)="onOptionChange('noAsistencial')" [checked]="selectedOption === 'noAsistencial'">
+        No Asistencial
+      </label>
+    </div>
+
     <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
   
       <mat-form-field appearance="fill">
         <mat-label>Persona</mat-label>
         <mat-select formControlName="persona" [compareWith]="comparePersona">
-          <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }} {{persona.apellido }}
+          <!-- <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }} {{persona.apellido }}
           </mat-option>
+           -->
+           <mat-option *ngFor="let persona of (selectedOption === 'asistencial' ? personasAsistenciales : personasNoAsistenciales)"
+           [value]="persona">{{ persona.nombre }} {{ persona.apellido }}</mat-option>
+
         </mat-select>
         <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
       </mat-form-field>
@@ -52,7 +67,7 @@
             requerida.</mat-error>
         </mat-form-field>
   
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" *ngIf="tipoPersona === 'Asistencial'">
           <mat-label>Tipo de revista</mat-label>
           <mat-select formControlName="tipoRevista" [compareWith]="compareTipoRevista">
             <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista.id">{{ tipoRevista.nombre

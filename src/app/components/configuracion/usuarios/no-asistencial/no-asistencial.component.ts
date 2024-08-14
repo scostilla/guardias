@@ -287,7 +287,10 @@ listLegajos(): void {
 crearLegajo(noAsistencial: NoAsistencial): void {
   const dialogRef = this.dialog.open(LegajoCreateComponent, {
     width: '600px',
-    data: {noAsistencial } // Envío la persona al componente
+    data: {
+      tipoPersona: 'NoAsistencial',
+        persona: noAsistencial
+     } 
   });
 
   dialogRef.afterClosed().subscribe(result => {

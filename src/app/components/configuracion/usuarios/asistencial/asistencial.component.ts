@@ -292,7 +292,9 @@ verLegajo(asistencial: AsistencialListDto): void {
 crearLegajo(asistencial: AsistencialListDto): void {
   const dialogRef = this.dialog.open(LegajoCreateComponent, {
     width: '600px',
-    data: {asistencial } // Envío la persona al componente
+    data: {
+      tipoPersona: 'Asistencial',
+      persona: asistencial } // Envío la persona al componente
   });
 
   dialogRef.afterClosed().subscribe(result => {
