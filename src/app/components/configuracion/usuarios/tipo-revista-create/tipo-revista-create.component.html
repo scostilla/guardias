@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>{{ esEdicion ? 'Modificar Tipo de Revista' : 'Crear Nuevo Tipo de Revista' }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="tipoRevistaForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" required>
+      <mat-error *ngIf="tipoRevistaForm.get('nombre')?.hasError('required')">
+        El nombre es obligatorio
+      </mat-error>
+      <mat-error *ngIf="nombreDuplicado">
+        Ya existe un tipo de revista con el mismo nombre
+      </mat-error>
+    </mat-form-field>
+    <div mat-dialog-actions>
+      <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+      <button mat-button color="primary" type="submit">{{ esEdicion ? 'Modificar' : 'Crear' }}</button>
+    </div>
+  </form>
+</div>

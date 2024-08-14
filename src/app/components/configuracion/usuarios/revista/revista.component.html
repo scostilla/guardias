@@ -32,7 +32,7 @@
 
       <ng-container matColumnDef="categoria">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Categoría 
-          <button mat-icon-button matTooltip="Agregar/editar">
+          <button mat-icon-button matTooltip="Agregar/editar" (click)="openEditCategoria()" >
             <mat-icon>playlist_add</mat-icon>
           </button>
         </th> 
@@ -41,7 +41,7 @@
 
       <ng-container matColumnDef="adicional">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Adicional 
-          <button mat-icon-button matTooltip="Agregar/editar">
+          <button mat-icon-button matTooltip="Agregar/editar" (click)="openEditAdicional()" >
             <mat-icon>playlist_add</mat-icon>
           </button>
         </th> 
@@ -50,7 +50,7 @@
 
       <ng-container matColumnDef="cargaHoraria">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Carga horaria 
-          <button mat-icon-button matTooltip="Agregar/editar">
+          <button mat-icon-button matTooltip="Agregar/editar"  (click)="openEditCargaHoraria()">
             <mat-icon>playlist_add</mat-icon>
           </button>
         </th> 

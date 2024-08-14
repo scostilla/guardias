@@ -1,16 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { AdicionalEditComponent } from '../adicional-edit/adicional-edit.component';
+import { CargaHorariaEditComponent } from '../carga-horaria-edit/carga-horaria-edit.component';
+import { CategoriaEditComponent } from '../categoria-edit/categoria-edit.component';
 import { RevistaEditComponent } from '../revista-edit/revista-edit.component';
 import { TipoRevistaEditComponent } from '../tipo-revista-edit/tipo-revista-edit.component';
-
 
 @Component({
   selector: 'app-revista',
@@ -24,6 +26,9 @@ export class RevistaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<TipoRevistaEditComponent>;
+  dialogRefCategoria!: MatDialogRef<CategoriaEditComponent>;
+  dialogRefAdicional!: MatDialogRef<AdicionalEditComponent>;
+  dialogRefCargaHoraria!: MatDialogRef<CargaHorariaEditComponent>;
   displayedColumns: string[] = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'acciones'];
   dataSource!: MatTableDataSource<Revista>;
   suscription!: Subscription;
@@ -131,6 +136,36 @@ export class RevistaComponent implements OnInit, OnDestroy {
       this.dialogRef.close();
     });
   } 
+
+  openEditCategoria(): void {
+    this.dialogRefCategoria = this.dialog.open(CategoriaEditComponent, {
+      width: '600px',
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+  }
+  
+  openEditAdicional(): void {
+    this.dialogRefAdicional = this.dialog.open(AdicionalEditComponent, {
+      width: '600px',
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+  }
+
+  openEditCargaHoraria(): void {
+    this.dialogRefCargaHoraria = this.dialog.open(CargaHorariaEditComponent, {
+      width: '600px',
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+  }
+
+  
+
 
   deleteRevista(revista: Revista): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

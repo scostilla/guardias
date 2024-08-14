@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Revista } from 'src/app/models/Configuracion/Revista';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 
 @Component({

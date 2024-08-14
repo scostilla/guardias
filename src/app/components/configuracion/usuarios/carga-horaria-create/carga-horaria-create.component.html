@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>{{ esEdicion ? 'Modificar Carga Horaria' : 'Crear Nueva Carga Horaria' }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="cargaHorariaForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill">
+            <mat-label>Cantidad</mat-label>
+            <input matInput formControlName="cantidad" required>
+            <mat-error *ngIf="cargaHorariaForm.get('cantidad')?.hasError('required')">
+                La cantidad es obligatoria
+            </mat-error>
+            <mat-error *ngIf="cantidadDuplicada">
+                Ya existe una carga horaria con la misma cantidad
+            </mat-error>
+        </mat-form-field>
+        <div mat-dialog-actions>
+            <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+            <button mat-button color="primary" type="submit">{{ esEdicion ? 'Modificar' : 'Crear' }}</button>
+        </div>
+    </form>
+</div>

@@ -26,13 +26,22 @@ export class TipoRevistaService {
       return this.httpClient.get<TipoRevista>(this.revistasURL + `detail/${id}`);
   }
 
-public save(revistas:TipoRevista): Observable<any> {
+/* public save(revistas:TipoRevista): Observable<any> {
   return this.httpClient.post<any>(this.revistasURL + 'create', revistas)
   .pipe(
     tap(() => {
      this._refresh$.next();
     })
   )
+}
+ */
+public save(tipoRevista: TipoRevista): Observable<any> {
+  return this.httpClient.post<any>(this.revistasURL + 'create', tipoRevista)
+    .pipe(
+      tap(() => {
+        this._refresh$.next();
+      })
+    );
 }
 
 public update(id:number, revistas:TipoRevista): Observable<any> {
