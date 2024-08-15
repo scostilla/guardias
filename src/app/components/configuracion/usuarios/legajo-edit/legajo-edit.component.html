@@ -34,8 +34,7 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
         
-            <p></p>
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Persona</mat-label>
               <mat-select formControlName="persona" [compareWith]="compareFn">
                 <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }}</mat-option>
@@ -99,7 +98,7 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
         
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Agrupación</mat-label>
               <mat-select formControlName="agrupacion">
                 <mat-option *ngFor="let agrup of agrupaciones" [value]="agrup.value">{{ agrup.viewValue }}</mat-option>
@@ -170,7 +169,7 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
         
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Actual</mat-label>
               <mat-select formControlName="actual">
                 <mat-option [value]="true">Si</mat-option>
