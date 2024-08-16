@@ -26,7 +26,6 @@ import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { ToastrService } from 'ngx-toastr'; // Importa ToastrService
 
-// Define la interfaz Agrup
 interface Agrup {
   value: string;
   viewValue: string;

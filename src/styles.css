@@ -607,6 +607,51 @@ mat-label{
   margin-bottom: 20px;
 }
 
+/* --Panel de expanción-- */
+.custom-header {
+  display: flex;
+  align-items: center;
+  background-color: #37BBED;
+  border-bottom: 1px solid #3ccbff;
+}
+
+.book-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3ccbff;
+  border-radius: 5px 0;
+  margin-right: 18px;
+  position: relative;
+  padding: 10px;
+}
+
+.book-marker::after {
+  content: "";
+  position: absolute;
+  right: -20px;
+  top: 80%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 25px solid transparent;
+  border-bottom: 0 solid transparent;
+  border-left: 25px solid #3ccbff;
+}
+
+.marker-number {
+  color: white;
+  font-weight: bold;
+  font-size: 17px;
+  text-align: center;
+  line-height: 40px;
+}
+
+.mat-expansion-panel-header {
+  padding: 0;
+}
+
+
 
 /* --referencias-- */
 .ref {

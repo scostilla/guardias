@@ -219,6 +219,7 @@ import { SoporteFormComponent } from './components/configuracion/soporte-form/so
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
 import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
+import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -389,6 +390,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     PersonalAutoridadComponent,
     TipoRevistaEditComponent,
     RevistaDetailComponent,
+    ValoresGuardiasCreateComponent,
     
   ],
 
