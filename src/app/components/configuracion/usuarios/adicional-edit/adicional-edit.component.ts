@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -29,7 +29,8 @@ export class AdicionalEditComponent implements OnInit, OnDestroy{
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<AdicionalEditComponent>,
     private toastr: ToastrService,
-    private paginatorIntl: MatPaginatorIntl
+    private paginatorIntl: MatPaginatorIntl,
+    private cd: ChangeDetectorRef
   ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente";
@@ -44,10 +45,20 @@ export class AdicionalEditComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-    this.listAdicional();
+   /*  this.listAdicional();
 
     this.subscription = this.adicionalService.refresh$.subscribe(() => {
       this.listAdicional();
+    }); */
+  }
+  
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.listAdicional();
+  
+      this.subscription = this.adicionalService.refresh$.subscribe(() => {
+        this.listAdicional();
+      });
     });
   }
 

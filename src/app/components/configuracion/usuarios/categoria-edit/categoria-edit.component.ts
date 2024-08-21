@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { Categoria } from "src/app/models/Configuracion/Categoria";
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
 import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { CategoriaCreateComponent } from '../categoria-create/categoria-create.component';
@@ -22,14 +22,15 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['nombre', 'acciones'];
   dataSource!: MatTableDataSource<Categoria>;
-  subscription!: Subscription;
+  private subscription!: Subscription;
 
   constructor(
     private categoriaService: CategoriaService,
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<CategoriaEditComponent>,
     private toastr: ToastrService,
-    private paginatorIntl: MatPaginatorIntl
+    private paginatorIntl: MatPaginatorIntl,
+    private cd: ChangeDetectorRef
   ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente";
@@ -44,15 +45,21 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.listCategoria();
+     /*  this.listCategoria();
 
-    this.subscription = this.categoriaService.refresh$.subscribe(() => {
+      this.subscription = this.categoriaService.refresh$.subscribe(() => {
       this.listCategoria();
-    });
+    });  */   
   }
 
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.listCategoria();
+  
+      this.subscription = this.categoriaService.refresh$.subscribe(() => {
+        this.listCategoria();
+      }); 
+    });
   }
 
   listCategoria(): void {
@@ -60,14 +67,42 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      this.cd.detectChanges(); // Forzar la detección de cambios
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+      
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Categoria, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
   openCreate(): void {
     const createDialogRef = this.dialog.open(CategoriaCreateComponent, {
       width: '500px'
     });
-  
+
     createDialogRef.afterClosed().subscribe(result => {
       if (result) {
         const confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -76,7 +111,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
             title: 'Confirmar Creación',
           }
         });
-  
+
         confirmDialogRef.afterClosed().subscribe(confirmResult => {
           if (confirmResult) {
             this.categoriaService.save(result).subscribe(
@@ -86,7 +121,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
                   positionClass: 'toast-top-center',
                   progressBar: true
                 });
-                this.categoriaService.refresh$.next();
+                this.categoriaService.refresh$.next(); // Emitir evento de actualización
               },
               error => {
                 this.toastr.error('Error al crear la categoría', 'Error', {
@@ -119,7 +154,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
       width: '500px',
       data: { ...categoria }
     });
-  
+
     editDialogRef.afterClosed().subscribe(result => {
       if (result) {
         const confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -128,7 +163,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
             title: 'Confirmar Modificación',
           }
         });
-  
+
         confirmDialogRef.afterClosed().subscribe(confirmResult => {
           if (confirmResult) {
             if (categoria.id !== undefined) {
@@ -139,7 +174,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
                     positionClass: 'toast-top-center',
                     progressBar: true
                   });
-                  this.categoriaService.refresh$.next();
+                  this.categoriaService.refresh$.next(); // Emitir evento de actualización
                 },
                 error => {
                   this.toastr.error('Error al actualizar la categoría', 'Error', {
@@ -196,7 +231,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.categoriaService.refresh$.next();
+            this.categoriaService.refresh$.next(); // Emitir evento de actualización
           },
           error => {
             this.toastr.error('Error al eliminar la categoría', 'Error', {
@@ -214,7 +249,7 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
         });
       }
     });
-}
+  }
 
   cerrar(): void {
     this.dialogRef.close();

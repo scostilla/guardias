@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -22,14 +22,15 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
 
   displayedColumns: string[] = ['nombre', 'acciones'];
   dataSource!: MatTableDataSource<TipoRevista>;
-  suscription!: Subscription;
+  private suscription!: Subscription;
 
   constructor(
     private tipoRevistaService: TipoRevistaService,
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<TipoRevistaEditComponent>,
     private toastr: ToastrService,
-    private paginatorIntl: MatPaginatorIntl
+    private paginatorIntl: MatPaginatorIntl,
+    private cd: ChangeDetectorRef
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente";
@@ -44,10 +45,20 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-    this.listTipoRevista();
+    /* this.listTipoRevista();
 
     this.suscription = this.tipoRevistaService.refresh$.subscribe(() => {
       this.listTipoRevista();
+    }); */
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.listTipoRevista();
+
+      this.suscription = this.tipoRevistaService.refresh$.subscribe(() => {
+        this.listTipoRevista();
+      });
     });
   }
 

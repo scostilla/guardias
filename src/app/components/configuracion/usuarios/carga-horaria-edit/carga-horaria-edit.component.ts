@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -29,7 +29,8 @@ export class CargaHorariaEditComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<CargaHorariaEditComponent>,
     private toastr: ToastrService,
-    private paginatorIntl: MatPaginatorIntl
+    private paginatorIntl: MatPaginatorIntl,
+    private cd: ChangeDetectorRef
   ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente";
@@ -44,12 +45,22 @@ export class CargaHorariaEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.listCargaHoraria();
+   /*  this.listCargaHoraria();
 
     this.subscription = this.cargaHorariaService.refresh$.subscribe(() => {
       this.listCargaHoraria();
-    });
+    }); */
   }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.listCargaHoraria();
+  
+      this.subscription = this.cargaHorariaService.refresh$.subscribe(() => {
+        this.listCargaHoraria();
+      });
+  });
+}
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();

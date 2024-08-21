@@ -25,7 +25,7 @@ export class RevistaComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dialogRef!: MatDialogRef<TipoRevistaEditComponent>;
+  dialogRefTipoRevista!: MatDialogRef<TipoRevistaEditComponent>;
   dialogRefCategoria!: MatDialogRef<CategoriaEditComponent>;
   dialogRefAdicional!: MatDialogRef<AdicionalEditComponent>;
   dialogRefCargaHoraria!: MatDialogRef<CargaHorariaEditComponent>;
@@ -52,6 +52,7 @@ export class RevistaComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listRevista();
+    
 
     this.suscription = this.revistaService.refresh$.subscribe(() => {
       this.listRevista();
@@ -129,29 +130,62 @@ export class RevistaComponent implements OnInit, OnDestroy {
   }
 
   openEditTipoRevista(): void {
-    this.dialogRef = this.dialog.open(TipoRevistaEditComponent, { 
+    this.dialogRefTipoRevista = this.dialog.open(TipoRevistaEditComponent, { 
       width: '600px',
     });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
+    this.dialogRefTipoRevista.afterClosed().subscribe(() => {
+      this.dialogRefTipoRevista.close();
     });
-  } 
+  }
 
   openEditCategoria(): void {
     this.dialogRefCategoria = this.dialog.open(CategoriaEditComponent, {
       width: '600px',
     });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
+    this.dialogRefCategoria.afterClosed().subscribe(() => {
+      this.dialogRefCategoria.close();
     });
   }
+
+  /* openEditCategoria(categoria?: Categoria): void {
+    const esEdicion = categoria != null;
+    const dialogRefCategoria = this.dialog.open(CategoriaEditComponent, {
+      width: '600px',
+      data : esEdicion ? categoria : null
+    });
+   
+    dialogRefCategoria.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        if (result) { 
+          this.toastr.success(esEdicion ? 'Categoria editada con éxito' : 'Categoria creada con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          if (esEdicion) {
+            const index = this.dataSource.data.findIndex(p => p.id === result.id);
+            this.dataSource.data[index] = result;
+          } else {
+            this.dataSource.data.push(result);
+          }
+          this.dataSource._updateChangeSubscription();
+        }else{
+          this.toastr.error('Ocurrió un error al crear o editar la categoria', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+      }
+      });
+    } */
   
   openEditAdicional(): void {
     this.dialogRefAdicional = this.dialog.open(AdicionalEditComponent, {
       width: '600px',
     });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
+    this.dialogRefAdicional.afterClosed().subscribe(() => {
+      this.dialogRefAdicional.close();
     });
   }
 
@@ -159,8 +193,8 @@ export class RevistaComponent implements OnInit, OnDestroy {
     this.dialogRefCargaHoraria = this.dialog.open(CargaHorariaEditComponent, {
       width: '600px',
     });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
+    this.dialogRefCargaHoraria.afterClosed().subscribe(() => {
+      this.dialogRefCargaHoraria.close();
     });
   }
 
