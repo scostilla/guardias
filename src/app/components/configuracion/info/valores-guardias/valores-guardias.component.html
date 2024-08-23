@@ -5,17 +5,20 @@
       <div class="titulos">VALORES DE GUARDIAS <span class="titulos-second">{{ valorGmiFecha }}</span></div>
     </div>
     <div class="col-6 col-md-2 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="openCreate()" matTooltip="Agregar nuevo GMI">
+      <button mat-fab color="primary" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
+        <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab color="accent" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
   </div>
   <div class="row">
-    <span class="titulos-second">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Circular N° 16/2024 - Contaduría de la provincia</span>
+    <span class="titulos-second">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ valorGmiDoc }} - Contaduría de la provincia</span>
   </div>
   <div class="row mt-3 contenedor-montos">
     <span class="fondo-montos">VALOR GMI CARGO = $ {{ valorGmiCargo | number:'1.2-2' }}</span>
-    <span class="titulo-select-tabla">bono uti (+9%)-D = $ 8.400,82</span>
+    <span class="titulo-select-tabla">bono uti (+9%)-D = $ {{ valorBonoUti | number:'1.2-2' }}</span>
 </div>
   
   <div class="row mt-3">

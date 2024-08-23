@@ -2,7 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ValorGmi } from 'src/app/models/ValorGmi';
 import { ValorGmiService } from 'src/app/services/valorGmi.service';
+import { ValorBonoUti } from 'src/app/models/ValorBonoUti';
+import { ValorBonoUtiService } from 'src/app/services/valorBonoUti.service';
 import { ValoresGuardiasCreateComponent } from '../valores-guardias-create/valores-guardias-create.component';
+import { ValoresBonoUtiCreateComponent } from '../valores-bono-uti-create/valores-bono-uti-create.component';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import * as moment from 'moment';
@@ -23,18 +26,22 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   valorB1580LV = 16801.63;
   valorB1580SDF = 18481.79;
   valorGmiFecha!: string;
+  valorGmiDoc!: string;
+  valorBonoUti!: number;
 
   dialogRef!: MatDialogRef<ValoresGuardiasCreateComponent>;
   suscription!: Subscription;
 
   constructor(
     private valorGmiService: ValorGmiService,
+    private valorBonoUtiService: ValorBonoUtiService,
     private dialog: MatDialog,
     private toastr: ToastrService,
 ) { }
 
 ngOnInit(): void {
   this.obtenerValorGmi();
+  this.obtenerValorUti();
 }
 
 obtenerValorGmi() {
@@ -43,9 +50,11 @@ obtenerValorGmi() {
 
     let valorGmiMayorFechaInicio: ValorGmi | undefined;
 
+    valores = valores.filter(valor => valor.tipoGuardia === 1);
+
     valores.forEach(valor => {
       const fechaInicio = moment(valor.fechaInicio, 'YYYY-MM-DD');
-      
+
       if (!valorGmiMayorFechaInicio || fechaInicio.isAfter(moment(valorGmiMayorFechaInicio.fechaInicio, 'YYYY-MM-DD'))) {
         valorGmiMayorFechaInicio = valor;
       }
@@ -68,38 +77,90 @@ obtenerValorGmi() {
       this.valorGmiFecha = '';
     }
 
-    console.log('valorGmiCargo después de la asignación:', this.valorGmiCargo); // Verifica el valor
+    console.log('valorGmiCargo después de la asignación:', this.valorGmiCargo);
   });
 }
 
-  openCreate(): void {
-    const dialogRef = this.dialog.open(ValoresGuardiasCreateComponent, {
-      width: '600px',
-      data: null
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) {
-          this.toastr.success('Valor GMI agregado con éxito', 'ÉXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-  
-        } else {
-          this.toastr.error('Ocurrió un error al intentar agregar el valor GMI', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
+obtenerValorUti() {
+  this.valorBonoUtiService.list().subscribe((valores: ValorBonoUti[]) => {
+    console.log('Datos recibidos:', valores);
+
+    let valorUtiMayorFechaInicio: ValorBonoUti | undefined;
+
+    valores.forEach(valor => {
+      const fechaInicio = moment(valor.fechaInicio, 'YYYY-MM-DD');
+
+      if (!valorUtiMayorFechaInicio || fechaInicio.isAfter(moment(valorUtiMayorFechaInicio.fechaInicio, 'YYYY-MM-DD'))) {
+        valorUtiMayorFechaInicio = valor;
       }
     });
-  }
 
-  ngOnDestroy(): void {
-    this.suscription?.unsubscribe();
+    console.log('Valor con la mayor fecha de inicio:', valorUtiMayorFechaInicio);
+    if (valorUtiMayorFechaInicio) {
+      this.valorBonoUti = valorUtiMayorFechaInicio.monto;
+    } else {
+      this.valorBonoUti = 0;
+    }
+
+    console.log('valorBonoUti después de la asignación:', this.valorBonoUti);
+  });
+}
+
+openCreateGMI(): void {
+  const dialogRef = this.dialog.open(ValoresGuardiasCreateComponent, {
+    width: '600px',
+    data: null
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result !== undefined) {
+      if (result) {
+        this.toastr.success('Valor GMI agregado con éxito', 'ÉXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.obtenerValorGmi();
+      } else {
+        this.toastr.error('Ocurrió un error al intentar agregar el valor GMI', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+  });
+}
+
+openCreateUTI(): void {
+  const dialogRef = this.dialog.open(ValoresBonoUtiCreateComponent, {
+    width: '600px',
+    data: null
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result !== undefined) {
+      if (result) {
+        this.toastr.success('Valor del Bono Uti agregado con éxito', 'ÉXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.obtenerValorGmi();
+      } else {
+        this.toastr.error('Ocurrió un error al intentar agregar el valor del Bono Uti', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+  });
+}
+
+
+ngOnDestroy(): void {
+  this.suscription?.unsubscribe();
 }
 
 }

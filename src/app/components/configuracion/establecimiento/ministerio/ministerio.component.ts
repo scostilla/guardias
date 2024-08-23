@@ -29,7 +29,7 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<MinisterioDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'idCabecera', 'idAutoridad', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'idCabecera', 'acciones'];
   dataSource!: MatTableDataSource<Ministerio>;
   suscription!: Subscription;
   panelOpenState = false;
@@ -88,9 +88,6 @@ actualizarColumnasVisibles(): void {
     }
     if (columna === 'telefono' && this.idCabeceraVisible) {
       columnasVisibles.push('idCabecera');
-    }
-    if (columna === 'telefono' && this.idAutoridadVisible) {
-      columnasVisibles.push('idAutoridad');
     }
   });
 

@@ -11,6 +11,7 @@ import { ConfiguracionComponent } from './components/configuracion/configuracion
 //Configuraciones: Generales
 import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
 import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
+import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 
 
@@ -203,6 +204,7 @@ const routes: Routes = [
   //Configuraciones: Generales
   {path: 'valores-guardias', component:ValoresGuardiasComponent},
   {path: 'valores-guardias-create', component:ValoresGuardiasCreateComponent},
+  {path: 'valores-bono-uti-create', component:ValoresBonoUtiCreateComponent},
   {path: 'soporte-form', component:SoporteFormComponent},
 
 

@@ -21,11 +21,10 @@ export class ValoresGuardiasCreateComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       monto: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-      documentoLegal: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,60}$')]],
+      documentoLegal: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. °]{2,60}$')]],
       fechaInicio: ['', Validators.required],
       tipoGuardia: [[], [Validators.required]]
     });
-
   }
 
   ngOnInit(): void {
@@ -38,23 +37,71 @@ export class ValoresGuardiasCreateComponent implements OnInit {
 
     const tipoGuardiaValue = this.form?.get('tipoGuardia')?.value;
     const tipoGuardiaInteger = this.getTipoGuardiaFromFormValue(tipoGuardiaValue);
+    const nuevaFechaInicio = new Date(this.form?.get('fechaInicio')?.value);
 
-    // Crear una instancia de ValorGmi con los datos del formulario
-    const valorGmi: ValorGmi = {
-      fechaInicio: new Date(this.form?.get('fechaInicio')?.value),
-      fechaFin: new Date(), // despues cambiar por null ya que esto se cargará recién cuando haya un nuevo valor GMI
-      monto: parseFloat(this.form?.get('monto')?.value),
-      tipoGuardia: tipoGuardiaInteger,
-      documentoLegal: this.form?.get('documentoLegal')?.value
-    };
+    this.valorGmiService.list().subscribe(
+      valorGmis => {
+        valorGmis.forEach(gmi => {
+          if (typeof gmi.fechaInicio === 'string') {
+            gmi.fechaInicio = new Date(gmi.fechaInicio);
+          }
+          if (gmi.fechaFin && typeof gmi.fechaFin === 'string') {
+            gmi.fechaFin = new Date(gmi.fechaFin);
+          }
+        });
 
-    this.valorGmiService.save(valorGmi).subscribe(
-      response => {
-        console.log('ValorGmi guardado exitosamente', response);
-        this.dialogRef.close(true);
+        const filteredRecords = valorGmis.filter(gmi => gmi.tipoGuardia === tipoGuardiaInteger);
+        const lastRecord = filteredRecords.sort((a, b) => b.fechaInicio.getTime() - a.fechaInicio.getTime())[0];
+
+        if (lastRecord) {
+          const updatedLastRecord = { ...lastRecord, fechaFin: nuevaFechaInicio };
+
+          this.valorGmiService.update(lastRecord.id!, updatedLastRecord).subscribe(
+            () => {
+              const valorGmi: ValorGmi = {
+                fechaInicio: nuevaFechaInicio,
+                fechaFin: null,
+                monto: parseFloat(this.form?.get('monto')?.value),
+                tipoGuardia: tipoGuardiaInteger,
+                documentoLegal: this.form?.get('documentoLegal')?.value
+              };
+
+              this.valorGmiService.save(valorGmi).subscribe(
+                response => {
+                  console.log('ValorGmi guardado exitosamente', response);
+                  this.dialogRef.close(true);
+                },
+                error => {
+                  console.error('Error al guardar ValorGmi', error);
+                }
+              );
+            },
+            error => {
+              console.error('Error al actualizar el último ValorGmi', error);
+            }
+          );
+        } else {
+          const valorGmi: ValorGmi = {
+            fechaInicio: nuevaFechaInicio,
+            fechaFin: null,
+            monto: parseFloat(this.form?.get('monto')?.value),
+            tipoGuardia: tipoGuardiaInteger,
+            documentoLegal: this.form?.get('documentoLegal')?.value
+          };
+
+          this.valorGmiService.save(valorGmi).subscribe(
+            response => {
+              console.log('ValorGmi guardado exitosamente', response);
+              this.dialogRef.close(true);
+            },
+            error => {
+              console.error('Error al guardar ValorGmi', error);
+            }
+          );
+        }
       },
       error => {
-        console.error('Error al guardar ValorGmi', error);
+        console.error('Error al obtener el último ValorGmi', error);
       }
     );
   }
@@ -75,5 +122,4 @@ export class ValoresGuardiasCreateComponent implements OnInit {
   cancelar(): void {
     this.dialogRef.close();
   }
-
 }

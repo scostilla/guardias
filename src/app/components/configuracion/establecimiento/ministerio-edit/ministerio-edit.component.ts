@@ -42,7 +42,7 @@ export class MinisterioEditComponent implements OnInit {
       region: [this.data ? this.data.region : '', Validators.required],
       estado: [this.data ? this.data.estado : '', Validators.required],
       idCabecera: [this.data ? this.data.idCabecera : ''],
-      idAutoridad: [this.data ? this.data.idAutoridad : '']
+      porcentajePorZona: [this.data ? this.data.porcentajePorZona : '']
     });
 
     this.listLocalidad();

@@ -2,20 +2,19 @@
  <div class="header-container">
  <div class="container">
   <div class="row row-container">
-    <div class="col d-flex justify-content-start align-items-center">
+    <div class="col-12 col-md-4 d-flex justify-content-md-start align-items-center display_movil">
       <a routerLink="/home-page">
-        <img src="assets/img/pnglogo1.png" width="170" height="100" />
+        <img src="assets/img/pnglogo1.png" width="170" height="100" alt="DPH" />
       </a>
     </div>
-    <div class="col d-flex justify-content-end align-items-center display_movil">
-      <div routerLink="/home-page">
+    <div class="col-12 col-md-4 d-flex justify-content-start justify-content-md-center mb-3 mb-md-0 align-items-center">
+      <a routerLink="/home-page">
         <div class="input-group">
-          <div id="titulo"><h3 class="fw-bold title-header">SISTEMA PROVINCIAL DE</h3></div><br/>
-          <div id="titulo"><h1 class="fw-bold title-header">GUARDIAS</h1></div>
+          <img src="assets/img/logo_sigu.png" alt="SIGU" />
         </div>
-      </div>
+      </a>
     </div>
-    <div class="col d-flex justify-content-end align-items-center">
+    <div class="col-12 col-md-4 d-flex justify-content-center mb-3 mb-md-0 justify-content-md-end align-items-center">
         <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showConfig">
           <mat-icon>settings</mat-icon>
         </button>

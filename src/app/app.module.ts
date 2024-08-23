@@ -220,6 +220,7 @@ import { PersonalAutoridadComponent } from './components/personal/personal-autor
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
 import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
+import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -391,6 +392,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     TipoRevistaEditComponent,
     RevistaDetailComponent,
     ValoresGuardiasCreateComponent,
+    ValoresBonoUtiCreateComponent,
     
   ],
 
