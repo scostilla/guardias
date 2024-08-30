@@ -30,8 +30,6 @@
                 </div>
                 <span class="negrita">Datos personal</span>
               </mat-panel-title>
-              <mat-panel-description>
-              </mat-panel-description>
             </mat-expansion-panel-header>
         
             <mat-form-field appearance="fill" style="margin-top: 20px;">
@@ -81,7 +79,7 @@
             </mat-form-field>
             
             <mat-action-row>
-              <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
+              <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
             </mat-action-row>
           </mat-expansion-panel>
         
@@ -94,8 +92,6 @@
                 </div>
                 <span class="negrita">Situación de revista</span>
               </mat-panel-title>
-              <mat-panel-description>
-              </mat-panel-description>
             </mat-expansion-panel-header>
         
             <mat-form-field appearance="fill" style="margin-top: 20px;">
@@ -151,8 +147,8 @@
             </mat-form-field>
           
             <mat-action-row>
-              <button mat-button color="warn" (click)="prevStep()">Anterior</button>
-              <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
+              <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
+              <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
             </mat-action-row>
           </mat-expansion-panel>
         
@@ -165,8 +161,6 @@
                 </div>
                 <span class="negrita">Datos del legajo</span>
               </mat-panel-title>
-              <mat-panel-description>
-              </mat-panel-description>
             </mat-expansion-panel-header>
         
             <mat-form-field appearance="fill" style="margin-top: 20px;">
@@ -204,8 +198,8 @@
             </mat-form-field>
             
             <mat-action-row>
-              <button mat-button color="warn" (click)="prevStep()">Anterior</button>
-              <button mat-raised-button color="primary" type="button" [disabled]="!legajoForm.valid || !isModified()">
+              <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()">
                 {{esEdicion ? 'Modificar' : 'Agregar Legajo'}}
               </button>
             </mat-action-row>

@@ -1,12 +1,11 @@
 import { Ddjj } from "./Configuracion/Ddjj";
-import { TipoGuardia } from "./Configuracion/TipoGuardia";
 
 export class ValorGmi {
     id?: number;
     fechaInicio: Date;
     fechaFin: Date | null;
     monto: number;
-    tipoGuardia: number;
+    tipoGuardia: string;
     documentoLegal: string;
     /*ddjjs: Ddjj[];*/
 
@@ -14,7 +13,7 @@ export class ValorGmi {
         fechaInicio: Date,
         fechaFin: Date | null,
         monto: number,
-        tipoGuardia: number,
+        tipoGuardia: string,
         documentoLegal: string,
         /*ddjjs: Ddjj[]*/
     ) {

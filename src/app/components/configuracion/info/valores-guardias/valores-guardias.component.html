@@ -1,23 +1,21 @@
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
-    <div class="col-6 col-md-10">
-      <div class="titulos">VALORES DE GUARDIAS <span class="titulos-second">{{ valorGmiFecha }}</span></div>
+    <div class="col-11 col-md-10">
+      <div class="titulos">VALORES DE GUARDIAS <span class="titulos-second">Contaduría de la provincia</span></div>
     </div>
-    <div class="col-6 col-md-2 m d-flex justify-content-end">
+    <div class="col-12 col-md-2 m d-flex justify-content-end">
       <button mat-fab color="primary" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
         <mat-icon>library_add</mat-icon>
       </button>
-      <button mat-fab color="accent" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
+      <button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
   </div>
-  <div class="row">
-    <span class="titulos-second">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ valorGmiDoc }} - Contaduría de la provincia</span>
-  </div>
-  <div class="row mt-3 contenedor-montos">
-    <span class="fondo-montos">VALOR GMI CARGO = $ {{ valorGmiCargo | number:'1.2-2' }}</span>
+  <div class="row mt-5 contenedor-montos">
+    <span class="fondo-monto-cargo" matTooltip="Fecha: {{ valorGmiFechaCargo }}" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ {{ valorGmiCargo | number:'1.2-2' }}</span>
+    <span class="fondo-monto-extra" matTooltip="Fecha: {{ valorGmiFechaExtra }}" matTooltipPosition="right">VALOR GMI EXTRA/CONTRAFACTURA = $ {{ valorGmiExtra | number:'1.2-2' }}</span>
     <span class="titulo-select-tabla">bono uti (+9%)-D = $ {{ valorBonoUti | number:'1.2-2' }}</span>
 </div>
   
@@ -41,18 +39,18 @@
                 <tr>
                   <td rowspan="3" class="no-hover">CARGO O AGRUPACIÓN DE HS</td>
                   <td>S/DECRETO N° 1178</td>
-                  <td>$ {{ valorGmiLV | number:'1.2-2' }}</td>
-                  <td>$ {{ valorGmiSDF | number:'1.2-2' }}</td>
+                  <td>$ </td>
+                  <td>$ </td>
                 </tr>
                 <tr>
                   <td>BONO DECRETO N° 1580 </td>
-                  <td>$ {{ valorB1580LV | number:'1.2-2' }}</td>
-                  <td>$ {{ valorB1580SDF | number:'1.2-2' }}</td>
+                  <td>$ </td>
+                  <td>$ </td>
                 </tr>
                 <tr class="negrita">
                   <td>TOTAL</td>
-                  <td>$ {{ (valorGmiLV + valorB1580LV) | number:'1.2-2' }}</td>
-                  <td>$ {{ (valorGmiSDF + valorB1580SDF) | number:'1.2-2' }}</td>
+                  <td>$ </td>
+                  <td>$ </td>
                 </tr>
 
                 <tr style="background-color: #f5f4f4;">

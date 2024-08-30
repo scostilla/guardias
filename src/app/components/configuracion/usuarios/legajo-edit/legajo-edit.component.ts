@@ -129,65 +129,16 @@ export class LegajoEditComponent implements OnInit {
   }
 
   loadDropdowns(): void {
-    this.asistencialService.list().subscribe(data => {
-      this.personas = data;
-    }, error => {
-      console.error('Error al cargar personas', error);
-    });
-
-    this.profesionService.list().subscribe(data => {
-      this.profesiones = data;
-    }, error => {
-      console.error('Error al cargar profesiones', error);
-    });
-
-    this.hospitalService.list().subscribe(data => {
-      this.efectores = data;
-    }, error => {
-      console.error('Error al cargar efectores', error);
-    });
-
-    this.cargoService.list().subscribe(data => {
-      this.cargos = data;
-    }, error => {
-      console.error('Error al cargar cargos', error);
-    });
-
-    this.especialidadService.list().subscribe(data => {
-      this.especialidades = data;
-    }, error => {
-      console.error('Error al cargar especialidades', error);
-    });
-
-    this.categoriaService.list().subscribe(data => {
-      this.categorias = data;
-    }, error => {
-      console.error('Error al cargar categorias', error);
-    });
-
-    this.adicionalService.list().subscribe(data => {
-      this.adicionales = data;
-    }, error => {
-      console.error('Error al cargar adicionales', error);
-    });
-
-    this.cargaHorariaService.list().subscribe(data => {
-      this.cargasHorarias = data;
-    }, error => {
-      console.error('Error al cargar cargas horarias', error);
-    });
-
-    this.tipoRevistaService.list().subscribe(data => {
-      this.tiposRevistas = data;
-    }, error => {
-      console.error('Error al cargar tipos de revistas', error);
-    });
-
-    this.revistaService.list().subscribe(data => {
-      this.revistas = data;
-    }, error => {
-      console.error('Error al cargar revistas', error);
-    });
+    this.asistencialService.list().subscribe(data => this.personas = data, error => console.error('Error al cargar personas', error));
+    this.profesionService.list().subscribe(data => this.profesiones = data, error => console.error('Error al cargar profesiones', error));
+    this.hospitalService.list().subscribe(data => this.efectores = data, error => console.error('Error al cargar efectores', error));
+    this.cargoService.list().subscribe(data => this.cargos = data, error => console.error('Error al cargar cargos', error));
+    this.especialidadService.list().subscribe(data => this.especialidades = data, error => console.error('Error al cargar especialidades', error));
+    this.categoriaService.list().subscribe(data => this.categorias = data, error => console.error('Error al cargar categorias', error));
+    this.adicionalService.list().subscribe(data => this.adicionales = data, error => console.error('Error al cargar adicionales', error));
+    this.cargaHorariaService.list().subscribe(data => this.cargasHorarias = data, error => console.error('Error al cargar cargas horarias', error));
+    this.tipoRevistaService.list().subscribe(data => this.tiposRevistas = data, error => console.error('Error al cargar tipos de revistas', error));
+    this.revistaService.list().subscribe(data => this.revistas = data, error => console.error('Error al cargar revistas', error));
   }
 
   saveLegajo(): void {
@@ -201,7 +152,7 @@ export class LegajoEditComponent implements OnInit {
         legajoData.activo,
         legajoData.matriculaNacional,
         legajoData.matriculaProvincial,
-        legajoData.tipoRevista.id, // Asegúrate de que esto es correcto
+        legajoData.tipoRevista.id,
         legajoData.udo.id,
         legajoData.persona.id,
         legajoData.cargo.id,
@@ -213,55 +164,41 @@ export class LegajoEditComponent implements OnInit {
       if (this.esEdicion) {
         this.legajoService.update(legajoData.id, legajoDto).subscribe({
           next: (result) => {
-            this.toastr.success('Legajo actualizado exitosamente!', 'Actualización Exitosa', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
+            this.toastr.success('Legajo actualizado exitosamente!', 'Actualización Exitosa', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
             this.router.navigate(['/legajo']);
           },
           error: (error) => {
-            this.toastr.error('Error al actualizar el legajo.', 'Error', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
+            this.toastr.error('Error al actualizar el legajo.', 'Error', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
             console.error('Error al actualizar el legajo', error);
           }
         });
       } else {
         this.legajoService.save(legajoDto).subscribe({
           next: (result) => {
-            this.toastr.success('Legajo creado exitosamente!', 'Creación Exitosa', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
+            this.toastr.success('Legajo creado exitosamente!', 'Creación Exitosa', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
             this.router.navigate(['/legajo']);
           },
           error: (error) => {
-            this.toastr.error('Error al crear el legajo.', 'Error', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
+            this.toastr.error('Error al crear el legajo.', 'Error', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
             console.error('Error al crear el legajo', error);
           }
         });
       }
+    } else {
+      this.toastr.warning('Por favor complete todos los campos requeridos.', 'Formulario Incompleto', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
     }
+  }
+
+  nextStep(): void {
+    this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
+  }
+  
+  prevStep(): void {
+    this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
   }
 
   setStep(index: number) {
     this.step = index;
-  }
-
-  nextStep() {
-    this.step++;
-  }
-
-  prevStep() {
-    this.step--;
   }
 
   cancel(): void {

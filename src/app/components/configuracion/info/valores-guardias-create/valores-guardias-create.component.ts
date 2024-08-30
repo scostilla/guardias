@@ -36,7 +36,6 @@ export class ValoresGuardiasCreateComponent implements OnInit {
     }
 
     const tipoGuardiaValue = this.form?.get('tipoGuardia')?.value;
-    const tipoGuardiaInteger = this.getTipoGuardiaFromFormValue(tipoGuardiaValue);
     const nuevaFechaInicio = new Date(this.form?.get('fechaInicio')?.value);
 
     this.valorGmiService.list().subscribe(
@@ -50,7 +49,7 @@ export class ValoresGuardiasCreateComponent implements OnInit {
           }
         });
 
-        const filteredRecords = valorGmis.filter(gmi => gmi.tipoGuardia === tipoGuardiaInteger);
+        const filteredRecords = valorGmis.filter(gmi => gmi.tipoGuardia === tipoGuardiaValue);
         const lastRecord = filteredRecords.sort((a, b) => b.fechaInicio.getTime() - a.fechaInicio.getTime())[0];
 
         if (lastRecord) {
@@ -62,7 +61,7 @@ export class ValoresGuardiasCreateComponent implements OnInit {
                 fechaInicio: nuevaFechaInicio,
                 fechaFin: null,
                 monto: parseFloat(this.form?.get('monto')?.value),
-                tipoGuardia: tipoGuardiaInteger,
+                tipoGuardia: tipoGuardiaValue,
                 documentoLegal: this.form?.get('documentoLegal')?.value
               };
 
@@ -85,7 +84,7 @@ export class ValoresGuardiasCreateComponent implements OnInit {
             fechaInicio: nuevaFechaInicio,
             fechaFin: null,
             monto: parseFloat(this.form?.get('monto')?.value),
-            tipoGuardia: tipoGuardiaInteger,
+            tipoGuardia: tipoGuardiaValue,
             documentoLegal: this.form?.get('documentoLegal')?.value
           };
 
@@ -105,20 +104,7 @@ export class ValoresGuardiasCreateComponent implements OnInit {
       }
     );
   }
-
-  getTipoGuardiaFromFormValue(value: string): number {
-    switch(value) {
-      case 'CARGO':
-        return 1;
-      case 'EXTRA':
-        return 2;
-      case 'PASIVA':
-        return 3;
-      default:
-        throw new Error('Tipo de guardia desconocido');
-    }
-  }
-
+  
   cancelar(): void {
     this.dialogRef.close();
   }

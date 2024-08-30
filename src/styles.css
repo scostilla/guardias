@@ -91,11 +91,10 @@ footer {
 }
 
 .contenedor-montos {
-  width: 450px;
+  width: 40%;
 }
 
-.fondo-montos {
-  background-color: #69ad1b;
+.fondo-monto-cargo, .fondo-monto-extra {
   color: #fff;
   padding: 10px 0 10px 0;
   margin-left: 10px;
@@ -103,6 +102,14 @@ footer {
   border-bottom-right-radius: 25px;
   font-weight: bold;
   display: block;
+}
+
+.fondo-monto-cargo {
+  background-color: #69ad1b;
+}
+
+.fondo-monto-extra {
+  background-color: #538817;
 }
 
 .contenedor-bocadillo{
@@ -303,6 +310,10 @@ footer {
   cursor: not-allowed;
 }
 
+::ng-deep .mat-tooltip.multi-line-tooltip { 
+  white-space: pre-line !important;
+}
+
 
 @media (max-width:768px) {
     .text {
@@ -329,6 +340,11 @@ footer {
   .form-field {
     width: 100%;
   }
+
+  .contenedor-montos {
+    width: 90%;
+  }
+    
 }
 
 /* --botones circulares seccción actividades-- */
