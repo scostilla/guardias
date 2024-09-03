@@ -1,5 +1,7 @@
 import { Efector } from "./Configuracion/Efector";
 import { ValorGuardias } from "./ValorGuardias";
+import { ValorGmi } from 'src/app/models/ValorGmi';
+import { ValorBonoUti } from 'src/app/models/ValorBonoUti';
 
 export class ValorGuardiasCargo extends ValorGuardias {
   decreto1178Lav: number;
@@ -16,8 +18,10 @@ export class ValorGuardiasCargo extends ValorGuardias {
     tipoGuardia: string,
     totalLav: number,
     totalSdf: number,
-    idBonoUti: number,
-    idValorGmi: number,
+    bonoUti: ValorBonoUti,
+    bono1580Lav: number,
+    bono1580Sdf: number,
+    valorGmi: ValorGmi,
     activo: boolean,
     efectores: Efector[],
     decreto1178Lav: number,
@@ -25,7 +29,7 @@ export class ValorGuardiasCargo extends ValorGuardias {
     decreto1657Lav: number,
     decreto1657Sdf: number,  
   ) {
-    super(fechaInicio, fechaFin, nivelComplejidad, tipoGuardia, totalLav, totalSdf, idBonoUti, idValorGmi, activo, efectores)
+    super(fechaInicio, fechaFin, nivelComplejidad, tipoGuardia, totalLav, totalSdf, bonoUti, bono1580Lav, bono1580Sdf, valorGmi, activo, efectores)
     this.decreto1178Lav = decreto1178Lav;
     this.decreto1178Sdf = decreto1178Sdf;
     this.decreto1657Lav = decreto1657Lav;
