@@ -23,7 +23,7 @@ export class ValorGuardiasCargo extends ValorGuardias {
     bono1580Sdf: number,
     valorGmi: ValorGmi,
     activo: boolean,
-    efectores: Efector[],
+    efectores: string[],
     decreto1178Lav: number,
     decreto1178Sdf: number,
     decreto1657Lav: number,

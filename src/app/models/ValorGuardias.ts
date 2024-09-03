@@ -15,7 +15,7 @@ export class ValorGuardias {
   bono1580Sdf: number;
   valorGmi: ValorGmi;
   activo: boolean;
-  efectores: Efector[];
+  efectores: string[];
 
   constructor(
 
@@ -30,7 +30,7 @@ export class ValorGuardias {
     bono1580Sdf: number,
     valorGmi: ValorGmi,
     activo: boolean,
-    efectores: Efector[],
+    efectores: string[],
   ) {
     this.fechaInicio = fechaInicio;
     this.fechaFin = fechaFin;

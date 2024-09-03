@@ -21,6 +21,10 @@ moment.locale('es');
 })
 export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   valoresPorNivel: { [nivel: number]: ValorGuardiasCargo[] } = {};
+  valoresNivel2Uro: ValorGuardiasCargo[] = [];
+  valoresNivel2Otros: ValorGuardiasCargo[] = [];
+  valoresNivel1Susques: ValorGuardiasCargo[] = [];
+  valoresNivel1Otros: ValorGuardiasCargo[] = [];
   
   dialogRef!: MatDialogRef<ValoresGuardiasCreateComponent>;
   suscription!: Subscription;
@@ -45,7 +49,20 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   listCargo(): void {
     this.suscription = this.valorGuardiasCargoService.obtenerValorGuardiaCargo().subscribe(
       (data: { [nivel: number]: ValorGuardiasCargo[] }) => {
+
         this.valoresPorNivel = data;
+
+        if (this.valoresPorNivel[2]) {
+          this.valoresNivel2Uro = this.valoresPorNivel[2].filter(v => v.efectores.includes('Uro'));
+
+          this.valoresNivel2Otros = this.valoresPorNivel[2].filter(v => !v.efectores.includes('Uro'));
+        }
+
+        if (this.valoresPorNivel[1]) {
+          this.valoresNivel1Susques = this.valoresPorNivel[1].filter(v => v.efectores.includes('Susques'));
+
+          this.valoresNivel1Otros = this.valoresPorNivel[1].filter(v => !v.efectores.includes('Susques'));
+        }
       },
       error => {
         console.error('Error al obtener el valor de guardia cargo', error);
