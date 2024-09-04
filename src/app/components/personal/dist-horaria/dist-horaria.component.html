@@ -1,7 +1,37 @@
-<div mat-dialog-title class="backgroud">
-    <h1 class="font">Distribución Horaria</h1>
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <div class="titulos">Distribución horaria</div>
+    </div>
+    <div class="col-6 m mt-3 d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+  </div>
+
+  <div class="row">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Asistencial</mat-label>
+      <input matInput [value]="inputValue" (click)="openAsistencialDialog()">
+      <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+    </mat-form-field>
+            
+    <mat-dialog-content class="mat-typography">
+
+      <form [formGroup]="distribForm" (ngSubmit)="saveDistribucion()">
+
+      </form>
+  </mat-dialog-content>
 </div>
 
+<!--
 <form [formGroup]="distribForm">
   <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
@@ -48,4 +78,4 @@
     <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit" [disabled]="!distribForm.valid">Guardar</button>
   </div>
-</form>
+</form>-->

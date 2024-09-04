@@ -5,7 +5,9 @@ import { DistHorariaGuardiaComponent } from '../../actividades/dist-horaria-guar
 import { DistHorariaConsComponent } from '../../actividades/dist-horaria-cons/dist-horaria-cons.component';
 import { DistHorariaGirasComponent } from '../../actividades/dist-horaria-giras/dist-horaria-giras.component';
 import { DistHorariaOtrasComponent } from '../../actividades/dist-horaria-otras/dist-horaria-otras.component';
+import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 
 @Component({
   selector: 'app-dist-horaria',
@@ -13,6 +15,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./dist-horaria.component.css'],
 })
 export class DistHorariaComponent {
+
+  inputValue: string = '';
+  selectedAsistencial?: Asistencial;
 
   hospitales: string[] = ['DN. PABLO SORIA'];
   profesional: string[] = ['FIGUEROA ELIO', 'ARRAYA PEDRO ADEMIR', 'MORALES RICARDO', 'ALFARO FIDEL', 'MARTINEZ YANINA VANESA G.'];
@@ -29,7 +34,7 @@ export class DistHorariaComponent {
 
   constructor(
     private http: HttpClient,
-    public dialogReg: MatDialog,
+    public dialog: MatDialog,
     private fb: FormBuilder
   ) {
     this.distribForm = this.fb.group({
@@ -48,7 +53,25 @@ export class DistHorariaComponent {
       });
   }
 
-  openDistGuardia() {
+  saveDistribucion(){}
+
+  openAsistencialDialog(): void {
+    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+      width: '600px',
+      disableClose: true
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Asume que result es de tipo Asistencial
+        this.selectedAsistencial = result;
+        this.inputValue = `${result.apellido} ${result.nombre}`;
+      }
+    });
+  }
+
+
+  /*openDistGuardia() {
     this.dialogReg.open(DistHorariaGuardiaComponent, {
       width: '600px',
       disableClose: true,
@@ -78,5 +101,5 @@ export class DistHorariaComponent {
 
   get isProfesionalSelected(): boolean {
     return this.distribForm.get('profesional')?.value !== '';
-  }
+  }*/
 }

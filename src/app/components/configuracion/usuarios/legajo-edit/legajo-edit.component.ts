@@ -24,7 +24,7 @@ import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { Revista } from 'src/app/models/Configuracion/Revista';
-import { ToastrService } from 'ngx-toastr'; // Importa ToastrService
+import { ToastrService } from 'ngx-toastr';
 
 interface Agrup {
   value: string;
@@ -190,11 +190,44 @@ export class LegajoEditComponent implements OnInit {
   }
 
   nextStep(): void {
+    if (this.step === 0 && !this.isPanel1Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en datos personal.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+  
+    if (this.step === 1 && !this.isPanel2Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en situación de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+  
+    if (this.step === 2 && !this.isPanel3Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+  
     this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
   }
   
   prevStep(): void {
     this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
+  }
+  
+  isPanel1Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 1 son válidos
+    const panel1Controls = ['persona', 'profesion', 'especialidades', 'cargo', 'matriculaNacional', 'matriculaProvincial'];
+    return panel1Controls.every(control => this.legajoForm.get(control)?.valid);
+  }
+  
+  isPanel2Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 2 son válidos
+    const panel2Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo'];
+    return panel2Controls.every(control => this.legajoForm.get(control)?.valid);
+  }
+  
+  isPanel3Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 3 son válidos
+    const panel3Controls = ['actual', 'legal', 'fechaInicio'];
+    return panel3Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
   setStep(index: number) {

@@ -52,6 +52,7 @@ import { EspecialidadDetailComponent } from './components/configuracion/profesio
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
 
 //Configuraciones: Personas
+import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
@@ -245,6 +246,7 @@ const routes: Routes = [
   {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
  
   //Configuraciones: Personas
+  {path: 'asistencial-selector', component:AsistencialSelectorComponent},
   {path: 'person', component:PersonComponent},
   {path: 'person-detail/:id', component:PersonDetailComponent},
   {path: 'person-edit/:id', component:PersonEditComponent},

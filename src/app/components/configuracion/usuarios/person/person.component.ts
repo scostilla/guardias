@@ -92,19 +92,6 @@ export class PersonComponent implements OnInit, OnDestroy {
   
     this.dataSource.filter = normalizedFilterValue;
   }
-
-  /*   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
-      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return normalizedData.indexOf(normalizedFilterValue) != -1;
-    };
-
-    this.dataSource.filter = normalizedFilterValue;
-  } */
         
   listAsistencial(): void {
     this.asistencialService.list().subscribe(data => {
@@ -264,10 +251,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   openDistribucion(){
-    this.dialogDistrib.open(DistHorariaComponent, {
-      width: '600px',
-      disableClose: true,
-    })
+    this.router.navigate(['/dist-horaria']);
   }
 
   deleteAsistencial(asistencial: Asistencial): void {

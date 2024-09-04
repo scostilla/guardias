@@ -22,7 +22,7 @@
 
         <mat-accordion class="example-headers-align">
           <!-- Panel 1 -->
-          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle >
+          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle id="panel1">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
@@ -84,7 +84,7 @@
           </mat-expansion-panel>
         
           <!-- Panel 2 -->
-          <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+          <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle id="panel2">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
@@ -153,7 +153,7 @@
           </mat-expansion-panel>
         
           <!-- Panel 3 -->
-          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle id="panel3">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
