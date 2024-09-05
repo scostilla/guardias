@@ -42,11 +42,22 @@ export class AsistencialSelectorComponent implements OnInit {
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  
+    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      return normalizedData.indexOf(filter) !== -1;
+    };
+  
     this.dataSource.filter = filterValue;
   }
-
   selectAsistencial(asistencial: Asistencial): void {
     this.dialogRef.close(asistencial);
   }

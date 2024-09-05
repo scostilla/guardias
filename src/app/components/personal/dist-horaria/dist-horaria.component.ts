@@ -7,7 +7,10 @@ import { DistHorariaGirasComponent } from '../../actividades/dist-horaria-giras/
 import { DistHorariaOtrasComponent } from '../../actividades/dist-horaria-otras/dist-horaria-otras.component';
 import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+
 
 @Component({
   selector: 'app-dist-horaria',
@@ -18,6 +21,10 @@ export class DistHorariaComponent {
 
   inputValue: string = '';
   selectedAsistencial?: Asistencial;
+  DistribucionForm!: FormGroup;
+  step = 0;
+
+
 
   hospitales: string[] = ['DN. PABLO SORIA'];
   profesional: string[] = ['FIGUEROA ELIO', 'ARRAYA PEDRO ADEMIR', 'MORALES RICARDO', 'ALFARO FIDEL', 'MARTINEZ YANINA VANESA G.'];
@@ -35,11 +42,24 @@ export class DistHorariaComponent {
   constructor(
     private http: HttpClient,
     public dialog: MatDialog,
+    public dialogReg: MatDialog,
+    private toastr: ToastrService,
+    private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder
   ) {
     this.distribForm = this.fb.group({
       hospital: ['', Validators.required],
       profesional: ['', Validators.required],
+    });
+
+    this.DistribucionForm = this.fb.group({
+      firstName: [''],
+      lastName: [''],
+      address: [''],
+      city: [''],
+      phone: [''],
+      email: ['']
     });
   }
 
@@ -57,21 +77,43 @@ export class DistHorariaComponent {
 
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
-      width: '600px',
+      width: '800px',
       disableClose: true
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Asume que result es de tipo Asistencial
         this.selectedAsistencial = result;
         this.inputValue = `${result.apellido} ${result.nombre}`;
       }
     });
   }
 
+  nextStep(): void {
+    this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
+  }
+  
+  prevStep(): void {
+    this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
+  }
 
-  /*openDistGuardia() {
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  cancel(): void {
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+    this.router.navigate(['/personal']);
+  }
+
+
+
+
+  openDistGuardia() {
     this.dialogReg.open(DistHorariaGuardiaComponent, {
       width: '600px',
       disableClose: true,
@@ -101,5 +143,5 @@ export class DistHorariaComponent {
 
   get isProfesionalSelected(): boolean {
     return this.distribForm.get('profesional')?.value !== '';
-  }*/
+  }
 }

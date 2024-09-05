@@ -76,7 +76,7 @@ export class LegajoEditComponent implements OnInit {
     private cargaHorariaService: CargaHorariaService,
     private tipoRevistaService: TipoRevistaService,
     private revistaService: RevistaService,
-    private toastr: ToastrService // Inyecta ToastrService
+    private toastr: ToastrService
   ) {
     this.legajoForm = this.fb.group({
       agrupacion: ['', Validators.required],

@@ -1,14 +1,15 @@
+<app-spinner></app-spinner>
 <h1 mat-dialog-title>Seleccionar Profesional</h1>
 
 <div class="container">
   <div class="row">
-    <div class="col-9 mt-3 mt-md-0">
+    <div class="col-9 mt-3">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
         <input matInput placeholder="Buscar por nombre, apellido o cuil" (input)="applyFilter($event)">
       </mat-form-field>
     </div>
-    <div class="col-3 d-flex justify-content-end">
+    <div class="col-3 mt-3 d-flex justify-content-end">
       <button mat-icon-button class="button-primary" (click)="cerrar()" matTooltip="Cerrar selección">
         <mat-icon>close</mat-icon>
       </button>
@@ -18,7 +19,7 @@
   <div class="row">
     <mat-dialog-content>
       <div class="table-responsive">
-        <mat-table [dataSource]="dataSource" matSort>
+        <mat-table [dataSource]="dataSource!" matSort>
           <!-- Columna Apellido -->
           <ng-container matColumnDef="apellido">
             <mat-header-cell *matHeaderCellDef class="negrita"> Apellido </mat-header-cell>
