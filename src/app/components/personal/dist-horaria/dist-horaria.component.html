@@ -15,26 +15,29 @@
   </div>
 
   <div class="row">
+  </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Profesional</mat-label>
-      <input matInput [value]="inputValue" (click)="openAsistencialDialog()">
-      <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-    </mat-form-field>
-            
-    <mat-dialog-content class="mat-typography">
-
-    </mat-dialog-content>
+  <div class="row" *ngIf="horasStatus">
+    <p>{{ horasStatus }}</p>
   </div>
 
   <div class="row">
     <mat-dialog-content class="mat-typography">
   
       <form [formGroup]="DistribucionForm" (ngSubmit)="saveDistribucion()">
-  
+
+        <mat-form-field appearance="fill">
+          <mat-label>Profesional</mat-label>
+          <input matInput formControlName="profesional" (click)="openAsistencialDialog()">
+          <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+          <mat-error *ngIf="DistribucionForm.get('profesional')?.hasError('required')">
+            El campo profesional es requerido.
+          </mat-error>
+        </mat-form-field>
+
         <mat-accordion class="example-headers-align">
           <!-- Panel 1 -->
-          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
+          <mat-expansion-panel [expanded]="step === 0 && isPanelEnabled" (opened)="setStep(0)" hideToggle [disabled]="!isPanelEnabled">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
@@ -44,13 +47,78 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
         
-            <mat-form-field style="margin-top: 20px;">
-              <mat-label>Dirección</mat-label>
-              <input matInput formControlName="address" />
+
+              <mat-form-field appearance="fill"  style="margin-top: 20px;">
+                  <mat-label>Servicio</mat-label>
+                      <mat-select formControlName="servicio" [compareWith]="compareServicio">
+                          <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
+                      </mat-select>
+                  <mat-error *ngIf="DistribucionForm.get('servicio')?.errors?.['required']">El servicio es requerido.</mat-error>
             </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Tipo Guardia</mat-label>
+                    <mat-select formControlName="tipoGuardia">
+                      <mat-option value="CONTRAFACTURA">Contrafactura</mat-option>
+                      <mat-option value="CARGO">Cargo</mat-option>
+                      <mat-option value="EXTRA">Extra</mat-option>
+                      <mat-option value="AGRUPACIÓN">Agrupación</mat-option>
+                      <mat-option value="PASIVA">Pasiva</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="DistribucionForm?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="fill">
+                    <mat-label>Efector</mat-label>
+                    <mat-select formControlName="efector" [compareWith]="compareEfector">
+                      <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="DistribucionForm.get('efector')?.errors?.['required']">El efector es requerido.</mat-error>
+                  </mat-form-field>
+            
+                <mat-form-field appearance="fill">
+                    <mat-label>Día</mat-label>
+                    <mat-select formControlName="dia">
+                      <mat-option value="LUNES">Lunes</mat-option>
+                      <mat-option value="MARTES">Martes</mat-option>
+                      <mat-option value="MIERCOLES">Miércoles</mat-option>
+                      <mat-option value="JUEVES">Jueves</mat-option>
+                      <mat-option value="VIERNES">Viernes</mat-option>
+                      <mat-option value="SABADO">Sábado</mat-option>
+                      <mat-option value="DOMINGO">Domingo</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="DistribucionForm?.get('dia')?.errors?.['required']">El día es requerido.</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>Fecha de Inicio</mat-label>
+                    <input matInput [matDatepicker]="picker1" formControlName="fechaInicio" />
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                    <mat-error *ngIf="DistribucionForm.get('fechaInicio')?.hasError('required')">La fecha de inicio es requerida.</mat-error>
+                  </mat-form-field>
+      
+                  <mat-form-field>
+                    <mat-label>Fecha de Finalización</mat-label>
+                    <input matInput [matDatepicker]="picker2" formControlName="fechaFinalizacion" />
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                    <mat-error *ngIf="DistribucionForm.get('fechaFinalizacion')?.hasError('required')">La fecha de finalización es requerida.</mat-error>
+                  </mat-form-field>
+      
+                  <mat-form-field appearance="fill" class="form-field">
+                    <mat-label>Hora de Ingreso</mat-label>
+                        <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
+                        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+                        <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+                        <mat-error *ngIf="DistribucionForm?.get('horaIngreso')?.invalid && DistribucionForm?.get('horaIngreso')?.touched">
+                            El campo es obligatorio (HH:mm).
+                        </mat-error>
+                </mat-form-field>
+
             <mat-form-field>
-              <mat-label>Ciudad</mat-label>
-              <input matInput formControlName="city" />
+              <mat-label>Cantidad de horas</mat-label>
+              <input matInput formControlName="cantidadHoras" (input)="updateHorasStatus()" type="number" />
             </mat-form-field>            
             <mat-action-row>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
@@ -58,7 +126,7 @@
           </mat-expansion-panel>
         
           <!-- Panel 2 -->
-          <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+          <mat-expansion-panel [expanded]="step === 1 && isPanelEnabled" (opened)="setStep(1)" hideToggle [disabled]="!isPanelEnabled">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
@@ -67,15 +135,36 @@
                 <span class="negrita">Consultorio</span>
               </mat-panel-title>
             </mat-expansion-panel-header>
-        
-            <mat-form-field style="margin-top: 20px;">
-              <mat-label>Teléfono</mat-label>
-              <input matInput formControlName="phone" />
+          
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
+              <mat-label>Tipo de Consultorio</mat-label>
+              <mat-select formControlName="tipoConsultorio">
+                <mat-option value="Consulta Externa">Consulta Externa</mat-option>
+                <mat-option value="Interno">Interno</mat-option>
+              </mat-select>
+              <mat-error *ngIf="DistribucionForm.get('tipoConsultorio')?.errors?.['required']">El tipo de consultorio es requerido.</mat-error>
             </mat-form-field>
+          
+            <mat-form-field appearance="fill">
+              <mat-label>Lugar</mat-label>
+              <input matInput formControlName="lugar" />
+              <mat-error *ngIf="DistribucionForm.get('lugar')?.errors?.['required']">El lugar es requerido.</mat-error>
+            </mat-form-field>
+          
+            <mat-form-field appearance="fill">
+              <mat-label>Servicio</mat-label>
+              <mat-select formControlName="servicioConsultorio" [compareWith]="compareServicio">
+                <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="DistribucionForm.get('servicioConsultorio')?.errors?.['required']">El servicio es requerido.</mat-error>
+            </mat-form-field>
+          
             <mat-form-field>
-              <mat-label>Email</mat-label>
-              <input matInput formControlName="email" />
-            </mat-form-field>          
+              <mat-label>Cantidad de horas</mat-label>
+              <input matInput formControlName="cantidadHorasConsultorio" (input)="updateHorasStatus()" type="number" />
+              <mat-error *ngIf="DistribucionForm.get('cantidadHorasConsultorio')?.errors?.['required']">La cantidad de horas es requerida.</mat-error>
+            </mat-form-field>
+          
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
@@ -83,7 +172,7 @@
           </mat-expansion-panel>
 
           <!-- Panel 3 -->
-          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+          <mat-expansion-panel [expanded]="step === 2 && isPanelEnabled" (opened)="setStep(2)" hideToggle [disabled]="!isPanelEnabled">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
@@ -93,14 +182,8 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
         
-            <mat-form-field style="margin-top: 20px;">
-              <mat-label>Teléfono</mat-label>
-              <input matInput formControlName="phone" />
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>Email</mat-label>
-              <input matInput formControlName="email" />
-            </mat-form-field>          
+
+
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
@@ -108,7 +191,7 @@
           </mat-expansion-panel>
         
           <!-- Panel 4 -->
-          <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle id="panel3">
+          <mat-expansion-panel [expanded]="step === 3 && isPanelEnabled" (opened)="setStep(3)"  hideToggle [disabled]="!isPanelEnabled">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
@@ -118,19 +201,12 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
         
-            <mat-form-field style="margin-top: 20px;">
-              <mat-label>Nombre</mat-label>
-              <input matInput formControlName="firstName" />
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>Apellido</mat-label>
-              <input matInput formControlName="lastName" />
-            </mat-form-field>
+
 
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="!DistribucionForm.valid">
-                Agregar
+              <button mat-raised-button color="primary" type="submit" [disabled]="!isFormValidAndHorasValid">
+                Guardar
               </button>
             </mat-action-row>
           </mat-expansion-panel>
@@ -154,52 +230,35 @@
   
   
   
-  <form [formGroup]="distribForm">
     <div mat-dialog-content class="content">
-      <mat-form-field appearance="outline">
-        <mat-label>Profesional</mat-label>
-        <mat-select formControlName="profesional">
-          <mat-option *ngFor="let prof of profesional" [value]="prof">{{ prof }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div class="error">
-        <span *ngIf="distribForm.get('profesional')?.hasError('required') && distribForm.get('profesional')?.touched">
-          <h5>El profesional es un campo requerido</h5>
-        </span>
-      </div>
   
       <p>Guardias
         <button mat-icon-button color="primary" (click)="openDistGuardia()" matTooltip="Agregar nuevo día de guardia"
-          [disabled]="!distribForm.get('profesional')?.value">
+          >
           <mat-icon>playlist_add</mat-icon>
         </button>
       </p>
   
       <p>Consultorio
         <button mat-icon-button color="primary" (click)="openDistCons()" matTooltip="Agregar nuevo día de consultorio"
-          [disabled]="!distribForm.get('profesional')?.value">
+          >
           <mat-icon>playlist_add</mat-icon>
         </button>
       </p>
   
       <p>Giras médicas
         <button mat-icon-button color="primary" (click)="openDistGira()" matTooltip="Agregar nuevo día de gira médica"
-          [disabled]="!distribForm.get('profesional')?.value">
+          >
           <mat-icon>playlist_add</mat-icon>
         </button>
       </p>
   
       <p>Otras actividades
         <button mat-icon-button color="primary" (click)="openDistOtra()" matTooltip="Agregar nuevo día de actividad"
-          [disabled]="!distribForm.get('profesional')?.value">
+          >
           <mat-icon>playlist_add</mat-icon>
         </button>
       </p>
     </div>
-    <div mat-dialog-actions class="action">
-      <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
-      <button mat-raised-button class="btnupdate" color="primary" type="submit" [disabled]="!distribForm.valid">Guardar</button>
-    </div>
-  </form>
   
 

@@ -10,6 +10,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
+import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
+import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
+import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
+import { ServicioService } from 'src/app/services/servicio.service';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 
 
 @Component({
@@ -23,8 +31,13 @@ export class DistHorariaComponent {
   selectedAsistencial?: Asistencial;
   DistribucionForm!: FormGroup;
   step = 0;
+  cantidadHoras: number = 0;
+  horasStatus: string = '';
 
+  isProfessionalLoaded: boolean = false;
 
+  servicios: Servicio[] = [];
+  efectores: Hospital[] = [];
 
   hospitales: string[] = ['DN. PABLO SORIA'];
   profesional: string[] = ['FIGUEROA ELIO', 'ARRAYA PEDRO ADEMIR', 'MORALES RICARDO', 'ALFARO FIDEL', 'MARTINEZ YANINA VANESA G.'];
@@ -35,9 +48,7 @@ export class DistHorariaComponent {
 
   selectedService: string = 'Cargo';
   selectedGuard: string = '';
-  disableButton: boolean = this.selectedGuard == '';
-
-  distribForm: FormGroup;
+  isButtonDisabled: boolean = true;
 
   constructor(
     private http: HttpClient,
@@ -46,34 +57,156 @@ export class DistHorariaComponent {
     private toastr: ToastrService,
     private route: ActivatedRoute,
     private router: Router,
+    private distribucionGuardiaService: DistribucionGuardiaService,
+    private distribucionConsultorioService: DistribucionConsultorioService,
+    private servicioService: ServicioService,
+    private efectorService: HospitalService,
     private fb: FormBuilder
   ) {
-    this.distribForm = this.fb.group({
-      hospital: ['', Validators.required],
-      profesional: ['', Validators.required],
-    });
-
     this.DistribucionForm = this.fb.group({
-      firstName: [''],
-      lastName: [''],
-      address: [''],
-      city: [''],
-      phone: [''],
-      email: ['']
+      profesional: ['', Validators.required],
+      tipoGuardia: ['', Validators.required],
+      dia: ['', Validators.required],
+      cantidadHoras: ['', [Validators.required, Validators.min(0)]],
+      fechaInicio: ['', Validators.required],
+      fechaFinalizacion: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+
+      // Campos para DistribucionConsultorio
+      tipoConsultorio: ['', Validators.required],
+      lugar: ['', Validators.required],
+      servicioConsultorio: ['', Validators.required],
+      cantidadHorasConsultorio: ['', [Validators.required, Validators.min(0)]],
+
+       // Campo para Efector
+      efector: ['', Validators.required],
+      servicio: ['', Validators.required]
     });
   }
 
   options: any[] | undefined;
 
   ngOnInit() {
-    this.http
-      .get<any[]>('../assets/jsonFiles/hospitales.json')
-      .subscribe((data) => {
-        this.options = data;
-      });
+    this.updateHorasStatus();
+    this.DistribucionForm.valueChanges.subscribe(() => this.updateHorasStatus());
+    this.listServicios();
   }
 
-  saveDistribucion(){}
+  listServicios(): void {
+    this.servicioService.list().subscribe(data => {
+      console.log('Lista de servicios:', data);
+      this.servicios = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listEfectores(): void {
+    this.efectorService.list().subscribe(data => {
+      console.log('Lista de efectores:', data);
+      this.efectores = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  updateHorasStatus() {
+    const horasGuardia = this.DistribucionForm.get('cantidadHoras')?.value || 0;
+    const horasConsultorio = this.DistribucionForm.get('cantidadHorasConsultorio')?.value || 0;
+    const totalHoras = horasGuardia + horasConsultorio;
+
+    if (!this.isProfessionalLoaded) {
+      this.horasStatus = 'Por favor, selecciona un profesional antes de continuar.';
+      this.isButtonDisabled = true;
+    } else if (this.DistribucionForm.invalid) {
+      this.horasStatus = 'Por favor, completa todos los campos obligatorios.';
+      this.isButtonDisabled = true;
+    } else if (totalHoras > 40) {
+      this.horasStatus = 'Se ha superado el número de horas posibles. Por favor, modifica los datos para que no sea mayor a 40 hs.';
+      this.isButtonDisabled = true;
+    } else {
+      this.horasStatus = `Has ingresado ${totalHoras} de un total de 40.`;
+      this.isButtonDisabled = false;
+    }
+  }
+
+  saveDistribucion() {
+    if (this.DistribucionForm.valid) {
+      const distribucionGuardia: DistribucionGuardia = {
+        ...this.DistribucionForm.value,
+        persona: this.selectedAsistencial,
+      };
+      const distribucionConsultorio: DistribucionConsultorio = {
+        ...this.DistribucionForm.value,
+        persona: this.selectedAsistencial,
+        tipoConsultorio: this.DistribucionForm.get('tipoConsultorio')?.value,
+        lugar: this.DistribucionForm.get('lugar')?.value,
+        servicio: this.DistribucionForm.get('servicioConsultorio')?.value,
+      };
+  
+      this.distribucionGuardiaService.save(distribucionGuardia).subscribe(
+        () => {
+          this.distribucionConsultorioService.save(distribucionConsultorio).subscribe(
+            () => {
+              this.toastr.success('Distribución guardada correctamente', 'Éxito');
+              this.router.navigate(['/personal']);
+            },
+            (error) => {
+              this.toastr.error('Error al guardar la distribución del consultorio', 'Error');
+              console.error(error);
+            }
+          );
+        },
+        (error) => {
+          this.toastr.error('Error al guardar la distribución de la guardia', 'Error');
+          console.error(error);
+        }
+      );
+    } else {
+      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error');
+    }
+  }
+
+  get isFormValidAndHorasValid(): boolean {
+    const horas = this.DistribucionForm.get('cantidadHoras')?.value;
+    const profesional = this.DistribucionForm.get('profesional')?.value;
+    const horasConsultorio = this.DistribucionForm.get('cantidadHorasConsultorio')?.value;
+    const totalHoras = (horas || 0) + (horasConsultorio || 0);
+  
+    return this.DistribucionForm.valid && profesional && totalHoras <= 40;
+  }
+
+  nextStep(): void {
+    this.step = (this.step + 1) % 4;
+  }
+
+  prevStep(): void {
+    this.step = (this.step - 1 + 4) % 4;
+  }
+
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  get isPanelEnabled(): boolean {
+    return this.isProfessionalLoaded;
+  }
+
+  get isPanel0Expanded(): boolean {
+    return this.isProfessionalLoaded && this.step === 0;
+  }
+  
+  get isPanel1Expanded(): boolean {
+    return this.isProfessionalLoaded && this.step === 1;
+  }
+  
+  get isPanel2Expanded(): boolean {
+    return this.isProfessionalLoaded && this.step === 2;
+  }
+  
+  get isPanel3Expanded(): boolean {
+    return this.isProfessionalLoaded && this.step === 3;
+  }
 
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
@@ -85,20 +218,20 @@ export class DistHorariaComponent {
       if (result) {
         this.selectedAsistencial = result;
         this.inputValue = `${result.apellido} ${result.nombre}`;
+        this.DistribucionForm.patchValue({ 
+          profesional: this.inputValue 
+        });
+        this.isProfessionalLoaded = true;
       }
     });
   }
 
-  nextStep(): void {
-    this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
-  }
-  
-  prevStep(): void {
-    this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
+  compareServicio(p1: Servicio, p2: Servicio): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  setStep(index: number) {
-    this.step = index;
+  compareEfector(e1: Hospital, e2: Hospital): boolean {
+    return e1 && e2 ? e1.id === e2.id : e1 === e2;
   }
 
   cancel(): void {
@@ -109,9 +242,6 @@ export class DistHorariaComponent {
     });
     this.router.navigate(['/personal']);
   }
-
-
-
 
   openDistGuardia() {
     this.dialogReg.open(DistHorariaGuardiaComponent, {
@@ -141,7 +271,4 @@ export class DistHorariaComponent {
     });
   }
 
-  get isProfesionalSelected(): boolean {
-    return this.distribForm.get('profesional')?.value !== '';
-  }
 }
