@@ -59,9 +59,12 @@ export class AsistencialSelectorComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
   selectAsistencial(asistencial: Asistencial): void {
+    // Verifica que el objeto tenga la estructura correcta
+    console.log('Selected Asistencial:', asistencial);
+  
+    // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
     this.dialogRef.close(asistencial);
   }
-
   cerrar(): void {
     this.dialogRef.close();
   }

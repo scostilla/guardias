@@ -37,9 +37,9 @@ export class DistHorariaComponent {
   isProfessionalLoaded: boolean = false;
 
   servicios: Servicio[] = [];
-  efectores: Hospital[] = [];
+  hospitales: Hospital[] = [];
 
-  hospitales: string[] = ['DN. PABLO SORIA'];
+  hospitaless: string[] = ['DN. PABLO SORIA'];
   profesional: string[] = ['FIGUEROA ELIO', 'ARRAYA PEDRO ADEMIR', 'MORALES RICARDO', 'ALFARO FIDEL', 'MARTINEZ YANINA VANESA G.'];
   guardia: string[] = ['Cargo', 'Agrupacion'];
   dia: string[] = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
@@ -60,7 +60,7 @@ export class DistHorariaComponent {
     private distribucionGuardiaService: DistribucionGuardiaService,
     private distribucionConsultorioService: DistribucionConsultorioService,
     private servicioService: ServicioService,
-    private efectorService: HospitalService,
+    private hospitalService: HospitalService,
     private fb: FormBuilder
   ) {
     this.DistribucionForm = this.fb.group({
@@ -68,19 +68,21 @@ export class DistHorariaComponent {
       tipoGuardia: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', [Validators.required, Validators.min(0)]],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
+      efectorGuardia: ['', Validators.required],
+      fechaInicioGuardia: ['', Validators.required],
+      fechaFinalizacionGuardia: ['', Validators.required],
+      horaIngresoGuardia: ['', Validators.required],
+      servicioGuardia: ['', Validators.required],
 
       // Campos para DistribucionConsultorio
       tipoConsultorio: ['', Validators.required],
       lugar: ['', Validators.required],
-      servicioConsultorio: ['', Validators.required],
       cantidadHorasConsultorio: ['', [Validators.required, Validators.min(0)]],
-
-       // Campo para Efector
-      efector: ['', Validators.required],
-      servicio: ['', Validators.required]
+      efectorConsultorio: ['', Validators.required],
+      fechaInicioConsultorio: ['', Validators.required],
+      fechaFinalizacionConsultorio: ['', Validators.required],
+      horaIngresoConsultorio: ['', Validators.required],
+      servicioConsultorio: ['', Validators.required]
     });
   }
 
@@ -90,6 +92,7 @@ export class DistHorariaComponent {
     this.updateHorasStatus();
     this.DistribucionForm.valueChanges.subscribe(() => this.updateHorasStatus());
     this.listServicios();
+    this.listEfectores();
   }
 
   listServicios(): void {
@@ -102,9 +105,9 @@ export class DistHorariaComponent {
   }
 
   listEfectores(): void {
-    this.efectorService.list().subscribe(data => {
-      console.log('Lista de efectores:', data);
-      this.efectores = data;
+    this.hospitalService.list().subscribe(data => {
+      console.log('Lista de hospitales:', data);
+      this.hospitales = data;
     }, error => {
       console.log(error);
     });
@@ -132,13 +135,33 @@ export class DistHorariaComponent {
 
   saveDistribucion() {
     if (this.DistribucionForm.valid) {
+      if (!this.selectedAsistencial) {
+        this.toastr.error('Por favor, selecciona un profesional', 'Error');
+        return;
+      }
+  
       const distribucionGuardia: DistribucionGuardia = {
-        ...this.DistribucionForm.value,
-        persona: this.selectedAsistencial,
+        dia: this.DistribucionForm.get('dia')?.value,
+        cantidadHoras: this.DistribucionForm.get('cantidadHoras')?.value,
+        activo: true,
+        persona: this.selectedAsistencial, // Incluye el objeto `persona` aquí
+        efector: this.DistribucionForm.get('efectorGuardia')?.value,
+        fechaInicio: this.DistribucionForm.get('fechaInicioGuardia')?.value,
+        fechaFinalizacion: this.DistribucionForm.get('fechaFinalizacionGuardia')?.value,
+        horaIngreso: this.DistribucionForm.get('horaIngresoGuardia')?.value,
+        tipoGuardia: this.DistribucionForm.get('tipoGuardia')?.value,
+        servicio: this.DistribucionForm.get('servicioGuardia')?.value,
       };
+  
       const distribucionConsultorio: DistribucionConsultorio = {
-        ...this.DistribucionForm.value,
-        persona: this.selectedAsistencial,
+        dia: this.DistribucionForm.get('dia')?.value,
+        cantidadHoras: this.DistribucionForm.get('cantidadHorasConsultorio')?.value,
+        activo: true,
+        persona: this.selectedAsistencial, // Incluye el objeto `persona` aquí
+        efector: this.DistribucionForm.get('efectorConsultorio')?.value,
+        fechaInicio: this.DistribucionForm.get('fechaInicioConsultorio')?.value,
+        fechaFinalizacion: this.DistribucionForm.get('fechaFinalizacionConsultorio')?.value,
+        horaIngreso: this.DistribucionForm.get('horaIngresoConsultorio')?.value,
         tipoConsultorio: this.DistribucionForm.get('tipoConsultorio')?.value,
         lugar: this.DistribucionForm.get('lugar')?.value,
         servicio: this.DistribucionForm.get('servicioConsultorio')?.value,
@@ -166,6 +189,7 @@ export class DistHorariaComponent {
       this.toastr.error('Por favor, completa todos los campos correctamente', 'Error');
     }
   }
+
 
   get isFormValidAndHorasValid(): boolean {
     const horas = this.DistribucionForm.get('cantidadHoras')?.value;
@@ -222,10 +246,12 @@ export class DistHorariaComponent {
           profesional: this.inputValue 
         });
         this.isProfessionalLoaded = true;
+  
+        console.log('Asistencial recibido en el componente principal:', this.selectedAsistencial);
       }
     });
   }
-
+  
   compareServicio(p1: Servicio, p2: Servicio): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
