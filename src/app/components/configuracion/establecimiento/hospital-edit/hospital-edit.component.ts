@@ -83,10 +83,10 @@ export class HospitalEditComponent implements OnInit {
         formValue.domicilio,
         formValue.region,
         formValue.localidad,
+        formValue.porcentajePorZona,
         formValue.esCabecera,
         formValue.admitePasiva,
-        formValue.nivelComplejidad,
-        formValue.porcentajePorZona
+        formValue.nivelComplejidad
       );
   
       console.log('HospitalDto:', hospitalDto);

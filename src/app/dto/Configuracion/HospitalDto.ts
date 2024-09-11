@@ -1,25 +1,27 @@
 import { EfectorDto } from "./EfectorDto";
 
 export class HospitalDto extends EfectorDto {
-  nivelComplejidad: number;
-  porcentajePorZona: number;
   esCabecera: boolean;
   admitePasiva: boolean;
+  nivelComplejidad: number;
+  //porcentajePorZona: number;
+  
+  
 
   constructor(
       nombre: string,
       domicilio: string,
-      region: number,
-      localidad: number,
-      nivelComplejidad: number,
+      idRegion: number,
+      idLocalidad: number,
       porcentajePorZona: number,
       esCabecera: boolean,
       admitePasiva: boolean,
+      nivelComplejidad: number
   ) {
-    super(nombre, domicilio, region, localidad);
-    this.nivelComplejidad = nivelComplejidad;
-    this.porcentajePorZona = porcentajePorZona;
+    super(nombre, domicilio, idRegion, idLocalidad,porcentajePorZona);
     this.esCabecera = esCabecera;
     this.admitePasiva = admitePasiva;
+    this.nivelComplejidad = nivelComplejidad;
+    /* this.porcentajePorZona = porcentajePorZona; */
   }
 }

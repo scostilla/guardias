@@ -1,20 +1,25 @@
 
 export class EfectorDto {
-    id?: number;
+    //id?: number;
     nombre: string;
     domicilio: string;
-    region: number;
-    localidad: number;
+    //region: number;
+    idRegion: number;
+    //localidad: number;
+    idLocalidad: number;
+    porcentajePorZona: number;
   
     constructor(
         nombre: string,
         domicilio: string,
-        region: number,
-        localidad: number,
+        idRegion: number,
+        idLocalidad: number,
+        porcentajePorZona: number,
     ) {
         this.nombre = nombre;
         this.domicilio = domicilio;
-        this.region = region;
-        this.localidad = localidad;
+        this.idRegion = idRegion;
+        this.idLocalidad = idLocalidad;
+        this.porcentajePorZona = porcentajePorZona;
     }
   }
