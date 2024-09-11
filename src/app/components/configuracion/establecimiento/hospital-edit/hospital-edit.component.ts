@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { HospitalDto } from 'src/app/dto/Configuracion/HospitalDto';
 import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { Region } from 'src/app/models/Configuracion/Region';
@@ -34,13 +35,10 @@ export class HospitalEditComponent implements OnInit {
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
       localidad: ['', Validators.required],
       region: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      admitePasiva: ['', Validators.required],
-      estado: ['', Validators.required],
-      esCabecera: ['', Validators.required],
       nivelComplejidad: ['', Validators.required],
       porcentajePorZona: ['', Validators.required],
-      observacion: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]]
+      esCabecera: ['', Validators.required],
+      admitePasiva: ['', Validators.required]
     });
 
     this.listLocalidad();
@@ -77,33 +75,47 @@ export class HospitalEditComponent implements OnInit {
 
   saveHospital(): void {
     if (this.hospitalForm.valid) {
-      const hospitalData = this.hospitalForm.value;
+      const formValue = this.hospitalForm.value;
+  
+      const hospitalDto = new HospitalDto(
+        formValue.nombre,
+        formValue.domicilio,
+        formValue.region,
+        formValue.localidad,
+        formValue.nivelComplejidad,
+        formValue.porcentajePorZona,
+        formValue.esCabecera,
+        formValue.admitePasiva
+      );
+    
+      console.log('HospitalDto:', hospitalDto); 
+  
       if (this.data && this.data.id) {
-        this.hospitalService.update(this.data.id, hospitalData).subscribe(
+        this.hospitalService.update(this.data.id, hospitalDto).subscribe(
           result => {
-            console.log('Hospital actualizado:', result); // Agrega esto
+            console.log('Hospital actualizado:', result);
             this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
-            console.error('Error al actualizar hospital:', error); // Agrega esto
+            console.error('Error al actualizar hospital:', error);
             this.dialogRef.close({ type: 'error', data: error });
           }
         );
       } else {
-        this.hospitalService.save(hospitalData).subscribe(
+        this.hospitalService.save(hospitalDto).subscribe(
           result => {
-            console.log('Hospital creado:', result); // Agrega esto
+            console.log('Hospital creado:', result);
             this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
-            console.error('Error al crear hospital:', error); // Agrega esto
+            console.error('Error al crear hospital:', error);
             this.dialogRef.close({ type: 'error', data: error });
           }
         );
       }
     }
   }
-  
+    
   compareLocalidad(p1: Localidad, p2: Localidad): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
