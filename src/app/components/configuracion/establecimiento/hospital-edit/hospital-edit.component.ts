@@ -77,20 +77,22 @@ export class HospitalEditComponent implements OnInit {
     if (this.hospitalForm.valid) {
       const formValue = this.hospitalForm.value;
   
+      // Aquí se debería incluir esCabecera y admitePasiva
       const hospitalDto = new HospitalDto(
         formValue.nombre,
         formValue.domicilio,
         formValue.region,
         formValue.localidad,
-        formValue.nivelComplejidad,
-        formValue.porcentajePorZona,
         formValue.esCabecera,
-        formValue.admitePasiva
+        formValue.admitePasiva,
+        formValue.nivelComplejidad,
+        formValue.porcentajePorZona
       );
-    
-      console.log('HospitalDto:', hospitalDto); 
+  
+      console.log('HospitalDto:', hospitalDto);
   
       if (this.data && this.data.id) {
+        // Actualiza el hospital existente
         this.hospitalService.update(this.data.id, hospitalDto).subscribe(
           result => {
             console.log('Hospital actualizado:', result);
@@ -102,6 +104,7 @@ export class HospitalEditComponent implements OnInit {
           }
         );
       } else {
+        // Crea un nuevo hospital
         this.hospitalService.save(hospitalDto).subscribe(
           result => {
             console.log('Hospital creado:', result);
@@ -115,7 +118,7 @@ export class HospitalEditComponent implements OnInit {
       }
     }
   }
-    
+      
   compareLocalidad(p1: Localidad, p2: Localidad): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
