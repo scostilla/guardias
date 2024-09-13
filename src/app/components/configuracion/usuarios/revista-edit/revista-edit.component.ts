@@ -168,6 +168,7 @@ export class RevistaEditComponent implements OnInit {
     
   saveRevista(): void {
     if (this.form?.valid) {
+
       const id = this.form.get('id')?.value;
       const idTipoRevista = this.form.get('tipoRevista')?.value?.id || null;
       const idCategoria = this.form.get('categoria')?.value?.id || null;
@@ -190,12 +191,17 @@ export class RevistaEditComponent implements OnInit {
   
       if (this.esEdicion) {
         // En caso de edición
-        const revista: Revista = {
-          id: id,
-          tipoRevista: this.form.get('tipoRevista')?.value,
-          categoria: this.form.get('categoria')?.value,
-          adicional: this.form.get('adicional')?.value,
-          cargaHoraria: this.form.get('cargaHoraria')?.value,
+        //const revista: Revista = {
+        const revista: RevistaDto = {
+          //id: id,
+          idTipoRevista: this.form.get('tipoRevista')?.value,
+          //tipoRevista: this.form.get('tipoRevista')?.value,
+          idCategoria: this.form.get('categoria')?.value,
+          //categoria: this.form.get('categoria')?.value,
+          idAdicional: this.form.get('adicional')?.value,
+          //adicional: this.form.get('adicional')?.value,
+          idCargaHoraria: this.form.get('cargaHoraria')?.value,
+          //cargaHoraria: this.form.get('cargaHoraria')?.value,
           agrupacion: this.form.get('agrupacion')?.value
         };
   
