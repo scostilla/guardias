@@ -231,14 +231,22 @@ export class CategoriaEditComponent implements OnInit, OnDestroy {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.categoriaService.refresh$.next(); // Emitir evento de actualización
+            this.categoriaService.refresh$.next(); 
           },
           error => {
+            if (error.status === 400 && error.error &&error.error.mensaje === 'No se puede eliminar la categoría porque está en uso') {
+              this.toastr.error('La Categoria no puede ser eliminada, tiene Revistas asociadas.', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+            } else {
             this.toastr.error('Error al eliminar la categoría', 'Error', {
               timeOut: 6000,
               positionClass: 'toast-top-center',
               progressBar: true
-            });
+              });
+            }
           }
         );
       } else {

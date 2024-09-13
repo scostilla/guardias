@@ -83,7 +83,7 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
       if (result) {
       const confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
-          message: '¿Estás seguro que deseas crear un nuevo tipo de revista?',
+          message: '¿Estás seguro que deseas crear un nuevo tipo revista?',
           title: 'Confirmar Creación',
         }
       });
@@ -92,7 +92,7 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
         if (confirmResult) {
           this.tipoRevistaService.save(result).subscribe(
             response => {
-              this.toastr.success('Tipo de revista creado exitosamente', 'Éxito', {
+              this.toastr.success('Tipo revista creado exitosamente', 'Éxito', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
@@ -135,7 +135,7 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
       if (result) {
         const confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
           data: {
-            message: '¿Estás seguro de que deseas editar el tipo de revista?',
+            message: '¿Estás seguro de que deseas editar el tipo revista?',
             title: 'Confirmar Modificación'
           }
         });
@@ -145,7 +145,7 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
             if (tipoRevista.id !== undefined) {
             this.tipoRevistaService.update(tipoRevista.id, result).subscribe(
               response => {
-                this.toastr.success('Tipo de revista actualizado exitosamente', 'Éxito',{
+                this.toastr.success('Tipo revista actualizado exitosamente', 'Éxito',{
                   timeOut: 6000,
                   positionClass: 'toast-top-center',
                   progressBar: true
@@ -153,7 +153,7 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
                 this.tipoRevistaService.refresh$.next();
               },
               error => {
-                this.toastr.error('Error al actualizar tipo de revista', 'Error',{
+                this.toastr.error('Error al actualizar tipo revista', 'Error',{
                   timeOut: 6000,
                   positionClass: 'toast-top-center',
                   progressBar: true
@@ -161,7 +161,7 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
               }
             );
           } else {
-            this.toastr.error('ID de tipo de revista no disponible', 'Error',{
+            this.toastr.error('ID de tipo revista no disponible', 'Error',{
               timeOut: 6000,
               positionClass: 'toast-top-center',
               progressBar: true
@@ -187,13 +187,13 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
 
   delete(tipoRevista: TipoRevista): void {
     if (tipoRevista.id === undefined) {
-      this.toastr.error('No se puede eliminar un tipo de revista sin ID', 'Error');
+      this.toastr.error('No se puede eliminar un tipo revista sin ID', 'Error');
       return;
     }
-
+  
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Confirmar la eliminación de "' + tipoRevista.nombre + '"',
+        message: `Confirmar la eliminación de "${tipoRevista.nombre}"`,
         title: 'Eliminar',
       },
     });
@@ -201,23 +201,31 @@ export class TipoRevistaEditComponent  implements OnInit, OnDestroy{
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.tipoRevistaService.delete(tipoRevista.id!).subscribe(
-          response => {
-          this.toastr.success('Tipo de revista eliminado con éxito', 'Éxito', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.tipoRevistaService.refresh$.next();
-          },
-          error => {
-            this.toastr.error('Error al eliminar el tipo de revista', 'Error', {
+          () => {
+            this.toastr.success('Tipo revista eliminado con éxito', 'Éxito', {
               timeOut: 6000,
               positionClass: 'toast-top-center',
               progressBar: true
             });
+            this.tipoRevistaService.refresh$.next();
+          },
+          error => {
+            if (error.status === 400 && error.error && error.error.mensaje === "No se puede eliminar el adicional porque está en uso") {
+              this.toastr.error("No se puede eliminar el adicional porque está en uso", 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+            } else {
+              this.toastr.error('Error al eliminar el tipo revista', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+            }
           }
         );
-      }else{
+      } else {
         this.toastr.error('Eliminación Cancelada', 'Cancelado', {
           timeOut: 6000,
           positionClass: 'toast-top-center',

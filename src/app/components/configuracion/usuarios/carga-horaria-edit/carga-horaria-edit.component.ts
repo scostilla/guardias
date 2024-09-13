@@ -210,11 +210,19 @@ dialogRef.afterClosed().subscribe(result => {
       this.cargaHorariaService.refresh$.next();
     },
     error => {
+      if (error.status === 400 && error.error && error.error.mensaje === 'No se puede eliminar la carga horaria porque está en uso') {
+        this.toastr.error('La Carga Horaria no puede ser eliminada, tiene Revistas asociadas', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      } else {
       this.toastr.error('Error al eliminar la carga horaria', 'Error', {
         timeOut: 6000,
         positionClass: 'toast-top-center',
         progressBar: true
-      });
+        });
+      }
     }
   );
 }else {
@@ -222,10 +230,10 @@ dialogRef.afterClosed().subscribe(result => {
     timeOut: 6000,
     positionClass: 'toast-top-center',
     progressBar: true
+      });
+    }
   });
 }
-});
-  }
 
 cerrar (): void {
   this.dialogRef.close();

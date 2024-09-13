@@ -210,24 +210,32 @@ delete(adicional: Adicional): void {
           this.adicionalService.refresh$.next();
         },
         error => {
-          this.toastr.error('Error al eliminar el adicional', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
+          if (error.status === 400 && error.error && error.error.mensaje === 'No se puede eliminar el adicional porque está en uso') {
+            this.toastr.error('El Adicional no puede ser eliminado, tiene Revistas asociadas.', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+        } else {
+            this.toastr.error('Error al eliminar el adicional', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+          }
         }
       );
-    }else{
+    } else {
       this.toastr.error('Eliminación Cancelada', 'Cancelado', {
         timeOut: 6000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
     }
-  });  
-    }
+  });
+}
 
 cerrar (): void {
   this.dialogRef.close();
-}
+  }
 }
