@@ -18,7 +18,7 @@ import { RegionService } from 'src/app/services/Configuracion/region.service';
 export class HospitalEditComponent implements OnInit {
   hospitalForm: FormGroup;
   initialData: any;
-  localidades: Localidad[] = []; 
+  localidades: Localidad[] = [];
   regiones: Region[] = []; 
 
   
@@ -35,8 +35,9 @@ export class HospitalEditComponent implements OnInit {
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
       localidad: ['', Validators.required],
       region: ['', Validators.required],
+      observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
+      telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]],
       nivelComplejidad: ['', Validators.required],
-      porcentajePorZona: ['', Validators.required],
       esCabecera: ['', Validators.required],
       admitePasiva: ['', Validators.required]
     });
@@ -77,13 +78,14 @@ export class HospitalEditComponent implements OnInit {
     if (this.hospitalForm.valid) {
       const formValue = this.hospitalForm.value;
   
-      // Aquí se debería incluir esCabecera y admitePasiva
       const hospitalDto = new HospitalDto(
         formValue.nombre,
         formValue.domicilio,
-        formValue.region,
-        formValue.localidad,
-        formValue.porcentajePorZona,
+        formValue.region.id,
+        formValue.localidad.id,
+        formValue.telefono,
+        formValue.observacion,
+        this.data ? this.data.porcentajePorZona : 1,
         formValue.esCabecera,
         formValue.admitePasiva,
         formValue.nivelComplejidad
@@ -92,7 +94,6 @@ export class HospitalEditComponent implements OnInit {
       console.log('HospitalDto:', hospitalDto);
   
       if (this.data && this.data.id) {
-        // Actualiza el hospital existente
         this.hospitalService.update(this.data.id, hospitalDto).subscribe(
           result => {
             console.log('Hospital actualizado:', result);
@@ -104,7 +105,6 @@ export class HospitalEditComponent implements OnInit {
           }
         );
       } else {
-        // Crea un nuevo hospital
         this.hospitalService.save(hospitalDto).subscribe(
           result => {
             console.log('Hospital creado:', result);

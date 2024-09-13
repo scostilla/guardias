@@ -71,7 +71,7 @@
                   <mat-form-field appearance="fill">
                     <mat-label>Efector</mat-label>
                     <mat-select formControlName="efectorGuardia" [compareWith]="compareEfector">
-                      <mat-option *ngFor="let hospital of hospitales" [value]="hospital">{{ hospital.nombre }}</mat-option>
+                      <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="DistribucionForm.get('efectorGuardia')?.errors?.['required']">El efector es requerido.</mat-error>
                   </mat-form-field>
@@ -154,7 +154,7 @@
             <mat-form-field appearance="fill">
               <mat-label>Efector</mat-label>
               <mat-select formControlName="efectorConsultorio" [compareWith]="compareEfector">
-                <mat-option *ngFor="let hospital of hospitales" [value]="hospital">{{ hospital.nombre }}</mat-option>
+                <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="DistribucionForm.get('efectorConsultorio')?.errors?.['required']">El efector es requerido.</mat-error>
             </mat-form-field>

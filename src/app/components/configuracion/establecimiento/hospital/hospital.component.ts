@@ -96,32 +96,37 @@ export class HospitalComponent implements OnInit, OnDestroy {
       width: '600px',
       data: esEdicion ? hospital : null
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
       if (result) {
-        this.toastr.success(esEdicion ? 'Hospital editado con éxito' : 'Hospital creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
-        } else {
-          this.dataSource.data.push(result);
+        if (result.type === 'save') {
+          this.toastr.success(esEdicion ? 'Hospital editado con éxito' : 'Hospital creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+  
+          if (esEdicion) {
+            const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+            if (index !== -1) {
+              this.dataSource.data[index] = result.data;
+            }
+          } else {
+            this.dataSource.data.push(result.data);
+          }
+          this.dataSource._updateChangeSubscription();
+        } else if (result.type === 'error') {
+          this.toastr.error('Ocurrió un error al crear o editar el hospital', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        } else if (result.type === 'cancel') {
         }
-        this.dataSource._updateChangeSubscription();
-      } else {
-        this.toastr.error('Ocurrió un error al crear o editar el hospital', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
       }
-    }
     });
   }
+  
 
   openDetail(hospital: Hospital): void {
     this.dialogRef = this.dialog.open(HospitalDetailComponent, { 

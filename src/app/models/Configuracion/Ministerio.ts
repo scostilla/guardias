@@ -13,14 +13,14 @@ import { Servicio } from "./Servicio";
 
 export class Ministerio extends Efector {
     idCabecera: number;
-    porcentajePorZona: number;
 
     constructor(
         nombre:string,
         domicilio: string,
         telefono: string, 
         estado: boolean, 
-        observacion: string, 
+        observacion: string,
+        porcentajePorZona: number,
         region: Region,
         localidad: Localidad,  
         distribucionesHorarias: DistribucionHoraria[],
@@ -33,11 +33,10 @@ export class Ministerio extends Efector {
         registroMensual: RegistroMensual[],
         ddjjs: Ddjj[],
         registrosPendientes: RegistrosPendientes[],
-        idCabecera: number,
-        porcentajePorZona: number
+        idCabecera: number
     ) 
         {
-        super(nombre,domicilio,telefono,estado,observacion,region,localidad, distribucionesHorarias,legajosUdo,legajos, servicios, notificaciones,autoridades,registrosActividades,registroMensual,ddjjs,registrosPendientes);
+        super(nombre, domicilio, telefono, estado, observacion, porcentajePorZona, region, localidad, distribucionesHorarias,legajosUdo,legajos, servicios, notificaciones,autoridades,registrosActividades,registroMensual,ddjjs,registrosPendientes);
         this.idCabecera = idCabecera;
         this.porcentajePorZona = porcentajePorZona;
     }

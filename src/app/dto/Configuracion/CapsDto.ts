@@ -1,9 +1,9 @@
 import { EfectorDto } from "./EfectorDto";
 
-export class HospitalDto extends EfectorDto {
-  esCabecera: boolean;
-  admitePasiva: boolean;
-  nivelComplejidad: number;
+export class CapsDto extends EfectorDto {
+  idCabecera: number;
+  areaProgramatica: number;
+  tipoCaps: string;
   
   
 
@@ -15,13 +15,13 @@ export class HospitalDto extends EfectorDto {
       telefono: string,
       observacion: string,
       porcentajePorZona: number,
-      esCabecera: boolean,
-      admitePasiva: boolean,
-      nivelComplejidad: number
+      idCabecera: number,
+      areaProgramatica: number,
+      tipoCaps: string
   ) {
     super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion, porcentajePorZona);
-    this.esCabecera = esCabecera;
-    this.admitePasiva = admitePasiva;
-    this.nivelComplejidad = nivelComplejidad;
+    this.idCabecera = idCabecera;
+    this.areaProgramatica = areaProgramatica;
+    this.tipoCaps = tipoCaps;
   }
 }

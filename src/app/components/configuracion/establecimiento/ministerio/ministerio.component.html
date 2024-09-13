@@ -17,12 +17,9 @@
     </div>
   </div>
 
-  <div class="row">
+<div class="row">
+  <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
-        <td mat-cell *matCellDef="let ministerio"> {{ministerio.id}} </td>
-      </ng-container>
 
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th> 
@@ -34,29 +31,9 @@
         <td mat-cell *matCellDef="let ministerio"> {{ministerio.domicilio}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="telefono">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Teléfono </th> 
-        <td mat-cell *matCellDef="let ministerio"> {{ministerio.telefono}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Estado </th> 
-        <td mat-cell *matCellDef="let especialidad"> {{especialidad.estado ? 'Activo' : 'Inactivo'}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="localidad" *ngIf="localidadVisible">
+      <ng-container matColumnDef="localidad">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Localidad </th> 
         <td mat-cell *matCellDef="let ministerio"> {{ministerio.localidad?.nombre}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="region" *ngIf="regionVisible">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Region </th> 
-        <td mat-cell *matCellDef="let ministerio"> {{ministerio.region?.nombre}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="idCabecera" *ngIf="idCabeceraVisible">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Cabecera </th> 
-        <td mat-cell *matCellDef="let ministerio"> {{ministerio.idCabecera}} </td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">
@@ -77,34 +54,9 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-
-    <div class="row mt-3">
-      <div class="col-lg-3">    
-        <mat-accordion>
-          <mat-expansion-panel hideToggle>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <button mat-icon-button color="primary" aria-label="Agregar columnas" matTooltip="Agregar columnas">
-                  <mat-icon>menu</mat-icon>
-                </button>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <ul><li>
-              <input type="checkbox" [(ngModel)]="regionVisible" (change)="actualizarColumnasVisibles()"> Region
-            </li>
-            <li>
-              <input type="checkbox" [(ngModel)]="localidadVisible" (change)="actualizarColumnasVisibles()"> Localidad
-            </li>
-            <li>
-              <input type="checkbox" [(ngModel)]="idCabeceraVisible" (change)="actualizarColumnasVisibles()"> Cabecera
-            </li>
-          </ul>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
-      <div class="col-lg-9">        
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
-      </div>
-    </div>
   </div>
+  <div class="row mt-3">
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
 </div>

@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionConsultorio } from "src/app/models/personal/DistribucionConsultorio";
+import { DistribucionConsultorioDto } from "src/app/dto/personal/DistribucionConsultorioDto";
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +32,7 @@ export class DistribucionConsultorioService {
     return this.httpClient.get<DistribucionConsultorio>(this.distribucionConsultoriosURL + `detailnombre/${nombre}`);
 }
 
-public save(distribucionConsultorioes:DistribucionConsultorio): Observable<any> {
+public save(distribucionConsultorioes:DistribucionConsultorioDto): Observable<any> {
   return this.httpClient.post<any>(this.distribucionConsultoriosURL + 'create', distribucionConsultorioes)
   .pipe(
     tap(() => {
@@ -39,7 +41,7 @@ public save(distribucionConsultorioes:DistribucionConsultorio): Observable<any> 
   )
 }
 
-public update(id:number, distribucionConsultorioes:DistribucionConsultorio): Observable<any> {
+public update(id:number, distribucionConsultorioes:DistribucionConsultorioDto): Observable<any> {
   return this.httpClient.put<any>(this.distribucionConsultoriosURL + `update/${id}`, distribucionConsultorioes)
   .pipe(
     tap(() => {

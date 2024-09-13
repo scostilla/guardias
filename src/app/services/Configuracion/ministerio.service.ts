@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Ministerio } from "src/app/models/Configuracion/Ministerio";
+import { MinisterioDto } from "src/app/dto/Configuracion/MinisterioDto";
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class MinisterioService {
     return this.httpClient.get<Ministerio>(this.ministeriosURL + `detailnombre/${nombre}`);
 }
 
-public save(ministerios:Ministerio): Observable<any> {
+public save(ministerios:MinisterioDto): Observable<any> {
   return this.httpClient.post<any>(this.ministeriosURL + 'create', ministerios)
   .pipe(
     tap(() => {
@@ -39,7 +40,7 @@ public save(ministerios:Ministerio): Observable<any> {
   )
 }
 
-public update(id:number, ministerios:Ministerio): Observable<any> {
+public update(id:number, ministerios:MinisterioDto): Observable<any> {
   return this.httpClient.put<any>(this.ministeriosURL + `update/${id}`, ministerios)
   .pipe(
     tap(() => {

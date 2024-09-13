@@ -16,6 +16,7 @@ export class Efector {
     telefono: string;
     estado: boolean;
     observacion: string;
+    porcentajePorZona: number;
     region: Region;
     localidad: Localidad;
     distribucionesHorarias: DistribucionHoraria[];
@@ -35,6 +36,7 @@ export class Efector {
         telefono: string,
         estado: boolean,
         observacion: string,
+        porcentajePorZona: number,
         region: Region,
         localidad: Localidad,
         distribucionesHorarias: DistribucionHoraria[],
@@ -53,6 +55,7 @@ export class Efector {
         this.telefono = telefono;
         this.estado = estado;
         this.observacion = observacion;
+        this.porcentajePorZona = porcentajePorZona;
         this.region = region;
         this.localidad = localidad;
         this.distribucionesHorarias = distribucionesHorarias;

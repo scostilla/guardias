@@ -31,7 +31,7 @@
                 <mat-form-field appearance="fill">
                   <mat-label>Localidad</mat-label>
                   <mat-select formControlName="localidad" [compareWith]="compareLocalidad">
-                    <mat-option *ngFor="let localidad of localidades" [value]="localidad.id" >{{ localidad.nombre }}</mat-option>
+                    <mat-option *ngFor="let localidad of localidades" [value]="localidad" >{{ localidad.nombre }}</mat-option>
                   </mat-select>
                             <mat-error *ngIf="hospitalForm?.get('localidad')?.invalid && hospitalForm?.get('localidad')?.touched">
                     El campo es obligatorio.
@@ -44,7 +44,7 @@
                 <mat-form-field appearance="fill">
                   <mat-label>Región</mat-label>
                   <mat-select formControlName="region" [compareWith]="compareRegion">
-                    <mat-option *ngFor="let region of regiones" [value]="region.id" >{{ region.nombre }}</mat-option>
+                    <mat-option *ngFor="let region of regiones" [value]="region" >{{ region.nombre }}</mat-option>
                   </mat-select>
                             <mat-error *ngIf="hospitalForm?.get('region')?.invalid && hospitalForm?.get('region')?.touched">
                     El campo es obligatorio.
@@ -52,6 +52,31 @@
                 </mat-form-field>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Teléfono</mat-label>
+                    <input matInput formControlName="telefono">
+                    <mat-error *ngIf="hospitalForm?.get('telefono')?.invalid && hospitalForm?.get('telefono')?.touched">
+                        El campo debe contener hasta 15 números.
+                    </mat-error>    
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Observación</mat-label>
+                    <input matInput formControlName="observacion">
+                  <mat-error *ngIf="hospitalForm?.get('observacion')?.invalid && hospitalForm?.get('observacion')?.touched">
+                    El campo puede contener letras y números (entre 3 y 80 caracteres).
+                  </mat-error>
+                </mat-form-field>
+              </div> 
+            </div>       
+
             <div class="row">
                 <div class="col">
                   <mat-form-field appearance="fill">
@@ -68,17 +93,6 @@
                   </mat-form-field>
                 </div>
               </div>  
-            <div class="row">
-              <div class="col">
-                <mat-form-field appearance="fill">
-                  <mat-label>Porcentaje por zona</mat-label>
-                    <input type="number" matInput formControlName="porcentajePorZona">
-                    <mat-error *ngIf="hospitalForm?.get('porcentajePorZona')?.invalid && hospitalForm?.get('porcentajePorZona')?.touched">
-                        El campo es obligatorio.
-                    </mat-error>    
-                </mat-form-field>
-              </div>
-            </div>
 
             <div class="row">
               <div class="col">

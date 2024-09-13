@@ -12,8 +12,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
+import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
 import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
+import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/servicio.service';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
@@ -133,64 +135,76 @@ export class DistHorariaComponent {
     }
   }
 
-  saveDistribucion() {
-    if (this.DistribucionForm.valid) {
-      if (!this.selectedAsistencial) {
-        this.toastr.error('Por favor, selecciona un profesional', 'Error');
-        return;
-      }
-  
-      const distribucionGuardia: DistribucionGuardia = {
-        dia: this.DistribucionForm.get('dia')?.value,
-        cantidadHoras: this.DistribucionForm.get('cantidadHoras')?.value,
-        activo: true,
-        persona: this.selectedAsistencial, // Incluye el objeto `persona` aquí
-        efector: this.DistribucionForm.get('efectorGuardia')?.value,
-        fechaInicio: this.DistribucionForm.get('fechaInicioGuardia')?.value,
-        fechaFinalizacion: this.DistribucionForm.get('fechaFinalizacionGuardia')?.value,
-        horaIngreso: this.DistribucionForm.get('horaIngresoGuardia')?.value,
-        tipoGuardia: this.DistribucionForm.get('tipoGuardia')?.value,
-        servicio: this.DistribucionForm.get('servicioGuardia')?.value,
-      };
-  
-      const distribucionConsultorio: DistribucionConsultorio = {
-        dia: this.DistribucionForm.get('dia')?.value,
-        cantidadHoras: this.DistribucionForm.get('cantidadHorasConsultorio')?.value,
-        activo: true,
-        persona: this.selectedAsistencial, // Incluye el objeto `persona` aquí
-        efector: this.DistribucionForm.get('efectorConsultorio')?.value,
-        fechaInicio: this.DistribucionForm.get('fechaInicioConsultorio')?.value,
-        fechaFinalizacion: this.DistribucionForm.get('fechaFinalizacionConsultorio')?.value,
-        horaIngreso: this.DistribucionForm.get('horaIngresoConsultorio')?.value,
-        tipoConsultorio: this.DistribucionForm.get('tipoConsultorio')?.value,
-        lugar: this.DistribucionForm.get('lugar')?.value,
-        servicio: this.DistribucionForm.get('servicioConsultorio')?.value,
-      };
-  
-      this.distribucionGuardiaService.save(distribucionGuardia).subscribe(
-        () => {
-          this.distribucionConsultorioService.save(distribucionConsultorio).subscribe(
-            () => {
-              this.toastr.success('Distribución guardada correctamente', 'Éxito');
-              this.router.navigate(['/personal']);
-            },
-            (error) => {
-              this.toastr.error('Error al guardar la distribución del consultorio', 'Error');
-              console.error(error);
-            }
-          );
-        },
-        (error) => {
-          this.toastr.error('Error al guardar la distribución de la guardia', 'Error');
-          console.error(error);
-        }
-      );
-    } else {
-      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error');
+saveDistribucion() {
+  if (this.DistribucionForm.valid) {
+    if (!this.selectedAsistencial) {
+      this.toastr.error('Por favor, selecciona un profesional', 'Error');
+      return;
     }
+
+    // Asignar un valor numérico por defecto si selectedAsistencial.id es undefined
+    const profesionalId: number = this.selectedAsistencial.id ?? 0;
+    const efectorGuardiaId = this.DistribucionForm.get('efectorGuardia')?.value as number;
+    const efectorConsultorioId = this.DistribucionForm.get('efectorConsultorio')?.value as number;
+    const servicioGuardiaId = this.DistribucionForm.get('servicioGuardia')?.value as number;
+    const servicioConsultorioId = this.DistribucionForm.get('servicioConsultorio')?.value as number;
+
+    // Construir el DTO para DistribucionGuardia
+    const distribucionGuardiaDto = new DistribucionGuardiaDto(
+      this.DistribucionForm.get('dia')?.value,
+      this.DistribucionForm.get('cantidadHoras')?.value,
+      profesionalId, // Utilizar profesionalId en lugar de selectedAsistencial.id
+      efectorGuardiaId,
+      this.DistribucionForm.get('fechaInicioGuardia')?.value,
+      this.DistribucionForm.get('fechaFinalizacionGuardia')?.value,
+      this.DistribucionForm.get('horaIngresoGuardia')?.value,
+      this.DistribucionForm.get('tipoGuardia')?.value,
+      servicioGuardiaId
+    );
+
+    // Construir el DTO para DistribucionConsultorio
+    const distribucionConsultorioDto = new DistribucionConsultorioDto(
+      this.DistribucionForm.get('dia')?.value,
+      this.DistribucionForm.get('cantidadHorasConsultorio')?.value,
+      profesionalId, // Utilizar profesionalId en lugar de selectedAsistencial.id
+      efectorConsultorioId,
+      this.DistribucionForm.get('fechaInicioConsultorio')?.value,
+      this.DistribucionForm.get('fechaFinalizacionConsultorio')?.value,
+      this.DistribucionForm.get('horaIngresoConsultorio')?.value,
+      servicioConsultorioId,
+      this.DistribucionForm.get('tipoConsultorio')?.value,
+      this.DistribucionForm.get('lugar')?.value
+    );
+
+    // Imprimir los DTOs en la consola para verificar los datos
+    console.log('DistribucionGuardiaDto:', distribucionGuardiaDto);
+    console.log('DistribucionConsultorioDto:', distribucionConsultorioDto);
+
+    // Guardar la distribución de la guardia
+    this.distribucionGuardiaService.save(distribucionGuardiaDto).subscribe(
+      () => {
+        // Guardar la distribución del consultorio
+        this.distribucionConsultorioService.save(distribucionConsultorioDto).subscribe(
+          () => {
+            this.toastr.success('Distribución guardada correctamente', 'Éxito');
+            this.router.navigate(['/personal']);
+          },
+          (error) => {
+            this.toastr.error('Error al guardar la distribución del consultorio', 'Error');
+            console.error(error);
+          }
+        );
+      },
+      (error) => {
+        this.toastr.error('Error al guardar la distribución de la guardia', 'Error');
+        console.error(error);
+      }
+    );
+  } else {
+    this.toastr.error('Por favor, completa todos los campos correctamente', 'Error');
   }
-
-
+}
+  
   get isFormValidAndHorasValid(): boolean {
     const horas = this.DistribucionForm.get('cantidadHoras')?.value;
     const profesional = this.DistribucionForm.get('profesional')?.value;
