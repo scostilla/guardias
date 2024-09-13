@@ -41,7 +41,7 @@ export class CapsEditComponent implements OnInit {
       region: ['', Validators.required],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]],
-      idCabecera: ['', Validators.required],
+      cabecera: ['', Validators.required],
       tipoCaps: ['', Validators.required]
     });
 
@@ -57,10 +57,10 @@ export class CapsEditComponent implements OnInit {
   ngOnInit(): void {
     this.initialData = this.capsForm.value;
     
-    if (this.data) {
+    /* if (this.data) {
       console.log('ID Cabecera en data:', this.data.idCabecera);
       this.listHospital(); // Asegúrate de cargar hospitales
-    }
+    } */
   }
 
   isModified(): boolean {
@@ -84,7 +84,7 @@ export class CapsEditComponent implements OnInit {
   }
 
   listHospital(): void {
-    this.hospitalService.list().subscribe(data => {
+    /* this.hospitalService.list().subscribe(data => {
       this.hospitales = data;
       if (this.data) {
         console.log('Datos antes de patchValue:', this.data);
@@ -94,6 +94,12 @@ export class CapsEditComponent implements OnInit {
         });
         console.log('Formulario después de patchValue:', this.capsForm.value);
       }
+    }, error => {
+      console.log(error);
+    }); */
+
+    this.hospitalService.list().subscribe(data => {
+      this.hospitales = data;
     }, error => {
       console.log(error);
     });
@@ -111,7 +117,8 @@ export class CapsEditComponent implements OnInit {
         formValue.telefono,
         formValue.observacion,
         this.data ? this.data.porcentajePorZona : 1,
-        formValue.idCabecera.id,
+        //formValue.idCabecera.id,
+        formValue.cabecera.id,
         this.data ? this.data.areaProgramatica : 1,
         formValue.tipoCaps
       );
@@ -152,9 +159,12 @@ export class CapsEditComponent implements OnInit {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-compareHospital(hospitalId: number, hospital: Hospital): boolean {
-  return hospital ? hospital.id === hospitalId : false;
+compareHospital(p1: Hospital, p2: Hospital): boolean {
+  return p1 && p2 ? p1.id === p2.id : p1 === p2;
 }
+/* compareHospital(hospitalId: number, hospital: Hospital): boolean {
+  return hospital ? hospital.id === hospitalId : false;
+} */
 
   cancel(): void {
     this.dialogRef.close({ type: 'cancel' });

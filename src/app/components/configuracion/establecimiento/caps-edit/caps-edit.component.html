@@ -64,8 +64,8 @@
 -->
             <mat-form-field appearance="fill">
                 <mat-label>Hospital cabecera</mat-label>
-                <mat-select formControlName="idCabecera" [compareWith]="compareHospital">
-                <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">
+                <mat-select formControlName="cabecera" [compareWith]="compareHospital">
+                <mat-option *ngFor="let hospital of hospitales" [value]="hospital">
                     {{ hospital.nombre }}
                 </mat-option>
                 </mat-select>
