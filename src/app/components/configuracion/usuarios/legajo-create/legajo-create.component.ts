@@ -51,7 +51,7 @@ interface Agrup {
 })
 export class LegajoCreateComponent implements OnInit {
   legajoForm: FormGroup;
-  // initialData: any;
+  initialData: any;
   //personas: Asistencial[] = [];
   personas: AsistencialListForLegajosDto[] = [];
   /* personas: AsistencialListDto[] = []; */
@@ -153,6 +153,8 @@ export class LegajoCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.initialData = this.legajoForm.value;
     /* this.route.params.subscribe(params => {
       const legajoId = params['id'];
       this.esEdicion = !!legajoId;
@@ -404,7 +406,7 @@ export class LegajoCreateComponent implements OnInit {
             // Si existe, usa su ID
             if (existingRevista && existingRevista.id !== undefined) {
               console.log("fecha que tiene " , legajoData.fechaInicio)
-              this.createLegajoDtoAndSave(existingRevista.id);
+              this.createLegajoDtoAndSave(legajoData, existingRevista.id);
             } else {
               console.error('La revista existente no tiene un ID.');
             }
@@ -419,7 +421,7 @@ export class LegajoCreateComponent implements OnInit {
                   (newRevista) => {
                     if (newRevista && newRevista.id !== undefined) {
                       console.log('%%%Nueva revista creada y encontrada:', newRevista);
-                      this.createLegajoDtoAndSave(newRevista.id);
+                      this.createLegajoDtoAndSave(legajoData, newRevista.id);
                     } else {
                       console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
                     }
@@ -439,15 +441,11 @@ export class LegajoCreateComponent implements OnInit {
     }
     }
   
-    createLegajoDtoAndSave( revistaId: number | null): void {
-      
-      const legajoData = this.legajoForm.value;
-
-     
+    createLegajoDtoAndSave(legajoData:any, revistaId: number): void {
 
       const legajoDto = new LegajoDto(
-        legajoData.fechaInicio ? new Date(moment(legajoData.fechaInicio).format('YYYY-MM-DD')) : null,
-        legajoData.fechaFinal ? new Date(moment(legajoData.fechaFinal).format('YYYY-MM-DD')): null,      
+        legajoData.fechaInicio,
+        legajoData.fechaFinal,      
         legajoData.actual,
         legajoData.legal,
         legajoData.activo,
@@ -474,7 +472,7 @@ export class LegajoCreateComponent implements OnInit {
           this.router.navigate(['/legajo'], { state: { legajoCreado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
         },
         (error) => {
-          this.toastr.error('Ocurrió un error al crear el Legajo', 'Error', {
+          this.toastr.error('Faaa Ocurrió un error al crear el Legajo', error, {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
