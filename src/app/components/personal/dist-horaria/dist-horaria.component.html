@@ -69,25 +69,16 @@
                     <mat-error *ngIf="guardiaForm.get('idServicio')?.errors?.['required']">El servicio es requerido.</mat-error>
             </mat-form-field>
 
-                <mat-form-field appearance="fill">
-                    <mat-label>Tipo Guardia</mat-label>
-                    <mat-select formControlName="tipoGuardia">
-                      <mat-option value="CONTRAFACTURA">Contrafactura</mat-option>
-                      <mat-option value="CARGO">Cargo</mat-option>
-                      <mat-option value="EXTRA">Extra</mat-option>
-                      <mat-option value="AGRUPACIÓN">Agrupación</mat-option>
-                      <mat-option value="PASIVA">Pasiva</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="guardiaForm?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
-                  </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Tipo Guardia</mat-label>
+              <mat-select formControlName="tipoGuardia">
+                <mat-option *ngFor="let tipo of tiposGuardiaOptions" [value]="tipo.nombre">
+                  {{ tipo.nombre }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="guardiaForm?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+            </mat-form-field>
 
-                  <mat-form-field appearance="fill">
-                    <mat-label>Efector</mat-label>
-                    <mat-select formControlName="idEfector" [compareWith]="compareHospital">
-                      <mat-option *ngFor="let hospital of hospitales" [value]="hospital" >{{ hospital.nombre }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="guardiaForm.get('idEfector')?.errors?.['required']">El efector es requerido.</mat-error>
-                  </mat-form-field>
             
                 <mat-form-field appearance="fill">
                   <mat-label>Día</mat-label>
@@ -170,13 +161,13 @@
                   <mat-error *ngIf="consultorioForm?.get('tipoConsultorio')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
+                <!--<mat-form-field appearance="fill">
                   <mat-label>Efector</mat-label>
                   <mat-select formControlName="idEfector" [compareWith]="compareHospital">
                     <mat-option *ngFor="let hospital of hospitales" [value]="hospital" >{{ hospital.nombre }}</mat-option>
                   </mat-select>
                   <mat-error *ngIf="consultorioForm.get('idEfector')?.errors?.['required']">El efector es requerido.</mat-error>
-                </mat-form-field>
+                </mat-form-field>-->
           
               <mat-form-field appearance="fill">
                 <mat-label>Día</mat-label>

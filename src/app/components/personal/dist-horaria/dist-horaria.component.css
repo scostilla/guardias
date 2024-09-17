@@ -89,3 +89,7 @@ mat-form-field input {
 .error-message {
   background-color: #dc3545;
 }
+
+.pending-message {
+  background-color: #ffc107;
+}
