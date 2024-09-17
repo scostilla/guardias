@@ -222,6 +222,7 @@ import { RevistaDetailComponent } from './components/configuracion/usuarios/revi
 import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
 import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
+import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -395,6 +396,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     ValoresGuardiasCreateComponent,
     ValoresBonoUtiCreateComponent,
     AsistencialSelectorComponent,
+    LegajoCreateComponent,
     
   ],
 

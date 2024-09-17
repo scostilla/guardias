@@ -127,13 +127,22 @@ export class LegajoComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-  openFormChanges(legajo?: Legajo): void {
+  /* openFormChanges(legajo?: Legajo): void {
     if (legajo && legajo.id) {
       this.router.navigate(['/legajo-edit', legajo.id]);
     } else {
-      this.router.navigate(['/legajo-edit']);
+      this.router.navigate(['/legajo-create']);
     }
-  }
+  } */
+
+    createLegajo(): void {
+      this.router.navigate(['/legajo-create']); // Redirige al componente de creación de legajo
+    }
+
+    updateLegajo(legajo: Legajo): void {
+      this.router.navigate(['/legajo-update']); // Redirige al componente de creación de legajo
+    }
+
 
   /*openFormChanges(legajo?: Legajo): void {
     const esEdicion = legajo != null;

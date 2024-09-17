@@ -5,7 +5,7 @@
       <div class="titulo_prueba">LEGAJOS</div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Legajo">
+      <button mat-fab color="primary" (click)="createLegajo()" matTooltip="Agregar Legajo">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
@@ -80,7 +80,7 @@
             <button mat-icon-button matTooltip="Ver Revista" (click)="verRevista(legajo)">
               <mat-icon color="primary">playlist_play</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Editar legajo de {{legajo.persona?.apellido}}" (click)="openFormChanges(legajo)">
+            <button mat-icon-button matTooltip="Editar legajo de {{legajo.persona?.apellido}}" (click)="updateLegajo(legajo)">
               <mat-icon class="btnEdit">edit</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Eliminar legajo de {{legajo.persona?.apellido}}" (click)="deleteLegajo(legajo)">
