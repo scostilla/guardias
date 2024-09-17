@@ -51,7 +51,7 @@ interface Agrup {
 })
 export class LegajoCreateComponent implements OnInit {
   legajoForm: FormGroup;
-  initialData: any;
+  //initialData: any;
   //personas: Asistencial[] = [];
   personas: AsistencialListForLegajosDto[] = [];
   /* personas: AsistencialListDto[] = []; */
@@ -121,6 +121,7 @@ export class LegajoCreateComponent implements OnInit {
       cargo: ['', Validators.required],
     });
 
+    this.listAsistenciales();
     this.listProfesiones();
     this.listUdos();
     this.listCargos();
@@ -154,7 +155,7 @@ export class LegajoCreateComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.initialData = this.legajoForm.value;
+    //this.initialData = this.legajoForm.value;
     /* this.route.params.subscribe(params => {
       const legajoId = params['id'];
       this.esEdicion = !!legajoId;
@@ -178,7 +179,7 @@ export class LegajoCreateComponent implements OnInit {
       this.loadDropdowns();
     }); */
 
-    this.listAsistenciales();
+    //this.listAsistenciales();
     //this.setupFormValueChanges();
 
     /* // Si se ha recibido una persona
@@ -202,7 +203,7 @@ export class LegajoCreateComponent implements OnInit {
     });
   } */
 
-  checkTipoGuardia(persona: AsistencialListDto): void {
+  /* checkTipoGuardia(persona: AsistencialListDto): void {
     if (persona.nombresTiposGuardias && persona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
       this.isContrafactura = true;
       // Limpiar validadores de los campos que no son necesarios para CONTRAFACTURA
@@ -233,7 +234,7 @@ export class LegajoCreateComponent implements OnInit {
   this.legajoForm.get('tipoRevista')?.updateValueAndValidity();
   this.legajoForm.get('udo')?.updateValueAndValidity();
   this.legajoForm.get('cargo')?.updateValueAndValidity();
-  }
+  } */
 
   /* isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
@@ -455,9 +456,9 @@ export class LegajoCreateComponent implements OnInit {
         legajoData.udo.id,
         legajoData.persona.id,
         legajoData.cargo.id,
-        legajoData.profesion.id,
         legajoData.efectores,
-        legajoData.especialidades
+        legajoData.especialidades,
+        legajoData.profesion.id
       );
 
       console.log("dto creado para guardar" , legajoDto);

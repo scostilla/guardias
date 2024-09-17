@@ -15,8 +15,8 @@ export class LegajoDto {
     idProfesion: number;
     
     constructor(
-        fechaInicio: Date | null,
-        fechaFinal: Date | null,
+        fechaInicio: Date,
+        fechaFinal: Date,
         actual: boolean, 
         legal: boolean, 
         activo:boolean, 
