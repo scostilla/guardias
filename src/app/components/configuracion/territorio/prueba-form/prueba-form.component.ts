@@ -1,95 +1,151 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
+import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+
+
 
 @Component({
   selector: 'app-prueba-form',
   templateUrl: './prueba-form.component.html',
-  styles: []
+  styleUrls: ['./prueba-form.component.css']
 })
-
 export class PruebaFormComponent implements OnInit {
-  form?: FormGroup;
-  eventTitle!: string;
-  eventStartDate!: Date; 
-  eventStartTime!: string; 
-  eventEndDate!: Date; 
-  eventEndTime!: string; 
-  eventColor!: string; 
-  predefinedColors = [
-    { name: 'Extra', primary: '#fcc932', secondary: '#fcc932' },
-    { name: 'Cargo', primary: '#91A8DA', secondary: '#91A8DA' },
-    { name: 'Agrupación', primary: '#F4AF88', secondary: '#F4AF88' },
-    { name: 'Contrafactura', primary: '#A9D08F', secondary: '#A9D08F' }
-  ];
+  distribucionForm: FormGroup;
+  initialData: any;
+  hospitales: Hospital[] = [];
+  servicios: Servicio[] = []; 
+  asistenciales: Asistencial[] = [];
 
-  constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<PruebaFormComponent>) {}
+
+  
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<PruebaFormComponent>,
+    private distribucionGuardiaService: DistribucionGuardiaService,
+    private hospitalService: HospitalService, 
+    private servicioService: ServicioService,
+    private asistencialService: AsistencialService,
+    @Inject(MAT_DIALOG_DATA) public data: Hospital
+  ) {
+    this.distribucionForm = this.fb.group({
+      idPersona: ['', Validators.required],
+      tipoGuardia: ['', Validators.required],
+      dia: ['', Validators.required],
+      cantidadHoras: ['', [Validators.required, Validators.min(0)]],
+      idEfector: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      fechaFinalizacion: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      idServicio: ['', Validators.required],
+    });
+
+    this.listHospital();
+    this.listServicio();
+    this.listAsistencial();
+
+
+    if (data) {
+      this.distribucionForm.patchValue(data);
+    }
+  }
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      eventTitle: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{4,50}$')]],
-      eventStartDate: ['', Validators.required],
-      eventStartTime: ['', Validators.required],
-      eventEndDate: ['', Validators.required],
-      eventEndTime: ['', Validators.required],
-      eventColor: ['', Validators.required]
-    }, { validator: this.dateAndTimeValidator.bind(this) });
-  this.form.get('eventEndDate')?.valueChanges.subscribe(() => {
-    this.form?.get('eventEndTime')?.updateValueAndValidity();
-  });
+    this.initialData = this.distribucionForm.value;
   }
 
-  dateAndTimeValidator(group: FormGroup): any {
-    const startDateControl = group.get('eventStartDate');
-    const endDateControl = group.get('eventEndDate');
-    const startTimeControl = group.get('eventStartTime');
-    const endTimeControl = group.get('eventEndTime');
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.distribucionForm.value);
+  }
+
+  listHospital(): void {
+    this.hospitalService.list().subscribe(data => {
+      this.hospitales = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listServicio(): void {
+    this.servicioService.list().subscribe(data => {
+      this.servicios = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listAsistencial(): void {
+    this.asistencialService.list().subscribe(data => {
+      this.asistenciales = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  saveHospital(): void {
+    if (this.distribucionForm.valid) {
+      const formValue = this.distribucionForm.value;
   
-    if (startDateControl && endDateControl && startTimeControl && endTimeControl) {
-      const start = new Date(startDateControl.value);
-      const end = new Date(endDateControl.value);
-      const startTime = startTimeControl.value ? startTimeControl.value.split(':') : null;
-      const endTime = endTimeControl.value ? endTimeControl.value.split(':') : null;
+      const distribucionGuardiaDto = new DistribucionGuardiaDto(
+        formValue.dia,
+        formValue.cantidadHoras,
+        formValue.idPersona.id,
+        formValue.idEfector.id,
+        formValue.fechaInicio,
+        formValue.fechaFinalizacion,
+        formValue.horaIngreso,
+        formValue.tipoGuardia,
+        formValue.idServicio.id
+      );
   
-      if (startTime && endTime) {
-        start.setHours(parseInt(startTime[0]), parseInt(startTime[1]));
-        end.setHours(parseInt(endTime[0]), parseInt(endTime[1]));
-      }
+      console.log('distribucionGuardiaDto:', distribucionGuardiaDto);
   
-      if (start.toDateString() === end.toDateString()) {
-        if (end.getTime() < start.getTime()) {
-          group.controls['eventEndTime'].setErrors({ timeInvalid: true });
-        }
+      if (this.data && this.data.id) {
+        this.distribucionGuardiaService.update(this.data.id, distribucionGuardiaDto).subscribe(
+          result => {
+            console.log('Hospital actualizado:', result);
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            console.error('Error al actualizar hospital:', error);
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
       } else {
-        if (end < start) {
-          group.controls['eventEndDate'].setErrors({ dateInvalid: true });
-          group.controls['eventEndTime'].setErrors({ timeInvalid: true });
-        }
+        this.distribucionGuardiaService.save(distribucionGuardiaDto).subscribe(
+          result => {
+            console.log('Hospital creado:', result);
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            console.error('Error al crear hospital:', error);
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
       }
     }
-  
-    return null;
+  }
+      
+  compareHospital(p1: Hospital, p2: Hospital): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  onSubmit(): void {
-    if (this.form?.valid) {
-      const formValue = this.form.value;
-      const selectedColor = this.predefinedColors.find(color => color.name === formValue.eventColor);
-  
-      const startDateTime = new Date(formValue.eventStartDate);
-      const startTimeParts = formValue.eventStartTime.split(':');
-      startDateTime.setHours(parseInt(startTimeParts[0]), parseInt(startTimeParts[1]));
-  
-      const endDateTime = new Date(formValue.eventEndDate);
-      const endTimeParts = formValue.eventEndTime.split(':');
-      endDateTime.setHours(parseInt(endTimeParts[0]), parseInt(endTimeParts[1]));
-    
-      this.dialogRef.close({
-        title: formValue.eventTitle,
-        startDate: startDateTime.toString(),
-        endDate: endDateTime.toString(),
-        color: selectedColor 
-      });
-    }
+  compareServicio(p1: Servicio, p2: Servicio): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  compareAsistencial(p1: Asistencial, p2: Asistencial): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  cancel(): void {
+    this.dialogRef.close({ type: 'cancel' });
   }
 }

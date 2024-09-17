@@ -46,3 +46,46 @@ mat-form-field {
 mat-form-field input {
   padding-right: 48px;
 }
+
+.container-mensajes {
+  display: flex;
+  gap: 10px;
+  margin: 10px;
+}
+
+.carga-horaria-display,
+.horas-status-display {
+  padding: 10px;
+  border-radius: 8px;
+  width: 30%;
+  text-align: center;
+}
+
+.carga-horaria-display {
+  border: 1px solid #243c74;
+  background-color: #243c74;
+}
+
+.carga-horaria-display p {
+  margin: 0;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.horas-status-display {
+  border: 1px solid transparent;
+}
+
+.horas-status-display p {
+  margin: 0;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.success-message {
+  background-color: #28a745;
+}
+
+.error-message {
+  background-color: #dc3545;
+}

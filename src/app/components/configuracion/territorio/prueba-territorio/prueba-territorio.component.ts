@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
-import { MonthViewDay } from 'calendar-utils';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
+import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { PruebaFormComponent } from '../prueba-form/prueba-form.component';
-import { PruebaForm2Component } from '../prueba-form2/prueba-form2.component';
-import { PruebaDetailComponent } from '../prueba-detail/prueba-detail.component';
-import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
-import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
 
 @Component({
   selector: 'app-prueba-territorio',
@@ -14,158 +16,155 @@ import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
   styleUrls: ['./prueba-territorio.component.css']
 })
 
-export class PruebaTerritorioComponent {
-  
-  view: CalendarView = CalendarView.Month;
-  viewDate: Date = new Date();
-  events: any[] = [];
-  CalendarView = CalendarView;
-  holidays: Feriado[] = [];
+export class PruebaTerritorioComponent implements OnInit, OnDestroy {
 
-  constructor(private feriadoService: FeriadoService, public dialog: MatDialog) {}
+  @ViewChild(MatTable) table!: MatTable<DistribucionGuardia>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  changeView(view: CalendarView): void {
-    this.view = view;
-  }
+  dialogRef!: MatDialogRef<PruebaFormComponent>;
+  displayedColumns: string[] = ['dia', 'cantidadHoras', 'efector', 'tipoGuardia', 'acciones'];
+  dataSource!: MatTableDataSource<DistribucionGuardia>;
+  suscription!: Subscription;
 
-  parseDate(dateString: string): Date {
-    const parts = dateString.split('-');
-    return new Date(+parts[0], +parts[1] - 1, +parts[2]);
+  constructor(
+    private distribucionGuardiaService: DistribucionGuardiaService,
+    private dialog: MatDialog,
+    private toastr: ToastrService,
+    private paginatorIntl: MatPaginatorIntl
+  ) { 
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente";
+    this.paginatorIntl.previousPageLabel = "Anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`; };
   }
 
   ngOnInit(): void {
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.holidays = feriados.map(feriado => ({
-        ...feriado,
-        fecha: this.parseDate(feriado.fecha as unknown as string)
-      }));
-      this.refreshView();
-    });
+    this.listDistribucionGuardia();
+
+    this.suscription = this.distribucionGuardiaService.refresh$.subscribe(() => {
+      this.listDistribucionGuardia();
+    })
+
   }
-  
-  refreshView(): void {
-    this.viewDate = new Date(this.viewDate.getTime());
-  }
-  
-  getHolidays(): void {
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.holidays = feriados;
+
+  listDistribucionGuardia(): void {
+    this.distribucionGuardiaService.list().subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
   }
 
-  beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
-    body.forEach(day => {
-      const holiday = this.holidays.find(holiday => this.isSameDay(day.date, holiday.fecha));
-      if (holiday) {
-        day.cssClass = 'holiday-class';
+  ngOnDestroy(): void {
+      this.suscription?.unsubscribe();
+  }
+
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-    });
+    }
+    return output;
   }
 
-  beforeWeekViewRender(renderEvent: CalendarWeekViewBeforeRenderEvent): void {
-    renderEvent.hourColumns.forEach(column => {
-      column.hours.forEach(hour => {
-        hour.segments.forEach(segment => {
-          const holiday = this.holidays.find(holiday => this.isSameDay(segment.date, holiday.fecha));
-          if (holiday) {
-            segment.cssClass = 'holiday-class';
-          }
-        });
-      });
-    });
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: DistribucionGuardia, filter: string) => {
+      return this.accentFilter(data.dia.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.efector.nombre.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
-  isHoliday(date: Date): boolean {
-    return this.holidays.some(holiday => this.isSameDay(date, holiday.fecha));
-  }
-
-  getHolidayName(date: Date): string | null {
-    const holiday = this.holidays.find(holiday => this.isSameDay(date, holiday.fecha));
-    return holiday ? holiday.motivo : null;
-  }
-
-  isSameDay(date1: Date, date2: Date): boolean {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
-  }
-
-  dayClicked(day: MonthViewDay<any>): void {
-    const dayStart = new Date(day.date).setHours(0, 0, 0, 0);
-    const events = this.events.filter(event => {
-      const eventStart = new Date(event.start).setHours(0, 0, 0, 0);
-      const eventEnd = new Date(event.end).setHours(0, 0, 0, 0);
-      return dayStart >= eventStart && dayStart <= eventEnd;
-    });
-  
-    const holidayName = this.getHolidayName(day.date);
-  
-    const dialogRef = this.dialog.open(PruebaDetailComponent, {
+  openFormChanges(distribucionGuardia?: DistribucionGuardia): void {
+    const esEdicion = distribucionGuardia != null;
+    const dialogRef = this.dialog.open(PruebaFormComponent, {
       width: '600px',
-      data: {
-        events: events.map(event => ({
-          ...event,
-          color: event.color 
-        })),
-        holidayName: holidayName 
+      data: esEdicion ? distribucionGuardia : null
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.type === 'save') {
+          this.toastr.success(esEdicion ? 'Hospital editado con éxito' : 'Hospital creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+  
+          if (esEdicion) {
+            const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+            if (index !== -1) {
+              this.dataSource.data[index] = result.data;
+            }
+          } else {
+            this.dataSource.data.push(result.data);
+          }
+          this.dataSource._updateChangeSubscription();
+        } else if (result.type === 'error') {
+          this.toastr.error('Ocurrió un error al crear o editar el hospital', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        } else if (result.type === 'cancel') {
+        }
       }
     });
   }
+  
 
-EventDialog(): void {
-  const dialogRef = this.dialog.open(PruebaFormComponent, {
-    width: '600px',
-});
+  openDetail(distribucionGuardia: DistribucionGuardia): void {
+    this.dialogRef = this.dialog.open(PruebaFormComponent, { 
+      width: '600px',
+      data: distribucionGuardia
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+    }
+
+  deleteHospital(distribucionGuardia: DistribucionGuardia): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Confirma la eliminación de ' + distribucionGuardia.dia,
+        title: 'Eliminar',
+      },
+    });
 
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
-      this.addEvent(new Date(result.startDate), new Date(result.endDate), result.title, result.color);
+      this.distribucionGuardiaService.delete(distribucionGuardia.id!).subscribe(data => {
+        this.toastr.success('Hospital eliminado con éxito', 'ELIMINADO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        const index = this.dataSource.data.findIndex(p => p.id === distribucionGuardia.id);
+        this.dataSource.data.splice(index, 1);
+        this.dataSource._updateChangeSubscription();
+      }, err => {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar el hospital', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      });
     }
   });
 }
-
-  nextView(): void {
-    if (this.view === CalendarView.Month) {
-      const nextMonth = new Date(this.viewDate);
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-      this.viewDate = nextMonth;
-    } else if (this.view === CalendarView.Week) {
-      const nextWeek = new Date(this.viewDate);
-      nextWeek.setDate(nextWeek.getDate() + 7);
-      this.viewDate = nextWeek;
-    }
-  }
-  
-  previousView(): void {
-    if (this.view === CalendarView.Month) {
-      const previousMonth = new Date(this.viewDate);
-      previousMonth.setMonth(previousMonth.getMonth() - 1);
-      this.viewDate = previousMonth;
-    } else if (this.view === CalendarView.Week) {
-      const previousWeek = new Date(this.viewDate);
-      previousWeek.setDate(previousWeek.getDate() - 7);
-      this.viewDate = previousWeek;
-    }
-  }
-
-  currentView(): void {
-    this.viewDate = new Date();
-  }
-
-  addEvent(startDate: Date, endDate: Date, eventTitle: string, color: any): void {
-    this.events = [
-      ...this.events,
-      {
-        start: startDate,
-        end: endDate,
-        title: eventTitle,
-        color: {
-          primary: color.primary,
-          secondary: color.secondary
-        }
-      }
-    ];
-  }
-
-
 }

@@ -1,82 +1,68 @@
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
-    <div class="col-md-6 d-flex justify-content-md-start justify-content-center">
-        <div class="titulos">Cronograma <span class="titulos-second">Tentativo</span></div>
+    <div class="col-6 col-md-7">
+      <div class="titulos">Distribucion Guardias</div>
     </div>
-    <div class="col-md-6 d-flex justify-content-md-end justify-content-center align-items-start mt-3 mt-md-0">
-      <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
-        <mat-button-toggle value="tentativo" disabled>Tentativo</mat-button-toggle>
-        <mat-button-toggle value="definitivo" routerLink="/cronograma-def">Definitivo</mat-button-toggle>
-        <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-  </div>
-  <div class="row mt-3 mt-md-0"> 
-    <div class="col-6 d-flex justify-content-start">
-      <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
-      <mat-menu #menug="matMenu">
-        <button mat-menu-item routerLink="/cronograma-p">Guardias Pasivas</button>
-      </mat-menu>
-    </div>
-    <div class="col-6 d-flex justify-content-end">
-      <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>Hospital San Roque (Centro)</button>
-        <button mat-menu-item>Materno Infantil (Centro)</button>
-      </mat-menu>
-    </div>
-  </div>
-  <div class="row mb-3"> 
-    <div class="col-12 d-flex justify-content-center titulo-calendario">{{ viewDate | date: 'MMMM yyyy' | uppercase }}</div>
-  </div>
-  <div class="row d-float justify-content-center">
-    <div class="col-12 d-flex justify-content-center">
-      <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
-      <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
-      <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
-      <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-6 d-flex justify-content-start">
-      <button mat-icon-button color="primary" (click)="EventDialog()" matTooltip="Añadir Profesional">
+    <div class="col-6 col-md-1 m d-flex justify-content-end">
+      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Distribución Guardia">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
-    <div class="col-6 d-flex justify-content-end">
-      <button mat-icon-button (click)="previousView()" matTooltip="Anterior">
-        <mat-icon>navigate_before</mat-icon>
-      </button>
-      <button mat-icon-button (click)="currentView()" matTooltip="Fecha actual">
-        <mat-icon>today</mat-icon>
-      </button>
-      <button mat-icon-button (click)="nextView()" matTooltip="Próximo">
-        <mat-icon>navigate_next</mat-icon>
-      </button>
-      <button mat-icon-button color="accent" (click)="changeView(CalendarView.Month)" matTooltip="Ver mes">
-        <mat-icon>calendar_today</mat-icon>
-      </button>
-      <button mat-icon-button color="accent" (click)="changeView(CalendarView.Week)" matTooltip="Ver semana">
-        <mat-icon>calendar_view_day</mat-icon>
-      </button>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+      </mat-form-field>
     </div>
   </div>
-  <div class="row"> 
-    <mwl-calendar-month-view
-      *ngIf="view === CalendarView.Month"
-      [viewDate]="viewDate"
-      [events]="events"
-      (dayClicked)="dayClicked($event.day)"
-      [weekendDays]="[0, 6]"
-      (beforeViewRender)="beforeMonthViewRender($event)">
-    </mwl-calendar-month-view>
 
-    <mwl-calendar-week-view
-      *ngIf="view === CalendarView.Week"
-      [viewDate]="viewDate"
-      [events]="events"
-      (beforeViewRender)="beforeWeekViewRender($event)">
-    </mwl-calendar-week-view>
+<div class="row">
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+
+      <ng-container matColumnDef="dia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Dia </th> 
+        <td mat-cell *matCellDef="let distribucionGuardia"> {{distribucionGuardia.dia}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cantidadHoras">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Cantidad Horas </th> 
+        <td mat-cell *matCellDef="let distribucionGuardia"> {{distribucionGuardia.cantidadHoras}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="efector">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Efector </th> 
+        <td mat-cell *matCellDef="let distribucionGuardia"> {{distribucionGuardia.efector?.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="tipoGuardia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo Guardia </th> 
+        <td mat-cell *matCellDef="let distribucionGuardia"> {{distribucionGuardia.tipoGuardia}} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
+        <td mat-cell *matCellDef="let hospital" class="cell-actions">
+          <button mat-icon-button matTooltip="Ver {{hospital.nombre}}" (click)="openDetail(hospital)">
+            <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Editar {{hospital.nombre}}" (click)="openFormChanges(hospital)">
+            <mat-icon class="btnEdit">edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Eliminar {{hospital.nombre}}" (click)="deleteHospital(hospital)">
+            <mat-icon class="btnRemove">delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
   </div>
+  <div class="row mt-3">
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
 </div>

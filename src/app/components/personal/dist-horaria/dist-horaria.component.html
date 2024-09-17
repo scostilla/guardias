@@ -24,16 +24,28 @@
   <div class="row">
     <mat-dialog-content class="mat-typography">
   
-      <form [formGroup]="DistribucionForm" (ngSubmit)="saveDistribucion()">
-
+      <form [formGroup]="guardiaForm">
+      <div class="row">
         <mat-form-field appearance="fill">
           <mat-label>Profesional</mat-label>
-          <input matInput formControlName="profesional" (click)="openAsistencialDialog()">
+          <input matInput formControlName="idPersona" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
           <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-          <mat-error *ngIf="DistribucionForm.get('profesional')?.hasError('required')">
+          <mat-error *ngIf="guardiaForm.get('idPersona')?.hasError('required')">
             El campo profesional es requerido.
           </mat-error>
         </mat-form-field>
+      </div>
+    </form>
+
+<div class="container-mensajes">
+    <div *ngIf="isProfessionalLoaded && cargaHoraria !== undefined" class="carga-horaria-display">
+      <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong></p>
+    </div>
+
+    <div *ngIf="isProfessionalLoaded" [ngClass]="horasMessageClass" class="horas-status-display">
+      <p>{{ horasMessage }}</p>
+    </div>
+  </div>
 
         <mat-accordion class="example-headers-align">
           <!-- Panel 1 -->
@@ -47,13 +59,14 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
         
+            <form [formGroup]="guardiaForm">
 
               <mat-form-field appearance="fill"  style="margin-top: 20px;">
                   <mat-label>Servicio</mat-label>
-                      <mat-select formControlName="servicioGuardia" [compareWith]="compareServicio">
-                          <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
-                      </mat-select>
-                  <mat-error *ngIf="DistribucionForm.get('servicioGuardia')?.errors?.['required']">El servicio es requerido.</mat-error>
+                  <mat-select formControlName="idServicio" [compareWith]="compareServicio">
+                    <mat-option *ngFor="let servicio of servicios" [value]="servicio" >{{ servicio.descripcion }}</mat-option>
+                  </mat-select>
+                    <mat-error *ngIf="guardiaForm.get('idServicio')?.errors?.['required']">El servicio es requerido.</mat-error>
             </mat-form-field>
 
                 <mat-form-field appearance="fill">
@@ -65,64 +78,66 @@
                       <mat-option value="AGRUPACIÓN">Agrupación</mat-option>
                       <mat-option value="PASIVA">Pasiva</mat-option>
                     </mat-select>
-                    <mat-error *ngIf="DistribucionForm?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+                    <mat-error *ngIf="guardiaForm?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
                   </mat-form-field>
 
                   <mat-form-field appearance="fill">
                     <mat-label>Efector</mat-label>
-                    <mat-select formControlName="efectorGuardia" [compareWith]="compareEfector">
-                      <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
+                    <mat-select formControlName="idEfector" [compareWith]="compareHospital">
+                      <mat-option *ngFor="let hospital of hospitales" [value]="hospital" >{{ hospital.nombre }}</mat-option>
                     </mat-select>
-                    <mat-error *ngIf="DistribucionForm.get('efectorGuardia')?.errors?.['required']">El efector es requerido.</mat-error>
+                    <mat-error *ngIf="guardiaForm.get('idEfector')?.errors?.['required']">El efector es requerido.</mat-error>
                   </mat-form-field>
             
                 <mat-form-field appearance="fill">
-                    <mat-label>Día</mat-label>
-                    <mat-select formControlName="dia">
-                      <mat-option value="LUNES">Lunes</mat-option>
-                      <mat-option value="MARTES">Martes</mat-option>
-                      <mat-option value="MIERCOLES">Miércoles</mat-option>
-                      <mat-option value="JUEVES">Jueves</mat-option>
-                      <mat-option value="VIERNES">Viernes</mat-option>
-                      <mat-option value="SABADO">Sábado</mat-option>
-                      <mat-option value="DOMINGO">Domingo</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="DistribucionForm?.get('dia')?.errors?.['required']">El día es requerido.</mat-error>
+                  <mat-label>Día</mat-label>
+                  <mat-select formControlName="dia">
+                    <mat-option value="LUNES">Lunes</mat-option>
+                    <mat-option value="MARTES">Martes</mat-option>
+                    <mat-option value="MIERCOLES">Miércoles</mat-option>
+                    <mat-option value="JUEVES">Jueves</mat-option>
+                    <mat-option value="VIERNES">Viernes</mat-option>
+                    <mat-option value="SABADO">Sábado</mat-option>
+                    <mat-option value="DOMINGO">Domingo</mat-option>
+                  </mat-select>
+                      <mat-error *ngIf="guardiaForm?.get('dia')?.errors?.['required']">El día es requerido.</mat-error>
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>Fecha de Inicio</mat-label>
-                    <input matInput [matDatepicker]="picker1" formControlName="fechaInicioGuardia" />
+                    <input matInput [matDatepicker]="picker1" formControlName="fechaInicio" />
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
-                    <mat-error *ngIf="DistribucionForm.get('fechaInicioGuardia')?.hasError('required')">La fecha de inicio es requerida.</mat-error>
+                    <mat-error *ngIf="guardiaForm.get('fechaInicio')?.hasError('required')">La fecha de inicio es requerida.</mat-error>
                   </mat-form-field>
       
                   <mat-form-field>
                     <mat-label>Fecha de Finalización</mat-label>
-                    <input matInput [matDatepicker]="picker2" formControlName="fechaFinalizacionGuardia" />
+                    <input matInput [matDatepicker]="picker2" formControlName="fechaFinalizacion" />
                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
-                    <mat-error *ngIf="DistribucionForm.get('fechaFinalizacionGuardia')?.hasError('required')">La fecha de finalización es requerida.</mat-error>
+                    <mat-error *ngIf="guardiaForm.get('fechaFinalizacion')?.hasError('required')">La fecha de finalización es requerida.</mat-error>
                   </mat-form-field>
       
                   <mat-form-field appearance="fill" class="form-field">
                     <mat-label>Hora de Ingreso</mat-label>
-                        <input matInput formControlName="horaIngresoGuardia" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
+                        <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
                         <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
                         <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
-                        <mat-error *ngIf="DistribucionForm?.get('horaIngresoGuardia')?.invalid && DistribucionForm?.get('horaIngresoGuardia')?.touched">
+                        <mat-error *ngIf="guardiaForm?.get('horaIngreso')?.invalid && guardiaForm?.get('horaIngreso')?.touched">
                             El campo es obligatorio (HH:mm).
                         </mat-error>
                 </mat-form-field>
 
             <mat-form-field>
               <mat-label>Cantidad de horas</mat-label>
-              <input matInput formControlName="cantidadHoras" (input)="updateHorasStatus()" type="number" />
+              <input matInput formControlName="cantidadHoras" type="number" />
+              <mat-error *ngIf="consultorioForm.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>
             </mat-form-field>            
             <mat-action-row>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
             </mat-action-row>
+          </form>
           </mat-expansion-panel>
         
           <!-- Panel 2 -->
@@ -135,74 +150,89 @@
                 <span class="negrita">Consultorio</span>
               </mat-panel-title>
             </mat-expansion-panel-header>
-          
-            <mat-form-field appearance="fill" style="margin-top: 20px;">
-              <mat-label>Tipo de Consultorio</mat-label>
-              <mat-select formControlName="tipoConsultorio">
-                <mat-option value="Consulta Externa">Consulta Externa</mat-option>
-                <mat-option value="Interno">Interno</mat-option>
-              </mat-select>
-              <mat-error *ngIf="DistribucionForm.get('tipoConsultorio')?.errors?.['required']">El tipo de consultorio es requerido.</mat-error>
-            </mat-form-field>
-          
-            <mat-form-field appearance="fill">
-              <mat-label>Lugar</mat-label>
-              <input matInput formControlName="lugar" />
-              <mat-error *ngIf="DistribucionForm.get('lugar')?.errors?.['required']">El lugar es requerido.</mat-error>
-            </mat-form-field>
+           
+            <form [formGroup]="consultorioForm">
 
-            <mat-form-field appearance="fill">
-              <mat-label>Efector</mat-label>
-              <mat-select formControlName="efectorConsultorio" [compareWith]="compareEfector">
-                <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="DistribucionForm.get('efectorConsultorio')?.errors?.['required']">El efector es requerido.</mat-error>
-            </mat-form-field>
-          
-            <mat-form-field appearance="fill">
-              <mat-label>Servicio</mat-label>
-              <mat-select formControlName="servicioConsultorio" [compareWith]="compareServicio">
-                <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="DistribucionForm.get('servicioConsultorio')?.errors?.['required']">El servicio es requerido.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field>
-              <mat-label>Fecha de Inicio</mat-label>
-              <input matInput [matDatepicker]="picker1Consultorio" formControlName="fechaInicioConsultorio" />
-              <mat-datepicker-toggle matSuffix [for]="picker1Consultorio"></mat-datepicker-toggle>
-              <mat-datepicker #picker1Consultorio></mat-datepicker>
-              <mat-error *ngIf="DistribucionForm.get('fechaInicioConsultorio')?.hasError('required')">La fecha de inicio es requerida.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field>
-              <mat-label>Fecha de Finalización</mat-label>
-              <input matInput [matDatepicker]="picker2Consultorio" formControlName="fechaFinalizacionConsultorio" />
-              <mat-datepicker-toggle matSuffix [for]="picker2Consultorio"></mat-datepicker-toggle>
-              <mat-datepicker #picker2Consultorio></mat-datepicker>
-              <mat-error *ngIf="DistribucionForm.get('fechaFinalizacionConsultorio')?.hasError('required')">La fecha de finalización es requerida.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill" class="form-field">
-              <mat-label>Hora de Ingreso</mat-label>
-                  <input matInput formControlName="horaIngresoConsultorio" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly (click)="horaPicker.open()">
-                  <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
-                  <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-                  <mat-error *ngIf="DistribucionForm?.get('horaIngresoConsultorio')?.invalid && DistribucionForm?.get('horaIngresoConsultorio')?.touched">
-                      El campo es obligatorio (HH:mm).
-                  </mat-error>
+              <mat-form-field appearance="fill"  style="margin-top: 20px;">
+                <mat-label>Servicio</mat-label>
+                <mat-select formControlName="idServicio" [compareWith]="compareServicio">
+                  <mat-option *ngFor="let servicio of servicios" [value]="servicio" >{{ servicio.descripcion }}</mat-option>
+                </mat-select>
+                  <mat-error *ngIf="consultorioForm.get('idServicio')?.errors?.['required']">El servicio es requerido.</mat-error>
           </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                  <mat-label>Tipo Consultorio</mat-label>
+                  <mat-select formControlName="tipoConsultorio">
+                    <mat-option value="EXTERNO">Externo</mat-option>
+                    <mat-option value="INTERNO">Interno</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="consultorioForm?.get('tipoConsultorio')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Efector</mat-label>
+                  <mat-select formControlName="idEfector" [compareWith]="compareHospital">
+                    <mat-option *ngFor="let hospital of hospitales" [value]="hospital" >{{ hospital.nombre }}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="consultorioForm.get('idEfector')?.errors?.['required']">El efector es requerido.</mat-error>
+                </mat-form-field>
           
-            <mat-form-field>
-              <mat-label>Cantidad de horas</mat-label>
-              <input matInput formControlName="cantidadHorasConsultorio" (input)="updateHorasStatus()" type="number" />
-              <mat-error *ngIf="DistribucionForm.get('cantidadHorasConsultorio')?.errors?.['required']">La cantidad de horas es requerida.</mat-error>
-            </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Día</mat-label>
+                <mat-select formControlName="dia">
+                  <mat-option value="LUNES">Lunes</mat-option>
+                  <mat-option value="MARTES">Martes</mat-option>
+                  <mat-option value="MIERCOLES">Miércoles</mat-option>
+                  <mat-option value="JUEVES">Jueves</mat-option>
+                  <mat-option value="VIERNES">Viernes</mat-option>
+                </mat-select>
+                    <mat-error *ngIf="consultorioForm?.get('dia')?.errors?.['required']">El día es requerido.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                  <mat-label>Fecha de Inicio</mat-label>
+                  <input matInput [matDatepicker]="picker3" formControlName="fechaInicio" />
+                  <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                  <mat-datepicker #picker3></mat-datepicker>
+                  <mat-error *ngIf="consultorioForm.get('fechaInicio')?.hasError('required')">La fecha de inicio es requerida.</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field>
+                  <mat-label>Fecha de Finalización</mat-label>
+                  <input matInput [matDatepicker]="picker4" formControlName="fechaFinalizacion" />
+                  <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                  <mat-datepicker #picker4></mat-datepicker>
+                  <mat-error *ngIf="consultorioForm.get('fechaFinalizacion')?.hasError('required')">La fecha de finalización es requerida.</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill" class="form-field">
+                  <mat-label>Hora de Ingreso</mat-label>
+                      <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly (click)="horaPicker2.open()">
+                      <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+                      <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+                      <mat-error *ngIf="consultorioForm?.get('horaIngreso')?.invalid && consultorioForm?.get('horaIngreso')?.touched">
+                          El campo es obligatorio (HH:mm).
+                      </mat-error>
+              </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Cantidad de horas</mat-label>
+            <input matInput formControlName="cantidadHoras" type="number" />
+            <mat-error *ngIf="consultorioForm.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>
+          </mat-form-field>         
           
+          <mat-form-field>
+            <mat-label>Lugar</mat-label>
+            <input matInput formControlName="lugar" />
+            <mat-error *ngIf="consultorioForm.get('lugar')?.hasError('required')">El campo es obligatorio.</mat-error>
+          </mat-form-field>            
+
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
             </mat-action-row>
+            </form>
           </mat-expansion-panel>
 
           <!-- Panel 3 -->
@@ -239,7 +269,7 @@
 
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="!isFormValidAndHorasValid">
+              <button mat-raised-button color="primary" type="submit" (click)="saveAll()" [disabled]="isButtonDisabled">
                 Guardar
               </button>
             </mat-action-row>
@@ -251,7 +281,6 @@
             Cancelar
           </button>
         </div>
-      </form>
     </mat-dialog-content>
   </div>
   </div>
