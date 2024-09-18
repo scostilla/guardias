@@ -3,13 +3,15 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionOtro } from "src/app/models/personal/DistribucionOtro";
+import { DistribucionOtroDto } from "src/app/dto/personal/DistribucionOtroDto";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class DistribucionOtroService {
 
-  distribucionOtrosURL = 'http://localhost:8080/distribucionOtro/';
+  distribucionOtrosURL = 'http://localhost:8080/distribucionOtra/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
@@ -30,7 +32,7 @@ export class DistribucionOtroService {
     return this.httpClient.get<DistribucionOtro>(this.distribucionOtrosURL + `detailnombre/${nombre}`);
 }
 
-public save(distribucionOtroes:DistribucionOtro): Observable<any> {
+public save(distribucionOtroes:DistribucionOtroDto): Observable<any> {
   return this.httpClient.post<any>(this.distribucionOtrosURL + 'create', distribucionOtroes)
   .pipe(
     tap(() => {
@@ -39,7 +41,7 @@ public save(distribucionOtroes:DistribucionOtro): Observable<any> {
   )
 }
 
-public update(id:number, distribucionOtroes:DistribucionOtro): Observable<any> {
+public update(id:number, distribucionOtroes:DistribucionOtroDto): Observable<any> {
   return this.httpClient.put<any>(this.distribucionOtrosURL + `update/${id}`, distribucionOtroes)
   .pipe(
     tap(() => {

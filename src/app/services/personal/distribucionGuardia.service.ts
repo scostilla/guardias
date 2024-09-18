@@ -32,8 +32,8 @@ export class DistribucionGuardiaService {
     return this.httpClient.get<DistribucionGuardia>(this.distribucionGuardiasURL + `detailnombre/${nombre}`);
 }
 
-public save(distribucionGuardiaes:DistribucionGuardiaDto): Observable<any> {
-  return this.httpClient.post<any>(this.distribucionGuardiasURL + 'create', distribucionGuardiaes)
+public save(distribucionGuardias:DistribucionGuardiaDto): Observable<any> {
+  return this.httpClient.post<any>(this.distribucionGuardiasURL + 'create', distribucionGuardias)
   .pipe(
     tap(() => {
      this._refresh$.next(); 
@@ -41,8 +41,8 @@ public save(distribucionGuardiaes:DistribucionGuardiaDto): Observable<any> {
   )
 }
 
-public update(id:number, distribucionGuardiaes:DistribucionGuardiaDto): Observable<any> {
-  return this.httpClient.put<any>(this.distribucionGuardiasURL + `update/${id}`, distribucionGuardiaes)
+public update(id:number, distribucionGuardias:DistribucionGuardiaDto): Observable<any> {
+  return this.httpClient.put<any>(this.distribucionGuardiasURL + `update/${id}`, distribucionGuardias)
   .pipe(
     tap(() => {
      this._refresh$.next(); 

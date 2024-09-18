@@ -1,27 +1,25 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { DistHorariaGuardiaComponent } from '../../actividades/dist-horaria-guardia/dist-horaria-guardia.component';
-import { DistHorariaConsComponent } from '../../actividades/dist-horaria-cons/dist-horaria-cons.component';
-import { DistHorariaGirasComponent } from '../../actividades/dist-horaria-giras/dist-horaria-giras.component';
-import { DistHorariaOtrasComponent } from '../../actividades/dist-horaria-otras/dist-horaria-otras.component';
 import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
-import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
-import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
 import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
+import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
+import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
+import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
+import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/servicio.service';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { Revista } from 'src/app/models/Configuracion/Revista';
-import * as moment from 'moment';
+import { Caps } from 'src/app/models/Configuracion/Caps';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
 
 
 @Component({
@@ -35,32 +33,25 @@ export class DistHorariaComponent {
   selectedAsistencial?: Asistencial;
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
+  giraForm!: FormGroup;
+  otroForm!: FormGroup;
+  
   step = 0;
   cantidadHoras: number = 0;
-  horasStatus: string = '';
 
   cargaHoraria?: number;
   idEfector?: number;
   tiposGuardiaOptions: { id: number, nombre: string }[] = [];
 
-  isProfessionalLoaded: boolean = false;
-
+  horasStatus: string = '';
   horasMessage: string = '';
   horasMessageClass: string = '';
 
-
   servicios: Servicio[] = [];
   hospitales: Hospital[] = [];
+  capss: Caps[] = [];
 
-  hospitaless: string[] = ['DN. PABLO SORIA'];
-  profesional: string[] = ['FIGUEROA ELIO', 'ARRAYA PEDRO ADEMIR', 'MORALES RICARDO', 'ALFARO FIDEL', 'MARTINEZ YANINA VANESA G.'];
-  guardia: string[] = ['Cargo', 'Agrupacion'];
-  dia: string[] = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
-  cons: string[] = ['Consultorio externo', 'Comisión'];
-  turno: string[] = ['Mañana', 'Tarde'];
-
-  selectedService: string = 'Cargo';
-  selectedGuard: string = '';
+  isProfessionalLoaded: boolean = false;
   isButtonDisabled: boolean = true;
   
 
@@ -73,8 +64,11 @@ export class DistHorariaComponent {
     private router: Router,
     private distribucionGuardiaService: DistribucionGuardiaService,
     private distribucionConsultorioService: DistribucionConsultorioService,
+    private distribucionGiraService: DistribucionGiraService,
+    private distribucionOtroService: DistribucionOtroService,
     private servicioService: ServicioService,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
     private fb: FormBuilder
   ) {
     this.guardiaForm = this.fb.group({
@@ -100,6 +94,30 @@ export class DistHorariaComponent {
       idServicio: ['', Validators.required]
     });
 
+    this.giraForm = this.fb.group({
+      idPersona: ['', Validators.required],
+      dia: ['', Validators.required],
+      cantidadHoras: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      fechaFinalizacion: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      puestoSalud: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      destino: ['', Validators.required]
+    });
+
+    this.otroForm = this.fb.group({
+      idPersona: ['', Validators.required],
+      dia: ['', Validators.required],
+      cantidadHoras: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      fechaFinalizacion: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      lugar: ['', Validators.required]
+    });
+
+
     this.subscribeToFormChanges();
   }
 
@@ -108,11 +126,14 @@ export class DistHorariaComponent {
   ngOnInit() {
     this.listServicios();
     this.listEfectores();
+    this.listCaps();
   }
 
   private subscribeToFormChanges(): void {
     this.guardiaForm.valueChanges.subscribe(() => this.updateHorasStatus());
     this.consultorioForm.valueChanges.subscribe(() => this.updateHorasStatus());
+    this.giraForm.valueChanges.subscribe(() => this.updateHorasStatus());
+    this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
   openAsistencialDialog(): void {
@@ -181,7 +202,9 @@ export class DistHorariaComponent {
   private updateHorasStatus(): void {
     const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
     const consultorioHoras = Number(this.consultorioForm.get('cantidadHoras')?.value ?? 0);
-    const totalHoras = guardiaHoras + consultorioHoras;
+    const giraHoras = Number(this.giraForm.get('cantidadHoras')?.value ?? 0);
+    const otroHoras = Number(this.otroForm.get('cantidadHoras')?.value ?? 0);
+    const totalHoras = guardiaHoras + consultorioHoras + giraHoras + otroHoras;
   
     if (this.cargaHoraria !== undefined) {
       if (totalHoras > this.cargaHoraria) {
@@ -195,12 +218,12 @@ export class DistHorariaComponent {
       } else {
         this.horasMessage = `Has cargado un total de ${totalHoras} hs`;
         this.horasMessageClass = 'success-message';
-        this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid;
+        this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
       }
     } else {
       this.horasMessage = '';
       this.horasMessageClass = '';
-      this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid;
+      this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
     }
   }
   
@@ -208,6 +231,8 @@ export class DistHorariaComponent {
     console.log('Actualizando idPersona:', id);
     this.guardiaForm.patchValue({ idPersona: id });
     this.consultorioForm.patchValue({ idPersona: id });
+    this.giraForm.patchValue({ idPersona: id });
+    this.otroForm.patchValue({ idPersona: id });
   }
 
   listServicios(): void {
@@ -228,108 +253,181 @@ export class DistHorariaComponent {
     });
   }
 
-  saveAll() {
-    if (this.isButtonDisabled) {
-      return;
-    }
-  
-    this.isButtonDisabled = true;
-  
-    const dataGuardia = this.guardiaForm.value;
-    const dataConsultorio = this.consultorioForm.value;
-  
-    if (this.idEfector === undefined) {
-      this.toastr.error('El ID del efector no está definido.', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      this.isButtonDisabled = false;
-      return;
-    }
-  
-    // Guardar solo el formulario de Guardia si es válido
-    if (this.guardiaForm.valid) {
-      const distribucionGuardiaDto = new DistribucionGuardiaDto(
-        dataGuardia.dia,
-        dataGuardia.cantidadHoras,
-        dataGuardia.idPersona,
-        this.idEfector,
-        dataGuardia.fechaInicio,
-        dataGuardia.fechaFinalizacion,
-        dataGuardia.horaIngreso,
-        dataGuardia.tipoGuardia,
-        dataGuardia.idServicio.id
-      );
-  
-      console.log('DistribucionGuardiaDto:', distribucionGuardiaDto);
-  
-      this.distribucionGuardiaService.save(distribucionGuardiaDto).subscribe(
-        result => {
-          console.log('Resultado al guardar guardia:', result);
-          this.toastr.success('Guardia guardada exitosamente.', 'Éxito', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        },
-        error => {
-          console.error('Error al guardar guardia:', error);
-          this.toastr.error('Ocurrió un error al guardar la guardia.', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      );
-    }
-  
-    // Guardar solo el formulario de Consultorio si es válido
-    if (this.consultorioForm.valid) {
-      const distribucionConsultorioDto = new DistribucionConsultorioDto(
-        dataConsultorio.dia,
-        dataConsultorio.cantidadHoras,
-        dataConsultorio.idPersona,
-        this.idEfector,
-        dataConsultorio.fechaInicio,
-        dataConsultorio.fechaFinalizacion,
-        dataConsultorio.horaIngreso,
-        dataConsultorio.idServicio.id,
-        dataConsultorio.tipoConsultorio,
-        dataConsultorio.lugar
-      );
-  
-      console.log('DistribucionConsultorioDto:', distribucionConsultorioDto);
-  
-      this.distribucionConsultorioService.save(distribucionConsultorioDto).subscribe(
-        result => {
-          console.log('Resultado al guardar consultorio:', result);
-          this.toastr.success('Consultorio guardado exitosamente.', 'Éxito', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.router.navigate(['/personal']);
-          this.isButtonDisabled = false;
-        },
-        error => {
-          console.error('Error al guardar consultorio:', error);
-          this.toastr.error('Ocurrió un error al guardar el consultorio.', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.isButtonDisabled = false;
-        }
-      );
-    } else if (this.guardiaForm.valid) {
-      this.router.navigate(['/personal']);
-      this.isButtonDisabled = false;
-    } else {
-      this.isButtonDisabled = false;
-    }
+  listCaps(): void {
+    this.capsService.list().subscribe(data => {
+      console.log('Lista de caps:', data);
+      this.capss = data;
+    }, error => {
+      console.log(error);
+    });
   }
-        
+
+  saveDistribuciones() {
+    this.isButtonDisabled = true;
+
+    if (this.idEfector === undefined) {
+        this.toastr.error('El ID del efector no está definido.', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+        });
+        this.isButtonDisabled = false;
+        return;
+    }
+
+    const formChecks = [
+        { form: this.guardiaForm, name: 'Guardias' },
+        { form: this.consultorioForm, name: 'Consultorio' },
+        { form: this.giraForm, name: 'Giras médicas' },
+        { form: this.otroForm, name: 'Otras actividades' }
+    ];
+
+    for (const { form, name } of formChecks) {
+        if (form.dirty && !form.valid) {
+            this.toastr.warning(`Faltan datos obligatorios para el panel ${name}.`, 'Advertencia', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+            this.isButtonDisabled = false;
+            return;
+        }
+    }
+
+    const savePromises = [];
+
+    if (this.guardiaForm.valid) {
+        const distribucionGuardiaDto = new DistribucionGuardiaDto(
+            this.guardiaForm.value.dia,
+            this.guardiaForm.value.cantidadHoras,
+            this.guardiaForm.value.idPersona,
+            this.idEfector,
+            this.guardiaForm.value.fechaInicio,
+            this.guardiaForm.value.fechaFinalizacion,
+            this.guardiaForm.value.horaIngreso,
+            this.guardiaForm.value.tipoGuardia,
+            this.guardiaForm.value.idServicio.id
+        );
+
+        savePromises.push(
+            this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+                .then(() => this.toastr.success('Guardia guardada exitosamente.', 'Éxito', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+                .catch(() => this.toastr.error('Error al guardar la Guardia.', 'Error', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+        );
+    }
+
+    if (this.consultorioForm.valid) {
+        const distribucionConsultorioDto = new DistribucionConsultorioDto(
+            this.consultorioForm.value.dia,
+            this.consultorioForm.value.cantidadHoras,
+            this.consultorioForm.value.idPersona,
+            this.idEfector,
+            this.consultorioForm.value.fechaInicio,
+            this.consultorioForm.value.fechaFinalizacion,
+            this.consultorioForm.value.horaIngreso,
+            this.consultorioForm.value.idServicio.id,
+            this.consultorioForm.value.tipoConsultorio,
+            this.consultorioForm.value.lugar
+        );
+
+        savePromises.push(
+            this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
+                .then(() => this.toastr.success('Consultorio guardado exitosamente.', 'Éxito', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+                .catch(() => this.toastr.error('Error al guardar el Consultorio.', 'Error', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+        );
+    }
+
+    if (this.giraForm.valid) {
+        const distribucionGiraDto = new DistribucionGiraDto(
+            this.giraForm.value.dia,
+            this.giraForm.value.cantidadHoras,
+            this.giraForm.value.idPersona,
+            this.idEfector,
+            this.giraForm.value.fechaInicio,
+            this.giraForm.value.fechaFinalizacion,
+            this.giraForm.value.horaIngreso,
+            this.giraForm.value.puestoSalud,
+            this.giraForm.value.descripcion,
+            this.giraForm.value.destino
+        );
+
+        savePromises.push(
+            this.distribucionGiraService.save(distribucionGiraDto).toPromise()
+                .then(() => this.toastr.success('Gira médica guardada exitosamente.', 'Éxito', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+                .catch(() => this.toastr.error('Error al guardar la Gira médica.', 'Error', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+        );
+    }
+
+    if (this.otroForm.valid) {
+        const distribucionOtroDto = new DistribucionOtroDto(
+            this.otroForm.value.dia,
+            this.otroForm.value.cantidadHoras,
+            this.otroForm.value.idPersona,
+            this.idEfector,
+            this.otroForm.value.fechaInicio,
+            this.otroForm.value.fechaFinalizacion,
+            this.otroForm.value.horaIngreso,
+            this.otroForm.value.descripcion,
+            this.otroForm.value.lugar
+        );
+
+        savePromises.push(
+            this.distribucionOtroService.save(distribucionOtroDto).toPromise()
+                .then(() => this.toastr.success('Otra actividad guardada exitosamente.', 'Éxito', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+                .catch(() => this.toastr.error('Error al guardar otra actividad.', 'Error', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                }))
+        );
+    }
+
+    // Ejecutar todas las promesas
+    Promise.all(savePromises)
+        .then(() => {
+            this.router.navigate(['/personal']);
+        })
+        .catch(() => {
+            // Manejo de errores general, si se desea
+            this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+        })
+        .finally(() => {
+            this.isButtonDisabled = false;
+        });
+}
+
   nextStep(): void {
     this.step = (this.step + 1) % 4;
   }
@@ -374,6 +472,10 @@ export class DistHorariaComponent {
     return a1 && a2 ? a1.id === a2.id : a1 === a2;
   }
 
+  compareCaps(c1: Hospital, c2: Hospital): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
+  }
+
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
@@ -381,34 +483,6 @@ export class DistHorariaComponent {
       progressBar: true
     });
     this.router.navigate(['/personal']);
-  }
-
-  openDistGuardia() {
-    this.dialogReg.open(DistHorariaGuardiaComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-  }
-
-  openDistCons() {
-    this.dialogReg.open(DistHorariaConsComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-  }
-
-  openDistGira() {
-    this.dialogReg.open(DistHorariaGirasComponent, {
-      width: '600px',
-      disableClose: true,
-    });
-  }
-
-  openDistOtra() {
-    this.dialogReg.open(DistHorariaOtrasComponent, {
-      width: '600px',
-      disableClose: true,
-    });
   }
 
 }
