@@ -152,10 +152,12 @@ export class DistHorariaComponent {
           const legajo = result.legajos[0];
           if (legajo.udo) {
             this.idEfector = legajo.udo.id;
+            this.listCaps();
           } else {
             this.idEfector = undefined;
+            this.capss = [];
           }
-  
+            
           if (legajo.revista && legajo.revista.cargaHoraria) {
             this.cargaHoraria = legajo.revista.cargaHoraria.cantidad;
             this.isProfessionalLoaded = true;
@@ -255,13 +257,14 @@ export class DistHorariaComponent {
 
   listCaps(): void {
     this.capsService.list().subscribe(data => {
-      console.log('Lista de caps:', data);
-      this.capss = data;
+      console.log('Lista completa de caps:', data); 
+      this.capss = data.filter(cap => cap.cabecera.id === this.idEfector);
+      console.log('Caps filtrados por idEfector:', this.capss);
     }, error => {
-      console.log(error);
+      console.log('Error al listar caps:', error);
     });
   }
-
+          
   saveDistribuciones() {
     this.isButtonDisabled = true;
 

@@ -1,4 +1,5 @@
 import { Efector } from "./Efector";
+import { Hospital } from "./Hospital";
 import { Localidad } from "./Localidad";
 import { Region } from "./Region";
 import { Ddjj } from "./Ddjj";
@@ -12,7 +13,7 @@ import { RegistrosPendientes } from "../RegistrosPendientes";
 
 
 export class Caps extends Efector {
-    idCabecera: number;
+    cabecera: Hospital;
     areaProgramatica: number;
     tipoCaps: string;
     
@@ -35,13 +36,13 @@ export class Caps extends Efector {
       registroMensual: RegistroMensual[],
       ddjjs: Ddjj[],
       registrosPendientes: RegistrosPendientes[],
-      idCabecera: number, 
+      cabecera: Hospital, 
       areaProgramatica: number,
       tipoCaps: string,
       ) {
         super(nombre, domicilio, telefono, estado, observacion, porcentajePorZona, region, localidad, distribucionesHorarias, 
           legajosUdo, legajos, servicios, notificaciones, autoridades, registrosActividades, registroMensual, ddjjs, registrosPendientes);
-        this.idCabecera = idCabecera;
+        this.cabecera = cabecera;
         this.areaProgramatica = areaProgramatica;
         this.tipoCaps = tipoCaps;
       }

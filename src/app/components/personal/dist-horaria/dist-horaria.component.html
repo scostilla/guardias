@@ -239,14 +239,14 @@
         
             <form [formGroup]="giraForm">
 
-                <mat-form-field appearance="fill" style="margin-top: 20px;">
-                  <mat-label>Puesto de salud</mat-label>
-                  <mat-select formControlName="puestoSalud" [compareWith]="compareCaps">
-                    <mat-option *ngFor="let caps of capss" [value]="caps.nombre" >{{ caps.nombre }}</mat-option>
-                  </mat-select>
-                  <mat-error *ngIf="giraForm.get('puestoSalud')?.errors?.['required']">El efector es requerido.</mat-error>
-                </mat-form-field>
-          
+              <mat-form-field appearance="fill" style="margin-top: 20px;">
+                <mat-label>Puesto de salud</mat-label>
+                <mat-select formControlName="puestoSalud" [compareWith]="compareCaps">
+                  <mat-option *ngFor="let cap of capss" [value]="cap.nombre">{{ cap.nombre }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="giraForm.get('puestoSalud')?.errors?.['required']">El efector es requerido.</mat-error>
+              </mat-form-field>
+                        
               <mat-form-field appearance="fill">
                 <mat-label>Día</mat-label>
                 <mat-select formControlName="dia">
