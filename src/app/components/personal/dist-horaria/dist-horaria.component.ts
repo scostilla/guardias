@@ -266,7 +266,7 @@ export class DistHorariaComponent {
     this.isButtonDisabled = true;
 
     if (this.idEfector === undefined) {
-        this.toastr.error('El ID del efector no está definido.', 'Error', {
+        this.toastr.error('El efector no está definido.', 'Error', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -275,6 +275,7 @@ export class DistHorariaComponent {
         return;
     }
 
+    //Esto es para chequear si un form se inicio tiene datos obligatorios sin guardar
     const formChecks = [
         { form: this.guardiaForm, name: 'Guardias' },
         { form: this.consultorioForm, name: 'Consultorio' },
@@ -294,8 +295,10 @@ export class DistHorariaComponent {
         }
     }
 
+    //El uso de promesas es para poder bloquear el boton una vez realizada la accion de guardar
     const savePromises = [];
 
+    //Guarda guardia
     if (this.guardiaForm.valid) {
         const distribucionGuardiaDto = new DistribucionGuardiaDto(
             this.guardiaForm.value.dia,
@@ -324,6 +327,7 @@ export class DistHorariaComponent {
         );
     }
 
+    //Guarda consultorio
     if (this.consultorioForm.valid) {
         const distribucionConsultorioDto = new DistribucionConsultorioDto(
             this.consultorioForm.value.dia,
@@ -353,6 +357,7 @@ export class DistHorariaComponent {
         );
     }
 
+    //Guarda gira medica
     if (this.giraForm.valid) {
         const distribucionGiraDto = new DistribucionGiraDto(
             this.giraForm.value.dia,
@@ -382,6 +387,7 @@ export class DistHorariaComponent {
         );
     }
 
+    //Guarda Otras actividades
     if (this.otroForm.valid) {
         const distribucionOtroDto = new DistribucionOtroDto(
             this.otroForm.value.dia,
@@ -410,13 +416,13 @@ export class DistHorariaComponent {
         );
     }
 
-    // Ejecutar todas las promesas
+    // Ejecuta todas las promesas
     Promise.all(savePromises)
         .then(() => {
             this.router.navigate(['/personal']);
         })
         .catch(() => {
-            // Manejo de errores general, si se desea
+            // Manejo de errores general
             this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
