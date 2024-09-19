@@ -36,7 +36,7 @@ export class DistHorariaComponent {
   giraForm!: FormGroup;
   otroForm!: FormGroup;
   
-  step = 0;
+  step = -1;
   cantidadHoras: number = 0;
 
   cargaHoraria?: number;
