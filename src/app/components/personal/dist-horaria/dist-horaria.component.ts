@@ -6,6 +6,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
@@ -18,7 +20,7 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/servicio.service';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { Caps } from 'src/app/models/Configuracion/Caps';
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
 
 
@@ -41,7 +43,7 @@ export class DistHorariaComponent {
 
   cargaHoraria?: number;
   idEfector?: number;
-  tiposGuardiaOptions: { id: number, nombre: string }[] = [];
+  tiposGuardiaOptions: { nombre: string }[] = [];
 
   horasStatus: string = '';
   horasMessage: string = '';
@@ -49,7 +51,7 @@ export class DistHorariaComponent {
 
   servicios: Servicio[] = [];
   hospitales: Hospital[] = [];
-  capss: Caps[] = [];
+  capss: CapsDto[] = [];
 
   isProfessionalLoaded: boolean = false;
   isButtonDisabled: boolean = true;
@@ -69,6 +71,7 @@ export class DistHorariaComponent {
     private servicioService: ServicioService,
     private hospitalService: HospitalService,
     private capsService: CapsService,
+    private asistencialService: AsistencialService,
     private fb: FormBuilder
   ) {
     this.guardiaForm = this.fb.group({
@@ -156,6 +159,7 @@ export class DistHorariaComponent {
           } else {
             this.idEfector = undefined;
             this.capss = [];
+            this.loadTiposGuardia();
           }
             
           if (legajo.revista && legajo.revista.cargaHoraria) {
@@ -256,15 +260,31 @@ export class DistHorariaComponent {
   }
 
   listCaps(): void {
-    this.capsService.list().subscribe(data => {
-      console.log('Lista completa de caps:', data); 
-      this.capss = data.filter(cap => cap.cabecera.id === this.idEfector);
-      console.log('Caps filtrados por idEfector:', this.capss);
-    }, error => {
-      console.log('Error al listar caps:', error);
-    });
+    if (this.idEfector) {
+      this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(data => {
+        console.log('Caps activos para el efector:', data);
+        this.capss = data; // Asigna los datos obtenidos a capss
+      }, error => {
+        console.log('Error al listar caps activos:', error);
+      });
+    } else {
+      this.capss = []; // Si no hay idEfector, limpiar los caps
+    }
   }
-          
+
+  loadTiposGuardia(): void {
+    if (this.idEfector) {
+      this.asistencialService.listByUdoAndTipoGuardia(this.idEfector).subscribe(data => {
+        console.log('Tipos de guardia obtenidos:', data);
+        this.tiposGuardiaOptions = data; // Asigna los datos obtenidos a tiposGuardiaOptions
+      }, error => {
+        console.log('Error al listar tipos de guardia:', error);
+      });
+    } else {
+      this.tiposGuardiaOptions = []; // Si no hay idEfector, limpiar los tipos de guardia
+    }
+  }
+
   saveDistribuciones() {
     this.isButtonDisabled = true;
 
