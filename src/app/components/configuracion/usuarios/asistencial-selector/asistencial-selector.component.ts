@@ -37,11 +37,15 @@ export class AsistencialSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.asistencialService.list().subscribe(data => {
-      this.dataSource.data = data;
-    });
+    this.asistencialService.list().subscribe(
+      data => {
+        this.dataSource.data = data;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      },
+    );
   }
-
+  
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value
       .normalize("NFD")
@@ -58,6 +62,7 @@ export class AsistencialSelectorComponent implements OnInit {
   
     this.dataSource.filter = filterValue;
   }
+
   selectAsistencial(asistencial: Asistencial): void {
     // Verifica que el objeto tenga la estructura correcta
     console.log('Selected Asistencial:', asistencial);

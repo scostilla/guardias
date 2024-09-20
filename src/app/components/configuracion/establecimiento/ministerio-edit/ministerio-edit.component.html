@@ -30,10 +30,10 @@
             <div class="col">
               <mat-form-field appearance="fill">
                 <mat-label>Localidad</mat-label>
-                <mat-select formControlName="localidad" [compareWith]="compareLocalidad">
-                  <mat-option *ngFor="let localidad of localidades" [value]="localidad" >{{ localidad.nombre }}</mat-option>
+                <mat-select formControlName="idLocalidad" [compareWith]="compareLocalidad">
+                  <mat-option *ngFor="let localidad of localidades" [value]="localidad.id" >{{ localidad.nombre }}</mat-option>
                 </mat-select>
-                          <mat-error *ngIf="ministerioForm?.get('localidad')?.invalid && ministerioForm?.get('localidad')?.touched">
+                          <mat-error *ngIf="ministerioForm?.get('idLocalidad')?.invalid && ministerioForm?.get('idLocalidad')?.touched">
                   El campo es obligatorio.
                 </mat-error>
               </mat-form-field>
@@ -43,10 +43,10 @@
             <div class="col">
               <mat-form-field appearance="fill">
                 <mat-label>Región</mat-label>
-                <mat-select formControlName="region" [compareWith]="compareRegion">
-                  <mat-option *ngFor="let region of regiones" [value]="region" >{{ region.nombre }}</mat-option>
+                <mat-select formControlName="idRegion" [compareWith]="compareRegion">
+                  <mat-option *ngFor="let region of regiones" [value]="region.id" >{{ region.nombre }}</mat-option>
                 </mat-select>
-                          <mat-error *ngIf="ministerioForm?.get('region')?.invalid && ministerioForm?.get('region')?.touched">
+                          <mat-error *ngIf="ministerioForm?.get('idRegion')?.invalid && ministerioForm?.get('idRegion')?.touched">
                   El campo es obligatorio.
                 </mat-error>
               </mat-form-field>

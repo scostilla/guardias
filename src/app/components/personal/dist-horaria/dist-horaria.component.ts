@@ -93,7 +93,6 @@ export class DistHorariaComponent {
     this.consultorioForm = this.fb.group({
       idPersona: ['', Validators.required],
       tipoConsultorio: ['', Validators.required],
-      lugar: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
       fechaInicio: ['', Validators.required],
@@ -154,26 +153,28 @@ export class DistHorariaComponent {
         this.selectedAsistencial = result;
         this.inputValue = `${result.apellido} ${result.nombre}`;
         this.updateIdPersona(result.id);
+
+        const legajosActivos = result.legajos.filter((legajo: { activo: boolean; }) => legajo.activo === true);
+        const ultimoLegajoActivo = legajosActivos.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id)[0];
   
-        if (result.legajos.length > 0) {
-          const legajo = result.legajos[0];
-          if (legajo.udo) {
-            this.idEfector = legajo.udo.id;
+        if (ultimoLegajoActivo) {
+          if (ultimoLegajoActivo.udo) {
+            this.idEfector = ultimoLegajoActivo.udo.id;
             this.listCaps();
           } else {
             this.idEfector = undefined;
             this.capss = [];
             this.listTiposGuardia();
           }
-            
-          if (legajo.revista && legajo.revista.cargaHoraria) {
-            this.cargaHoraria = legajo.revista.cargaHoraria.cantidad;
+          
+          if (ultimoLegajoActivo.revista && ultimoLegajoActivo.revista.cargaHoraria) {
+            this.cargaHoraria = ultimoLegajoActivo.revista.cargaHoraria.cantidad;
             this.isProfessionalLoaded = true;
             this.tiposGuardiaOptions = result.tiposGuardias;
           } else {
             this.cargaHoraria = undefined;
             this.isProfessionalLoaded = false;
-            this.toastr.warning('El profesional seleccionado no posee una revista.', 'Advertencia', {
+            this.toastr.warning('El profesional seleccionado no posee una revista.', 'Aviso', {
               timeOut: 6000,
               positionClass: 'toast-top-center',
               progressBar: true
@@ -182,7 +183,7 @@ export class DistHorariaComponent {
         } else {
           this.cargaHoraria = undefined;
           this.isProfessionalLoaded = false;
-          this.toastr.warning('El profesional seleccionado no posee un legajo.', 'Advertencia', {
+          this.toastr.warning('El profesional seleccionado no posee un legajo.', 'Aviso', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -385,12 +386,12 @@ export class DistHorariaComponent {
 
         savePromises.push(
             this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                .then(() => this.toastr.success('Guardia guardada exitosamente.', 'Éxito', {
+                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Guardia', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                 }))
-                .catch(() => this.toastr.error('Error al guardar la Guardia.', 'Error', {
+                .catch(() => this.toastr.error('No se pudo guardar guardia.', 'Error', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
@@ -409,18 +410,17 @@ export class DistHorariaComponent {
             this.consultorioForm.value.fechaFinalizacion,
             this.consultorioForm.value.horaIngreso,
             this.consultorioForm.value.idServicio.id,
-            this.consultorioForm.value.tipoConsultorio,
-            this.consultorioForm.value.lugar
+            this.consultorioForm.value.tipoConsultorio
         );
 
         savePromises.push(
             this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
-                .then(() => this.toastr.success('Consultorio guardado exitosamente.', 'Éxito', {
+                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Consultorio', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                 }))
-                .catch(() => this.toastr.error('Error al guardar el Consultorio.', 'Error', {
+                .catch(() => this.toastr.error('No se pudo guardar Consultorio.', 'Error', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
@@ -445,12 +445,12 @@ export class DistHorariaComponent {
 
         savePromises.push(
             this.distribucionGiraService.save(distribucionGiraDto).toPromise()
-                .then(() => this.toastr.success('Gira médica guardada exitosamente.', 'Éxito', {
+                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Gira médica', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                 }))
-                .catch(() => this.toastr.error('Error al guardar la Gira médica.', 'Error', {
+                .catch(() => this.toastr.error('No se pudo guardar Gira médica.', 'Error', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
@@ -474,12 +474,12 @@ export class DistHorariaComponent {
 
         savePromises.push(
             this.distribucionOtroService.save(distribucionOtroDto).toPromise()
-                .then(() => this.toastr.success('Otra actividad guardada exitosamente.', 'Éxito', {
+                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Otra actividad', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                 }))
-                .catch(() => this.toastr.error('Error al guardar otra actividad.', 'Error', {
+                .catch(() => this.toastr.error('No se pudo guardar otra actividad.', 'Error', {
                     timeOut: 6000,
                     positionClass: 'toast-top-center',
                     progressBar: true
@@ -550,6 +550,22 @@ export class DistHorariaComponent {
 
   compareCaps(c1: Hospital, c2: Hospital): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
+  }
+
+  limpiarGuardia() {
+    this.guardiaForm.reset();
+  }
+
+  limpiarConsultorio() {
+    this.consultorioForm.reset();
+  }
+
+  limpiarGira() {
+    this.giraForm.reset();
+  }
+
+  limpiarOtro() {
+    this.otroForm.reset();
   }
 
   cancel(): void {

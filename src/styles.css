@@ -667,6 +667,9 @@ mat-label{
   padding: 0;
 }
 
+.spacer {
+  flex: 1 1 auto;
+}
 
 
 /* --referencias-- */

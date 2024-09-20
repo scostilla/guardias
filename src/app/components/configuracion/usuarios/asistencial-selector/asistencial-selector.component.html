@@ -19,7 +19,7 @@
   <div class="row">
     <mat-dialog-content>
       <div class="table-responsive">
-        <mat-table [dataSource]="dataSource!" matSort>
+        <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort">
           <!-- Columna Apellido -->
           <ng-container matColumnDef="apellido">
             <mat-header-cell *matHeaderCellDef class="negrita"> Apellido </mat-header-cell>
@@ -48,11 +48,11 @@
           <mat-header-row *matHeaderRowDef="displayedColumns" style="background-color: #f5f5f5;"></mat-header-row>
           <!-- Fila de datos -->
           <mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer;"></mat-row>
-        </mat-table>
+        </table>
       </div>
     </mat-dialog-content>
     <div class="col-12">
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
 </div>

@@ -33,8 +33,8 @@ export class MinisterioEditComponent implements OnInit {
     this.ministerioForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,60}$')]],
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
-      localidad: ['', Validators.required],
-      region: ['', Validators.required],
+      idLocalidad: ['', Validators.required],
+      idRegion: ['', Validators.required],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]]
     });
@@ -78,8 +78,8 @@ export class MinisterioEditComponent implements OnInit {
       const ministerioDto = new MinisterioDto(
         formValue.nombre,
         formValue.domicilio,
-        formValue.region.id,
-        formValue.localidad.id,
+        formValue.idRegion,
+        formValue.idLocalidad,
         formValue.telefono,
         formValue.observacion,
         this.data ? this.data.porcentajePorZona : 1,

@@ -22,7 +22,6 @@
   </div>-->
 
   <div class="row">
-    <mat-dialog-content class="mat-typography">
   
       <form [formGroup]="guardiaForm">
         <div class="row">
@@ -39,7 +38,7 @@
 
       <div class="container-mensajes">
         <div *ngIf="isProfessionalLoaded && cargaHoraria !== undefined" class="carga-horaria-display">
-          <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong></p>
+          <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong> hs</p>
         </div>
 
         <div *ngIf="isProfessionalLoaded" [ngClass]="horasMessageClass" class="horas-status-display">
@@ -47,7 +46,9 @@
         </div>
       </div>
 
-      <mat-accordion class="example-headers-align">
+    <mat-dialog-content class="mat-typography">
+
+      <mat-accordion>
         <!-- Panel 1 -->
         <mat-expansion-panel [expanded]="step === 0 && isPanelEnabled" (opened)="setStep(0)" hideToggle [disabled]="!isPanelEnabled">
           <mat-expansion-panel-header class="custom-header">
@@ -100,7 +101,7 @@
                   {{ mes.nombre }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="giraForm?.get('fechaFinalizacion')?.errors?.['required']">El campo es obligatorio.</mat-error>
+              <mat-error *ngIf="guardiaForm?.get('fechaFinalizacion')?.errors?.['required']">El campo es obligatorio.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
@@ -126,6 +127,12 @@
             </mat-form-field>
 
             <mat-action-row>
+              <button mat-icon-button (click)="limpiarGuardia()" matTooltip="Vaciar formulario guardia">
+                <mat-icon>close</mat-icon>
+              </button>
+
+              <span class="spacer"></span>
+
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
             </mat-action-row>
 
@@ -183,7 +190,7 @@
                     {{ mes.nombre }}
                   </mat-option>
                 </mat-select>
-                <mat-error *ngIf="giraForm?.get('fechaFinalizacion')?.errors?.['required']">El campo es obligatorio.</mat-error>
+                <mat-error *ngIf="consultorioForm?.get('fechaFinalizacion')?.errors?.['required']">El campo es obligatorio.</mat-error>
               </mat-form-field>  
 
               <mat-form-field appearance="fill">
@@ -204,18 +211,19 @@
               </mat-form-field>
           
               <mat-form-field>
-                <mat-label>Lugar</mat-label>
-                  <input matInput formControlName="lugar" />
-                <mat-error *ngIf="consultorioForm.get('lugar')?.hasError('required')">El campo es obligatorio.</mat-error>
-              </mat-form-field>            
-
-              <mat-form-field>
                 <mat-label>Cantidad de horas</mat-label>
                   <input matInput formControlName="cantidadHoras" type="number" />
                 <mat-error *ngIf="consultorioForm.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>
               </mat-form-field>         
 
               <mat-action-row>
+                <button mat-icon-button (click)="limpiarConsultorio()" matTooltip="Vaciar formulario consultorio">
+                  <mat-icon>close</mat-icon>
+                </button>
+  
+                <span class="spacer"></span>
+  
+  
                 <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
                 <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
               </mat-action-row>
@@ -300,11 +308,18 @@
           
             <mat-form-field>
               <mat-label>Cantidad de horas</mat-label>
-                <input matInput formControlName="cantidadHoras" type="number" />
+                <input matInput formControlName="cantidadHoras" type="number" placeholder="Incluye tiempo de permanencia, y de viaje (ida y vuelta)." />
               <mat-error *ngIf="giraForm.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>
             </mat-form-field>         
 
             <mat-action-row>
+              <button mat-icon-button (click)="limpiarGira()" matTooltip="Vaciar formulario gira médica">
+                <mat-icon>close</mat-icon>
+              </button>
+
+              <span class="spacer"></span>
+
+
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
             </mat-action-row>
@@ -364,7 +379,7 @@
                   {{ mes.nombre }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="giraForm?.get('fechaFinalizacion')?.errors?.['required']">El campo es obligatorio.</mat-error>
+              <mat-error *ngIf="otroForm?.get('fechaFinalizacion')?.errors?.['required']">El campo es obligatorio.</mat-error>
             </mat-form-field>
 
             <mat-form-field>
@@ -388,6 +403,13 @@
         </form>
 
         <mat-action-row>
+          <button mat-icon-button (click)="limpiarOtro()" matTooltip="Vaciar formulario otra actividad">
+            <mat-icon>close</mat-icon>
+          </button>
+
+          <span class="spacer"></span>
+
+
           <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
           <button mat-button color="primary" type="button" (click)="cerrarPanel()">Cerrar paneles</button>
         </mat-action-row>
@@ -395,9 +417,10 @@
       </mat-accordion>
       
       <div class="action-buttons mt-4 d-flex justify-content-start">
-        <button mat-raised-button color="primary" type="submit" (click)="saveDistribuciones()" [disabled]="isButtonDisabled">Guardar</button>
+        <button mat-raised-button color="primary" type="submit" (click)="saveDistribuciones()" [disabled]="isButtonDisabled" style="margin-right: 10px;">Guardar</button>
         <button mat-raised-button color="secondary" type="button" (click)="cancel()">Cancelar</button>
       </div>
+      <div class="row"></div>
     </mat-dialog-content>
   </div>
 </div>
