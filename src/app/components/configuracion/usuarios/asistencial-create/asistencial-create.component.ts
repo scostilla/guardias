@@ -19,7 +19,6 @@ import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 export class AsistencialCreateComponent implements OnInit {
 
   asistencialForm: FormGroup;
-  //initialData: any;
   tiposGuardias: TipoGuardia[] = [];
   roles: Rol[] = [];
 
@@ -47,33 +46,15 @@ export class AsistencialCreateComponent implements OnInit {
       nombreUsuario: ['', [Validators.required]],
       password: ['', [Validators.required]],
       roles: [[], [Validators.required]],
-      /*  estado: ['', Validators.required], */
-      /* tipoGuardia: ['', Validators.required] */
     });
 
     this.listTipoGuardia();
     this.listRoles();
-
-    /* if (data) {
-      this.asistencialForm.patchValue({
-        ...data,
-        tiposGuardias: data.tiposGuardias ? data.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
-        roles: data.usuario ? data.usuario.roles.map((rol: any) => rol.id) : []
-      });
-    } */
-
-    /* if (data) {
-      this.asistencialForm.patchValue(data);
-    } */
   }
 
   ngOnInit(): void {
-    //this.initialData = this.asistencialForm.value;
+    
   }
-
-  /*  isModified(): boolean {
-     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
-   } */
 
   listTipoGuardia(): void {
     this.tipoGuardiaService.list().subscribe(data => {
@@ -198,6 +179,18 @@ export class AsistencialCreateComponent implements OnInit {
         tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
       });
     }
+  }
+
+  formatCuil(event: any): void {
+    let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
+    if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
+    }
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
+    }
+    event.target.value = value;
+    this.asistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
   }
 
   cancel(): void {

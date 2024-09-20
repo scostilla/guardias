@@ -1,9 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
-import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Rol } from 'src/app/models/Configuracion/Rol';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
@@ -55,7 +54,7 @@ export class AsistencialEditComponent implements OnInit {
     this.listTipoGuardia();
     this.listRoles();
 
-    // recupero el estado del router
+    // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.initialData = navigation.extras.state['asistencial'];  // Recibo el asistencial
@@ -70,7 +69,7 @@ export class AsistencialEditComponent implements OnInit {
       this.idAsistencial = this.initialData.id ?? 0;
       this.asistencialForm.patchValue({
         ...this.initialData,
-        tiposGuardias: this.initialData.tiposGuardias ? this.initialData.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [], 
+        tiposGuardias: this.initialData.tiposGuardias ? this.initialData.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
       });
 
       console.log("id asis a modificar", this.idAsistencial);
@@ -113,20 +112,20 @@ export class AsistencialEditComponent implements OnInit {
         asistencialData.domicilio,
         asistencialData.esAsistencial,
         asistencialData.activo,
-        this.initialData?.usuario?.id?? 0 ,
+        this.initialData?.usuario?.id ?? 0,
         asistencialData.tiposGuardias
       );
-  
+
       console.log("asistencial dto que quiero guardar", asistencialDto);
-  
-      this.asistencialService.update(this.idAsistencial,asistencialDto).subscribe(
+
+      this.asistencialService.update(this.idAsistencial, asistencialDto).subscribe(
         (result) => {
           this.toastr.success('Asistencial modificado con éxito', 'EXITO', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
-          this.router.navigate(['/asistencial'], { state: { asistencialModificado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial modificado
+          this.router.navigate(['/asistencial'], { state: { asistencialModificado: result } }); // Redirijo a la lista de asistenciales y paso el asistencial modificado
         },
         (error) => {
           this.toastr.error('Ocurrió un error al crear el Asistencial', error, {
@@ -135,32 +134,33 @@ export class AsistencialEditComponent implements OnInit {
             progressBar: true
           });
         }
-      );}
+      );
+    }
 
-      /* const nuevoUsuario = new NuevoUsuario(
-        asistencialData.nombreUsuario,
-        asistencialData.email,
-        asistencialData.password,
-        asistencialData.roles
-      );
-      // Verifica si existe un usuario con el nombreUsuario especificado
-      this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
-        (existingUsuario) => {
-          if (!existingUsuario) {
-            // Usuario no encontrado, creamos
-            this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
-          } else {
-            console.error('El nombre de usuario ya existe.');
-          }
-        },
-        (error) => {
-          console.log('Error al buscar el usuario existente', error);
+    /* const nuevoUsuario = new NuevoUsuario(
+      asistencialData.nombreUsuario,
+      asistencialData.email,
+      asistencialData.password,
+      asistencialData.roles
+    );
+    // Verifica si existe un usuario con el nombreUsuario especificado
+    this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
+      (existingUsuario) => {
+        if (!existingUsuario) {
+          // Usuario no encontrado, creamos
+          this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
+        } else {
+          console.error('El nombre de usuario ya existe.');
         }
-      );
-    } */
+      },
+      (error) => {
+        console.log('Error al buscar el usuario existente', error);
+      }
+    );
+  } */
   }
 
-  createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
+  /* createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
     //creamos el usuario
     this.authService.create(nuevoUsuario).subscribe(
       () => {
@@ -181,9 +181,9 @@ export class AsistencialEditComponent implements OnInit {
         console.error('Error al crear el usuario', createError);
       }
     );
-  }
+  } */
 
-  updateAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
+  /* updateAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
     const asistencialDto = new AsistencialDto(
       asistencialData.nombre,
       asistencialData.apellido,
@@ -219,7 +219,7 @@ export class AsistencialEditComponent implements OnInit {
         });
       }
     );
-  }
+  } */
 
   onTipoGuardiaSelectionChange(event: any): void {
     const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
@@ -240,6 +240,18 @@ export class AsistencialEditComponent implements OnInit {
         tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
       });
     }
+  }
+
+  formatCuil(event: any): void {
+    let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
+    if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
+    }
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
+    }
+    event.target.value = value;
+    this.asistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
   }
 
   compareFn(o1: any, o2: any): boolean {
