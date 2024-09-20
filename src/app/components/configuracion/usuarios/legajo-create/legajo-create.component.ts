@@ -1,8 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
@@ -14,7 +13,6 @@ import { AdicionalService } from 'src/app/services/Configuracion/adicional.servi
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
@@ -23,14 +21,10 @@ import { Categoria } from 'src/app/models/Configuracion/Categoria';
 import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
-import { Revista } from 'src/app/models/Configuracion/Revista';
 import { ToastrService } from 'ngx-toastr';
-import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
-import * as moment from 'moment';
 
 // Defino la interfaz para los datos que espero recibir
 /* export interface DialogData {
@@ -56,7 +50,7 @@ export class LegajoCreateComponent implements OnInit {
   personas: AsistencialListForLegajosDto[] = [];
   /* personas: AsistencialListDto[] = []; */
   // Para guardar la persona seleccionada que viene desde AsistencialComponent
-  selectedPersona: AsistencialListDto | null = null;
+  //selectedPersona: AsistencialListDto | null = null;
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -65,7 +59,7 @@ export class LegajoCreateComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
-  isContrafactura: boolean = false;
+  //isContrafactura: boolean = false;
   //esEdicion = false;
   //revistas: Revista[] = [];
 

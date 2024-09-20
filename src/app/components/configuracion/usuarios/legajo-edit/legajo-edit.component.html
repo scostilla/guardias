@@ -2,7 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">{{esEdicion ? 'Modificar' : 'Agregar'}} Legajo</div>
+      <div class="titulos">Modificar Legajo</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/legajo">
@@ -18,7 +18,7 @@
   <div class="row">
     <mat-dialog-content class="mat-typography">
 
-      <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
+      <form [formGroup]="legajoForm" (ngSubmit)="updateLegajo()">
 
         <mat-accordion class="example-headers-align">
           <!-- Panel 1 -->
@@ -104,7 +104,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Categoría</mat-label>
-              <mat-select formControlName="categoria" [compareWith]="compareFn">
+              <mat-select formControlName="categoria" [compareWith]="compareFn2">
                 <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('categoria')?.errors?.['required']">La categoría es requerida.</mat-error>
@@ -112,7 +112,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Adicional</mat-label>
-              <mat-select formControlName="adicional" [compareWith]="compareFn">
+              <mat-select formControlName="adicional" [compareWith]="compareFn2">
                 <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
@@ -120,7 +120,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Carga Horaria</mat-label>
-              <mat-select formControlName="cargaHoraria" [compareWith]="compareFn">
+              <mat-select formControlName="cargaHoraria" [compareWith]="compareFn2">
                 <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria.id">{{ cargaHoraria.cantidad
                   }}</mat-option>
               </mat-select>
@@ -130,7 +130,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Tipo de revista</mat-label>
-              <mat-select formControlName="tipoRevista" [compareWith]="compareFn">
+              <mat-select formControlName="tipoRevista" [compareWith]="compareFn2">
                 <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista.id">{{ tipoRevista.nombre
                   }}</mat-option>
               </mat-select>
@@ -200,7 +200,7 @@
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()">
-                {{esEdicion ? 'Modificar' : 'Agregar Legajo'}}
+                Modificar Legajo
               </button>
             </mat-action-row>
           </mat-expansion-panel>

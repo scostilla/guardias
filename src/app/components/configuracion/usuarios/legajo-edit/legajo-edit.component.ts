@@ -25,6 +25,8 @@ import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { ToastrService } from 'ngx-toastr';
+import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
+import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 
 interface Agrup {
   value: string;
@@ -39,9 +41,9 @@ interface Agrup {
 export class LegajoEditComponent implements OnInit {
 
   legajoForm: FormGroup;
-  esEdicion = false;
-  initialData: any;
-  personas: Asistencial[] = [];
+  initialData: Legajo | undefined;
+  idLegajo: number = 0;
+  personas: AsistencialListForLegajosDto[] = [];
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -64,7 +66,6 @@ export class LegajoEditComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private legajoService: LegajoService,
-    private route: ActivatedRoute,
     private router: Router,
     private asistencialService: AsistencialService,
     private profesionService: ProfesionService,
@@ -97,38 +98,127 @@ export class LegajoEditComponent implements OnInit {
       fechaFinal: [''],
       cargo: ['', Validators.required],
     });
+
+    this.listAsistenciales();
+    this.listProfesiones();
+    this.listUdos();
+    this.listCargos();
+    this.listEspecialidades();
+    this.listCategorias();
+    this.listAdicionales();
+    this.listCargaHoraria();
+    this.listTipoRevista();
+
+    // recupero el estado del router
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.initialData = navigation.extras.state['legajo'];  // Recibo el legajo
+    }
+
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const legajoId = params['id'];
-      this.esEdicion = !!legajoId;
 
-      if (this.esEdicion) {
-        this.legajoService.detail(legajoId).subscribe({
-          next: (legajo) => {
-            this.initialData = legajo;
-            this.legajoForm.patchValue({
-              ...legajo,
-              efectores: legajo.efectores ? legajo.efectores.map((efector: any) => efector.id) : [],
-              especialidades: legajo.especialidades ? legajo.especialidades.map((especialidad: any) => especialidad.id) : []
-            });
-          },
-          error: (err) => {
-            console.error('Error al obtener el legajo', err);
-          }
-        });
-      }
-
-      this.loadDropdowns();
-    });
+    if (this.initialData) {
+      console.log("legajo a modificar",this.initialData);
+      console.log("categoria", this.initialData.revista?.categoria?.id); 
+    console.log("adicional", this.initialData.revista?.adicional?.id); 
+    console.log("cargaHoraria", this.initialData.revista?.cargaHoraria?.id); 
+    console.log("tipoRevista", this.initialData.revista?.tipoRevista?.id); 
+      this.idLegajo = this.initialData.id ?? 0;  
+      this.legajoForm.patchValue({
+        ...this.initialData,
+        efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
+        especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
+        adicional: this.initialData.revista.adicional?.id,  // Cargar adicional del objeto 'Revista'
+        agrupacion: this.initialData.revista?.agrupacion,  // Aquí cargas el valor de 'agrupacion'
+        cargaHoraria: this.initialData.revista.cargaHoraria?.id,  // Cargar carga horaria del objeto 'Revista'
+        categoria: this.initialData.revista?.categoria?.id ?? null,  // Cargar categoría del objeto 'Revista'
+        tipoRevista: this.initialData.revista.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
+        
+      });
+    }
   }
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
   }
 
-  loadDropdowns(): void {
+  listAsistenciales(): void {
+
+    this.asistencialService.listForLegajosDtos().subscribe(data => {
+      this.personas = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listProfesiones(): void {
+    this.profesionService.list().subscribe(data => {
+      this.profesiones = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listUdos(): void {
+    /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
+    this.hospitalService.list().subscribe(data => {
+      this.efectores = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listCargos(): void {
+    this.cargoService.list().subscribe(data => {
+      this.cargos = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listEspecialidades(): void {
+    this.especialidadService.list().subscribe(data => {
+      this.especialidades = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listCategorias(): void {
+    this.categoriaService.list().subscribe(data => {
+      this.categorias = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listAdicionales(): void {
+    this.adicionalService.list().subscribe(data => {
+      this.adicionales = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listCargaHoraria(): void {
+    this.cargaHorariaService.list().subscribe(data => {
+      this.cargasHorarias = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listTipoRevista(): void {
+    this.tipoRevistaService.list().subscribe(data => {
+      this.tiposRevistas = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  /* loadDropdowns(): void {
     this.asistencialService.list().subscribe(data => this.personas = data, error => console.error('Error al cargar personas', error));
     this.profesionService.list().subscribe(data => this.profesiones = data, error => console.error('Error al cargar profesiones', error));
     this.hospitalService.list().subscribe(data => this.efectores = data, error => console.error('Error al cargar efectores', error));
@@ -139,54 +229,100 @@ export class LegajoEditComponent implements OnInit {
     this.cargaHorariaService.list().subscribe(data => this.cargasHorarias = data, error => console.error('Error al cargar cargas horarias', error));
     this.tipoRevistaService.list().subscribe(data => this.tiposRevistas = data, error => console.error('Error al cargar tipos de revistas', error));
     this.revistaService.list().subscribe(data => this.revistas = data, error => console.error('Error al cargar revistas', error));
-  }
+  } */
 
-  saveLegajo(): void {
+  updateLegajo(): void {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
-      const legajoDto = new LegajoDto(
-        legajoData.fechaInicio,
-        legajoData.fechaFinal,
-        legajoData.actual,
-        legajoData.legal,
-        legajoData.activo,
-        legajoData.matriculaNacional,
-        legajoData.matriculaProvincial,
-        legajoData.tipoRevista.id,
-        legajoData.udo.id,
-        legajoData.persona.id,
-        legajoData.cargo.id,
-        legajoData.efectores,
-        legajoData.especialidades,
-        legajoData.profesion.id
+
+      const revistaDto = new RevistaDto(
+        legajoData.tipoRevista,
+        legajoData.categoria,
+        legajoData.adicional,
+        legajoData.cargaHoraria,
+        legajoData.agrupacion
       );
 
-      if (this.esEdicion) {
-        this.legajoService.update(legajoData.id, legajoDto).subscribe({
-          next: (result) => {
-            this.toastr.success('Legajo actualizado exitosamente!', 'Actualización Exitosa', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            this.router.navigate(['/legajo']);
-          },
-          error: (error) => {
-            this.toastr.error('Error al actualizar el legajo.', 'Error', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            console.error('Error al actualizar el legajo', error);
+      // Verifica si existe una revista con los atributos especificados
+      this.revistaService.checkRevista(revistaDto).subscribe(
+        (existingRevista) => {
+          // Si existe, usa su ID
+          if (existingRevista && existingRevista.id !== undefined) {
+            console.log("carga horaria de la nueva revista ", existingRevista.cargaHoraria)
+            this.createLegajoDtoAndUpdate(legajoData, existingRevista.id);
+          } else {
+            console.error('La revista existente no tiene un ID.');
           }
-        });
-      } else {
-        this.legajoService.save(legajoDto).subscribe({
-          next: (result) => {
-            this.toastr.success('Legajo creado exitosamente!', 'Creación Exitosa', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            this.router.navigate(['/legajo']);
-          },
-          error: (error) => {
-            this.toastr.error('Error al crear el legajo.', 'Error', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            console.error('Error al crear el legajo', error);
-          }
-        });
-      }
-    } else {
-      this.toastr.warning('Por favor complete todos los campos requeridos.', 'Formulario Incompleto', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+        },
+        (error) => {
+          // Si no existe, crea una nueva revista
+          console.log('##### Revista no encontrada, creando una nueva.');
+          this.revistaService.save(revistaDto).subscribe(
+            () => {
+              // Una vez creada, busca la revista nuevamente
+              this.revistaService.checkRevista(revistaDto).subscribe(
+                (newRevista) => {
+                  if (newRevista && newRevista.id !== undefined) {
+                    console.log('%%%Nueva revista creada y encontrada:', newRevista);
+                    this.createLegajoDtoAndUpdate(legajoData, newRevista.id);
+                  } else {
+                    console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
+                  }
+                },
+                (error) => {
+                  console.error('Error al buscar la revista después de crearla', error);
+                }
+              );
+            },
+            (error) => {
+              console.error('%%%%%%%Error al crear la revista', error);
+            }
+          );
+        }
+      );
     }
+  }
+
+  createLegajoDtoAndUpdate(legajoData: any, revistaId: number): void {
+
+    const legajoDto = new LegajoDto(
+      legajoData.fechaInicio,
+      legajoData.fechaFinal,
+      legajoData.actual,
+      legajoData.legal,
+      legajoData.activo,
+      legajoData.matriculaNacional,
+      legajoData.matriculaProvincial,
+      revistaId!, // Usa el ID de la revista (existente o nueva)
+      legajoData.udo.id,
+      legajoData.persona.id,
+      legajoData.cargo.id,
+      legajoData.efectores,
+      legajoData.especialidades,
+      legajoData.profesion.id
+    );
+
+    console.log("legajo a guardar ", legajoDto);
+    console.log("id a modificar  ", this.idLegajo);
+
+    this.legajoService.update(this.idLegajo,legajoDto).subscribe(
+      (result) => {
+        this.toastr.success('Legajo modificado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.router.navigate(['/legajo'], { state: { legajoModificado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
+      },
+      (error) => {
+        this.toastr.error('Faaa Ocurrió un error al crear el Legajo', error, {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        console.error('Error al crear el legajo', error);
+      }
+    );
   }
 
   nextStep(): void {
@@ -194,36 +330,36 @@ export class LegajoEditComponent implements OnInit {
       this.toastr.warning('Complete todos los campos obligatorios en datos personal.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
-  
+
     if (this.step === 1 && !this.isPanel2Valid()) {
       this.toastr.warning('Complete todos los campos obligatorios en situación de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
-  
+
     if (this.step === 2 && !this.isPanel3Valid()) {
       this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
-  
+
     this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
   }
-  
+
   prevStep(): void {
     this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
   }
-  
+
   isPanel1Valid(): boolean {
     // Verifica si los campos obligatorios en el panel 1 son válidos
     const panel1Controls = ['persona', 'profesion', 'especialidades', 'cargo', 'matriculaNacional', 'matriculaProvincial'];
     return panel1Controls.every(control => this.legajoForm.get(control)?.valid);
   }
-  
+
   isPanel2Valid(): boolean {
     // Verifica si los campos obligatorios en el panel 2 son válidos
     const panel2Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo'];
     return panel2Controls.every(control => this.legajoForm.get(control)?.valid);
   }
-  
+
   isPanel3Valid(): boolean {
     // Verifica si los campos obligatorios en el panel 3 son válidos
     const panel3Controls = ['actual', 'legal', 'fechaInicio'];
@@ -245,5 +381,9 @@ export class LegajoEditComponent implements OnInit {
 
   compareFn(o1: any, o2: any): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  }
+
+  compareFn2(o1: any, o2: any): boolean {
+    return o1 && o2 ? o1 === o2 : o1 === o2;
   }
 }

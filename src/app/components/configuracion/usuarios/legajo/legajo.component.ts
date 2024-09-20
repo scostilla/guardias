@@ -136,11 +136,13 @@ export class LegajoComponent implements OnInit, OnDestroy {
   } */
 
     createLegajo(): void {
-      this.router.navigate(['/legajo-create']); // Redirige al componente de creación de legajo
+      this.router.navigate(['/legajo-create']); 
     }
 
     updateLegajo(legajo: Legajo): void {
-      this.router.navigate(['/legajo-update']); // Redirige al componente de creación de legajo
+      this.router.navigate(['/legajo-edit'], {
+        state: {legajo}
+      }); 
     }
 
 
