@@ -93,3 +93,11 @@ mat-form-field input {
 .pending-message {
   background-color: #ffc107;
 }
+
+.icon-pending {
+  color: #ffc107;
+}
+
+.icon-success {
+  color: #28a745;
+}

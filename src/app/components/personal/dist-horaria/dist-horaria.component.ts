@@ -22,6 +22,7 @@ import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import * as moment from 'moment';
 
 
 @Component({
@@ -40,10 +41,12 @@ export class DistHorariaComponent {
   
   step = -1;
   cantidadHoras: number = 0;
+  minDate!: Date;
 
   cargaHoraria?: number;
   idEfector?: number;
   tiposGuardiaOptions: { nombre: string }[] = [];
+  meses: { nombre: string; fecha: moment.Moment; }[] = [];
 
   horasStatus: string = '';
   horasMessage: string = '';
@@ -55,6 +58,8 @@ export class DistHorariaComponent {
 
   isProfessionalLoaded: boolean = false;
   isButtonDisabled: boolean = true;
+
+  options: any[] | undefined;
   
 
   constructor(
@@ -120,16 +125,15 @@ export class DistHorariaComponent {
       lugar: ['', Validators.required]
     });
 
-
+    this.minDate = new Date();
     this.subscribeToFormChanges();
   }
 
-  options: any[] | undefined;
-
   ngOnInit() {
     this.listServicios();
-    this.listEfectores();
+    /*this.listEfectores();*/
     this.listCaps();
+    this.generarMeses();
   }
 
   private subscribeToFormChanges(): void {
@@ -159,7 +163,7 @@ export class DistHorariaComponent {
           } else {
             this.idEfector = undefined;
             this.capss = [];
-            this.loadTiposGuardia();
+            this.listTiposGuardia();
           }
             
           if (legajo.revista && legajo.revista.cargaHoraria) {
@@ -250,14 +254,14 @@ export class DistHorariaComponent {
     });
   }
 
-  listEfectores(): void {
+  /*listEfectores(): void {
     this.hospitalService.list().subscribe(data => {
       console.log('Lista de hospitales:', data);
       this.hospitales = data;
     }, error => {
       console.log(error);
     });
-  }
+  }*/
 
   listCaps(): void {
     if (this.idEfector) {
@@ -272,21 +276,58 @@ export class DistHorariaComponent {
     }
   }
 
-  loadTiposGuardia(): void {
+  listTiposGuardia(): void {
     if (this.idEfector) {
       this.asistencialService.listByUdoAndTipoGuardia(this.idEfector).subscribe(data => {
         console.log('Tipos de guardia obtenidos:', data);
-        this.tiposGuardiaOptions = data; // Asigna los datos obtenidos a tiposGuardiaOptions
+        this.tiposGuardiaOptions = data;
       }, error => {
         console.log('Error al listar tipos de guardia:', error);
       });
     } else {
-      this.tiposGuardiaOptions = []; // Si no hay idEfector, limpiar los tipos de guardia
+      this.tiposGuardiaOptions = [];
     }
+  }
+
+  //Permite el select mes de vigencia cree la ultima fecha del mes elegido
+  private generarMeses(): void {
+    const hoy = new Date();
+    this.meses = [];
+    
+    for (let i = 0; i < 6; i++) {
+      const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
+      const ultimoDia = mes.daysInMonth(); // Último día del mes
+      
+      // Crea un objeto Moment para el último día del mes
+      const fechaFinalizacion = moment(mes).endOf('month');
+  
+      const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
+    
+      this.meses.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
+    }
+  }
+
+  // Verifica los campos en cada form para colocar su estado (en proceso o finalizado)
+  isFormStarted(form: FormGroup): boolean {
+    return form.dirty;
+  }
+  
+  isFormComplete(form: FormGroup): boolean {
+    return this.isFormStarted(form) && form.valid;
+  }
+  
+  hasIncompleteFields(form: FormGroup): boolean {
+    return this.isFormStarted(form) && !form.valid;
+  }
+
+  cerrarPanel() {
+    this.step = -1; // O cualquier valor que indique que no hay panel abierto
   }
 
   saveDistribuciones() {
     this.isButtonDisabled = true;
+
+    const fechaFinalizacion = this.guardiaForm.get('fechaFinalizacion')?.value;
 
     if (this.idEfector === undefined) {
         this.toastr.error('El efector no está definido.', 'Error', {
@@ -297,6 +338,13 @@ export class DistHorariaComponent {
         this.isButtonDisabled = false;
         return;
     }
+
+    console.log('Datos a guardar:', {
+      guardia: this.guardiaForm.value,
+      consultorio: this.consultorioForm.value,
+      gira: this.giraForm.value,
+      otro: this.otroForm.value,
+    });
 
     //Esto es para chequear si un form se inicio tiene datos obligatorios sin guardar
     const formChecks = [
@@ -439,23 +487,22 @@ export class DistHorariaComponent {
         );
     }
 
-    // Ejecuta todas las promesas
+    // Envia los datos cargados para guardar
     Promise.all(savePromises)
-        .then(() => {
-            this.router.navigate(['/personal']);
-        })
-        .catch(() => {
-            // Manejo de errores general
-            this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
-            });
-        })
-        .finally(() => {
-            this.isButtonDisabled = false;
-        });
-}
+    .then(() => {
+      this.router.navigate(['/personal']);
+    })
+    .catch(() => {
+      this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+    })
+    .finally(() => {
+      this.isButtonDisabled = false;
+    });
+  }
 
   nextStep(): void {
     this.step = (this.step + 1) % 4;
