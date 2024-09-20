@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, tap } from 'rxjs';
+import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Usuario } from 'src/app/models/login/Usuario';
@@ -30,8 +30,16 @@ export class AuthService {
 
   }
 
-  public detail(nombreUsuario: string): Observable<Usuario> {
-    return this.httpClient.get<Usuario>(this.authUrl +`detail/${nombreUsuario}`);
+  public detail(nombreUsuario: string): Observable<Usuario| null> {
+    return this.httpClient.get<Usuario>(this.authUrl +`detail/${nombreUsuario}`).pipe(
+      catchError((error) => {
+        if (error.status === 404) {
+          // Retorna null si el usuario no existe
+          return of(null);
+        }
+        return throwError(error);
+      })
+    );
   }
 
   public detailPersonBasicPanel(): Observable<PersonBasicPanelDto> {

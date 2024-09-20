@@ -10,6 +10,7 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { AsistencialEditComponent } from '../asistencial-edit/asistencial-edit.component';
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-asistencial',
@@ -37,6 +38,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     private asistencialService: AsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -161,6 +163,17 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       }
     }
     });
+  }
+
+  createAsistencial(): void {
+    this.router.navigate(['/asistencial-create']); 
+  }
+
+  updateAsistencial(asistencial: Asistencial): void {
+    console.log("en asistencial se envia el objeto", asistencial);
+    this.router.navigate(['/asistencial-edit'], {
+      state: {asistencial}
+    }); 
   }
 
   openDetail(asistencial: Asistencial): void {

@@ -22,7 +22,6 @@ import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { ToastrService } from 'ngx-toastr';
-import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
 
@@ -76,9 +75,7 @@ export class LegajoCreateComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    //public dialogRef: MatDialogRef<LegajoCreateComponent>,
     private legajoService: LegajoService,
-    //private route: ActivatedRoute,
     private router: Router,
     private profesionService: ProfesionService,
     private asistencialService: AsistencialService,
@@ -467,7 +464,7 @@ export class LegajoCreateComponent implements OnInit {
           this.router.navigate(['/legajo'], { state: { legajoCreado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
         },
         (error) => {
-          this.toastr.error('Faaa Ocurrió un error al crear el Legajo', error, {
+          this.toastr.error('Ocurrió un error al crear el Legajo', error, {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true

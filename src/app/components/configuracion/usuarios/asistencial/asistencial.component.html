@@ -5,7 +5,7 @@
     <div class="titulos">ASISTENCIAL</div>
   </div>
   <div class="col-1 align-items-right">
-    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Asistencial">
+    <button mat-fab color="primary" (click)="createAsistencial()" matTooltip="Agregar Asistencial">
       <mat-icon>library_add</mat-icon>
     </button>
   </div>
@@ -85,7 +85,7 @@
       <button mat-icon-button matTooltip="Ver {{asistencial.nombre}}" (click)="openDetail(asistencial)">
         <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="openFormChanges(asistencial)">
+      <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="updateAsistencial(asistencial)">
         <mat-icon class="btnEdit">edit</mat-icon>
       </button>
       <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteAsistencial(asistencial)">

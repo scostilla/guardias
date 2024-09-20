@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Rol } from 'src/app/models/Configuracion/Rol';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
@@ -13,15 +12,14 @@ import { AuthService } from 'src/app/services/login/auth.service';
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 
 @Component({
-  selector: 'app-asistencial-edit',
-  templateUrl: './asistencial-edit.component.html',
-  styleUrls: ['./asistencial-edit.component.css']
+  selector: 'app-asistencial-create',
+  templateUrl: './asistencial-create.component.html',
+  styleUrls: ['./asistencial-create.component.css']
 })
-export class AsistencialEditComponent implements OnInit {
+export class AsistencialCreateComponent implements OnInit {
 
   asistencialForm: FormGroup;
-  initialData: Asistencial | undefined;
-  idAsistencial: number = 0;
+  //initialData: any;
   tiposGuardias: TipoGuardia[] = [];
   roles: Rol[] = [];
 
@@ -33,7 +31,6 @@ export class AsistencialEditComponent implements OnInit {
     private rolService: RolService,
     private authService: AuthService,
     private toastr: ToastrService,
-
   ) {
     this.asistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
@@ -46,40 +43,37 @@ export class AsistencialEditComponent implements OnInit {
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
       tiposGuardias: [[], [Validators.required]],
-      //email: [''/* , [Validators.required, Validators.email] */],
-      //nombreUsuario: [''/* , [Validators.required] */],
-      //password: [''/* , [Validators.required] */],
-      //roles: [[]/* , [Validators.required] */],
+      email: ['', [Validators.required, Validators.email]],
+      nombreUsuario: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      roles: [[], [Validators.required]],
+      /*  estado: ['', Validators.required], */
+      /* tipoGuardia: ['', Validators.required] */
     });
 
     this.listTipoGuardia();
     this.listRoles();
 
-    // recupero el estado del router
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-      this.initialData = navigation.extras.state['asistencial'];  // Recibo el asistencial
-    }
+    /* if (data) {
+      this.asistencialForm.patchValue({
+        ...data,
+        tiposGuardias: data.tiposGuardias ? data.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
+        roles: data.usuario ? data.usuario.roles.map((rol: any) => rol.id) : []
+      });
+    } */
 
+    /* if (data) {
+      this.asistencialForm.patchValue(data);
+    } */
   }
 
   ngOnInit(): void {
-    if (this.initialData) {
-      console.log("asistencial a modificar", this.initialData);
-      console.log("nombreUsuario", this.initialData.usuario?.nombreUsuario);
-      this.idAsistencial = this.initialData.id ?? 0;
-      this.asistencialForm.patchValue({
-        ...this.initialData,
-        tiposGuardias: this.initialData.tiposGuardias ? this.initialData.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [], 
-      });
-
-      console.log("id asis a modificar", this.idAsistencial);
-    }
+    //this.initialData = this.asistencialForm.value;
   }
 
-  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
-  }
+  /*  isModified(): boolean {
+     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
+   } */
 
   listTipoGuardia(): void {
     this.tipoGuardiaService.list().subscribe(data => {
@@ -97,47 +91,11 @@ export class AsistencialEditComponent implements OnInit {
     });
   }
 
-  updateAsistencial(): void {
+  saveAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
 
-      const asistencialDto = new AsistencialDto(
-        asistencialData.nombre,
-        asistencialData.apellido,
-        asistencialData.dni,
-        asistencialData.cuil,
-        asistencialData.fechaNacimiento,
-        asistencialData.sexo,
-        asistencialData.telefono,
-        asistencialData.email,
-        asistencialData.domicilio,
-        asistencialData.esAsistencial,
-        asistencialData.activo,
-        this.initialData?.usuario?.id?? 0 ,
-        asistencialData.tiposGuardias
-      );
-  
-      console.log("asistencial dto que quiero guardar", asistencialDto);
-  
-      this.asistencialService.update(this.idAsistencial,asistencialDto).subscribe(
-        (result) => {
-          this.toastr.success('Asistencial modificado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.router.navigate(['/asistencial'], { state: { asistencialModificado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial modificado
-        },
-        (error) => {
-          this.toastr.error('Ocurrió un error al crear el Asistencial', error, {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      );}
-
-      /* const nuevoUsuario = new NuevoUsuario(
+      const nuevoUsuario = new NuevoUsuario(
         asistencialData.nombreUsuario,
         asistencialData.email,
         asistencialData.password,
@@ -157,7 +115,7 @@ export class AsistencialEditComponent implements OnInit {
           console.log('Error al buscar el usuario existente', error);
         }
       );
-    } */
+    }
   }
 
   createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
@@ -168,8 +126,8 @@ export class AsistencialEditComponent implements OnInit {
         this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
           (newUsuario) => {
             if (newUsuario && newUsuario.id !== undefined) {
-              //modifico el asistencial con el id de usuario creado
-              this.updateAsistencialDtoAndSave(asistencialData, newUsuario.id);
+              //creo el asistencial con el id de usuario creado
+              this.createAsistencialDtoAndSave(asistencialData, newUsuario.id);
             }
           },
           (searchError) => {
@@ -183,7 +141,7 @@ export class AsistencialEditComponent implements OnInit {
     );
   }
 
-  updateAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
+  createAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
     const asistencialDto = new AsistencialDto(
       asistencialData.nombre,
       asistencialData.apellido,
@@ -202,14 +160,14 @@ export class AsistencialEditComponent implements OnInit {
 
     console.log("asistencial dto que quiero guardar", asistencialDto);
 
-    this.asistencialService.update(this.idAsistencial,asistencialDto).subscribe(
+    this.asistencialService.save(asistencialDto).subscribe(
       (result) => {
-        this.toastr.success('Asistencial modificado con éxito', 'EXITO', {
+        this.toastr.success('Asistencial creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/asistencial'], { state: { asistencialModificado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial modificado
+        this.router.navigate(['/asistencial'], { state: { asistencialCreado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial creado
       },
       (error) => {
         this.toastr.error('Ocurrió un error al crear el Asistencial', error, {
@@ -242,10 +200,6 @@ export class AsistencialEditComponent implements OnInit {
     }
   }
 
-  compareFn(o1: any, o2: any): boolean {
-    return o1 && o2 ? o1.id === o2.id : o1 === o2;
-  }
-
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
@@ -255,4 +209,5 @@ export class AsistencialEditComponent implements OnInit {
     this.router.navigate(['/asistencial']);
   }
 }
+
 

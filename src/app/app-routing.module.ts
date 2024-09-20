@@ -192,6 +192,7 @@ import { AutoridadComponent } from './components/configuracion/usuarios/autorida
 import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
+import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 
 
 
@@ -252,9 +253,10 @@ const routes: Routes = [
   {path: 'person-detail/:id', component:PersonDetailComponent},
   {path: 'person-edit/:id', component:PersonEditComponent},
   {path: 'person-edit', component: PersonEditComponent },
+  {path: 'asistencial-create', component:AsistencialCreateComponent},
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
-  {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
+  {path: 'asistencial-edit', component:AsistencialEditComponent},
   {path: 'no-asistencial', component:NoAsistencialComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},

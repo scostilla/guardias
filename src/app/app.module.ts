@@ -223,6 +223,7 @@ import { ValoresGuardiasCreateComponent } from './components/configuracion/info/
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
 import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
+import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -397,6 +398,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     ValoresBonoUtiCreateComponent,
     AsistencialSelectorComponent,
     LegajoCreateComponent,
+    AsistencialCreateComponent,
     
   ],
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -14,7 +14,6 @@ import { AdicionalService } from 'src/app/services/Configuracion/adicional.servi
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
@@ -120,12 +119,12 @@ export class LegajoEditComponent implements OnInit {
   ngOnInit(): void {
 
     if (this.initialData) {
-      console.log("legajo a modificar",this.initialData);
-      console.log("categoria", this.initialData.revista?.categoria?.id); 
-    console.log("adicional", this.initialData.revista?.adicional?.id); 
-    console.log("cargaHoraria", this.initialData.revista?.cargaHoraria?.id); 
-    console.log("tipoRevista", this.initialData.revista?.tipoRevista?.id); 
-      this.idLegajo = this.initialData.id ?? 0;  
+      console.log("legajo a modificar", this.initialData);
+      console.log("categoria", this.initialData.revista?.categoria?.id);
+      console.log("adicional", this.initialData.revista?.adicional?.id);
+      console.log("cargaHoraria", this.initialData.revista?.cargaHoraria?.id);
+      console.log("tipoRevista", this.initialData.revista?.tipoRevista?.id);
+      this.idLegajo = this.initialData.id ?? 0;
       this.legajoForm.patchValue({
         ...this.initialData,
         efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
@@ -135,7 +134,7 @@ export class LegajoEditComponent implements OnInit {
         cargaHoraria: this.initialData.revista.cargaHoraria?.id,  // Cargar carga horaria del objeto 'Revista'
         categoria: this.initialData.revista?.categoria?.id ?? null,  // Cargar categoría del objeto 'Revista'
         tipoRevista: this.initialData.revista.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
-        
+
       });
     }
   }
@@ -305,7 +304,7 @@ export class LegajoEditComponent implements OnInit {
     console.log("legajo a guardar ", legajoDto);
     console.log("id a modificar  ", this.idLegajo);
 
-    this.legajoService.update(this.idLegajo,legajoDto).subscribe(
+    this.legajoService.update(this.idLegajo, legajoDto).subscribe(
       (result) => {
         this.toastr.success('Legajo modificado con éxito', 'EXITO', {
           timeOut: 6000,
