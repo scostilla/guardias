@@ -14,6 +14,7 @@ import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horari
 import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
+
 @Component({
   selector: 'app-revista-edit',
   templateUrl: './revista-edit.component.html',
@@ -21,18 +22,17 @@ import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.
 })
 export class RevistaEditComponent implements OnInit {
 
-  form?: FormGroup;
-  esEdicion?: boolean;
-  esIgual: boolean = false;
+  revistaForm: FormGroup;
+  initialData: any;
   agrupaciones: AgrupacionEnum[] = [];
   tipoRevista: TipoRevista[] = [];
-  categoria: Categoria[] = [];
-  adicional: Adicional[] = [];
+  categorias: Categoria[] = [];
+  adicionales: Adicional[] = [];
   cargaHoraria: CargaHoraria[] = [];
-  errorMessage: string = '';
   categoria24HS?: Categoria;
   cargaHoraria24?: CargaHoraria;
   cargaHoraria30?: CargaHoraria;
+  esEdicion?: boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -46,88 +46,90 @@ export class RevistaEditComponent implements OnInit {
     private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) private data: Revista 
   ) { 
-    this.listProvincia();
-  }
 
-  private updatingForm = false;
-  ngOnInit(): void {
-    this.form = this.fb.group({
-      id: [this.data ? this.data.id : null],
-      agrupacion: [this.data ? this.data.agrupacion : '', Validators.required],
-      categoria: [this.data ? this.data.categoria : '', Validators.required],
-      adicional: [this.data ? this.data.adicional : '', Validators.required],
-      cargaHoraria: [this.data ? this.data.cargaHoraria : '', Validators.required],
-      tipoRevista: [this.data ? this.data.tipoRevista : '', Validators.required]
-    });
-
-    console.log('Valor inicial de tipoRevista:', this.form?.get('tipoRevista')?.value);
-  console.log('Estado del formulario:', this.form?.value);
-
-    
-    this.agrupacionService.getAgrupaciones().subscribe(data => {
-      console.log('Agrupaciones recibidas:', data); // Verifica los datos en la consola
-      this.agrupaciones = data;
-    }, error => {
-      console.log('Error al obtener agrupaciones:', error);
-    });
-    
     this.esEdicion = this.data != null;
-  
-    // Asignar los valores a las variables categoria24HS y cargaHoraria24
-    this.categoria24HS = this.categoria.find(cat => cat.nombre === '24 HS');
-    this.cargaHoraria24 = this.cargaHoraria.find(carga => carga.cantidad === 24);
-    this.cargaHoraria30 = this.cargaHoraria.find(carga => carga.cantidad === 30);
-  
-    this.form.valueChanges.subscribe(val => {
-      if (this.updatingForm) return;
-      this.updatingForm = true;
-      this.esIgual = val.id !== this.data?.id || val.agrupacion !== this.data?.agrupacion || 
-                     val.categoria !== this.data?.categoria || val.adicional !== this.data?.adicional || 
-                     val.cargaHoraria !== this.data?.cargaHoraria || val.tipoRevista !== this.data?.tipoRevista;
-  
-      const selectedCategoria = this.categoria.find(cat => cat.id === val.categoria?.id);
-      const selectedCargaHoraria = this.cargaHoraria.find(carga => carga.id === val.cargaHoraria?.id);
-  
-      this.checkCategoriaYCargaHoraria(selectedCategoria, selectedCargaHoraria);
-      console.log('Estado del formulario:', this.form?.value);
-      this.updatingForm = false;
+
+    this.revistaForm = this.fb.group({
+      agrupacion: ['', Validators.required],
+      categoria: ['', Validators.required],
+      adicional: [''],  
+      cargaHoraria: ['', Validators.required],
+      tipoRevista: ['', Validators.required]
     });
-  
-    this.listCategorias(); 
-    this.listAdicional();
-    this.listCargaHoraria();
 
     this.loadAgrupaciones();
-    
+    this.listCategorias();
+    this.listAdicionales();
+    this.listCargaHoraria();
+    this.listTipoRevista();
+
+    if (data) {
+          console.log("Datos recibidos para edición:", data);
+      this.revistaForm.patchValue({
+        ...data,
+  adicional: data.adicional ? data.adicional.id : null 
+});
+      
+      // Llama a las funciones de cambio para asegurarte de que la visibilidad se ajuste
+      this.onCategoriaChange(data.categoria);
+      this.onCargaHorariaChange(data.cargaHoraria);
+    }
   }
+  
+  ngOnInit(): void {
+    this.initialData = this.revistaForm.value;
+
+    // Observa los cambios en el campo de categoría
+    this.revistaForm.get('categoria')?.valueChanges.subscribe(categoria => {
+      this.onCategoriaChange(categoria);
+    });
+
+    // Observa los cambios en el campo de carga horaria
+    this.revistaForm.get('cargaHoraria')?.valueChanges.subscribe(cargaHoraria => {
+      this.onCargaHorariaChange(cargaHoraria);
+    });
+  }
+
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.revistaForm.value);
+  }
+
   loadAgrupaciones(): void {
     this.agrupacionService.getAgrupaciones().subscribe(data => {
-      console.log('Agrupaciones recibidas:', data); // Verifica los datos en la consola
       this.agrupaciones = data;
     }, error => {
       console.log('Error al obtener agrupaciones:', error);
     });
   }
-  checkCategoriaYCargaHoraria(categoria: any, cargaHoraria: any): void {
-    const categoria24HS = this.categoria.find(cat => cat.nombre === '24 HS');
-    const cargaHoraria24 = this.cargaHoraria.find(carga => carga.cantidad === 24);
-    const cargaHoraria30 = this.cargaHoraria.find(carga => carga.cantidad === 30);
-  
-    if ((categoria && categoria.id === categoria24HS?.id) || 
-        (cargaHoraria && cargaHoraria.id === cargaHoraria24?.id) ||
-        (cargaHoraria && cargaHoraria.id === cargaHoraria30?.id)) {
-      
-      this.form?.get('adicional')?.clearValidators();
-      this.form?.get('adicional')?.setValue(null); // Vaciar el campo adicional
-    } else {
-      this.form?.get('adicional')?.setValidators(Validators.required);
-    }
-  
-    // Siempre actualiza el estado y la validez después de cambiar los validadores
-    this.form?.get('adicional')?.updateValueAndValidity();
+
+  listCategorias(): void {
+    this.categoriaService.list().subscribe(data => {
+      this.categorias = data;
+      this.categoria24HS = this.categorias.find(cat => cat.nombre === '24 HS');
+    }, error => {
+      console.log('Error al cargar las categorias', error);
+    });
   }
 
-  listProvincia(): void {
+  listAdicionales(): void {
+    this.adicionalService.list().subscribe(data => {
+      this.adicionales = data;
+    }, error => {
+      console.log('Error al cargar los adicionales', error);
+    });
+  }
+
+  listCargaHoraria(): void {
+    this.cargaHorariaService.list().subscribe(data => {
+      this.cargaHoraria = data;
+      this.cargaHoraria24 = this.cargaHoraria.find(ch => ch.cantidad === 24);
+      this.cargaHoraria30 = this.cargaHoraria.find(ch => ch.cantidad === 30);
+    }, error => {
+      console.log('Error al cargar las cargas horarias', error);
+    });
+  }
+
+  listTipoRevista(): void {
     this.tipoRevistaService.list().subscribe(data => {
       this.tipoRevista = data;
     }, error => {
@@ -135,104 +137,128 @@ export class RevistaEditComponent implements OnInit {
     });
   }
 
-  listCategorias(): void {
-    this.categoriaService.list().subscribe(data => {
-      this.categoria = data;
-      // Asignar los valores a las variables categoria24HS y cargaHoraria24 aquí
-      this.categoria24HS = this.categoria.find(cat => cat.nombre === '24 HS');
-      this.checkCategoriaYCargaHoraria(this.form?.get('categoria')?.value, this.form?.get('cargaHoraria')?.value);
-    }, error => {
-      console.log(error);
-    });
-  }
+  isAdicionalVisible: boolean = true;
 
-  listAdicional(): void {
-    this.adicionalService.list().subscribe(data => {
-      this.adicional = data;
-    }, error => {
-      console.log(error);
-    });
-  }
+  onCategoriaChange(categoria: Categoria): void {
+    const cargaHoraria = this.revistaForm.get('cargaHoraria')?.value;
 
-  listCargaHoraria(): void {
-    this.cargaHorariaService.list().subscribe(data =>{
-      this.cargaHoraria = data;
-      // Asignar los valores a las variables categoria24HS y cargaHoraria24 aquí
-      this.cargaHoraria24 = this.cargaHoraria.find(carga => carga.cantidad === 24);
-      this.cargaHoraria30 = this.cargaHoraria.find(carga => carga.cantidad === 30);
-      this.checkCategoriaYCargaHoraria(this.form?.get('categoria')?.value, this.form?.get('cargaHoraria')?.value);
-    }, error =>{
-      console.log(error);
-    });
-  }
     
+  
+     // Validación para categoría "24 HS" con carga horaria 30
+    if (categoria?.nombre === '24 HS' && cargaHoraria?.cantidad === 30) {
+      this.toastr.error('La categoría 24 HS no permite una carga horaria de 30.');
+    } 
+    // Validación para categoría "24 HS" con carga horaria distinta a 24
+    if (categoria?.nombre === '24 HS' && cargaHoraria?.cantidad !== 24) {
+      this.toastr.error('La carga horaria debe ser 24 para la categoría 24 HS.');
+    }  
+  
+    // Actualización de la visibilidad del campo adicional
+    const shouldHideAdicional = (cargaHoraria?.cantidad === 24 || cargaHoraria?.cantidad === 30) || categoria?.nombre === '24 HS';
+    this.isAdicionalVisible = !shouldHideAdicional;
+  
+    if (shouldHideAdicional) {
+      this.revistaForm.get('adicional')?.setValue(null); // Limpia el valor de adicional
+      this.revistaForm.get('adicional')?.clearValidators(); // Remueve las validaciones
+    } else if (cargaHoraria?.cantidad !== 30 && categoria?.nombre !== '24 HS' && cargaHoraria?.cantidad !== 24) {
+      // Solo si la carga horaria no es 30 y la categoría no es "24 HS", el adicional es requerido
+      this.revistaForm.get('adicional')?.setValidators(Validators.required);
+    } 
+    
+    this.revistaForm.get('adicional')?.updateValueAndValidity(); // Actualiza el estado de validación
+  }
+  
+  
+  onCargaHorariaChange(cargaHoraria: CargaHoraria): void {
+     const categoria = this.revistaForm.get('categoria')?.value;
+
+  
+     // Validación para categoría "24 HS" con carga horaria 30
+    if (categoria?.nombre === '24 HS' && cargaHoraria?.cantidad === 30) {
+      this.toastr.error('La categoría 24 HS no permite una carga horaria de 30.');
+    } 
+    // Validación para categorías que no son "24 HS" con carga horaria 24
+    if (categoria?.nombre !== '24 HS' && cargaHoraria?.cantidad === 24) {
+      this.toastr.error('La categoría debe ser 24 HS para la carga horaria de 24.');
+    }    
+  
+    // Actualizar visibilidad del campo adicional
+    const shouldHideAdicional = cargaHoraria?.cantidad === 24 || cargaHoraria?.cantidad === 30;
+    this.isAdicionalVisible = !shouldHideAdicional;
+  
+    if (shouldHideAdicional) {
+      this.revistaForm.get('adicional')?.setValue(null); // Limpia el valor de adicional
+      this.revistaForm.get('adicional')?.clearValidators(); // Remueve las validaciones
+    } else {
+      this.revistaForm.get('adicional')?.setValidators(Validators.required); // Aplica las validaciones si es visible
+    }
+    
+    this.revistaForm.get('adicional')?.updateValueAndValidity(); // Actualiza el estado de validación
+  }
+
+  isRevistaFormValid(): boolean {
+    return this.revistaForm.valid;
+  }
+
   saveRevista(): void {
-    if (this.form?.valid) {
+    const categoria = this.revistaForm.get('categoria')?.value;
+    const cargaHoraria = this.revistaForm.get('cargaHoraria')?.value;
+  
+    // Validar si la categoría es "24 HS" y la carga horaria no es 24
+    if (categoria?.nombre === '24 HS' && cargaHoraria?.cantidad !== 24) {
+      this.toastr.error('La categoría "24 HS" requiere una carga horaria de 24.');
+      return; // No continuar con la creación o actualización
+    }
+    if (cargaHoraria?.cantidad === 24 && categoria?.nombre !== '24 HS') {
+      this.toastr.error('La carga horaria de 24 solo es válida para la categoría "24 HS".');
+      return; // No continuar con la creación o actualización
+    }
 
-      const id = this.form.get('id')?.value;
-      const idTipoRevista = this.form.get('tipoRevista')?.value?.id || null;
-      const idCategoria = this.form.get('categoria')?.value?.id || null;
-      const idAdicional = this.form.get('adicional')?.value?.id || null;
-      const idCargaHoraria = this.form.get('cargaHoraria')?.value?.id || null;
-      const agrupacion = this.form.get('agrupacion')?.value;
+    if (cargaHoraria?.cantidad === 30 && categoria?.nombre === '24 HS') {
+      this.toastr.error('La categoría "24 HS" no permite una carga horaria de 30.');
+      return; // No continuar con la creación o actualización
+    }
   
-      console.log('ID Tipo Revista:', idTipoRevista);
-      console.log('ID Categoria:', idCategoria);
-      console.log('ID Adicional:', idAdicional);
-      console.log('ID Carga Horaria:', idCargaHoraria);
-      console.log('Agrupación:', agrupacion);
+    if (this.revistaForm.valid) {
+      const revistaData = this.revistaForm.value;
   
-      if (idTipoRevista === null || idCategoria === null || idCargaHoraria === null) {
-        this.toastr.error('Faltan datos requeridos.');
-        return;
-      }
-  
-      const revistaDto = new RevistaDto(idTipoRevista, idCategoria, idAdicional, idCargaHoraria, agrupacion);
-  
-      if (this.esEdicion) {
-        // En caso de edición
-        //const revista: Revista = {
-        const revista: RevistaDto = {
-          //id: id,
-          idTipoRevista: this.form.get('tipoRevista')?.value,
-          //tipoRevista: this.form.get('tipoRevista')?.value,
-          idCategoria: this.form.get('categoria')?.value,
-          //categoria: this.form.get('categoria')?.value,
-          idAdicional: this.form.get('adicional')?.value,
-          //adicional: this.form.get('adicional')?.value,
-          idCargaHoraria: this.form.get('cargaHoraria')?.value,
-          //cargaHoraria: this.form.get('cargaHoraria')?.value,
-          agrupacion: this.form.get('agrupacion')?.value
-        };
-  
-        console.log('Revista a actualizar:', revista);
-  
-        this.revistaService.update(id, revista).subscribe({
-          next: (data) => this.dialogRef.close(data),
-          error: (err) => this.handleValidationError(err)
-        });
+      const revistaDto = new RevistaDto(
+        revistaData.tipoRevista.id,
+        revistaData.categoria.id,
+        revistaData.adicional ? revistaData.adicional : null, // Asegúrate de que esto esté correcto
+        revistaData.cargaHoraria.id,
+        revistaData.agrupacion 
+      );
+  console.log("Datos a guardar:", revistaDto);
+      if (this.data && this.data.id) {
+        this.revistaService.update(this.data.id, revistaDto).subscribe(
+          (result) => {
+            this.dialogRef.close({ type: 'save', data: result });
+            this.toastr.success('Revista actualizada correctamente.');
+          },
+          (error) => {
+            this.toastr.error('Error al actualizar la revista.');
+          }
+        );
       } else {
-        // En caso de creación
-        this.revistaService.save(revistaDto).subscribe({
-          next: (data) => this.dialogRef.close(data),
-          error: (err) => this.handleValidationError(err)
-        });
+        this.revistaService.save(revistaDto).subscribe(
+          (result) => {
+            this.dialogRef.close({ type: 'save', data: result });
+            this.toastr.success('Revista creada con éxito.');
+          },
+          (error) => {
+            console.error('Error en la creación de la revista', error);
+            this.toastr.error('Error al crear la revista: ' + error.message);
+          }
+        );
       }
     } else {
-      this.toastr.error('Formulario no válido');
+      this.toastr.error('El formulario contiene errores.');
     }
   }
-  
-  handleValidationError(err: any): void {
-    if (err.status === 400 && err.error && err.error.mensaje) {
-      this.errorMessage = err.error.mensaje; // Mostrar mensaje de error en el formulario
-      this.toastr.error(err.error.mensaje); // Mostrar notificación con Toastr
-    } else {
-      this.errorMessage = 'Ocurrió un error inesperado.';
-      this.toastr.error('Ocurrió un error inesperado.');
-    }
+  cancelar(): void {
+    this.dialogRef.close();
   }
-
 
   compareCategoria(p1: Categoria, p2: Categoria): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
@@ -245,12 +271,8 @@ export class RevistaEditComponent implements OnInit {
   compareCargaHoraria(p1: CargaHoraria, p2: CargaHoraria): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
+
   compareTipoRevista(p1: TipoRevista, p2: TipoRevista): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
-
-  cancelar(): void {
-    this.dialogRef.close();
-  }
-
 }

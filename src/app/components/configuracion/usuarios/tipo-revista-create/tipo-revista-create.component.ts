@@ -21,6 +21,7 @@ export class TipoRevistaCreateComponent {
     private tipoRevistaService: TipoRevistaService // Inyectamos el servicio
   ) {
     this.esEdicion = this.data != null; // Si existen datos, es edición
+    
     this.tipoRevistaForm = this.fb.group({
       nombre: [data?.nombre || '', Validators.required]  // Usamos los datos si existen
     });

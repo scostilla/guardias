@@ -1,58 +1,57 @@
 <h2 mat-dialog-title>{{esEdicion ? 'Modificar' : 'Agregar'}} Revista
-    <h5 class="requiredField">*Campos Obligatorios</h5>
-  </h2>
-  
-  <form [formGroup]="form!" (ngSubmit)="saveRevista()">
-    <mat-dialog-content>
-      <div class="row" style="margin-top: 20px">
-        <div class="col">
-          <mat-form-field appearance="fill">
-            <mat-label>Agrupación</mat-label>
-            <mat-select formControlName="agrupacion">
-              <mat-option *ngFor="let agrupacion of agrupaciones" [value]="agrupacion">
-                {{ agrupacion }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="form?.get('agrupacion')?.invalid && form?.get('agrupacion')?.touched">
-              El campo es obligatorio.
-            </mat-error>
-          </mat-form-field>
-        </div>
+  <h5 class="requiredField">*Campos Obligatorios</h5>
+</h2>
+
+<form [formGroup]="revistaForm!" (ngSubmit)="saveRevista()">
+  <mat-dialog-content>
+    <div class="row" style="margin-top: 20px">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Agrupación</mat-label>
+          <mat-select formControlName="agrupacion">
+            <mat-option *ngFor="let agrupacion of agrupaciones" [value]="agrupacion">
+              {{ agrupacion }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="revistaForm?.get('agrupacion')?.invalid && revistaForm?.get('agrupacion')?.touched">
+            El campo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+      </div>
       </div>
       <div class="row">
         <div class="col">
           <mat-form-field appearance="fill">
             <mat-label>Categoria</mat-label>
             <mat-select formControlName="categoria" [compareWith]="compareCategoria">
-              <mat-option *ngFor="let categoria of categoria" [value]="categoria">
+              <mat-option *ngFor="let categoria of categorias" [value]="categoria">
                 {{ categoria.nombre }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="form?.get('categoria')?.invalid && form?.get('categoria')?.touched">
+            <mat-error *ngIf="revistaForm?.get('categoria')?.invalid && revistaForm?.get('categoria')?.touched">
               El campo es obligatorio.
             </mat-error>
           </mat-form-field>
         </div>
       </div>
-      <div *ngIf="!(form?.get('categoria')?.value?.id === categoria24HS?.id ||
-        form?.get('cargaHoraria')?.value?.id === cargaHoraria24?.id ||
-        form?.get('cargaHoraria')?.value?.id === cargaHoraria30?.id)">
-        <div class="row">
-          <div class="col">
-            <mat-form-field appearance="fill">
-              <mat-label>Adicional</mat-label>
-              <mat-select formControlName="adicional" [compareWith]="compareAdicional">
-                <mat-option *ngFor="let adi of adicional" [value]="adi">
-                  {{ adi.nombre }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="form?.get('adicional')?.invalid && form?.get('adicional')?.touched">
-                El campo es obligatorio.
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-      </div>
+      <div *ngIf="
+  !(revistaForm?.get('categoria')?.value?.id === categoria24HS?.id || 
+    revistaForm?.get('cargaHoraria')?.value?.id === cargaHoraria24?.id || 
+    revistaForm?.get('cargaHoraria')?.value?.id === cargaHoraria30?.id)">
+  
+  <div class="row">
+    <mat-form-field>
+      <mat-label>Adicional</mat-label>
+      <mat-select formControlName="adicional">
+        <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">
+          {{ adicional.nombre }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="revistaForm.get('adicional')?.hasError('required')">Este campo es obligatorio.</mat-error>
+    </mat-form-field>
+  </div>
+</div>
+
       <div class="row">
         <div class="col">
           <mat-form-field appearance="fill">
@@ -62,7 +61,7 @@
                 {{ cargaHoraria.cantidad }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="form?.get('cargaHoraria')?.invalid && form?.get('cargaHoraria')?.touched">
+            <mat-error *ngIf="revistaForm?.get('cargaHoraria')?.invalid && revistaForm?.get('cargaHoraria')?.touched">
               El campo es obligatorio.
             </mat-error>
           </mat-form-field>
@@ -77,14 +76,14 @@
                 {{ tipoRevista.nombre }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="form?.get('tipoRevista')?.invalid && form?.get('tipoRevista')?.touched">
+            <mat-error *ngIf="revistaForm?.get('tipoRevista')?.invalid && revistaForm?.get('tipoRevista')?.touched">
               El campo es obligatorio.
             </mat-error>
           </mat-form-field>
         </div>
       </div>
       <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!esIgual || form?.invalid">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!revistaForm.valid">
           {{esEdicion ? 'Modificar' : 'Agregar'}}
         </button>
         <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
