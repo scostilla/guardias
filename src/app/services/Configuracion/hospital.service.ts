@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Hospital } from "src/app/models/Configuracion/Hospital";
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 
 
 @Injectable({
@@ -26,6 +27,10 @@ export class HospitalService {
 
   public getById( id:number): Observable<Hospital> {
     return this.httpClient.get<Hospital>(this.hospitalesURL + `detail/${id}`);
+}
+
+public listActiveCapsByHospitalId(hospitalId: number): Observable<CapsDto[]> {
+  return this.httpClient.get<CapsDto[]>(`${this.hospitalesURL}listCaps/${hospitalId}`);
 }
 
   public detailnombre(nombre:string): Observable<Hospital> {

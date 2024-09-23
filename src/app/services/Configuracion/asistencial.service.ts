@@ -29,6 +29,10 @@ export class AsistencialService {
     return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list')
   }
 
+  public listByUdoAndTipoGuardia(idUdo: number): Observable<AsistencialDto[]> {
+    return this.httpClient.get<AsistencialDto[]>(`${this.asistencialesURL}listByUdoAndTipoGuardia/${idUdo}`);
+  }
+
   public listSummary(): Observable<AsistencialSummaryDto[]> {
     return this.httpClient.get<AsistencialSummaryDto[]>(this.asistencialesURL + 'listSummary')
   }
