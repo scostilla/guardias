@@ -8,9 +8,6 @@
       <button mat-fab class="button-primary" (click)="openFormChanges()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
       </button>
-      <button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openNovedades()" matTooltip="Agregar novedad">
-        <mat-icon>event</mat-icon>
-      </button>
       <button mat-fab class="button-success" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
         <mat-icon>av_timer</mat-icon>
       </button>
@@ -112,6 +109,9 @@
             </button>
             <button mat-icon-button matTooltip="Agregar Legajo" (click)="crearLegajo()" *ngIf="!isLoadingLegajos && !hayLegajos(asistencial)">
               <mat-icon color="primary">playlist_add</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Agregar novedad" (click)="openNovedades()">
+              <mat-icon color="warn">event</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)">
               <mat-icon>calendar_month</mat-icon>
