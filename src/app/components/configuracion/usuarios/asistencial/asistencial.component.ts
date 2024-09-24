@@ -12,7 +12,7 @@ import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-de
 import { Router } from '@angular/router';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { NovedadesFormComponent } from 'src/app/components/personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from 'src/app/components/personal/novedades-person-edit/novedades-person-edit.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 
 @Component({
@@ -227,7 +227,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   openNovedades() {
-    this.dialogNov.open(NovedadesFormComponent, {
+    this.dialogNov.open(NovedadesPersonEditComponent, {
       width: '600px',
       disableClose: true,
     })

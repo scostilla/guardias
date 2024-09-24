@@ -13,7 +13,7 @@ import { PersonEditComponent } from '../person-edit/person-edit.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { NovedadesFormComponent } from '../../../personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from '../../../personal/novedades-person-edit/novedades-person-edit.component';
 import { DistHorariaComponent } from '../../../personal/dist-horaria/dist-horaria.component';
 
 import { Router } from '@angular/router';
@@ -114,7 +114,17 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   verLegajo(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {
-      this.router.navigate(['/legajo-person', asistencial.id]);
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/legajo-person']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
+  verNovedad(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/novedades-person']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }
@@ -241,13 +251,6 @@ export class PersonComponent implements OnInit, OnDestroy {
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
-  }
-
-  openNovedades(){
-    this.dialogNov.open(NovedadesFormComponent, {
-      width: '600px',
-      disableClose: true,
-    })
   }
 
   openDistribucion(){

@@ -1,8 +1,13 @@
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Articulo } from 'src/app/models/Configuracion/Articulo';
+import { Inciso } from 'src/app/models/Configuracion/Inciso';
+
 export class NovedadPersonal {
-        idPersona: number;
-        idSuplente : number;
-        idArticulo: number;
-        idInciso: number;
+        id?: number;
+        persona: Asistencial;
+        suplente : Asistencial;
+        articulo: Articulo;
+        inciso: Inciso;
         fechaInicio: Date;
         fechaFinal: Date;
         puedeRealizarGuardia: boolean;
@@ -14,10 +19,10 @@ export class NovedadPersonal {
     
     
         constructor(
-            idPersona: number,
-            idSuplente : number,
-            idArticulo: number,
-            idInciso: number,
+            persona: Asistencial,
+            suplente : Asistencial,
+            articulo: Articulo,
+            inciso: Inciso,
             fechaInicio: Date,
             fechaFinal: Date,
             puedeRealizarGuardia: boolean,
@@ -26,10 +31,10 @@ export class NovedadPersonal {
             actual: boolean,
             descripcion: string,
             ){
-            this.idPersona = idPersona;
-            this.idSuplente = idSuplente;
-            this.idArticulo = idArticulo;
-            this.idInciso = idInciso;
+            this.persona = persona;
+            this.suplente = suplente;
+            this.articulo = articulo;
+            this.inciso = inciso;
             this.fechaInicio = fechaInicio;
             this.fechaFinal = fechaFinal;
             this.puedeRealizarGuardia = puedeRealizarGuardia;

@@ -168,7 +168,8 @@ import { DailyScheduleComponent } from './components/daily-schedule/daily-schedu
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
-import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
@@ -265,7 +266,7 @@ const routes: Routes = [
   {path: 'legajo-detail/:id', component:LegajoDetailComponent},
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
   {path: 'legajo-edit', component:LegajoEditComponent},
-  {path: 'legajo-person/:id', component:LegajoPersonComponent},
+  {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'personal-dh/:id', component:PersonalDhComponent},
   {path: 'cargo', component:CargoComponent},
@@ -366,22 +367,23 @@ const routes: Routes = [
   { path: 'professional-list', component: ProfessionalListComponent},
   { path: 'professinal-news', component: ProfessionalNewsComponent},
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
-  {path: 'novedades-form', component: NovedadesFormComponent},
-  {path: 'professional-detail/:id', component: ProfessionalDetailComponent },
-  {path: 'professional-dh/:id', component: ProfessionalDhComponent },
-  {path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
-  {path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
-  {path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
-  {path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
+  { path: 'novedades-person-edit', component: NovedadesPersonEditComponent},
+  { path: 'novedades-person', component: NovedadesPersonComponent},
+  { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
+  { path: 'professional-dh/:id', component: ProfessionalDhComponent },
+  { path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
+  { path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
+  { path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
+  { path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
  /*  {path:'api', component:ApiComponent} */
- {path:'MonthTableComponent',component:MonthTableComponent},
- {path: 'popup-calendario', component:PopupCalendarioComponent},
- {path: 'digesto', component:DigestoComponent},
- {path: 'novedades', component:NovedadesComponent}, 
- {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
- {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+ { path:'MonthTableComponent',component:MonthTableComponent},
+ { path: 'popup-calendario', component:PopupCalendarioComponent},
+ { path: 'digesto', component:DigestoComponent},
+ { path: 'novedades', component:NovedadesComponent}, 
+ { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
+ { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 
- {path: 'cronograma-new', component:CronogramaNewComponent},
+ { path: 'cronograma-new', component:CronogramaNewComponent},
 
 
 

@@ -48,7 +48,8 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
-import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
@@ -224,6 +225,7 @@ import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/v
 import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
+import { NovedadesPersonDetailComponent } from './components/personal/novedades-person-detail/novedades-person-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -248,7 +250,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     ProfessionalNewsComponent,
     ProfessionalAbmComponent,
     ProfessionalListComponent,
-    NovedadesFormComponent,
+    NovedadesPersonEditComponent,
     DistHorariaComponent,
     ConfirmDialogComponent,
     GuardiasViewComponent,
@@ -399,6 +401,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     AsistencialSelectorComponent,
     LegajoCreateComponent,
     AsistencialCreateComponent,
+    NovedadesPersonDetailComponent,
+    NovedadesPersonComponent,
     
   ],
 

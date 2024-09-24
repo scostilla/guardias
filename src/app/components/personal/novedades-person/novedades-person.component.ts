@@ -5,36 +5,37 @@ import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/pag
 import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
+import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import { NovedadesPersonEditComponent } from '../novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonDetailComponent } from '../novedades-person-detail/novedades-person-detail.component';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-legajo-person',
-  templateUrl: './legajo-person.component.html',
-  styleUrls: ['./legajo-person.component.css']
+  selector: 'app-novedades-person',
+  templateUrl: './novedades-person.component.html',
+  styleUrls: ['./novedades-person.component.css']
 })
 
-export class LegajoPersonComponent implements OnInit, OnDestroy {
+export class NovedadesPersonComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table!: MatTable<Legajo>;
+  @ViewChild(MatTable) table!: MatTable<NovedadPersonal>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id',  'profesion', 'udo','fechaInicio', 'actual', 'fechaFinal', /* 'cargo', */ 'acciones'];
-  dataSource!: MatTableDataSource<Legajo>;
+  dialogRef!: MatDialogRef<NovedadesPersonDetailComponent>;
+  displayedColumns: string[] = ['descripcion', 'fechaInicio', 'fechaFinal', 'actual', 'acciones'];
+  dataSource!: MatTableDataSource<NovedadPersonal>;
   suscription!: Subscription;
-  legajos: Legajo[] = [];
+  novedades: NovedadPersonal[] = [];
   asistencialId?: number;
   nombreCompleto: string = '';
 
   constructor(
-    private legajoService: LegajoService,
+    private novedadPersonalService: NovedadPersonalService,
     private asistencialService: AsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
@@ -53,37 +54,41 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
-    this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-      if (asistencial) {
-        this.asistencialId = asistencial.id;
-        this.listLegajos();
-      } else {
-        console.error('No hay asistencial seleccionado.');
-      }
-    });
-  
-    this.listLegajos();
+  this.asistencialService.currentAsistencial$.subscribe(asistencial => {
+    if (asistencial) {
+      this.asistencialId = asistencial.id;
+      this.listNovedad();
+    } else {
+      console.error('No hay asistencial seleccionado.');
+    }
+  });
+    this.listNovedad();
 
-    this.suscription = this.legajoService.refresh$.subscribe(() => {
-      this.listLegajos();
+    this.suscription = this.novedadPersonalService.refresh$.subscribe(() => {
+      this.listNovedad();
     })
 
   }
 
-  listLegajos(): void {
-    this.legajoService.list().subscribe(data => {
-      this.legajos = data.filter(legajo => legajo.persona.id === this.asistencialId);
-
-      if (this.legajos.length > 0) {
-        this.nombreCompleto = `${this.legajos[0].persona.apellido}, ${this.legajos[0].persona.nombre}`;
+  listNovedad(): void {
+    if (!this.asistencialId) return;
+  
+    this.asistencialService.getByIds([this.asistencialId]).subscribe(asistenciales => {
+      const asistencial = asistenciales[0];
+      if (asistencial) {
+        this.nombreCompleto = `${asistencial.apellido}, ${asistencial.nombre}`;
       }
-    
-      this.dataSource = new MatTableDataSource(this.legajos);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+  
+      this.novedadPersonalService.list().subscribe(data => {
+        this.novedades = data.filter(novedad => novedad.persona.id === this.asistencialId);
+  
+        this.dataSource = new MatTableDataSource(this.novedades);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
     });
   }
-  
+    
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
@@ -106,28 +111,29 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
 applyFilter(event: Event) {
   const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
   this.dataSource.filter = filterValue;
-  this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
+  this.dataSource.filterPredicate = (data: NovedadPersonal, filter: string) => {
     const actualString = data.actual ? 'si' : 'no';
-    const idPersonaString = data.profesion.nombre.toString();
-    const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
+    const descripcion = data.descripcion.toString();
+    const fechaInicioString = data.fechaInicio.toISOString().toLowerCase();
 
     // Aplicar el filtro a los valores convertidos
     return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
+           this.accentFilter(descripcion).includes(this.accentFilter(filter)) || 
+           this.accentFilter(fechaInicioString).includes(this.accentFilter(filter));
   };
 }
-  openFormChanges(legajo?: Legajo): void {
-    const esEdicion = legajo != null;
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
+
+  openFormChanges(novedadPersonal?: NovedadPersonal): void {
+    const esEdicion = novedadPersonal != null;
+    const dialogRef = this.dialog.open(NovedadesPersonEditComponent, {
       width: '600px',
-      data: esEdicion ? legajo : null
+      data: esEdicion ? novedadPersonal : null
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
       if (result) {
-        this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Novedad editada con éxito' : 'Novedad creada con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -140,7 +146,7 @@ applyFilter(event: Event) {
         }
         this.dataSource._updateChangeSubscription();
       } else {
-        this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
+        this.toastr.error('Ocurrió un error al crear o editar la Novedad', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -150,38 +156,38 @@ applyFilter(event: Event) {
     });
   }
 
-  openDetail(legajo: Legajo): void {
-    this.dialogRef = this.dialog.open(LegajoDetailComponent, { 
+  openDetail(novedadPersonal: NovedadPersonal): void {
+    this.dialogRef = this.dialog.open(NovedadesPersonDetailComponent, { 
       width: '600px',
-      data: legajo
+      data: novedadPersonal
     });
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
     }
 
-  deleteLegajo(legajo: Legajo): void {
+  deleteNovedadPersonal(novedadPersonal: NovedadPersonal): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Confirma la eliminación de ' + legajo.id,
+        message: 'Confirma la eliminación de ' + novedadPersonal.id,
         title: 'Eliminar',
       },
     });
 
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
-      this.legajoService.delete(legajo.id!).subscribe(data => {
-        this.toastr.success('Legajo eliminado con éxito', 'ELIMINADO', {
+      this.novedadPersonalService.delete(novedadPersonal.id!).subscribe(data => {
+        this.toastr.success('Novedad eliminada con éxito', 'ELIMINADO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
 
-        const index = this.dataSource.data.findIndex(p => p.id === legajo.id);
+        const index = this.dataSource.data.findIndex(p => p.id === novedadPersonal.id);
         this.dataSource.data.splice(index, 1);
         this.dataSource._updateChangeSubscription();
       }, err => {
-        this.toastr.error(err.message, 'Error, no se pudo eliminar el legajo', {
+        this.toastr.error(err.message, 'Error, no se pudo eliminar la novedad', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

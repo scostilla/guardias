@@ -1,0 +1,87 @@
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Novedad
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form [formGroup]="novedadPersonalForm!" (ngSubmit)="saveNovedadPersonal()">
+    <mat-dialog-content>
+
+                <mat-form-field appearance="fill" style="margin-top: 20px">
+                    <mat-label>Tipo Novedad</mat-label>
+                    <mat-select formControlName="descripcion">
+                      <mat-option value="Compensatorio">Compensatorio</mat-option>
+                      <mat-option value="L.A.O">L.A.O.</mat-option>
+                      <mat-option value="Maternidad">Maternidad</mat-option>
+                      <mat-option value="Parte de Enfermo">Parte de enfermo</mat-option>
+                      <mat-option value="Familiar enfermo">Familiar enfermo</mat-option>
+                      <mat-option value="Falta sin aviso">Falta sin aviso</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El tipo de novedad es requerido.</mat-error>
+                </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Inicio</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Finalizacion</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="fechaFinal">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
+          </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Es actual?</mat-label>
+        <mat-select formControlName="actual">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Cobra sueldo?</mat-label>
+        <mat-select formControlName="cobraSueldo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Necesita reemplazo?</mat-label>
+        <mat-select formControlName="necesitaReemplazo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Puede realizar guardia?</mat-label>
+        <mat-select formControlName="puedeRealizarGuardia">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Reemplazo</mat-label>
+        <mat-select formControlName="idSuplente" [compareWith]="compareAsistencial">
+          <mat-option *ngFor="let asistencial of asistenciales" [value]="asistencial.id" >{{ asistencial.apellido }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!novedadPersonalForm.valid || !isModified()">
+          {{data ? 'Modificar' : 'Agregar'}}
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+      </mat-dialog-content>
+  </form>

@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -88,5 +89,14 @@ export class AsistencialService {
         })
       )
   }
+
+  //lo uso para enviar id sin usar la url
+  private currentAsistencialSubject = new BehaviorSubject<Asistencial | null>(null);
+  currentAsistencial$ = this.currentAsistencialSubject.asObservable();
+  
+  setCurrentAsistencial(asistencial: Asistencial) {
+    this.currentAsistencialSubject.next(asistencial);
+  }
+  
 
 }

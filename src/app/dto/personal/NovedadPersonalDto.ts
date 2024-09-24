@@ -1,23 +1,19 @@
 export class NovedadPersonalDto {
-    idPersona: number;
-    idSuplente : number;
-    idArticulo: number;
-    idInciso: number;
-    fechaInicio: Date;
-    fechaFinal: Date;
-    puedeRealizarGuardia: boolean;
-    cobraSueldo: boolean;
-    necesitaReemplazo: boolean;
-    actual: boolean;
-    descripcion: string;
-
+    id?: number;
+    fechaInicio: Date;        // Requerido
+    fechaFinal: Date;       // Opcional
+    puedeRealizarGuardia?: boolean; // Opcional
+    cobraSueldo: boolean;   // Opcional
+    necesitaReemplazo: boolean; // Opcional
+    actual: boolean;         // Opcional
+    descripcion: string;      // Requerido
+    idPersona: number;        // Requerido
+    idSuplente: number;       // Requerido
+    idArticulo: number;       // Requerido
+    idInciso: number;         // Requerido
 
 
     constructor(
-        idPersona: number,
-        idSuplente : number,
-        idArticulo: number,
-        idInciso: number,
         fechaInicio: Date,
         fechaFinal: Date,
         puedeRealizarGuardia: boolean,
@@ -25,11 +21,11 @@ export class NovedadPersonalDto {
         necesitaReemplazo: boolean,
         actual: boolean,
         descripcion: string,
-        ){
-        this.idPersona = idPersona;
-        this.idSuplente = idSuplente;
-        this.idArticulo = idArticulo;
-        this.idInciso = idInciso;
+        idPersona: number,
+        idSuplente: number,
+        idArticulo: number,
+        idInciso: number,
+      ){
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
         this.puedeRealizarGuardia = puedeRealizarGuardia;
@@ -37,5 +33,9 @@ export class NovedadPersonalDto {
         this.necesitaReemplazo = necesitaReemplazo;
         this.actual = actual;
         this.descripcion = descripcion;
+        this.idPersona = idPersona;
+        this.idSuplente = idSuplente;
+        this.idArticulo = idArticulo;
+        this.idInciso = idInciso;
     }
 }
