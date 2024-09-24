@@ -9,11 +9,11 @@
                     <mat-label>Tipo Novedad</mat-label>
                     <mat-select formControlName="descripcion">
                       <mat-option value="Compensatorio">Compensatorio</mat-option>
-                      <mat-option value="L.A.O">L.A.O.</mat-option>
+                      <mat-option value="LAO">L.A.O.</mat-option>
                       <mat-option value="Maternidad">Maternidad</mat-option>
-                      <mat-option value="Parte de Enfermo">Parte de enfermo</mat-option>
-                      <mat-option value="Familiar enfermo">Familiar enfermo</mat-option>
-                      <mat-option value="Falta sin aviso">Falta sin aviso</mat-option>
+                      <mat-option value="Parte_de_Enfermo">Parte de enfermo</mat-option>
+                      <mat-option value="Familiar_enfermo">Familiar enfermo</mat-option>
+                      <mat-option value="Falta_sin_aviso">Falta sin aviso</mat-option>
                     </mat-select>
                     <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El tipo de novedad es requerido.</mat-error>
                 </mat-form-field>

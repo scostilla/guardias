@@ -33,6 +33,7 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
   novedades: NovedadPersonal[] = [];
   asistencialId?: number;
   nombreCompleto: string = '';
+  tieneNovedades: boolean = true;
 
   constructor(
     private novedadPersonalService: NovedadPersonalService,
@@ -71,24 +72,31 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
   }
 
   listNovedad(): void {
-    if (!this.asistencialId) return;
+    if (this.asistencialId === undefined) {
+      this.tieneNovedades = false; // No hay asistencialId, así que no hay novedades
+      return; // Salimos del método
+    }
   
-    this.asistencialService.getByIds([this.asistencialId]).subscribe(asistenciales => {
-      const asistencial = asistenciales[0];
-      if (asistencial) {
-        this.nombreCompleto = `${asistencial.apellido}, ${asistencial.nombre}`;
-      }
+    this.novedadPersonalService.list().subscribe(data => {
+      this.novedades = data.filter(novedad => novedad.persona.id === this.asistencialId);
   
-      this.novedadPersonalService.list().subscribe(data => {
-        this.novedades = data.filter(novedad => novedad.persona.id === this.asistencialId);
+      this.tieneNovedades = this.novedades.length > 0; // Actualiza el estado
   
-        this.dataSource = new MatTableDataSource(this.novedades);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+      // Actualiza el dataSource
+      this.dataSource = new MatTableDataSource(this.novedades);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+  
+      // Obtener el asistencial completo (opcional)
+      this.asistencialService.getByIds([this.asistencialId!]).subscribe(asistenciales => {
+        const asistencial = asistenciales[0];
+        if (asistencial) {
+          this.nombreCompleto = `${asistencial.apellido}, ${asistencial.nombre}`;
+        }
       });
     });
   }
-    
+      
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
