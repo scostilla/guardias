@@ -14,6 +14,7 @@ import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { NovedadesFormComponent } from 'src/app/components/personal/novedades-form/novedades-form.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 
 @Component({
   selector: 'app-asistencial',
@@ -76,10 +77,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnDestroy(): void {
-    this.suscription?.unsubscribe();
-  }
-
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -104,14 +101,16 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
+   //   this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
+   
     });
   }
 
-  hayLegajos(asistencial: Asistencial): boolean {
+  hayLegajos(asistencial: AsistencialListDto): boolean {
     return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
   }
 
-  verLegajo(asistencial: Asistencial): void {
+  verLegajo(asistencial: AsistencialListDto): void {
     if (asistencial && asistencial.id) {
       this.router.navigate(['/legajo-person', asistencial.id]);
     } else {
@@ -119,30 +118,11 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     }
   }
 
-  crearLegajo(): void {
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
-      width: '600px',
-      data: null
-    });
+  crearLegajo(asistencial: AsistencialListDto): void {
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) {
-          this.toastr.success('Legajo creado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.dataSource.data.push(result);
-          this.dataSource._updateChangeSubscription();
-        } else {
-          this.toastr.error('No se creó el Legajo', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      }
+    console.log("en asistencial se envia el objeto", asistencial);
+    this.router.navigate(['/legajo-create'], {
+      state: { asistencial }
     });
   }
 
@@ -266,5 +246,28 @@ export class AsistencialComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  // obtengo el tooltip del botón basado en la existencia de legajos
+getTooltip(asistencial: AsistencialListDto): string {
+  return this.hayLegajos(asistencial) ? 'Ver Legajo' : 'Agregar Legajo';
+}
+
+// Obtener el ícono del botón basado en la existencia de legajos
+getIcon(asistencial: AsistencialListDto): string {
+  return this.hayLegajos(asistencial) ? 'playlist_play' : 'playlist_add';
+}
+
+// Determinar la acción del botón basada en la existencia de legajos
+getButtonAction(asistencial: AsistencialListDto): void {
+  if (this.hayLegajos(asistencial)) {
+    this.verLegajo(asistencial);
+  } else {
+    this.crearLegajo(asistencial);
+  }
+}
+
+  ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
   }
 }
