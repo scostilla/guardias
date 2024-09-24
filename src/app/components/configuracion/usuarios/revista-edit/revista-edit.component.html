@@ -9,8 +9,8 @@
         <mat-form-field appearance="fill">
           <mat-label>Agrupación</mat-label>
           <mat-select formControlName="agrupacion">
-            <mat-option *ngFor="let agrupacion of agrupaciones" [value]="agrupacion">
-              {{ agrupacion }}
+            <mat-option *ngFor="let agrupacion of agrupaciones" [value]="agrupacion.name">
+              {{ agrupacion.displayName }} <!-- Muestra el displayName -->
             </mat-option>
           </mat-select>
           <mat-error *ngIf="revistaForm?.get('agrupacion')?.invalid && revistaForm?.get('agrupacion')?.touched">
@@ -18,7 +18,7 @@
           </mat-error>
         </mat-form-field>
       </div>
-      </div>
+    </div>
       <div class="row">
         <div class="col">
           <mat-form-field appearance="fill">
@@ -42,8 +42,8 @@
   <div class="row">
     <mat-form-field>
       <mat-label>Adicional</mat-label>
-      <mat-select formControlName="adicional">
-        <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">
+      <mat-select formControlName="adicional" [compareWith]="compareAdicional">
+        <mat-option *ngFor="let adicional of adicionales" [value]="adicional">
           {{ adicional.nombre }}
         </mat-option>
       </mat-select>

@@ -65,10 +65,7 @@ export class RevistaEditComponent implements OnInit {
 
     if (data) {
           console.log("Datos recibidos para edición:", data);
-      this.revistaForm.patchValue({
-        ...data,
-  adicional: data.adicional ? data.adicional.id : null 
-});
+      this.revistaForm.patchValue(data);
       
       // Llama a las funciones de cambio para asegurarte de que la visibilidad se ajuste
       this.onCategoriaChange(data.categoria);
@@ -96,11 +93,12 @@ export class RevistaEditComponent implements OnInit {
 
   loadAgrupaciones(): void {
     this.agrupacionService.getAgrupaciones().subscribe(data => {
-      this.agrupaciones = data;
+        this.agrupaciones = data; // Ahora es un array de AgrupacionEnum
+        console.log('Agrupaciones:', this.agrupaciones);
     }, error => {
-      console.log('Error al obtener agrupaciones:', error);
+        console.log('Error al obtener agrupaciones:', error);
     });
-  }
+}
 
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
@@ -225,7 +223,7 @@ export class RevistaEditComponent implements OnInit {
       const revistaDto = new RevistaDto(
         revistaData.tipoRevista.id,
         revistaData.categoria.id,
-        revistaData.adicional ? revistaData.adicional : null, // Asegúrate de que esto esté correcto
+        revistaData.adicional? revistaData.adicional.id : null, // Asegúrate de que esto esté correcto
         revistaData.cargaHoraria.id,
         revistaData.agrupacion 
       );
@@ -234,7 +232,7 @@ export class RevistaEditComponent implements OnInit {
         this.revistaService.update(this.data.id, revistaDto).subscribe(
           (result) => {
             this.dialogRef.close({ type: 'save', data: result });
-            this.toastr.success('Revista actualizada correctamente.');
+           
           },
           (error) => {
             this.toastr.error('Error al actualizar la revista.');
@@ -275,4 +273,6 @@ export class RevistaEditComponent implements OnInit {
   compareTipoRevista(p1: TipoRevista, p2: TipoRevista): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
+
+
 }

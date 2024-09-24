@@ -14,7 +14,7 @@ export class Revista {
     constructor(tipoRevista: TipoRevista, categoria: Categoria, adicional: Adicional, cargaHoraria: CargaHoraria,  agrupacion: string) {
       this.tipoRevista = tipoRevista;
       this.categoria = categoria;
-      this.adicional = adicional;
+    this.adicional = adicional;
       this.cargaHoraria = cargaHoraria;
       this.agrupacion = agrupacion;
     }
