@@ -74,6 +74,16 @@ import { CargoEditComponent } from './components/configuracion/usuarios/cargo-ed
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 
+//Configuraciones: Leyes
+import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
+import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
+import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
+import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
+import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
+import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
+import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
+import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
+
 
 //Configuraciones: Calendario
 import { FeriadoComponent } from './components/configuracion/calendario/feriado/feriado.component';
@@ -274,6 +284,18 @@ const routes: Routes = [
   {path: 'cargo-edit/:id', component:CargoEditComponent},
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
+  
+  //Configuraciones: Leyes
+  {path: 'articulo', component:ArticuloComponent},
+  {path: 'articulo-detail/:id', component:ArticuloDetailComponent},
+  {path: 'articulo-edit/:id', component:ArticuloEditComponent},
+  {path: 'inciso', component:IncisoComponent},
+  {path: 'inciso-detail/:id', component:IncisoDetailComponent},
+  {path: 'inciso-edit/:id', component:IncisoEditComponent},
+  {path: 'tipo-ley', component:TipoLeyComponent},
+  {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent},
+
+
   
   //Autoridad
   {path: 'autoridad', component:AutoridadComponent},

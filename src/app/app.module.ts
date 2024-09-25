@@ -226,6 +226,14 @@ import { AsistencialSelectorComponent } from './components/configuracion/usuario
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 import { NovedadesPersonDetailComponent } from './components/personal/novedades-person-detail/novedades-person-detail.component';
+import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
+import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
+import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
+import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
+import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
+import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
+import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
+import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -403,6 +411,14 @@ registerLocaleData(localeEsAr, 'es-AR');
     AsistencialCreateComponent,
     NovedadesPersonDetailComponent,
     NovedadesPersonComponent,
+    TipoLeyComponent,
+    TipoLeyEditComponent,
+    ArticuloComponent,
+    ArticuloDetailComponent,
+    ArticuloEditComponent,
+    IncisoComponent,
+    IncisoDetailComponent,
+    IncisoEditComponent,
     
   ],
 

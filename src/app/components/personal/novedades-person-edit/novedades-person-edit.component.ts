@@ -5,6 +5,10 @@ import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { Articulo } from 'src/app/models/Configuracion/Articulo';
+import { ArticuloService } from 'src/app/services/Configuracion/articulo.service';
+import { Inciso } from 'src/app/models/Configuracion/Inciso';
+import { IncisoService } from 'src/app/services/Configuracion/inciso.service';
 import { ToastrService } from 'ngx-toastr';
 
 
@@ -17,27 +21,35 @@ export class NovedadesPersonEditComponent implements OnInit {
   novedadPersonalForm!: FormGroup;
   initialData: any;
   asistenciales: Asistencial[] = [];
+  articulos: Articulo[] = [];
+  incisos: Inciso[] = [];
   
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<NovedadesPersonEditComponent>,
     private novedadPersonalService: NovedadPersonalService,
     private asistencialService: AsistencialService,
+    private articuloService: ArticuloService,
+    private incisoService: IncisoService,
     private toastr: ToastrService,
-    @Inject(MAT_DIALOG_DATA) public data: NovedadPersonalDto
+    @Inject(MAT_DIALOG_DATA) public data: { asistencialId: number; novedadPersonal?: NovedadPersonalDto }
   ) {
     this.novedadPersonalForm = this.fb.group({
       descripcion: ['', [Validators.required]],
       fechaInicio: ['', Validators.required],
       fechaFinal: ['', Validators.required],
       idSuplente: ['', Validators.required],
-      puedeRealizarGuardia: [false],
-      cobraSueldo: [false],
-      necesitaReemplazo: [false],
-      actual: [false]
+      idArticulo: ['', Validators.required],
+      idInciso: ['', Validators.required],
+      puedeRealizarGuardia: [''],
+      cobraSueldo: [''],
+      necesitaReemplazo: [''],
+      actual: [''],
     });
 
     this.listAsistencial();
+    this.listArticulo();
+    this.listInciso();
 
     if (data) {
       this.novedadPersonalForm.patchValue(data);
@@ -45,8 +57,22 @@ export class NovedadesPersonEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.data.novedadPersonal) {
+      this.novedadPersonalForm.patchValue({
+        descripcion: this.data.novedadPersonal.descripcion,
+        fechaInicio: this.data.novedadPersonal.fechaInicio,
+        fechaFinal: this.data.novedadPersonal.fechaFinal,
+        idSuplente: this.data.novedadPersonal.idSuplente,
+        idArticulo: this.data.novedadPersonal.idArticulo,
+        idInciso: this.data.novedadPersonal.idInciso,
+        puedeRealizarGuardia: this.data.novedadPersonal.puedeRealizarGuardia,
+        cobraSueldo: this.data.novedadPersonal.cobraSueldo,
+        necesitaReemplazo: this.data.novedadPersonal.necesitaReemplazo,
+        actual: this.data.novedadPersonal.actual,
+      });
+    }
     this.initialData = this.novedadPersonalForm.value;
-  }
+}
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.novedadPersonalForm.value);
@@ -60,11 +86,26 @@ export class NovedadesPersonEditComponent implements OnInit {
     });
   }
 
+  listArticulo(): void {
+    this.articuloService.list().subscribe(data => {
+      this.articulos = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listInciso(): void {
+    this.incisoService.list().subscribe(data => {
+      this.incisos = data;
+    }, error => {
+      console.log(error);
+    });
+  }
 
   saveNovedadPersonal(): void {
     if (this.novedadPersonalForm.valid) {
       const formValue = this.novedadPersonalForm.value;
-
+  
       const novedadPersonalDto = new NovedadPersonalDto(
         formValue.fechaInicio,
         formValue.fechaFinal,
@@ -73,15 +114,15 @@ export class NovedadesPersonEditComponent implements OnInit {
         formValue.necesitaReemplazo,
         formValue.actual,
         formValue.descripcion,
-        this.data ? this.data.idPersona : 42,
+        this.data.novedadPersonal ? this.data.novedadPersonal.idPersona : this.data.asistencialId,
         formValue.idSuplente,
-        this.data ? this.data.idArticulo : 1,
-        this.data ? this.data.idInciso : 1
+        formValue.idArticulo,
+        formValue.idInciso,
       );
       console.log('Datos a guardar:', novedadPersonalDto);
 
-      if (this.data && this.data.id) {
-        this.novedadPersonalService.update(this.data.id, novedadPersonalDto).subscribe(
+      if (this.data.novedadPersonal && this.data.novedadPersonal.id) {
+        this.novedadPersonalService.update(this.data.novedadPersonal.id, novedadPersonalDto).subscribe(
           result => {
             console.log('Novedad actualizada:', result);
             this.dialogRef.close({ type: 'save', data: result });
@@ -104,9 +145,17 @@ export class NovedadesPersonEditComponent implements OnInit {
         );
       }
     }
-}
+  }
 
   compareAsistencial(p1: Asistencial, p2: Asistencial): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  compareArticulo(p1: Articulo, p2: Articulo): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  compareInciso(p1: Inciso, p2: Inciso): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 

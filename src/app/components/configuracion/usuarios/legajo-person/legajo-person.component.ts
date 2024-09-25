@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
+import { LegajoPersonEditComponent } from '../legajo-person-edit/legajo-person-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { ActivatedRoute } from '@angular/router';
@@ -119,7 +119,7 @@ applyFilter(event: Event) {
 }
   openFormChanges(legajo?: Legajo): void {
     const esEdicion = legajo != null;
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
+    const dialogRef = this.dialog.open(LegajoPersonEditComponent, {
       width: '600px',
       data: esEdicion ? legajo : null
     });

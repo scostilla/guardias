@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Novedad
+<h2 mat-dialog-title>{{ data.novedadPersonal ? 'Modificar' : 'Agregar' }} Novedad
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
   
@@ -73,11 +73,25 @@
         </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="fill">
+        <mat-label>Articulo</mat-label>
+        <mat-select formControlName="idArticulo" [compareWith]="compareArticulo">
+          <mat-option *ngFor="let articulo of articulos" [value]="articulo.id" >{{ articulo.numero }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El campo es requerido.</mat-error>
+      </mat-form-field>
 
+      <mat-form-field appearance="fill">
+        <mat-label>Inciso</mat-label>
+        <mat-select formControlName="idInciso" [compareWith]="compareInciso">
+          <mat-option *ngFor="let inciso of incisos" [value]="inciso.id" >{{ inciso.numero }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El campo es requerido.</mat-error>
+      </mat-form-field>
 
     <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="submit" [disabled]="!novedadPersonalForm.valid || !isModified()">
-          {{data ? 'Modificar' : 'Agregar'}}
+          {{data.novedadPersonal ? 'Modificar' : 'Agregar'}}
         </button>
         <button mat-raised-button color="secondary" type="button" (click)="cancel()">
           Cancelar

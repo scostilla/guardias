@@ -73,21 +73,21 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
 
   listNovedad(): void {
     if (this.asistencialId === undefined) {
-      this.tieneNovedades = false; // No hay asistencialId, así que no hay novedades
-      return; // Salimos del método
+      this.tieneNovedades = false;
+      return;
     }
   
     this.novedadPersonalService.list().subscribe(data => {
       this.novedades = data.filter(novedad => novedad.persona.id === this.asistencialId);
   
-      this.tieneNovedades = this.novedades.length > 0; // Actualiza el estado
+      this.tieneNovedades = this.novedades.length > 0;
   
       // Actualiza el dataSource
       this.dataSource = new MatTableDataSource(this.novedades);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
   
-      // Obtener el asistencial completo (opcional)
+      // Obtener el asistencial completo
       this.asistencialService.getByIds([this.asistencialId!]).subscribe(asistenciales => {
         const asistencial = asistenciales[0];
         if (asistencial) {
@@ -131,13 +131,18 @@ applyFilter(event: Event) {
   };
 }
 
-  openFormChanges(novedadPersonal?: NovedadPersonal): void {
-    const esEdicion = novedadPersonal != null;
-    const dialogRef = this.dialog.open(NovedadesPersonEditComponent, {
-      width: '600px',
-      data: esEdicion ? novedadPersonal : null
-    });
+openFormChanges(novedadPersonal?: NovedadPersonal): void {
+  const esEdicion = !!novedadPersonal;
+  const dialogData = {
+    asistencialId: this.asistencialId,
+    novedadPersonal: esEdicion ? novedadPersonal : null
+  };
 
+  const dialogRef = this.dialog.open(NovedadesPersonEditComponent, {
+    width: '600px',
+    data: dialogData
+  });
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
       if (result) {
