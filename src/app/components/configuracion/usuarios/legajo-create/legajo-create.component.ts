@@ -26,6 +26,8 @@ import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
+import { MatDialog } from '@angular/material/dialog';
 
 interface Agrup {
   value: string;
@@ -37,12 +39,15 @@ interface Agrup {
   styleUrls: ['./legajo-create.component.css']
 })
 export class LegajoCreateComponent implements OnInit {
+
+  inputValue: string = '';
+  selectedAsistencial?: Asistencial;
   legajoForm: FormGroup;
   initialData: Asistencial | undefined;
-  personas: AsistencialListForLegajosDto[] = [];
+  //personas: AsistencialListForLegajosDto[] = [];
 
   // Para guardar la persona seleccionada que viene desde AsistencialComponent
-  selectedPersona: AsistencialListDto | null = null;
+  //selectedPersona: AsistencialListDto | null = null;
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -65,10 +70,11 @@ export class LegajoCreateComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    public dialog: MatDialog,
     private legajoService: LegajoService,
     private router: Router,
     private profesionService: ProfesionService,
-    private asistencialService: AsistencialService,
+    //private asistencialService: AsistencialService,
     private hospitalService: HospitalService,
     private cargoService: CargoService,
     private especialidadService: EspecialidadService,
@@ -86,7 +92,7 @@ export class LegajoCreateComponent implements OnInit {
       adicional: ['', Validators.required],
       cargaHoraria: ['', Validators.required],
       tipoRevista: ['', Validators.required],
-      persona: ['', Validators.required],
+      idPersona: ['', Validators.required],
       profesion: ['', Validators.required],
       udo: ['', Validators.required],
       efectores: [[]],
@@ -100,7 +106,7 @@ export class LegajoCreateComponent implements OnInit {
       cargo: ['', Validators.required],
     });
 
-    this.listAsistenciales();
+    //this.listAsistenciales();
     this.listProfesiones();
     this.listUdos();
     this.listCargos();
@@ -114,22 +120,55 @@ export class LegajoCreateComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.initialData = navigation.extras.state['asistencial'];  // Recibo el asistencial
+      console.log('Datos cargados en el constructor:', this.initialData);
     }
-
+    
   }
 
   ngOnInit(): void {
-    // Si se ha recibido una persona
-    if (this.initialData) {
-      console.log('Datos recibidos en legajo-create:', this.initialData);
+     // Si se ha recibido una persona
+     if (this.initialData) {
+      
+      this.inputValue = `${this.initialData.apellido} ${this.initialData.nombre}`;
+      console.log('Datos de inputValue:', this.inputValue);
+      
       // lo carga en el formulario
-      this.legajoForm.patchValue({
-        persona: this.initialData.id,
-      });
+      this.legajoForm.patchValue({idPersona: this.initialData.id});
+      console.log('Datos despues del patchValue:', this.inputValue);
+
     }
+    
   }
 
-  listAsistenciales(): void {
+  openAsistencialDialog(): void {
+    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+      width: '800px',
+      disableClose: true
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        //this.selectedAsistencial = result;
+        this.inputValue = `${result.apellido} ${result.nombre}`;
+        this.legajoForm.patchValue({ idPersona: result.id });
+      } else {
+        this.toastr.info('No se seleccionó un profesional', 'Información', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }, error => {
+      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      console.error('Error al abrir el diálogo de carga de profesional:', error);
+    });
+  }
+
+  /* listAsistenciales(): void {
 
     this.asistencialService.listForLegajosDtos().subscribe(data => {
       this.personas = data;
@@ -144,7 +183,7 @@ export class LegajoCreateComponent implements OnInit {
     }, error => {
       console.log(error);
     });
-  }
+  } */
 
   /*  setupFormValueChanges(): void {
      this.legajoForm.get('persona')?.valueChanges.subscribe((selectedPersona: AsistencialListDto) => {
@@ -391,7 +430,7 @@ export class LegajoCreateComponent implements OnInit {
       legajoData.matriculaProvincial,
       revistaId!, // Usa el ID de la revista (existente o nueva)
       legajoData.udo.id,
-      legajoData.persona.id,
+      legajoData.idPersona,
       legajoData.cargo.id,
       legajoData.efectores,
       legajoData.especialidades,
@@ -444,7 +483,7 @@ export class LegajoCreateComponent implements OnInit {
 
   isPanel1Valid(): boolean {
     // Verifica si los campos obligatorios en el panel 1 son válidos
-    const panel1Controls = ['persona', 'profesion', 'especialidades', 'cargo', 'matriculaNacional', 'matriculaProvincial'];
+    const panel1Controls = ['idPersona', 'profesion', 'especialidades', 'cargo', 'matriculaNacional', 'matriculaProvincial'];
     return panel1Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
