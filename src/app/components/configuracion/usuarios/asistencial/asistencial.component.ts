@@ -122,7 +122,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     console.log("en asistencial se envia el objeto", asistencial);
     this.router.navigate(['/legajo-create'], {
-      state: { asistencial }
+      state: { asistencial , fromAsistencial: true}
     });
   }
 

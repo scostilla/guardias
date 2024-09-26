@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
@@ -23,9 +22,7 @@ import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { ToastrService } from 'ngx-toastr';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
-import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -40,6 +37,7 @@ interface Agrup {
 })
 export class LegajoCreateComponent implements OnInit {
 
+  fromAsistencial: boolean = false;
   inputValue: string = '';
   selectedAsistencial?: Asistencial;
   legajoForm: FormGroup;
@@ -119,25 +117,18 @@ export class LegajoCreateComponent implements OnInit {
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      this.initialData = navigation.extras.state['asistencial'];  // Recibo el asistencial
-      console.log('Datos cargados en el constructor:', this.initialData);
+      this.initialData = navigation.extras.state['asistencial']; 
+      this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
     }
     
   }
 
   ngOnInit(): void {
-     // Si se ha recibido una persona
+     // Si recibo un asistencial
      if (this.initialData) {
-      
-      this.inputValue = `${this.initialData.apellido} ${this.initialData.nombre}`;
-      console.log('Datos de inputValue:', this.inputValue);
-      
-      // lo carga en el formulario
-      this.legajoForm.patchValue({idPersona: this.initialData.id});
-      console.log('Datos despues del patchValue:', this.inputValue);
-
+      this.inputValue = `${this.initialData.apellido} ${this.initialData.nombre}`; 
+      this.legajoForm.patchValue({idPersona: this.initialData.id}); // Cargo el id del asistencial en el formulario
     }
-    
   }
 
   openAsistencialDialog(): void {
@@ -148,7 +139,7 @@ export class LegajoCreateComponent implements OnInit {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        //this.selectedAsistencial = result;
+         // Actualizo el valor legible para mostrarlo y el id para el formulario
         this.inputValue = `${result.apellido} ${result.nombre}`;
         this.legajoForm.patchValue({ idPersona: result.id });
       } else {
@@ -230,8 +221,6 @@ export class LegajoCreateComponent implements OnInit {
   /* isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
   } */
-
-
 
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
@@ -363,13 +352,6 @@ export class LegajoCreateComponent implements OnInit {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
 
-      /*    // Si es CONTRAFACTURA, no se crea ni se busca una revista
-      if (this.isContrafactura) {
-
-        console.log("ENTROOO");
-        this.createLegajoDtoAndSave(legajoData,null);
-      } else {
-        console.log("NOOOO ENTROOO"); */
       const revistaDto = new RevistaDto(
         legajoData.tipoRevista,
         legajoData.categoria,
@@ -446,7 +428,15 @@ export class LegajoCreateComponent implements OnInit {
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/legajo'], { state: { legajoCreado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
+
+        // Redirige según de dónde vino
+      if (this.fromAsistencial) {
+        this.router.navigate(['/asistencial'], { state: { legajoCreado: result } });
+      } else {
+        this.router.navigate(['/legajo'], { state: { legajoCreado: result } });
+      }
+      
+        /* this.router.navigate(['/legajo'], { state: { legajoCreado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado */
       },
       (error) => {
         this.toastr.error('Ocurrió un error al crear el Legajo', error, {
@@ -509,7 +499,13 @@ export class LegajoCreateComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
+    // Redirige según de dónde vino
+  if (this.fromAsistencial) {
+    this.router.navigate(['/asistencial']);
+  } else {
     this.router.navigate(['/legajo']);
+  }
+    /* this.router.navigate(['/legajo']); */
   }
 
   compareFn(o1: any, o2: any): boolean {
