@@ -1,0 +1,16 @@
+<div class="row mt-5" *ngIf="servicio">
+    <div class="col-md-4 mx-auto">
+        <div class="card mt-5" style="width: 18rem;">
+            <div class="card-header">
+              Servicio
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{servicio.id}}</li>
+              <li class="list-group-item">{{servicio.descripcion}}</li>
+            </ul>
+            <div class="card-footer">
+              <button class="btn btn-outline-primary btn-block" (click)="volver()">Volver</button>
+            </div>
+          </div>
+    </div>
+</div>

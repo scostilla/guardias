@@ -1,20 +1,49 @@
-<div mat-dialog-title class="backgroud" align="center">
-    <h1 class="font">NUEVO REGISTRO</h1>
+<!-- <div mat-dialog-title class="backgroud">
+    <h1 class="font">Nuevo Registro</h1>
+</div>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col">Ver</th>
+        <th scope="col">Editar</th>
+        <th scope="col">Borrar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let servicio of servicios" >
+        <td>{{servicio.id}}</td>
+        <td>{{servicio.descripcion}}</td>
+        <td><button class="btn btn-outline-primary" routerLink="/detalle/{{servicio.id}}">Ver</button></td>
+        <td><button class="btn btn-outline-warning" routerLink="/editar/{{servicio.id}}">Editar</button></td>
+        <td><button class="btn btn-outline-danger" (click)="borrarServicio(servicio.id)">Eliminar</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-outline-primary" routerLink="/nuevo">Nuevo</button> -->
+
+
+<div mat-dialog-title class="backgroud">
+    <h1 class="font">Nuevo Registro fabi</h1>
 </div>
 <div mat-dialog-content class="content">
     <mat-form-field appearance="outline">
         <mat-label>Tipo de servicio</mat-label>
         <mat-select [(ngModel)]="defaultSelected">
-            <mat-option [value]="tipserv" *ngFor="let tipserv of tipoServicio" [value]="tipserv">
-                {{tipserv}}</mat-option>
+            <mat-option [value]="servicio.descripcion" *ngFor="let servicio of servicios"
+                [value]="servicio.descripcion">
+                {{servicio.descripcion}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <div [ngSwitch]="defaultSelected" appearance="outline">
+    <div [ngSwitch]="defaultSelected">
         <div *ngSwitchCase="'Guardia activa'">
             <mat-form-field appearance="outline">
                 <mat-label>Tipo de guardia</mat-label>
                 <mat-select>
-                    <mat-option *ngFor="let guard of guardia" [value]="guard"> {{guard}}</mat-option>
+                    <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias">
+                        {{tipoGuardias.descripcion}}</mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -30,26 +59,98 @@
         </div>
         <div *ngSwitchCase="'Guardia pasiva'">
             <mat-form-field appearance="outline">
-                <mat-label>Especialidad</mat-label>
-                <mat-select>
-                    <mat-option *ngFor="let esp of especialidad" [value]="esp"> {{esp}}</mat-option>
+                <mat-label>Establecimiento</mat-label>
+                <mat-select [(ngModel)]="pasiva">
+                    <mat-option *ngFor="let hosp of hospital" [value]="hosp"> {{hosp}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
+        <div [ngSwitch]="pasiva" appearance="outline">
+            <div *ngSwitchCase="'Dn. Pablo Soria'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_ps" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngSwitchCase="'San Roque'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_sr" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngSwitchCase="'Materno Infantil'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Especialidad</mat-label>
+                    <mat-select [(ngModel)]="alert">
+                        <mat-option *ngFor="let esp of especialidad_mi" [value]="esp"> {{esp}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <span [ngSwitch]="alert">
+                <span
+                    *ngSwitchCase="['Cirugía General','Cirugía Reparadora','Oncología','Hematología','Traumatología','UTI-UTIN'].includes(alert) ? alert : !alert">
+                    <div class="alert alert-danger" role="alert">
+                        Especialidad seleccionada sin requerimiento.
+                    </div>
+                </span>
+            </span>
+        </div>
     </div>
-    <div mat-dialog-subtitle align="center">
+    <div mat-dialog-subtitle>
         <h2>Detalle del profesional</h2>
     </div>
-    <div class="row">
+    <div *ngIf="profesional">
+        <form novalidate #f="ngForm">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nombre</mat-label>
+                        <input matInput placeholder="{{selectedNombre}}" id="nombre" name="nombre"
+                            [(ngModel)]="profesional.nombre" disabled>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Apellido</mat-label>
+                        <input matInput placeholder="{{selectedApellido}}" id="apellido" name="apellido"
+                            [(ngModel)]="profesional.apellido">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <mat-form-field appearance="outline">
+                            <mat-label>DNI</mat-label>
+                            <input matInput id="dni" name="dni" [(ngModel)]="profesional.dni">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <mat-form-field appearance="outline">
+                            <mat-label>ID</mat-label>
+                            <input matInput id="id" name="id" [(ngModel)]="profesional.idPersona">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Nombre1</mat-label>
                 <input matInput placeholder="{{selectedNombre}}">
             </mat-form-field>
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Apellido</mat-label>
+                <mat-label>Apellido1</mat-label>
                 <input matInput placeholder="{{selectedApellido}}">
             </mat-form-field>
         </div>
@@ -57,17 +158,17 @@
     <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>DNI</mat-label>
+                <mat-label>DNI1</mat-label>
                 <input matInput placeholder="ingrese">
             </mat-form-field>
         </div>
         <div class="col">
             <mat-form-field appearance="outline">
-                <mat-label>Profesion</mat-label>
+                <mat-label>Profesion 1</mat-label>
                 <input matInput placeholder="ingrese">
             </mat-form-field>
         </div>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col">
             <mat-form-field appearance="outline">
@@ -95,11 +196,9 @@
         <div class="col">
             <app-time-picker></app-time-picker>
         </div>
-    </div>
+    </div> 
 </div>
 <div mat-dialog-actions class="action">
-    <button mat-raised-button class="btnupdate" type="button"
-        [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button class="btnupdate" type="button" [mat-dialog-close]="false">Cancelar</button>
     <button mat-raised-button class="btnupdate" color="primary" type="submit">Guardar</button>
 </div>
-
