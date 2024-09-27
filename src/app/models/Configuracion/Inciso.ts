@@ -1,9 +1,13 @@
 import { Ley } from "./Ley";
 import { TipoLey } from './TipoLey';
+import { Articulo } from './Articulo';
+import { NovedadPersonal } from '../personal/NovedadPersonal';
 
 export class Inciso extends Ley {
-    idArticulo: number;
-    idNovedadesPersonales: number;
+  incisoPadre: Inciso;
+  subIncisos: Inciso[] = [];
+  articulo: Articulo;
+  novedadesPersonales: NovedadPersonal[] = [];
   
     constructor(
       numero: string,
@@ -16,11 +20,15 @@ export class Inciso extends Ley {
       fechaModificacion: Date,
       motivoModificacion: string,
       activo: boolean = true,
-      idArticulo: number,
-      idNovedadesPersonales: number,  
-    ) {
+      incisoPadre: Inciso,
+      subIncisos: Inciso[] = [],
+      articulo: Articulo,
+      novedadesPersonales: NovedadPersonal[]
+        ) {
       super(numero, denominacion, estado, fechaAlta, tipoLey, detalle, fechaBaja, fechaModificacion, motivoModificacion, activo);
-      this.idArticulo = idArticulo;
-      this.idNovedadesPersonales = idNovedadesPersonales;
+      this.incisoPadre = incisoPadre;
+      this.subIncisos = subIncisos;
+      this.articulo = articulo;
+      this.novedadesPersonales = novedadesPersonales;
     }
   }

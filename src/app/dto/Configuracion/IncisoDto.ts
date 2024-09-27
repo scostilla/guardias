@@ -1,8 +1,9 @@
 import { LeyDto } from "./LeyDto";
 
 export class IncisoDto extends LeyDto {
+    idIncisoPadre: number;  
     idArticulo: number;
-    idNovedadesPersonales: number;
+    idNovedadesPersonales: number[];
   
     constructor(
       numero: string,
@@ -15,10 +16,12 @@ export class IncisoDto extends LeyDto {
       fechaModificacion: Date,
       motivoModificacion: string,
       activo: boolean = true,
+      idIncisoPadre: number,
       idArticulo: number,
-      idNovedadesPersonales: number,  
+      idNovedadesPersonales: number[],  
     ) {
       super(numero, denominacion, estado, fechaAlta, idTipoLey, detalle, fechaBaja, fechaModificacion, motivoModificacion, activo);
+      this.idIncisoPadre = idIncisoPadre;
       this.idArticulo = idArticulo;
       this.idNovedadesPersonales = idNovedadesPersonales;
     }
