@@ -1,16 +1,15 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort} from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 
@@ -20,7 +19,7 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
   styleUrls: ['./legajo-person.component.css']
 })
 
-export class LegajoPersonComponent implements OnInit, OnDestroy {
+export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatTable) table!: MatTable<Legajo>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -68,15 +67,22 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
       this.asistencialId = this.initialData.id;
       this.nombreCompleto = `${this.initialData.nombre} ${this.initialData.apellido}`;
       this.listLegajos(this.asistencialId!);
-
     }
 
+    // Suscribirse al refresh$
     this.suscription = this.legajoService.refresh$.subscribe(() => {
       if (this.asistencialId) {
         this.listLegajos(this.asistencialId);
       }
     })
+  }
 
+  ngAfterViewInit(): void {
+    // Inicializa paginador y sort
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   listLegajos(asistencialId: number): void {
@@ -90,6 +96,35 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.toastr.error('Error al cargar legajos', 'ERROR', { timeOut: 3000 });
       }
+    });
+  }
+
+  openDetail(legajo: Legajo): void {
+    this.dialogRef = this.dialog.open(LegajoDetailComponent, {
+      width: '600px',
+      data: legajo
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
+    });
+  }
+
+  createLegajo(): void {
+
+    if (this.initialData) {
+      const asistencialSend = this.initialData.id;
+      this.router.navigate(['/legajo-create'], {
+        state: { asistencialSend, fromAsistencial: true }
+      });
+    } else {
+      this.router.navigate(['/legajo-create']);
+    }
+
+  }
+
+  updateLegajo(legajo: Legajo): void {
+    this.router.navigate(['/legajo-edit'], {
+      state: { legajo, fromLegajoPerson: true }
     });
   }
 
@@ -127,54 +162,44 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
     };
   }
 
-  updateLegajo(legajo: Legajo): void {
-    this.router.navigate(['/legajo-edit'], {
-      state: {legajo, fromLegajoPerson: true}
-    }); 
-  }
+  
 
-  openFormChanges(legajo?: Legajo): void {
-    const esEdicion = legajo != null;
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
-      width: '600px',
-      data: esEdicion ? legajo : null
-    });
+  
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) {
-          this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          if (esEdicion) {
-            const index = this.dataSource.data.findIndex(p => p.id === result.id);
-            this.dataSource.data[index] = result;
-          } else {
-            this.dataSource.data.push(result);
-          }
-          this.dataSource._updateChangeSubscription();
-        } else {
-          this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      }
-    });
-  }
+  /*  openFormChanges(legajo?: Legajo): void {
+     const esEdicion = legajo != null;
+     const dialogRef = this.dialog.open(LegajoEditComponent, {
+       width: '600px',
+       data: esEdicion ? legajo : null
+     });
+ 
+     dialogRef.afterClosed().subscribe(result => {
+       if (result !== undefined) {
+         if (result) {
+           this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
+             timeOut: 6000,
+             positionClass: 'toast-top-center',
+             progressBar: true
+           });
+           if (esEdicion) {
+             const index = this.dataSource.data.findIndex(p => p.id === result.id);
+             this.dataSource.data[index] = result;
+           } else {
+             this.dataSource.data.push(result);
+           }
+           this.dataSource._updateChangeSubscription();
+         } else {
+           this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
+             timeOut: 6000,
+             positionClass: 'toast-top-center',
+             progressBar: true
+           });
+         }
+       }
+     });
+   } */
 
-  openDetail(legajo: Legajo): void {
-    this.dialogRef = this.dialog.open(LegajoDetailComponent, {
-      width: '600px',
-      data: legajo
-    });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
-    });
-  }
+  
 
   deleteLegajo(legajo: Legajo): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -206,4 +231,6 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+
 }

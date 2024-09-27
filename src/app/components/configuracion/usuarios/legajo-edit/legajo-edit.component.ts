@@ -326,12 +326,12 @@ export class LegajoEditComponent implements OnInit {
         //this.router.navigate(['/legajo'], { state: { legajoModificado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
       },
       (error) => {
-        this.toastr.error('Faaa Ocurrió un error al crear el Legajo', error, {
+        this.toastr.error(' Ocurrió un error al editar el Legajo', error, {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        console.error('Error al crear el legajo', error);
+        console.error('Error al editar el legajo', error);
       }
     );
   }
@@ -392,7 +392,10 @@ export class LegajoEditComponent implements OnInit {
     if (this.fromLegajo) {
       this.router.navigate(['/legajo']);
     } else {
-      this.router.navigate(['/legajo-person']);
+      console.log("vuelvo a legajo-person", this.initialData);
+      this.router.navigate(['/legajo-person'],{
+        state:{legajoModificado: this.initialData}
+      });
     }
     
     //this.router.navigate(['/legajo']);
