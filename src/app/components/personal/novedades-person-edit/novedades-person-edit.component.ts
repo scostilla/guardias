@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { Articulo } from 'src/app/models/Configuracion/Articulo';
 import { ArticuloService } from 'src/app/services/Configuracion/articulo.service';
 import { Inciso } from 'src/app/models/Configuracion/Inciso';
@@ -23,12 +23,15 @@ export class NovedadesPersonEditComponent implements OnInit {
   asistenciales: Asistencial[] = [];
   articulos: Articulo[] = [];
   incisos: Inciso[] = [];
+  inputValue: string = '';
+  selectedAsistencial?: Asistencial;
+
   
   constructor(
     private fb: FormBuilder,
+    public dialog: MatDialog,
     public dialogRef: MatDialogRef<NovedadesPersonEditComponent>,
     private novedadPersonalService: NovedadPersonalService,
-    private asistencialService: AsistencialService,
     private articuloService: ArticuloService,
     private incisoService: IncisoService,
     private toastr: ToastrService,
@@ -47,7 +50,6 @@ export class NovedadesPersonEditComponent implements OnInit {
       actual: [''],
     });
 
-    this.listAsistencial();
     this.listArticulo();
     this.listInciso();
 
@@ -78,14 +80,6 @@ export class NovedadesPersonEditComponent implements OnInit {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.novedadPersonalForm.value);
   }
 
-  listAsistencial(): void {
-    this.asistencialService.list().subscribe(data => {
-      this.asistenciales = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
   listArticulo(): void {
     this.articuloService.list().subscribe(data => {
       this.articulos = data;
@@ -102,8 +96,39 @@ export class NovedadesPersonEditComponent implements OnInit {
     });
   }
 
+  openAsistencialDialog(): void {
+    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+      width: '800px',
+      disableClose: true
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.selectedAsistencial = result;
+        this.inputValue = `${result.apellido} ${result.nombre}`;
+        this.novedadPersonalForm.patchValue({ idSuplente: result.id });
+      } else {
+        this.toastr.info('No se seleccionó un profesional', 'Información', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }, error => {
+      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      console.error('Error al abrir el diálogo de carga de profesional:', error);
+    });
+  }
+  
+
+
   saveNovedadPersonal(): void {
     if (this.novedadPersonalForm.valid) {
+      console.log('Valores del formulario:', this.novedadPersonalForm.value);
       const formValue = this.novedadPersonalForm.value;
   
       const novedadPersonalDto = new NovedadPersonalDto(
@@ -145,10 +170,6 @@ export class NovedadesPersonEditComponent implements OnInit {
         );
       }
     }
-  }
-
-  compareAsistencial(p1: Asistencial, p2: Asistencial): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   compareArticulo(p1: Articulo, p2: Articulo): boolean {

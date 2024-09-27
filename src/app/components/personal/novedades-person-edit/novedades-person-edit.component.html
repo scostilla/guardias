@@ -11,7 +11,7 @@
                       <mat-option value="Compensatorio">Compensatorio</mat-option>
                       <mat-option value="LAO">L.A.O.</mat-option>
                       <mat-option value="Maternidad">Maternidad</mat-option>
-                      <mat-option value="Parte_de_Enfermo">Parte de enfermo</mat-option>
+                      <mat-option value="Parte_de_enfermo">Parte de enfermo</mat-option>
                       <mat-option value="Familiar_enfermo">Familiar enfermo</mat-option>
                       <mat-option value="Falta_sin_aviso">Falta sin aviso</mat-option>
                     </mat-select>
@@ -51,14 +51,6 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Necesita reemplazo?</mat-label>
-        <mat-select formControlName="necesitaReemplazo">
-          <mat-option [value]="true">Si</mat-option>
-          <mat-option [value]="false">No</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="form-field">
         <mat-label>Puede realizar guardia?</mat-label>
         <mat-select formControlName="puedeRealizarGuardia">
           <mat-option [value]="true">Si</mat-option>
@@ -66,11 +58,19 @@
         </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Necesita reemplazo?</mat-label>
+        <mat-select formControlName="necesitaReemplazo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
       <mat-form-field appearance="fill">
         <mat-label>Reemplazo</mat-label>
-        <mat-select formControlName="idSuplente" [compareWith]="compareAsistencial">
-          <mat-option *ngFor="let asistencial of asistenciales" [value]="asistencial.id" >{{ asistencial.apellido }}</mat-option>
-        </mat-select>
+          <input matInput formControlName="idSuplente" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+          <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+          <mat-error *ngIf="novedadPersonalForm.get('idSuplente')?.errors?.['required']">El campo es requerido.</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
