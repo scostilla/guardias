@@ -15,38 +15,38 @@ export class LegajoService {
 
   constructor(private httpClient: HttpClient) { }
 
-  get refresh$(){
+  get refresh$() {
     return this._refresh$;
   }
 
   public list(): Observable<Legajo[]> {
-      return this.httpClient.get<Legajo[]>(this.legajosURL + 'list');
+    return this.httpClient.get<Legajo[]>(this.legajosURL + 'list');
   }
 
-  public detail(id:number): Observable<Legajo> {
-      return this.httpClient.get<Legajo>(this.legajosURL + `detail/${id}`);
+  public detail(id: number): Observable<Legajo> {
+    return this.httpClient.get<Legajo>(this.legajosURL + `detail/${id}`);
   }
 
-public save(legajo:LegajoDto): Observable<any> {
-  return this.httpClient.post<any>(this.legajosURL + 'create', legajo)
-  .pipe(
-    tap(() => {
-     this._refresh$.next(); 
-    })
-  )
-}
+  public save(legajo: LegajoDto): Observable<any> {
+    return this.httpClient.post<any>(this.legajosURL + 'create', legajo)
+      .pipe(
+        tap(() => {
+          this._refresh$.next();
+        })
+      )
+  }
 
-public update(id:number, legajo:LegajoDto): Observable<any> {
-  return this.httpClient.put<any>(this.legajosURL + `update/${id}`, legajo)
-  .pipe(
-    tap(() => {
-     this._refresh$.next(); 
-    })
-  )
-}
+  public update(id: number, legajo: LegajoDto): Observable<any> {
+    return this.httpClient.put<any>(this.legajosURL + `update/${id}`, legajo)
+      .pipe(
+        tap(() => {
+          this._refresh$.next();
+        })
+      )
+  }
 
-public delete(id:number): Observable<any> {
-  return this.httpClient.put<any>(this.legajosURL + `delete/${id}`, {});
-}
+  public delete(id: number): Observable<any> {
+    return this.httpClient.put<any>(this.legajosURL + `delete/${id}`, {});
+  }
 
 }

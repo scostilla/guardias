@@ -265,7 +265,7 @@ const routes: Routes = [
   {path: 'legajo-detail/:id', component:LegajoDetailComponent},
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
   {path: 'legajo-edit', component:LegajoEditComponent},
-  {path: 'legajo-person/:id', component:LegajoPersonComponent},
+  {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'personal-dh/:id', component:PersonalDhComponent},
   {path: 'cargo', component:CargoComponent},
