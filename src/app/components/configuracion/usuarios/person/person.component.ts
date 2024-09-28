@@ -130,6 +130,16 @@ export class PersonComponent implements OnInit, OnDestroy {
     }
   }
 
+  verDistribucion(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/personal-dh']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+  
+
   crearLegajo(): void {
     const dialogRef = this.dialog.open(LegajoEditComponent, {
       width: '600px',
@@ -156,14 +166,6 @@ export class PersonComponent implements OnInit, OnDestroy {
       }
     });
   }  
-
-  verDistribucion(asistencial: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.router.navigate(['/personal-dh', asistencial.id]);
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();

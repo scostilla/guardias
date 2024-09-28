@@ -113,8 +113,8 @@ footer {
 }
 
 .contenedor-bocadillo{
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   background-color: #243c74; /* Color de fondo azul oscuro */
   color: white; /* Color de texto blanco */
   font-weight: bold;
