@@ -230,6 +230,7 @@ import { TipoRevistaCreateComponent } from './components/configuracion/usuarios/
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
 import { CronogramaDetailComponent } from './components/cronogramas/cronograma-detail/cronograma-detail.component';
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
+import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
