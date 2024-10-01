@@ -184,7 +184,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     if (asistencial && asistencial.id) {
       //this.router.navigate(['/legajo-person', asistencial.id]);
       this.router.navigate(['/legajo-person'], {
-        state: { asistencial }
+        state: { asistencial , fromAsistencial: true}
       });
     } else {
       console.error('El objeto asistencial no tiene un id.');

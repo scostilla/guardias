@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { NoAsistencialDto } from 'src/app/dto/Configuracion/NoAsistencialDto';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 
 @Injectable({
@@ -23,6 +24,10 @@ export class NoAsistencialService {
     public list(): Observable<NoAsistencial[]> {
       return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + 'list')
     }
+
+    public getLegajosByNoAsistencial(id: number): Observable<Legajo[]> {
+      return this.httpClient.get<Legajo[]>(this.noasistencialesURL + `legajos/${id}`);
+  }
       
     public detail(id:number): Observable<NoAsistencial> {
         return this.httpClient.get<NoAsistencial>(this.noasistencialesURL + `detail/${id}`);

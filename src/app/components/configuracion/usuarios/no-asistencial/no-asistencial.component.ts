@@ -177,7 +177,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     if (noAsistencial && noAsistencial.id) {
       //this.router.navigate(['/legajo-person', asistencial.id]);
       this.router.navigate(['/legajo-person'], {
-        state: { noAsistencial }
+        state: { noAsistencial, fromNoAsistencial: true  }
       });
     } else {
       console.error('El objeto noAsistencial no tiene un id.');

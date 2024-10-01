@@ -1,17 +1,19 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
-import { MatSort} from '@angular/material/sort';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 
 @Component({
   selector: 'app-legajo-person',
@@ -21,27 +23,33 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 
 export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  fromAsistencial: boolean = false;
+  fromNoAsistencial: boolean = false;
+
   @ViewChild(MatTable) table!: MatTable<Legajo>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id', 'profesion', 'udo', 'fechaInicio', 'actual', 'fechaFinal', /* 'cargo', */ 'acciones'];
+  displayedColumns: string[] = ['profesion', 'udo', 'fechaInicio', 'actual', 'fechaFinal', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
-  asistencialId?: number;
+  personId?: number;
+  //noAsistencialId?: number;
   nombreCompleto: string = '';
-  initialData: Asistencial | undefined;
+  initialData: Asistencial | NoAsistencial | undefined;
 
   constructor(
     private legajoService: LegajoService,
     private asistencialService: AsistencialService,
+    private noAsistencialService: NoAsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private paginatorIntl: MatPaginatorIntl,
     private router: Router,
   ) {
+
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
     this.paginatorIntl.previousPageLabel = "Página anterior";
@@ -56,7 +64,16 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      this.initialData = navigation.extras.state['asistencial'];
+      // Verifica si viene de Asistencial o NoAsistencial
+      this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
+      this.fromNoAsistencial = !!navigation.extras.state['fromNoAsistencial'];
+
+      // Asigno los datos a initialData basado en fromAsistencial o fromNoAsistencial
+      if (this.fromAsistencial) {
+        this.initialData = navigation.extras.state['asistencial'] as Asistencial;
+      } else if (this.fromNoAsistencial) {
+        this.initialData = navigation.extras.state['noAsistencial'] as NoAsistencial;
+      }
     }
   }
 
@@ -64,15 +81,15 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Si recibo un asistencial
     if (this.initialData) {
-      this.asistencialId = this.initialData.id;
+      this.personId = this.initialData.id;
       this.nombreCompleto = `${this.initialData.nombre} ${this.initialData.apellido}`;
-      this.listLegajos(this.asistencialId!);
+      this.listLegajos(this.personId!);
     }
 
     // Suscribirse al refresh$
     this.suscription = this.legajoService.refresh$.subscribe(() => {
-      if (this.asistencialId) {
-        this.listLegajos(this.asistencialId);
+      if (this.personId) {
+        this.listLegajos(this.personId);
       }
     })
   }
@@ -85,18 +102,37 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  listLegajos(asistencialId: number): void {
-    this.asistencialService.getLegajosByAsistencial(asistencialId).subscribe({
-      next: (data) => {
-        this.legajos = data;
-        this.dataSource = new MatTableDataSource(this.legajos);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      },
-      error: (err) => {
-        this.toastr.error('Error al cargar legajos', 'ERROR', { timeOut: 3000 });
-      }
-    });
+// validar el fromAsistencial fromNoAsistencial
+  listLegajos(personId: number): void {
+
+    if (this.fromAsistencial) {
+      this.asistencialService.getLegajosByAsistencial(personId).subscribe({
+        next: (data) => {
+          this.legajos = data;
+          this.dataSource = new MatTableDataSource(this.legajos);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          this.toastr.error('Error al cargar legajos', 'ERROR', { timeOut: 3000 });
+        }
+      });
+    } else if (this.fromNoAsistencial) {
+      this.noAsistencialService.getLegajosByNoAsistencial(personId).subscribe({
+        next: (data) => {
+          this.legajos = data;
+          this.dataSource = new MatTableDataSource(this.legajos);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          this.toastr.error('Error al cargar legajos', 'ERROR', { timeOut: 3000 });
+        }
+      });
+    }
+
+
+    
   }
 
   openDetail(legajo: Legajo): void {
@@ -162,9 +198,9 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  
 
-  
+
+
 
   /*  openFormChanges(legajo?: Legajo): void {
      const esEdicion = legajo != null;
@@ -199,7 +235,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
      });
    } */
 
-  
+
 
   deleteLegajo(legajo: Legajo): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
