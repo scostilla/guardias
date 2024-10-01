@@ -5,7 +5,7 @@
       <div class="titulo_prueba">LEGAJOS</div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Legajo">
+      <button mat-fab color="primary" (click)="createLegajo()" matTooltip="Agregar Legajo">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
@@ -51,26 +51,6 @@
           <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
         </ng-container>
 
-        <!-- <ng-container matColumnDef="fechaFinal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Final </th> 
-          <td mat-cell *matCellDef="let legajo"> {{ legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
-        </ng-container> -->
-
-        <!-- <ng-container matColumnDef="matriculaNacional">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Matricula Nacional </th> 
-          <td mat-cell *matCellDef="let legajo"> {{legajo.matriculaNacional}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="matriculaProvincial">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Matricula Provincial </th> 
-          <td mat-cell *matCellDef="let legajo"> {{legajo.matriculaProvincial}} </td>
-        </ng-container> -->
-
-        <!-- <ng-container matColumnDef="cargo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Cargo </th> 
-          <td mat-cell *matCellDef="let legajo"> {{legajo.cargo.nombre}} </td>
-        </ng-container> -->
-
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef  class="negrita"></th>
           <td mat-cell *matCellDef="let legajo" class="cell-actions">
@@ -80,7 +60,7 @@
             <button mat-icon-button matTooltip="Ver Revista" (click)="verRevista(legajo)">
               <mat-icon color="primary">playlist_play</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Editar legajo de {{legajo.persona?.apellido}}" (click)="openFormChanges(legajo)">
+            <button mat-icon-button matTooltip="Editar legajo de {{legajo.persona?.apellido}}" (click)="updateLegajo(legajo)">
               <mat-icon class="btnEdit">edit</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Eliminar legajo de {{legajo.persona?.apellido}}" (click)="deleteLegajo(legajo)">

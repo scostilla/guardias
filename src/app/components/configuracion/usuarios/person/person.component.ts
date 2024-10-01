@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { PersonEditComponent } from '../person-edit/person-edit.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { NovedadesFormComponent } from '../../../personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from '../../../personal/novedades-person-edit/novedades-person-edit.component';
 import { DistHorariaComponent } from '../../../personal/dist-horaria/dist-horaria.component';
 
 import { Router } from '@angular/router';
@@ -92,19 +92,6 @@ export class PersonComponent implements OnInit, OnDestroy {
   
     this.dataSource.filter = normalizedFilterValue;
   }
-
-  /*   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
-      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return normalizedData.indexOf(normalizedFilterValue) != -1;
-    };
-
-    this.dataSource.filter = normalizedFilterValue;
-  } */
         
   listAsistencial(): void {
     this.asistencialService.list().subscribe(data => {
@@ -127,11 +114,31 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   verLegajo(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {
-      this.router.navigate(['/legajo-person', asistencial.id]);
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/legajo-person']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }
   }
+
+  verNovedad(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/novedades-person']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
+  verDistribucion(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/personal-dh']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+  
 
   crearLegajo(): void {
     const dialogRef = this.dialog.open(LegajoEditComponent, {
@@ -159,14 +166,6 @@ export class PersonComponent implements OnInit, OnDestroy {
       }
     });
   }  
-
-  verDistribucion(asistencial: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.router.navigate(['/personal-dh', asistencial.id]);
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }
 
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
@@ -204,9 +203,17 @@ export class PersonComponent implements OnInit, OnDestroy {
     if (this.table) {
       this.table.renderRows();
     }
-  }  
-
+  } 
+  
   openFormChanges(asistencial?: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/person-edit', asistencial.id]);
+    } else {
+      this.router.navigate(['/person-edit']);
+    }
+  }
+
+ /* openFormChanges(asistencial?: Asistencial): void {
     const esEdicion = asistencial != null;
     const dialogRef = this.dialog.open(PersonEditComponent, {
       width: '600px',
@@ -236,7 +243,7 @@ export class PersonComponent implements OnInit, OnDestroy {
       } else if (result && result.type === 'cancel') {
       }
     });
-  }
+  } */
 
   openDetail(asistencial: Asistencial): void {
     this.dialogRef = this.dialog.open(PersonDetailComponent, { 
@@ -248,18 +255,8 @@ export class PersonComponent implements OnInit, OnDestroy {
     });
   }
 
-  openNovedades(){
-    this.dialogNov.open(NovedadesFormComponent, {
-      width: '600px',
-      disableClose: true,
-    })
-  }
-
   openDistribucion(){
-    this.dialogDistrib.open(DistHorariaComponent, {
-      width: '600px',
-      disableClose: true,
-    })
+    this.router.navigate(['/dist-horaria']);
   }
 
   deleteAsistencial(asistencial: Asistencial): void {

@@ -1,1 +1,136 @@
-<p>hospital-edit works!</p>
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Hospital
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+  </h2>
+    <form [formGroup]="hospitalForm" (ngSubmit)="saveHospital()">
+      <mat-dialog-content>
+            <div class="row" style="margin-top: 20px">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Nombre</mat-label>
+                    <input matInput formControlName="nombre">
+                  <mat-error *ngIf="hospitalForm?.get('nombre')?.invalid && hospitalForm?.get('nombre')?.touched">
+                    El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Domicilio</mat-label>
+                    <input matInput formControlName="domicilio">
+                  <mat-error *ngIf="hospitalForm?.get('domicilio')?.invalid && hospitalForm?.get('domicilio')?.touched">
+                    El campo puede contener letras y números (entre 3 y 80 caracteres).
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Localidad</mat-label>
+                  <mat-select formControlName="localidad" [compareWith]="compareLocalidad">
+                    <mat-option *ngFor="let localidad of localidades" [value]="localidad" >{{ localidad.nombre }}</mat-option>
+                  </mat-select>
+                            <mat-error *ngIf="hospitalForm?.get('localidad')?.invalid && hospitalForm?.get('localidad')?.touched">
+                    El campo es obligatorio.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Región</mat-label>
+                  <mat-select formControlName="region" [compareWith]="compareRegion">
+                    <mat-option *ngFor="let region of regiones" [value]="region" >{{ region.nombre }}</mat-option>
+                  </mat-select>
+                            <mat-error *ngIf="hospitalForm?.get('region')?.invalid && hospitalForm?.get('region')?.touched">
+                    El campo es obligatorio.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Teléfono</mat-label>
+                    <input matInput formControlName="telefono">
+                    <mat-error *ngIf="hospitalForm?.get('telefono')?.invalid && hospitalForm?.get('telefono')?.touched">
+                        El campo debe contener hasta 15 números.
+                    </mat-error>    
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Observación</mat-label>
+                    <input matInput formControlName="observacion">
+                  <mat-error *ngIf="hospitalForm?.get('observacion')?.invalid && hospitalForm?.get('observacion')?.touched">
+                    El campo puede contener letras y números (entre 3 y 80 caracteres).
+                  </mat-error>
+                </mat-form-field>
+              </div> 
+            </div>       
+
+            <div class="row">
+                <div class="col">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Nivel Complejidad</mat-label>
+                    <mat-select formControlName="nivelComplejidad">
+                      <mat-option [value]=1>1</mat-option>
+                      <mat-option [value]=2>2</mat-option>
+                      <mat-option [value]=2>3</mat-option>
+                      <mat-option [value]=2>4</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="hospitalForm?.get('nivelComplejidad')?.invalid && hospitalForm?.get('nivelComplejidad')?.touched">
+                        El campo es obligatorio.
+                    </mat-error>    
+                  </mat-form-field>
+                </div>
+              </div>  
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Es cabecera</mat-label>
+                  <mat-select formControlName="esCabecera">
+                    <mat-option [value]="true">Si</mat-option>
+                    <mat-option [value]="false">No</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="hospitalForm?.get('esCabecera')?.invalid && hospitalForm?.get('esCabecera')?.touched">
+                    El campo es obligatorio.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Admite guardia pasiva</mat-label>
+                  <mat-select formControlName="admitePasiva">
+                    <mat-option [value]="true">Si</mat-option>
+                    <mat-option [value]="false">No</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="hospitalForm?.get('admitePasiva')?.invalid && hospitalForm?.get('admitePasiva')?.touched">
+                    El campo es obligatorio.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div mat-dialog-actions class="action mt-4">
+              <button mat-raised-button color="primary" type="submit" [disabled]="!hospitalForm.valid || !isModified()">
+                {{data ? 'Modificar' : 'Agregar'}}
+              </button>
+              <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                Cancelar
+              </button>
+            </div>
+  </mat-dialog-content>
+</form>

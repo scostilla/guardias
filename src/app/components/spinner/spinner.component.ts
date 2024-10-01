@@ -4,11 +4,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-spinner',
-  template: `
-    <div class="spinner" *ngIf="showSpinner | async"> 
-    <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
-</div>
-  `,
+  templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.css']
 })
 

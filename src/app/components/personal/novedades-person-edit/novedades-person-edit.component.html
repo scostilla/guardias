@@ -1,0 +1,101 @@
+<h2 mat-dialog-title>{{ data.novedadPersonal ? 'Modificar' : 'Agregar' }} Novedad
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form [formGroup]="novedadPersonalForm!" (ngSubmit)="saveNovedadPersonal()">
+    <mat-dialog-content>
+
+                <mat-form-field appearance="fill" style="margin-top: 20px">
+                    <mat-label>Tipo Novedad</mat-label>
+                    <mat-select formControlName="descripcion">
+                      <mat-option value="Compensatorio">Compensatorio</mat-option>
+                      <mat-option value="LAO">L.A.O.</mat-option>
+                      <mat-option value="Maternidad">Maternidad</mat-option>
+                      <mat-option value="Parte_de_enfermo">Parte de enfermo</mat-option>
+                      <mat-option value="Familiar_enfermo">Familiar enfermo</mat-option>
+                      <mat-option value="Falta_sin_aviso">Falta sin aviso</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El tipo de novedad es requerido.</mat-error>
+                </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Inicio</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Finalizacion</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="fechaFinal">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
+          </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Es actual?</mat-label>
+        <mat-select formControlName="actual">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Cobra sueldo?</mat-label>
+        <mat-select formControlName="cobraSueldo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Puede realizar guardia?</mat-label>
+        <mat-select formControlName="puedeRealizarGuardia">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Necesita reemplazo?</mat-label>
+        <mat-select formControlName="necesitaReemplazo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Reemplazo</mat-label>
+          <input matInput formControlName="idSuplente" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+          <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+          <mat-error *ngIf="novedadPersonalForm.get('idSuplente')?.errors?.['required']">El campo es requerido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Articulo</mat-label>
+        <mat-select formControlName="idArticulo" [compareWith]="compareArticulo">
+          <mat-option *ngFor="let articulo of articulos" [value]="articulo.id" >{{ articulo.numero }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El campo es requerido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Inciso</mat-label>
+        <mat-select formControlName="idInciso" [compareWith]="compareInciso">
+          <mat-option *ngFor="let inciso of incisos" [value]="inciso.id" >{{ inciso.numero }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="novedadPersonalForm.get('descripcion')?.errors?.['required']">El campo es requerido.</mat-error>
+      </mat-form-field>
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!novedadPersonalForm.valid || !isModified()">
+          {{data.novedadPersonal ? 'Modificar' : 'Agregar'}}
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+      </mat-dialog-content>
+  </form>

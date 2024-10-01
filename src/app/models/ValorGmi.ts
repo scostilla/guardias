@@ -1,31 +1,26 @@
-import { Ddjj } from "./Configuracion/Ddjj";
-import { TipoGuardia } from "./Configuracion/TipoGuardia";
 
 export class ValorGmi {
     id?: number;
-    activo: boolean;
     fechaInicio: Date;
-    fechaFin: Date;
+    fechaFin: Date | null;
     monto: number;
     tipoGuardia: string;
-    esLav:boolean;
-    ddjjs: Ddjj[];
+    documentoLegal: string;
+    /*ddjjs: Ddjj[];*/
 
     constructor(
-        activo: boolean,
         fechaInicio: Date,
-        fechaFin: Date,
+        fechaFin: Date | null,
         monto: number,
         tipoGuardia: string,
-        esLav:boolean,
-        ddjjs: Ddjj[]
+        documentoLegal: string,
+        /*ddjjs: Ddjj[]*/
     ) {
-        this.activo = activo;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.monto = monto;
         this.tipoGuardia = tipoGuardia;
-        this.esLav = esLav;
-        this.ddjjs = ddjjs;
+        this.documentoLegal = documentoLegal;
+        /*this.ddjjs = ddjjs;*/
     }
 }

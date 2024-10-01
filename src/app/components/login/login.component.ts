@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
@@ -58,9 +58,8 @@ export class LoginComponent implements OnInit {
         this.tokenService.setToken(data.token);
         this.tokenService.setUserName(data.nombreUsuario);
         this.tokenService.setAuthorities(data.authorities);
-        this.roles = this.tokenService.getAuthorities();
-
-        this.toastr.success('Bienvenido ' + data.nombreUsuario, 'OK', {
+        this.roles = data.authorities;
+        this.toastr.success(data.nombreUsuario, 'Bienvenido', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
         // Redireccionnamiento segun roles

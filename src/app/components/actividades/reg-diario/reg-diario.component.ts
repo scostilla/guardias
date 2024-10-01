@@ -151,7 +151,7 @@ export class RegDiarioComponent {
 
       const registroDto = new RegistroActividadDto(
         registroData.fecIngreso,
-        registroData.fecEgreso,
+        registroData.fecEgreso ,
         registroData.eventStartTime,
         registroData.eventEndTime,
         registroData.tipoGuardia.id,
