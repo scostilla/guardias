@@ -1,16 +1,16 @@
 export class Usuario {
 
-    nombre: string;
+    id?: number;
     nombreUsuario: string;
     email: string;
     password: string;
-   // authorities: string[];
+    roles: string[];
     
-    constructor(nombre: string, nombreUsuario: string, email: string, password: string) {
-        this.nombre = nombre;
+    constructor( nombreUsuario: string, email: string, password: string, roles:string[]) {
+        
         this.nombreUsuario = nombreUsuario;
         this.email = email;
         this.password = password;
-        //this.authorities = authorities;
+        this.roles = roles;
     }
 }

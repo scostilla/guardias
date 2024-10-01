@@ -45,7 +45,7 @@ export class RevistaService {
       )
   }
 
-  public update(id: number, revistas: RevistaDto): Observable<any> {
+  public update(id: number, revistas: Revista): Observable<any> {
     return this.httpClient.put<any>(this.revistasURL + `update/${id}`, revistas)
       .pipe(
         tap(() => {

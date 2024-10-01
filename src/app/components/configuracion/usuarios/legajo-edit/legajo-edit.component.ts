@@ -1,34 +1,37 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { Profesion } from 'src/app/models/Configuracion/Profesion';
-import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
-import { CargoService } from 'src/app/services/Configuracion/cargo.service';
-import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
-import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
-import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
-import { Categoria } from 'src/app/models/Configuracion/Categoria';
-import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
-import { Adicional } from 'src/app/models/Configuracion/Adicional';
-import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
-import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
-import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
-import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
+import { Adicional } from 'src/app/models/Configuracion/Adicional';
+import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
+import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
+import { Revista } from 'src/app/models/Configuracion/Revista';
+import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
+import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
+import { CargoService } from 'src/app/services/Configuracion/cargo.service';
+import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 
 interface Agrup {
   value: string;
   viewValue: string;
 }
+
 @Component({
   selector: 'app-legajo-edit',
   templateUrl: './legajo-edit.component.html',
@@ -37,8 +40,9 @@ interface Agrup {
 export class LegajoEditComponent implements OnInit {
 
   legajoForm: FormGroup;
-  initialData: any;
-  personas: Asistencial[] = [];
+  initialData: Legajo | undefined;
+  idLegajo: number = 0;
+  personas: AsistencialListForLegajosDto[] = [];
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -47,13 +51,23 @@ export class LegajoEditComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
+  revistas: Revista[] = [];
+  step = 0;
+
+  agrupaciones: Agrup[] = [
+    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
+    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
+    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
+    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
+    { value: 'TECNICOS', viewValue: 'Técnicos' },
+  ];
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<LegajoEditComponent>,
     private legajoService: LegajoService,
-    private profesionService: ProfesionService,
+    private router: Router,
     private asistencialService: AsistencialService,
+    private profesionService: ProfesionService,
     private hospitalService: HospitalService,
     private cargoService: CargoService,
     private especialidadService: EspecialidadService,
@@ -62,10 +76,8 @@ export class LegajoEditComponent implements OnInit {
     private cargaHorariaService: CargaHorariaService,
     private tipoRevistaService: TipoRevistaService,
     private revistaService: RevistaService,
-
-    @Inject(MAT_DIALOG_DATA) public data: Legajo
+    private toastr: ToastrService
   ) {
-
     this.legajoForm = this.fb.group({
       agrupacion: ['', Validators.required],
       categoria: ['', Validators.required],
@@ -74,7 +86,6 @@ export class LegajoEditComponent implements OnInit {
       tipoRevista: ['', Validators.required],
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
-      //revista: [''],
       udo: ['', Validators.required],
       efectores: [[]],
       especialidades: [[]],
@@ -97,18 +108,35 @@ export class LegajoEditComponent implements OnInit {
     this.listCargaHoraria();
     this.listTipoRevista();
 
-
-    if (data) {
-      this.legajoForm.patchValue({
-        ...data,
-        efectores: data.efectores ? data.efectores.map((efector: any) => efector.id) : [],
-        especialidades: data.especialidades ? data.especialidades.map((especialidad: any) => especialidad.id) : []
-      });
+    // recupero el estado del router
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.initialData = navigation.extras.state['legajo'];  // Recibo el legajo
     }
+
   }
 
   ngOnInit(): void {
-    this.initialData = this.legajoForm.value;
+
+    if (this.initialData) {
+      console.log("legajo a modificar", this.initialData);
+      console.log("categoria", this.initialData.revista?.categoria?.id);
+      console.log("adicional", this.initialData.revista?.adicional?.id);
+      console.log("cargaHoraria", this.initialData.revista?.cargaHoraria?.id);
+      console.log("tipoRevista", this.initialData.revista?.tipoRevista?.id);
+      this.idLegajo = this.initialData.id ?? 0;
+      this.legajoForm.patchValue({
+        ...this.initialData,
+        efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
+        especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
+        adicional: this.initialData.revista.adicional?.id,  // Cargar adicional del objeto 'Revista'
+        agrupacion: this.initialData.revista?.agrupacion,  // Aquí cargas el valor de 'agrupacion'
+        cargaHoraria: this.initialData.revista.cargaHoraria?.id,  // Cargar carga horaria del objeto 'Revista'
+        categoria: this.initialData.revista?.categoria?.id ?? null,  // Cargar categoría del objeto 'Revista'
+        tipoRevista: this.initialData.revista.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
+
+      });
+    }
   }
 
   isModified(): boolean {
@@ -116,7 +144,8 @@ export class LegajoEditComponent implements OnInit {
   }
 
   listAsistenciales(): void {
-    this.asistencialService.list().subscribe(data => {
+
+    this.asistencialService.listForLegajosDtos().subscribe(data => {
       this.personas = data;
     }, error => {
       console.log(error);
@@ -156,16 +185,6 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  /* Form de revista */
-
-  agrupaciones: Agrup[] = [
-    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
-    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
-    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
-    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
-    { value: 'TECNICOS', viewValue: 'Técnicos' },
-  ];
-
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
       this.categorias = data;
@@ -198,11 +217,20 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  isLegajoFormValid(): boolean {
-    return this.legajoForm.valid;
-  }
+  /* loadDropdowns(): void {
+    this.asistencialService.list().subscribe(data => this.personas = data, error => console.error('Error al cargar personas', error));
+    this.profesionService.list().subscribe(data => this.profesiones = data, error => console.error('Error al cargar profesiones', error));
+    this.hospitalService.list().subscribe(data => this.efectores = data, error => console.error('Error al cargar efectores', error));
+    this.cargoService.list().subscribe(data => this.cargos = data, error => console.error('Error al cargar cargos', error));
+    this.especialidadService.list().subscribe(data => this.especialidades = data, error => console.error('Error al cargar especialidades', error));
+    this.categoriaService.list().subscribe(data => this.categorias = data, error => console.error('Error al cargar categorias', error));
+    this.adicionalService.list().subscribe(data => this.adicionales = data, error => console.error('Error al cargar adicionales', error));
+    this.cargaHorariaService.list().subscribe(data => this.cargasHorarias = data, error => console.error('Error al cargar cargas horarias', error));
+    this.tipoRevistaService.list().subscribe(data => this.tiposRevistas = data, error => console.error('Error al cargar tipos de revistas', error));
+    this.revistaService.list().subscribe(data => this.revistas = data, error => console.error('Error al cargar revistas', error));
+  } */
 
-  saveLegajo(): void {
+  updateLegajo(): void {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
 
@@ -213,15 +241,17 @@ export class LegajoEditComponent implements OnInit {
         legajoData.cargaHoraria,
         legajoData.agrupacion
       );
+
       // Verifica si existe una revista con los atributos especificados
       this.revistaService.checkRevista(revistaDto).subscribe(
         (existingRevista) => {
           // Si existe, usa su ID
           if (existingRevista && existingRevista.id !== undefined) {
-            this.createLegajoDtoAndSave(legajoData, existingRevista.id);
-        } else {
-          console.error('La revista existente no tiene un ID.');
-      }
+            console.log("carga horaria de la nueva revista ", existingRevista.cargaHoraria)
+            this.createLegajoDtoAndUpdate(legajoData, existingRevista.id);
+          } else {
+            console.error('La revista existente no tiene un ID.');
+          }
         },
         (error) => {
           // Si no existe, crea una nueva revista
@@ -233,7 +263,7 @@ export class LegajoEditComponent implements OnInit {
                 (newRevista) => {
                   if (newRevista && newRevista.id !== undefined) {
                     console.log('%%%Nueva revista creada y encontrada:', newRevista);
-                    this.createLegajoDtoAndSave(legajoData, newRevista.id);
+                    this.createLegajoDtoAndUpdate(legajoData, newRevista.id);
                   } else {
                     console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
                   }
@@ -252,7 +282,8 @@ export class LegajoEditComponent implements OnInit {
     }
   }
 
-  createLegajoDtoAndSave(legajoData: any, revistaId: number): void {
+  createLegajoDtoAndUpdate(legajoData: any, revistaId: number): void {
+
     const legajoDto = new LegajoDto(
       legajoData.fechaInicio,
       legajoData.fechaFinal,
@@ -261,7 +292,7 @@ export class LegajoEditComponent implements OnInit {
       legajoData.activo,
       legajoData.matriculaNacional,
       legajoData.matriculaProvincial,
-      revistaId, // Usa el ID de la revista (existente o nueva)
+      revistaId!, // Usa el ID de la revista (existente o nueva)
       legajoData.udo.id,
       legajoData.persona.id,
       legajoData.cargo.id,
@@ -269,64 +300,89 @@ export class LegajoEditComponent implements OnInit {
       legajoData.especialidades,
       legajoData.profesion.id
     );
-  
-    console.log("#### legajoDto que viene ", legajoDto);
-    console.log("#### legajoDto id de la revista  ", legajoDto.idRevista);
-    console.log("#### data y data.id ", this.data);
-  
-    this.saveOrUpdateLegajo(legajoDto);
+
+    console.log("legajo a guardar ", legajoDto);
+    console.log("id a modificar  ", this.idLegajo);
+
+    this.legajoService.update(this.idLegajo, legajoDto).subscribe(
+      (result) => {
+        this.toastr.success('Legajo modificado con éxito', 'EXITO', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.router.navigate(['/legajo'], { state: { legajoModificado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
+      },
+      (error) => {
+        this.toastr.error('Faaa Ocurrió un error al crear el Legajo', error, {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        console.error('Error al crear el legajo', error);
+      }
+    );
   }
 
-
-  saveOrUpdateLegajo(legajoDto: LegajoDto): void {
-
-    /* AYUDA: si this.data tiene un valor y un ID asociado */
-    if (this.data && this.data.id) {
-      this.legajoService.update(this.data.id, legajoDto).subscribe(
-        result => {
-          this.dialogRef.close({ type: 'save', data: result });
-        },
-        error => {
-          this.dialogRef.close({ type: 'error', data: error });
-        }
-      );
-    } else {
-      this.legajoService.save(legajoDto).subscribe(
-        result => {
-          this.dialogRef.close({ type: 'save', data: result });
-        },
-        error => {
-          this.dialogRef.close({ type: 'error', data: error });
-        }
-      );
+  nextStep(): void {
+    if (this.step === 0 && !this.isPanel1Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en datos personal.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
     }
+
+    if (this.step === 1 && !this.isPanel2Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en situación de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+
+    if (this.step === 2 && !this.isPanel3Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+
+    this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
   }
 
-  comparePersona(p1: Asistencial, p2: Asistencial): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  prevStep(): void {
+    this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
   }
 
-  compareProfesion(p1: Profesion, p2: Profesion): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  isPanel1Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 1 son válidos
+    const panel1Controls = ['persona', 'profesion', 'especialidades', 'cargo', 'matriculaNacional', 'matriculaProvincial'];
+    return panel1Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
-  compareTipoRevista(p1: TipoRevista, p2: TipoRevista): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  isPanel2Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 2 son válidos
+    const panel2Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo'];
+    return panel2Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
-  compareUdo(p1: Efector, p2: Efector): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  isPanel3Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 3 son válidos
+    const panel3Controls = ['actual', 'legal', 'fechaInicio'];
+    return panel3Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
-  compareEfector(p1: Efector, p2: Efector): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
-
-  compareCargo(p1: Cargo, p2: Cargo): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  setStep(index: number) {
+    this.step = index;
   }
 
   cancel(): void {
-    this.dialogRef.close();
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+    this.router.navigate(['/legajo']);
+  }
+
+  compareFn(o1: any, o2: any): boolean {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  }
+
+  compareFn2(o1: any, o2: any): boolean {
+    return o1 && o2 ? o1 === o2 : o1 === o2;
   }
 }

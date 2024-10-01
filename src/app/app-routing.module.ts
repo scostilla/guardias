@@ -9,6 +9,8 @@ import { HomeProfesionalComponent } from './components/home-profesional/home-pro
 import { LoginComponent } from './components/login/login.component';
 
 //Configuraciones: Generales
+import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
+import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 
@@ -53,6 +55,7 @@ import { ProfesionComponent } from './components/configuracion/profesionales/pro
 import { AdicionalEditComponent } from './components/configuracion/usuarios/adicional-edit/adicional-edit.component';
 import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
 import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
+import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
 import { CargaHorariaEditComponent } from './components/configuracion/usuarios/carga-horaria-edit/carga-horaria-edit.component';
 import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
@@ -73,6 +76,16 @@ import { PersonComponent } from './components/configuracion/usuarios/person/pers
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+//Configuraciones: Leyes
+import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
+import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
+import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
+import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
+import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
+import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
+import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
+import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
+
 
 //Configuraciones: Calendario
 import { FeriadoDetailComponent } from './components/configuracion/calendario/feriado-detail/feriado-detail.component';
@@ -159,7 +172,8 @@ import { DailyScheduleComponent } from './components/daily-schedule/daily-schedu
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
-import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
@@ -191,6 +205,8 @@ import { AutoridadDetailComponent } from './components/configuracion/usuarios/au
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
 import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
 
+import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
+import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 
 
 
@@ -204,6 +220,8 @@ const routes: Routes = [
 
   //Configuraciones: Generales
   {path: 'valores-guardias', component:ValoresGuardiasComponent},
+  {path: 'valores-guardias-create', component:ValoresGuardiasCreateComponent},
+  {path: 'valores-bono-uti-create', component:ValoresBonoUtiCreateComponent},
   {path: 'soporte-form', component:SoporteFormComponent},
 
 
@@ -244,30 +262,47 @@ const routes: Routes = [
   {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
  
   //Configuraciones: Personas
+  {path: 'asistencial-selector', component:AsistencialSelectorComponent},
   {path: 'person', component:PersonComponent},
   {path: 'person-detail/:id', component:PersonDetailComponent},
   {path: 'person-edit/:id', component:PersonEditComponent},
+  {path: 'person-edit', component: PersonEditComponent },
+  {path: 'asistencial-create', component:AsistencialCreateComponent},
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
-  {path: 'asistencial-edit/:id', component:AsistencialEditComponent},
+  {path: 'asistencial-edit', component:AsistencialEditComponent},
   {path: 'no-asistencial', component:NoAsistencialComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
   {path: 'legajo', component:LegajoComponent},
+  {path: 'legajo-create', component: LegajoCreateComponent},
   {path: 'legajo-detail/:id', component:LegajoDetailComponent},
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
-  {path: 'legajo-person/:id', component:LegajoPersonComponent},
+  {path: 'legajo-edit', component:LegajoEditComponent},
+  {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
-  {path: 'personal-dh/:id', component:PersonalDhComponent},
+  {path: 'personal-dh', component:PersonalDhComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},
   {path: 'revista', component: RevistaComponent},
-  {path:'revista-edit/:id', component: RegionEditComponent},
+  {path: 'revista-edit/:id', component: RegionEditComponent},
   {path: 'categoria-edit/:id', component: CategoriaEditComponent},
   {path: 'adicional-edit/:id', component: AdicionalEditComponent},
   {path: 'carga-horaria-edit/:id', component: CargaHorariaEditComponent},
   {path: 'tipo-revista-edit/:id', component: TipoRevistaEditComponent},
+
+  
+  //Configuraciones: Leyes
+  {path: 'articulo', component:ArticuloComponent},
+  {path: 'articulo-detail/:id', component:ArticuloDetailComponent},
+  {path: 'articulo-edit/:id', component:ArticuloEditComponent},
+  {path: 'inciso', component:IncisoComponent},
+  {path: 'inciso-detail/:id', component:IncisoDetailComponent},
+  {path: 'inciso-edit/:id', component:IncisoEditComponent},
+  {path: 'tipo-ley', component:TipoLeyComponent},
+  {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent},
+
 
   
   //Autoridad
@@ -362,22 +397,23 @@ const routes: Routes = [
   { path: 'professional-list', component: ProfessionalListComponent},
   { path: 'professinal-news', component: ProfessionalNewsComponent},
   { path: 'schedule-distribution', component: ScheduleDistributionComponent},
-  {path: 'novedades-form', component: NovedadesFormComponent},
-  {path: 'professional-detail/:id', component: ProfessionalDetailComponent },
-  {path: 'professional-dh/:id', component: ProfessionalDhComponent },
-  {path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
-  {path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
-  {path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
-  {path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
+  { path: 'novedades-person-edit', component: NovedadesPersonEditComponent},
+  { path: 'novedades-person', component: NovedadesPersonComponent},
+  { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
+  { path: 'professional-dh/:id', component: ProfessionalDhComponent },
+  { path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
+  { path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
+  { path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
+  { path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
  /*  {path:'api', component:ApiComponent} */
- {path:'MonthTableComponent',component:MonthTableComponent},
- {path: 'popup-calendario', component:PopupCalendarioComponent},
- {path: 'digesto', component:DigestoComponent},
- {path: 'novedades', component:NovedadesComponent}, 
- {path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
- {path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+ { path:'MonthTableComponent',component:MonthTableComponent},
+ { path: 'popup-calendario', component:PopupCalendarioComponent},
+ { path: 'digesto', component:DigestoComponent},
+ { path: 'novedades', component:NovedadesComponent}, 
+ { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
+ { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 
- {path: 'cronograma-new', component:CronogramaNewComponent},
+ { path: 'cronograma-new', component:CronogramaNewComponent},
 
 
 

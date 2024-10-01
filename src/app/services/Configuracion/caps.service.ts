@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Caps } from "src/app/models/Configuracion/Caps";
+import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +32,7 @@ export class CapsService {
     return this.httpClient.get<Caps>(this.capsURL + `detailnombre/${nombre}`);
 }
 
-public save(caps:Caps): Observable<any> {
+public save(caps:CapsDto): Observable<any> {
   return this.httpClient.post<any>(this.capsURL + 'create', caps)
   .pipe(
     tap(() => {
@@ -39,7 +41,7 @@ public save(caps:Caps): Observable<any> {
   )
 }
 
-public update(id:number, caps:Caps): Observable<any> {
+public update(id:number, caps:CapsDto): Observable<any> {
   return this.httpClient.put<any>(this.capsURL + `update/${id}`, caps)
   .pipe(
     tap(() => {

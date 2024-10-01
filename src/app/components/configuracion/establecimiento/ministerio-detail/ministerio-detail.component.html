@@ -1,13 +1,9 @@
 <h1 mat-dialog-title>DETALLE
-  <h5>MINISTERIO</h5>
+  <h5>HOSPITAL</h5>
 </h1>
 <mat-dialog-content>
   <table class="table">
       <tbody>
-        <tr>
-          <th scope="row">ID</th>
-          <td>{{ministerio.id}}</td>
-        </tr>
         <tr>
           <th scope="row">Nombre</th>
           <td>{{ministerio.nombre}}</td>
@@ -19,10 +15,6 @@
         <tr>
           <th scope="row">Teléfono</th>
           <td>{{ministerio.telefono}}</td>
-        </tr>
-        <tr>
-          <th scope="row">Estado</th>
-          <td>{{ministerio.estado ? 'Activo' : 'Inactivo'}}</td>
         </tr>
         <tr>
           <th scope="row">Observaciones</th>
@@ -37,12 +29,8 @@
           <td>{{ministerio.localidad.nombre}}</td>
         </tr>
         <tr>
-          <th scope="row">Es Cabecera</th>
+          <th scope="row">Cabecera</th>
           <td>{{ministerio.idCabecera}}</td>
-        </tr>
-        <tr>
-          <th scope="row">Autoridad</th>
-          <td>{{ministerio.idAutoridad}}</td>
         </tr>
       </tbody>
     </table>

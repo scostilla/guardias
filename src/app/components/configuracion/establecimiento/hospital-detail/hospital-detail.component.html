@@ -1,1 +1,40 @@
-<p>hospital-detail works!</p>
+<h1 mat-dialog-title>DETALLE
+    <h5>HOSPITAL</h5>
+  </h1>
+  <mat-dialog-content>
+    <table class="table">
+        <tbody>
+          <tr>
+            <th scope="row">Nombre</th>
+            <td>{{hospital.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Domicilio</th>
+            <td>{{hospital.domicilio}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Teléfono</th>
+            <td>{{hospital.telefono}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Observaciones</th>
+            <td>{{hospital.observacion}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Region</th>
+            <td>{{hospital.region.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Localidad</th>
+            <td>{{hospital.localidad.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Es Cabecera</th>
+            <td>{{hospital.esCabecera ? 'Si' : 'No'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>

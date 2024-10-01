@@ -1,15 +1,19 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { AsistencialEditComponent } from '../asistencial-edit/asistencial-edit.component';
-import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component'; 
+import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
+import { Router } from '@angular/router';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
+import { NovedadesPersonEditComponent } from 'src/app/components/personal/novedades-person-edit/novedades-person-edit.component';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 
 @Component({
   selector: 'app-asistencial',
@@ -19,26 +23,35 @@ import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-de
 
 export class AsistencialComponent implements OnInit, OnDestroy {
 
+  dniVisible: boolean = false;
   domicilioVisible: boolean = false;
   estadoVisible: boolean = false;
   fechaNacimientoVisible: boolean = false;
-  sexoVisible: boolean = false;
+  telefonoVisible: boolean = false;
+  emailVisible: boolean = false;
 
   @ViewChild(MatTable) table!: MatTable<Asistencial>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'dni', 'domicilio', 'email', 'estado', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'tipoGuardia', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
   dataSource!: MatTableDataSource<Asistencial>;
   suscription!: Subscription;
+  asistencial!: Asistencial;
+  legajos: Legajo[] = [];
+  isLoadingLegajos: boolean = true;
 
   constructor(
     private asistencialService: AsistencialService,
     private dialog: MatDialog,
+    public dialogNov: MatDialog,
+    public dialogDistrib: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
+    private legajoService: LegajoService,
     private paginatorIntl: MatPaginatorIntl
-    ) { 
+  ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
     this.paginatorIntl.previousPageLabel = "Página anterior";
@@ -47,10 +60,12 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.paginatorIntl.getRangeLabel = (page, size, length) => {
       const start = page * size + 1;
       const end = Math.min((page + 1) * size, length);
-      return `${start} - ${end} de ${length}`; };
-     }
+      return `${start} - ${end} de ${length}`;
+    };
+  }
 
   ngOnInit(): void {
+    this.listLegajos();
     this.listAsistencial();
 
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
@@ -61,6 +76,22 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   }
 
+  ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
+  }
+
+  applyFilter(filterValue: string) {
+    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return normalizedData.indexOf(normalizedFilterValue) != -1;
+    };
+
+    this.dataSource.filter = normalizedFilterValue;
+  }
+
   listAsistencial(): void {
     this.asistencialService.list().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
@@ -69,21 +100,71 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-      this.suscription?.unsubscribe();
+  listLegajos(): void {
+    this.legajoService.list().subscribe((legajos: Legajo[]) => {
+      this.legajos = legajos;
+      this.isLoadingLegajos = false;
+    });
+  }
+
+  hayLegajos(asistencial: Asistencial): boolean {
+    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
+  }
+
+  verLegajo(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/legajo-person', asistencial.id]);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
+  crearLegajo(): void {
+    const dialogRef = this.dialog.open(LegajoEditComponent, {
+      width: '600px',
+      data: null
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        if (result) {
+          this.toastr.success('Legajo creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.dataSource.data.push(result);
+          this.dataSource._updateChangeSubscription();
+        } else {
+          this.toastr.error('No se creó el Legajo', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+      }
+    });
+  }
+
+  verDistribucion(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/personal-dh', asistencial.id]);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
   }
 
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['id', 'nombre', 'apellido', 'cuil', 'dni', 'email', 'telefono', 'tipoGuardia', 'acciones'];
-  
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
+
     let columnasVisibles: string[] = [];
-  
+
     columnasBase.forEach(columna => {
       columnasVisibles.push(columna);
-      if (columna === 'apellido' && this.domicilioVisible) {
+      if (columna === 'cuil' && this.domicilioVisible) {
         columnasVisibles.push('domicilio');
       }
-      if (columna === 'apellido' && this.estadoVisible) {
+      /* if (columna === 'apellido' && this.estadoVisible) {
         columnasVisibles.push('estado');
       }
       if (columna === 'telefono' && this.fechaNacimientoVisible) {
@@ -91,15 +172,15 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       }
       if (columna === 'telefono' && this.sexoVisible) {
         columnasVisibles.push('sexo');
-      }
+      } */
     });
-  
+
     this.displayedColumns = columnasVisibles;
-  
+
     if (this.table) {
       this.table.renderRows();
     }
-  }  
+  }
 
   accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
@@ -116,62 +197,45 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     return output;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
-      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.apellido.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.dni.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) || 
-      this.accentFilter(data.domicilio.toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.cuil.toString().toLowerCase()).includes(this.accentFilter(filter.toString().toLowerCase())) ||
-      this.accentFilter(data.fechaNacimiento.toISOString().toLowerCase()).includes(this.accentFilter(filter)) || 
-      this.accentFilter(data.sexo.toLowerCase()).includes(this.accentFilter(filter));
-    };
+  openFormChanges(asistencial?: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/asistencial-edit', asistencial.id]);
+    } else {
+      this.router.navigate(['/asistencial-create']);
+    }
   }
 
-  openFormChanges(asistencial?: Asistencial): void {
-    const esEdicion = asistencial != null;
-    const dialogRef = this.dialog.open(AsistencialEditComponent, {
-      width: '600px',
-      data: esEdicion ? asistencial : null
-    });
+  createAsistencial(): void {
+    this.router.navigate(['/asistencial-create']);
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-      if (result) {
-        this.toastr.success(esEdicion ? 'Asistencial editado con éxito' : 'Asistencial creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
-        } else {
-          this.dataSource.data.push(result);
-        }
-        this.dataSource._updateChangeSubscription();
-      } else {
-        this.toastr.error('Ocurrió un error al crear o editar Asistencial', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-      }
-    }
+  updateAsistencial(asistencial: Asistencial): void {
+    console.log("en asistencial se envia el objeto", asistencial);
+    this.router.navigate(['/asistencial-edit'], {
+      state: { asistencial }
     });
   }
 
   openDetail(asistencial: Asistencial): void {
-    this.dialogRef = this.dialog.open(AsistencialDetailComponent, { 
+    this.dialogRef = this.dialog.open(AsistencialDetailComponent, {
       width: '600px',
       data: asistencial
     });
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
-    }
+  }
+
+  openNovedades() {
+    this.dialogNov.open(NovedadesPersonEditComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }
+
+  openDistribucion() {
+    this.router.navigate(['/dist-horaria']);
+  }
 
   deleteAsistencial(asistencial: Asistencial): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -181,26 +245,26 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       },
     });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.asistencialService.delete(asistencial.id!).subscribe(data => {
-        this.toastr.success('Asistencial eliminado con éxito', 'ELIMINADO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.asistencialService.delete(asistencial.id!).subscribe(data => {
+          this.toastr.success('Asistencial eliminado con éxito', 'ELIMINADO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
 
-        const index = this.dataSource.data.findIndex(p => p.id === asistencial.id);
-        this.dataSource.data.splice(index, 1);
-        this.dataSource._updateChangeSubscription();
-      }, err => {
-        this.toastr.error(err.message, 'Error, no se pudo eliminar el asistencial', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
+          const index = this.dataSource.data.findIndex(p => p.id === asistencial.id);
+          this.dataSource.data.splice(index, 1);
+          this.dataSource._updateChangeSubscription();
+        }, err => {
+          this.toastr.error(err.message, 'Error, no se pudo eliminar el asistencial', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
         });
-      });
-    }
-  });
-}
+      }
+    });
+  }
 }

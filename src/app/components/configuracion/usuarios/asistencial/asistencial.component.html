@@ -1,135 +1,165 @@
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
-  <div class="col-7">
-    <div class="titulos">ASISTENCIAL</div>
-  </div>
-  <div class="col-1 align-items-right">
-    <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Asistencial">
-      <mat-icon>library_add</mat-icon>
-    </button>
-  </div>
-  <div class="col-4">
-    <mat-form-field>
-      <mat-label>Filtro</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
-    </mat-form-field>
-  </div>
-</div>
-
-<div class="row">
-<table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Id </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.id}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="nombre">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.nombre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="apellido">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Apellido </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.apellido}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="dni">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> DNI </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.dni}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="domicilio">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Domicilio </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.domicilio}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> E-mail </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.email}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="estado">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Estado </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.estado ? 'Activo' : 'Inactivo'}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="cuil">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> CUIL </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.cuil}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="fechaNacimiento">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Nacimiento </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.fechaNacimiento | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="sexo">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Sexo </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.sexo}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="telefono">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Teléfono </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.telefono}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="tipoGuardia">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo Guardia </th> 
-    <td mat-cell *matCellDef="let asistencial"> {{asistencial.tipoGuardia}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="acciones">
-    <th mat-header-cell *matHeaderCellDef  class="negrita"> Acciones </th>
-    <td mat-cell *matCellDef="let asistencial" class="cell-actions">
-      <button mat-icon-button matTooltip="Ver {{asistencial.nombre}}" (click)="openDetail(asistencial)">
-        <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+    <div class="col-12 col-md-7">
+      <div class="titulo_prueba">PERSONAL</div>
+    </div>
+    <div class="col-12 col-md-1 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
+        <mat-icon>library_add</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="openFormChanges(asistencial)">
-        <mat-icon class="btnEdit">edit</mat-icon>
+      <button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openNovedades()" matTooltip="Agregar novedad">
+        <mat-icon>event</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteAsistencial(asistencial)">
-        <mat-icon class="btnRemove">delete</mat-icon>
+      <button mat-fab class="button-success" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
+        <mat-icon>av_timer</mat-icon>
       </button>
-    </td>
-  </ng-container>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keydown.enter)="applyFilter(input.value)" #input>
+        <button mat-icon-button matSuffix (click)="applyFilter(input.value)">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+  <div class="row">
+    <div class="row">
+      <div class="col-6">Estás viendo:
+        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales <mat-icon>expand_more</mat-icon></button>
+        <mat-menu #menug="matMenu">
+          <button mat-menu-item routerLink="/no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
+        </mat-menu>
+      </div>
+    </div>
 
-<div class="row mt-3">
-  <div class="col-3">
-    <mat-accordion>
-      <mat-expansion-panel #miPanel hideToggle>
-        <mat-expansion-panel-header style="pointer-events: none;">
-          <mat-panel-title>
-            <button mat-icon-button color="primary" aria-label="Agregar columnas" matTooltip="Agregar columnas" (click)="miPanel.toggle(); $event.stopPropagation()" style="pointer-events: auto;">
-              <mat-icon>menu</mat-icon>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.nombre}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="apellido">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Apellido </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.apellido}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dni">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> DNI </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.dni}} </td>
+        </ng-container>
+
+        <!--   <ng-container matColumnDef="domicilio">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Domicilio </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.domicilio}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> E-mail </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.email}} </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="esAsistencial">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Asistencial </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.esAsistencial ? 'Si' : 'No'}} </td>
+        </ng-container> 
+
+         <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Estado </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.estado ? 'Activo' : 'Inactivo'}} </td>
+        </ng-container> --> 
+
+        <ng-container matColumnDef="cuil">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> CUIL </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.cuil}} </td>
+        </ng-container>
+        <!--
+        <ng-container matColumnDef="fechaNacimiento">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Nacimiento </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.fechaNacimiento | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
+        </ng-container>
+      
+        
+        <ng-container matColumnDef="sexo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Sexo </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.sexo}} </td>
+        </ng-container>-->
+        
+        <ng-container matColumnDef="telefono">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Teléfono </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.telefono}} </td>
+        </ng-container> 
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef  class="negrita"></th>
+          <td mat-cell *matCellDef="let asistencial" class="cell-actions">
+            <button mat-icon-button matTooltip="Ver {{asistencial.nombre}}" (click)="openDetail(asistencial)">
+              <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
             </button>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <ul>
-          <li>
-            <input type="checkbox" [(ngModel)]="domicilioVisible" (change)="actualizarColumnasVisibles()"> Domicilio
-          </li>
-          <li>
-            <input type="checkbox" [(ngModel)]="estadoVisible" (change)="actualizarColumnasVisibles()"> Estado
-          </li>
-          <li>
-            <input type="checkbox" [(ngModel)]="fechaNacimientoVisible" (change)="actualizarColumnasVisibles()"> Fecha Nacimiento
-          </li>
-          <li>
-            <input type="checkbox" [(ngModel)]="sexoVisible" (change)="actualizarColumnasVisibles()"> Sexo
-          </li>
-      </ul>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-  <div class="col-9">
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
-  </div>
-  </div>
-</div>
-</div>
+            <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="updateAsistencial(asistencial)">
+              <mat-icon class="btnEdit">edit</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteAsistencial(asistencial)">
+              <mat-icon class="btnRemove">delete</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)" *ngIf="!isLoadingLegajos && hayLegajos(asistencial)">
+              <mat-icon color="primary">playlist_play</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Agregar Legajo" (click)="crearLegajo()" *ngIf="!isLoadingLegajos && !hayLegajos(asistencial)">
+              <mat-icon color="primary">playlist_add</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)">
+              <mat-icon>calendar_month</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  <div class="row mt-3">
+    <div class="col-lg-3">    
+    <mat-accordion>
+        <mat-expansion-panel #miPanel hideToggle>
+          <mat-expansion-panel-header style="pointer-events: none;">
+            <mat-panel-title>
+              <button mat-icon-button color="primary" aria-label="Agregar columnas" matTooltip="Agregar columnas" (click)="miPanel.toggle(); $event.stopPropagation()" style="pointer-events: auto;">
+                <mat-icon>menu</mat-icon>
+              </button>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <ul>
+            <li>
+              <input type="checkbox" [(ngModel)]="dniVisible" (change)="actualizarColumnasVisibles()"> DNI
+            </li>
+            <!-- <li>
+              <input type="checkbox" [(ngModel)]="domicilioVisible" (change)="actualizarColumnasVisibles()"> Domicilio
+            </li>
+            <li>
+              <input type="checkbox" [(ngModel)]="estadoVisible" (change)="actualizarColumnasVisibles()"> Estado
+            </li>
+            <li>
+              <input type="checkbox" [(ngModel)]="fechaNacimientoVisible" (change)="actualizarColumnasVisibles()"> Fecha Nacimiento
+            </li>-->
+            <li>
+              <input type="checkbox" [(ngModel)]="telefonoVisible" (change)="actualizarColumnasVisibles()"> Teléfono
+            </li>
+            <!-- <li>
+              <input type="checkbox" [(ngModel)]="emailVisible" (change)="actualizarColumnasVisibles()"> E-mail
+            </li> -->
+        </ul>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="col-lg-9">        
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+    </div>
+  </div>
+</div>

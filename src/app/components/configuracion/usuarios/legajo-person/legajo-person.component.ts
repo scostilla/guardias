@@ -8,8 +8,9 @@ import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
+import { LegajoPersonEditComponent } from '../legajo-person-edit/legajo-person-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -34,6 +35,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
 
   constructor(
     private legajoService: LegajoService,
+    private asistencialService: AsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private route: ActivatedRoute,
@@ -51,11 +53,15 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.asistencialId = +params['id'];
-      this.listLegajos();
+    this.asistencialService.currentAsistencial$.subscribe(asistencial => {
+      if (asistencial) {
+        this.asistencialId = asistencial.id;
+        this.listLegajos();
+      } else {
+        console.error('No hay asistencial seleccionado.');
+      }
     });
-
+  
     this.listLegajos();
 
     this.suscription = this.legajoService.refresh$.subscribe(() => {
@@ -113,7 +119,7 @@ applyFilter(event: Event) {
 }
   openFormChanges(legajo?: Legajo): void {
     const esEdicion = legajo != null;
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
+    const dialogRef = this.dialog.open(LegajoPersonEditComponent, {
       width: '600px',
       data: esEdicion ? legajo : null
     });

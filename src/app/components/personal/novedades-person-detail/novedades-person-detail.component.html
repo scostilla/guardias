@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>DETALLE NOVEDAD:
+</h1>
+
+  <mat-dialog-content>
+    <table class="table">
+        <tbody>
+          <tr class="bg-light">
+            <th scope="row">Apellido y nombre</th>
+            <td>{{novedadPeronal.persona.apellido}}, {{novedadPeronal.persona.nombre}}</td>
+          </tr>    
+          <tr>
+            <th scope="row">Tipo de novedad</th>
+            <td>{{novedadPeronal.descripcion}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha final</th>
+            <td>{{novedadPeronal.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha inicio</th>
+            <td>{{novedadPeronal.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Necesita reemplazo</th>
+            <td>{{novedadPeronal.necesitaReemplazo ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Reemplazo</th>
+            <td>{{novedadPeronal.suplente.apellido}}, {{novedadPeronal.suplente.nombre}}</td>
+          </tr>    
+          <tr>
+          <tr>
+            <th scope="row">Actual</th>
+            <td>{{novedadPeronal.actual ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Cobra sueldo</th>
+            <td>{{novedadPeronal.cobraSueldo ? 'Si' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Puede realizar guardia</th>
+            <td>{{novedadPeronal.puedeRealizarGuardia ? 'Si' : 'No'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>

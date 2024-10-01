@@ -60,7 +60,8 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
-import { NovedadesFormComponent } from './components/personal/novedades-form/novedades-form.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
 import { PopupComponent } from './components/popup/popup.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
@@ -74,7 +75,6 @@ import { TimePickerComponent } from './components/time-picker/time-picker.compon
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
 
 
-import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { DdjjContrafacturaComponent } from './components/guardias/ddjj-contrafactura/ddjj-contrafactura.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 
@@ -183,12 +183,24 @@ import { EfectorComponent } from './components/configuracion/establecimiento/efe
 import { UdoDetailComponent } from './components/configuracion/establecimiento/udo-detail/udo-detail.component';
 import { UdoEditComponent } from './components/configuracion/establecimiento/udo-edit/udo-edit.component';
 import { UdoComponent } from './components/configuracion/establecimiento/udo/udo.component';
+import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
+import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
+import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
+import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
+import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
+import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
+import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
+import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
+import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
+import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { AdicionalCreateComponent } from './components/configuracion/usuarios/adicional-create/adicional-create.component';
 import { AdicionalEditComponent } from './components/configuracion/usuarios/adicional-edit/adicional-edit.component';
+import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
 import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
+import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
 import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
@@ -199,6 +211,7 @@ import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
 import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
 import { CategoriaEditComponent } from './components/configuracion/usuarios/categoria-edit/categoria-edit.component';
+import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
@@ -221,6 +234,7 @@ import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detai
 import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
+import { NovedadesPersonDetailComponent } from './components/personal/novedades-person-detail/novedades-person-detail.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
@@ -250,7 +264,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     ProfessionalNewsComponent,
     ProfessionalAbmComponent,
     ProfessionalListComponent,
-    NovedadesFormComponent,
+    NovedadesPersonEditComponent,
     DistHorariaComponent,
     ConfirmDialogComponent,
     GuardiasViewComponent,
@@ -403,6 +417,21 @@ registerLocaleData(localeEsAr, 'es-AR');
     AdicionalEditComponent,
     CargaHorariaCreateComponent,
     CargaHorariaEditComponent,
+    ValoresGuardiasCreateComponent,
+    ValoresBonoUtiCreateComponent,
+    AsistencialSelectorComponent,
+    LegajoCreateComponent,
+    AsistencialCreateComponent,
+    NovedadesPersonDetailComponent,
+    NovedadesPersonComponent,
+    TipoLeyComponent,
+    TipoLeyEditComponent,
+    ArticuloComponent,
+    ArticuloDetailComponent,
+    ArticuloEditComponent,
+    IncisoComponent,
+    IncisoDetailComponent,
+    IncisoEditComponent,
     
   ],
 

@@ -19,20 +19,14 @@ import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detai
 
 export class MinisterioComponent implements OnInit, OnDestroy {
 
-  localidadVisible: boolean = false;
-  regionVisible: boolean = false;
-  idCabeceraVisible: boolean = false;
-  idAutoridadVisible: boolean = false;
-
   @ViewChild(MatTable) table!: MatTable<Ministerio>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<MinisterioDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'domicilio', 'estado', 'telefono', 'localidad', 'region', 'idCabecera', 'idAutoridad', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'domicilio', 'localidad', 'acciones'];
   dataSource!: MatTableDataSource<Ministerio>;
   suscription!: Subscription;
-  panelOpenState = false;
 
   constructor(
     private ministerioService: MinisterioService,
@@ -58,7 +52,6 @@ export class MinisterioComponent implements OnInit, OnDestroy {
       this.listMinisterio();
     })
 
-    this.actualizarColumnasVisibles();
   }
 
   listMinisterio(): void {
@@ -72,34 +65,6 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }
-
-actualizarColumnasVisibles(): void {
-  let columnasBase = ['id', 'nombre', 'domicilio', 'telefono', 'estado', 'acciones'];
-
-  let columnasVisibles: string[] = [];
-
-  columnasBase.forEach(columna => {
-    columnasVisibles.push(columna);
-    if (columna === 'telefono' && this.localidadVisible) {
-      columnasVisibles.push('localidad');
-    }
-    if (columna === 'telefono' && this.regionVisible) {
-      columnasVisibles.push('region');
-    }
-    if (columna === 'telefono' && this.idCabeceraVisible) {
-      columnasVisibles.push('idCabecera');
-    }
-    if (columna === 'telefono' && this.idAutoridadVisible) {
-      columnasVisibles.push('idAutoridad');
-    }
-  });
-
-  this.displayedColumns = columnasVisibles;
-
-  if (this.table) {
-    this.table.renderRows();
-  }
-}
 
   accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
@@ -118,16 +83,11 @@ actualizarColumnasVisibles(): void {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filterPredicate = (data: Ministerio, filter: string) => {
-      const nombre = this.accentFilter(data.nombre.toLowerCase());
-      const domicilio = this.accentFilter(data.domicilio.toLowerCase());
-      const localidad = this.accentFilter(data.localidad.nombre.toLowerCase());
-      const region = this.accentFilter(data.region.nombre.toLowerCase());
-      const estado = data.estado ? 'si' : 'no';
-      filter = this.accentFilter(filter.toLowerCase());
-      return nombre.includes(filter) || localidad.includes(filter) || region.includes(filter) || estado.includes(filter);
-    };
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Ministerio, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.localidad.nombre.toLowerCase()).includes(this.accentFilter(filter));
+    };
   }
 
   openFormChanges(ministerio?: Ministerio): void {
@@ -136,32 +96,37 @@ actualizarColumnasVisibles(): void {
       width: '600px',
       data: esEdicion ? ministerio : null
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
       if (result) {
-        this.toastr.success(esEdicion ? 'Ministerio editado con éxito' : 'Ministerio creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
-        } else {
-          this.dataSource.data.push(result);
+        if (result.type === 'save') {
+          this.toastr.success(esEdicion ? 'Ministerio editado con éxito' : 'Ministerio creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+  
+          if (esEdicion) {
+            const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+            if (index !== -1) {
+              this.dataSource.data[index] = result.data;
+            }
+          } else {
+            this.dataSource.data.push(result.data);
+          }
+          this.dataSource._updateChangeSubscription();
+        } else if (result.type === 'error') {
+          this.toastr.error('Ocurrió un error al crear o editar el ministerio', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        } else if (result.type === 'cancel') {
         }
-        this.dataSource._updateChangeSubscription();
-      } else {
-        this.toastr.error('Ocurrió un error al crear o editar el ministerio', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
       }
-    }
     });
   }
+  
 
   openDetail(ministerio: Ministerio): void {
     this.dialogRef = this.dialog.open(MinisterioDetailComponent, { 

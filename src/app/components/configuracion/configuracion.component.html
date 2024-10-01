@@ -117,13 +117,29 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
           <div class="btnMenu-button-row">
-              <button mat-raised-button color="primary" routerLink="/person">Personas</button>
+              <button mat-raised-button color="primary" routerLink="/asistencial">Personas</button>
               <button mat-raised-button color="accent" routerLink="/provincia">Usuarios</button>
               <button mat-raised-button color="warn" routerLink="/autoridad">Autoridades</button>
               <button mat-raised-button routerLink="/legajo">Legajo</button>
               <button mat-raised-button routerLink="/revista">Revista</button>
           </div>
       </mat-expansion-panel>
+      <mat-expansion-panel (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false">
+<mat-expansion-panel-header>
+<mat-panel-title class="panel-title">
+Datos Leyes
+</mat-panel-title>
+<mat-panel-description>
+Tipo ley, Articulo, Inciso. 
+</mat-panel-description>
+</mat-expansion-panel-header>
+<div class="btnMenu-button-row">
+<button mat-raised-button color="primary" routerLink="/tipo-ley">Tipo ley</button>
+<button mat-raised-button color="accent" routerLink="/articulo">Articulo</button>
+<button mat-raised-button color="warn" routerLink="/inciso">Inciso</button>
+</div>
+</mat-expansion-panel>
             <mat-expansion-panel (opened)="panelOpenState = true"
                            (closed)="panelOpenState = false">
         <mat-expansion-panel-header>

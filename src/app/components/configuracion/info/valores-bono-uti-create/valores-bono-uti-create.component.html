@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Agregar nuevo valor Bono Uti
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form [formGroup]="form!" (ngSubmit)="saveUTI()">
+    <mat-dialog-content>
+        <div class="row" style="margin-top: 20px">
+            <div class="col">
+                <mat-form-field appearance="fill" class="form-field">
+                    <mat-label>monto</mat-label>
+                    <input matInput formControlName="monto">
+                    <mat-error *ngIf="form?.get('monto')?.errors?.['required']">El monto es requerido.</mat-error>
+                    <mat-error *ngIf="form?.get('monto')?.errors?.['pattern']">El monto debe tener solo numeros e ir separado por un "." (decimal).</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                <mat-label>Fecha de Inicio</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="form?.get('fechaInicio')?.errors?.['required']">La fecha de nacimiento es requerida.</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Documento legal</mat-label>
+                    <input matInput formControlName="documentoLegal">
+                    <mat-error *ngIf="form?.get('documentoLegal')?.errors?.['required']">El documento legal es requerido.</mat-error>
+                    <mat-error *ngIf="form?.get('documentoLegal')?.errors?.['pattern']">El documento legal debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+                  </mat-form-field>
+            </div>                
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field appearance="fill">
+                    <mat-label>Tipo Guardia</mat-label>
+                    <mat-select formControlName="tipoGuardia">
+                      <mat-option value="CARGO">GMI de guardia cargo y agrupación de hs</mat-option>
+                      <mat-option value="EXTRA">GMI de guardia extra y contra factura</mat-option>
+                      <mat-option value="PASIVA">GMI de guardia pasiva</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+                  </mat-form-field>
+            </div>
+          </div>    
+
+        <div mat-dialog-actions class="action mt-4">
+            <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
+            Agregar nuevo valor
+            </button>
+            <button mat-raised-button color="secondary" type="button" (click)="cancelar()">
+            Cancelar
+            </button>
+        </div>
+    </mat-dialog-content>
+  </form>
