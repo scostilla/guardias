@@ -121,7 +121,7 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Roles</mat-label>
             <mat-select formControlName="roles" multiple>
-              <mat-option *ngFor="let rol of roles" [value]="rol.id">{{ rol.rolNombre }}</mat-option>
+              <mat-option *ngFor="let rol of roles" [value]="rol.rolNombre">{{ rol.rolNombre }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

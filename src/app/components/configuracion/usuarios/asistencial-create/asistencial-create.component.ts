@@ -87,6 +87,7 @@ export class AsistencialCreateComponent implements OnInit {
         (existingUsuario) => {
           if (!existingUsuario) {
             // Usuario no encontrado, creamos
+            console.log("roles para el usuari que se creará", nuevoUsuario);
             this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
           } else {
             console.error('El nombre de usuario ya existe.');
