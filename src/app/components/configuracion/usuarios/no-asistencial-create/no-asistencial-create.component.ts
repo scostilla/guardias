@@ -2,66 +2,53 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
+import { NoAsistencialDto } from 'src/app/dto/Configuracion/NoAsistencialDto';
 import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Rol } from 'src/app/models/Configuracion/Rol';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { AuthService } from 'src/app/services/login/auth.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 
 @Component({
-  selector: 'app-asistencial-create',
-  templateUrl: './asistencial-create.component.html',
-  styleUrls: ['./asistencial-create.component.css']
+  selector: 'app-no-asistencial-create',
+  templateUrl: './no-asistencial-create.component.html',
+  styleUrls: ['./no-asistencial-create.component.css']
 })
-export class AsistencialCreateComponent implements OnInit {
+export class NoAsistencialCreateComponent implements OnInit {
 
-  asistencialForm: FormGroup;
-  tiposGuardias: TipoGuardia[] = [];
+  noAsistencialForm: FormGroup;
   roles: Rol[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private asistencialService: AsistencialService,
+    private noAsistencialService: NoAsistencialService,
     private router: Router,
-    private tipoGuardiaService: TipoGuardiaService,
     private rolService: RolService,
     private authService: AuthService,
     private toastr: ToastrService,
-  ) {
-    this.asistencialForm = this.fb.group({
+
+  ){
+    this.noAsistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
       domicilio: ['', Validators.required],
-      esAsistencial: [true, Validators.required],
-      cuil: ['', [Validators.required, /* Validators.pattern(/^\d{11}$/) */]],
+      esAsistencial: [false, Validators.required],
+      cuil: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: [[], [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       nombreUsuario: ['', [Validators.required]],
       password: ['', [Validators.required]],
       roles: [[], [Validators.required]],
     });
 
-    this.listTipoGuardia();
     this.listRoles();
   }
 
   ngOnInit(): void {
     
-  }
-
-  listTipoGuardia(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      this.tiposGuardias = data;
-    }, error => {
-      console.log(error);
-    });
   }
 
   listRoles(): void {
@@ -72,22 +59,22 @@ export class AsistencialCreateComponent implements OnInit {
     });
   }
 
-  saveAsistencial(): void {
-    if (this.asistencialForm.valid) {
-      const asistencialData = this.asistencialForm.value;
+  saveNoAsistencial(): void {
+    if (this.noAsistencialForm.valid) {
+      const noAsistencialData = this.noAsistencialForm.value;
 
       const nuevoUsuario = new NuevoUsuario(
-        asistencialData.nombreUsuario,
-        asistencialData.email,
-        asistencialData.password,
-        asistencialData.roles
+        noAsistencialData.nombreUsuario,
+        noAsistencialData.email,
+        noAsistencialData.password,
+        noAsistencialData.roles
       );
       // Verifica si existe un usuario con el nombreUsuario especificado
       this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
         (existingUsuario) => {
           if (!existingUsuario) {
             // Usuario no encontrado, creamos
-            this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
+            this.createNewUserAndNoAsistencial(nuevoUsuario, noAsistencialData);
           } else {
             console.error('El nombre de usuario ya existe.');
           }
@@ -99,7 +86,7 @@ export class AsistencialCreateComponent implements OnInit {
     }
   }
 
-  createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
+  createNewUserAndNoAsistencial(nuevoUsuario: NuevoUsuario, noAsistencialData: any): void {
     //creamos el usuario
     this.authService.create(nuevoUsuario).subscribe(
       () => {
@@ -107,8 +94,8 @@ export class AsistencialCreateComponent implements OnInit {
         this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
           (newUsuario) => {
             if (newUsuario && newUsuario.id !== undefined) {
-              //creo el asistencial con el id de usuario creado
-              this.createAsistencialDtoAndSave(asistencialData, newUsuario.id);
+              //creo el no asistencial con el id de usuario creado
+              this.createNoAsistencialDtoAndSave(noAsistencialData, newUsuario.id);
             }
           },
           (searchError) => {
@@ -122,36 +109,35 @@ export class AsistencialCreateComponent implements OnInit {
     );
   }
 
-  createAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
-    const asistencialDto = new AsistencialDto(
-      asistencialData.nombre,
-      asistencialData.apellido,
-      asistencialData.dni,
-      asistencialData.cuil,
-      asistencialData.fechaNacimiento,
-      asistencialData.sexo,
-      asistencialData.telefono,
-      asistencialData.email,
-      asistencialData.domicilio,
-      asistencialData.esAsistencial,
-      asistencialData.activo,
-      usuarioId,
-      asistencialData.tiposGuardias
+  createNoAsistencialDtoAndSave(noAsistencialData: any, usuarioId: number): void {
+    const noAsistencialDto = new NoAsistencialDto(
+      noAsistencialData.nombre,
+      noAsistencialData.apellido,
+      noAsistencialData.dni,
+      noAsistencialData.cuil,
+      noAsistencialData.fechaNacimiento,
+      noAsistencialData.sexo,
+      noAsistencialData.telefono,
+      noAsistencialData.email,
+      noAsistencialData.domicilio,
+      noAsistencialData.esAsistencial,
+      noAsistencialData.activo,
+      usuarioId
     );
 
-    console.log("asistencial dto que quiero guardar", asistencialDto);
+    console.log("noAsistencial dto que quiero guardar", noAsistencialDto);
 
-    this.asistencialService.save(asistencialDto).subscribe(
+    this.noAsistencialService.save(noAsistencialDto).subscribe(
       (result) => {
-        this.toastr.success('Asistencial creado con éxito', 'EXITO', {
+        this.toastr.success('NoAsistencial creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/asistencial'], { state: { asistencialCreado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial creado
+        this.router.navigate(['/no-asistencial'], { state: { noAsistencialCreado: result } }); // Redirigir a la lista de no asistenciales y pasar el noAsistencial creado
       },
       (error) => {
-        this.toastr.error('Ocurrió un error al crear el Asistencial', error, {
+        this.toastr.error('Ocurrió un error al crear el noAsistencial', error, {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -160,28 +146,7 @@ export class AsistencialCreateComponent implements OnInit {
     );
   }
 
-  onTipoGuardiaSelectionChange(event: any): void {
-    const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
-
-    // Si se selecciona CONTRAFACTURA, deseleccionar las demás opciones
-    if (selectedValues.includes(1)) {
-      this.asistencialForm.patchValue({
-        tiposGuardias: [1]
-      });
-    } else if (selectedValues.includes(5)) {
-      // Si se selecciona PASIVA, deseleccionar las demás opciones
-      this.asistencialForm.patchValue({
-        tiposGuardias: [5]
-      });
-    } else {
-      // Si se seleccionan las opciones 2, 3 o 4, permitir que se elijan juntas
-      this.asistencialForm.patchValue({
-        tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
-      });
-    }
-  }
-
-  formatCuil(event: any): void {
+  /* formatCuil(event: any): void {
     let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
     if (value.length > 2) {
       value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
@@ -190,8 +155,8 @@ export class AsistencialCreateComponent implements OnInit {
       value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
     }
     event.target.value = value;
-    this.asistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
-  }
+    this.noAsistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
+  } */
 
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
@@ -199,8 +164,6 @@ export class AsistencialCreateComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/asistencial']);
+    this.router.navigate(['/no-asistencial']);
   }
 }
-
-

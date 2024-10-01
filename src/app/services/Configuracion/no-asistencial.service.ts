@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { NoAsistencialDto } from 'src/app/dto/Configuracion/NoAsistencialDto';
 import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 
 @Injectable({
@@ -31,8 +32,8 @@ export class NoAsistencialService {
       return this.httpClient.get<NoAsistencial>(this.noasistencialesURL + `detailnombre/${nombre}`);
   }
   
-  public save(noasistenciales:NoAsistencial): Observable<any> {
-    return this.httpClient.post<any>(this.noasistencialesURL + 'create', noasistenciales)
+  public save(noAsistencial:NoAsistencialDto): Observable<any> {
+    return this.httpClient.post<any>(this.noasistencialesURL + 'create', noAsistencial)
     .pipe(
       tap(() => {
        this._refresh$.next(); 
@@ -40,8 +41,8 @@ export class NoAsistencialService {
     )
   }
   
-  public update(id:number, noasistenciales:NoAsistencial): Observable<any> {
-    return this.httpClient.put<any>(this.noasistencialesURL + `update/${id}`, noasistenciales)
+  public update(id:number, noasistencial:NoAsistencialDto): Observable<any> {
+    return this.httpClient.put<any>(this.noasistencialesURL + `update/${id}`, noasistencial)
     .pipe(
       tap(() => {
        this._refresh$.next(); 

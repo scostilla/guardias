@@ -39,7 +39,7 @@ export class AsistencialEditComponent implements OnInit {
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
       domicilio: ['', Validators.required],
-      esAsistencial: ['', Validators.required],
+      esAsistencial: [true, Validators.required],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
@@ -52,7 +52,7 @@ export class AsistencialEditComponent implements OnInit {
     });
 
     this.listTipoGuardia();
-    this.listRoles();
+    //this.listRoles();
 
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();

@@ -2,7 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">Agregar Asistencial</div>
+      <div class="titulos">Agregar No asistencial</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
@@ -17,20 +17,20 @@
 
   <div class="row">
       <mat-dialog-content class="mat-typography">
-      <form [formGroup]="asistencialForm" (ngSubmit)="saveAsistencial()">
+      <form [formGroup]="noAsistencialForm" (ngSubmit)="saveNoAsistencial()">
         <div class="form-row">
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre">
-            <mat-error *ngIf="asistencialForm.get('nombre')?.errors?.['required']">El nombre es requerido.</mat-error>
-            <mat-error *ngIf="asistencialForm.get('nombre')?.errors?.['pattern']">El nombre debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('nombre')?.errors?.['required']">El nombre es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('nombre')?.errors?.['pattern']">El nombre debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
           </mat-form-field>
     
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Apellido</mat-label>
             <input matInput formControlName="apellido">
-            <mat-error *ngIf="asistencialForm.get('apellido')?.errors?.['required']">El apellido es requerido.</mat-error>
-            <mat-error *ngIf="asistencialForm.get('apellido')?.errors?.['pattern']">El apellido debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('apellido')?.errors?.['required']">El apellido es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('apellido')?.errors?.['pattern']">El apellido debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
           </mat-form-field>
         </div>
 
@@ -38,15 +38,16 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>DNI</mat-label>
             <input matInput formControlName="dni">
-            <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['required']">El DNI es requerido.</mat-error>
-            <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['pattern']">El DNI debe tener solo números (entre 8 y 20 dígitos).</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('dni')?.errors?.['required']">El DNI es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('dni')?.errors?.['pattern']">El DNI debe tener solo números (entre 8 y 20 dígitos).</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>CUIL</mat-label>
-            <input matInput formControlName="cuil" (input)="formatCuil($event)">
-            <mat-error *ngIf="asistencialForm.get('cuil')?.errors?.['required']">El CUIL es requerido.</mat-error>
-            <mat-error *ngIf="asistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
+            <!-- <input matInput formControlName="cuil" (input)="formatCuil($event)"> -->
+            <input matInput formControlName="cuil" >
+            <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['required']">El CUIL es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
           </mat-form-field>
         </div>
 
@@ -56,7 +57,7 @@
             <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="asistencialForm.get('fechaNacimiento')?.errors?.['required']">La fecha de nacimiento es requerida.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('fechaNacimiento')?.errors?.['required']">La fecha de nacimiento es requerida.</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
@@ -73,49 +74,35 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email">
-            <mat-error *ngIf="asistencialForm.get('email')?.errors?.['required']">El email es requerido.</mat-error>
-            <mat-error *ngIf="asistencialForm.get('email')?.errors?.['email']">Debe ser un email válido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('email')?.errors?.['required']">El email es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('email')?.errors?.['email']">Debe ser un email válido.</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Teléfono</mat-label>
             <input matInput formControlName="telefono">
-            <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['required']">El teléfono es requerido.</mat-error>
-            <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('telefono')?.errors?.['required']">El teléfono es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Domicilio</mat-label>
             <input matInput formControlName="domicilio">
-            <mat-error *ngIf="asistencialForm.get('domicilio')?.errors?.['required']">El domicilio es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('domicilio')?.errors?.['required']">El domicilio es requerido.</mat-error>
           </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Tipo guardia</mat-label>
-            <mat-select formControlName="tiposGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
-              <div *ngIf="asistencialForm.get('tiposGuardias')?.value.includes(1) || asistencialForm.get('tiposGuardias')?.value.includes(5)">
-                <p style="color: rgb(180, 180, 180); font-size: 0.8em; margin-left: 15px;">&raquo; La opción seleccionada no puede combinarse con las demás guardias.</p>
-              </div>    
-              <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia.id">{{ tipoGuardia.nombre }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="asistencialForm.get('tiposGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>  
-          </mat-form-field>
-
         </div>
 
         <div class="form-row">
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Nombre de Usuario</mat-label>
             <input matInput formControlName="nombreUsuario">
-            <mat-error *ngIf="asistencialForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
           </mat-form-field>
       
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Contraseña</mat-label>
             <input matInput formControlName="password">
-            <mat-error *ngIf="asistencialForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
           </mat-form-field>
       
           <mat-form-field appearance="fill" class="form-field">
@@ -127,7 +114,7 @@
         </div>
 
         <div mat-dialog-actions class="action mt-4">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid ">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!noAsistencialForm.valid ">
             Agregar
           </button>
           <button mat-raised-button color="secondary" type="button" (click)="cancel()">

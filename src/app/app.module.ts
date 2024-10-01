@@ -224,6 +224,7 @@ import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/v
 import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
+import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -399,6 +400,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     AsistencialSelectorComponent,
     LegajoCreateComponent,
     AsistencialCreateComponent,
+    NoAsistencialCreateComponent,
     
   ],
 

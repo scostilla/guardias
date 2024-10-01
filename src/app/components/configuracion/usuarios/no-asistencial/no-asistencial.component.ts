@@ -10,6 +10,7 @@ import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { NoAsistencialEditComponent } from '../no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-no-asistencial',
@@ -40,6 +41,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     private noasistencialService: NoAsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -138,7 +140,18 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     };
   }
 
-  openFormChanges(noasistencial?: NoAsistencial): void {
+  createNoAsistencial(): void {
+    this.router.navigate(['/no-asistencial-create']);
+  }
+
+  updateNoAsistencial(noAsistencial: NoAsistencial): void {
+    console.log("en no asistencial se envia el objeto", noAsistencial);
+    this.router.navigate(['/no-asistencial-edit'], {
+      state: { noAsistencial }
+    });
+  }
+
+  /* openFormChanges(noasistencial?: NoAsistencial): void {
     const esEdicion = noasistencial != null;
     const dialogRef = this.dialog.open(NoAsistencialEditComponent, {
       width: '600px',
@@ -168,7 +181,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       } else if (result && result.type === 'cancel') {
       }
     });
-  }
+  } */
 
   openDetail(noasistencial: NoAsistencial): void {
     this.dialogRef = this.dialog.open(NoAsistencialDetailComponent, { 

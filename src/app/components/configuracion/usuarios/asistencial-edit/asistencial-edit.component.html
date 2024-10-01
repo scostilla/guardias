@@ -98,15 +98,6 @@
 
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
-                        <mat-label>Es asistencial?</mat-label>
-                        <mat-select formControlName="esAsistencial">
-                            <mat-option [value]="true">Si</mat-option>
-                            <mat-option [value]="false">No</mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="asistencialForm.get('esAsistencial')?.errors?.['required']">El campo es
-                            requerido.</mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Tipo guardia</mat-label>
                         <mat-select formControlName="tiposGuardias" multiple
                             (selectionChange)="onTipoGuardiaSelectionChange($event)">
