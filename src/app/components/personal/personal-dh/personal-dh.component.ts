@@ -37,7 +37,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
-      console.log('Asistencial recibido:', this.asistencial); // Para depuración
+      console.log('Asistencial recibido:', this.asistencial);
     });
   
     const fechaActual = moment();
