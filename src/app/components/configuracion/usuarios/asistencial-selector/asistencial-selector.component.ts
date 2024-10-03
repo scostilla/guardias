@@ -5,6 +5,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { Person } from 'src/app/models/Configuracion/Person';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 
 @Component({
   selector: 'app-asistencial-selector',
@@ -12,15 +14,18 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
   styleUrls: ['./asistencial-selector.component.css']
 })
 export class AsistencialSelectorComponent implements OnInit {
-  @ViewChild(MatTable) table!: MatTable<Asistencial>;
+  /* @ViewChild(MatTable) table!: MatTable<Asistencial>; */
+  @ViewChild(MatTable) table!: MatTable<Person>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dataSource = new MatTableDataSource<Asistencial>([]);
+  dataSource = new MatTableDataSource<Person>([]);
   displayedColumns: string[] = ['apellido', 'nombre', 'cuil'];
+  selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
   constructor(
     private asistencialService: AsistencialService,
+    private noAsistencialService: NoAsistencialService,
     public dialogRef: MatDialogRef<AsistencialSelectorComponent>,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -37,9 +42,32 @@ export class AsistencialSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.asistencialService.list().subscribe(data => {
+
+    // Cargar la lista según el tipo seleccionado
+    this.loadDataByType(this.selectedType);
+
+    /* this.asistencialService.list().subscribe(data => {
       this.dataSource.data = data;
-    });
+    }); */
+  }
+
+  // Método que se ejecuta al cambiar entre Asistencial y NoAsistencial
+  onTypeChange(event: any): void {
+    this.selectedType = event.value;
+    this.loadDataByType(this.selectedType);
+  }
+
+  // Cargar la lista de asistenciales o noAsistenciales según el tipo
+  loadDataByType(type: string): void {
+    if (type === 'asistencial') {
+      this.asistencialService.list().subscribe(data => {
+        this.dataSource.data = data;
+      });
+    } else if (type === 'noAsistencial') {
+      this.noAsistencialService.list().subscribe(data => {
+        this.dataSource.data = data;
+      });
+    }
   }
 
   applyFilter(event: Event): void {
@@ -48,7 +76,7 @@ export class AsistencialSelectorComponent implements OnInit {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
   
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+    this.dataSource.filterPredicate = (data: Person, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
@@ -58,13 +86,16 @@ export class AsistencialSelectorComponent implements OnInit {
   
     this.dataSource.filter = filterValue;
   }
-  selectAsistencial(asistencial: Asistencial): void {
+
+   // Selecciona una persona (Asistencial o NoAsistencial)
+  selectPersona(persona: Person): void {
     // Verifica que el objeto tenga la estructura correcta
-    console.log('Selected Asistencial:', asistencial);
+    console.log('Selected Persona:', persona);
   
     // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
-    this.dialogRef.close(asistencial);
+    this.dialogRef.close(persona);
   }
+
   cerrar(): void {
     this.dialogRef.close();
   }
