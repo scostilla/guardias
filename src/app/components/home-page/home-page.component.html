@@ -3,7 +3,7 @@
     <div class="text-title-hosp" >
       <mat-icon>business</mat-icon> &nbsp;&nbsp;
       <select class="select-tabla" [(ngModel)]="selectedEfector">
-        <option *ngFor="let efector of nombresEfectores" [value]="efector">{{ efector }}</option>
+        <option *ngFor="let efector of nombresEfectores" [value]="efector">{{ efector.nombre }}</option>
       </select>
     </div>
   </div>

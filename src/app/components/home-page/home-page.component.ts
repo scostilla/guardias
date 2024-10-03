@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
@@ -12,8 +13,8 @@ import { TokenService } from 'src/app/services/login/token.service';
 export class HomePageComponent implements OnInit{
 
   isLogged = false;
-  nombresEfectores: string[] = [];
-  selectedEfector: string | null = null;
+  nombresEfectores: EfectorSummaryDto[] = [];
+  selectedEfector: EfectorSummaryDto | null = null;
 
   constructor(
     private router: Router,
@@ -30,8 +31,8 @@ export class HomePageComponent implements OnInit{
      this.authService.detailPersonBasicPanel()
      .subscribe(
        response => {
-         if ( response.nombresEfectores.length > 0) {
-          this.nombresEfectores = response.nombresEfectores;
+         if ( response.efectores.length > 0) {
+          this.nombresEfectores = response.efectores;
           this.selectedEfector = this.nombresEfectores[0];
         }
        },
