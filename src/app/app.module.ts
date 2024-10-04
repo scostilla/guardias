@@ -234,6 +234,7 @@ import { ArticuloEditComponent } from './components/configuracion/leyes/articulo
 import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
 import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
+import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -419,6 +420,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     IncisoComponent,
     IncisoDetailComponent,
     IncisoEditComponent,
+    PersonalDhHistorialComponent,
     
   ],
 
