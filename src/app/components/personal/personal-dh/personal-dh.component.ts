@@ -114,16 +114,18 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
           const fechaFinalizacion = moment(d.fechaFinalizacion);
   
           return d.persona.id === idPersona &&
-            (fechaInicio.month() === mesActual && fechaInicio.year() <= anioActual) ||
-            (fechaFinalizacion.month() === mesActual && fechaFinalizacion.year() >= anioActual);
+            (fechaInicio.month() <= mesActual && fechaFinalizacion.month() >= mesActual &&
+            fechaInicio.year() <= anioActual && fechaFinalizacion.year() >= anioActual);
         });
   
         distribucionesGuardia.forEach(distr => {
-          const diaDeLaSemana = moment(distr.fechaInicio).format('dddd').toLowerCase();
-          this.horasPorDia[diaDeLaSemana + 'Guardia'].cantidad += distr.cantidadHoras;
-          
-          if (!this.horasPorDia[diaDeLaSemana + 'Guardia'].horaIngreso && distr.horaIngreso) {
-            this.horasPorDia[diaDeLaSemana + 'Guardia'].horaIngreso = distr.horaIngreso;
+          const diaDeLaSemana = moment(distr.fechaInicio).locale('es').format('dddd').toLowerCase();
+          const diaConAcento = diaDeLaSemana === 'miércoles' ? 'miercoles' : diaDeLaSemana === 'sábado' ? 'sabado' : diaDeLaSemana;
+  
+          this.horasPorDia[diaConAcento + 'Guardia'].cantidad += distr.cantidadHoras;
+  
+          if (!this.horasPorDia[diaConAcento + 'Guardia'].horaIngreso && distr.horaIngreso) {
+            this.horasPorDia[diaConAcento + 'Guardia'].horaIngreso = distr.horaIngreso;
           }
         });
   
@@ -133,7 +135,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       });
     });
   }
-
+  
   loadDistribucionesConsultorio(idPersona: number): Observable<void> {
     return new Observable(observer => {
       this.distribucionConsultorioService.list().subscribe(distribuciones => {
@@ -146,16 +148,18 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
           const fechaFinalizacion = moment(d.fechaFinalizacion);
   
           return d.persona.id === idPersona &&
-            (fechaInicio.month() === mesActual && fechaInicio.year() <= anioActual) ||
-            (fechaFinalizacion.month() === mesActual && fechaFinalizacion.year() >= anioActual);
+            (fechaInicio.month() <= mesActual && fechaFinalizacion.month() >= mesActual &&
+            fechaInicio.year() <= anioActual && fechaFinalizacion.year() >= anioActual);
         });
   
         distribucionesConsultorio.forEach(distr => {
-          const diaDeLaSemana = moment(distr.fechaInicio).format('dddd').toLowerCase();
-          this.horasPorDia[diaDeLaSemana + 'Consultorio'].cantidad += distr.cantidadHoras;
-          
-          if (!this.horasPorDia[diaDeLaSemana + 'Consultorio'].horaIngreso && distr.horaIngreso) {
-            this.horasPorDia[diaDeLaSemana + 'Consultorio'].horaIngreso = distr.horaIngreso;
+          const diaDeLaSemana = moment(distr.fechaInicio).locale('es').format('dddd').toLowerCase();
+          const diaConAcento = diaDeLaSemana === 'miércoles' ? 'miercoles' : diaDeLaSemana === 'sábado' ? 'sabado' : diaDeLaSemana;
+  
+          this.horasPorDia[diaConAcento + 'Consultorio'].cantidad += distr.cantidadHoras;
+  
+          if (!this.horasPorDia[diaConAcento + 'Consultorio'].horaIngreso && distr.horaIngreso) {
+            this.horasPorDia[diaConAcento + 'Consultorio'].horaIngreso = distr.horaIngreso;
           }
         });
   
@@ -165,7 +169,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       });
     });
   }
-
+  
   loadDistribucionesGira(idPersona: number): Observable<void> {
     return new Observable(observer => {
       this.distribucionGiraService.list().subscribe(distribuciones => {
@@ -178,16 +182,18 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
           const fechaFinalizacion = moment(d.fechaFinalizacion);
   
           return d.persona.id === idPersona &&
-            (fechaInicio.month() === mesActual && fechaInicio.year() <= anioActual) ||
-            (fechaFinalizacion.month() === mesActual && fechaFinalizacion.year() >= anioActual);
+            (fechaInicio.month() <= mesActual && fechaFinalizacion.month() >= mesActual &&
+            fechaInicio.year() <= anioActual && fechaFinalizacion.year() >= anioActual);
         });
   
         distribucionesGira.forEach(distr => {
-          const diaDeLaSemana = moment(distr.fechaInicio).format('dddd').toLowerCase();
-          this.horasPorDia[diaDeLaSemana + 'Gira'].cantidad += distr.cantidadHoras;
-          
-          if (!this.horasPorDia[diaDeLaSemana + 'Gira'].horaIngreso && distr.horaIngreso) {
-            this.horasPorDia[diaDeLaSemana + 'Gira'].horaIngreso = distr.horaIngreso;
+          const diaDeLaSemana = moment(distr.fechaInicio).locale('es').format('dddd').toLowerCase();
+          const diaConAcento = diaDeLaSemana === 'miércoles' ? 'miercoles' : diaDeLaSemana === 'sábado' ? 'sabado' : diaDeLaSemana;
+  
+          this.horasPorDia[diaConAcento + 'Gira'].cantidad += distr.cantidadHoras;
+  
+          if (!this.horasPorDia[diaConAcento + 'Gira'].horaIngreso && distr.horaIngreso) {
+            this.horasPorDia[diaConAcento + 'Gira'].horaIngreso = distr.horaIngreso;
           }
         });
   
@@ -197,7 +203,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       });
     });
   }
-
+  
   loadDistribucionesOtro(idPersona: number): Observable<void> {
     return new Observable(observer => {
       this.distribucionOtroService.list().subscribe(distribuciones => {
@@ -210,16 +216,18 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
           const fechaFinalizacion = moment(d.fechaFinalizacion);
   
           return d.persona.id === idPersona &&
-            (fechaInicio.month() === mesActual && fechaInicio.year() <= anioActual) ||
-            (fechaFinalizacion.month() === mesActual && fechaFinalizacion.year() >= anioActual);
+            (fechaInicio.month() <= mesActual && fechaFinalizacion.month() >= mesActual &&
+            fechaInicio.year() <= anioActual && fechaFinalizacion.year() >= anioActual);
         });
   
         distribucionesOtro.forEach(distr => {
-          const diaDeLaSemana = moment(distr.fechaInicio).format('dddd').toLowerCase();
-          this.horasPorDia[diaDeLaSemana + 'Gira'].cantidad += distr.cantidadHoras;
-          
-          if (!this.horasPorDia[diaDeLaSemana + 'Gira'].horaIngreso && distr.horaIngreso) {
-            this.horasPorDia[diaDeLaSemana + 'Gira'].horaIngreso = distr.horaIngreso;
+          const diaDeLaSemana = moment(distr.fechaInicio).locale('es').format('dddd').toLowerCase();
+          const diaConAcento = diaDeLaSemana === 'miércoles' ? 'miercoles' : diaDeLaSemana === 'sábado' ? 'sabado' : diaDeLaSemana;
+  
+          this.horasPorDia[diaConAcento + 'Otro'].cantidad += distr.cantidadHoras;
+  
+          if (!this.horasPorDia[diaConAcento + 'Otro'].horaIngreso && distr.horaIngreso) {
+            this.horasPorDia[diaConAcento + 'Otro'].horaIngreso = distr.horaIngreso;
           }
         });
   
@@ -229,7 +237,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       });
     });
   }
-
+  
 
   getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];

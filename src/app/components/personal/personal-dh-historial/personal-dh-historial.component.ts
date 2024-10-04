@@ -21,6 +21,7 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
   asistencial: Asistencial | null = null;
   nombreMes!: string;
   anoActual!: number;
+  
 
   mesesDisponibles: { value: string; label: string }[] = [];
   mesSeleccionado!: string;
@@ -92,27 +93,39 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     for (let i = 1; i < fechaActual.month(); i++) {
       mesesPasados.push({
         value: `${i}-${this.anoActual}`, // Formato MM-YYYY
-        label: moment().month(i - 1).format('MMMM YYYY')
+        label: moment().month(i - 1).format('MMMM YYYY').toUpperCase()
       });
     }
   
     // Agregar el mes anterior
     if (fechaActual.month() > 0) { // Si no es enero
       mesesPasados.push({
-        value: `${fechaActual.month()}-${this.anoActual}`, // Mes anterior
-        label: moment().month(fechaActual.month() - 1).format('MMMM YYYY')
+        value: `${fechaActual.month()}-${this.anoActual}`,
+        label: moment().month(fechaActual.month() - 1).format('MMMM YYYY').toUpperCase()
       });
-    } else {
-      // Si es enero, agregar diciembre del año anterior
+    } else { // Si es enero, agregar diciembre del año anterior
       mesesPasados.push({
         value: `12-${this.anoActual - 1}`,
-        label: moment().month(11).format('MMMM YYYY')
+        label: moment().month(11).format('MMMM YYYY').toUpperCase()
       });
     }
   
     this.mesesDisponibles = mesesPasados;
+  
+    // Establecer mes y año por defecto
+    this.mesSeleccionado = this.mesesDisponibles[this.mesesDisponibles.length - 1].value; // El último mes disponible
+    this.nombreMes = moment().month(fechaActual.month() - 1).format('MMMM').toUpperCase(); // Nombre en mayúsculas
   }
   
+  onMonthChange(event: any): void {
+    const [mes, anio] = event.target.value.split('-').map(Number);
+    this.mesSeleccionado = event.target.value;
+    this.nombreMes = moment().month(mes - 1).format('MMMM').toUpperCase(); // Nombre del mes en mayúsculas
+    this.anoActual = anio;
+  
+    this.filtrarDistribucionesPorMes(); // Opcional: Filtrar distribuciones cuando cambie el mes
+  }
+      
   filtrarDistribucionesPorMes(): void {
     const [mes, anio] = this.mesSeleccionado.split('-').map(Number);
     console.log(`Filtrar distribuciones para: ${mes}/${anio}`);
@@ -145,100 +158,120 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     this.loadDistribucionesOtro(idPersona);
   }
 
-loadDistribucionesGuardia(idPersona: number): void {
-  this.distribucionGuardiaService.list().subscribe(distribuciones => {
-    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+  loadDistribucionesGuardia(idPersona: number): void {
+    this.distribucionGuardiaService.list().subscribe(distribuciones => {
+        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+        
+        // Establecer el rango de fechas para el mes seleccionado
+        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
+        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
 
-    const distribucionesGuardia = distribuciones.filter(d => 
-      d.persona.id === idPersona &&
-      moment(d.fechaInicio).year() === anioSeleccionado &&
-      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
-    );
+        // Resetear horas antes de sumar
+        this.resetHorasPorDia();
 
-    distribucionesGuardia.forEach(distr => {
-      const dia = distr.dia.toLowerCase();
-      this.horasPorDia[dia + 'Guardia'].cantidad += distr.cantidadHoras;
+        distribuciones.forEach(distr => {
+          if (distr.persona.id === idPersona) {
+              const fechaInicio = moment(distr.fechaInicio);
+              const fechaFinalizacion = moment(distr.fechaFinalizacion);
+      
+              // Verificar si el mes seleccionado está dentro del rango de fechas
+              if ((fechaInicio.isBefore(finDelMes) && fechaFinalizacion.isAfter(inicioDelMes)) || 
+                  (fechaInicio.isSame(inicioDelMes, 'month') || fechaFinalizacion.isSame(finDelMes, 'month'))) {
+                  
+                  // Usar locale y asegurarse que se utilice 'dddd' y toLowerCase
+                  const diaKey = moment(fechaInicio).locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
+                  const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
+                  this.horasPorDia[diaConAcento + 'Guardia'].cantidad += distr.cantidadHoras;
+              }
+          }
+      });
 
-      if (distr.horaIngreso) {
-        this.horasPorDia[dia + 'Guardia'].horaIngreso = distr.horaIngreso;
-      }
+        // Calcular total de horas de Guardia
+        this.totalHorasGuardia = distribuciones.reduce((total, distr) => {
+            const fechaInicio = moment(distr.fechaInicio);
+            const fechaFinalizacion = moment(distr.fechaFinalizacion);
+            if (distr.persona.id === idPersona && 
+                (fechaInicio.isBefore(finDelMes) && fechaFinalizacion.isAfter(inicioDelMes))) {
+                return total + distr.cantidadHoras;
+            }
+            return total;
+        }, 0);
     });
-
-    this.totalHorasGuardia = distribucionesGuardia.reduce((total, distr) => total + distr.cantidadHoras, 0);
-  });
 }
 
 loadDistribucionesConsultorio(idPersona: number): void {
-  this.distribucionConsultorioService.list().subscribe(distribuciones => {
-    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+    this.distribucionConsultorioService.list().subscribe(distribuciones => {
+        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-    const distribucionesConsultorio = distribuciones.filter(d => 
-      d.persona.id === idPersona &&
-      moment(d.fechaInicio).year() === anioSeleccionado &&
-      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
-    );
+        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
+        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
 
-    distribucionesConsultorio.forEach(distr => {
-      const dia = distr.dia.toLowerCase();
-      this.horasPorDia[dia + 'Consultorio'].cantidad += distr.cantidadHoras;
+        const distribucionesConsultorio = distribuciones.filter(d => 
+            d.persona.id === idPersona &&
+            moment(d.fechaInicio).isBefore(finDelMes) && 
+            moment(d.fechaFinalizacion).isAfter(inicioDelMes) // Verifica que el mes esté dentro del rango
+        );
 
-      if (distr.horaIngreso) {
-        this.horasPorDia[dia + 'Consultorio'].horaIngreso = distr.horaIngreso;
-      }
+        distribucionesConsultorio.forEach(distr => {
+            const fechaInicio = moment(distr.fechaInicio);
+            const diaKey = fechaInicio.locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
+            const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
+            this.horasPorDia[diaConAcento + 'Consultorio'].cantidad += distr.cantidadHoras;
+        });
+
+        this.totalHorasConsultorio = distribucionesConsultorio.reduce((total, distr) => total + distr.cantidadHoras, 0);
     });
-
-    this.totalHorasConsultorio = distribucionesConsultorio.reduce((total, distr) => total + distr.cantidadHoras, 0);
-  });
 }
 
 loadDistribucionesGira(idPersona: number): void {
-  this.distribucionGiraService.list().subscribe(distribuciones => {
-    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+    this.distribucionGiraService.list().subscribe(distribuciones => {
+        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-    const distribucionesGira = distribuciones.filter(d => 
-      d.persona.id === idPersona &&
-      moment(d.fechaInicio).year() === anioSeleccionado &&
-      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
-    );
+        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
+        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
 
-    distribucionesGira.forEach(distr => {
-      const dia = distr.dia.toLowerCase();
-      this.horasPorDia[dia + 'Gira'].cantidad += distr.cantidadHoras;
+        const distribucionesGira = distribuciones.filter(d => 
+            d.persona.id === idPersona &&
+            moment(d.fechaInicio).isBefore(finDelMes) && 
+            moment(d.fechaFinalizacion).isAfter(inicioDelMes) // Verifica que el mes esté dentro del rango
+        );
 
-      if (distr.horaIngreso) {
-        this.horasPorDia[dia + 'Gira'].horaIngreso = distr.horaIngreso;
-      }
+        distribucionesGira.forEach(distr => {
+            const fechaInicio = moment(distr.fechaInicio);
+            const diaKey = fechaInicio.locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
+            const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
+            this.horasPorDia[diaConAcento + 'Gira'].cantidad += distr.cantidadHoras;
+        });
+
+        this.totalHorasGira = distribucionesGira.reduce((total, distr) => total + distr.cantidadHoras, 0);
     });
-
-    this.totalHorasGira = distribucionesGira.reduce((total, distr) => total + distr.cantidadHoras, 0);
-  });
 }
 
 loadDistribucionesOtro(idPersona: number): void {
-  this.distribucionOtroService.list().subscribe(distribuciones => {
-    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+    this.distribucionOtroService.list().subscribe(distribuciones => {
+        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-    const distribucionesOtro = distribuciones.filter(d => 
-      d.persona.id === idPersona &&
-      moment(d.fechaInicio).year() === anioSeleccionado &&
-      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
-    );
+        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
+        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
 
-    distribucionesOtro.forEach(distr => {
-      const dia = distr.dia.toLowerCase();
-      this.horasPorDia[dia + 'Otro'].cantidad += distr.cantidadHoras;
+        const distribucionesOtro = distribuciones.filter(d => 
+            d.persona.id === idPersona &&
+            moment(d.fechaInicio).isBefore(finDelMes) && 
+            moment(d.fechaFinalizacion).isAfter(inicioDelMes) // Verifica que el mes esté dentro del rango
+        );
 
-      if (distr.horaIngreso) {
-        this.horasPorDia[dia + 'Otro'].horaIngreso = distr.horaIngreso;
-      }
+        distribucionesOtro.forEach(distr => {
+            const fechaInicio = moment(distr.fechaInicio);
+            const diaKey = fechaInicio.locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
+            const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
+            this.horasPorDia[diaConAcento + 'Otro'].cantidad += distr.cantidadHoras;
+        });
+
+        this.totalHorasOtro = distribucionesOtro.reduce((total, distr) => total + distr.cantidadHoras, 0);
     });
-
-    this.totalHorasOtro = distribucionesOtro.reduce((total, distr) => total + distr.cantidadHoras, 0);
-  });
 }
 
-
-  getMonthName(monthIndex: number): string {
+getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     return monthNames[monthIndex];
   }
