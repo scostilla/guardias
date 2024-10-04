@@ -88,14 +88,15 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     const fechaActual = moment();
     const mesesPasados = [];
   
-    for (let i = 1; i <= fechaActual.month(); i++) {
+    // Agregar meses desde enero hasta el mes anterior al actual
+    for (let i = 1; i < fechaActual.month(); i++) {
       mesesPasados.push({
         value: `${i}-${this.anoActual}`, // Formato MM-YYYY
         label: moment().month(i - 1).format('MMMM YYYY')
       });
     }
   
-    // Agregar el mes anterior al array de meses disponibles
+    // Agregar el mes anterior
     if (fechaActual.month() > 0) { // Si no es enero
       mesesPasados.push({
         value: `${fechaActual.month()}-${this.anoActual}`, // Mes anterior
@@ -167,86 +168,75 @@ loadDistribucionesGuardia(idPersona: number): void {
   });
 }
 
-  loadDistribucionesConsultorio(idPersona: number): void {
-    this.distribucionConsultorioService.list().subscribe(distribuciones => {
-      const fechaActual = moment();
-      const mesActual = fechaActual.month();
-      const anioActual = fechaActual.year();
+loadDistribucionesConsultorio(idPersona: number): void {
+  this.distribucionConsultorioService.list().subscribe(distribuciones => {
+    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-      const distribucionesConsultorio = distribuciones.filter(d => 
-        d.persona.id === idPersona && 
-        moment(d.fechaInicio).year() <= anioActual && 
-        moment(d.fechaFinalizacion).year() >= anioActual && 
-        moment(d.fechaInicio).month() <= mesActual && 
-        moment(d.fechaFinalizacion).month() >= mesActual
-      );
+    const distribucionesConsultorio = distribuciones.filter(d => 
+      d.persona.id === idPersona &&
+      moment(d.fechaInicio).year() === anioSeleccionado &&
+      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
+    );
 
-      distribucionesConsultorio.forEach(distr => {
-        const dia = distr.dia.toLowerCase();
-        this.horasPorDia[dia + 'Consultorio'].cantidad += distr.cantidadHoras;
+    distribucionesConsultorio.forEach(distr => {
+      const dia = distr.dia.toLowerCase();
+      this.horasPorDia[dia + 'Consultorio'].cantidad += distr.cantidadHoras;
 
-        if (distr.horaIngreso) {
-            this.horasPorDia[dia + 'Consultorio'].horaIngreso = distr.horaIngreso;
-        }
+      if (distr.horaIngreso) {
+        this.horasPorDia[dia + 'Consultorio'].horaIngreso = distr.horaIngreso;
+      }
     });
 
     this.totalHorasConsultorio = distribucionesConsultorio.reduce((total, distr) => total + distr.cantidadHoras, 0);
-});
+  });
 }
 
-  loadDistribucionesGira(idPersona: number): void {
-    this.distribucionGiraService.list().subscribe(distribuciones => {
-      const fechaActual = moment();
-      const mesActual = fechaActual.month();
-      const anioActual = fechaActual.year();
+loadDistribucionesGira(idPersona: number): void {
+  this.distribucionGiraService.list().subscribe(distribuciones => {
+    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-      const distribucionesGira = distribuciones.filter(d => 
-        d.persona.id === idPersona && 
-        moment(d.fechaInicio).year() <= anioActual && 
-        moment(d.fechaFinalizacion).year() >= anioActual && 
-        moment(d.fechaInicio).month() <= mesActual && 
-        moment(d.fechaFinalizacion).month() >= mesActual
-      );
+    const distribucionesGira = distribuciones.filter(d => 
+      d.persona.id === idPersona &&
+      moment(d.fechaInicio).year() === anioSeleccionado &&
+      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
+    );
 
-      distribucionesGira.forEach(distr => {
-        const dia = distr.dia.toLowerCase();
-        this.horasPorDia[dia + 'Gira'].cantidad += distr.cantidadHoras;
+    distribucionesGira.forEach(distr => {
+      const dia = distr.dia.toLowerCase();
+      this.horasPorDia[dia + 'Gira'].cantidad += distr.cantidadHoras;
 
-        if (distr.horaIngreso) {
-            this.horasPorDia[dia + 'Gira'].horaIngreso = distr.horaIngreso;
-        }
+      if (distr.horaIngreso) {
+        this.horasPorDia[dia + 'Gira'].horaIngreso = distr.horaIngreso;
+      }
     });
 
     this.totalHorasGira = distribucionesGira.reduce((total, distr) => total + distr.cantidadHoras, 0);
-});
+  });
 }
 
-  loadDistribucionesOtro(idPersona: number): void {
-    this.distribucionOtroService.list().subscribe(distribuciones => {
-      const fechaActual = moment();
-      const mesActual = fechaActual.month();
-      const anioActual = fechaActual.year();
+loadDistribucionesOtro(idPersona: number): void {
+  this.distribucionOtroService.list().subscribe(distribuciones => {
+    const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
 
-      const distribucionesOtro = distribuciones.filter(d => 
-        d.persona.id === idPersona && 
-        moment(d.fechaInicio).year() <= anioActual && 
-        moment(d.fechaFinalizacion).year() >= anioActual && 
-        moment(d.fechaInicio).month() <= mesActual && 
-        moment(d.fechaFinalizacion).month() >= mesActual
-      );
+    const distribucionesOtro = distribuciones.filter(d => 
+      d.persona.id === idPersona &&
+      moment(d.fechaInicio).year() === anioSeleccionado &&
+      moment(d.fechaInicio).month() === (mesSeleccionado - 1) // Restar 1 porque los meses son 0-indexados
+    );
 
-      distribucionesOtro.forEach(distr => {
-        const dia = distr.dia.toLowerCase();
-        this.horasPorDia[dia + 'Otro'].cantidad += distr.cantidadHoras;
+    distribucionesOtro.forEach(distr => {
+      const dia = distr.dia.toLowerCase();
+      this.horasPorDia[dia + 'Otro'].cantidad += distr.cantidadHoras;
 
-        if (distr.horaIngreso) {
-            this.horasPorDia[dia + 'Otro'].horaIngreso = distr.horaIngreso;
-        }
+      if (distr.horaIngreso) {
+        this.horasPorDia[dia + 'Otro'].horaIngreso = distr.horaIngreso;
+      }
     });
 
     this.totalHorasOtro = distribucionesOtro.reduce((total, distr) => total + distr.cantidadHoras, 0);
-});
+  });
 }
+
 
   getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
