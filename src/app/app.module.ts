@@ -187,7 +187,7 @@ import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/v
 import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
-import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
+
 import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
 import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
@@ -429,7 +429,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     TipoLeyEditComponent,
     ArticuloComponent,
     ArticuloDetailComponent,
-    ArticuloEditComponent,
+ 
     IncisoComponent,
     IncisoDetailComponent,
     IncisoEditComponent,

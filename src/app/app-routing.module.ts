@@ -78,7 +78,7 @@ import { TipoRevistaEditComponent } from './components/configuracion/usuarios/ti
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 //Configuraciones: Leyes
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
-import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
+
 import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
 import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
@@ -296,7 +296,7 @@ const routes: Routes = [
   //Configuraciones: Leyes
   {path: 'articulo', component:ArticuloComponent},
   {path: 'articulo-detail/:id', component:ArticuloDetailComponent},
-  {path: 'articulo-edit/:id', component:ArticuloEditComponent},
+
   {path: 'inciso', component:IncisoComponent},
   {path: 'inciso-detail/:id', component:IncisoDetailComponent},
   {path: 'inciso-edit/:id', component:IncisoEditComponent},

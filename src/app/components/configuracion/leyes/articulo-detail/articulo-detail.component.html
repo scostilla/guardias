@@ -1,1 +1,24 @@
-<p>articulo-detail works!</p>
+<h1 mat-dialog-title> DETALLE
+  <h5>ARTÍCULO</h5>
+</h1>
+<mat-dialog-content>
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row">Número</th>
+        <td>{{articulo.numero}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Denominación</th>
+        <td>{{articulo.denominacion}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Detalle</th>
+        <td>{{articulo.detalle}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div mat-dialog-actions class="action mt-4">
+    <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>
