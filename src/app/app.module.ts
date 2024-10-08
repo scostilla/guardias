@@ -18,6 +18,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { CategoriaCreateComponent } from './components/configuracion/usuarios/categoria-create/categoria-create.component';
 import { SharedModule } from './components/shared/shared.module';
 
+
 //Angular nativo
 
 //Componentes sistema
@@ -236,7 +237,12 @@ import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { NovedadesPersonDetailComponent } from './components/personal/novedades-person-detail/novedades-person-detail.component';
+import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
+import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
+import { PersonalComponent } from './components/personal/personal/personal.component';
+import { interceptorProvider } from './interceptors/interceptor.service';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
