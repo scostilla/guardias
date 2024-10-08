@@ -297,7 +297,6 @@ export class DistHorariaComponent {
     
     for (let i = 0; i < 6; i++) {
       const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
-      const ultimoDia = mes.daysInMonth(); // Último día del mes
       
       // Crea un objeto Moment para el último día del mes
       const fechaFinalizacion = moment(mes).endOf('month');
@@ -328,7 +327,18 @@ export class DistHorariaComponent {
   saveDistribuciones() {
     this.isButtonDisabled = true;
 
-    const fechaFinalizacion = this.guardiaForm.get('fechaFinalizacion')?.value;
+    // Obtener fechas de inicio y finalización para cada formulario
+    const fechaInicioGuardia = this.guardiaForm.get('fechaInicio')?.value;
+    const fechaFinalizacionGuardia = this.guardiaForm.get('fechaFinalizacion')?.value;
+    
+    const fechaInicioConsultorio = this.consultorioForm.get('fechaInicio')?.value;
+    const fechaFinalizacionConsultorio = this.consultorioForm.get('fechaFinalizacion')?.value;
+
+    const fechaInicioGira = this.giraForm.get('fechaInicio')?.value;
+    const fechaFinalizacionGira = this.giraForm.get('fechaFinalizacion')?.value;
+
+    const fechaInicioOtro = this.otroForm.get('fechaInicio')?.value;
+    const fechaFinalizacionOtro = this.otroForm.get('fechaFinalizacion')?.value;
 
     if (this.idEfector === undefined) {
         this.toastr.error('El efector no está definido.', 'Error', {
@@ -341,13 +351,12 @@ export class DistHorariaComponent {
     }
 
     console.log('Datos a guardar:', {
-      guardia: this.guardiaForm.value,
-      consultorio: this.consultorioForm.value,
-      gira: this.giraForm.value,
-      otro: this.otroForm.value,
+        guardia: this.guardiaForm.value,
+        consultorio: this.consultorioForm.value,
+        gira: this.giraForm.value,
+        otro: this.otroForm.value,
     });
 
-    //Esto es para chequear si un form se inicio tiene datos obligatorios sin guardar
     const formChecks = [
         { form: this.guardiaForm, name: 'Guardias' },
         { form: this.consultorioForm, name: 'Consultorio' },
@@ -367,142 +376,180 @@ export class DistHorariaComponent {
         }
     }
 
-    //El uso de promesas es para poder bloquear el boton una vez realizada la accion de guardar
     const savePromises = [];
 
-    //Guarda guardia
+    // Calcula meses para cada distribución
+    const guardiaMeses = this.calcularMeses(fechaInicioGuardia, fechaFinalizacionGuardia);
+    const consultorioMeses = this.calcularMeses(fechaInicioConsultorio, fechaFinalizacionConsultorio);
+    const giraMeses = this.calcularMeses(fechaInicioGira, fechaFinalizacionGira);
+    const otroMeses = this.calcularMeses(fechaInicioOtro, fechaFinalizacionOtro);
+
+    // Guarda guardia
     if (this.guardiaForm.valid) {
-        const distribucionGuardiaDto = new DistribucionGuardiaDto(
-            this.guardiaForm.value.dia,
-            this.guardiaForm.value.cantidadHoras,
-            this.guardiaForm.value.idPersona,
-            this.idEfector,
-            this.guardiaForm.value.fechaInicio,
-            this.guardiaForm.value.fechaFinalizacion,
-            this.guardiaForm.value.horaIngreso,
-            this.guardiaForm.value.tipoGuardia,
-            this.guardiaForm.value.idServicio.id
-        );
+        for (const mes of guardiaMeses) {
+            const distribucionGuardiaDto = new DistribucionGuardiaDto(
+                this.guardiaForm.value.dia,
+                this.guardiaForm.value.cantidadHoras,
+                this.guardiaForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.guardiaForm.value.horaIngreso,
+                this.guardiaForm.value.tipoGuardia,
+                this.guardiaForm.value.idServicio.id
+            );
 
-        savePromises.push(
-            this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Guardia', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar guardia.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+                this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Guardia', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+                    .catch(() => this.toastr.error('No se pudo guardar guardia.', 'Error', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+            );
+        }
     }
 
-    //Guarda consultorio
+    // Guarda consultorio
     if (this.consultorioForm.valid) {
-        const distribucionConsultorioDto = new DistribucionConsultorioDto(
-            this.consultorioForm.value.dia,
-            this.consultorioForm.value.cantidadHoras,
-            this.consultorioForm.value.idPersona,
-            this.idEfector,
-            this.consultorioForm.value.fechaInicio,
-            this.consultorioForm.value.fechaFinalizacion,
-            this.consultorioForm.value.horaIngreso,
-            this.consultorioForm.value.idServicio.id,
-            this.consultorioForm.value.tipoConsultorio
-        );
+        for (const mes of consultorioMeses) {
+            const distribucionConsultorioDto = new DistribucionConsultorioDto(
+                this.consultorioForm.value.dia,
+                this.consultorioForm.value.cantidadHoras,
+                this.consultorioForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.consultorioForm.value.horaIngreso,
+                this.consultorioForm.value.idServicio.id,
+                this.consultorioForm.value.tipoConsultorio
+            );
 
-        savePromises.push(
-            this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Consultorio', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar Consultorio.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+                this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
+                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Consultorio', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+                    .catch(() => this.toastr.error('No se pudo guardar Consultorio.', 'Error', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+            );
+        }
     }
 
-    //Guarda gira medica
+    // Guarda gira médica
     if (this.giraForm.valid) {
-        const distribucionGiraDto = new DistribucionGiraDto(
-            this.giraForm.value.dia,
-            this.giraForm.value.cantidadHoras,
-            this.giraForm.value.idPersona,
-            this.idEfector,
-            this.giraForm.value.fechaInicio,
-            this.giraForm.value.fechaFinalizacion,
-            this.giraForm.value.horaIngreso,
-            this.giraForm.value.puestoSalud,
-            this.giraForm.value.descripcion,
-            this.giraForm.value.destino
-        );
+        for (const mes of giraMeses) {
+            const distribucionGiraDto = new DistribucionGiraDto(
+                this.giraForm.value.dia,
+                this.giraForm.value.cantidadHoras,
+                this.giraForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.giraForm.value.horaIngreso,
+                this.giraForm.value.puestoSalud,
+                this.giraForm.value.descripcion,
+                this.giraForm.value.destino
+            );
 
-        savePromises.push(
-            this.distribucionGiraService.save(distribucionGiraDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Gira médica', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar Gira médica.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+                this.distribucionGiraService.save(distribucionGiraDto).toPromise()
+                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Gira médica', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+                    .catch(() => this.toastr.error('No se pudo guardar Gira médica.', 'Error', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+            );
+        }
     }
 
-    //Guarda Otras actividades
+    // Guarda otras actividades
     if (this.otroForm.valid) {
-        const distribucionOtroDto = new DistribucionOtroDto(
-            this.otroForm.value.dia,
-            this.otroForm.value.cantidadHoras,
-            this.otroForm.value.idPersona,
-            this.idEfector,
-            this.otroForm.value.fechaInicio,
-            this.otroForm.value.fechaFinalizacion,
-            this.otroForm.value.horaIngreso,
-            this.otroForm.value.descripcion,
-            this.otroForm.value.lugar
-        );
+        for (const mes of otroMeses) {
+            const distribucionOtroDto = new DistribucionOtroDto(
+                this.otroForm.value.dia,
+                this.otroForm.value.cantidadHoras,
+                this.otroForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.otroForm.value.horaIngreso,
+                this.otroForm.value.descripcion,
+                this.otroForm.value.lugar
+            );
 
-        savePromises.push(
-            this.distribucionOtroService.save(distribucionOtroDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Otra actividad', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar otra actividad.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+                this.distribucionOtroService.save(distribucionOtroDto).toPromise()
+                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Otra actividad', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+                    .catch(() => this.toastr.error('No se pudo guardar otra actividad.', 'Error', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    }))
+            );
+        }
     }
 
     // Envia los datos cargados para guardar
     Promise.all(savePromises)
-    .then(() => {
-      this.router.navigate(['/personal']);
-    })
-    .catch(() => {
-      this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
+        .then(() => {
+            this.router.navigate(['/personal']);
+        })
+        .catch(() => {
+            this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+        })
+        .finally(() => {
+            this.isButtonDisabled = false;
+        });
+}
+
+// Función para calcular los meses de un rango de fechas
+calcularMeses(fechaInicio: string, fechaFin: string): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
+  const meses: Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> = [];
+  const inicio = moment(fechaInicio);
+  const fin = moment(fechaFin);
+  
+  let primerMes = true;
+  while (inicio.isSameOrBefore(fin, 'month')) {
+      const mesNombreCapitalizado = inicio.format('MMMM').charAt(0).toUpperCase() + inicio.format('MMMM').slice(1);
+      
+      // Obtener el último día del mes actual
+      const fechaFinalizacion = moment(inicio).endOf('month').startOf('day').toDate(); 
+  
+      meses.push({
+          mes: mesNombreCapitalizado,
+          fechaInicio: primerMes ? inicio.toDate() : inicio.startOf('month').toDate(),
+          fechaFinalizacion: fechaFinalizacion,
       });
-    })
-    .finally(() => {
-      this.isButtonDisabled = false;
-    });
+  
+      primerMes = false;
+      inicio.add(1, 'month');
   }
+    return meses;
+}
 
   nextStep(): void {
     this.step = (this.step + 1) % 4;
