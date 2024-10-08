@@ -2,17 +2,14 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-7 mb-3">
-      <div class="titulos">DISTRIBUCIÓN HORARIA <span class="titulos-second">SEMANAL</span></div>
+      <div class="titulos">HISTORIAL DIST. HORARIA <span class="titulos-second">SEMANAL</span></div>
     </div>
     <div class="col-12 col-md-5 d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="volverDistribucion()">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
       <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
-      </button>
-      <button mat-fab class="button-pase" style="margin-left: 5px;" matTooltip="Ver historial" (click)="verDistribucionHistorial()">
-        <mat-icon>calendar_month</mat-icon>
       </button>
     </div>
   </div>
@@ -30,11 +27,13 @@
       </div>
     </div>
     <div class="col-md-3 d-flex justify-content-start">
-      <div class="contenedor-subtitulo-bocadillo">
-        ACTUAL
-      </div>  
+        <div class="contenedor-subtitulo-bocadillo">
+            <select class="select-tabla" [(ngModel)]="mesSeleccionado" (change)="onMonthChange($event)">
+                <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
+              </select>
+        </div>
+      </div>
     </div>
-  </div>
 
   <div class="row">
   <div class="table-responsive">
@@ -220,18 +219,4 @@
   </div>
   </div>
 
-  <div class="row">
-  <div class="container-mensajes">
-    <div *ngIf="cargaHoraria !== undefined" class="carga-horaria-display">
-      <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong> hs</p>
-      <p *ngIf="cargaHoraria === undefined">
-        No hay carga horaria disponible para este profesional.
-      </p>
-    </div>
-
-    <div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
-      <p>{{ mensajeCargaHoraria }}</p>
-    </div>
-  </div>
-  </div>
 </div>

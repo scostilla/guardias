@@ -65,16 +65,9 @@ import { CategoriaEditComponent } from './components/configuracion/usuarios/cate
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
-import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
-import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
-import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
-import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
-import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
-import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
-import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
+import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 //Configuraciones: Leyes
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
@@ -282,6 +275,7 @@ const routes: Routes = [
   {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'personal-dh', component:PersonalDhComponent},
+  {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
   {path: 'cargo-edit/:id', component:CargoEditComponent},

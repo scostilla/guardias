@@ -39,6 +39,9 @@
       <div class="container-mensajes">
         <div *ngIf="isProfessionalLoaded && cargaHoraria !== undefined" class="carga-horaria-display">
           <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong> hs</p>
+          <p *ngIf="isProfessionalLoaded && cargaHoraria === undefined">
+            No hay carga horaria disponible para este asistencial.
+          </p>    
         </div>
 
         <div *ngIf="isProfessionalLoaded" [ngClass]="horasMessageClass" class="horas-status-display">

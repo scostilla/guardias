@@ -11,7 +11,7 @@ import { DistribucionOtro } from "src/app/models/personal/DistribucionOtro";
 })
 export class DistribucionOtroService {
 
-  distribucionOtrosURL = 'http://localhost:8080/distribucionOtro/';
+  distribucionOtrosURL = 'http://localhost:8080/distribucionOtra/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
