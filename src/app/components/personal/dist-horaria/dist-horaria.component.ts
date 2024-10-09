@@ -298,7 +298,7 @@ export class DistHorariaComponent {
     for (let i = 0; i < 6; i++) {
       const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
       
-      // Crea un objeto Moment para el último día del mes
+      const fechaInicio = mes.startOf('month').toDate();
       const fechaFinalizacion = moment(mes).endOf('month');
   
       const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
@@ -377,6 +377,7 @@ export class DistHorariaComponent {
     }
 
     const savePromises = [];
+    const errorMessages: string[] = [];
 
     // Calcula meses para cada distribución
     const guardiaMeses = this.calcularMeses(fechaInicioGuardia, fechaFinalizacionGuardia);
@@ -400,19 +401,12 @@ export class DistHorariaComponent {
             );
 
             savePromises.push(
-                this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Guardia', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-                    .catch(() => this.toastr.error('No se pudo guardar guardia.', 'Error', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-            );
-        }
+              this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
+                  })
+          );
+      }
     }
 
     // Guarda consultorio
@@ -431,19 +425,12 @@ export class DistHorariaComponent {
             );
 
             savePromises.push(
-                this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
-                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Consultorio', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-                    .catch(() => this.toastr.error('No se pudo guardar Consultorio.', 'Error', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-            );
-        }
+              this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionConsultorioDto.dia}`);
+                  })
+          );
+      }
     }
 
     // Guarda gira médica
@@ -463,19 +450,12 @@ export class DistHorariaComponent {
             );
 
             savePromises.push(
-                this.distribucionGiraService.save(distribucionGiraDto).toPromise()
-                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Gira médica', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-                    .catch(() => this.toastr.error('No se pudo guardar Gira médica.', 'Error', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-            );
-        }
+              this.distribucionGiraService.save(distribucionGiraDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGiraDto.dia}`);
+                  })
+          );
+      }
     }
 
     // Guarda otras actividades
@@ -494,24 +474,33 @@ export class DistHorariaComponent {
             );
 
             savePromises.push(
-                this.distribucionOtroService.save(distribucionOtroDto).toPromise()
-                    .then(() => this.toastr.success('Se ha guardado exitosamente.', 'Otra actividad', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-                    .catch(() => this.toastr.error('No se pudo guardar otra actividad.', 'Error', {
-                        timeOut: 6000,
-                        positionClass: 'toast-top-center',
-                        progressBar: true
-                    }))
-            );
-        }
+              this.distribucionOtroService.save(distribucionOtroDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionOtroDto.dia}`);
+                  })
+          );
+      }
     }
 
     // Envia los datos cargados para guardar
     Promise.all(savePromises)
         .then(() => {
+            // Mostrar mensaje de éxito
+            this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+
+            // Si hubo errores, mostrar detalle
+            if (errorMessages.length > 0) {
+                this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                });
+            }
+
             this.router.navigate(['/personal']);
         })
         .catch(() => {
@@ -524,7 +513,7 @@ export class DistHorariaComponent {
         .finally(() => {
             this.isButtonDisabled = false;
         });
-}
+  }
 
 // Función para calcular los meses de un rango de fechas
 calcularMeses(fechaInicio: string, fechaFin: string): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
