@@ -70,6 +70,15 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     this.anoActual = fechaActual.year();
   }
 
+  agregarDistribucion(asistencial: Asistencial | null): void {
+    if (asistencial) { 
+        this.asistencialService.setCurrentAsistencial(asistencial);
+        this.router.navigate(['/dist-horaria']);
+    } else {
+        console.error('No se puede agregar distribución: asistencial es null.');
+    }
+}
+
   loadDistribuciones(idPersona: number): void {
     forkJoin([
       this.loadDistribucionesGuardia(idPersona),

@@ -38,6 +38,7 @@ export class DistHorariaComponent {
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
   otroForm!: FormGroup;
+  vigenciaForm!: FormGroup;
   
   step = -1;
   cantidadHoras: number = 0;
@@ -84,8 +85,6 @@ export class DistHorariaComponent {
       tipoGuardia: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -95,8 +94,6 @@ export class DistHorariaComponent {
       tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -105,8 +102,6 @@ export class DistHorariaComponent {
       idPersona: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       puestoSalud: ['', Validators.required],
       descripcion: ['', Validators.required],
@@ -117,11 +112,15 @@ export class DistHorariaComponent {
       idPersona: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       descripcion: ['', Validators.required],
       lugar: ['', Validators.required]
+    });
+
+    this.vigenciaForm = this.fb.group({
+      mesVigencia: [null, Validators.required],
+      fechaInicio: [{ value: null, disabled: true }],
+      fechaFinalizacion: [{ value: null, disabled: true }]
     });
 
     this.minDate = new Date();
@@ -222,8 +221,8 @@ export class DistHorariaComponent {
         this.horasMessage = 'Has superado el total de horas posibles';
         this.horasMessageClass = 'error-message';
         this.isButtonDisabled = true;
-      } else if (totalHoras === 0) {
-        this.horasMessage = 'Aún no se cargaron horas en el formulario';
+      } else if (totalHoras < this.cargaHoraria) {
+        this.horasMessage = `Total de horas cargadas: ${totalHoras}. Debes alcanzar ${this.cargaHoraria} hs entre todos los formularios.`;
         this.horasMessageClass = 'pending-message';
         this.isButtonDisabled = true;
       } else {
@@ -237,7 +236,7 @@ export class DistHorariaComponent {
       this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
     }
   }
-  
+
   updateIdPersona(id: string): void {
     console.log('Actualizando idPersona:', id);
     this.guardiaForm.patchValue({ idPersona: id });
@@ -246,6 +245,20 @@ export class DistHorariaComponent {
     this.otroForm.patchValue({ idPersona: id });
   }
 
+  updateFechas() {
+    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
+    
+    if (mesVigencia) {
+      const fechaInicio = moment(mesVigencia).startOf('month').toDate();
+      const fechaFinalizacion = moment(mesVigencia).endOf('month').toDate();
+      
+      this.vigenciaForm.patchValue({
+        fechaInicio: fechaInicio,
+        fechaFinalizacion: fechaFinalizacion
+      });
+    }
+  }
+  
   listServicios(): void {
     this.servicioService.list().subscribe(data => {
       console.log('Lista de servicios:', data);
@@ -254,15 +267,6 @@ export class DistHorariaComponent {
       console.log(error);
     });
   }
-
-  /*listEfectores(): void {
-    this.hospitalService.list().subscribe(data => {
-      console.log('Lista de hospitales:', data);
-      this.hospitales = data;
-    }, error => {
-      console.log(error);
-    });
-  }*/
 
   listCaps(): void {
     if (this.idEfector) {
@@ -295,17 +299,18 @@ export class DistHorariaComponent {
     const hoy = new Date();
     this.meses = [];
     
-    for (let i = 0; i < 6; i++) {
-      const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
-      
-      const fechaInicio = mes.startOf('month').toDate();
-      const fechaFinalizacion = moment(mes).endOf('month');
+    // Comienza desde el mes siguiente al actual
+    for (let i = 1; i <= 6; i++) {
+        const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
+        
+        const fechaInicio = mes.startOf('month').toDate();
+        const fechaFinalizacion = moment(mes).endOf('month');
   
-      const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
+        const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
     
-      this.meses.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
+        this.meses.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
     }
-  }
+}
 
   // Verifica los campos en cada form para colocar su estado (en proceso o finalizado)
   isFormStarted(form: FormGroup): boolean {
@@ -321,24 +326,14 @@ export class DistHorariaComponent {
   }
 
   cerrarPanel() {
-    this.step = -1; // O cualquier valor que indique que no hay panel abierto
+    this.step = -1;
   }
 
   saveDistribuciones() {
     this.isButtonDisabled = true;
 
     // Obtener fechas de inicio y finalización para cada formulario
-    const fechaInicioGuardia = this.guardiaForm.get('fechaInicio')?.value;
-    const fechaFinalizacionGuardia = this.guardiaForm.get('fechaFinalizacion')?.value;
-    
-    const fechaInicioConsultorio = this.consultorioForm.get('fechaInicio')?.value;
-    const fechaFinalizacionConsultorio = this.consultorioForm.get('fechaFinalizacion')?.value;
-
-    const fechaInicioGira = this.giraForm.get('fechaInicio')?.value;
-    const fechaFinalizacionGira = this.giraForm.get('fechaFinalizacion')?.value;
-
-    const fechaInicioOtro = this.otroForm.get('fechaInicio')?.value;
-    const fechaFinalizacionOtro = this.otroForm.get('fechaFinalizacion')?.value;
+    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
 
     if (this.idEfector === undefined) {
         this.toastr.error('El efector no está definido.', 'Error', {
@@ -380,10 +375,10 @@ export class DistHorariaComponent {
     const errorMessages: string[] = [];
 
     // Calcula meses para cada distribución
-    const guardiaMeses = this.calcularMeses(fechaInicioGuardia, fechaFinalizacionGuardia);
-    const consultorioMeses = this.calcularMeses(fechaInicioConsultorio, fechaFinalizacionConsultorio);
-    const giraMeses = this.calcularMeses(fechaInicioGira, fechaFinalizacionGira);
-    const otroMeses = this.calcularMeses(fechaInicioOtro, fechaFinalizacionOtro);
+    const guardiaMeses = this.calcularMeses(mesVigencia);
+    const consultorioMeses = this.calcularMeses(mesVigencia);
+    const giraMeses = this.calcularMeses(mesVigencia);
+    const otroMeses = this.calcularMeses(mesVigencia);
 
     // Guarda guardia
     if (this.guardiaForm.valid) {
@@ -399,6 +394,8 @@ export class DistHorariaComponent {
                 this.guardiaForm.value.tipoGuardia,
                 this.guardiaForm.value.idServicio.id
             );
+
+            console.log('Guardia a guardar:', distribucionGuardiaDto);
 
             savePromises.push(
               this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
@@ -516,28 +513,30 @@ export class DistHorariaComponent {
   }
 
 // Función para calcular los meses de un rango de fechas
-calcularMeses(fechaInicio: string, fechaFin: string): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
+calcularMeses(mesVigencia: string): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
   const meses: Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> = [];
-  const inicio = moment(fechaInicio);
-  const fin = moment(fechaFin);
-  
-  let primerMes = true;
+  const mesActual = moment(); // Fecha actual
+  const mesVigente = moment(mesVigencia); // Mes de vigencia
+
+  let inicio = mesActual.clone().add(1, 'month'); // Comienza desde el siguiente mes
+  const fin = mesVigente; // Hasta el mes de vigencia
+
   while (inicio.isSameOrBefore(fin, 'month')) {
       const mesNombreCapitalizado = inicio.format('MMMM').charAt(0).toUpperCase() + inicio.format('MMMM').slice(1);
       
-      // Obtener el último día del mes actual
-      const fechaFinalizacion = moment(inicio).endOf('month').startOf('day').toDate(); 
-  
+      // Asegurarse de que la fecha de finalización sea el último día del mes
+      const fechaFinalizacion = inicio.endOf('month').startOf('day').toDate(); 
+
       meses.push({
           mes: mesNombreCapitalizado,
-          fechaInicio: primerMes ? inicio.toDate() : inicio.startOf('month').toDate(),
+          fechaInicio: inicio.startOf('month').toDate(),
           fechaFinalizacion: fechaFinalizacion,
       });
-  
-      primerMes = false;
-      inicio.add(1, 'month');
+
+      inicio.add(1, 'month'); // Mueve al siguiente mes
   }
-    return meses;
+
+  return meses;
 }
 
   nextStep(): void {
@@ -552,26 +551,30 @@ calcularMeses(fechaInicio: string, fechaFin: string): Array<{ mes: string, fecha
     this.step = index;
   }
 
-  get isPanelEnabled(): boolean {
-    return this.isProfessionalLoaded;
-  }
+  get isMesVigenciaSelected(): boolean {
+    return !!this.vigenciaForm.get('mesVigencia')?.value;
+}
 
-  get isPanel0Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 0;
-  }
-  
-  get isPanel1Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 1;
-  }
-  
-  get isPanel2Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 2;
-  }
-  
-  get isPanel3Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 3;
-  }
-  
+get isPanelEnabled(): boolean {
+  return this.isProfessionalLoaded && this.isMesVigenciaSelected;
+}
+
+get isPanel0Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 0;
+}
+
+get isPanel1Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 1;
+}
+
+get isPanel2Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 2;
+}
+
+get isPanel3Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 3;
+}
+
   compareServicio(s1: Servicio, s2: Servicio): boolean {
     return s1 && s2 ? s1.id === s2.id : s1 === s2;
   }
