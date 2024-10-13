@@ -23,6 +23,10 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 import * as moment from 'moment';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
+import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
+import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
+import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
+
 
 
 @Component({
@@ -57,8 +61,14 @@ export class DistHorariaComponent {
   hospitales: Hospital[] = [];
   capss: CapsDto[] = [];
 
+  private distribucionesConsultorio: DistribucionConsultorio[] = [];
+  private distribucionesGuardia: DistribucionGuardia[] = [];
+  private distribucionesGira: DistribucionGira[] = [];
+  private distribucionesOtro: DistribucionOtro[] = [];
+
   isProfessionalLoaded: boolean = false;
   isButtonDisabled: boolean = true;
+  isPanelsEnabled: boolean = true;
 
   options: any[] | undefined;
   
@@ -129,9 +139,25 @@ export class DistHorariaComponent {
 
   ngOnInit() {
     this.listServicios();
-    /*this.listEfectores();*/
     this.listCaps();
     this.generarMeses();
+
+    this.distribucionConsultorioService.list().subscribe(data => {
+      this.distribucionesConsultorio = data;
+    });
+    
+    this.distribucionGuardiaService.list().subscribe(data => {
+      this.distribucionesGuardia = data;
+    });
+    
+    this.distribucionGiraService.list().subscribe(data => {
+      this.distribucionesGira = data;
+    });
+    
+    this.distribucionOtroService.list().subscribe(data => {
+      this.distribucionesOtro = data;
+    });
+  
   }
 
   private subscribeToFormChanges(): void {
@@ -146,13 +172,16 @@ export class DistHorariaComponent {
       width: '800px',
       disableClose: true
     });
-  
+    
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedAsistencial = result;
         this.inputValue = `${result.apellido} ${result.nombre}`;
         this.updateIdPersona(result.id);
-
+  
+        // Resetear el select del mes de vigencia
+        this.vigenciaForm.patchValue({ mesVigencia: null });
+  
         const legajosActivos = result.legajos.filter((legajo: { activo: boolean; }) => legajo.activo === true);
         const ultimoLegajoActivo = legajosActivos.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id)[0];
   
@@ -207,7 +236,7 @@ export class DistHorariaComponent {
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
   }
-  
+    
     
   private updateHorasStatus(): void {
     const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
@@ -247,18 +276,90 @@ export class DistHorariaComponent {
 
   updateFechas() {
     const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
-    
-    if (mesVigencia) {
-      const fechaInicio = moment(mesVigencia).startOf('month').toDate();
-      const fechaFinalizacion = moment(mesVigencia).endOf('month').toDate();
-      
-      this.vigenciaForm.patchValue({
-        fechaInicio: fechaInicio,
-        fechaFinalizacion: fechaFinalizacion
+    const idPersonaSeleccionado = this.guardiaForm.get('idPersona')?.value;
+  
+    // Verificación de datos
+    if (!mesVigencia) {
+      console.warn('Mes de vigencia no está definido.');
+      return;
+    }
+    if (!idPersonaSeleccionado) {
+      console.warn('ID de persona no está definido.');
+      return;
+    }
+  
+    const fechaInicio = moment(mesVigencia).startOf('month').toDate();
+    const fechaFinalizacion = moment(mesVigencia).endOf('month').toDate();
+  
+    this.vigenciaForm.patchValue({
+      fechaInicio: fechaInicio,
+      fechaFinalizacion: fechaFinalizacion
+    });
+  
+    // Obtener mes y año de vigencia
+    const mesesParaVerificar = [];
+    let inicio = moment().add(1, 'month').startOf('month'); // Comienza desde el siguiente mes
+    const fin = moment(mesVigencia).endOf('month');
+  
+    while (inicio.isSameOrBefore(fin, 'month')) {
+      mesesParaVerificar.push({ mes: inicio.month(), año: inicio.year() });
+      inicio.add(1, 'month');
+    }
+  
+    // Verificar si ya hay registros en cada uno de los meses calculados
+    let existenRegistros = false;
+    for (const { mes, año } of mesesParaVerificar) {
+      if (
+        this.verificarRegistros(this.distribucionesConsultorio, mes, año, idPersonaSeleccionado) ||
+        this.verificarRegistros(this.distribucionesGuardia, mes, año, idPersonaSeleccionado) ||
+        this.verificarRegistros(this.distribucionesGira, mes, año, idPersonaSeleccionado) ||
+        this.verificarRegistros(this.distribucionesOtro, mes, año, idPersonaSeleccionado)
+      ) {
+        existenRegistros = true;
+        break; // Si se encuentra al menos un registro, salir del bucle
+      }
+    }
+  
+    if (existenRegistros) {
+      this.toastr.warning('Ya existen registros para uno o más de los meses seleccionados.', 'Advertencia', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
       });
+      this.isPanelsEnabled = false; // Deshabilitar los paneles
+    } else {
+      this.isPanelsEnabled = true; // Habilitar los paneles si no existen registros
     }
   }
+        
+  private verificarRegistros(distribuciones: any[], mes: number, año: number, idPersona: number): boolean {
+    return distribuciones.some(distribucion => {
+      const fechaDistribucionInicio = new Date(distribucion.fechaInicio);
+      const fechaDistribucionFin = new Date(distribucion.fechaFinalizacion);
+      const activo = distribucion.activo; // Verifica que 'activo' es correcto
+      const personaId = distribucion.persona.id; // Verifica que 'persona' tiene la propiedad 'id'
   
+      // Log para depuración
+      console.log('Verificando distribución:', {
+        activo,
+        personaId,
+        idPersona,
+        fechaDistribucionInicio,
+        fechaDistribucionFin,
+        mes,
+        año
+      });
+  
+      return (
+        activo &&
+        personaId === idPersona &&
+        // Verifica que el mes y el año coincidan tanto en inicio como en fin
+        ((fechaDistribucionInicio.getMonth() === mes && fechaDistribucionInicio.getFullYear() === año) ||
+        (fechaDistribucionFin.getMonth() === mes && fechaDistribucionFin.getFullYear() === año))
+      );
+    });
+  }
+    
   listServicios(): void {
     this.servicioService.list().subscribe(data => {
       console.log('Lista de servicios:', data);
@@ -336,7 +437,7 @@ export class DistHorariaComponent {
     const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
 
     if (this.idEfector === undefined) {
-        this.toastr.error('El efector no está definido.', 'Error', {
+        this.toastr.error('El profesional no esta definido o no posee un legajo.', 'Error', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -551,12 +652,12 @@ calcularMeses(mesVigencia: string): Array<{ mes: string, fechaInicio: Date, fech
     this.step = index;
   }
 
-  get isMesVigenciaSelected(): boolean {
-    return !!this.vigenciaForm.get('mesVigencia')?.value;
+get isMesVigenciaSelected(): boolean {
+  return !!this.vigenciaForm.get('mesVigencia')?.value;
 }
 
 get isPanelEnabled(): boolean {
-  return this.isProfessionalLoaded && this.isMesVigenciaSelected;
+  return this.isProfessionalLoaded && this.isMesVigenciaSelected && this.isPanelsEnabled;
 }
 
 get isPanel0Expanded(): boolean {
