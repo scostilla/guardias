@@ -250,7 +250,7 @@ export class PersonEditComponent implements OnInit {
       progressBar: true
 });
 
-    this.router.navigate(['/person']);
+    this.router.navigate(['/personal']);
   }
 
   onTipoGuardiaSelectionChange(event: any): void {

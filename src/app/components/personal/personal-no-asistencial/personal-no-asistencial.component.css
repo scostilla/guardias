@@ -1,0 +1,70 @@
+
+h2{
+    font-family: "Ubuntu", sans-serif;
+    font-size:400% !important;
+  }
+
+.btnMenu {
+  width: 100%;
+	height: 50px;
+	margin: 1%;
+	color:#f3f3f3;
+	text-decoration:none;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	-webkit-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+    -moz-box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+    box-shadow: 0px 6px 20px -6px rgba(0,0,0,0.41);
+	transition: all 0.5s;
+  }
+
+.btnMenu span {
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+	transition: 0.5s;
+  }
+  div.btnMenu span:after {
+	content: '\00bb';
+	position: absolute;
+	opacity: 0;
+	top: 0;
+	right: -20px;
+	transition: 0.5s;
+  }
+  
+.btnMenu:hover span {
+	padding-right: 25px;
+  }
+  
+  div.btnMenu:hover span:after {
+	opacity: 1;
+	right: 0;
+  }
+
+.icon1_btnMenu, .icon2_btnMenu, .icon3_btnMenu, .icon4_btnMenu, .icon5_btnMenu, .icon6_btnMenu, .icon_select_btnMenu {
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+	width: 100%;
+	font-size: 0.26em;
+	font-weight:bold;
+	text-align:center; 
+	padding:3%;
+}
+.icon1_btnMenu {background-color: #54998C; border-bottom: 9px solid #3b6d64;}
+.icon2_btnMenu {background-color: #1B497B; border-bottom: 9px solid #123253;}
+.icon3_btnMenu {background-color: #C0CF50; border-bottom: 9px solid #909b3c;}
+.icon4_btnMenu {background-color: #F2953E; border-bottom: 9px solid #b8712e;}
+.icon5_btnMenu {background-color: #EB428F; border-bottom: 9px solid #c73778;}
+.icon6_btnMenu {background-color: #9284BE; border-bottom: 9px solid #786d9c;}
+.icon_select_btnMenu {background-color: #c8c8ca; border-bottom: 9px solid #b6b6b6;}
+
+.text_boton {text-align: center;
+	font-size: 80%;
+	padding: 0 6% 6% 6%;
+	display:block;
+	}
+
+	  

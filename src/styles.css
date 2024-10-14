@@ -623,6 +623,41 @@ mat-label{
   margin-bottom: 20px;
 }
 
+.select-inicio-container {
+  position: relative;
+  display: inline-block;
+}
+
+.select-inicio {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 5px 25px 5px 5px;
+  font-size: 16px;
+  appearance: none;
+  width: 100%;
+  cursor: pointer;
+}
+
+.select-inicio:focus {
+  outline: none;
+}
+
+.arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  pointer-events: none;
+  font-size: 10px;
+}
+
+.select-inicio option {
+  background-color: #243c74;
+  color: white;
+}
+
 /* --Panel de expanción-- */
 .custom-header {
   display: flex;

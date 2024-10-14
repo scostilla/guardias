@@ -235,6 +235,8 @@ import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.
 import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
+import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
+import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -421,6 +423,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     IncisoDetailComponent,
     IncisoEditComponent,
     PersonalDhHistorialComponent,
+    NoAsistencialCreateComponent,
+    PersonalNoAsistencialComponent,
     
   ],
 

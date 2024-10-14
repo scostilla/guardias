@@ -48,10 +48,12 @@
           <mat-menu #menu="matMenu">
             <div class="perfil-content">
               <div class="perfil-img">
-                <img src="assets/img/profile-user.jpg">
+                <img src="assets/img/profile-user.png">
               </div>
               <div class="perfil-nom">
-                {{nombreUsuario}}
+                <div *ngIf="isLogged">
+                  {{ nombreUsuario }} {{ apellidoUsuario }}
+                </div>
               </div>
               <div class="perfil-cargo">
                 Administrativo

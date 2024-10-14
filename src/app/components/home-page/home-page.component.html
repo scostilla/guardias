@@ -1,5 +1,12 @@
 <div id="container-title-hosp" >
-    <div class="text-title-hosp"><mat-icon>business</mat-icon> &nbsp;&nbsp;HOSPITAL PABLO SORIA</div>
+    <div class="text-title-hosp"><mat-icon>business</mat-icon>
+      <div class="select-inicio-container">
+        <select class="select-inicio" [(ngModel)]="selectedEfector">
+          <option *ngFor="let efector of nombresEfectores" [value]="efector">{{ efector.nombre }}</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
 </div>
 <div class="container" *ngIf="isLogged">
   <section>

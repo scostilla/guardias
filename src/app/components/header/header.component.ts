@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
 @Component({
@@ -9,8 +11,7 @@ import { TokenService } from 'src/app/services/login/token.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-
-export class HeaderComponent implements OnDestroy , OnInit {
+export class HeaderComponent implements OnDestroy, OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showConfig: boolean = true;
@@ -18,12 +19,14 @@ export class HeaderComponent implements OnDestroy , OnInit {
 
   isLogged = false;
   nombreUsuario = '';
+  apellidoUsuario = '';
 
   constructor(
     private router: Router, 
     private toastr: ToastrService,
-    private tokenService: TokenService
-    ) {
+    private tokenService: TokenService,
+    private authService: AuthService // Asegúrate de inyectar el servicio
+  ) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.showNavBar = !(event.url === '/home-page' || event.url === '/home-profesional');
@@ -32,15 +35,26 @@ export class HeaderComponent implements OnDestroy , OnInit {
       }
     });
   }
+
   ngOnInit(): void {
-    if(this.tokenService.getToken()){
+    if (this.tokenService.getToken()) {
       this.isLogged = true;
-      this.nombreUsuario = this.tokenService.getUserName();
-    }else{
+
+      // Obtener los detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+        },
+        (error) => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
       this.isLogged = false;
       this.nombreUsuario = '';
+      this.apellidoUsuario = '';
     }
-    
   }
 
   ngOnDestroy(): void {
@@ -49,10 +63,8 @@ export class HeaderComponent implements OnDestroy , OnInit {
     }
   }
 
-  onLogOut(): void{
+  onLogOut(): void {
     this.tokenService.logOut();
-    //window.location.reload();
     this.router.navigate(['/']);
   }
-
 }

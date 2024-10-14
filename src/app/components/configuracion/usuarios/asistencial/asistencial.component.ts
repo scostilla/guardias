@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -11,9 +11,9 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
 import { Router } from '@angular/router';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { NovedadesPersonEditComponent } from 'src/app/components/personal/novedades-person-edit/novedades-person-edit.component';
+//import { NovedadesFormComponent } from 'src/app/components/personal/novedades-form/novedades-form.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 
 @Component({
   selector: 'app-asistencial',
@@ -76,10 +76,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnDestroy(): void {
-    this.suscription?.unsubscribe();
-  }
-
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -104,116 +100,13 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
+      //   this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
+
     });
-  }
-
-  hayLegajos(asistencial: Asistencial): boolean {
-    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
-  }
-
-  verLegajo(asistencial: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.router.navigate(['/legajo-person', asistencial.id]);
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }
-
-  crearLegajo(): void {
-    const dialogRef = this.dialog.open(LegajoEditComponent, {
-      width: '600px',
-      data: null
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) {
-          this.toastr.success('Legajo creado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.dataSource.data.push(result);
-          this.dataSource._updateChangeSubscription();
-        } else {
-          this.toastr.error('No se creó el Legajo', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      }
-    });
-  }
-
-  verDistribucion(asistencial: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.router.navigate(['/personal-dh', asistencial.id]);
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }
-
-  actualizarColumnasVisibles(): void {
-    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
-
-    let columnasVisibles: string[] = [];
-
-    columnasBase.forEach(columna => {
-      columnasVisibles.push(columna);
-      if (columna === 'cuil' && this.domicilioVisible) {
-        columnasVisibles.push('domicilio');
-      }
-      /* if (columna === 'apellido' && this.estadoVisible) {
-        columnasVisibles.push('estado');
-      }
-      if (columna === 'telefono' && this.fechaNacimientoVisible) {
-        columnasVisibles.push('fechaNacimiento');
-      }
-      if (columna === 'telefono' && this.sexoVisible) {
-        columnasVisibles.push('sexo');
-      } */
-    });
-
-    this.displayedColumns = columnasVisibles;
-
-    if (this.table) {
-      this.table.renderRows();
-    }
-  }
-
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
-  }
-
-  openFormChanges(asistencial?: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.router.navigate(['/asistencial-edit', asistencial.id]);
-    } else {
-      this.router.navigate(['/asistencial-create']);
-    }
   }
 
   createAsistencial(): void {
     this.router.navigate(['/asistencial-create']);
-  }
-
-  updateAsistencial(asistencial: Asistencial): void {
-    console.log("en asistencial se envia el objeto", asistencial);
-    this.router.navigate(['/asistencial-edit'], {
-      state: { asistencial }
-    });
   }
 
   openDetail(asistencial: Asistencial): void {
@@ -226,15 +119,11 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     });
   }
 
-  openNovedades() {
-    this.dialogNov.open(NovedadesPersonEditComponent, {
-      width: '600px',
-      disableClose: true,
-    })
-  }
-
-  openDistribucion() {
-    this.router.navigate(['/dist-horaria']);
+  updateAsistencial(asistencial: Asistencial): void {
+    console.log("en asistencial se envia el objeto", asistencial);
+    this.router.navigate(['/asistencial-edit'], {
+      state: { asistencial }
+    });
   }
 
   deleteAsistencial(asistencial: Asistencial): void {
@@ -266,5 +155,104 @@ export class AsistencialComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  /*openNovedades() {
+    this.dialogNov.open(NovedadesFormComponent, {
+      width: '600px',
+      disableClose: true,
+    })
+  }*/
+
+  openDistribucion() {
+    this.router.navigate(['/dist-horaria']);
+  }
+
+  verDistribucion(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.router.navigate(['/personal-dh', asistencial.id]);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
+  hayLegajos(asistencial: AsistencialListDto): boolean {
+    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
+  }
+
+  verLegajo(asistencial: AsistencialListDto): void {
+    if (asistencial && asistencial.id) {
+      //this.router.navigate(['/legajo-person', asistencial.id]);
+      this.router.navigate(['/legajo-person'], {
+        state: { asistencial , fromAsistencial: true}
+      });
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
+  crearLegajo(asistencial: AsistencialListDto): void {
+
+    console.log("en asistencial se envia el objeto", asistencial);
+    this.router.navigate(['/legajo-create'], {
+      state: { asistencial, fromAsistencial: true }
+    });
+  }
+
+  // obtengo el tooltip del botón basado en la existencia de legajos
+  getTooltip(asistencial: AsistencialListDto): string {
+    return this.hayLegajos(asistencial) ? 'Ver Legajo' : 'Agregar Legajo';
+  }
+
+  // Obtener el ícono del botón basado en la existencia de legajos
+  getIcon(asistencial: AsistencialListDto): string {
+    return this.hayLegajos(asistencial) ? 'playlist_play' : 'playlist_add';
+  }
+
+  // Determinar la acción del botón basada en la existencia de legajos
+  getButtonAction(asistencial: AsistencialListDto): void {
+    if (this.hayLegajos(asistencial)) {
+      this.verLegajo(asistencial);
+    } else {
+      this.crearLegajo(asistencial);
+    }
+  }
+
+  actualizarColumnasVisibles(): void {
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
+
+    let columnasVisibles: string[] = [];
+
+    columnasBase.forEach(columna => {
+      columnasVisibles.push(columna);
+      if (columna === 'cuil' && this.domicilioVisible) {
+        columnasVisibles.push('domicilio');
+      }
+    });
+
+    this.displayedColumns = columnasVisibles;
+
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }
+
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
+  ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
   }
 }

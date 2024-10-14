@@ -204,46 +204,28 @@ export class PersonComponent implements OnInit, OnDestroy {
       this.table.renderRows();
     }
   } 
+
+  createAsistencial(): void {
+    this.router.navigate(['/asistencial-create']);
+  }
+
+  updateAsistencial(asistencial: Asistencial): void {
+    console.log("en asistencial se envia el objeto", asistencial);
+    this.router.navigate(['/asistencial-edit'], {
+      state: { asistencial }
+    });
+  }
   
+
+ /* 
   openFormChanges(asistencial?: Asistencial): void {
     if (asistencial && asistencial.id) {
       this.router.navigate(['/person-edit', asistencial.id]);
     } else {
-      this.router.navigate(['/person-edit']);
+      this.router.navigate(['/asistencial-create']);
     }
   }
-
- /* openFormChanges(asistencial?: Asistencial): void {
-    const esEdicion = asistencial != null;
-    const dialogRef = this.dialog.open(PersonEditComponent, {
-      width: '600px',
-      data: esEdicion ? asistencial : null
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Asistencial editado con éxito' : 'Asistencial creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
-          this.dataSource.data[index] = result.data;
-        } else {
-          this.dataSource.data.push(result.data);
-        }
-        this.dataSource._updateChangeSubscription();
-      } else if (result && result.type === 'error') {
-        this.toastr.error('Ocurrió un error al crear o editar Asistencial', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-      } else if (result && result.type === 'cancel') {
-      }
-    });
-  } */
+ */
 
   openDetail(asistencial: Asistencial): void {
     this.dialogRef = this.dialog.open(PersonDetailComponent, { 

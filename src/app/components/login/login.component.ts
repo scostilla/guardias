@@ -58,20 +58,27 @@ export class LoginComponent implements OnInit {
         this.tokenService.setToken(data.token);
         this.tokenService.setUserName(data.nombreUsuario);
         this.tokenService.setAuthorities(data.authorities);
-        this.roles = data.authorities;
-        this.toastr.success(data.nombreUsuario, 'Bienvenido', {
+        this.roles = this.tokenService.getAuthorities();
+
+        this.toastr.success('Bienvenido ' + data.nombreUsuario, 'OK', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
-        this.router.navigate(['/home-page']);
+        // Redireccionnamiento segun roles
+        if (this.roles.includes('ROLE_ADMIN')) {
+          this.router.navigate(['/home-page']);
+        } else if (this.roles.includes('ROLE_USER')) {
+          this.router.navigate(['/home-profesional']);
+        };
       },
       err => {
         this.isLogged = false;
         this.isLoginFail = true;
         this.errMsj = err.error.message;
-        console.log('fabiana #######'+ err.error.message);
-        this.toastr.error(this.errMsj, 'Fail msj', {
-          timeOut: 3000,  positionClass: 'toast-top-center',
-        });
+         /* debería mostrarme el mensaje "campos mal puestos.. ver porque no lo hace"*/
+         console.log('Mensaje de error: ' + this.errMsj);
+         this.toastr.error(this.errMsj, 'Fail msj', {
+           timeOut: 3000, positionClass: 'toast-top-center',
+         });
         
       }
     );
