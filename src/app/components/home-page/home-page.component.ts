@@ -19,34 +19,17 @@ export class HomePageComponent implements OnInit{
   nombreUsuario: string = '';
   apellidoUsuario: string = '';
 
-
   constructor(
     private router: Router,
     private tokenService: TokenService,
-  
-    private http: HttpClient,
     private authService: AuthService,
-
+    private http: HttpClient
   ) {}
 
-    ngOnInit(): void {
-      if (this.tokenService.getToken()) {
-        this.isLogged = true;
-  
-       // Obtener nombres efectores asociados
-       this.authService.detailPersonBasicPanel()
-       .subscribe(
-         response => {
-           if ( response.nombresEfectores.length > 0) {
-            this.nombresEfectores = response.nombresEfectores;
-            this.selectedEfector = this.nombresEfectores[0];
-          }
-         },
-         error => {
-           console.error('Error al obtener efectores asociados:', error);
-         }
-       );
-  
+  ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+
       // Obtener detalles del usuario
       this.authService.detailPersonBasicPanel()
         .subscribe(
@@ -70,9 +53,9 @@ export class HomePageComponent implements OnInit{
           }
         );
     } else {
-        this.isLogged = false;
-      }
+      this.isLogged = false;
     }
+  }
 
   goToProfessionalForm() {
     console.log('redirecting to professional form');
