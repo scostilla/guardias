@@ -19,16 +19,14 @@ export class HomePageComponent implements OnInit{
   nombreUsuario: string = '';
   apellidoUsuario: string = '';
 
-  nombresEfectores: string[] = [];
-  selectedEfector: string | null = null;
 
   constructor(
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
+  
     private http: HttpClient,
     private authService: AuthService,
-    private http: HttpClient
+
   ) {}
 
     ngOnInit(): void {

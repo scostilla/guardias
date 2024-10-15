@@ -1,21 +1,19 @@
-import { EfectorSummaryDto } from "../efector/EfectorSummaryDto";
-
 export class PersonBasicPanelDto{
     nombre: string;
     apellido: string;
-    udo: EfectorSummaryDto;
-    efectores: EfectorSummaryDto[];
+    nombreUdo: string;
+    nombresEfectores: string[];
   
     constructor(
         nombre: string,
         apellido: string,
-        udo: EfectorSummaryDto,
-        efectores: EfectorSummaryDto[]
+        nombreUdo: string,
+        nombresEfectores: string[]
              
         ) {
         this.nombre = nombre;
         this.apellido = apellido;
-        this.udo = udo;
-        this.efectores = efectores
+        this.nombreUdo = nombreUdo;
+        this.nombresEfectores = nombresEfectores
     }
 }
