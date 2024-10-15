@@ -42,6 +42,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   legajos: Legajo[] = [];
   isLoadingLegajos: boolean = true;
 
+  showMessage: boolean = false;
+
   private efectorIdSubscription!: Subscription;
   
   constructor(
@@ -99,24 +101,26 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   listAsistencial(efectorId: number | null = null): void {
     this.asistencialService.list().subscribe(data => {
-      if (efectorId) {
-        // Filtrar los datos por el efectorId en los legajos
+      if (efectorId === null) {
+        this.dataSource = new MatTableDataSource<Asistencial>([]);
+        this.showMessage = true; // Muestra el mensaje si efectorId es null
+      } else {
         data = data.filter(asistencial => 
           asistencial.legajos.some(legajo => 
             legajo.efectores.some(efector => efector.id === efectorId)
           )
         );
+        this.dataSource = new MatTableDataSource<Asistencial>(data);
+        this.showMessage = false;
       }
       
-      this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }, error => {
       console.error('Error al obtener asistenciales:', error);
-      // Manejar el error adecuadamente
     });
   }
-      
+  
   listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
