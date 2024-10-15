@@ -22,21 +22,33 @@ export class HomePageComponent implements OnInit {
     private router: Router,
     private tokenService: TokenService,
     private authService: AuthService,
-    private asistencialService: AsistencialService // Inyectamos el servicio de asistenciales
+    private asistencialService: AsistencialService
   ) {}
 
   ngOnInit(): void {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
 
+      // Obtener el ID del efector del almacenamiento local
+      const savedEfectorId = localStorage.getItem('selectedEfectorId');
+
       this.authService.detailPersonBasicPanel().subscribe(
         (response: PersonBasicPanelDto) => {
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
+          this.nombresEfectores = response.efectores;
 
-          if (response.efectores.length > 0) {
-            this.nombresEfectores = response.efectores;
+          // Si hay un efector guardado, seleccionarlo; de lo contrario, seleccionar el primero
+          if (savedEfectorId) {
+            this.selectedEfector = this.nombresEfectores.find(efector => efector.id === Number(savedEfectorId)) || null;
+          } else if (this.nombresEfectores.length > 0) {
             this.selectedEfector = this.nombresEfectores[0];
+          }
+
+          // Si hay un efector seleccionado, llamar a fetchAsistenciales
+          if (this.selectedEfector) {
+            this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+            this.fetchAsistenciales(this.selectedEfector.id);
           }
         },
         error => {
@@ -45,35 +57,39 @@ export class HomePageComponent implements OnInit {
       );
     } else {
       this.isLogged = false;
+      // Reiniciar el efector seleccionado si no está logueado
+      this.selectedEfector = null;
     }
   }
 
   onEfectorChange() {
     if (this.selectedEfector) {
-      console.log('ID del efector seleccionado:', this.selectedEfector.id); // Verifica que el id se esté imprimiendo correctamente
+      console.log('ID del efector seleccionado:', this.selectedEfector.id);
       this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+      // Guardar el ID del efector seleccionado en el almacenamiento local
+      localStorage.setItem('selectedEfectorId', this.selectedEfector.id.toString());
       this.fetchAsistenciales(this.selectedEfector.id);
     }
   }
-      
+
   fetchAsistenciales(efectorId: number) {
     this.asistencialService.listByEfectorAndTipoGuardia(efectorId).subscribe(
       (asistenciales) => {
         console.log('Asistenciales filtrados para efector ID:', efectorId, asistenciales);
-        // Aquí puedes manejar los datos de asistenciales según lo necesites
       },
       (error) => {
         console.error('Error al obtener asistenciales:', error);
       }
     );
   }
-  
+
   goToProfessionalForm() {
     this.router.navigateByUrl('/professional-form');
   }
 
   onLogOut(): void {
     this.tokenService.logOut();
+    localStorage.removeItem('selectedEfectorId'); // Limpiar el almacenamiento local al cerrar sesión
     window.location.reload();
   }
 }
