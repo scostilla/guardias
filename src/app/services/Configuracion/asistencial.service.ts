@@ -102,6 +102,20 @@ export class AsistencialService {
   setCurrentAsistencial(asistencial: Asistencial) {
     this.currentAsistencialSubject.next(asistencial);
   }
+
+  //uso para filtrar por el efector del usuario logueado
+listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto[]> {
+  console.log('Listando asistenciales para el ID Efector:', efectorId); // Log del efectorId
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}/listByEfectorAndTipoGuardia/${efectorId}`);
+}
+
+  private currentEfectorIdSubject = new BehaviorSubject<number | null>(null);
+  currentEfectorId$ = this.currentEfectorIdSubject.asObservable();
+
+  setCurrentEfectorId(efectorId: number) {
+    this.currentEfectorIdSubject.next(efectorId);
+  }
+
   
 
 }

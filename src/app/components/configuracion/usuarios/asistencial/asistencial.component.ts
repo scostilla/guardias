@@ -42,6 +42,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   legajos: Legajo[] = [];
   isLoadingLegajos: boolean = true;
 
+  private efectorIdSubscription!: Subscription;
+  
   constructor(
     private asistencialService: AsistencialService,
     private dialog: MatDialog,
@@ -66,12 +68,19 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listLegajos();
-    this.listAsistencial();
-
+    
+    this.efectorIdSubscription = this.asistencialService.currentEfectorId$.subscribe(efectorId => {
+      console.log('ID Efector recibido en asistencial:', efectorId); // Log del ID efector recibido
+      if (efectorId !== null) {
+        this.listAsistencial(efectorId);
+      } else {
+        this.listAsistencial(); // Sin filtro si no hay efectorId
+      }
+    });
+  
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listAsistencial();
-    })
-
+      this.listAsistencial(); // Sin filtro si es necesario
+    });    
     this.actualizarColumnasVisibles();
 
   }
@@ -88,14 +97,26 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.dataSource.filter = normalizedFilterValue;
   }
 
-  listAsistencial(): void {
+  listAsistencial(efectorId: number | null = null): void {
     this.asistencialService.list().subscribe(data => {
+      if (efectorId) {
+        // Filtrar los datos por el efectorId en los legajos
+        data = data.filter(asistencial => 
+          asistencial.legajos.some(legajo => 
+            legajo.efectores.some(efector => efector.id === efectorId)
+          )
+        );
+      }
+      
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+    }, error => {
+      console.error('Error al obtener asistenciales:', error);
+      // Manejar el error adecuadamente
     });
   }
-
+      
   listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
