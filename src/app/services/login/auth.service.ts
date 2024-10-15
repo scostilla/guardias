@@ -20,6 +20,7 @@ export class AuthService {
   constructor(private httpClient: HttpClient) { }
 
   public create(nuevoUsuario : NuevoUsuario): Observable<any>{
+    console.log("rol que envio", nuevoUsuario);
     return this.httpClient.post<any>(this.authUrl + 'create',nuevoUsuario);
   }
 

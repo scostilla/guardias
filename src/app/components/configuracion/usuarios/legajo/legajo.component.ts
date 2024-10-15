@@ -61,7 +61,6 @@ export class LegajoComponent implements OnInit, OnDestroy {
     this.listLegajos();
     this.listRevistas();
 
-
     this.suscription = this.legajoService.refresh$.subscribe(() => {
       this.listLegajos();
     })
@@ -141,7 +140,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
 
     updateLegajo(legajo: Legajo): void {
       this.router.navigate(['/legajo-edit'], {
-        state: {legajo}
+        state: {legajo, fromLegajo: true}
       }); 
     }
 

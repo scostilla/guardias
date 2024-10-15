@@ -2,6 +2,20 @@
 <h1 mat-dialog-title>Seleccionar Profesional</h1>
 
 <div class="container">
+
+  <!-- Selector para elegir entre Asistencial o NoAsistencial -->
+  <div class="row">
+    <div class="col-12 mt-3">
+      <mat-form-field>
+        <mat-label>Tipo de Profesional</mat-label>
+        <mat-select [(ngModel)]="selectedType" (selectionChange)="onTypeChange($event)">
+          <mat-option value="asistencial">Asistencial</mat-option>
+          <mat-option value="noAsistencial">No Asistencial</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  
   <div class="row">
     <div class="col-11 mt-3">
       <mat-form-field>
@@ -23,24 +37,24 @@
           <!-- Columna Apellido -->
           <ng-container matColumnDef="apellido">
             <mat-header-cell *matHeaderCellDef class="negrita"> Apellido </mat-header-cell>
-            <mat-cell *matCellDef="let asistencial" (click)="selectAsistencial(asistencial)">
-              {{ asistencial.apellido }}
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+              {{ persona.apellido }}
             </mat-cell>
           </ng-container>
 
           <!-- Columna Nombre -->
           <ng-container matColumnDef="nombre">
             <mat-header-cell *matHeaderCellDef class="negrita"> Nombre </mat-header-cell>
-            <mat-cell *matCellDef="let asistencial" (click)="selectAsistencial(asistencial)">
-              {{ asistencial.nombre }}
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+              {{ persona.nombre }}
             </mat-cell>
           </ng-container>
 
           <!-- Columna CUIL -->
           <ng-container matColumnDef="cuil">
             <mat-header-cell *matHeaderCellDef class="negrita"> CUIL </mat-header-cell>
-            <mat-cell *matCellDef="let asistencial" (click)="selectAsistencial(asistencial)">
-              {{ asistencial.cuil }}
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+              {{ persona.cuil }}
             </mat-cell>
           </ng-container>
 

@@ -5,7 +5,7 @@
       <div class="titulo_prueba">PERSONAL</div>
     </div>
     <div class="col-12 col-md-1 m d-flex justify-content-end">
-      <button mat-fab class="button-primary" (click)="openFormChanges()" matTooltip="Agregar Persona Asistencial">
+      <button mat-fab class="button-primary" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
       </button>
       <button mat-fab class="button-success" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
@@ -28,7 +28,7 @@
       <div class="col-6">Estás viendo:
         <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales <mat-icon>expand_more</mat-icon></button>
         <mat-menu #menug="matMenu">
-          <button mat-menu-item routerLink="/no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
+          <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
         </mat-menu>
       </div>
     </div>
@@ -72,8 +72,8 @@
         </ng-container> --> 
 
         <ng-container matColumnDef="cuil">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> CUIL </th> 
-          <td mat-cell *matCellDef="let asistencial"> {{asistencial.cuil}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
+          <td mat-cell *matCellDef="let asistencial" style="white-space: nowrap;"> {{ formatCuil(asistencial.cuil) }} </td>
         </ng-container>
         <!--
         <ng-container matColumnDef="fechaNacimiento">
@@ -98,7 +98,7 @@
             <button mat-icon-button matTooltip="Ver {{asistencial.nombre}}" (click)="openDetail(asistencial)">
               <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="openFormChanges(asistencial)">
+            <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="updateAsistencial(asistencial)">
               <mat-icon class="btnEdit">edit</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteAsistencial(asistencial)">

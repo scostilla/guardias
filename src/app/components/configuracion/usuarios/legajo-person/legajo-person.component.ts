@@ -1,17 +1,19 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoPersonEditComponent } from '../legajo-person-edit/legajo-person-edit.component';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
+import { Router } from '@angular/router';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { ActivatedRoute } from '@angular/router';
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 
 @Component({
   selector: 'app-legajo-person',
@@ -19,28 +21,35 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./legajo-person.component.css']
 })
 
-export class LegajoPersonComponent implements OnInit, OnDestroy {
+export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  fromAsistencial: boolean = false;
+  fromNoAsistencial: boolean = false;
 
   @ViewChild(MatTable) table!: MatTable<Legajo>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['id',  'profesion', 'udo','fechaInicio', 'actual', 'fechaFinal', /* 'cargo', */ 'acciones'];
+  displayedColumns: string[] = ['profesion', 'udo', 'fechaInicio', 'actual', 'fechaFinal', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
-  asistencialId?: number;
+  personId?: number;
+  //noAsistencialId?: number;
   nombreCompleto: string = '';
+  initialData: Asistencial | NoAsistencial | undefined;
 
   constructor(
     private legajoService: LegajoService,
     private asistencialService: AsistencialService,
+    private noAsistencialService: NoAsistencialService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private route: ActivatedRoute,
-    private paginatorIntl: MatPaginatorIntl
-    ) { 
+    private paginatorIntl: MatPaginatorIntl,
+    private router: Router,
+  ) {
+
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
     this.paginatorIntl.previousPageLabel = "Página anterior";
@@ -49,43 +58,114 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
     this.paginatorIntl.getRangeLabel = (page, size, length) => {
       const start = page * size + 1;
       const end = Math.min((page + 1) * size, length);
-      return `${start} - ${end} de ${length}`; };
-     }
+      return `${start} - ${end} de ${length}`;
+    };
+
+    // recupera el estado del router
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      // Verifica si viene de Asistencial o NoAsistencial
+      this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
+      this.fromNoAsistencial = !!navigation.extras.state['fromNoAsistencial'];
+
+      // Asigno los datos a initialData basado en fromAsistencial o fromNoAsistencial
+      if (this.fromAsistencial) {
+        this.initialData = navigation.extras.state['asistencial'] as Asistencial;
+      } else if (this.fromNoAsistencial) {
+        this.initialData = navigation.extras.state['noAsistencial'] as NoAsistencial;
+      }
+    }
+  }
 
   ngOnInit(): void {
-    this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-      if (asistencial) {
-        this.asistencialId = asistencial.id;
-        this.listLegajos();
-      } else {
-        console.error('No hay asistencial seleccionado.');
-      }
-    });
-  
-    this.listLegajos();
 
+    // Si recibo un asistencial
+    if (this.initialData) {
+      this.personId = this.initialData.id;
+      this.nombreCompleto = `${this.initialData.nombre} ${this.initialData.apellido}`;
+      this.listLegajos(this.personId!);
+    }
+
+    // Suscribirse al refresh$
     this.suscription = this.legajoService.refresh$.subscribe(() => {
-      this.listLegajos();
+      if (this.personId) {
+        this.listLegajos(this.personId);
+      }
     })
-
   }
 
-  listLegajos(): void {
-    this.legajoService.list().subscribe(data => {
-      this.legajos = data.filter(legajo => legajo.persona.id === this.asistencialId);
-
-      if (this.legajos.length > 0) {
-        this.nombreCompleto = `${this.legajos[0].persona.apellido}, ${this.legajos[0].persona.nombre}`;
-      }
-    
-      this.dataSource = new MatTableDataSource(this.legajos);
+  ngAfterViewInit(): void {
+    // Inicializa paginador y sort
+    if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+    }
+  }
+
+// validar el fromAsistencial fromNoAsistencial
+  listLegajos(personId: number): void {
+
+    if (this.fromAsistencial) {
+      this.asistencialService.getLegajosByAsistencial(personId).subscribe({
+        next: (data) => {
+          this.legajos = data;
+          this.dataSource = new MatTableDataSource(this.legajos);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          this.toastr.error('Error al cargar legajos', 'ERROR', { timeOut: 3000 });
+        }
+      });
+    } else if (this.fromNoAsistencial) {
+      this.noAsistencialService.getLegajosByNoAsistencial(personId).subscribe({
+        next: (data) => {
+          this.legajos = data;
+          this.dataSource = new MatTableDataSource(this.legajos);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          this.toastr.error('Error al cargar legajos', 'ERROR', { timeOut: 3000 });
+        }
+      });
+    }
+
+
+    
+  }
+
+  openDetail(legajo: Legajo): void {
+    this.dialogRef = this.dialog.open(LegajoDetailComponent, {
+      width: '600px',
+      data: legajo
+    });
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.close();
     });
   }
-  
+
+  createLegajo(): void {
+
+    if (this.initialData) {
+      const asistencialSend = this.initialData.id;
+      this.router.navigate(['/legajo-create'], {
+        state: { asistencialSend, fromAsistencial: true }
+      });
+    } else {
+      this.router.navigate(['/legajo-create']);
+    }
+
+  }
+
+  updateLegajo(legajo: Legajo): void {
+    this.router.navigate(['/legajo-edit'], {
+      state: { legajo, fromLegajoPerson: true }
+    });
+  }
+
   ngOnDestroy(): void {
-      this.suscription?.unsubscribe();
+    this.suscription?.unsubscribe();
   }
 
   accentFilter(input: string): string {
@@ -103,62 +183,59 @@ export class LegajoPersonComponent implements OnInit, OnDestroy {
     return output;
   }
 
-applyFilter(event: Event) {
-  const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-  this.dataSource.filter = filterValue;
-  this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
-    const actualString = data.actual ? 'si' : 'no';
-    const idPersonaString = data.profesion.nombre.toString();
-    const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+    this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
+      const actualString = data.actual ? 'si' : 'no';
+      const idPersonaString = data.profesion.nombre.toString();
+      const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
-    // Aplicar el filtro a los valores convertidos
-    return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
-  };
-}
-  openFormChanges(legajo?: Legajo): void {
-    const esEdicion = legajo != null;
-    const dialogRef = this.dialog.open(LegajoPersonEditComponent, {
-      width: '600px',
-      data: esEdicion ? legajo : null
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-      if (result) {
-        this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
-        } else {
-          this.dataSource.data.push(result);
-        }
-        this.dataSource._updateChangeSubscription();
-      } else {
-        this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-      }
-    }
-    });
+      // Aplicar el filtro a los valores convertidos
+      return this.accentFilter(actualString).includes(this.accentFilter(filter)) ||
+        this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) ||
+        this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
+    };
   }
 
-  openDetail(legajo: Legajo): void {
-    this.dialogRef = this.dialog.open(LegajoDetailComponent, { 
-      width: '600px',
-      data: legajo
-    });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
-    });
-    }
+
+
+
+
+  /*  openFormChanges(legajo?: Legajo): void {
+     const esEdicion = legajo != null;
+     const dialogRef = this.dialog.open(LegajoEditComponent, {
+       width: '600px',
+       data: esEdicion ? legajo : null
+     });
+ 
+     dialogRef.afterClosed().subscribe(result => {
+       if (result !== undefined) {
+         if (result) {
+           this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
+             timeOut: 6000,
+             positionClass: 'toast-top-center',
+             progressBar: true
+           });
+           if (esEdicion) {
+             const index = this.dataSource.data.findIndex(p => p.id === result.id);
+             this.dataSource.data[index] = result;
+           } else {
+             this.dataSource.data.push(result);
+           }
+           this.dataSource._updateChangeSubscription();
+         } else {
+           this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
+             timeOut: 6000,
+             positionClass: 'toast-top-center',
+             progressBar: true
+           });
+         }
+       }
+     });
+   } */
+
+
 
   deleteLegajo(legajo: Legajo): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -168,26 +245,28 @@ applyFilter(event: Event) {
       },
     });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.legajoService.delete(legajo.id!).subscribe(data => {
-        this.toastr.success('Legajo eliminado con éxito', 'ELIMINADO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.legajoService.delete(legajo.id!).subscribe(data => {
+          this.toastr.success('Legajo eliminado con éxito', 'ELIMINADO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
 
-        const index = this.dataSource.data.findIndex(p => p.id === legajo.id);
-        this.dataSource.data.splice(index, 1);
-        this.dataSource._updateChangeSubscription();
-      }, err => {
-        this.toastr.error(err.message, 'Error, no se pudo eliminar el legajo', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
+          const index = this.dataSource.data.findIndex(p => p.id === legajo.id);
+          this.dataSource.data.splice(index, 1);
+          this.dataSource._updateChangeSubscription();
+        }, err => {
+          this.toastr.error(err.message, 'Error, no se pudo eliminar el legajo', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
         });
-      });
-    }
-  });
-}
+      }
+    });
+  }
+
+
 }

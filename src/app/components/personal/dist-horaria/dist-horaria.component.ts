@@ -23,6 +23,10 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 import * as moment from 'moment';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
+import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
+import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
+import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
+
 
 
 @Component({
@@ -38,6 +42,7 @@ export class DistHorariaComponent {
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
   otroForm!: FormGroup;
+  vigenciaForm!: FormGroup;
   
   step = -1;
   cantidadHoras: number = 0;
@@ -56,8 +61,14 @@ export class DistHorariaComponent {
   hospitales: Hospital[] = [];
   capss: CapsDto[] = [];
 
+  private distribucionesConsultorio: DistribucionConsultorio[] = [];
+  private distribucionesGuardia: DistribucionGuardia[] = [];
+  private distribucionesGira: DistribucionGira[] = [];
+  private distribucionesOtro: DistribucionOtro[] = [];
+
   isProfessionalLoaded: boolean = false;
   isButtonDisabled: boolean = true;
+  isPanelsEnabled: boolean = true;
 
   options: any[] | undefined;
   
@@ -84,8 +95,6 @@ export class DistHorariaComponent {
       tipoGuardia: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -95,8 +104,6 @@ export class DistHorariaComponent {
       tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -105,8 +112,6 @@ export class DistHorariaComponent {
       idPersona: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       puestoSalud: ['', Validators.required],
       descripcion: ['', Validators.required],
@@ -117,11 +122,15 @@ export class DistHorariaComponent {
       idPersona: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinalizacion: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       descripcion: ['', Validators.required],
       lugar: ['', Validators.required]
+    });
+
+    this.vigenciaForm = this.fb.group({
+      mesVigencia: [null, Validators.required],
+      fechaInicio: [{ value: null, disabled: true }],
+      fechaFinalizacion: [{ value: null, disabled: true }]
     });
 
     this.minDate = new Date();
@@ -130,9 +139,25 @@ export class DistHorariaComponent {
 
   ngOnInit() {
     this.listServicios();
-    /*this.listEfectores();*/
     this.listCaps();
     this.generarMeses();
+
+    this.distribucionConsultorioService.list().subscribe(data => {
+      this.distribucionesConsultorio = data;
+    });
+    
+    this.distribucionGuardiaService.list().subscribe(data => {
+      this.distribucionesGuardia = data;
+    });
+    
+    this.distribucionGiraService.list().subscribe(data => {
+      this.distribucionesGira = data;
+    });
+    
+    this.distribucionOtroService.list().subscribe(data => {
+      this.distribucionesOtro = data;
+    });
+  
   }
 
   private subscribeToFormChanges(): void {
@@ -147,13 +172,16 @@ export class DistHorariaComponent {
       width: '800px',
       disableClose: true
     });
-  
+    
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedAsistencial = result;
         this.inputValue = `${result.apellido} ${result.nombre}`;
         this.updateIdPersona(result.id);
-
+  
+        // Resetear el select del mes de vigencia
+        this.vigenciaForm.patchValue({ mesVigencia: null });
+  
         const legajosActivos = result.legajos.filter((legajo: { activo: boolean; }) => legajo.activo === true);
         const ultimoLegajoActivo = legajosActivos.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id)[0];
   
@@ -208,7 +236,7 @@ export class DistHorariaComponent {
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
   }
-  
+    
     
   private updateHorasStatus(): void {
     const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
@@ -222,8 +250,8 @@ export class DistHorariaComponent {
         this.horasMessage = 'Has superado el total de horas posibles';
         this.horasMessageClass = 'error-message';
         this.isButtonDisabled = true;
-      } else if (totalHoras === 0) {
-        this.horasMessage = 'Aún no se cargaron horas en el formulario';
+      } else if (totalHoras < this.cargaHoraria) {
+        this.horasMessage = `Total de horas cargadas: ${totalHoras}. Debes alcanzar ${this.cargaHoraria} hs entre todos los formularios.`;
         this.horasMessageClass = 'pending-message';
         this.isButtonDisabled = true;
       } else {
@@ -237,7 +265,7 @@ export class DistHorariaComponent {
       this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
     }
   }
-  
+
   updateIdPersona(id: string): void {
     console.log('Actualizando idPersona:', id);
     this.guardiaForm.patchValue({ idPersona: id });
@@ -246,6 +274,92 @@ export class DistHorariaComponent {
     this.otroForm.patchValue({ idPersona: id });
   }
 
+  updateFechas() {
+    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
+    const idPersonaSeleccionado = this.guardiaForm.get('idPersona')?.value;
+  
+    // Verificación de datos
+    if (!mesVigencia) {
+      console.warn('Mes de vigencia no está definido.');
+      return;
+    }
+    if (!idPersonaSeleccionado) {
+      console.warn('ID de persona no está definido.');
+      return;
+    }
+  
+    const fechaInicio = moment(mesVigencia).startOf('month').toDate();
+    const fechaFinalizacion = moment(mesVigencia).endOf('month').toDate();
+  
+    this.vigenciaForm.patchValue({
+      fechaInicio: fechaInicio,
+      fechaFinalizacion: fechaFinalizacion
+    });
+  
+    // Obtener mes y año de vigencia
+    const mesesParaVerificar = [];
+    let inicio = moment().add(1, 'month').startOf('month'); // Comienza desde el siguiente mes
+    const fin = moment(mesVigencia).endOf('month');
+  
+    while (inicio.isSameOrBefore(fin, 'month')) {
+      mesesParaVerificar.push({ mes: inicio.month(), año: inicio.year() });
+      inicio.add(1, 'month');
+    }
+  
+    // Verificar si ya hay registros en cada uno de los meses calculados
+    let existenRegistros = false;
+    for (const { mes, año } of mesesParaVerificar) {
+      if (
+        this.verificarRegistros(this.distribucionesConsultorio, mes, año, idPersonaSeleccionado) ||
+        this.verificarRegistros(this.distribucionesGuardia, mes, año, idPersonaSeleccionado) ||
+        this.verificarRegistros(this.distribucionesGira, mes, año, idPersonaSeleccionado) ||
+        this.verificarRegistros(this.distribucionesOtro, mes, año, idPersonaSeleccionado)
+      ) {
+        existenRegistros = true;
+        break; // Si se encuentra al menos un registro, salir del bucle
+      }
+    }
+  
+    if (existenRegistros) {
+      this.toastr.warning('Ya existen registros para uno o más de los meses seleccionados.', 'Advertencia', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.isPanelsEnabled = false; // Deshabilitar los paneles
+    } else {
+      this.isPanelsEnabled = true; // Habilitar los paneles si no existen registros
+    }
+  }
+        
+  private verificarRegistros(distribuciones: any[], mes: number, año: number, idPersona: number): boolean {
+    return distribuciones.some(distribucion => {
+      const fechaDistribucionInicio = new Date(distribucion.fechaInicio);
+      const fechaDistribucionFin = new Date(distribucion.fechaFinalizacion);
+      const activo = distribucion.activo; // Verifica que 'activo' es correcto
+      const personaId = distribucion.persona.id; // Verifica que 'persona' tiene la propiedad 'id'
+  
+      // Log para depuración
+      console.log('Verificando distribución:', {
+        activo,
+        personaId,
+        idPersona,
+        fechaDistribucionInicio,
+        fechaDistribucionFin,
+        mes,
+        año
+      });
+  
+      return (
+        activo &&
+        personaId === idPersona &&
+        // Verifica que el mes y el año coincidan tanto en inicio como en fin
+        ((fechaDistribucionInicio.getMonth() === mes && fechaDistribucionInicio.getFullYear() === año) ||
+        (fechaDistribucionFin.getMonth() === mes && fechaDistribucionFin.getFullYear() === año))
+      );
+    });
+  }
+    
   listServicios(): void {
     this.servicioService.list().subscribe(data => {
       console.log('Lista de servicios:', data);
@@ -254,15 +368,6 @@ export class DistHorariaComponent {
       console.log(error);
     });
   }
-
-  /*listEfectores(): void {
-    this.hospitalService.list().subscribe(data => {
-      console.log('Lista de hospitales:', data);
-      this.hospitales = data;
-    }, error => {
-      console.log(error);
-    });
-  }*/
 
   listCaps(): void {
     if (this.idEfector) {
@@ -295,18 +400,18 @@ export class DistHorariaComponent {
     const hoy = new Date();
     this.meses = [];
     
-    for (let i = 0; i < 6; i++) {
-      const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
-      const ultimoDia = mes.daysInMonth(); // Último día del mes
-      
-      // Crea un objeto Moment para el último día del mes
-      const fechaFinalizacion = moment(mes).endOf('month');
+    // Comienza desde el mes siguiente al actual
+    for (let i = 1; i <= 6; i++) {
+        const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
+        
+        const fechaInicio = mes.startOf('month').toDate();
+        const fechaFinalizacion = moment(mes).endOf('month');
   
-      const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
+        const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
     
-      this.meses.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
+        this.meses.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
     }
-  }
+}
 
   // Verifica los campos en cada form para colocar su estado (en proceso o finalizado)
   isFormStarted(form: FormGroup): boolean {
@@ -322,16 +427,17 @@ export class DistHorariaComponent {
   }
 
   cerrarPanel() {
-    this.step = -1; // O cualquier valor que indique que no hay panel abierto
+    this.step = -1;
   }
 
   saveDistribuciones() {
     this.isButtonDisabled = true;
 
-    const fechaFinalizacion = this.guardiaForm.get('fechaFinalizacion')?.value;
+    // Obtener fechas de inicio y finalización para cada formulario
+    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
 
     if (this.idEfector === undefined) {
-        this.toastr.error('El efector no está definido.', 'Error', {
+        this.toastr.error('El profesional no esta definido o no posee un legajo.', 'Error', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -341,13 +447,12 @@ export class DistHorariaComponent {
     }
 
     console.log('Datos a guardar:', {
-      guardia: this.guardiaForm.value,
-      consultorio: this.consultorioForm.value,
-      gira: this.giraForm.value,
-      otro: this.otroForm.value,
+        guardia: this.guardiaForm.value,
+        consultorio: this.consultorioForm.value,
+        gira: this.giraForm.value,
+        otro: this.otroForm.value,
     });
 
-    //Esto es para chequear si un form se inicio tiene datos obligatorios sin guardar
     const formChecks = [
         { form: this.guardiaForm, name: 'Guardias' },
         { form: this.consultorioForm, name: 'Consultorio' },
@@ -367,142 +472,173 @@ export class DistHorariaComponent {
         }
     }
 
-    //El uso de promesas es para poder bloquear el boton una vez realizada la accion de guardar
     const savePromises = [];
+    const errorMessages: string[] = [];
 
-    //Guarda guardia
+    // Calcula meses para cada distribución
+    const guardiaMeses = this.calcularMeses(mesVigencia);
+    const consultorioMeses = this.calcularMeses(mesVigencia);
+    const giraMeses = this.calcularMeses(mesVigencia);
+    const otroMeses = this.calcularMeses(mesVigencia);
+
+    // Guarda guardia
     if (this.guardiaForm.valid) {
-        const distribucionGuardiaDto = new DistribucionGuardiaDto(
-            this.guardiaForm.value.dia,
-            this.guardiaForm.value.cantidadHoras,
-            this.guardiaForm.value.idPersona,
-            this.idEfector,
-            this.guardiaForm.value.fechaInicio,
-            this.guardiaForm.value.fechaFinalizacion,
-            this.guardiaForm.value.horaIngreso,
-            this.guardiaForm.value.tipoGuardia,
-            this.guardiaForm.value.idServicio.id
-        );
+        for (const mes of guardiaMeses) {
+            const distribucionGuardiaDto = new DistribucionGuardiaDto(
+                this.guardiaForm.value.dia,
+                this.guardiaForm.value.cantidadHoras,
+                this.guardiaForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.guardiaForm.value.horaIngreso,
+                this.guardiaForm.value.tipoGuardia,
+                this.guardiaForm.value.idServicio.id
+            );
 
-        savePromises.push(
-            this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Guardia', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar guardia.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            console.log('Guardia a guardar:', distribucionGuardiaDto);
+
+            savePromises.push(
+              this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
+                  })
+          );
+      }
     }
 
-    //Guarda consultorio
+    // Guarda consultorio
     if (this.consultorioForm.valid) {
-        const distribucionConsultorioDto = new DistribucionConsultorioDto(
-            this.consultorioForm.value.dia,
-            this.consultorioForm.value.cantidadHoras,
-            this.consultorioForm.value.idPersona,
-            this.idEfector,
-            this.consultorioForm.value.fechaInicio,
-            this.consultorioForm.value.fechaFinalizacion,
-            this.consultorioForm.value.horaIngreso,
-            this.consultorioForm.value.idServicio.id,
-            this.consultorioForm.value.tipoConsultorio
-        );
+        for (const mes of consultorioMeses) {
+            const distribucionConsultorioDto = new DistribucionConsultorioDto(
+                this.consultorioForm.value.dia,
+                this.consultorioForm.value.cantidadHoras,
+                this.consultorioForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.consultorioForm.value.horaIngreso,
+                this.consultorioForm.value.idServicio.id,
+                this.consultorioForm.value.tipoConsultorio
+            );
 
-        savePromises.push(
-            this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Consultorio', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar Consultorio.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+              this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionConsultorioDto.dia}`);
+                  })
+          );
+      }
     }
 
-    //Guarda gira medica
+    // Guarda gira médica
     if (this.giraForm.valid) {
-        const distribucionGiraDto = new DistribucionGiraDto(
-            this.giraForm.value.dia,
-            this.giraForm.value.cantidadHoras,
-            this.giraForm.value.idPersona,
-            this.idEfector,
-            this.giraForm.value.fechaInicio,
-            this.giraForm.value.fechaFinalizacion,
-            this.giraForm.value.horaIngreso,
-            this.giraForm.value.puestoSalud,
-            this.giraForm.value.descripcion,
-            this.giraForm.value.destino
-        );
+        for (const mes of giraMeses) {
+            const distribucionGiraDto = new DistribucionGiraDto(
+                this.giraForm.value.dia,
+                this.giraForm.value.cantidadHoras,
+                this.giraForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.giraForm.value.horaIngreso,
+                this.giraForm.value.puestoSalud,
+                this.giraForm.value.descripcion,
+                this.giraForm.value.destino
+            );
 
-        savePromises.push(
-            this.distribucionGiraService.save(distribucionGiraDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Gira médica', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar Gira médica.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+              this.distribucionGiraService.save(distribucionGiraDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGiraDto.dia}`);
+                  })
+          );
+      }
     }
 
-    //Guarda Otras actividades
+    // Guarda otras actividades
     if (this.otroForm.valid) {
-        const distribucionOtroDto = new DistribucionOtroDto(
-            this.otroForm.value.dia,
-            this.otroForm.value.cantidadHoras,
-            this.otroForm.value.idPersona,
-            this.idEfector,
-            this.otroForm.value.fechaInicio,
-            this.otroForm.value.fechaFinalizacion,
-            this.otroForm.value.horaIngreso,
-            this.otroForm.value.descripcion,
-            this.otroForm.value.lugar
-        );
+        for (const mes of otroMeses) {
+            const distribucionOtroDto = new DistribucionOtroDto(
+                this.otroForm.value.dia,
+                this.otroForm.value.cantidadHoras,
+                this.otroForm.value.idPersona,
+                this.idEfector,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                this.otroForm.value.horaIngreso,
+                this.otroForm.value.descripcion,
+                this.otroForm.value.lugar
+            );
 
-        savePromises.push(
-            this.distribucionOtroService.save(distribucionOtroDto).toPromise()
-                .then(() => this.toastr.success('Se a guardado exitosamente.', 'Otra actividad', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-                .catch(() => this.toastr.error('No se pudo guardar otra actividad.', 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                }))
-        );
+            savePromises.push(
+              this.distribucionOtroService.save(distribucionOtroDto).toPromise()
+                  .catch(() => {
+                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionOtroDto.dia}`);
+                  })
+          );
+      }
     }
 
     // Envia los datos cargados para guardar
     Promise.all(savePromises)
-    .then(() => {
-      this.router.navigate(['/personal']);
-    })
-    .catch(() => {
-      this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-    })
-    .finally(() => {
-      this.isButtonDisabled = false;
-    });
+        .then(() => {
+            // Mostrar mensaje de éxito
+            this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+
+            // Si hubo errores, mostrar detalle
+            if (errorMessages.length > 0) {
+                this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                });
+            }
+
+            this.router.navigate(['/personal']);
+        })
+        .catch(() => {
+            this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+            });
+        })
+        .finally(() => {
+            this.isButtonDisabled = false;
+        });
   }
+
+// Función para calcular los meses de un rango de fechas
+calcularMeses(mesVigencia: string): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
+  const meses: Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> = [];
+  const mesActual = moment(); // Fecha actual
+  const mesVigente = moment(mesVigencia); // Mes de vigencia
+
+  let inicio = mesActual.clone().add(1, 'month'); // Comienza desde el siguiente mes
+  const fin = mesVigente; // Hasta el mes de vigencia
+
+  while (inicio.isSameOrBefore(fin, 'month')) {
+      const mesNombreCapitalizado = inicio.format('MMMM').charAt(0).toUpperCase() + inicio.format('MMMM').slice(1);
+      
+      // Asegurarse de que la fecha de finalización sea el último día del mes
+      const fechaFinalizacion = inicio.endOf('month').startOf('day').toDate(); 
+
+      meses.push({
+          mes: mesNombreCapitalizado,
+          fechaInicio: inicio.startOf('month').toDate(),
+          fechaFinalizacion: fechaFinalizacion,
+      });
+
+      inicio.add(1, 'month'); // Mueve al siguiente mes
+  }
+
+  return meses;
+}
 
   nextStep(): void {
     this.step = (this.step + 1) % 4;
@@ -516,26 +652,30 @@ export class DistHorariaComponent {
     this.step = index;
   }
 
-  get isPanelEnabled(): boolean {
-    return this.isProfessionalLoaded;
-  }
+get isMesVigenciaSelected(): boolean {
+  return !!this.vigenciaForm.get('mesVigencia')?.value;
+}
 
-  get isPanel0Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 0;
-  }
-  
-  get isPanel1Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 1;
-  }
-  
-  get isPanel2Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 2;
-  }
-  
-  get isPanel3Expanded(): boolean {
-    return this.isProfessionalLoaded && this.step === 3;
-  }
-  
+get isPanelEnabled(): boolean {
+  return this.isProfessionalLoaded && this.isMesVigenciaSelected && this.isPanelsEnabled;
+}
+
+get isPanel0Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 0;
+}
+
+get isPanel1Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 1;
+}
+
+get isPanel2Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 2;
+}
+
+get isPanel3Expanded(): boolean {
+  return this.isPanelEnabled && this.step === 3;
+}
+
   compareServicio(s1: Servicio, s2: Servicio): boolean {
     return s1 && s2 ? s1.id === s2.id : s1 === s2;
   }

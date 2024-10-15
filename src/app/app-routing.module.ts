@@ -53,6 +53,7 @@ import { ProfesionComponent } from './components/configuracion/profesionales/pro
 
 //Configuraciones: Personas
 import { AdicionalEditComponent } from './components/configuracion/usuarios/adicional-edit/adicional-edit.component';
+import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
 import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
 import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
@@ -67,6 +68,7 @@ import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
+import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
 import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
 import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
@@ -115,7 +117,9 @@ import { DistHorariaComponent } from './components/personal/dist-horaria/dist-ho
 //Sección: Personal
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
+import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
 
 
@@ -208,7 +212,6 @@ import { AutoridadEditComponent } from './components/configuracion/usuarios/auto
 import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
 
 import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
-import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 
 
@@ -275,8 +278,9 @@ const routes: Routes = [
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
   {path: 'asistencial-edit', component:AsistencialEditComponent},
   {path: 'no-asistencial', component:NoAsistencialComponent},
+  {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
-  {path: 'no-asistencial-edit/:id', component:NoAsistencialEditComponent},
+  {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
   {path: 'legajo', component:LegajoComponent},
   {path: 'legajo-create', component: LegajoCreateComponent},
   {path: 'legajo-detail/:id', component:LegajoDetailComponent},
@@ -343,7 +347,9 @@ const routes: Routes = [
 
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
+  {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
+  {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
 
