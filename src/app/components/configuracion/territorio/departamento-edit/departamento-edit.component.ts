@@ -70,7 +70,7 @@ export class DepartamentoEditComponent implements OnInit {
       departamentoData.codigoPostal,
       departamentoData.activo,
       departamentoData.provincia.id,
-     
+    
     );
 
     if (this.data && this.data.id) {
