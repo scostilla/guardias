@@ -28,24 +28,22 @@ export class HomePageComponent implements OnInit {
   ngOnInit(): void {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
-
-      // Obtener el ID del efector del almacenamiento local
-      const savedEfectorId = localStorage.getItem('selectedEfectorId');
-
+  
       this.authService.detailPersonBasicPanel().subscribe(
         (response: PersonBasicPanelDto) => {
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
           this.nombresEfectores = response.efectores;
-
-          // Si hay un efector guardado, seleccionarlo; de lo contrario, seleccionar el primero
+  
+          // Comprueba si hay un efector guardado
+          const savedEfectorId = localStorage.getItem('selectedEfectorId');
           if (savedEfectorId) {
-            this.selectedEfector = this.nombresEfectores.find(efector => efector.id === Number(savedEfectorId)) || null;
+            this.selectedEfector = this.nombresEfectores.find(efector => efector.id === Number(savedEfectorId)) || this.nombresEfectores[0];
           } else if (this.nombresEfectores.length > 0) {
             this.selectedEfector = this.nombresEfectores[0];
           }
-
-          // Si hay un efector seleccionado, llamar a fetchAsistenciales
+  
+          // Establece el ID del efector actual si hay uno seleccionado
           if (this.selectedEfector) {
             this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
             this.fetchAsistenciales(this.selectedEfector.id);
@@ -57,11 +55,10 @@ export class HomePageComponent implements OnInit {
       );
     } else {
       this.isLogged = false;
-      // Reiniciar el efector seleccionado si no está logueado
-      this.selectedEfector = null;
+      this.selectedEfector = null; // Reiniciar el efector seleccionado si no está logueado
     }
   }
-
+    
   onEfectorChange() {
     if (this.selectedEfector) {
       console.log('ID del efector seleccionado:', this.selectedEfector.id);
@@ -71,7 +68,7 @@ export class HomePageComponent implements OnInit {
       this.fetchAsistenciales(this.selectedEfector.id);
     }
   }
-
+  
   fetchAsistenciales(efectorId: number) {
     this.asistencialService.listByEfectorAndTipoGuardia(efectorId).subscribe(
       (asistenciales) => {
@@ -88,8 +85,8 @@ export class HomePageComponent implements OnInit {
   }
 
   onLogOut(): void {
-    this.tokenService.logOut();
-    localStorage.removeItem('selectedEfectorId'); // Limpiar el almacenamiento local al cerrar sesión
-    window.location.reload();
+    this.tokenService.logOut(); // Limpiar el sessionStorage
+    localStorage.removeItem('selectedEfectorId'); // Limpiar el ID del efector
+    window.location.reload(); // Recargar la página
   }
 }
