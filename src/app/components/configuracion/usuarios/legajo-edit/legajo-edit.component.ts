@@ -39,6 +39,8 @@ interface Agrup {
 })
 export class LegajoEditComponent implements OnInit {
 
+  fromLegajoPerson: boolean = false;
+  fromLegajo: boolean = false;
   legajoForm: FormGroup;
   initialData: Legajo | undefined;
   idLegajo: number = 0;
@@ -112,6 +114,8 @@ export class LegajoEditComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.initialData = navigation.extras.state['legajo'];  // Recibo el legajo
+      this.fromLegajoPerson = !!navigation.extras.state['fromLegajoPerson'];
+      this.fromLegajo = !!navigation.extras.state['fromLegajo'];
     }
 
   }
@@ -311,15 +315,23 @@ export class LegajoEditComponent implements OnInit {
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/legajo'], { state: { legajoModificado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
+
+         // Redirige según de dónde vino
+      if (this.fromLegajo) {
+        this.router.navigate(['/legajo'], { state: { legajoModificado: result } });
+      } else {
+        this.router.navigate(['/legajo-person'], { state: { legajoModificado: result } });
+      }
+
+        //this.router.navigate(['/legajo'], { state: { legajoModificado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
       },
       (error) => {
-        this.toastr.error('Faaa Ocurrió un error al crear el Legajo', error, {
+        this.toastr.error(' Ocurrió un error al editar el Legajo', error, {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        console.error('Error al crear el legajo', error);
+        console.error('Error al editar el legajo', error);
       }
     );
   }
@@ -375,7 +387,18 @@ export class LegajoEditComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/legajo']);
+
+    // Redirige según de dónde vino
+    if (this.fromLegajo) {
+      this.router.navigate(['/legajo']);
+    } else {
+      console.log("vuelvo a legajo-person", this.initialData);
+      this.router.navigate(['/legajo-person'],{
+        state:{legajoModificado: this.initialData}
+      });
+    }
+    
+    //this.router.navigate(['/legajo']);
   }
 
   compareFn(o1: any, o2: any): boolean {

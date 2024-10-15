@@ -168,9 +168,19 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dist-horaria']);
   }
 
+  verNovedad(asistencial: Asistencial): void {
+    if (asistencial && asistencial.id) {
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/novedades-person']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+  }
+
   verDistribucion(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {
-      this.router.navigate(['/personal-dh', asistencial.id]);
+      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.router.navigate(['/personal-dh']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }

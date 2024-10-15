@@ -45,6 +45,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
         (response: PersonBasicPanelDto) => {
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
+          console.log('Usuario en el header:', this.nombreUsuario, this.apellidoUsuario);
         },
         (error) => {
           console.error('Error al obtener detalles del usuario:', error);

@@ -216,6 +216,7 @@ export class PersonComponent implements OnInit, OnDestroy {
     });
   }
   
+  
 
  /* 
   openFormChanges(asistencial?: Asistencial): void {
@@ -270,5 +271,13 @@ export class PersonComponent implements OnInit, OnDestroy {
       });
     }
   });
+}
+
+formatCuil(cuil: string): string {
+  if (!cuil) return '';
+  // Asegúrate de que el CUIL tenga al menos 11 dígitos
+  if (cuil.length < 11) return cuil;
+
+  return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
 }
 }

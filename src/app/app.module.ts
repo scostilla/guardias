@@ -237,6 +237,7 @@ import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edi
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
+import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -425,6 +426,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     PersonalDhHistorialComponent,
     NoAsistencialCreateComponent,
     PersonalNoAsistencialComponent,
+    PersonalLegajoSelectComponent,
     
   ],
 

@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -33,6 +34,10 @@ export class AsistencialService {
   public listByUdoAndTipoGuardia(idUdo: number): Observable<AsistencialDto[]> {
     return this.httpClient.get<AsistencialDto[]>(`${this.asistencialesURL}listByUdoAndTipoGuardia/${idUdo}`);
   }
+
+  public getLegajosByAsistencial(id: number): Observable<Legajo[]> {
+    return this.httpClient.get<Legajo[]>(this.asistencialesURL + `legajos/${id}`);
+}
 
   public listSummary(): Observable<AsistencialSummaryDto[]> {
     return this.httpClient.get<AsistencialSummaryDto[]>(this.asistencialesURL + 'listSummary')

@@ -113,8 +113,9 @@ import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria
 
 //Sección: Personal
 import { PersonalComponent } from './components/personal/personal/personal.component';
-import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
+import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
+import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 
@@ -335,6 +336,7 @@ const routes: Routes = [
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
+  {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
 
