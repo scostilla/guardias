@@ -207,6 +207,7 @@ import { AutoridadDetailComponent } from './components/configuracion/usuarios/au
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
 import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
 
+import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
 import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 
@@ -305,6 +306,9 @@ const routes: Routes = [
   {path: 'inciso-edit/:id', component:IncisoEditComponent},
   {path: 'tipo-ley', component:TipoLeyComponent},
   {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent},
+  {path: 'tipo-licencia', component:TipoLicenciaComponent},
+  {path: 'tipo-licencia-edit/:id', component:TipoLeyEditComponent},
+  {path: 'tipo-licencia-detail/:id', component:TipoLeyEditComponent},
 
 
   

@@ -1,0 +1,19 @@
+<h1 mat-dialog-title> DETALLE
+    <h5>TIPO LICENCIA</h5>
+  </h1>
+  <mat-dialog-content>
+    <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">Nombre</th>
+          <td>{{tipoLicencia.nombre}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Ley</th>
+          <td>{{tipoLicencia.tipoLey.descripcion}}</td>
+      </tbody>
+    </table>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>

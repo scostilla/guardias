@@ -195,6 +195,9 @@ import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edi
 import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
 import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
 import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
+import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
+import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
+import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { AdicionalCreateComponent } from './components/configuracion/usuarios/adicional-create/adicional-create.component';
 import { AdicionalEditComponent } from './components/configuracion/usuarios/adicional-edit/adicional-edit.component';
@@ -436,6 +439,10 @@ registerLocaleData(localeEsAr, 'es-AR');
     IncisoDetailComponent,
     IncisoEditComponent,
     PersonalDhHistorialComponent,
+
+    TipoLicenciaComponent,
+    TipoLicenciaDetailComponent,
+    TipoLicenciaEditComponent,
     
   ],
 
