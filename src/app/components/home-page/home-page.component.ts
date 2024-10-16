@@ -35,10 +35,10 @@ export class HomePageComponent implements OnInit {
           this.apellidoUsuario = response.apellido;
           this.nombresEfectores = response.efectores;
   
-          // Comprueba si hay un efector guardado
-          const savedEfectorId = localStorage.getItem('selectedEfectorId');
+          // Cargar el efector desde el servicio
+          const savedEfectorId = this.asistencialService.getCurrentEfectorId();
           if (savedEfectorId) {
-            this.selectedEfector = this.nombresEfectores.find(efector => efector.id === Number(savedEfectorId)) || this.nombresEfectores[0];
+            this.selectedEfector = this.nombresEfectores.find(efector => efector.id === savedEfectorId) || this.nombresEfectores[0];
           } else if (this.nombresEfectores.length > 0) {
             this.selectedEfector = this.nombresEfectores[0];
           }
@@ -58,7 +58,7 @@ export class HomePageComponent implements OnInit {
       this.selectedEfector = null; // Reiniciar el efector seleccionado si no está logueado
     }
   }
-    
+      
   onEfectorChange() {
     if (this.selectedEfector) {
       console.log('ID del efector seleccionado:', this.selectedEfector.id);

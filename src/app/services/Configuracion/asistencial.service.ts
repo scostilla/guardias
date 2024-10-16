@@ -106,7 +106,7 @@ export class AsistencialService {
   //uso para filtrar por el efector del usuario logueado
 listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto[]> {
   console.log('Listando asistenciales para el ID Efector:', efectorId); // Log del efectorId
-  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}/listByEfectorAndTipoGuardia/${efectorId}`);
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTipoGuardia/${efectorId}`);
 }
 
   private currentEfectorIdSubject = new BehaviorSubject<number | null>(null);
@@ -114,8 +114,13 @@ listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto
 
   setCurrentEfectorId(efectorId: number) {
     this.currentEfectorIdSubject.next(efectorId);
+    sessionStorage.setItem('selectedEfectorId', efectorId.toString());
   }
-
+  
+  getCurrentEfectorId(): number | null {
+    const savedEfectorId = sessionStorage.getItem('selectedEfectorId');
+    return savedEfectorId ? Number(savedEfectorId) : null;
+  }
   
 
 }
