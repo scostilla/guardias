@@ -69,10 +69,17 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Leer el ID del efector del sessionStorage
+    const storedEfectorId = sessionStorage.getItem('selectedEfectorId');
+    if (storedEfectorId) {
+      const efectorId = Number(storedEfectorId);
+      this.asistencialService.setCurrentEfectorId(efectorId); // Actualiza el BehaviorSubject
+    }
+  
     this.listLegajos();
     
     this.efectorIdSubscription = this.asistencialService.currentEfectorId$.subscribe(efectorId => {
-      console.log('ID Efector recibido en asistencial:', efectorId); // Log del ID efector recibido
+      console.log('ID Efector recibido en asistencial:', efectorId);
       if (efectorId !== null) {
         this.listAsistencial(efectorId);
       } else {
@@ -84,9 +91,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.listAsistencial(); // Sin filtro si es necesario
     });    
     this.actualizarColumnasVisibles();
-
   }
-
+  
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
