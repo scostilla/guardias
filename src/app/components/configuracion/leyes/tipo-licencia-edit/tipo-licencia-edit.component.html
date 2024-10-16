@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Tipo de Licencia
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
+    <form [formGroup]="tipoLicenciaForm" (ngSubmit)="saveTipoLicencia()">
+      <mat-dialog-content>
+            <div class="row" style="margin-top: 20px">
+              <div class="col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Nombre</mat-label>
+                    <input matInput formControlName="nombre">
+                  <mat-error *ngIf="tipoLicenciaForm?.get('nombre')?.invalid && tipoLicenciaForm?.get('nombre')?.touched">
+                    El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+           <div class="row">
+            <div class="col">
+              <mat-form-field appearance="fill">
+                <mat-label>Ley</mat-label>
+                 <mat-select formControlName="tipoLey" [compareWith]="compareTipoLey">
+                   <mat-option *ngFor="let tipoLey of tipoLeyes" [value]="tipoLey" >{{ tipoLey.descripcion }}</mat-option>
+                    </mat-select>
+                            <mat-error *ngIf="tipoLicenciaForm?.get('tipoLey')?.invalid && tipoLicenciaForm?.get('tipoLey')?.touched">
+                        El campo es obligatorio.
+                        </mat-error>
+                </mat-form-field>
+                </div>
+            </div>
+            <div mat-dialog-actions class="action mt-4">
+              <button mat-raised-button color="primary" type="submit" [disabled]="!tipoLicenciaForm.valid || !isModified()">
+                {{data ? 'Modificar' : 'Agregar'}}
+              </button>
+              <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                Cancelar
+              </button>
+            </div>
+            </mat-dialog-content>
+    </form>

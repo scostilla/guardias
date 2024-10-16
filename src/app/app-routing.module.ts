@@ -77,7 +77,7 @@ import { CargoEditComponent } from './components/configuracion/usuarios/cargo-ed
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 
-//Configuraciones: Leyes
+//Configuraciones: Leyes y novedades
 import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
 import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
@@ -86,6 +86,10 @@ import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-d
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
 import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
 import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
+import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
+import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
+import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
+
 
 
 //Configuraciones: Calendario
@@ -291,7 +295,7 @@ const routes: Routes = [
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
   
-  //Configuraciones: Leyes
+  //Configuraciones: Leyes y novedades
   {path: 'articulo', component:ArticuloComponent},
   {path: 'articulo-detail/:id', component:ArticuloDetailComponent},
   {path: 'articulo-edit/:id', component:ArticuloEditComponent},
@@ -300,6 +304,10 @@ const routes: Routes = [
   {path: 'inciso-edit/:id', component:IncisoEditComponent},
   {path: 'tipo-ley', component:TipoLeyComponent},
   {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent},
+  {path: 'tipo-licencia', component:TipoLicenciaComponent},
+  {path: 'tipo-licencia/:id', component:TipoLicenciaDetailComponent},
+  {path: 'tipo-licencia/:id', component:TipoLicenciaEditComponent},
+
 
 
   

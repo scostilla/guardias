@@ -238,6 +238,9 @@ import { PersonalDhHistorialComponent } from './components/personal/personal-dh-
 import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
 import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
+import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
+import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
+import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -427,6 +430,9 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialCreateComponent,
     PersonalNoAsistencialComponent,
     PersonalLegajoSelectComponent,
+    TipoLicenciaComponent,
+    TipoLicenciaEditComponent,
+    TipoLicenciaDetailComponent,
     
   ],
 
