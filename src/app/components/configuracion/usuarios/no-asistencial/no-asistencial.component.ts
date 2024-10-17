@@ -40,6 +40,9 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   legajos: Legajo[] = [];
   isLoadingLegajos: boolean = true;
 
+  showMessage: boolean = false;
+  efectorId: number | null = null;
+
   constructor(
     private noasistencialService: NoAsistencialService,
     private dialog: MatDialog,
@@ -62,15 +65,23 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listLegajos();
-    this.listNoAsistencial();
+
+    // Obtener el ID efector del servicio
+    this.efectorId = this.noasistencialService.getCurrentEfectorId();
+
+    // Verificar si el ID efector es válido
+    if (this.efectorId === null) {
+        this.showMessage = true;
+    } else {
+        this.listNoAsistencial(this.efectorId);
+    }
 
     this.suscription = this.noasistencialService.refresh$.subscribe(() => {
-      this.listNoAsistencial();
-    })
+        this.listNoAsistencial(this.efectorId); // Usar el efectorId actual
+    });
 
     this.actualizarColumnasVisibles();
-
-  }
+}
 
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -99,12 +110,31 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     return output;
   } */
 
-  listNoAsistencial(): void {
-    this.noasistencialService.list().subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
+    listNoAsistencial(efectorId: number | null = null): void {
+      if (efectorId === null) {
+          this.showMessage = true;
+          this.dataSource = new MatTableDataSource<NoAsistencial>([]);
+          return;
+      }
+  
+      this.noasistencialService.getNoAsistencialesByEfector(efectorId).subscribe(data => {
+          if (data.length === 0) {
+              this.showMessage = true;
+          } else {
+              this.showMessage = false;
+              this.dataSource = new MatTableDataSource<NoAsistencial>(data);
+          }
+  
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+      }, error => {
+          console.error('Error al obtener no asistenciales:', error);
+          this.showMessage = true; // Muestra mensaje si hay error
+      });
+  }
+
+  getCurrentEfectorId(): number | null {
+    return this.efectorId;
   }
 
   listLegajos(): void {

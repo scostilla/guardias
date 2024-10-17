@@ -21,6 +21,12 @@
     </div>
   </div>
 
+  <div *ngIf="showMessage" class="no-selection-message">
+    No has seleccionado ningún hospital en el panel principal, haz <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+  </div>
+  
+<div *ngIf="!showMessage">
+
   <div class="row">
     <div class="row">
       <div class="col-6">Estás viendo:
@@ -129,4 +135,6 @@
       </div>
     </div>
   </div>
+
+</div>
 </div>

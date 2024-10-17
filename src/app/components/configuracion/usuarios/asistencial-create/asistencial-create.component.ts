@@ -37,7 +37,7 @@ export class AsistencialCreateComponent implements OnInit {
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
       domicilio: ['', Validators.required],
       esAsistencial: [true, Validators.required],
-      cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
+      cuil: ['', [Validators.required, /* Validators.pattern(/^\d{11}$/) */]],
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
@@ -124,9 +124,6 @@ export class AsistencialCreateComponent implements OnInit {
   }
 
   createAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
-    
-    asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
-
     const asistencialDto = new AsistencialDto(
       asistencialData.nombre,
       asistencialData.apellido,
@@ -152,7 +149,7 @@ export class AsistencialCreateComponent implements OnInit {
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/personal'], { state: { asistencialCreado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial creado
+        this.router.navigate(['/asistencial'], { state: { asistencialCreado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial creado
       },
       (error) => {
         this.toastr.error('Ocurrió un error al crear el Asistencial', error, {
@@ -203,6 +200,6 @@ export class AsistencialCreateComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/personal']);
+    this.router.navigate(['/asistencial']);
   }
 }
