@@ -64,8 +64,8 @@
         </ng-container>
 
         <ng-container matColumnDef="cuil">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th> 
-          <td mat-cell *matCellDef="let asistencial"> {{ formatCuil(asistencial.cuil) }} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
+          <td mat-cell *matCellDef="let asistencial" style="white-space: nowrap;"> {{ formatCuil(asistencial.cuil) }} </td>
         </ng-container>
         
         <ng-container matColumnDef="telefono">
