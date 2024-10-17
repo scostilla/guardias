@@ -33,7 +33,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NoAsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
   dataSource!: MatTableDataSource<NoAsistencial>;
   suscription!: Subscription;
   noAsistencial!: NoAsistencial;

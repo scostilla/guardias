@@ -31,23 +31,20 @@ export class HomePageComponent implements OnInit {
   
       this.authService.detailPersonBasicPanel().subscribe(
         (response: PersonBasicPanelDto) => {
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
           this.nombresEfectores = response.efectores;
-  
-          // Cargar el efector desde el servicio
-          const savedEfectorId = this.asistencialService.getCurrentEfectorId();
+
+          // Cargar el efector seleccionado desde el BehaviorSubject
+          const savedEfectorId = this.asistencialService.getCurrentEfectorId(); // Método para obtener el ID del efector actual
+          
           if (savedEfectorId) {
             this.selectedEfector = this.nombresEfectores.find(efector => efector.id === savedEfectorId) || this.nombresEfectores[0];
-          } else if (this.nombresEfectores.length > 0) {
-            this.selectedEfector = this.nombresEfectores[0];
+          } else {
+            this.selectedEfector = this.nombresEfectores[0]; // Si no hay efector guardado, selecciona el primero
           }
-  
-          // Establece el ID del efector actual si hay uno seleccionado
-          if (this.selectedEfector) {
-            this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
-            this.fetchAsistenciales(this.selectedEfector.id);
-          }
+
+          // Establece el ID en el BehaviorSubject
+          this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+          this.fetchAsistenciales(this.selectedEfector.id);
         },
         error => {
           console.error('Error al obtener detalles del usuario:', error);
@@ -55,16 +52,13 @@ export class HomePageComponent implements OnInit {
       );
     } else {
       this.isLogged = false;
-      this.selectedEfector = null; // Reiniciar el efector seleccionado si no está logueado
+      this.selectedEfector = null;
     }
   }
       
   onEfectorChange() {
     if (this.selectedEfector) {
-      console.log('ID del efector seleccionado:', this.selectedEfector.id);
       this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
-      // Guardar el ID del efector seleccionado en el almacenamiento local
-      localStorage.setItem('selectedEfectorId', this.selectedEfector.id.toString());
       this.fetchAsistenciales(this.selectedEfector.id);
     }
   }
@@ -86,7 +80,7 @@ export class HomePageComponent implements OnInit {
 
   onLogOut(): void {
     this.tokenService.logOut(); // Limpiar el sessionStorage
-    localStorage.removeItem('selectedEfectorId'); // Limpiar el ID del efector
+    this.asistencialService.setCurrentEfectorId(null); // Reiniciar el ID del efector
     window.location.reload(); // Recargar la página
   }
 }

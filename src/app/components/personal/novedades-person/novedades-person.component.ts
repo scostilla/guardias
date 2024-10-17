@@ -27,7 +27,7 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NovedadesPersonDetailComponent>;
-  displayedColumns: string[] = ['descripcion', 'fechaInicio', 'fechaFinal', 'actual', 'acciones'];
+  displayedColumns: string[] = ['tipoLicencia', 'fechaInicio', 'fechaFinal', 'acciones'];
   dataSource!: MatTableDataSource<NovedadPersonal>;
   suscription!: Subscription;
   novedades: NovedadPersonal[] = [];
@@ -120,14 +120,15 @@ applyFilter(event: Event) {
   const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
   this.dataSource.filter = filterValue;
   this.dataSource.filterPredicate = (data: NovedadPersonal, filter: string) => {
-    const actualString = data.actual ? 'si' : 'no';
-    const descripcion = data.descripcion.toString();
+    const descripcion = data.tipoLicencia.toString();
     const fechaInicioString = data.fechaInicio.toISOString().toLowerCase();
+    const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
+
 
     // Aplicar el filtro a los valores convertidos
-    return this.accentFilter(actualString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(descripcion).includes(this.accentFilter(filter)) || 
-           this.accentFilter(fechaInicioString).includes(this.accentFilter(filter));
+    return this.accentFilter(descripcion).includes(this.accentFilter(filter)) || 
+           this.accentFilter(fechaInicioString).includes(this.accentFilter(filter)) || 
+           this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
   };
 }
 

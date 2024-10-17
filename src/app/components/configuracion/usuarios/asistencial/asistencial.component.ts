@@ -35,7 +35,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
   dataSource!: MatTableDataSource<Asistencial>;
   suscription!: Subscription;
   asistencial!: Asistencial;
@@ -43,6 +43,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   isLoadingLegajos: boolean = true;
 
   showMessage: boolean = false;
+  efectorId: number | null = null;
 
   private efectorIdSubscription!: Subscription;
   
@@ -69,30 +70,25 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Leer el ID del efector del sessionStorage
-    const storedEfectorId = sessionStorage.getItem('selectedEfectorId');
-    if (storedEfectorId) {
-      const efectorId = Number(storedEfectorId);
-      this.asistencialService.setCurrentEfectorId(efectorId); // Actualiza el BehaviorSubject
-    }
-  
     this.listLegajos();
+
+    // Obtener el ID efector del servicio
+    this.efectorId = this.asistencialService.getCurrentEfectorId();
     
-    this.efectorIdSubscription = this.asistencialService.currentEfectorId$.subscribe(efectorId => {
-      console.log('ID Efector recibido en asistencial:', efectorId);
-      if (efectorId !== null) {
-        this.listAsistencial(efectorId);
-      } else {
-        this.listAsistencial(); // Sin filtro si no hay efectorId
-      }
-    });
-  
+    // Verificar si el ID efector es válido
+    if (this.efectorId === null) {
+      this.showMessage = true;
+    } else {
+      this.listAsistencial(this.efectorId);
+    }
+
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listAsistencial(); // Sin filtro si es necesario
-    });    
+      this.listAsistencial(this.efectorId); // Usar el efectorId actual
+    });
+    
     this.actualizarColumnasVisibles();
   }
-  
+
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -106,27 +102,36 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   listAsistencial(efectorId: number | null = null): void {
+    // Si no hay un ID de efector, muestra el mensaje
+    if (efectorId === null) {
+      this.showMessage = true;
+      this.dataSource = new MatTableDataSource<Asistencial>([]);
+      return;
+    }
+  
     this.asistencialService.list().subscribe(data => {
-      if (efectorId === null) {
-        this.dataSource = new MatTableDataSource<Asistencial>([]);
-        this.showMessage = true; // Muestra el mensaje si efectorId es null
+      const filteredData = data.filter(asistencial => 
+        asistencial.legajos.some(legajo => 
+          legajo.efectores.some(efector => efector.id === efectorId)
+        )
+      );
+  
+      // Si no se encuentran datos, muestra el mensaje
+      if (filteredData.length === 0) {
+        this.showMessage = true;
       } else {
-        data = data.filter(asistencial => 
-          asistencial.legajos.some(legajo => 
-            legajo.efectores.some(efector => efector.id === efectorId)
-          )
-        );
-        this.dataSource = new MatTableDataSource<Asistencial>(data);
         this.showMessage = false;
+        this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
       }
-      
+  
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }, error => {
       console.error('Error al obtener asistenciales:', error);
+      this.showMessage = true; // Muestra mensaje si hay error
     });
   }
-  
+      
   listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
@@ -135,7 +140,15 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     });
   }
-
+  
+  formatCuil(cuil: string): string {
+    if (!cuil) return '';
+    // Asegúrate de que el CUIL tenga al menos 11 dígitos
+    if (cuil.length < 11) return cuil;
+  
+    return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
+  }
+  
   createAsistencial(): void {
     this.router.navigate(['/asistencial-create']);
   }
@@ -295,5 +308,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-  }
+    this.efectorIdSubscription?.unsubscribe();
+  }  
 }

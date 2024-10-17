@@ -9,10 +9,6 @@
             <td>{{legajo.persona.apellido}}, {{legajo.persona.nombre}}</td>
           </tr>    
           <tr>
-            <th scope="row">ID</th>
-            <td>{{legajo.id}}</td>
-          </tr>    
-          <tr>
             <th scope="row">Actual</th>
             <td>{{legajo.actual ? 'Si' : 'No'}}</td>
           </tr>
@@ -44,11 +40,15 @@
             <th scope="row">U.D.O.</th>
             <td>{{legajo.udo.nombre}}</td>
           </tr>
-          <!-- <tr>
-            <th scope="row">Cargo</th>
-            <td>{{legajo.cargo.nombre}}</td>
-          </tr> -->
-        </tbody>
+          <tr>
+            <th scope="row">Efectores</th>
+              <td>
+                  <ng-container *ngFor="let efector of legajo.efectores; let i = index">
+                      {{ efector.nombre }}<span *ngIf="!isLast(i, legajo.efectores)">, </span>
+                  </ng-container>
+              </td>
+          </tr>
+      </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
