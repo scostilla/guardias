@@ -145,6 +145,13 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
             </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Efectores</mat-label>
+              <mat-select formControlName="efectores" multiple [compareWith]="compareFn">
+                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
+            </mat-form-field>
           
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>

@@ -6,11 +6,11 @@
     <mat-dialog-content>
 
           <mat-form-field appearance="fill">
-            <mat-label>Articulo</mat-label>
-              <mat-select formControlName="tipoLicencia" [compareWith]="compareLicencia">
+            <mat-label>Tipo de licencia</mat-label>
+              <mat-select formControlName="idTipoLicencia" [compareWith]="compareLicencia">
                 <mat-option *ngFor="let licencia of licencias" [value]="licencia.id" >{{ licencia.nombre }}</mat-option>
               </mat-select>
-            <mat-error *ngIf="novedadPersonalForm.get('tipoLicencia')?.errors?.['required']">El campo es requerido.</mat-error>
+            <mat-error *ngIf="novedadPersonalForm.get('idTipoLicencia')?.errors?.['required']">El campo es requerido.</mat-error>
           </mat-form-field>
           
 
@@ -28,8 +28,9 @@
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
             <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['dateLessThan']">La fecha de finalización no puede ser anterior a la fecha de inicio.</mat-error>
           </mat-form-field>
-
+          
       <mat-form-field appearance="fill" class="form-field">
         <mat-label>Cobra sueldo?</mat-label>
         <mat-select formControlName="cobraSueldo">

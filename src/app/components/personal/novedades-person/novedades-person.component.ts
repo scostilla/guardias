@@ -12,7 +12,7 @@ import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { NovedadesPersonEditComponent } from '../novedades-person-edit/novedades-person-edit.component';
 import { NovedadesPersonDetailComponent } from '../novedades-person-detail/novedades-person-detail.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-novedades-person',
@@ -41,6 +41,7 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastr: ToastrService,
     private route: ActivatedRoute,
+    private router: Router,
     private paginatorIntl: MatPaginatorIntl
     ) { 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -54,22 +55,23 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
       return `${start} - ${end} de ${length}`; };
      }
 
-  ngOnInit(): void {
-  this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-    if (asistencial) {
-      this.asistencialId = asistencial.id;
+     ngOnInit(): void {
+      this.asistencialService.currentAsistencial$.subscribe(asistencial => {
+        if (asistencial) {
+          this.asistencialId = asistencial.id;
+          this.listNovedad();
+        } else {
+          console.error('No hay asistencial seleccionado.');
+          this.router.navigate(['personal']);
+        }
+      });
+      
       this.listNovedad();
-    } else {
-      console.error('No hay asistencial seleccionado.');
+  
+      this.suscription = this.novedadPersonalService.refresh$.subscribe(() => {
+        this.listNovedad();
+      });
     }
-  });
-    this.listNovedad();
-
-    this.suscription = this.novedadPersonalService.refresh$.subscribe(() => {
-      this.listNovedad();
-    })
-
-  }
 
   listNovedad(): void {
     if (this.asistencialId === undefined) {

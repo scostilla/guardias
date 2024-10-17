@@ -8,6 +8,7 @@ import { AsistencialSelectorComponent } from 'src/app/components/configuracion/u
 import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
 import { TipoLicenciaService } from 'src/app/services/Configuracion/tipoLicencia.service';
 import { ToastrService } from 'ngx-toastr';
+import { AbstractControl } from '@angular/forms';
 
 
 @Component({
@@ -34,14 +35,14 @@ export class NovedadesPersonEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { asistencialId: number; novedadPersonal?: NovedadPersonalDto }
   ) {
     this.novedadPersonalForm = this.fb.group({
-      tipoLicencia: ['', [Validators.required]],
+      idTipoLicencia: ['', [Validators.required]],
       fechaInicio: ['', Validators.required],
-      fechaFinal: ['', Validators.required],
+      fechaFinal: [{ value: '', disabled: true }, Validators.required], 
       idSuplente: ['', Validators.required],
       puedeRealizarGuardia: [''],
       cobraSueldo: [''],
       necesitaReemplazo: [''],
-    });
+    }, { validators: this.dateLessThan('fechaInicio', 'fechaFinal') });
 
     this.listLicencia();
 
@@ -53,7 +54,7 @@ export class NovedadesPersonEditComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.novedadPersonal) {
       this.novedadPersonalForm.patchValue({
-        descripcion: this.data.novedadPersonal.idTipoLicencia,
+        idTipoLicencia: this.data.novedadPersonal.idTipoLicencia,
         fechaInicio: this.data.novedadPersonal.fechaInicio,
         fechaFinal: this.data.novedadPersonal.fechaFinal,
         idSuplente: this.data.novedadPersonal.idSuplente,
@@ -63,8 +64,32 @@ export class NovedadesPersonEditComponent implements OnInit {
       });
     }
     this.initialData = this.novedadPersonalForm.value;
-}
 
+    // Observa los cambios en fechaInicio para habilitar o deshabilitar fechaFinal
+    this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(value => {
+      if (value) {
+        this.novedadPersonalForm.get('fechaFinal')?.enable();
+      } else {
+        this.novedadPersonalForm.get('fechaFinal')?.disable();
+      }
+    });
+  }
+
+  // Validador personalizado para comprobar que la fechaFinal no sea anterior a fechaInicio
+  dateLessThan(start: string, end: string) {
+    return (formGroup: AbstractControl) => {
+      const startControl = formGroup.get(start);
+      const endControl = formGroup.get(end);
+      if (startControl && endControl) {
+        if (endControl.value && startControl.value && endControl.value < startControl.value) {
+          endControl.setErrors({ dateLessThan: true });
+        } else {
+          endControl.setErrors(null);
+        }
+      }
+    };
+  }
+  
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.novedadPersonalForm.value);
   }
@@ -118,7 +143,7 @@ export class NovedadesPersonEditComponent implements OnInit {
         formValue.puedeRealizarGuardia,
         formValue.cobraSueldo,
         formValue.necesitaReemplazo,
-        formValue.actual,
+        true,
         formValue.idTipoLicencia,
         this.data.novedadPersonal ? this.data.novedadPersonal.idPersona : this.data.asistencialId,
         formValue.idSuplente,
