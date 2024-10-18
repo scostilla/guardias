@@ -75,11 +75,11 @@ export class NoAsistencialService {
   }
 
   private encrypt(text: string): string {
-    return CryptoJS.AES.encrypt(text, 'secretKey').toString(); // Cambia 'secretKey' por tu clave real
+    return CryptoJS.AES.encrypt(text, 'Dph*FfLlMmNn99').toString();
   }
 
   private decrypt(encryptedText: string): string {
-    const bytes = CryptoJS.AES.decrypt(encryptedText, 'secretKey'); // Cambia 'secretKey' por tu clave real
+    const bytes = CryptoJS.AES.decrypt(encryptedText, 'Dph*FfLlMmNn99');
     return bytes.toString(CryptoJS.enc.Utf8);
   }
 

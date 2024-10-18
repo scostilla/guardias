@@ -200,6 +200,6 @@ export class AsistencialCreateComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/asistencial']);
+    this.router.navigate(['/personal']);
   }
 }
