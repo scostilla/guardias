@@ -100,6 +100,9 @@ export class AsistencialEditComponent implements OnInit {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
 
+      asistencialData.nombre = this.capitalizeWords(asistencialData.nombre);
+      asistencialData.apellido = this.capitalizeWords(asistencialData.apellido);
+
       asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
 
       const asistencialDto = new AsistencialDto(
@@ -160,6 +163,22 @@ export class AsistencialEditComponent implements OnInit {
         tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
       });
     }
+  }
+
+  capitalizeWords(value: string): string {
+    return value.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  onNombreInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.asistencialForm.get('nombre')?.setValue(formattedValue, { emitEvent: false });
+  }
+  
+  onApellidoInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.asistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
   }
 
   formatCuil(event: any): void {

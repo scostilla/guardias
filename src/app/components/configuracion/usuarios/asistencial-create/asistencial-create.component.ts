@@ -37,7 +37,7 @@ export class AsistencialCreateComponent implements OnInit {
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
       domicilio: ['', Validators.required],
       esAsistencial: [true, Validators.required],
-      cuil: ['', [Validators.required, /* Validators.pattern(/^\d{11}$/) */]],
+      cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
@@ -75,6 +75,11 @@ export class AsistencialCreateComponent implements OnInit {
   saveAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
+
+      asistencialData.nombre = this.capitalizeWords(asistencialData.nombre);
+      asistencialData.apellido = this.capitalizeWords(asistencialData.apellido);
+
+      asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
 
       const nuevoUsuario = new NuevoUsuario(
         asistencialData.nombreUsuario,
@@ -180,6 +185,22 @@ export class AsistencialCreateComponent implements OnInit {
         tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
       });
     }
+  }
+
+  capitalizeWords(value: string): string {
+    return value.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  onNombreInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.asistencialForm.get('nombre')?.setValue(formattedValue, { emitEvent: false });
+  }
+  
+  onApellidoInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.asistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
   }
 
   formatCuil(event: any): void {

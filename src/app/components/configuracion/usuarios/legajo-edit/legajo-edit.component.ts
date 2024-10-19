@@ -318,7 +318,7 @@ export class LegajoEditComponent implements OnInit {
 
          // Redirige según de dónde vino
       if (this.fromLegajo) {
-        this.router.navigate(['/legajo'], { state: { legajoModificado: result } });
+        this.router.navigate(['/personal-legajo'], { state: { legajoModificado: result } });
       } else {
         this.router.navigate(['/legajo-person'], { state: { legajoModificado: result } });
       }
@@ -390,7 +390,7 @@ export class LegajoEditComponent implements OnInit {
 
     // Redirige según de dónde vino
     if (this.fromLegajo) {
-      this.router.navigate(['/legajo']);
+      this.router.navigate(['/personal-legajo']);
     } else {
       console.log("vuelvo a legajo-person", this.initialData);
       this.router.navigate(['/legajo-person'],{

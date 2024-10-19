@@ -443,11 +443,11 @@ export class LegajoCreateComponent implements OnInit {
 
         // Redirige según de dónde vino
         if (this.fromAsistencial) {
-          this.router.navigate(['/asistencial']);
+          this.router.navigate(['/personal']);
         } else if (this.fromNoAsistencial) {
-          this.router.navigate(['/no-asistencial']);
+          this.router.navigate(['/personal-no-asistencial']);
         } else {
-          this.router.navigate(['/legajo']);
+          this.router.navigate(['/personal-legajo']);
         }
       },
       (error) => {
@@ -513,11 +513,11 @@ export class LegajoCreateComponent implements OnInit {
     });
     // Redirige según de dónde vino
     if (this.fromAsistencial) {
-      this.router.navigate(['/asistencial']);
+      this.router.navigate(['/personal']);
     } else if (this.fromNoAsistencial) {
-      this.router.navigate(['/no-asistencial']);
+      this.router.navigate(['/personal-no-asistencial']);
     } else {
-      this.router.navigate(['/legajo']);
+      this.router.navigate(['/personal-legajo']);
     }
   }
 

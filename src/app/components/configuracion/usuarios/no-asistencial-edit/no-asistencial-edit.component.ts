@@ -69,6 +69,9 @@ export class NoAsistencialEditComponent implements OnInit {
     if (this.noAsistencialForm.valid) {
       const noAsistencialData = this.noAsistencialForm.value;
 
+      noAsistencialData.nombre = this.capitalizeWords(noAsistencialData.nombre);
+      noAsistencialData.apellido = this.capitalizeWords(noAsistencialData.apellido);
+
       noAsistencialData.cuil = noAsistencialData.cuil.replace(/-/g, '');
 
       const noAsistencialDto = new NoAsistencialDto(
@@ -106,6 +109,22 @@ export class NoAsistencialEditComponent implements OnInit {
         }
       );
     }
+  }
+
+  capitalizeWords(value: string): string {
+    return value.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  onNombreInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.noAsistencialForm.get('nombre')?.setValue(formattedValue, { emitEvent: false });
+  }
+  
+  onApellidoInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.noAsistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
   }
 
   formatCuil(event: any): void {
