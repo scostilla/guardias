@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
         this.tokenService.setAuthorities(data.authorities);
         this.roles = this.tokenService.getAuthorities();
 
-        this.toastr.success('Bienvenido ' + data.nombreUsuario, 'OK', {
+        this.toastr.success(data.nombreUsuario, 'Bienvenido', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
         // Redireccionnamiento segun roles

@@ -241,6 +241,8 @@ import { PersonalLegajoSelectComponent } from './components/personal/personal-le
 import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
 import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
 import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
+import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
+import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 registerLocaleData(localeEsAr, 'es-AR');
 
 
@@ -433,6 +435,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     TipoLicenciaComponent,
     TipoLicenciaEditComponent,
     TipoLicenciaDetailComponent,
+    LegajoNoAsistencialComponent,
+    PersonalLegajoNoAsistencialComponent,
     
   ],
 

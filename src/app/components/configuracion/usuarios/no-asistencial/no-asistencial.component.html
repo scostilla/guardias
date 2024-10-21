@@ -35,12 +35,18 @@
     </div>
 
     <div *ngIf="showMessage" class="no-selection-message">
-      No has seleccionado ningún hospital en el panel principal, haz <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+      No has seleccionado ningún hospital en el panel principal, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
     </div>
     
-  <div *ngIf="!showMessage">  
+    <div *ngIf="sinAsistencialMessage" class="no-selection-message">
+      No se encontraron personas cargadas para el efector seleccionado, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="!showMessage && !sinAsistencialMessage">
 
-    <div class="table-responsive">
+      <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>

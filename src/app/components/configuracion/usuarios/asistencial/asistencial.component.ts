@@ -106,7 +106,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
       this.showMessage = true;
-      this.sinAsistencialMessage = false; // Reinicia el mensaje de no asistenciales
+      this.sinAsistencialMessage = false;
       this.dataSource = new MatTableDataSource<Asistencial>([]);
       return;
     }
@@ -120,11 +120,11 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
       // Maneja los mensajes según los resultados
       if (filteredData.length === 0) {
-        this.showMessage = false; // Reinicia el mensaje de no selección
-        this.sinAsistencialMessage = true; // Activa el mensaje de no asistenciales
+        this.showMessage = false;
+        this.sinAsistencialMessage = true;
       } else {
-        this.showMessage = false; // Reinicia el mensaje de no selección
-        this.sinAsistencialMessage = false; // Reinicia el mensaje de no asistenciales
+        this.showMessage = false;
+        this.sinAsistencialMessage = false;
         this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
       }
 
@@ -132,8 +132,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.dataSource.sort = this.sort;
     }, error => {
       console.error('Error al obtener asistenciales:', error);
-      this.showMessage = true; // Muestra mensaje si hay error
-      this.sinAsistencialMessage = false; // Reinicia el mensaje de no asistenciales
+      this.showMessage = true;
+      this.sinAsistencialMessage = false;
     });
   }
 
