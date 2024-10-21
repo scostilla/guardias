@@ -55,7 +55,7 @@ export class LegajoEditComponent implements OnInit {
   revistas: Revista[] = [];
   step = 0;
 
-  personaId!: number;
+  personId!: number;
 
   agrupaciones: Agrup[] = [
     { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
@@ -138,7 +138,7 @@ export class LegajoEditComponent implements OnInit {
 
       console.log("ID de persona recibido:", this.initialData.persona.id);
   
-      this.personaId = this.initialData.persona.id;
+      this.personId = this.initialData.persona.id;
       
       this.legajoForm.patchValue({
         ...this.initialData,
@@ -301,7 +301,7 @@ export class LegajoEditComponent implements OnInit {
       legajoData.matriculaProvincial,
       revistaId!, // Usa el ID de la revista (existente o nueva)
       legajoData.udo.id,
-      this.personaId,
+      this.personId,
       legajoData.cargo.id,
       legajoData.efectores,
       legajoData.especialidades,

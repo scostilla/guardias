@@ -32,7 +32,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
                 
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Profesión</mat-label>
               <mat-select formControlName="profesion" [compareWith]="compareFn">
                 <mat-option *ngFor="let profesion of profesiones" [value]="profesion">{{ profesion.nombre }}</mat-option>
