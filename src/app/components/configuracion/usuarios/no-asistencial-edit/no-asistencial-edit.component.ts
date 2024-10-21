@@ -57,6 +57,10 @@ export class NoAsistencialEditComponent implements OnInit {
         ...this.initialData
       });
 
+                // Formatear el CUIL después de cargar los datos
+    const formattedCuil = this.formatCuilValue(this.initialData.cuil);
+    this.noAsistencialForm.get('cuil')?.setValue(formattedCuil, { emitEvent: false });
+
       console.log("id noAsis a modificar", this.idNoAsistencial);
     }
   }
@@ -126,6 +130,18 @@ export class NoAsistencialEditComponent implements OnInit {
     const formattedValue = this.capitalizeWords(event.target.value);
     this.noAsistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
   }
+
+  formatCuilValue(cuil: string): string {
+    let value = cuil.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
+    if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
+    }
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
+    }
+    return value;
+  }
+  
 
   formatCuil(event: any): void {
     let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos

@@ -31,15 +31,7 @@
                 <span class="negrita">Datos personal</span>
               </mat-panel-title>
             </mat-expansion-panel-header>
-        
-            <mat-form-field appearance="fill" style="margin-top: 20px;">
-              <mat-label>Persona</mat-label>
-              <mat-select formControlName="persona" [compareWith]="compareFn">
-                <mat-option *ngFor="let persona of personas" [value]="persona">{{ persona.nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('persona')?.errors?.['required']">La persona es requerida.</mat-error>
-            </mat-form-field>
-        
+                
             <mat-form-field appearance="fill">
               <mat-label>Profesión</mat-label>
               <mat-select formControlName="profesion" [compareWith]="compareFn">

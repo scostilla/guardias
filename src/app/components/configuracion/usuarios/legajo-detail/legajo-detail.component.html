@@ -37,6 +37,14 @@
             <td>{{legajo.profesion.nombre}}</td>
           </tr>
           <tr>
+          <th scope="row">Especialidades</th>
+          <td>
+            <ng-container *ngFor="let especialidad of legajo.especialidades; let i = index">
+              {{ especialidad.nombre }}<span *ngIf="!isLast(i, legajo.especialidades)">, </span>
+            </ng-container>
+          </td>
+        </tr>
+          <tr>
             <th scope="row">U.D.O.</th>
             <td>{{legajo.udo.nombre}}</td>
           </tr>

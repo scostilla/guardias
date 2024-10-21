@@ -22,6 +22,13 @@ export class NoAsistencialDetailComponent implements OnInit {
     this.noasistencial = this.data;
   }
 
+  formatCuil(cuil: string): string {
+    if (!cuil) return '';
+    if (cuil.length < 11) return cuil;
+    
+    return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
+  }
+
   cerrar(): void {
     this.dialogRef.close();
   }

@@ -45,7 +45,7 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>CUIL</mat-label>
             <!-- <input matInput formControlName="cuil" (input)="formatCuil($event)"> -->
-            <input matInput formControlName="cuil" >
+            <input matInput formControlName="cuil" (input)="formatCuil($event)">
             <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['required']">El CUIL es requerido.</mat-error>
             <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
           </mat-form-field>

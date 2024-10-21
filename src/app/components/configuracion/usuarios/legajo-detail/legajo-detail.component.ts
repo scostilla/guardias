@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { Efector } from 'src/app/models/Configuracion/Efector'; 
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
 
 @Component({
   selector: 'app-legajo-detail',
@@ -21,10 +22,10 @@ export class LegajoDetailComponent implements OnInit {
     this.legajo = this.data;
   }
 
-  isLast(index: number, array: Efector[]): boolean {
+  isLast(index: number, array: Efector[] | Especialidad[]): boolean {
     return index === array.length - 1;
-}
-
+  }
+  
   cerrar(): void {
     this.dialogRef.close();
   }

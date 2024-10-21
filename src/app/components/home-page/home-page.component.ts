@@ -15,8 +15,6 @@ export class HomePageComponent implements OnInit {
   isLogged = false;
   nombresEfectores: EfectorSummaryDto[] = [];
   selectedEfector: EfectorSummaryDto | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
 
   constructor(
     private router: Router,

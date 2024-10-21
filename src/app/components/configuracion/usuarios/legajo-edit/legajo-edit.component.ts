@@ -44,7 +44,6 @@ export class LegajoEditComponent implements OnInit {
   legajoForm: FormGroup;
   initialData: Legajo | undefined;
   idLegajo: number = 0;
-  personas: AsistencialListForLegajosDto[] = [];
   profesiones: Profesion[] = [];
   efectores: Efector[] = [];
   cargos: Cargo[] = [];
@@ -55,6 +54,8 @@ export class LegajoEditComponent implements OnInit {
   tiposRevistas: TipoRevista[] = [];
   revistas: Revista[] = [];
   step = 0;
+
+  personaId!: number;
 
   agrupaciones: Agrup[] = [
     { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
@@ -100,7 +101,6 @@ export class LegajoEditComponent implements OnInit {
       cargo: ['', Validators.required],
     });
 
-    this.listAsistenciales();
     this.listProfesiones();
     this.listUdos();
     this.listCargos();
@@ -123,12 +123,23 @@ export class LegajoEditComponent implements OnInit {
   ngOnInit(): void {
 
     if (this.initialData) {
-      console.log("legajo a modificar", this.initialData);
-      console.log("categoria", this.initialData.revista?.categoria?.id);
-      console.log("adicional", this.initialData.revista?.adicional?.id);
-      console.log("cargaHoraria", this.initialData.revista?.cargaHoraria?.id);
-      console.log("tipoRevista", this.initialData.revista?.tipoRevista?.id);
       this.idLegajo = this.initialData.id ?? 0;
+  
+      // Verifica si el ID de la persona es undefined
+      if (this.initialData.persona?.id === undefined) {
+        this.toastr.warning('ID de la persona no encontrado. Regresando a pagina de lagajos.', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.router.navigate(['/personal-legajo']);
+        return;
+      }
+
+      console.log("ID de persona recibido:", this.initialData.persona.id);
+  
+      this.personaId = this.initialData.persona.id;
+      
       this.legajoForm.patchValue({
         ...this.initialData,
         efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
@@ -147,14 +158,6 @@ export class LegajoEditComponent implements OnInit {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
   }
 
-  listAsistenciales(): void {
-
-    this.asistencialService.listForLegajosDtos().subscribe(data => {
-      this.personas = data;
-    }, error => {
-      console.log(error);
-    });
-  }
 
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
@@ -298,7 +301,7 @@ export class LegajoEditComponent implements OnInit {
       legajoData.matriculaProvincial,
       revistaId!, // Usa el ID de la revista (existente o nueva)
       legajoData.udo.id,
-      legajoData.persona.id,
+      this.personaId,
       legajoData.cargo.id,
       legajoData.efectores,
       legajoData.especialidades,

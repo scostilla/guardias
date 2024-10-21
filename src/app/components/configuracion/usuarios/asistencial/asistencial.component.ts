@@ -43,6 +43,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   isLoadingLegajos: boolean = true;
 
   showMessage: boolean = false;
+  sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
 
   private efectorIdSubscription!: Subscription;
@@ -105,33 +106,37 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
       this.showMessage = true;
+      this.sinAsistencialMessage = false; // Reinicia el mensaje de no asistenciales
       this.dataSource = new MatTableDataSource<Asistencial>([]);
       return;
     }
-  
+
     this.asistencialService.list().subscribe(data => {
       const filteredData = data.filter(asistencial => 
         asistencial.legajos.some(legajo => 
           legajo.efectores.some(efector => efector.id === efectorId)
-        )
+        ) || asistencial.legajos.length === 0
       );
-  
-      // Si no se encuentran datos, muestra el mensaje
+
+      // Maneja los mensajes según los resultados
       if (filteredData.length === 0) {
-        this.showMessage = true;
+        this.showMessage = false; // Reinicia el mensaje de no selección
+        this.sinAsistencialMessage = true; // Activa el mensaje de no asistenciales
       } else {
-        this.showMessage = false;
+        this.showMessage = false; // Reinicia el mensaje de no selección
+        this.sinAsistencialMessage = false; // Reinicia el mensaje de no asistenciales
         this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
       }
-  
+
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }, error => {
       console.error('Error al obtener asistenciales:', error);
       this.showMessage = true; // Muestra mensaje si hay error
+      this.sinAsistencialMessage = false; // Reinicia el mensaje de no asistenciales
     });
   }
-      
+
   listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
