@@ -22,7 +22,6 @@ export class Caps extends Efector {
       telefono: string,
       estado: boolean,
       observacion: string,
-      porcentajePorZona: number,
       region: Region,
       localidad: Localidad,
       distribucionesHorarias: DistribucionHoraria[],
@@ -39,7 +38,7 @@ export class Caps extends Efector {
       areaProgramatica: number,
       tipoCaps: string,
       ) {
-        super(nombre, domicilio, telefono, estado, observacion, porcentajePorZona, region, localidad, distribucionesHorarias, 
+        super(nombre, domicilio, telefono, estado, observacion, region, localidad, distribucionesHorarias, 
           legajosUdo, legajos, servicios, notificaciones, autoridades, registrosActividades, registroMensual, ddjjs, registrosPendientes);
         this.idCabecera = idCabecera;
         this.areaProgramatica = areaProgramatica;

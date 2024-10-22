@@ -82,7 +82,6 @@ export class MinisterioEditComponent implements OnInit {
         formValue.localidad.id,
         formValue.telefono,
         formValue.observacion,
-        this.data ? this.data.porcentajePorZona : 1,
         this.data ? this.data.idCabecera : 1
       );
   

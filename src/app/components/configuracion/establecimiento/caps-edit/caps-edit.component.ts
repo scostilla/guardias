@@ -116,7 +116,6 @@ export class CapsEditComponent implements OnInit {
         formValue.localidad.id,
         formValue.telefono,
         formValue.observacion,
-        this.data ? this.data.porcentajePorZona : 1,
         //formValue.idCabecera.id,
         formValue.cabecera.id,
         this.data ? this.data.areaProgramatica : 1,

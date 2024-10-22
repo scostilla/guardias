@@ -85,7 +85,6 @@ export class HospitalEditComponent implements OnInit {
         formValue.localidad.id,
         formValue.telefono,
         formValue.observacion,
-        this.data ? this.data.porcentajePorZona : 1,
         formValue.esCabecera,
         formValue.admitePasiva,
         formValue.nivelComplejidad
