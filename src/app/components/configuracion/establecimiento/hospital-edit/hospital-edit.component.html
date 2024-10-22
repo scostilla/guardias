@@ -7,9 +7,9 @@
               <div class="col">
                 <mat-form-field appearance="fill">
                   <mat-label>Nombre</mat-label>
-                    <input matInput formControlName="nombre">
+                  <input matInput formControlName="nombre" (input)="onNombreInput($event)">
                   <mat-error *ngIf="hospitalForm?.get('nombre')?.invalid && hospitalForm?.get('nombre')?.touched">
-                    El campo es obligatorio y debe tener solo letras (entre 2 y 50 caracteres).
+                    El campo es obligatorio y debe tener solo letras (entre 2 y 60 caracteres).
                   </mat-error>
                 </mat-form-field>
               </div>

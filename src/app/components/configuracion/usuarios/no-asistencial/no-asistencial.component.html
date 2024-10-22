@@ -2,11 +2,14 @@
 <div class="container">
   <div class="row">
     <div class="col-6 col-md-7">
-      <div class="titulos">PERSONAL</div>
+      <div class="titulos_extra">PERSONAL</div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="createNoAsistencial()" matTooltip="Agregar Persona No Asistencial">
+      <button mat-fab class="button-success" (click)="createNoAsistencial()" matTooltip="Agregar Persona No Asistencial">
         <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/personal">
+        <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">

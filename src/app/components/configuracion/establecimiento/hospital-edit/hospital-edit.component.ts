@@ -8,7 +8,7 @@ import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { Region } from 'src/app/models/Configuracion/Region';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
-
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-hospital-edit',
@@ -27,7 +27,8 @@ export class HospitalEditComponent implements OnInit {
     public dialogRef: MatDialogRef<HospitalEditComponent>,
     private hospitalService: HospitalService,
     private localidadService: LocalidadService, 
-    private regionService: RegionService, 
+    private regionService: RegionService,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Hospital
   ) {
     this.hospitalForm = this.fb.group({
@@ -74,12 +75,18 @@ export class HospitalEditComponent implements OnInit {
     });
   }
 
+  onNombreInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const uppercaseValue = input.value.toUpperCase();
+    this.hospitalForm.get('nombre')?.setValue(uppercaseValue);
+  }
+
   saveHospital(): void {
     if (this.hospitalForm.valid) {
       const formValue = this.hospitalForm.value;
   
       const hospitalDto = new HospitalDto(
-        formValue.nombre,
+        formValue.nombre.toUpperCase(),
         formValue.domicilio,
         formValue.region.id,
         formValue.localidad.id,
@@ -128,6 +135,11 @@ export class HospitalEditComponent implements OnInit {
 
 
   cancel(): void {
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
     this.dialogRef.close({ type: 'cancel' });
   }
 }

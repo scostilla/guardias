@@ -24,7 +24,7 @@ export class PaisComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<PaisDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'codigo', 'nacionalidad', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'codigo', 'nacionalidad', 'acciones'];
   dataSource!: MatTableDataSource<Pais>;
   suscription!: Subscription;
 

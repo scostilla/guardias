@@ -5,9 +5,12 @@
         <div class="titulos">TIPO LICENCIAS</div>
       </div>
       <div class="col-6 col-md-1 m d-flex justify-content-end">
-        <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Tipo Licencia" >
+        <button mat-fab class="button-success" (click)="openFormChanges()" matTooltip="Agregar Tipo Licencia" >
           <mat-icon>library_add</mat-icon>
         </button>
+        <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/configuracion">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>  
       </div>
       <div class="col-12 col-md-4 mt-3 mt-md-0">
         <mat-form-field>
