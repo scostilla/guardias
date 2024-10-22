@@ -22,7 +22,7 @@ export class CapsEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = [];
-  hospitales: Hospital[] = []; 
+  hospitales: Hospital[] = [];
 
   
   constructor(

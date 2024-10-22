@@ -2,7 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../../popup/popup.component';
-import { ProfessionalDataServiceService } from 'src/app/services/ProfessionalDataService/professional-data-service.service';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
