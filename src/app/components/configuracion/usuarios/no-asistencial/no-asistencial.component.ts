@@ -218,7 +218,6 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
 
   verLegajo(noAsistencial: NoAsistencial): void {
     if (noAsistencial && noAsistencial.id) {
-      //this.router.navigate(['/legajo-person', asistencial.id]);
       this.router.navigate(['/legajo-person'], {
         state: { noAsistencial, fromNoAsistencial: true  }
       });

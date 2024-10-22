@@ -61,14 +61,12 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
       return `${start} - ${end} de ${length}`;
     };
 
-    // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      // Verifica si viene de Asistencial o NoAsistencial
+      console.log('Navegación recibida en LegajoPerson:', navigation.extras.state); // Log de la navegación
       this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
       this.fromNoAsistencial = !!navigation.extras.state['fromNoAsistencial'];
-
-      // Asigno los datos a initialData basado en fromAsistencial o fromNoAsistencial
+  
       if (this.fromAsistencial) {
         this.initialData = navigation.extras.state['asistencial'] as Asistencial;
       } else if (this.fromNoAsistencial) {
@@ -159,11 +157,29 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateLegajo(legajo: Legajo): void {
+    let stateData: any = { legajo, fromLegajoPerson: true };
+  
+    if (this.fromAsistencial) {
+      stateData.asistencial = this.initialData as Asistencial; // Si es asistencial
+    } else if (this.fromNoAsistencial) {
+      stateData.noAsistencial = this.initialData as NoAsistencial; // Si es no asistencial
+    }
+  
     this.router.navigate(['/legajo-edit'], {
-      state: { legajo, fromLegajoPerson: true }
+      state: stateData
     });
   }
 
+  goBack(): void {
+    if (this.fromAsistencial) {
+      this.router.navigate(['/personal']);
+    } else if (this.fromNoAsistencial) {
+      this.router.navigate(['/personal-no-asistencial']);
+    } else {
+      this.router.navigate(['/personal']); // Redirige a personal por defecto si no hay información
+    }
+  }
+  
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }

@@ -24,6 +24,8 @@ import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { ToastrService } from 'ngx-toastr';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 
@@ -56,6 +58,9 @@ export class LegajoEditComponent implements OnInit {
   step = 0;
 
   personId!: number;
+  asistencial: Asistencial | undefined;
+  noAsistencial: NoAsistencial | undefined;
+  isAsistencial: boolean = false;
 
   agrupaciones: Agrup[] = [
     { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
@@ -110,49 +115,73 @@ export class LegajoEditComponent implements OnInit {
     this.listCargaHoraria();
     this.listTipoRevista();
 
-    // recupero el estado del router
+  // recupero el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      this.initialData = navigation.extras.state['legajo'];  // Recibo el legajo
+      this.isAsistencial = !!navigation.extras.state['asistencial'];
+      
+      this.initialData = navigation.extras.state['legajo'];
       this.fromLegajoPerson = !!navigation.extras.state['fromLegajoPerson'];
       this.fromLegajo = !!navigation.extras.state['fromLegajo'];
-    }
-
-  }
-
-  ngOnInit(): void {
-
-    if (this.initialData) {
-      this.idLegajo = this.initialData.id ?? 0;
   
-      // Verifica si el ID de la persona es undefined
-      if (this.initialData.persona?.id === undefined) {
-        this.toastr.warning('ID de la persona no encontrado. Regresando a pagina de lagajos.', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        this.router.navigate(['/personal-legajo']);
-        return;
+      // Determina si es asistencial o no asistencial
+      this.asistencial = navigation.extras.state['asistencial'] || undefined;
+      this.noAsistencial = navigation.extras.state['noAsistencial'] || undefined;
+  
+      if (this.asistencial) {
+        // Manejo específico para asistencial
+        console.log('Viene de asistencial:', this.asistencial);
+      } else if (this.noAsistencial) {
+        // Manejo específico para no asistencial
+        console.log('Viene de no asistencial:', this.noAsistencial);
+      } else {
+        console.error('No se encontró ni asistencial ni no asistencial.');
       }
-
-      console.log("ID de persona recibido:", this.initialData.persona.id);
-  
-      this.personId = this.initialData.persona.id;
-      
-      this.legajoForm.patchValue({
-        ...this.initialData,
-        efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
-        especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
-        adicional: this.initialData.revista.adicional?.id,  // Cargar adicional del objeto 'Revista'
-        agrupacion: this.initialData.revista?.agrupacion,  // Aquí cargas el valor de 'agrupacion'
-        cargaHoraria: this.initialData.revista.cargaHoraria?.id,  // Cargar carga horaria del objeto 'Revista'
-        categoria: this.initialData.revista?.categoria?.id ?? null,  // Cargar categoría del objeto 'Revista'
-        tipoRevista: this.initialData.revista.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
-
-      });
     }
   }
+
+ngOnInit(): void {
+  // Verifica si hay datos iniciales
+  if (this.initialData) {
+    this.idLegajo = this.initialData.id ?? 0;
+
+    // Verifica si el ID de la persona es undefined
+    if (this.initialData.persona?.id === undefined) {
+      this.toastr.warning('ID de la persona no encontrado. Regresando a página de legajos.', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigate(['/personal-legajo']);
+      return;
+    }
+
+    this.personId = this.initialData.persona.id;
+
+    // Carga los datos del formulario
+    this.legajoForm.patchValue({
+      ...this.initialData,
+      efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
+      especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
+      adicional: this.initialData.revista.adicional?.id,  // Cargar adicional del objeto 'Revista'
+      agrupacion: this.initialData.revista?.agrupacion,  // Aquí cargas el valor de 'agrupacion'
+      cargaHoraria: this.initialData.revista.cargaHoraria?.id,  // Cargar carga horaria del objeto 'Revista'
+      categoria: this.initialData.revista?.categoria?.id ?? null,  // Cargar categoría del objeto 'Revista'
+      tipoRevista: this.initialData.revista.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
+    });
+
+    // Manejo específico dependiendo de si es asistencial o no
+    if (this.asistencial) {
+      // Configuración o lógica específica para asistencial
+      console.log('Cargando datos para asistencial:', this.asistencial);
+      // Puedes hacer más configuraciones aquí si es necesario
+    } else {
+      // Configuración o lógica específica para no asistencial
+      console.log('Cargando datos para no asistencial');
+      // Puedes hacer más configuraciones aquí si es necesario
+    }
+  }
+}
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
@@ -319,25 +348,29 @@ export class LegajoEditComponent implements OnInit {
           progressBar: true
         });
 
-         // Redirige según de dónde vino
-      if (this.fromLegajo) {
-        this.router.navigate(['/personal-legajo'], { state: { legajoModificado: result } });
-      } else {
-        this.router.navigate(['/legajo-person'], { state: { legajoModificado: result } });
-      }
-
-        //this.router.navigate(['/legajo'], { state: { legajoModificado: result } }); // Redirigir a la lista de legajos y pasar el legajo creado
-      },
-      (error) => {
-        this.toastr.error(' Ocurrió un error al editar el Legajo', error, {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
+      // Redirige según si es asistencial o no asistencial
+      if (this.asistencial) {
+        this.router.navigate(['/legajo-person'], {
+          state: { asistencial: this.asistencial, fromAsistencial: true }
         });
-        console.error('Error al editar el legajo', error);
+      } else if (this.noAsistencial) {
+        this.router.navigate(['/legajo-person'], {
+          state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
+        });
+      } else {
+        this.router.navigate(['/legajo-person']);
       }
-    );
-  }
+    },
+    (error) => {
+      this.toastr.error('Ocurrió un error al editar el Legajo', error, {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      console.error('Error al editar el legajo', error);
+    }
+  );
+}
 
   nextStep(): void {
     if (this.step === 0 && !this.isPanel1Valid()) {
@@ -390,20 +423,27 @@ export class LegajoEditComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-
-    // Redirige según de dónde vino
+    
+    console.log('Cancelando. NoAsistencial:', this.noAsistencial); // Verificar el objeto
+  
     if (this.fromLegajo) {
       this.router.navigate(['/personal-legajo']);
     } else {
-      console.log("vuelvo a legajo-person", this.initialData);
-      this.router.navigate(['/legajo-person'],{
-        state:{legajoModificado: this.initialData}
-      });
+      if (this.asistencial) {
+        this.router.navigate(['/legajo-person'], {
+          state: { asistencial: this.asistencial, fromAsistencial: true }
+        });
+      } else if (this.noAsistencial) {
+        this.router.navigate(['/legajo-person'], {
+          state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
+        });
+      } else {
+        console.error('No se encontró el objeto asistencial ni el objeto no asistencial.');
+        this.router.navigate(['/personal-legajo']);
+      }
     }
-    
-    //this.router.navigate(['/legajo']);
   }
-
+        
   compareFn(o1: any, o2: any): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
   }

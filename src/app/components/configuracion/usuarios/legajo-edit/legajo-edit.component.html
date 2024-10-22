@@ -2,7 +2,11 @@
 <div class="container">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">Modificar Legajo</div>
+      <div class="titulos">Modificar Legajo: 
+        <span class="titulos-second">
+          {{ asistencial ? (asistencial.apellido + ', ' + asistencial.nombre) : (noAsistencial?.apellido + ', ' + noAsistencial?.nombre) }}
+        </span>
+      </div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
@@ -40,14 +44,13 @@
               <mat-error *ngIf="legajoForm.get('profesion')?.errors?.['required']">La profesión es requerida.</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" *ngIf="isAsistencial">
               <mat-label>Especialidades</mat-label>
               <mat-select formControlName="especialidades" multiple>
-                <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre
-                  }}</mat-option>
+                <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre }}</mat-option>
               </mat-select>
             </mat-form-field>
-        
+                    
             <mat-form-field appearance="fill">
               <mat-label>Cargo</mat-label>
               <mat-select formControlName="cargo" [compareWith]="compareFn">
