@@ -144,18 +144,24 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createLegajo(): void {
-
-    if (this.initialData) {
-      const asistencialSend = this.initialData.id;
+    if (this.fromNoAsistencial && this.initialData) {
+      const noAsistencial = this.initialData as NoAsistencial;
       this.router.navigate(['/legajo-create'], {
-        state: { asistencialSend, fromAsistencial: true }
+        state: { noAsistencial, fromNoAsistencial: true }
       });
     } else {
-      this.router.navigate(['/legajo-create']);
+      // Manejo de otros casos, por ejemplo, asistencial
+      if (this.initialData) {
+        const asistencial = this.initialData.id;
+        this.router.navigate(['/legajo-create'], {
+          state: { asistencial, fromAsistencial: true }
+        });
+      } else {
+        this.router.navigate(['/legajo-create']);
+      }
     }
-
   }
-
+  
   updateLegajo(legajo: Legajo): void {
     let stateData: any = { legajo, fromLegajoPerson: true };
   
