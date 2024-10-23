@@ -8,7 +8,7 @@
       <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
-            <input matInput formControlName="nombre">
+            <input matInput formControlName="nombre" (input)="onNombreInput($event)">
           <mat-error *ngIf="form?.get('nombre')?.invalid && form?.get('nombre')?.touched">
             El campo es obligatorio y debe tener solo letras (entre 2 y 20 caracteres).
           </mat-error>

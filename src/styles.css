@@ -59,7 +59,7 @@ footer {
   color: #ad643a;
 }
 
-.titulo_prueba {
+.titulos_extra {
   font-size: 2em;
   font-weight: bold;
   letter-spacing: 0;
@@ -69,7 +69,7 @@ footer {
   position: relative;
 }
 
-.titulo_prueba:before {
+.titulos_extra:before {
   content: "";
   position: absolute;
   left: 0;
@@ -79,7 +79,7 @@ footer {
   background-color: #243c74;
 }
 
-.titulo_prueba:after {
+.titulos_extra:after {
   content: "";
   position: absolute;
   left: 0;
@@ -426,6 +426,10 @@ footer {
   background-color: transparent !important;
 }
 
+mat-table {
+  table-layout: fixed; /* Esto hará que la tabla tenga un diseño fijo */
+}
+
 /*
 .table-bordered tbody tr:nth-child(even) {
   background-color: #f2f2f2; 
@@ -507,6 +511,7 @@ footer {
   white-space: nowrap;
   overflow: hidden;
   vertical-align: middle;
+  text-overflow: ellipsis;
 }
 
 .mat-row,

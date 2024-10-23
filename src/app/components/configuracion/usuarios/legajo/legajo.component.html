@@ -18,6 +18,17 @@
   </div>
 
   <div class="row">
+    <div class="row">
+      <div class="col-6">Estás viendo:
+        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales 
+          <mat-icon>expand_more</mat-icon></button>
+        <mat-menu #menug="matMenu">
+          <button mat-menu-item routerLink="/personal-legajo-no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
+        </mat-menu>
+      </div>
+    </div>
+
+  <div class="row">
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
 

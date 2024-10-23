@@ -218,6 +218,7 @@ import { CategoriaEditComponent } from './components/configuracion/usuarios/cate
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
+import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
@@ -244,6 +245,7 @@ import { NovedadesPersonDetailComponent } from './components/personal/novedades-
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
@@ -449,6 +451,11 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialCreateComponent,
     PersonalNoAsistencialComponent,
     PersonalLegajoSelectComponent,
+    TipoLicenciaComponent,
+    TipoLicenciaEditComponent,
+    TipoLicenciaDetailComponent,
+    LegajoNoAsistencialComponent,
+    PersonalLegajoNoAsistencialComponent,
     
   ],
 

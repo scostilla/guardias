@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
         this.tokenService.setAuthorities(data.authorities);
         this.roles = this.tokenService.getAuthorities();
 
-        this.toastr.success('Bienvenido ' + data.nombreUsuario, 'OK', {
+        this.toastr.success(data.nombreUsuario, 'Bienvenido', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
         // Redireccionnamiento segun roles
@@ -76,9 +76,11 @@ export class LoginComponent implements OnInit {
         this.errMsj = err.error.message;
          /* debería mostrarme el mensaje "campos mal puestos.. ver porque no lo hace"*/
          console.log('Mensaje de error: ' + this.errMsj);
-         this.toastr.error(this.errMsj, 'Fail msj', {
-           timeOut: 3000, positionClass: 'toast-top-center',
-         });
+         this.toastr.error(err.message, 'Error, usuario y/o contraseña incorrecto.', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+       });
         
       }
     );

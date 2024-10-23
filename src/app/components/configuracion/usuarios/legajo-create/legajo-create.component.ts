@@ -67,6 +67,8 @@ export class LegajoCreateComponent implements OnInit {
   ];
 
   step = 0;
+  isAsistencial: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -143,7 +145,7 @@ export class LegajoCreateComponent implements OnInit {
 
   }
 
-  openAsistencialDialog(): void {
+  /*openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
       disableClose: true
@@ -169,7 +171,7 @@ export class LegajoCreateComponent implements OnInit {
       });
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }
+  }*/
 
   /* listAsistenciales(): void {
 
@@ -443,11 +445,11 @@ export class LegajoCreateComponent implements OnInit {
 
         // Redirige según de dónde vino
         if (this.fromAsistencial) {
-          this.router.navigate(['/asistencial']);
+          this.router.navigate(['/personal']);
         } else if (this.fromNoAsistencial) {
-          this.router.navigate(['/no-asistencial']);
+          this.router.navigate(['/personal-no-asistencial']);
         } else {
-          this.router.navigate(['/legajo']);
+          this.router.navigate(['/personal-legajo']);
         }
       },
       (error) => {
@@ -505,6 +507,10 @@ export class LegajoCreateComponent implements OnInit {
     this.step = index;
   }
 
+  cerrarPanel() {
+    this.step = -1;
+  }
+
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
@@ -513,11 +519,11 @@ export class LegajoCreateComponent implements OnInit {
     });
     // Redirige según de dónde vino
     if (this.fromAsistencial) {
-      this.router.navigate(['/asistencial']);
+      this.router.navigate(['/personal']);
     } else if (this.fromNoAsistencial) {
-      this.router.navigate(['/no-asistencial']);
+      this.router.navigate(['/personal-no-asistencial']);
     } else {
-      this.router.navigate(['/legajo']);
+      this.router.navigate(['/personal-legajo']);
     }
   }
 

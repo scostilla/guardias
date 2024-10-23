@@ -5,10 +5,6 @@
   <table class="table">
       <tbody>
         <tr>
-          <th scope="row">ID</th>
-          <td>{{asistencial.id}}</td>
-        </tr>
-        <tr>
           <th scope="row">Nombre</th>
           <td>{{asistencial.nombre}}</td>
         </tr>
@@ -22,7 +18,7 @@
         </tr>
         <tr>
           <th scope="row">Cuil</th>
-          <td>{{asistencial.cuil}}</td>
+          <td>{{ formatCuil(asistencial.cuil) }}</td>
         </tr>
         <tr>
           <th scope="row">Domicilio</th>
@@ -44,11 +40,15 @@
           <th scope="row">Sexo</th>
           <td>{{asistencial.sexo}}</td>
         </tr>
-        <!-- <tr>
-          <th scope="row">Tipo de guardia</th>
-          <td>{{asistencial.tipoGuardia}}</td>
-        </tr> -->
-      </tbody>
+        <tr>
+          <th scope="row">Tipos de guardia</th>
+            <td>
+                <ng-container *ngFor="let efector of asistencial.tiposGuardias; let i = index">
+                    {{ efector.nombre }}<span *ngIf="!isLast(i, asistencial.tiposGuardias)">, </span>
+                </ng-container>
+            </td>
+        </tr>
+    </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>

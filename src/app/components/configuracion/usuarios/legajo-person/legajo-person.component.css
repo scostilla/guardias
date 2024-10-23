@@ -1,0 +1,8 @@
+mat-table {
+    table-layout: fixed; /* Esto hará que la tabla tenga un diseño fijo */
+  }
+  
+  .mat-cell, .mat-header-cell {
+    overflow: hidden; /* Esconde el desbordamiento */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos si el texto es demasiado largo */
+  }

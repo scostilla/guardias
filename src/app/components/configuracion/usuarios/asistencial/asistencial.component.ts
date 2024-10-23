@@ -35,13 +35,19 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
   dataSource!: MatTableDataSource<Asistencial>;
   suscription!: Subscription;
   asistencial!: Asistencial;
   legajos: Legajo[] = [];
   isLoadingLegajos: boolean = true;
 
+  showMessage: boolean = false;
+  sinAsistencialMessage: boolean = false;
+  efectorId: number | null = null;
+
+  private efectorIdSubscription!: Subscription;
+  
   constructor(
     private asistencialService: AsistencialService,
     private dialog: MatDialog,
@@ -66,14 +72,22 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listLegajos();
-    this.listAsistencial();
+
+    // Obtener el ID efector del servicio
+    this.efectorId = this.asistencialService.getCurrentEfectorId();
+    
+    // Verificar si el ID efector es válido
+    if (this.efectorId === null) {
+      this.showMessage = true;
+    } else {
+      this.listAsistencial(this.efectorId);
+    }
 
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listAsistencial();
-    })
-
+      this.listAsistencial(this.efectorId); // Usar el efectorId actual
+    });
+    
     this.actualizarColumnasVisibles();
-
   }
 
   applyFilter(filterValue: string) {
@@ -88,11 +102,38 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.dataSource.filter = normalizedFilterValue;
   }
 
-  listAsistencial(): void {
+  listAsistencial(efectorId: number | null = null): void {
+    // Si no hay un ID de efector, muestra el mensaje
+    if (efectorId === null) {
+      this.showMessage = true;
+      this.sinAsistencialMessage = false;
+      this.dataSource = new MatTableDataSource<Asistencial>([]);
+      return;
+    }
+
     this.asistencialService.list().subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
+      const filteredData = data.filter(asistencial => 
+        asistencial.legajos.some(legajo => 
+          legajo.efectores.some(efector => efector.id === efectorId)
+        ) || asistencial.legajos.length === 0
+      );
+
+      // Maneja los mensajes según los resultados
+      if (filteredData.length === 0) {
+        this.showMessage = false;
+        this.sinAsistencialMessage = true;
+      } else {
+        this.showMessage = false;
+        this.sinAsistencialMessage = false;
+        this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
+      }
+
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+    }, error => {
+      console.error('Error al obtener asistenciales:', error);
+      this.showMessage = true;
+      this.sinAsistencialMessage = false;
     });
   }
 
@@ -104,7 +145,15 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     });
   }
-
+  
+  formatCuil(cuil: string): string {
+    if (!cuil) return '';
+    // Asegúrate de que el CUIL tenga al menos 11 dígitos
+    if (cuil.length < 11) return cuil;
+  
+    return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
+  }
+  
   createAsistencial(): void {
     this.router.navigate(['/asistencial-create']);
   }
@@ -264,5 +313,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-  }
+    this.efectorIdSubscription?.unsubscribe();
+  }  
 }

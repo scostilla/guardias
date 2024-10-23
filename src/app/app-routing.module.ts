@@ -63,8 +63,10 @@ import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-
 import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
 import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
 import { CategoriaEditComponent } from './components/configuracion/usuarios/categoria-edit/categoria-edit.component';
+import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
+import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
@@ -80,7 +82,7 @@ import { TipoRevistaEditComponent } from './components/configuracion/usuarios/ti
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 
-//Configuraciones: Leyes
+//Configuraciones: Leyes y novedades
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
 
 import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
@@ -88,6 +90,10 @@ import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-d
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
 import { IncisoComponent } from './components/configuracion/leyes/inciso/inciso.component';
 import { TipoLeyEditComponent } from './components/configuracion/leyes/tipo-ley-edit/tipo-ley-edit.component';
+import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
+import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
+import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
+
 import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo-ley.component';
 
 
@@ -117,6 +123,7 @@ import { DistHorariaComponent } from './components/personal/dist-horaria/dist-ho
 //Sección: Personal
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
@@ -211,8 +218,6 @@ import { AutoridadDetailComponent } from './components/configuracion/usuarios/au
 import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
 import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
 
-import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
-import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 
 
 
@@ -286,6 +291,7 @@ const routes: Routes = [
   {path: 'legajo-detail/:id', component:LegajoDetailComponent},
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
   {path: 'legajo-edit', component:LegajoEditComponent},
+  {path: 'legajo-no-asistencial', component:LegajoNoAsistencialComponent},
   {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'personal-dh', component:PersonalDhComponent},
@@ -301,7 +307,7 @@ const routes: Routes = [
   {path: 'tipo-revista-edit/:id', component: TipoRevistaEditComponent},
 
   
-  //Configuraciones: Leyes
+  //Configuraciones: Leyes y novedades
   {path: 'articulo', component:ArticuloComponent},
   {path: 'articulo-detail/:id', component:ArticuloDetailComponent},
 
@@ -310,6 +316,10 @@ const routes: Routes = [
   {path: 'inciso-edit/:id', component:IncisoEditComponent},
   {path: 'tipo-ley', component:TipoLeyComponent},
   {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent},
+  {path: 'tipo-licencia', component:TipoLicenciaComponent},
+  {path: 'tipo-licencia/:id', component:TipoLicenciaDetailComponent},
+  {path: 'tipo-licencia/:id', component:TipoLicenciaEditComponent},
+
   {path: 'tipo-licencia', component:TipoLicenciaComponent},
   {path: 'tipo-licencia-edit/:id', component:TipoLeyEditComponent},
   {path: 'tipo-licencia-detail/:id', component:TipoLeyEditComponent},
@@ -349,6 +359,7 @@ const routes: Routes = [
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
+  {path: 'personal-legajo-no-asistencial', component:PersonalLegajoNoAsistencialComponent},
   {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},

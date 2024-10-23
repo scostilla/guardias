@@ -24,7 +24,7 @@ export class RegionComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<RegionDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'acciones'];
   dataSource!: MatTableDataSource<Region>;
   suscription!: Subscription;
 

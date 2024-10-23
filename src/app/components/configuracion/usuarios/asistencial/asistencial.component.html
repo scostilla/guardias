@@ -2,17 +2,17 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-7">
-      <div class="titulo_prueba">PERSONAL</div>
+      <div class="titulos_extra">PERSONAL</div>
     </div>
     <div class="col-12 col-md-1 m d-flex justify-content-end">
-      <button mat-fab class="button-primary" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
+      <button mat-fab class="button-success" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
       </button>
       <!--<button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openNovedades()" 
       matTooltip="Agregar novedad">
         <mat-icon>event</mat-icon>
       </button>-->
-      <button mat-fab class="button-success" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
+      <button mat-fab class="button-primary" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
         <mat-icon>av_timer</mat-icon>
       </button>
     </div>
@@ -30,14 +30,26 @@
 
   <div class="row">
     <div class="row">
-      <div class="col-6">Estás viendo:
+      <div class="col-12">Estás viendo:
         <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales 
           <mat-icon>expand_more</mat-icon></button>
         <mat-menu #menug="matMenu">
-          <button mat-menu-item routerLink="/no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
+          <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
         </mat-menu>
       </div>
     </div>
+
+    <div *ngIf="showMessage" class="no-selection-message">
+      No has seleccionado ningún hospital en el panel principal, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="sinAsistencialMessage" class="no-selection-message">
+      No se encontraron personas cargadas para el efector seleccionado, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="!showMessage && !sinAsistencialMessage">
 
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
@@ -58,8 +70,8 @@
         </ng-container>
 
         <ng-container matColumnDef="cuil">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> CUIL </th> 
-          <td mat-cell *matCellDef="let asistencial"> {{asistencial.cuil}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
+          <td mat-cell *matCellDef="let asistencial" style="white-space: nowrap;"> {{ formatCuil(asistencial.cuil) }} </td>
         </ng-container>
         
         <ng-container matColumnDef="telefono">
@@ -90,10 +102,11 @@
             <button mat-icon-button matTooltip="Agregar Legajo" (click)="crearLegajo()" *ngIf="!isLoadingLegajos && !hayLegajos(asistencial)">
               <mat-icon color="primary">playlist_add</mat-icon>
             </button> -->
-            <button mat-icon-button matTooltip="Ver/Agregar novedad" (click)="verNovedad(asistencial)">
+            <button mat-icon-button matTooltip="Ver/Agregar novedad" (click)="verNovedad(asistencial)" *ngIf="hayLegajos(asistencial)">
               <mat-icon color="warn">event</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)">
+          
+            <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)" *ngIf="hayLegajos(asistencial)">
               <mat-icon>calendar_month</mat-icon>
             </button>
           </td>
@@ -130,4 +143,6 @@
     </div>
     </div>
   </div>
+
+</div>
 </div>

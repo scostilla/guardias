@@ -33,12 +33,16 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NoAsistencialDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'cuil', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
   dataSource!: MatTableDataSource<NoAsistencial>;
   suscription!: Subscription;
   noAsistencial!: NoAsistencial;
   legajos: Legajo[] = [];
   isLoadingLegajos: boolean = true;
+
+  showMessage: boolean = false;
+  sinAsistencialMessage: boolean = false;
+  efectorId: number | null = null;
 
   constructor(
     private noasistencialService: NoAsistencialService,
@@ -62,15 +66,23 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listLegajos();
-    this.listNoAsistencial();
+
+    // Obtener el ID efector del servicio
+    this.efectorId = this.noasistencialService.getCurrentEfectorId();
+    
+    // Verificar si el ID efector es válido
+    if (this.efectorId === null) {
+      this.showMessage = true;
+    } else {
+      this.listNoAsistencial(this.efectorId);
+    }
 
     this.suscription = this.noasistencialService.refresh$.subscribe(() => {
-      this.listNoAsistencial();
-    })
+      this.listNoAsistencial(this.efectorId); // Usar el efectorId actual
+    });
 
     this.actualizarColumnasVisibles();
-
-  }
+}
 
   applyFilter(filterValue: string) {
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -99,12 +111,43 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     return output;
   } */
 
-  listNoAsistencial(): void {
-    this.noasistencialService.list().subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
+    listNoAsistencial(efectorId: number | null = null): void {
+      // Si no hay un ID de efector, muestra el mensaje
+      if (efectorId === null) {
+        this.showMessage = true;
+        this.sinAsistencialMessage = false;
+        this.dataSource = new MatTableDataSource<NoAsistencial>([]);
+        return;
+      }
+  
+      this.noasistencialService.list().subscribe(data => {
+        const filteredData = data.filter(asistencial => 
+          asistencial.legajos.some(legajo => 
+            legajo.efectores.some(efector => efector.id === efectorId)
+          ) || asistencial.legajos.length === 0
+        );
+  
+        // Maneja los mensajes según los resultados
+        if (filteredData.length === 0) {
+          this.showMessage = false;
+          this.sinAsistencialMessage = true;
+        } else {
+          this.showMessage = false;
+          this.sinAsistencialMessage = false;
+          this.dataSource = new MatTableDataSource<NoAsistencial>(filteredData);
+        }
+  
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }, error => {
+        console.error('Error al obtener asistenciales:', error);
+        this.showMessage = true;
+        this.sinAsistencialMessage = false;
+      });
+    }
+  
+  getCurrentEfectorId(): number | null {
+    return this.efectorId;
   }
 
   listLegajos(): void {
@@ -175,7 +218,6 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
 
   verLegajo(noAsistencial: NoAsistencial): void {
     if (noAsistencial && noAsistencial.id) {
-      //this.router.navigate(['/legajo-person', asistencial.id]);
       this.router.navigate(['/legajo-person'], {
         state: { noAsistencial, fromNoAsistencial: true  }
       });

@@ -10,6 +10,7 @@ import { Region } from 'src/app/models/Configuracion/Region';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class CapsEditComponent implements OnInit {
     private localidadService: LocalidadService, 
     private regionService: RegionService,
     private hospitalService: HospitalService,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Caps
   ) {
     this.capsForm = this.fb.group({
@@ -105,18 +107,23 @@ export class CapsEditComponent implements OnInit {
     });
   }
 
+  onNombreInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const uppercaseValue = input.value.toUpperCase();
+    this.capsForm.get('nombre')?.setValue(uppercaseValue);
+  }
+
   saveCaps(): void {
     if (this.capsForm.valid) {
       const formValue = this.capsForm.value;
   
       const capsDto = new CapsDto(
-        formValue.nombre,
+        formValue.nombre.toUpperCase(),
         formValue.domicilio,
         formValue.region.id,
         formValue.localidad.id,
         formValue.telefono,
         formValue.observacion,
-        this.data ? this.data.porcentajePorZona : 1,
         //formValue.idCabecera.id,
         formValue.cabecera.id,
         this.data ? this.data.areaProgramatica : 1,
@@ -167,6 +174,11 @@ compareHospital(p1: Hospital, p2: Hospital): boolean {
 } */
 
   cancel(): void {
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
     this.dialogRef.close({ type: 'cancel' });
   }
 }

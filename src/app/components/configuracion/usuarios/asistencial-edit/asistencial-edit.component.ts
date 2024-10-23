@@ -72,6 +72,10 @@ export class AsistencialEditComponent implements OnInit {
         tiposGuardias: this.initialData.tiposGuardias ? this.initialData.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
       });
 
+          // Formatear el CUIL después de cargar los datos
+    const formattedCuil = this.formatCuilValue(this.initialData.cuil);
+    this.asistencialForm.get('cuil')?.setValue(formattedCuil, { emitEvent: false });
+
       console.log("id asis a modificar", this.idAsistencial);
     }
   }
@@ -99,6 +103,9 @@ export class AsistencialEditComponent implements OnInit {
   updateAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
+
+      asistencialData.nombre = this.capitalizeWords(asistencialData.nombre);
+      asistencialData.apellido = this.capitalizeWords(asistencialData.apellido);
 
       asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
 
@@ -161,6 +168,34 @@ export class AsistencialEditComponent implements OnInit {
       });
     }
   }
+
+  capitalizeWords(value: string): string {
+    return value.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  onNombreInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.asistencialForm.get('nombre')?.setValue(formattedValue, { emitEvent: false });
+  }
+  
+  onApellidoInput(event: any): void {
+    const formattedValue = this.capitalizeWords(event.target.value);
+    this.asistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
+  }
+
+  formatCuilValue(cuil: string): string {
+    let value = cuil.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
+    if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
+    }
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
+    }
+    return value;
+  }
+  
 
   formatCuil(event: any): void {
     let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos

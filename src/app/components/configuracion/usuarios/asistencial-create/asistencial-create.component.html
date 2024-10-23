@@ -18,17 +18,29 @@
   <div class="row">
       <mat-dialog-content class="mat-typography">
       <form [formGroup]="asistencialForm" (ngSubmit)="saveAsistencial()">
-        <div class="form-row">
+        <mat-accordion>
+          <!-- Panel 1 -->
+          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle id="panel1">
+            <mat-expansion-panel-header class="custom-header">
+              <mat-panel-title>
+                <div class="book-marker">
+                  <span class="marker-number">1</span>
+                </div>
+                <span class="negrita">Datos personales</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+        <div class="form-row" style="margin-top: 20px;">
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Nombre</mat-label>
-            <input matInput formControlName="nombre">
+            <input matInput formControlName="nombre" (input)="onNombreInput($event)">
             <mat-error *ngIf="asistencialForm.get('nombre')?.errors?.['required']">El nombre es requerido.</mat-error>
             <mat-error *ngIf="asistencialForm.get('nombre')?.errors?.['pattern']">El nombre debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
           </mat-form-field>
     
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Apellido</mat-label>
-            <input matInput formControlName="apellido">
+            <input matInput formControlName="apellido" (input)="onApellidoInput($event)">
             <mat-error *ngIf="asistencialForm.get('apellido')?.errors?.['required']">El apellido es requerido.</mat-error>
             <mat-error *ngIf="asistencialForm.get('apellido')?.errors?.['pattern']">El apellido debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
           </mat-form-field>
@@ -105,7 +117,24 @@
 
         </div>
 
-        <div class="form-row">
+        <mat-action-row>
+          <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    
+      <!-- Panel 2 -->
+      <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle id="panel2">
+        <mat-expansion-panel-header class="custom-header">
+          <mat-panel-title>
+            <div class="book-marker">
+              <span class="marker-number">2</span>
+            </div>
+            <span class="negrita">Datos usuario</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+
+        <div class="form-row" style="margin-top: 20px;">
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Nombre de Usuario</mat-label>
             <input matInput formControlName="nombreUsuario">
@@ -126,9 +155,17 @@
           </mat-form-field>
         </div>
 
+        <mat-action-row>
+          <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
+          <button mat-button color="primary" type="button" (click)="cerrarPanel()">Cerrar paneles</button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+
         <div mat-dialog-actions class="action mt-4">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid ">
-            Agregar
+          <button mat-raised-button color="primary" type="submit" [disabled]="!asistencialForm.valid" class="me-2">
+            Agregar asistencial
           </button>
           <button mat-raised-button color="secondary" type="button" (click)="cancel()">
             Cancelar

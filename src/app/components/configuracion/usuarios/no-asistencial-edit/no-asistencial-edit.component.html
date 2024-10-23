@@ -21,7 +21,7 @@
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Nombre</mat-label>
-                        <input matInput formControlName="nombre">
+                        <input matInput formControlName="nombre" (input)="onNombreInput($event)">
                         <mat-error *ngIf="noAsistencialForm.get('nombre')?.errors?.['required']">El nombre es
                             requerido.</mat-error>
                         <mat-error *ngIf="noAsistencialForm.get('nombre')?.errors?.['pattern']">El nombre debe tener solo
@@ -30,7 +30,7 @@
 
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Apellido</mat-label>
-                        <input matInput formControlName="apellido">
+                        <input matInput formControlName="apellido" (input)="onApellidoInput($event)">
                         <mat-error *ngIf="noAsistencialForm.get('apellido')?.errors?.['required']">El apellido es
                             requerido.</mat-error>
                         <mat-error *ngIf="noAsistencialForm.get('apellido')?.errors?.['pattern']">El apellido debe tener
@@ -50,11 +50,10 @@
 
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>CUIL</mat-label>
-                        <!-- <input matInput formControlName="cuil" (input)="formatCuil($event)"> -->
-                        <input matInput formControlName="cuil">
+                        <input matInput formControlName="cuil" (input)="formatCuil($event)">
                         <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['required']">El CUIL es
                             requerido.</mat-error>
-                        <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo
+                        <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe ser ingresado solo con
                             números (11 dígitos).</mat-error>
                     </mat-form-field>
                 </div>
@@ -98,7 +97,7 @@
                 </div>
                 <div mat-dialog-actions class="action mt-4">
                     <button mat-raised-button color="primary" type="submit"
-                        [disabled]="!noAsistencialForm.valid || !isModified()">Modificar
+                        [disabled]="!noAsistencialForm.valid || !isModified()" class="me-2">Modificar no asistencial
                     </button>
                     <button mat-raised-button color="secondary" type="button" (click)="cancel()">
                         Cancelar

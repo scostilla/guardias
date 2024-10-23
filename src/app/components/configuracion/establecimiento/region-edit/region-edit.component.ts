@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Region } from 'src/app/models/Configuracion/Region';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-region-edit',
@@ -19,6 +20,7 @@ export class RegionEditComponent implements OnInit {
     private fb: FormBuilder,
     private regionService: RegionService,
     private dialogRef: MatDialogRef<RegionEditComponent>,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) private data: Region 
   ) { }
 
@@ -35,9 +37,15 @@ export class RegionEditComponent implements OnInit {
     });
   }
 
+  onNombreInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const uppercaseValue = input.value.toUpperCase();
+    this.form?.get('nombre')?.setValue(uppercaseValue);
+  }
+
   saveRegion(): void {
     const id = this.form?.get('id')?.value;
-    const nombre = this.form?.get('nombre')?.value;
+    const nombre = this.form?.get('nombre')?.value.toUpperCase();
 
     const region = new Region(nombre);
     region.id = id;
@@ -54,6 +62,11 @@ export class RegionEditComponent implements OnInit {
   }
 
   cancelar(): void {
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
     this.dialogRef.close();
   }
 

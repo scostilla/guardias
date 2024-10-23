@@ -14,12 +14,11 @@ export class HospitalDto extends EfectorDto {
       idLocalidad: number,
       telefono: string,
       observacion: string,
-      porcentajePorZona: number,
       esCabecera: boolean,
       admitePasiva: boolean,
       nivelComplejidad: number
   ) {
-    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion, porcentajePorZona);
+    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion);
     this.esCabecera = esCabecera;
     this.admitePasiva = admitePasiva;
     this.nivelComplejidad = nivelComplejidad;

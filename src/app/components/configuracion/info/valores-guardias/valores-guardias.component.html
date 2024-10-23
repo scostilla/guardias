@@ -5,12 +5,16 @@
       <div class="titulos">VALORES DE GUARDIAS <span class="titulos-second">Contaduría de la provincia</span></div>
     </div>
     <div class="col-12 col-md-2 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
+      <button mat-fab class="button-success" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
         <mat-icon>library_add</mat-icon>
       </button>
       <button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
         <mat-icon>library_add</mat-icon>
       </button>
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/configuracion">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+
     </div>
   </div>
   <div class="row mt-5 contenedor-montos">

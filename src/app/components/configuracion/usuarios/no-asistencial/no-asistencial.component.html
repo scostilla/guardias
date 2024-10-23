@@ -2,11 +2,14 @@
 <div class="container">
   <div class="row">
     <div class="col-6 col-md-7">
-      <div class="titulos">PERSONAL</div>
+      <div class="titulos_extra">PERSONAL</div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="createNoAsistencial()" matTooltip="Agregar Persona No Asistencial">
+      <button mat-fab class="button-success" (click)="createNoAsistencial()" matTooltip="Agregar Persona No Asistencial">
         <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/personal">
+        <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
@@ -23,7 +26,7 @@
 
   <div class="row">
     <div class="row">
-      <div class="col-6">Estás viendo:
+      <div class="col-12">Estás viendo:
         <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">No Asistenciales
           <mat-icon>expand_more</mat-icon></button>
         <mat-menu #menug="matMenu">
@@ -34,7 +37,19 @@
 
     </div>
 
-    <div class="table-responsive">
+    <div *ngIf="showMessage" class="no-selection-message">
+      No has seleccionado ningún hospital en el panel principal, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="sinAsistencialMessage" class="no-selection-message">
+      No se encontraron personas cargadas para el efector seleccionado, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="!showMessage && !sinAsistencialMessage">
+
+      <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>
@@ -129,4 +144,6 @@
       </div>
     </div>
   </div>
+
+</div>
 </div>
