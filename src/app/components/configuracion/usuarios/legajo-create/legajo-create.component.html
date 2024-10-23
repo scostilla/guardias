@@ -20,7 +20,7 @@
 
       <form [formGroup]="legajoForm" (ngSubmit)="saveLegajo()">
 
-        <mat-accordion class="example-headers-align">
+        <mat-accordion>
           <!-- Panel 1 -->
           <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle id="panel1">
             <mat-expansion-panel-header class="custom-header">
@@ -32,7 +32,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Profesional</mat-label>
               <input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required [disabled]="initialData !== undefined">
               <mat-icon matSuffix (click)="initialData === undefined ? openAsistencialDialog() : null">person</mat-icon>
@@ -224,14 +224,16 @@
             
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid">
-                Agregar Legajo
-              </button>
+              <button mat-button color="primary" type="button" (click)="cerrarPanel()">Cerrar paneles</button>
             </mat-action-row>
           </mat-expansion-panel>
         </mat-accordion>
       
         <div mat-dialog-actions class="action mt-4">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid" class="me-2">
+            Agregar Legajo
+          </button>
+
           <button mat-raised-button color="secondary" type="button" (click)="cancel()">
             Cancelar
           </button>

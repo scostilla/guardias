@@ -505,6 +505,10 @@ export class LegajoCreateComponent implements OnInit {
     this.step = index;
   }
 
+  cerrarPanel() {
+    this.step = -1;
+  }
+
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,

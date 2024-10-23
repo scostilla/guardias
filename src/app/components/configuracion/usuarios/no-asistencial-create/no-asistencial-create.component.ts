@@ -18,6 +18,8 @@ export class NoAsistencialCreateComponent implements OnInit {
 
   noAsistencialForm: FormGroup;
   roles: Rol[] = [];
+  step = 0;
+
 
   constructor(
     private fb: FormBuilder,
@@ -180,6 +182,44 @@ export class NoAsistencialCreateComponent implements OnInit {
     }
     event.target.value = value;
     this.noAsistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
+  }
+
+  nextStep(): void {
+    if (this.step === 0 && !this.isPanel1Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en datos personales.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+
+    if (this.step === 1 && !this.isPanel2Valid()) {
+      this.toastr.warning('Complete todos los campos obligatorios en datos usuario.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      return;
+    }
+
+    this.step = (this.step + 1) % 2; 
+  }
+
+  prevStep(): void {
+    this.step = (this.step - 1 + 2) % 2;
+  }
+
+  isPanel1Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 1 son válidos
+    const panel1Controls = ['nombre', 'apellido', 'dni', 'domicilio', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'email'];
+    return panel1Controls.every(control => this.noAsistencialForm.get(control)?.valid);
+  }
+
+  isPanel2Valid(): boolean {
+    // Verifica si los campos obligatorios en el panel 2 son válidos
+    const panel2Controls = ['nombreUsuario', 'password', 'roles'];
+    return panel2Controls.every(control => this.noAsistencialForm.get(control)?.valid);
+  }
+
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  cerrarPanel() {
+    this.step = -1;
   }
 
   cancel(): void {
