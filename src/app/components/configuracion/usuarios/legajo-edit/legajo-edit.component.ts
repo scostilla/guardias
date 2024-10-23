@@ -128,15 +128,6 @@ export class LegajoEditComponent implements OnInit {
       this.asistencial = navigation.extras.state['asistencial'] || undefined;
       this.noAsistencial = navigation.extras.state['noAsistencial'] || undefined;
   
-      if (this.asistencial) {
-        // Manejo específico para asistencial
-        console.log('Viene de asistencial:', this.asistencial);
-      } else if (this.noAsistencial) {
-        // Manejo específico para no asistencial
-        console.log('Viene de no asistencial:', this.noAsistencial);
-      } else {
-        console.error('No se encontró ni asistencial ni no asistencial.');
-      }
     }
   }
 
@@ -170,16 +161,6 @@ ngOnInit(): void {
       tipoRevista: this.initialData.revista.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
     });
 
-    // Manejo específico dependiendo de si es asistencial o no
-    if (this.asistencial) {
-      // Configuración o lógica específica para asistencial
-      console.log('Cargando datos para asistencial:', this.asistencial);
-      // Puedes hacer más configuraciones aquí si es necesario
-    } else {
-      // Configuración o lógica específica para no asistencial
-      console.log('Cargando datos para no asistencial');
-      // Puedes hacer más configuraciones aquí si es necesario
-    }
   }
 }
 
@@ -417,33 +398,32 @@ ngOnInit(): void {
     this.step = index;
   }
 
-  cancel(): void {
+  cerrarPanel() {
+    this.step = -1;
+  }
+
+  cancel(): void { 
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
       positionClass: 'toast-top-center',
       progressBar: true
     });
     
-    console.log('Cancelando. NoAsistencial:', this.noAsistencial); // Verificar el objeto
+    console.log('Cancelando. NoAsistencial:', this.noAsistencial);
   
-    if (this.fromLegajo) {
-      this.router.navigate(['/personal-legajo']);
+    if (this.asistencial) {
+      this.router.navigate(['/legajo-person'], {
+        state: { asistencial: this.asistencial, fromAsistencial: true }
+      });
+    } else if (this.noAsistencial) {
+      this.router.navigate(['/legajo-person'], {
+        state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
+      });
     } else {
-      if (this.asistencial) {
-        this.router.navigate(['/legajo-person'], {
-          state: { asistencial: this.asistencial, fromAsistencial: true }
-        });
-      } else if (this.noAsistencial) {
-        this.router.navigate(['/legajo-person'], {
-          state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
-        });
-      } else {
-        console.error('No se encontró el objeto asistencial ni el objeto no asistencial.');
-        this.router.navigate(['/personal-legajo']);
-      }
+      console.error('No se encontró el objeto asistencial ni el objeto no asistencial.');
     }
   }
-        
+          
   compareFn(o1: any, o2: any): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
   }

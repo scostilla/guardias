@@ -36,7 +36,7 @@
             <th scope="row">Profesión</th>
             <td>{{legajo.profesion.nombre}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="legajo.especialidades && legajo.especialidades.length > 0">
           <th scope="row">Especialidades</th>
           <td>
             <ng-container *ngFor="let especialidad of legajo.especialidades; let i = index">
@@ -56,6 +56,13 @@
                   </ng-container>
               </td>
           </tr>
+          <tr>
+            <th scope="row" *ngIf="revista">Revista</th>
+            <td>{{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }} - {{ revista.adicional.nombre }})
+              <br/> Carga horaria: {{ revista.cargaHoraria.cantidad }} Hs
+              <br/>{{ revista.agrupacion }}</td>
+          </tr>
+          <tr>
       </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">

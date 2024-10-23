@@ -2,10 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">Modificar Legajo: 
-        <span class="titulos-second">
-          {{ asistencial ? (asistencial.apellido + ', ' + asistencial.nombre) : (noAsistencial?.apellido + ', ' + noAsistencial?.nombre) }}
-        </span>
+      <div class="titulos">Modificar Legajo 
       </div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
@@ -35,8 +32,17 @@
                 <span class="negrita">Datos personal</span>
               </mat-panel-title>
             </mat-expansion-panel-header>
+
+            <mat-form-field appearance="fill" style="margin-top: 20px;"> 
+              <mat-label>Profesional</mat-label>
+              <input matInput [value]="asistencial ? (asistencial.apellido + ', ' + asistencial.nombre) : (noAsistencial?.apellido + ', ' + noAsistencial?.nombre)" readonly required>
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="legajoForm.get('idPersona')?.hasError('required')">
+                El campo profesional es requerido.
+              </mat-error>
+            </mat-form-field>
                 
-            <mat-form-field appearance="fill" style="margin-top: 20px;">
+            <mat-form-field appearance="fill">
               <mat-label>Profesión</mat-label>
               <mat-select formControlName="profesion" [compareWith]="compareFn">
                 <mat-option *ngFor="let profesion of profesiones" [value]="profesion">{{ profesion.nombre }}</mat-option>
@@ -201,14 +207,15 @@
             
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()">
-                Modificar Legajo
-              </button>
+              <button mat-button color="primary" type="button" (click)="cerrarPanel()">Cerrar paneles</button>
             </mat-action-row>
           </mat-expansion-panel>
         </mat-accordion>
       
         <div mat-dialog-actions class="action mt-4">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid || !isModified()" class="me-2">
+            Modificar Legajo
+          </button>
           <button mat-raised-button color="secondary" type="button" (click)="cancel()">
             Cancelar
           </button>

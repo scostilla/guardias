@@ -67,6 +67,8 @@ export class LegajoCreateComponent implements OnInit {
   ];
 
   step = 0;
+  isAsistencial: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -143,7 +145,7 @@ export class LegajoCreateComponent implements OnInit {
 
   }
 
-  openAsistencialDialog(): void {
+  /*openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
       disableClose: true
@@ -169,7 +171,7 @@ export class LegajoCreateComponent implements OnInit {
       });
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }
+  }*/
 
   /* listAsistenciales(): void {
 

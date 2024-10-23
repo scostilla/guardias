@@ -32,15 +32,15 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <mat-form-field appearance="fill" style="margin-top: 20px;">
+            <mat-form-field appearance="fill" style="margin-top: 20px;"> 
               <mat-label>Profesional</mat-label>
-              <input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required [disabled]="initialData !== undefined">
-              <mat-icon matSuffix (click)="initialData === undefined ? openAsistencialDialog() : null">person</mat-icon>
+              <input matInput [value]="inputValue" readonly required>
+              <mat-icon matSuffix>person</mat-icon>
               <mat-error *ngIf="legajoForm.get('idPersona')?.hasError('required')">
                 El campo profesional es requerido.
               </mat-error>
             </mat-form-field>
-
+            
             <!-- <mat-form-field appearance="fill">
               <mat-label>Profesional</mat-label>
               <input matInput formControlName="idPersona" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
