@@ -84,17 +84,18 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     this.actualizarColumnasVisibles();
 }
 
-  applyFilter(filterValue: string) {
-    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+applyFilter(event: Event) {
+  const filterValue = (event.target as HTMLInputElement).value;
+  const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-    this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
-      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return normalizedData.indexOf(normalizedFilterValue) != -1;
-    };
+  this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
+    const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return normalizedData.indexOf(normalizedFilterValue) !== -1;
+  };
 
-    this.dataSource.filter = normalizedFilterValue;
-  }
+  this.dataSource.filter = normalizedFilterValue;
+}
 
   /* accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";

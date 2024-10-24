@@ -90,18 +90,19 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.actualizarColumnasVisibles();
   }
 
-  applyFilter(filterValue: string) {
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
+  
     this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return normalizedData.indexOf(normalizedFilterValue) != -1;
+      return normalizedData.indexOf(normalizedFilterValue) !== -1;
     };
-
+  
     this.dataSource.filter = normalizedFilterValue;
   }
-
+  
   listAsistencial(efectorId: number | null = null): void {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
@@ -294,21 +295,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     if (this.table) {
       this.table.renderRows();
     }
-  }
-
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
   }
 
   ngOnDestroy(): void {

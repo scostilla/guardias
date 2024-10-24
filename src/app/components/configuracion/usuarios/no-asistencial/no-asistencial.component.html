@@ -15,11 +15,10 @@
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
-        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keydown.enter)="applyFilter(input.value)" 
-        #input>
-        <button mat-icon-button matSuffix (click)="applyFilter(input.value)">
+        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keyup)="applyFilter($event)" #input>
+        <!--<button mat-icon-button matSuffix (click)="applyFilter(input.value)">
           <mat-icon>search</mat-icon>
-        </button>
+        </button>-->
       </mat-form-field>
     </div>
   </div>

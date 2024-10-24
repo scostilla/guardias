@@ -53,7 +53,7 @@ export class AutoridadEditComponent implements OnInit {
           idPersona: data.persona.id, // Solo guardamos el id
           nombre: data.nombre,
           fechaInicio: moment(data.fechaInicio), // Convertir a objeto Moment
-          fechaFinal: data.fechaFinal ? moment(data.fechaFinal) : "", // Convertir a objeto Moment o null
+          fechaFinal: data.fechaFinal ? moment(data.fechaFinal) : null, // Convertir a objeto Moment o null
           esActual: data.esActual,
           esRegional: data.esRegional,
           idEfector: data.efector // Aquí se asigna el objeto completo
@@ -82,7 +82,7 @@ export class AutoridadEditComponent implements OnInit {
 
   loadAutoridades(): void {
     this.autoridadService.list().subscribe(data => {
-      this.autoridades = data;
+      this.autoridades = data; // Guarda la lista de autoridades
     }, error => {
       console.log(error);
     });
@@ -120,18 +120,19 @@ export class AutoridadEditComponent implements OnInit {
     if (this.autoridadForm.valid) {
       const autoridadData = this.autoridadForm.value;
   
-      // Verificar si ya existe un registro activo para la persona seleccionada
-      const existing = this.autoridades.find(a => 
-        a.persona.id === autoridadData.idPersona && a.activo === true
-      );
+      if (!this.data || !this.data.id) {
+        const existing = this.autoridades.find(a => 
+          a.persona.id === autoridadData.idPersona && a.activo === true
+        );
   
-      if (existing) {
-        this.toastr.warning('Ya existe un registro activo para esta persona.', 'Advertencia', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        return; // Salir del método si existe un registro activo
+        if (existing) {
+          this.toastr.warning('Ya existe un registro activo para esta persona.', 'Advertencia', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          return;
+        }
       }
   
       const autoridadDto = new AutoridadDto(
@@ -146,7 +147,6 @@ export class AutoridadEditComponent implements OnInit {
   
       console.log('Datos a enviar:', autoridadDto);
   
-      // Lógica para guardar
       if (this.data && this.data.id) {
         this.autoridadService.update(this.data.id, autoridadDto).subscribe(
           result => {
@@ -167,7 +167,7 @@ export class AutoridadEditComponent implements OnInit {
         );
       }
     }
-  }  
+  }
 
   compareEfector(p1: Efector, p2: Efector): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
