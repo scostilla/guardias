@@ -14,11 +14,11 @@
           </tr>    
           <tr>
             <th scope="row">Fecha Inicio</th>
-            <td>{{autoridad.fechaInicio}}</td>
+            <td>{{autoridad.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>    
           <tr>
             <th scope="row">Fecha Final</th>
-            <td>{{autoridad.fechaFinal}}</td>
+            <td>{{autoridad.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>    
           <tr>
             <th scope="row">Actual</th>

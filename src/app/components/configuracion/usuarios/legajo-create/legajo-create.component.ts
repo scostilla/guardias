@@ -449,7 +449,7 @@ export class LegajoCreateComponent implements OnInit {
         } else if (this.fromNoAsistencial) {
           this.router.navigate(['/personal-no-asistencial']);
         } else {
-          this.router.navigate(['/personal-legajo']);
+          this.router.navigate(['/personal-legajo-select']);
         }
       },
       (error) => {
@@ -523,7 +523,7 @@ export class LegajoCreateComponent implements OnInit {
     } else if (this.fromNoAsistencial) {
       this.router.navigate(['/personal-no-asistencial']);
     } else {
-      this.router.navigate(['/personal-legajo']);
+      this.router.navigate(['/personal-legajo-select']);
     }
   }
 

@@ -1,10 +1,10 @@
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
-    <div class="col-6 col-md-7">
+    <div class="col-12 col-md-7">
       <div class="titulos_extra">AUTORIDADES</div>
     </div>
-    <div class="col-6 col-md-1 m d-flex justify-content-end">
+    <div class="col-12 col-md-1 m d-flex justify-content-end">
       <button mat-fab class="button-success" (click)="openFormChanges()" matTooltip="Agregar Autoridad">
         <mat-icon>library_add</mat-icon>
       </button>
@@ -26,7 +26,7 @@
 
         <ng-container matColumnDef="persona">
           <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Persona </th> 
-          <td mat-cell *matCellDef="let autoridad"> {{autoridad.persona?.apellido}}, {{autoridad.persona?.nombre}} </td>
+          <td mat-cell *matCellDef="let autoridad" style="white-space: nowrap;"> {{autoridad.persona?.apellido}}, {{autoridad.persona?.nombre}} </td>
         </ng-container>
 
         <ng-container matColumnDef="nombre">
@@ -34,41 +34,26 @@
           <td mat-cell *matCellDef="let autoridad">{{autoridad.nombre}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="fechaInicio">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Inicio </th> 
-          <td mat-cell *matCellDef="let autoridad">{{autoridad.fechaInicio}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="fichaFinal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Ficha Final </th> 
-          <td mat-cell *matCellDef="let autoridad">{{autoridad.fechaFinal}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="esActual">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Actual </th> 
-          <td mat-cell *matCellDef="let autoridad"> {{autoridad.esActual ? 'SI' : 'NO'}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="esRegional">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Regional </th> 
-          <td mat-cell *matCellDef="let autoridad">{{autoridad.esRegional ? 'SI' : 'NO'}} </td>
-        </ng-container>
-
         <ng-container matColumnDef="efector">
           <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Efector </th> 
-          <td mat-cell *matCellDef="let autoridad">{{autoridad.efector.nombre}}</td>
+          <td mat-cell *matCellDef="let autoridad" style="white-space: nowrap;">{{autoridad.efector?.nombre}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fechaInicio">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Fecha Inicio </th> 
+          <td mat-cell *matCellDef="let autoridad">{{autoridad.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }} </td>
         </ng-container>
 
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef  class="negrita"></th>
           <td mat-cell *matCellDef="let autoridad" class="cell-actions">
-            <button mat-icon-button matTooltip="Ver {{autoridad.persona?.nombre}}" (click)="openDetail(autoridad)">
+            <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(autoridad)">
               <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Editar {{autoridad.persona?.nombre}}" (click)="openFormChanges(autoridad)">
+            <button mat-icon-button matTooltip="Editar" (click)="openFormChanges(autoridad)">
               <mat-icon class="btnEdit">edit</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Eliminar {{autoridad.persona?.nombre}}" (click)="deleteAutoridad(autoridad)">
+            <button mat-icon-button matTooltip="Eliminar" (click)="deleteAutoridad(autoridad)">
               <mat-icon class="btnRemove">delete</mat-icon>
             </button>
           </td>

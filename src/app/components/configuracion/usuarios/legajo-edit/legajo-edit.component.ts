@@ -331,15 +331,15 @@ ngOnInit(): void {
 
       // Redirige según si es asistencial o no asistencial
       if (this.asistencial) {
-        this.router.navigate(['/legajo-person'], {
+        this.router.navigate(['/personal-legajo-select'], {
           state: { asistencial: this.asistencial, fromAsistencial: true }
         });
       } else if (this.noAsistencial) {
-        this.router.navigate(['/legajo-person'], {
+        this.router.navigate(['/personal-legajo-select'], {
           state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
         });
       } else {
-        this.router.navigate(['/legajo-person']);
+        this.router.navigate(['/personal-legajo-select']);
       }
     },
     (error) => {
@@ -412,11 +412,11 @@ ngOnInit(): void {
     console.log('Cancelando. NoAsistencial:', this.noAsistencial);
   
     if (this.asistencial) {
-      this.router.navigate(['/legajo-person'], {
+      this.router.navigate(['/personal-legajo-select'], {
         state: { asistencial: this.asistencial, fromAsistencial: true }
       });
     } else if (this.noAsistencial) {
-      this.router.navigate(['/legajo-person'], {
+      this.router.navigate(['/personal-legajo-select'], {
         state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
       });
     } else {

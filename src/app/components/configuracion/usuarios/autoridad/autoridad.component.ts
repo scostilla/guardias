@@ -23,7 +23,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AutoridadDetailComponent>;
-  displayedColumns: string[] = ['persona', 'nombre', 'fechaInicio', 'fichaFinal', 'esActual', 'esRegional', 'efector', /* 'fechaFinal',  'matriculaNacional', 'matriculaProvincial', 'cargo', */ 'acciones'];
+  displayedColumns: string[] = ['persona', 'nombre', 'fechaInicio', 'efector', 'acciones'];
   dataSource!: MatTableDataSource<Autoridad>;
   suscription!: Subscription;
 
@@ -52,43 +52,31 @@ export class AutoridadComponent implements OnInit, OnDestroy {
     })
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-
-    const normalizeText = (text: string) => {
-      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
-
-    this.dataSource.filterPredicate = (data: Autoridad, filter: string) => {
-      /*  const actualValue = data.actual ? 'sí' : 'no';
-       const legalValue = data.legal ? 'sí' : 'no'; */
-
-      const fechaInicioTimestamp = data.fechaInicio ? new Date(data.fechaInicio).getTime() : null;
-
-      const dataStr = normalizeText(
-        data.persona?.nombre.toLowerCase() + ' ' +
-        data.persona?.apellido.toLowerCase() + ' ' +
-        data.efector?.nombre.toLowerCase()
-        //actualValue + ' ' + legalValue
-      );
-
-      const normalizedFilter = normalizeText(filter);
-
-      const filterDate = normalizedFilter.split('/').reverse().join('-');
-      const filterTimestamp = Date.parse(filterDate);
-
-      if (!isNaN(filterTimestamp)) {
-        return fechaInicioTimestamp === filterTimestamp;
+  accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
       }
-
-      return dataStr.indexOf(normalizedFilter) != -1;
-    };
-
-    this.dataSource.filter = filterValue;
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
     }
+    return output;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Autoridad, filter: string) => {
+      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.persona.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.persona.apellido.toLowerCase()).includes(this.accentFilter(filter)) ||
+       this.accentFilter(data.efector.nombre.toLowerCase()).includes(this.accentFilter(filter));
+       ;
+    };
   }
 
   listAutoridades(): void {

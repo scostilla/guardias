@@ -44,8 +44,9 @@ export class AsistencialSelectorComponent implements OnInit {
   ngOnInit(): void {
 
     // Cargar la lista según el tipo seleccionado
-    this.loadDataByType(this.selectedType);
-
+    setTimeout(() => {
+      this.loadDataByType(this.selectedType);
+    });
     /* this.asistencialService.list().subscribe(data => {
       this.dataSource.data = data;
     }); */
