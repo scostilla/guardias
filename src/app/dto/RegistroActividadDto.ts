@@ -8,8 +8,9 @@ export class RegistroActividadDto{
     idAsistencial: number;
     idServicio: number;
     idEfector: number;
+    idUsuario: number;
 
-    constructor(fechaIngreso: Date, fechaEgreso: Date, horaIngreso: Date, horaEgreso: Date, idTipoGuardia: number, activo: boolean, idAsistencial: number, idServicio: number, idEfector: number) {
+    constructor(fechaIngreso: Date, fechaEgreso: Date, horaIngreso: Date, horaEgreso: Date, idTipoGuardia: number, activo: boolean, idAsistencial: number, idServicio: number, idEfector: number, idUsuario: number) {
 
         this.fechaIngreso = fechaIngreso;
         this.fechaEgreso = fechaEgreso;
@@ -20,5 +21,6 @@ export class RegistroActividadDto{
         this.idAsistencial = idAsistencial;
         this.idServicio = idServicio;
         this.idEfector = idEfector;
+        this.idUsuario = idUsuario;
     }
 }

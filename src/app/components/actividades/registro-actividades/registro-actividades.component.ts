@@ -6,11 +6,13 @@ import { RegistroActividadService } from 'src/app/services/registroActividad.ser
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/servicio.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -28,6 +30,8 @@ export class RegistroActividadesComponent {
   timeControl: FormControl = new FormControl();
   currentDate: Date = new Date();
   initialData: any;
+  inputValue: string = '';
+
 
   constructor(
     private fb: FormBuilder,
@@ -38,16 +42,17 @@ export class RegistroActividadesComponent {
     private hospitalService: HospitalService,
     private toastr: ToastrService,
     private router: Router,
+    public dialog: MatDialog,
     private route: ActivatedRoute
   ) {
     this.registroForm = this.fb.group({
-      tipoGuardia: ['', Validators.required],
-      asistencial: ['', Validators.required],
-      servicio: ['', Validators.required],
-      efector: ['', Validators.required],
-      fecIngreso: ['', Validators.required],
+      idTipoGuardia: ['', Validators.required],
+      idAsistencial: ['', Validators.required],
+      idServicio: ['', Validators.required],
+      idEfector: ['', Validators.required],
+      fechaIngreso: ['', Validators.required],
       eventStartTime: ['', Validators.required],
-      fecEgreso: [''],
+      fechaEgreso: [''],
       eventEndTime: ['']
     });
 
@@ -108,20 +113,53 @@ export class RegistroActividadesComponent {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
+  openAsistencialDialog(): void {
+    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+      width: '800px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Actualizo el valor legible para mostrarlo y el id para el formulario
+        this.inputValue = `${result.apellido} ${result.nombre}`;
+        this.registroForm.patchValue({ idAsistencial: result.id });
+      } else {
+        this.toastr.info('No se seleccionó un profesional', 'Información', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }, error => {
+      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      console.error('Error al abrir el diálogo de carga de profesional:', error);
+    });
+  }
+
+
   saveRegistro(): void {
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
       const registroDto = new RegistroActividadDto(
-        registroData.fecIngreso,
-        registroData.fecEgreso,
+        registroData.fechaIngreso,
+        registroData.fechaEgreso,
         registroData.eventStartTime,
         registroData.eventEndTime,
-        registroData.tipoGuardia.id,
-        registroData.activo, 
-        registroData.asistencial.id,
-        registroData.servicio.id,
-        registroData.efector.id
+        registroData.idTipoGuardia.id,
+        true, 
+        registroData.idAsistencial,
+        registroData.idServicio.id,
+        registroData.idEfector.id,
+        1
       );
+
+      console.log('Registro a enviar:', registroDto);
+
       if (this.initialData && this.initialData.id) {
         this.registroActividadService.update(this.initialData.id, registroDto).subscribe(
           result => {
