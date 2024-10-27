@@ -45,13 +45,15 @@ export class RegistroActividadesComponent {
     public dialog: MatDialog,
     private route: ActivatedRoute
   ) {
+    this.currentDate = new Date();
+
     this.registroForm = this.fb.group({
       idTipoGuardia: ['', Validators.required],
       idAsistencial: ['', Validators.required],
       idServicio: ['', Validators.required],
       idEfector: ['', Validators.required],
-      fechaIngreso: ['', Validators.required],
-      eventStartTime: ['', Validators.required],
+      fechaIngreso: [this.currentDate, Validators.required], // Fecha actual
+      eventStartTime: [this.formatCurrentTime(), Validators.required], // Hora actual
       fechaEgreso: [''],
       eventEndTime: ['']
     });
@@ -67,6 +69,12 @@ export class RegistroActividadesComponent {
         this.registroForm.patchValue(this.initialData);
       }
     });
+  }
+
+  private formatCurrentTime(): string {
+    const hours = this.currentDate.getHours().toString().padStart(2, '0');
+    const minutes = this.currentDate.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`; // Formato HH:mm
   }
 
   onTipoGuardiaChange(event: any) {
@@ -146,7 +154,7 @@ export class RegistroActividadesComponent {
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
       const registroDto = new RegistroActividadDto(
-        registroData.fechaIngreso,
+        new Date(registroData.fechaIngreso), // Asegúrate de que sea un objeto Date
         registroData.fechaEgreso,
         registroData.eventStartTime,
         registroData.eventEndTime,

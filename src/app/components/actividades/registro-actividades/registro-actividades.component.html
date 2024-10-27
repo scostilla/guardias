@@ -65,15 +65,25 @@
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Ingreso</mat-label>
+                        <input matInput [value]="registroForm.get('fechaIngreso')?.value | date:'shortDate'" 
+                               readonly disabled>
+                    </mat-form-field>
+                    <!--
+                    <mat-form-field appearance="fill" class="form-field">
+                        <mat-label>Ingreso</mat-label>
                                 <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso" [min]="currentDate" [max]="currentDate" [readonly]="true">
                             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                             <mat-datepicker #picker1></mat-datepicker>
                             <mat-hint>MM/DD/YYYY</mat-hint>
                             <mat-error *ngIf="registroForm.get('fechaIngreso')?.errors?.['required']">La fecha de ingreso es requerida.</mat-error>
-                            <!-- <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-                                <mat-datepicker #picker1></mat-datepicker> -->
-                    </mat-form-field>
+                    </mat-form-field>-->
                     
+                    <mat-form-field appearance="fill" class="form-field">
+                        <mat-label>Hora de Inicio</mat-label>
+                        <input matInput [value]="registroForm.get('eventStartTime')?.value" 
+                               readonly disabled>
+                    </mat-form-field>
+                    <!--
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Hora de Inicio</mat-label>
                             <input matInput formControlName="eventStartTime" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
@@ -82,7 +92,7 @@
                             <mat-error *ngIf="registroForm?.get('eventStartTime')?.invalid && registroForm?.get('eventStartTime')?.touched">
                                 El campo es obligatorio (HH:mm).
                             </mat-error>
-                    </mat-form-field>
+                    </mat-form-field>-->
                 </div>
 <!--
                 <div class="form-row">
