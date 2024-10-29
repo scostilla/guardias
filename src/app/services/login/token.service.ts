@@ -22,6 +22,15 @@ export class TokenService {
     return sessionStorage.getItem(TOKEN_KEY);
   }
 
+  /*  El token JWT esta compuesto por tres partes separadas por puntos (.), y el método token.split('.')[1] extraerá el payload (la segunda parte), que es el que contiene la información del usuario, incluido el ID. */
+  public getUserIdFromToken(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+}
+
+
   public setUserName(userName: string): void {
     window.sessionStorage.removeItem(USERNAME_KEY);
     window.sessionStorage.setItem(USERNAME_KEY, userName);

@@ -56,12 +56,18 @@ clearRegistroId(): void {
       })
     )
   }
+
+  public registrarSalida(id: number, registroActividad: RegistroActividadDto): Observable<any> {
+    return this.httpClient.put<any>(this.registroActividadURL + `registrarSalida/${id}`, registroActividad)
+    .pipe(
+      tap(() => {
+       this._refresh$.next(); 
+      })
+    )
+}
   
   public delete(id:number): Observable<any> {
     return this.httpClient.put<any>(this.registroActividadURL + `delete/${id}`, {});
   }
 
-  public getLastActiveRegistro(): Observable<RegistroActividad> {
-    return this.httpClient.get<RegistroActividad>(this.registroActividadURL + 'lastActive');
-}  
-  }
+}

@@ -26,6 +26,9 @@ export class HomePageComponent implements OnInit {
   ngOnInit(): void {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
+
+      const userId = this.tokenService.getUserIdFromToken();
+      console.log('ID del usuario logeado:', userId);
   
       this.authService.detailPersonBasicPanel().subscribe(
         (response: PersonBasicPanelDto) => {

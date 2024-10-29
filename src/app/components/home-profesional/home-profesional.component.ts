@@ -23,6 +23,7 @@ export class HomeProfesionalComponent implements OnInit {
   apellidoUsuario: string = '';
   nombresEfectores: EfectorSummaryDto[] = [];
   ultimoRegistro: RegistroActividad | null = null;
+  usuarioPersona: number | null = null;
 
   constructor(
     private router: Router,
@@ -36,15 +37,19 @@ export class HomeProfesionalComponent implements OnInit {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
 
+      const userId = this.tokenService.getUserIdFromToken();
+      console.log('ID del usuario logeado:', userId);
+
       // Obtener detalles del usuario
       this.authService.detailPersonBasicPanel().subscribe(
         (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
           this.nombresEfectores = response.efectores; // Asignar efectores
 
           // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario);
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
           console.log('Efectores asociados:', this.nombresEfectores);
         },
         error => {
@@ -54,6 +59,7 @@ export class HomeProfesionalComponent implements OnInit {
   } else {
       this.isLogged = false;
       console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
     }
   }
 
@@ -71,7 +77,8 @@ export class HomeProfesionalComponent implements OnInit {
   }
 
   openRegistroDiarioProfesional() {
-    this.registroActividadService.getLastActiveRegistro().subscribe(
+    this.router.navigateByUrl('/registro-actividades-ingreso');
+    /*this.registroActividadService.getLastActiveRegistro().subscribe(
       (registro) => {
         this.ultimoRegistro = registro; // Asigna el último registro a la variable
   
@@ -94,7 +101,7 @@ export class HomeProfesionalComponent implements OnInit {
         // Manejar el error, por ejemplo, redirigir a la página de ingreso
         this.router.navigateByUrl('/registro-actividades-ingreso');
       }
-    );
+    );*/
   }
 
   cargarRegistro(): void {

@@ -1,5 +1,5 @@
 <app-spinner></app-spinner>
-<div class="container">
+<div class="container" *ngIf="isLogged">
   <div class="row">
     <div class="col-6">
       <div class="titulos">Nuevo registro diario</div>
@@ -38,9 +38,7 @@
             <div class="form-row">
                 <mat-form-field appearance="fill">
                     <mat-label>Profesional</mat-label>
-                    <input matInput formControlName="idAsistencial" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
-                    <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-                    <mat-error *ngIf="registroForm.get('idAsistencial')?.errors?.['required']">El profesional es requerido.</mat-error>
+                    <input matInput [value]="inputValue" readonly required>
                   </mat-form-field>
                 </div>
         

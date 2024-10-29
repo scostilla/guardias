@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RegistroActividad } from 'src/app/models/RegistroActividad'; // Puedes eliminar esto si no lo necesitas
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
@@ -33,6 +37,15 @@ export class RegistroActividadesComponent {
   initialData: any;
   inputValue: string = '';
 
+  isLogged = false;
+  userId: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
+  nombresEfectores: EfectorSummaryDto[] = [];
+  ultimoRegistro: RegistroActividad | null = null;
+  usuarioPersona: number | null = null;
+
+
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +57,8 @@ export class RegistroActividadesComponent {
     private toastr: ToastrService,
     private router: Router,
     public dialog: MatDialog,
+    private tokenService: TokenService,
+    private authService: AuthService,
     private route: ActivatedRoute
   ) {
     this.currentDate = new Date();
@@ -79,6 +94,38 @@ export class RegistroActividadesComponent {
       }
     });
   }
+
+  ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+          this.nombresEfectores = response.efectores; // Asignar efectores
+
+          // Log para mostrar el usuario y los efectores
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+          console.log('Efectores asociados:', this.nombresEfectores);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+  } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+  }
+
 
   onTipoGuardiaChange(event: any) {
     console.log("Tipo de guardia seleccionado:", event.value);
@@ -209,7 +256,7 @@ export class RegistroActividadesComponent {
         registroData.idAsistencial,
         registroData.idServicio.id,
         registroData.idEfector.id,
-        1
+        this.userId!
       );
 
       console.log('Registro a enviar:', registroDto);

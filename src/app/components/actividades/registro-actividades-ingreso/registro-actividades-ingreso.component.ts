@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RegistroActividad } from 'src/app/models/RegistroActividad'; // Puedes eliminar esto si no lo necesitas
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
@@ -23,7 +27,7 @@ import * as moment from 'moment';
   templateUrl: './registro-actividades-ingreso.component.html',
   styleUrls: ['./registro-actividades-ingreso.component.css']
 })
-export class RegistroActividadesIngresoComponent {
+export class RegistroActividadesIngresoComponent implements OnInit {
   registroForm: FormGroup;
   tiposGuardias: TipoGuardia[] = [];
   asistenciales: Asistencial[] = [];
@@ -33,6 +37,15 @@ export class RegistroActividadesIngresoComponent {
   currentDate: Date = new Date();
   initialData: any;
   inputValue: string = '';
+  asistencialSeleccionado: Asistencial | null = null;
+
+  isLogged = false;
+  userId: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
+  nombresEfectores: EfectorSummaryDto[] = [];
+  ultimoRegistro: RegistroActividad | null = null;
+  usuarioPersona: number | null = null;
 
 
   constructor(
@@ -45,13 +58,14 @@ export class RegistroActividadesIngresoComponent {
     private toastr: ToastrService,
     private router: Router,
     public dialog: MatDialog,
+    private tokenService: TokenService,
+    private authService: AuthService,
     private route: ActivatedRoute
   ) {
     this.currentDate = new Date();
 
     this.registroForm = this.fb.group({
       idTipoGuardia: ['', Validators.required],
-      idAsistencial: ['', Validators.required],
       idServicio: ['', Validators.required],
       idEfector: ['', Validators.required],
       fechaIngreso: [this.currentDate, Validators.required], // Fecha actual
@@ -71,6 +85,39 @@ export class RegistroActividadesIngresoComponent {
         this.registroForm.patchValue(this.initialData);
       }
     });
+  }
+
+  ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+          this.nombresEfectores = response.efectores; // Asignar efectores
+
+          this.loadAsistencialData();
+
+          // Log para mostrar el usuario y los efectores
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+          console.log('Efectores asociados:', this.nombresEfectores);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+  } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
   }
 
   private formatCurrentTime(): string {
@@ -123,38 +170,27 @@ export class RegistroActividadesIngresoComponent {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
-  openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
-      width: '800px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Actualizo el valor legible para mostrarlo y el id para el formulario
-        this.inputValue = `${result.apellido} ${result.nombre}`;
-        this.registroForm.patchValue({ idAsistencial: result.id });
+  private loadAsistencialData(): void {
+    this.asistencialService.list().subscribe(data => {
+      this.asistenciales = data;
+  
+      // Busca el asistencial correspondiente al usuarioPersona
+      const asistencial = this.asistenciales.find(a => a.id === this.usuarioPersona);
+      if (asistencial) {
+        this.inputValue = `${asistencial.apellido} ${asistencial.nombre}`;
       } else {
-        this.toastr.info('No se seleccionó un profesional', 'Información', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+        this.inputValue = 'No se encontró asistencial';
       }
     }, error => {
-      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      console.error('Error al abrir el diálogo de carga de profesional:', error);
+      console.log(error);
     });
   }
-
 
   saveRegistro(): void {
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
+      const asistencialId = this.usuarioPersona !== null ? this.usuarioPersona : 0;
+
       const registroDto = new RegistroActividadDto(
         moment(registroData.fechaIngreso).startOf('day').toDate(), // Asegúrate de que sea un objeto Date
         registroData.fechaEgreso,
@@ -162,10 +198,10 @@ export class RegistroActividadesIngresoComponent {
         registroData.eventEndTime,
         registroData.idTipoGuardia.id,
         true, 
-        registroData.idAsistencial,
+        asistencialId,
         registroData.idServicio.id,
         registroData.idEfector.id,
-        1
+        this.userId!
       );
 
       console.log('Registro a enviar:', registroDto);
@@ -234,4 +270,10 @@ export class RegistroActividadesIngresoComponent {
     });
     this.router.navigate(['/home-profesional']);
   }
+
+  onLogOut(): void {
+    this.tokenService.logOut();
+    window.location.reload();
+  }
+
 }
