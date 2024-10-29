@@ -5,7 +5,7 @@
       <div class="titulos">Nuevo registro diario</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/home-page">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>
@@ -66,13 +66,25 @@
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Ingreso</mat-label>
+                        <input matInput [value]="registroForm.get('fechaIngreso')?.value | date:'shortDate'" 
+                               readonly disabled>
+                    </mat-form-field>
+                    <!--
+                    <mat-form-field appearance="fill" class="form-field">
+                        <mat-label>Ingreso</mat-label>
                                 <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso" [min]="currentDate" [max]="currentDate" [readonly]="true">
                             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                             <mat-datepicker #picker1></mat-datepicker>
                             <mat-hint>MM/DD/YYYY</mat-hint>
                             <mat-error *ngIf="registroForm.get('fechaIngreso')?.errors?.['required']">La fecha de ingreso es requerida.</mat-error>
-                    </mat-form-field>
+                    </mat-form-field>-->
                     
+                    <mat-form-field appearance="fill" class="form-field">
+                        <mat-label>Hora de Inicio</mat-label>
+                        <input matInput [value]="registroForm.get('eventStartTime')?.value" 
+                               readonly disabled>
+                    </mat-form-field>
+                    <!--
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Hora de Inicio</mat-label>
                             <input matInput formControlName="eventStartTime" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
@@ -81,29 +93,25 @@
                             <mat-error *ngIf="registroForm?.get('eventStartTime')?.invalid && registroForm?.get('eventStartTime')?.touched">
                                 El campo es obligatorio (HH:mm).
                             </mat-error>
-                    </mat-form-field>
+                    </mat-form-field>-->
                 </div>
-
+<!--
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Egreso</mat-label>
-                        <input matInput [matDatepicker]="picker2" formControlName="fechaEgreso" [readonly]="!registroForm.get('fechaIngreso')?.value">
-                        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                        <mat-datepicker #picker2></mat-datepicker>
-                        <mat-error *ngIf="registroForm.get('fechaEgreso')?.errors?.['required']">La fecha de egreso es requerida.</mat-error>
-                        <mat-error *ngIf="registroForm.get('fechaEgreso')?.errors?.['fechaEgresoInvalida']">La fecha de egreso debe ser igual o posterior a la fecha de ingreso.</mat-error>
-                      </mat-form-field>
-                      
+                            <input matInput [matDatepicker]="picker2" formControlName="fechaEgreso" [readonly]="true">
+                            <mat-hint>MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                    </mat-form-field>
+
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Hora de Finalización</mat-label>
-                            <input matInput formControlName="eventEndTime" [ngxMatTimepicker]="horaPicker2" [format]="24" (click)="horaPicker2.open()" [readonly]="!registroForm.get('fechaEgreso')?.value">
+                            <input matInput formControlName="eventEndTime" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly (click)="horaPicker2.open()">
                             <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
                             <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-                            <mat-error *ngIf="registroForm?.get('eventEndTime')?.invalid && registroForm?.get('eventEndTime')?.touched">
-                                El campo es obligatorio (HH:mm).
-                            </mat-error>
                     </mat-form-field>
-                </div>
+                </div>-->
             </ng-container>
 
         <div mat-dialog-actions class="action mt-4">

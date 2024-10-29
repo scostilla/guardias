@@ -110,6 +110,8 @@ import { NotificacionEditComponent } from './components/notificacion/notificacio
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
+import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
+import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaConsComponent } from './components/actividades/dist-horaria-cons/dist-horaria-cons.component';
@@ -336,6 +338,8 @@ const routes: Routes = [
   {path:"registro-diario",component: RegistroDiarioComponent},
   {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent},
+  {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent},
+  {path:"registro-actividades-egreso",component: RegistroActividadesEgresoComponent},
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
   {path:'dist-horaria-cons', component:DistHorariaConsComponent},

@@ -15,14 +15,15 @@ import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import * as moment from 'moment';
+
 
 @Component({
-  selector: 'app-registro-actividades',
-  templateUrl: './registro-actividades.component.html',
-  styleUrls: ['./registro-actividades.component.css']
+  selector: 'app-registro-actividades-ingreso',
+  templateUrl: './registro-actividades-ingreso.component.html',
+  styleUrls: ['./registro-actividades-ingreso.component.css']
 })
-export class RegistroActividadesComponent {
+export class RegistroActividadesIngresoComponent {
   registroForm: FormGroup;
   tiposGuardias: TipoGuardia[] = [];
   asistenciales: Asistencial[] = [];
@@ -53,18 +54,10 @@ export class RegistroActividadesComponent {
       idAsistencial: ['', Validators.required],
       idServicio: ['', Validators.required],
       idEfector: ['', Validators.required],
-      fechaIngreso: ['', Validators.required],
-      eventStartTime: ['', Validators.required],
-      fechaEgreso: [{ value: '', disabled: true }],
-      eventEndTime: [{ value: '', disabled: true }, Validators.required]
-    });
-
-    this.registroForm.get('fechaIngreso')?.valueChanges.subscribe(value => {
-      this.updateFechaEgresoState(value);
-    });
-
-    this.registroForm.get('fechaEgreso')?.valueChanges.subscribe(value => {
-      this.updateEventEndTimeState(value);
+      fechaIngreso: [this.currentDate, Validators.required], // Fecha actual
+      eventStartTime: [this.formatCurrentTime(), Validators.required], // Hora actual
+      fechaEgreso: [''],
+      eventEndTime: ['']
     });
 
     this.listTiposGuardias();
@@ -80,53 +73,16 @@ export class RegistroActividadesComponent {
     });
   }
 
+  private formatCurrentTime(): string {
+    const hours = this.currentDate.getHours().toString().padStart(2, '0');
+    const minutes = this.currentDate.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`; // Formato HH:mm
+  }
+
   onTipoGuardiaChange(event: any) {
     console.log("Tipo de guardia seleccionado:", event.value);
   }
 
-  private updateFechaEgresoState(fechaIngreso: Date | null): void {
-    const fechaEgresoControl = this.registroForm.get('fechaEgreso') as FormControl;
-
-    if (fechaIngreso) {
-      fechaEgresoControl.enable();
-      fechaEgresoControl.setValidators([this.fechaEgresoValidator(fechaIngreso)]);
-    } else {
-      fechaEgresoControl.disable();
-      fechaEgresoControl.clearValidators();
-    }
-
-    fechaEgresoControl.updateValueAndValidity();
-  }
-
-  private updateEventEndTimeState(fechaEgreso: Date | null): void {
-    const eventEndTimeControl = this.registroForm.get('eventEndTime') as FormControl;
-
-    if (fechaEgreso) {
-      eventEndTimeControl.enable();
-      eventEndTimeControl.setValidators([Validators.required]);
-    } else {
-      eventEndTimeControl.disable();
-      eventEndTimeControl.clearValidators();
-    }
-
-    eventEndTimeControl.updateValueAndValidity();
-  }
-
-  private fechaEgresoValidator(fechaIngreso: Date): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const fechaEgreso = control.value ? new Date(control.value) : null;
-
-      // Si no hay fecha de egreso, no hay error
-      if (!fechaEgreso) {
-        return null;
-      }
-
-      // Validar que la fecha de egreso sea igual o mayor a la fecha de ingreso
-      const isValid = fechaEgreso >= fechaIngreso;
-      return isValid ? null : { fechaEgresoInvalida: true };
-    };
-  }
-    
   listTiposGuardias(): void {
     this.tipoGuardiaService.list().subscribe(data => {
       console.log('Lista de Tipos de Guardias:', data);
@@ -200,7 +156,7 @@ export class RegistroActividadesComponent {
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
       const registroDto = new RegistroActividadDto(
-        registroData.fechaIngreso,
+        moment(registroData.fechaIngreso).startOf('day').toDate(), // Asegúrate de que sea un objeto Date
         registroData.fechaEgreso,
         registroData.eventStartTime,
         registroData.eventEndTime,
@@ -222,7 +178,7 @@ export class RegistroActividadesComponent {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.router.navigate(['/home-page']);
+            this.router.navigate(['/home-profesional']);
           },
           error => {
             this.toastr.error('Ocurrió un error al crear o editar el registro diario', 'Error', {
@@ -240,7 +196,7 @@ export class RegistroActividadesComponent {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.router.navigate(['/home-page']);
+            this.router.navigate(['/home-profesional']);
           },
           error => {
             this.toastr.error('Ocurrió un error al guardar el registro', 'Error', {
@@ -276,6 +232,6 @@ export class RegistroActividadesComponent {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/home-page']);
+    this.router.navigate(['/home-profesional']);
   }
 }

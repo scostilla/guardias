@@ -243,8 +243,8 @@ import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo
 import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
 import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
 import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
-registerLocaleData(localeEsAr, 'es-AR');
-
+import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
+import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
 
 @NgModule({
   declarations: [
@@ -437,6 +437,8 @@ registerLocaleData(localeEsAr, 'es-AR');
     TipoLicenciaDetailComponent,
     LegajoNoAsistencialComponent,
     PersonalLegajoNoAsistencialComponent,
+    RegistroActividadesEgresoComponent,
+    RegistroActividadesIngresoComponent,
     
   ],
 
@@ -503,4 +505,8 @@ registerLocaleData(localeEsAr, 'es-AR');
   
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    registerLocaleData(localeEsAr, 'es-AR');
+  }
+}

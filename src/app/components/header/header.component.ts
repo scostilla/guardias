@@ -29,7 +29,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   ) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.showNavBar = !(event.url === '/home-page' || event.url === '/home-profesional');
+        this.showNavBar = !(event.url === '/home-page' || event.url === '/home-profesional' || event.url === '/registro-actividades-ingreso' || event.url === '/registro-actividades-egreso');
         this.showConfig = !(event.url === '/home-profesional');
         this.showHeader = !(event.url === '/');
       }

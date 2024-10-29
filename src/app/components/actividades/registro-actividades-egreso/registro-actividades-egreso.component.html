@@ -1,0 +1,95 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <div class="titulos">Egreso</div>
+    </div>
+    <div class="col-6 m mt-3 d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+  </div>
+
+  <mat-dialog-content class="mat-typography">
+    <form [formGroup]="registroForm" (ngSubmit)="saveRegistro()">
+
+        <div class="form-row">
+                <mat-form-field appearance="fill" class="form-field">
+                    <mat-label>Egreso</mat-label>
+                    <input matInput [value]="registroForm.get('fechaEgreso')?.value | date:'shortDate'" readonly disabled>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="form-field">
+                    <mat-label>Hora de Finalización</mat-label>
+                    <input matInput [value]="registroForm.get('horaEgreso')?.value" readonly disabled>
+                </mat-form-field>
+        </div>
+
+        <div class="form-row titulos-second negrita mb-1 mt-3">Datos del ingreso estás finalizando:</div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill">
+          <mat-label>Tipo de Guardia</mat-label>
+          <mat-select formControlName="tipoGuardia" [compareWith]="compareTipoGuardia">
+            <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia.id">{{ tipoGuardia.nombre }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="registroForm.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+        </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Profesional</mat-label>
+            <input matInput formControlName="asistencial" [value]="inputValue" (focus)="inputValue = getNombreCompleto()">
+            <mat-error *ngIf="registroForm.get('asistencial')?.errors?.['required']">El profesional es requerido.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Servicio</mat-label>
+            <mat-select formControlName="servicio" [compareWith]="compareServicio">
+              <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registroForm.get('servicio')?.errors?.['required']">El servicio es requerido.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="form-field">
+            <mat-label>Efector</mat-label>
+            <mat-select formControlName="efector" [compareWith]="compareEfector">
+              <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registroForm.get('efector')?.errors?.['required']">El hospital es requerido.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Ingreso</mat-label>
+              <input matInput formControlName="fechaIngreso" [matDatepicker]="picker">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+  
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Hora de Inicio</mat-label>
+              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" (click)="horaPicker.open()">
+              <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+              <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+            </mat-form-field>
+          </div>
+  
+      <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!registroForm.valid || !isModified()" class="me-2">
+          {{initialData ? 'Modificar' : 'Agregar'}} registro
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </mat-dialog-content>
+</div>
