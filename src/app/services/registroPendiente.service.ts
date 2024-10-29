@@ -32,6 +32,10 @@ import { RegistroPendiente } from "../models/RegistroPendiente";
     public detailByEfectorAndFecha(idEfector: number, mes: number, anio: number): Observable<RegistroPendiente[]> {
       return this.httpClient.get<RegistroPendiente[]>(this.registroMensualURL + `detailByEfectorAndFecha/${idEfector}/${mes}/${anio}`);
     }
+
+    public detailByEfectorAndFechaAndAsistencial(idEfector: number, mes: number, anio: number, idAsistencial: number): Observable<RegistroPendiente> {
+      return this.httpClient.get<RegistroPendiente>(this.registroMensualURL + `detailByEfectorAndFechaAndAsistencial/${idEfector}/${mes}/${anio}/${idAsistencial}`);
+    }
   
     public create(registroPendiente: RegistroPendiente): Observable<any> {
       return this.httpClient.post<any>(this.registroMensualURL + 'create', registroPendiente)
