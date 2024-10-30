@@ -8,6 +8,7 @@ import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
+import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
 
 @Component({
   selector: 'app-home-profesional',
@@ -30,7 +31,8 @@ export class HomeProfesionalComponent implements OnInit {
     public dialogReg: MatDialog,
     private tokenService: TokenService,
     private authService: AuthService,
-    private registroActividadService: RegistroActividadService
+    private registroActividadService: RegistroActividadService,
+    private registroPendienteService: RegistroPendienteService
   ) {}
 
   ngOnInit(): void {
@@ -77,33 +79,31 @@ export class HomeProfesionalComponent implements OnInit {
   }
 
   openRegistroDiarioProfesional() {
-    this.router.navigateByUrl('/registro-actividades-ingreso');
-    /*this.registroActividadService.getLastActiveRegistro().subscribe(
-      (registro) => {
-        this.ultimoRegistro = registro; // Asigna el último registro a la variable
+    const idEfector = 43; // ID estático para prueba
+    const mes = new Date().getMonth() + 1; // Mes actual
+    const anio = new Date().getFullYear(); // Año actual
   
-        if (this.ultimoRegistro) {
-          // Verificamos si la fecha de egreso es null o una cadena vacía
-          if (!this.ultimoRegistro.fechaEgreso) {
-            // Si hay un registro, pero sin fecha de egreso
-            this.router.navigateByUrl(`/registro-actividades-egreso/${this.ultimoRegistro.id}`);
-          } else {
-            // Si hay un registro con fecha de egreso
-            this.router.navigateByUrl('/registro-actividades-ingreso');
-          }
+    this.registroPendienteService.detailByEfectorAndFechaAndAsistencial(idEfector, mes, anio, this.usuarioPersona!)
+    .subscribe(
+      (registro) => {
+        console.log('Registro pendiente:', registro);
+        console.log('Mes:', mes, 'Año:', anio, 'ID Asistencial:', this.usuarioPersona);
+        
+        if (registro) { // Verificamos si hay un registro
+          // Navegar a egreso con el ID del registro
+          this.router.navigate([`/registro-actividades-egreso/${registro.id}`]);
         } else {
-          // Si no existe ningún registro
-          this.router.navigateByUrl('/registro-actividades-ingreso');
+          // Si no hay registros pendientes, navegar a ingreso
+          this.router.navigate(['/registro-actividades-ingreso']);
         }
       },
       (error) => {
-        console.error('Error al obtener el último registro activo:', error);
-        // Manejar el error, por ejemplo, redirigir a la página de ingreso
-        this.router.navigateByUrl('/registro-actividades-ingreso');
+        console.error('Error al verificar registros pendientes:', error);
+        this.router.navigate(['/registro-actividades-ingreso']);
       }
-    );*/
+    );
   }
-
+          
   cargarRegistro(): void {
     const id = 3; // ID que deseas enviar
     console.log('ID enviado desde el componente inicial:', id);

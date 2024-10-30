@@ -339,7 +339,7 @@ const routes: Routes = [
   {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent},
   {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent},
-  {path:"registro-actividades-egreso",component: RegistroActividadesEgresoComponent},
+  {path:"registro-actividades-egreso/:id", component: RegistroActividadesEgresoComponent },
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
   {path:'dist-horaria-cons', component:DistHorariaConsComponent},

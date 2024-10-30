@@ -19,6 +19,13 @@
     <form [formGroup]="registroForm" (ngSubmit)="saveRegistro()">
 
         <div class="form-row">
+            <mat-form-field appearance="fill">
+                <mat-label>Profesional</mat-label>
+                <input matInput [value]="inputValue" readonly required>
+              </mat-form-field>
+        </div>
+
+        <div class="form-row">
         <mat-form-field appearance="fill">
             <mat-label>Tipo de Guardia</mat-label>
             <mat-select formControlName="idTipoGuardia" [compareWith]="compareTipoGuardia"
@@ -34,13 +41,6 @@
         <!-- Sección para mostrar asistenciales que pueden hacer guardia de "CARGO" -->
         <!--<ng-container *ngIf="registroForm.get('idTipoGuardia')?.value.nombre === 'CARGO' ">-->
             <ng-container *ngIf="registroForm.get('idTipoGuardia')?.value">
-
-            <div class="form-row">
-                <mat-form-field appearance="fill">
-                    <mat-label>Profesional</mat-label>
-                    <input matInput [value]="inputValue" readonly required>
-                  </mat-form-field>
-                </div>
         
                 <div class="form-row">
                     <mat-form-field appearance="fill"  class="form-field">

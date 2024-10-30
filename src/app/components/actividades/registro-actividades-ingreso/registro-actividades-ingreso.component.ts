@@ -171,21 +171,9 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   }
 
   private loadAsistencialData(): void {
-    this.asistencialService.list().subscribe(data => {
-      this.asistenciales = data;
-  
-      // Busca el asistencial correspondiente al usuarioPersona
-      const asistencial = this.asistenciales.find(a => a.id === this.usuarioPersona);
-      if (asistencial) {
-        this.inputValue = `${asistencial.apellido} ${asistencial.nombre}`;
-      } else {
-        this.inputValue = 'No se encontró asistencial';
-      }
-    }, error => {
-      console.log(error);
-    });
+    this.inputValue = `${this.apellidoUsuario} ${this.nombreUsuario}`;
   }
-
+  
   saveRegistro(): void {
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;

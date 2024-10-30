@@ -35,9 +35,9 @@ clearRegistroId(): void {
         return this.httpClient.get<RegistroActividad[]>(this.registroActividadURL + 'list');
     }
   
-    public detail(id:number): Observable<RegistroActividad> {
-        return this.httpClient.get<RegistroActividad>(this.registroActividadURL + `detail/${id}`);
-    }
+    public detail(id: number): Observable<RegistroActividad> {
+      return this.httpClient.get<RegistroActividad>(this.registroActividadURL + `detail/${id}`);
+  }
   
   public save(registroActividad:RegistroActividadDto): Observable<any> {
     return this.httpClient.post<any>(this.registroActividadURL + 'create', registroActividad)

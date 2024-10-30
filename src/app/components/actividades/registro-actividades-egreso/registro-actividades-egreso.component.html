@@ -36,7 +36,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Tipo de Guardia</mat-label>
           <mat-select formControlName="tipoGuardia" [compareWith]="compareTipoGuardia">
-            <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia.id">{{ tipoGuardia.nombre }}</mat-option>
+            <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia">{{ tipoGuardia.nombre }}</mat-option>
           </mat-select>
           <mat-error *ngIf="registroForm.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
         </mat-form-field>
@@ -52,7 +52,7 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Servicio</mat-label>
             <mat-select formControlName="servicio" [compareWith]="compareServicio">
-              <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.descripcion }}</mat-option>
+              <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
             </mat-select>
             <mat-error *ngIf="registroForm.get('servicio')?.errors?.['required']">El servicio es requerido.</mat-error>
           </mat-form-field>
@@ -60,7 +60,7 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Efector</mat-label>
             <mat-select formControlName="efector" [compareWith]="compareEfector">
-              <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre }}</mat-option>
             </mat-select>
             <mat-error *ngIf="registroForm.get('efector')?.errors?.['required']">El hospital es requerido.</mat-error>
           </mat-form-field>
@@ -83,8 +83,8 @@
           </div>
   
       <div mat-dialog-actions class="action mt-4">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!registroForm.valid || !isModified()" class="me-2">
-          {{initialData ? 'Modificar' : 'Agregar'}} registro
+        <button mat-raised-button color="primary" type="submit" [disabled]="!registroForm.valid" class="me-2">
+          Finalizar registro
         </button>
         <button mat-raised-button color="secondary" type="button" (click)="cancel()">
           Cancelar

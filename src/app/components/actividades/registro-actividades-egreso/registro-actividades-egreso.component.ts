@@ -31,7 +31,6 @@ export class RegistroActividadesEgresoComponent implements OnInit, OnDestroy {
   efectores: Efector[] = [];
   timeControl: FormControl = new FormControl();
   currentDate: Date = new Date();
-  initialData: any;
   inputValue: string = '';
   registroId: number | null = null;
   private registroIdSubscription!: Subscription;
@@ -61,60 +60,39 @@ export class RegistroActividadesEgresoComponent implements OnInit, OnDestroy {
       horaEgreso: [this.formatCurrentTime(), Validators.required]
     });
 
-    this.route.params.subscribe(params => {
-      const id = params['id'];
-      if (id) {
-        this.loadRegistro(id); // Cargar el registro si hay un ID
-      }
-    });
-
     this.listTiposGuardias();
     this.listAsistenciales();
     this.listServicios();
     this.listEfectores();
-
-    this.route.data.subscribe(data => {
-      this.initialData = data['initialData'];
-      if (this.initialData) {
-        this.registroForm.patchValue(this.initialData);
-      }
-    });
   }
 
   ngOnInit() {
-    // Suscribirse al BehaviorSubject para recibir el ID
-    this.registroIdSubscription = this.registroActividadService.registroId$.subscribe(id => {
-      console.log('ID recibido en el componente:', id); // Log para verificar el ID
-      if (id !== null) {
-        this.loadRegistro(id); // Cargar el registro si hay un ID
+    // Obtener el ID de los parámetros de la ruta
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      console.log('ID recibido en el componente:', id);
+      if (id) {
+        this.loadRegistro(+id); // Convertir a número y cargar el registro
       } else {
         // Redirigir si no hay ID
         this.router.navigate(['/home-profesional']);
       }
     });
   }
-
+  
   private loadRegistro(id: number): void {
     this.registroActividadService.detail(id).subscribe(
       data => {
         console.log('Datos recibidos del servicio:', data);
-        this.initialData = data;
-
-        this.registroId = id;
-  
-        // Verifica si ya hay una fecha de egreso
-        if (data.fechaEgreso) {
-          this.router.navigate(['/home-profesional']); // Redirige si hay fecha de egreso
-          return;
-        }
+        this.registroId = id; // Asignar el ID recibido
   
         const horaIngresoDate = data.horaIngreso ? moment(data.horaIngreso, 'HH:mm:ss.SSSSSSS').format('HH:mm') : '';
   
         this.registroForm.patchValue({
-          tipoGuardia: data.tipoGuardia.id,
+          tipoGuardia: data.tipoGuardia,
           asistencial: data.asistencial.id,
-          servicio: data.servicio.id,
-          efector: data.efector.id,
+          servicio: data.servicio,
+          efector: data.efector,
           fechaIngreso: data.fechaIngreso,
           horaIngreso: horaIngresoDate,
         });
@@ -132,7 +110,7 @@ export class RegistroActividadesEgresoComponent implements OnInit, OnDestroy {
       }
     );
   }
-    
+
   getNombreCompleto(): string {
     const asistencial = this.registroForm.get('asistencial')?.value;
     // Aquí puedes retornar el nombre completo si lo tienes almacenado
@@ -185,10 +163,6 @@ export class RegistroActividadesEgresoComponent implements OnInit, OnDestroy {
     });
   }
 
-  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
-  }
-
 saveRegistro(): void {
   if (this.registroForm.valid) {
     this.registroForm.enable();
@@ -203,11 +177,11 @@ saveRegistro(): void {
       moment(registroData.fechaEgreso).startOf('day').toDate(),
       registroData.horaIngreso,
       registroData.horaEgreso,
-      registroData.tipoGuardia, // Asegúrate de que esto sea válido
+      registroData.tipoGuardia.id, // Asegúrate de que esto sea válido
       true,
       registroData.asistencial,
-      registroData.servicio,
-      registroData.efector,
+      registroData.servicio.id,
+      registroData.efector.id,
       1
     );
 
@@ -216,7 +190,7 @@ saveRegistro(): void {
 
     // Aquí puedes proceder a llamar a tu servicio para guardar
     if (this.registroId !== null) {
-      this.registroActividadService.update(this.registroId, registroDto).subscribe(
+      this.registroActividadService.registrarSalida(this.registroId, registroDto).subscribe(
       result => {
         this.toastr.success('Registro guardado con éxito', 'ÉXITO', {
           timeOut: 6000,
