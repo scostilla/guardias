@@ -245,6 +245,7 @@ import { LegajoNoAsistencialComponent } from './components/configuracion/usuario
 import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
+import { PermisosComponent } from './components/configuracion/permisos/permisos.component';
 
 @NgModule({
   declarations: [
@@ -439,6 +440,7 @@ import { RegistroActividadesIngresoComponent } from './components/actividades/re
     PersonalLegajoNoAsistencialComponent,
     RegistroActividadesEgresoComponent,
     RegistroActividadesIngresoComponent,
+    PermisosComponent,
     
   ],
 

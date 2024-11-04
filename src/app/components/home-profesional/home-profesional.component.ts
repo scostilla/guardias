@@ -103,14 +103,7 @@ export class HomeProfesionalComponent implements OnInit {
       }
     );
   }
-          
-  cargarRegistro(): void {
-    const id = 3; // ID que deseas enviar
-    console.log('ID enviado desde el componente inicial:', id);
-    this.registroActividadService.setRegistroId(id);
-    this.router.navigate(['/registro-actividades-egreso']);
-  }
-    
+              
   onLogOut(): void {
     this.tokenService.logOut();
     window.location.reload();

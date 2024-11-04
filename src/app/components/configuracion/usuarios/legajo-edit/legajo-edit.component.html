@@ -148,8 +148,8 @@
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-              <mat-label>Efectores</mat-label>
-              <mat-select formControlName="efectores" multiple [compareWith]="compareFn">
+              <mat-label>Efector</mat-label>
+              <mat-select formControlName="efectores" [compareWith]="compareFn">
                 <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
             </mat-form-field>

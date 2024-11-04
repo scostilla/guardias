@@ -95,7 +95,7 @@ export class LegajoEditComponent implements OnInit {
       persona: ['', Validators.required],
       profesion: ['', Validators.required],
       udo: ['', Validators.required],
-      efectores: [[]],
+      efectores: ['', Validators.required],
       especialidades: [[]],
       matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
       matriculaProvincial: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
