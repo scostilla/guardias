@@ -1,18 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
-import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { Profesion } from 'src/app/models/Configuracion/Profesion';
-import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
-import { CargoService } from 'src/app/services/Configuracion/cargo.service';
+import { Cargo } from 'src/app/models/Configuracion/cargo';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { CargoService } from 'src/app/services/Configuracion/cargo.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
 
 
 

@@ -9,8 +9,8 @@
         <mat-form-field appearance="fill">
           <mat-label>Agrupación</mat-label>
           <mat-select formControlName="agrupacion">
-            <mat-option *ngFor="let agrupacion of agrupaciones" [value]="agrupacion.name">
-              {{ agrupacion.displayName }} <!-- Muestra el displayName -->
+            <mat-option *ngFor="let agrup of agrupaciones" [value]="agrup.value">
+              {{ agrup.viewValue }} <!-- Muestra el displayName -->
             </mat-option>
           </mat-select>
           <mat-error *ngIf="revistaForm?.get('agrupacion')?.invalid && revistaForm?.get('agrupacion')?.touched">
@@ -57,7 +57,7 @@
           <mat-form-field appearance="fill">
             <mat-label>Carga horaria</mat-label>
             <mat-select formControlName="cargaHoraria" [compareWith]="compareCargaHoraria">
-              <mat-option *ngFor="let cargaHoraria of cargaHoraria" [value]="cargaHoraria">
+              <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria">
                 {{ cargaHoraria.cantidad }}
               </mat-option>
             </mat-select>

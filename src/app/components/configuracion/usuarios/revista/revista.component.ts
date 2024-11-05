@@ -14,6 +14,10 @@ import { CategoriaEditComponent } from '../categoria-edit/categoria-edit.compone
 import { RevistaEditComponent } from '../revista-edit/revista-edit.component';
 import { TipoRevistaEditComponent } from '../tipo-revista-edit/tipo-revista-edit.component';
 
+interface Agrup {
+  value: string;
+  viewValue: string;
+}
 @Component({
   selector: 'app-revista',
   templateUrl: './revista.component.html',
@@ -32,6 +36,14 @@ export class RevistaComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'acciones'];
   dataSource!: MatTableDataSource<Revista>;
   suscription!: Subscription;
+
+  agrupaciones: Agrup[] = [
+    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
+    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
+    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
+    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
+    { value: 'TECNICOS', viewValue: 'Técnicos' },
+  ];
 
   constructor(
     private revistaService: RevistaService,
@@ -52,8 +64,7 @@ export class RevistaComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listRevista();
-    
-
+  
     this.suscription = this.revistaService.refresh$.subscribe(() => {
       this.listRevista();
     })
@@ -62,12 +73,18 @@ export class RevistaComponent implements OnInit, OnDestroy {
 
   listRevista(): void {
     this.revistaService.list().subscribe(data => {
+      console.log('Datos de revistas:', data);
+      
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
 
+getAgrupacionViewValue(value: string): string {
+  const agrupacion = this.agrupaciones.find(a => a.value === value);
+  return agrupacion ? agrupacion.viewValue : value; // Devuelve el viewValue o el valor original si no se encuentra
+}
   ngOnDestroy(): void {
       this.suscription?.unsubscribe();
   }

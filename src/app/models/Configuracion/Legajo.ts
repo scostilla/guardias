@@ -1,9 +1,9 @@
-import { Profesion } from './Profesion';
-import { Person } from './Person';
 import { Efector } from './Efector';
-import { Revista } from './Revista';
 import { Especialidad } from './Especialidad';
-import { Cargo } from './Cargo';
+import { Person } from './Person';
+import { Profesion } from './Profesion';
+import { Revista } from './Revista';
+import { Cargo } from './cargo';
 
 export class Legajo {
     id?: number;

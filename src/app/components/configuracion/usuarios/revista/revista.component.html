@@ -27,7 +27,7 @@
             <mat-icon>playlist_add</mat-icon>
           </button> -->
         </th> 
-        <td mat-cell *matCellDef="let revista"> {{revista.agrupacion}} </td>
+        <td mat-cell *matCellDef="let revista"> {{getAgrupacionViewValue(revista.agrupacion)}} </td>
       </ng-container>
 
       <ng-container matColumnDef="categoria">

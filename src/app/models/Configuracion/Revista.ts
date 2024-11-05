@@ -3,6 +3,7 @@ import { CargaHoraria } from "./CargaHoraria";
 import { Categoria } from "./Categoria";
 import { TipoRevista } from "./TipoRevista";
 
+
 export class Revista {
     id?: number;
     tipoRevista: TipoRevista;//no null

@@ -9,12 +9,17 @@ import { Categoria } from 'src/app/models/Configuracion/Categoria';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
-import { AgrupacionEnum, AgrupacionService } from 'src/app/services/Configuracion/agrupacion.service';
+import { AgrupacionService } from 'src/app/services/Configuracion/agrupacion.service';
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
 import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
 
+
+interface Agrup {
+  value: string;
+  viewValue: string;
+}
 @Component({
   selector: 'app-revista-edit',
   templateUrl: './revista-edit.component.html',
@@ -24,15 +29,23 @@ export class RevistaEditComponent implements OnInit {
 
   revistaForm: FormGroup;
   initialData: any;
-  agrupaciones: AgrupacionEnum[] = [];
+ /*  agrupaciones: AgrupacionEnum[] = []; */
   tipoRevista: TipoRevista[] = [];
   categorias: Categoria[] = [];
   adicionales: Adicional[] = [];
-  cargaHoraria: CargaHoraria[] = [];
+  cargasHorarias: CargaHoraria[] = [];
   categoria24HS?: Categoria;
   cargaHoraria24?: CargaHoraria;
   cargaHoraria30?: CargaHoraria;
   esEdicion?: boolean;
+
+  agrupaciones: Agrup[] = [
+    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
+    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
+    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
+    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
+    { value: 'TECNICOS', viewValue: 'Técnicos' },
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -57,7 +70,7 @@ export class RevistaEditComponent implements OnInit {
       tipoRevista: ['', Validators.required]
     });
 
-    this.loadAgrupaciones();
+/*     this.loadAgrupaciones(); */
     this.listCategorias();
     this.listAdicionales();
     this.listCargaHoraria();
@@ -91,14 +104,14 @@ export class RevistaEditComponent implements OnInit {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.revistaForm.value);
   }
 
-  loadAgrupaciones(): void {
+  /* loadAgrupaciones(): void {
     this.agrupacionService.getAgrupaciones().subscribe(data => {
         this.agrupaciones = data; // Ahora es un array de AgrupacionEnum
         console.log('Agrupaciones:', this.agrupaciones);
     }, error => {
         console.log('Error al obtener agrupaciones:', error);
     });
-}
+} */
 
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
@@ -119,9 +132,9 @@ export class RevistaEditComponent implements OnInit {
 
   listCargaHoraria(): void {
     this.cargaHorariaService.list().subscribe(data => {
-      this.cargaHoraria = data;
-      this.cargaHoraria24 = this.cargaHoraria.find(ch => ch.cantidad === 24);
-      this.cargaHoraria30 = this.cargaHoraria.find(ch => ch.cantidad === 30);
+      this.cargasHorarias = data;
+      this.cargaHoraria24 = this.cargasHorarias.find(ch => ch.cantidad === 24);
+      this.cargaHoraria30 = this.cargasHorarias.find(ch => ch.cantidad === 30);
     }, error => {
       console.log('Error al cargar las cargas horarias', error);
     });
