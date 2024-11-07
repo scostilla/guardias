@@ -163,39 +163,6 @@ getAgrupacionViewValue(value: string): string {
       this.dialogRefCategoria.close();
     });
   }
-
-  /* openEditCategoria(categoria?: Categoria): void {
-    const esEdicion = categoria != null;
-    const dialogRefCategoria = this.dialog.open(CategoriaEditComponent, {
-      width: '600px',
-      data : esEdicion ? categoria : null
-    });
-   
-    dialogRefCategoria.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result) { 
-          this.toastr.success(esEdicion ? 'Categoria editada con éxito' : 'Categoria creada con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          if (esEdicion) {
-            const index = this.dataSource.data.findIndex(p => p.id === result.id);
-            this.dataSource.data[index] = result;
-          } else {
-            this.dataSource.data.push(result);
-          }
-          this.dataSource._updateChangeSubscription();
-        }else{
-          this.toastr.error('Ocurrió un error al crear o editar la categoria', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      }
-      });
-    } */
   
   openEditAdicional(): void {
     this.dialogRefAdicional = this.dialog.open(AdicionalEditComponent, {
@@ -214,9 +181,6 @@ getAgrupacionViewValue(value: string): string {
       this.dialogRefCargaHoraria.close();
     });
   }
-
-  
-
 
   deleteRevista(revista: Revista): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

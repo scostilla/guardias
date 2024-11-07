@@ -241,10 +241,18 @@ export class RevistaEditComponent implements OnInit {
         revistaData.agrupacion 
       );
   console.log("Datos a guardar:", revistaDto);
+
+  this.revistaService.checkRevista(revistaDto).subscribe(
+    (existingRevista) => {
+      if (existingRevista) {
+        // Si la revista ya existe, mostrar un mensaje y no hacer nada
+        this.toastr.warning('La revista ya existe.');
+      } else {
       if (this.data && this.data.id) {
         this.revistaService.update(this.data.id, revistaDto).subscribe(
           (result) => {
             this.dialogRef.close({ type: 'save', data: result });
+            this.toastr.success('Revista actualizada con éxito.');
            
           },
           (error) => {
@@ -262,10 +270,17 @@ export class RevistaEditComponent implements OnInit {
             this.toastr.error('Error al crear la revista: ' + error.message);
           }
         );
-      }
+      } 
+    }
+    }, 
+    (error) => {
+      console.error('Error al verificar existencia de revista', error);
+      this.toastr.error('Error al verificar existencia de la revista.');
+    }
+  );
     } else {
       this.toastr.error('El formulario contiene errores.');
-    }
+     }
   }
   cancelar(): void {
     this.dialogRef.close();
