@@ -7,11 +7,11 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 
 @Component({
-  selector: 'app-home-page',
-  templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.css'],
+  selector: 'app-home-autoridad',
+  templateUrl: './home-autoridad.component.html',
+  styleUrls: ['./home-autoridad.component.css'],
 })
-export class HomePageComponent implements OnInit {
+export class HomeAutoridadComponent implements OnInit {
   isLogged = false;
   nombresEfectores: EfectorSummaryDto[] = [];
   selectedEfector: EfectorSummaryDto | null = null;
@@ -37,15 +37,28 @@ export class HomePageComponent implements OnInit {
         (response: PersonBasicPanelDto) => {
           console.log('Respuesta de detailPersonBasicPanel:', response);
   
-          // Suponemos que ahora solo hay un efector
-          if (response.efectores && response.efectores.length > 0) {
-            this.selectedEfector = response.efectores[0]; // Solo tomamos el primero
-            console.log('Efector seleccionado:', this.selectedEfector);
+          this.nombresEfectores = response.efectores;
+          console.log('Efectores obtenidos:', this.nombresEfectores);
   
-            // Establecer el efector en el BehaviorSubject
+          // Verificar que el arreglo de efectores no esté vacío antes de asignar el primer efector
+          if (this.nombresEfectores && this.nombresEfectores.length > 0) {
+            console.log('Efectores disponibles, iniciando selección del efector');
+            
+            const savedEfectorId = this.asistencialService.getCurrentEfectorId(); // Obtener el ID del efector actual
+            console.log('ID del efector guardado:', savedEfectorId);
+  
+            if (savedEfectorId) {
+              this.selectedEfector = this.nombresEfectores.find(efector => efector.id === savedEfectorId) || this.nombresEfectores[0];
+              console.log('Efector seleccionado según el ID guardado:', this.selectedEfector);
+            } else {
+              this.selectedEfector = this.nombresEfectores[0]; // Si no hay efector guardado, selecciona el primero
+              console.log('No se encontró un efector guardado, seleccionando el primer efector:', this.selectedEfector);
+            }
+  
+            // Establece el ID en el BehaviorSubject
             this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
             console.log('ID del efector seleccionado guardado en el BehaviorSubject:', this.selectedEfector.id);
-  
+            
             // Fetch asistenciales
             this.fetchAsistenciales(this.selectedEfector.id);
   
@@ -65,6 +78,13 @@ export class HomePageComponent implements OnInit {
     }
   }
         
+  onEfectorChange() {
+    if (this.selectedEfector) {
+      this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+      this.fetchAsistenciales(this.selectedEfector.id);
+    }
+  }
+  
   fetchAsistenciales(efectorId: number) {
     this.asistencialService.listByEfectorAndTipoGuardia(efectorId).subscribe(
       (asistenciales) => {
@@ -75,7 +95,7 @@ export class HomePageComponent implements OnInit {
       }
     );
   }
-  
+
   goToProfessionalForm() {
     this.router.navigateByUrl('/professional-form');
   }

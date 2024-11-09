@@ -5,11 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Rol } from 'src/app/models/Configuracion/Rol';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { AuthService } from 'src/app/services/login/auth.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 
 @Component({
   selector: 'app-asistencial-edit',
@@ -21,14 +19,12 @@ export class AsistencialEditComponent implements OnInit {
   asistencialForm: FormGroup;
   initialData: Asistencial | undefined;
   idAsistencial: number = 0;
-  tiposGuardias: TipoGuardia[] = [];
   roles: Rol[] = [];
 
   constructor(
     private fb: FormBuilder,
     private asistencialService: AsistencialService,
     private router: Router,
-    private tipoGuardiaService: TipoGuardiaService,
     private rolService: RolService,
     private authService: AuthService,
     private toastr: ToastrService,
@@ -44,14 +40,12 @@ export class AsistencialEditComponent implements OnInit {
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: [[], [Validators.required]],
       //email: [''/* , [Validators.required, Validators.email] */],
       //nombreUsuario: [''/* , [Validators.required] */],
       //password: [''/* , [Validators.required] */],
       //roles: [[]/* , [Validators.required] */],
     });
 
-    this.listTipoGuardia();
     //this.listRoles();
 
     // recupera el estado del router
@@ -69,7 +63,6 @@ export class AsistencialEditComponent implements OnInit {
       this.idAsistencial = this.initialData.id ?? 0;
       this.asistencialForm.patchValue({
         ...this.initialData,
-        tiposGuardias: this.initialData.tiposGuardias ? this.initialData.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
       });
 
           // Formatear el CUIL después de cargar los datos
@@ -82,14 +75,6 @@ export class AsistencialEditComponent implements OnInit {
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
-  }
-
-  listTipoGuardia(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      this.tiposGuardias = data;
-    }, error => {
-      console.log(error);
-    });
   }
 
   listRoles(): void {
@@ -121,8 +106,7 @@ export class AsistencialEditComponent implements OnInit {
         asistencialData.domicilio,
         asistencialData.esAsistencial,
         asistencialData.activo,
-        this.initialData?.usuario?.id ?? 0,
-        asistencialData.tiposGuardias
+        this.initialData?.usuario?.id ?? 0
       );
 
       console.log("asistencial dto que quiero guardar", asistencialDto);
@@ -146,27 +130,6 @@ export class AsistencialEditComponent implements OnInit {
       );
     }
 
-  }
-
-  onTipoGuardiaSelectionChange(event: any): void {
-    const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
-
-    // Si se selecciona CONTRAFACTURA, deseleccionar las demás opciones
-    if (selectedValues.includes(1)) {
-      this.asistencialForm.patchValue({
-        tiposGuardias: [1]
-      });
-    } else if (selectedValues.includes(5)) {
-      // Si se selecciona PASIVA, deseleccionar las demás opciones
-      this.asistencialForm.patchValue({
-        tiposGuardias: [5]
-      });
-    } else {
-      // Si se seleccionan las opciones 2, 3 o 4, permitir que se elijan juntas
-      this.asistencialForm.patchValue({
-        tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
-      });
-    }
   }
 
   capitalizeWords(value: string): string {

@@ -75,8 +75,6 @@ export class LegajoComponent implements OnInit, OnDestroy {
     };
   
     this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
-      const actualValue = data.actual ? 'sí' : 'no';
-      const legalValue = data.legal ? 'sí' : 'no';
   
       const fechaInicioTimestamp = data.fechaInicio ? new Date(data.fechaInicio).getTime() : null;
   
@@ -84,8 +82,7 @@ export class LegajoComponent implements OnInit, OnDestroy {
         data.persona?.nombre.toLowerCase() + ' ' +
         data.persona?.apellido.toLowerCase() + ' ' +
         data.profesion?.nombre.toLowerCase() + ' ' +
-        data.udo?.nombre.toLowerCase() + ' ' +
-        actualValue + ' ' + legalValue
+        data.udo?.nombre.toLowerCase() + ' '
       );
   
       const normalizedFilter = normalizeText(filter);

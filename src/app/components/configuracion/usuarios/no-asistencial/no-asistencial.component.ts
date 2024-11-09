@@ -214,7 +214,7 @@ applyFilter(event: Event) {
 
   hayLegajos(noAsistencial: NoAsistencial): boolean {
 
-    return this.legajos.some(legajo => legajo.persona.id === noAsistencial.id);
+    return this.legajos.some(legajo => legajo.persona?.id === noAsistencial.id);
   }
 
   verLegajo(noAsistencial: NoAsistencial): void {

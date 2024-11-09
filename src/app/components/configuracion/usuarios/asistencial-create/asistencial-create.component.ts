@@ -5,11 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Rol } from 'src/app/models/Configuracion/Rol';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { AuthService } from 'src/app/services/login/auth.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 
 @Component({
   selector: 'app-asistencial-create',
@@ -19,7 +17,6 @@ import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 export class AsistencialCreateComponent implements OnInit {
 
   asistencialForm: FormGroup;
-  tiposGuardias: TipoGuardia[] = [];
   roles: Rol[] = [];
   step = 0;
 
@@ -28,7 +25,6 @@ export class AsistencialCreateComponent implements OnInit {
     private fb: FormBuilder,
     private asistencialService: AsistencialService,
     private router: Router,
-    private tipoGuardiaService: TipoGuardiaService,
     private rolService: RolService,
     private authService: AuthService,
     private toastr: ToastrService,
@@ -43,27 +39,17 @@ export class AsistencialCreateComponent implements OnInit {
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: [[], [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       nombreUsuario: ['', [Validators.required]],
       password: ['', [Validators.required]],
       roles: [[], [Validators.required]],
     });
 
-    this.listTipoGuardia();
     this.listRoles();
   }
 
   ngOnInit(): void {
     
-  }
-
-  listTipoGuardia(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      this.tiposGuardias = data;
-    }, error => {
-      console.log(error);
-    });
   }
 
   listRoles(): void {
@@ -143,8 +129,7 @@ export class AsistencialCreateComponent implements OnInit {
       asistencialData.domicilio,
       asistencialData.esAsistencial,
       asistencialData.activo,
-      usuarioId,
-      asistencialData.tiposGuardias
+      usuarioId
     );
 
     console.log("asistencial dto que quiero guardar", asistencialDto);
@@ -166,27 +151,6 @@ export class AsistencialCreateComponent implements OnInit {
         });
       }
     );
-  }
-
-  onTipoGuardiaSelectionChange(event: any): void {
-    const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
-
-    // Si se selecciona CONTRAFACTURA, deseleccionar las demás opciones
-    if (selectedValues.includes(1)) {
-      this.asistencialForm.patchValue({
-        tiposGuardias: [1]
-      });
-    } else if (selectedValues.includes(5)) {
-      // Si se selecciona PASIVA, deseleccionar las demás opciones
-      this.asistencialForm.patchValue({
-        tiposGuardias: [5]
-      });
-    } else {
-      // Si se seleccionan las opciones 2, 3 o 4, permitir que se elijan juntas
-      this.asistencialForm.patchValue({
-        tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
-      });
-    }
   }
 
   capitalizeWords(value: string): string {

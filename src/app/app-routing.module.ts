@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
+import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 
 //Configuraciones: Generales
@@ -225,6 +226,7 @@ const routes: Routes = [
   {path: '', component: LoginComponent },
   {path:"home-page", component:HomePageComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
+  {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
 
   //Configuraciones: Generales

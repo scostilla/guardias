@@ -2,8 +2,6 @@ import { PersonDto } from "./PersonDto";
 
 export class AsistencialDto extends PersonDto {
 
-    idTiposGuardias: number[];
-
     constructor(
         nombre: string,
         apellido: string,
@@ -17,10 +15,8 @@ export class AsistencialDto extends PersonDto {
         esAsistencial: boolean,
         activo: boolean,
         idUsuario: number,
-        idTiposGuardias: number[]
     ) {
         super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, esAsistencial, activo, idUsuario);
-        this.idTiposGuardias = idTiposGuardias;
     }
 
 }

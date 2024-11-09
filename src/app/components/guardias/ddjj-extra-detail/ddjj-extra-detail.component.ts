@@ -29,8 +29,9 @@ export class DdjjExtraDetailComponent {
   ngOnInit(): void {
   }
   
+    //verificar, aqui decia actual en vez de activo
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+    const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
     return legajoActual ? legajoActual : undefined;
   } 
 

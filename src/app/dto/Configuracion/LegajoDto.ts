@@ -1,50 +1,51 @@
 export class LegajoDto {
     fechaInicio: Date | null;
-    fechaFinal: Date | null;
-    actual: boolean;
-    legal: boolean;
-    activo:boolean;
+    fechaFinal?: Date | null;
+    esAutoridad: boolean;
+    activo: boolean;
     matriculaNacional: string;
     matriculaProvincial: string;
-    idRevista:number;
-    idUdo: number;
+    idSuspencion?: number | null;
+    idRevista?: number | null;
+    idUdo?: number  | null;
     idPersona: number;
-    idCargo: number;
-    idEfectores: number[];
-    idEspecialidades: number[];
+    idEfectores?: number[]  | null;
+    idEspecialidades?: number[] | null;
     idProfesion: number;
-    
+    idTipoGuardias?: number[] | null;
+  
     constructor(
-        fechaInicio: Date,
-        fechaFinal: Date,
-        actual: boolean, 
-        legal: boolean, 
-        activo:boolean, 
-        matriculaNacional: string, 
-        matriculaProvincial: string,
-        idRevista:number,
-        idUdo: number,
-        idPersona: number,
-        idCargo: number,
-        idEfectores: number[],
-        idEspecialidades: number[],
-        idProfesion: number
+      fechaInicio: Date | null,
+      esAutoridad: boolean,
+      activo: boolean,
+      matriculaNacional: string,
+      matriculaProvincial: string,
+      idPersona: number,
+      idProfesion: number,
+  
+      // Parámetros opcionales
+      fechaFinal?: Date | null,
+      idSuspencion?: number | null,
+      idRevista?: number | null,
+      idUdo?: number  | null,
+      idEfectores?: number[]  | null,
+      idEspecialidades?: number[] | null,
+      idTipoGuardias?: number[] | null
     ) {
-        
-        this.fechaInicio = fechaInicio;
-        this.fechaFinal = fechaFinal;
-        this.actual = actual;
-        this.legal = legal;
-        this.activo = activo;
-        this.matriculaNacional = matriculaNacional;
-        this.matriculaProvincial = matriculaProvincial;
-        this.idRevista = idRevista;
-        this.idUdo = idUdo;
-        this.idPersona = idPersona;
-        this.idCargo = idCargo;
-        this.idEfectores=idEfectores;
-        this.idEspecialidades=idEspecialidades;
-        this.idProfesion = idProfesion;
+      this.fechaInicio = fechaInicio;
+      this.fechaFinal = fechaFinal ?? null;
+      this.esAutoridad = esAutoridad;
+      this.activo = activo;
+      this.matriculaNacional = matriculaNacional;
+      this.matriculaProvincial = matriculaProvincial;
+      this.idSuspencion = idSuspencion ?? null;
+      this.idRevista = idRevista;
+      this.idUdo = idUdo;
+      this.idPersona = idPersona;
+      this.idEfectores = idEfectores;
+      this.idEspecialidades = idEspecialidades ?? null;
+      this.idProfesion = idProfesion;
+      this.idTipoGuardias = idTipoGuardias ?? null;
     }
-
   }
+  

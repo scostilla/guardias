@@ -103,20 +103,6 @@
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Tipo guardia</mat-label>
-            <mat-select formControlName="tiposGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
-              <div *ngIf="asistencialForm.get('tiposGuardias')?.value.includes(1) || asistencialForm.get('tiposGuardias')?.value.includes(5)">
-                <p style="color: rgb(180, 180, 180); font-size: 0.8em; margin-left: 15px;">&raquo; La opción seleccionada no puede combinarse con las demás guardias.</p>
-              </div>    
-              <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia.id">{{ tipoGuardia.nombre }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="asistencialForm.get('tiposGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>  
-          </mat-form-field>
-
-        </div>
-
         <mat-action-row>
           <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
         </mat-action-row>

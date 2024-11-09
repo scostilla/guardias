@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 
 
@@ -14,7 +15,7 @@ import { Revista } from 'src/app/models/Configuracion/Revista';
 export class LegajoDetailComponent implements OnInit {
 
   legajo!: Legajo;
-  revista!: Revista;
+  revista: Revista | null | undefined;
 
   constructor(
     private dialogRef: MatDialogRef<LegajoDetailComponent>,
@@ -26,7 +27,7 @@ export class LegajoDetailComponent implements OnInit {
     this.revista = this.legajo.revista;
   }
 
-  isLast(index: number, array: Efector[] | Especialidad[]): boolean {
+  isLast(index: number, array: Efector[] | Especialidad[] | TipoGuardia[]): boolean {
     return index === array.length - 1;
   }
   

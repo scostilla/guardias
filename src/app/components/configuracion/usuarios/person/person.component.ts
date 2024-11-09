@@ -109,7 +109,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   hayLegajos(asistencial: Asistencial): boolean {
-    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
+    return this.legajos.some(legajo => legajo.persona?.id === asistencial.id);
   }
 
   verLegajo(asistencial: Asistencial): void {

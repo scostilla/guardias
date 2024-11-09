@@ -31,7 +31,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['profesion', 'udo', 'fechaInicio', 'actual', 'fechaFinal', 'acciones'];
+  displayedColumns: string[] = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'fechaFinal', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
@@ -206,55 +206,14 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
     this.dataSource.filterPredicate = (data: Legajo, filter: string) => {
-      const actualString = data.actual ? 'si' : 'no';
       const idPersonaString = data.profesion.nombre.toString();
-      const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
+      const fechaFinalString = data.fechaFinal!.toISOString().toLowerCase();
 
       // Aplicar el filtro a los valores convertidos
-      return this.accentFilter(actualString).includes(this.accentFilter(filter)) ||
-        this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) ||
+      return this.accentFilter(idPersonaString).includes(this.accentFilter(filter)) ||
         this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
     };
   }
-
-
-
-
-
-  /*  openFormChanges(legajo?: Legajo): void {
-     const esEdicion = legajo != null;
-     const dialogRef = this.dialog.open(LegajoEditComponent, {
-       width: '600px',
-       data: esEdicion ? legajo : null
-     });
- 
-     dialogRef.afterClosed().subscribe(result => {
-       if (result !== undefined) {
-         if (result) {
-           this.toastr.success(esEdicion ? 'Legajo editado con éxito' : 'Legajo creado con éxito', 'EXITO', {
-             timeOut: 6000,
-             positionClass: 'toast-top-center',
-             progressBar: true
-           });
-           if (esEdicion) {
-             const index = this.dataSource.data.findIndex(p => p.id === result.id);
-             this.dataSource.data[index] = result;
-           } else {
-             this.dataSource.data.push(result);
-           }
-           this.dataSource._updateChangeSubscription();
-         } else {
-           this.toastr.error('Ocurrió un error al crear o editar el Legajo', 'Error', {
-             timeOut: 6000,
-             positionClass: 'toast-top-center',
-             progressBar: true
-           });
-         }
-       }
-     });
-   } */
-
-
 
   deleteLegajo(legajo: Legajo): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -286,6 +245,5 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-
 
 }

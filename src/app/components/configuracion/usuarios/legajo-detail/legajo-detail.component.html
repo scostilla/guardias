@@ -6,11 +6,11 @@
         <tbody>
           <tr class="bg-light">
             <th scope="row">Apellido y nombre</th>
-            <td>{{legajo.persona.apellido}}, {{legajo.persona.nombre}}</td>
+            <td>{{legajo.persona?.apellido}}, {{legajo.persona?.nombre}}</td>
           </tr>    
           <tr>
-            <th scope="row">Actual</th>
-            <td>{{legajo.actual ? 'Si' : 'No'}}</td>
+            <th scope="row">Es autoridad</th>
+            <td>{{legajo.esAutoridad ? 'Si' : 'No'}}</td>
           </tr>
           <tr>
             <th scope="row">Fecha final</th>
@@ -19,10 +19,6 @@
           <tr>
             <th scope="row">Fecha inicio</th>
             <td>{{legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
-          </tr>
-          <tr>
-            <th scope="row">Legal</th>
-            <td>{{legajo.legal ? 'Si' : 'No'}}</td>
           </tr>
           <tr>
             <th scope="row">Matricula Nacional</th>
@@ -44,9 +40,17 @@
             </ng-container>
           </td>
         </tr>
+        <tr>
+          <th scope="row">Tipo de guardia</th>
+          <td>
+            <ng-container *ngFor="let tipoGuardias of legajo.tipoGuardias; let i = index">
+              {{ tipoGuardias.nombre }}<span *ngIf="!isLast(i, legajo.tipoGuardias)">, </span>
+            </ng-container>
+          </td>
+        </tr>
           <tr>
             <th scope="row">U.D.O.</th>
-            <td>{{legajo.udo.nombre}}</td>
+            <td>{{legajo.udo?.nombre}}</td>
           </tr>
           <tr>
             <th scope="row">Efectores</th>
@@ -56,14 +60,15 @@
                   </ng-container>
               </td>
           </tr>
-          <tr>
-            <th scope="row" *ngIf="revista">Revista</th>
-            <td>{{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }} - {{ revista.adicional.nombre }})
+          <tr *ngIf="revista">
+            <th scope="row">Revista</th>
+            <td>
+              {{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }} - {{ revista.adicional.nombre }})
               <br/> Carga horaria: {{ revista.cargaHoraria.cantidad }} Hs
-              <br/>{{ revista.agrupacion }}</td>
+              <br/>{{ revista.agrupacion }}
+            </td>
           </tr>
-          <tr>
-      </tbody>
+        </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>

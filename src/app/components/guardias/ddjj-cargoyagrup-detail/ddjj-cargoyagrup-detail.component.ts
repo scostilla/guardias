@@ -29,8 +29,9 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
   ngOnInit(): void {
   }
   
+  //aqui decia actual en vez de activo, luego revisar este metodo y su uso
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+    const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
     return legajoActual ? legajoActual : undefined;
   } 
 

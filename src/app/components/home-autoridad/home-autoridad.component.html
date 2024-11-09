@@ -1,8 +1,13 @@
 <app-spinner></app-spinner>
 <div id="container-title-hosp" >
     <div class="text-title-hosp"><mat-icon>business</mat-icon>
-      <div *ngIf="selectedEfector" class="select-inicio-container">
-        {{ selectedEfector.nombre }}
+      <div class="select-inicio-container">
+        <select class="select-inicio" [(ngModel)]="selectedEfector" (change)="onEfectorChange()">
+          <option *ngFor="let efector of nombresEfectores" [ngValue]="efector">
+            {{ efector.nombre }}
+          </option>
+        </select>
+        <span class="arrow">▼</span>
       </div>
     </div>
 </div>

@@ -26,6 +26,10 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
+import { Location } from '@angular/common';
+
 
 interface Agrup {
   value: string;
@@ -56,6 +60,8 @@ export class LegajoCreateComponent implements OnInit {
   adicionales: Adicional[] = [];
   cargasHorarias: CargaHoraria[] = [];
   tiposRevistas: TipoRevista[] = [];
+  tipoGuardias: TipoGuardia[] = [];
+  noEspecialidadesMessage: string = '';
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -68,6 +74,7 @@ export class LegajoCreateComponent implements OnInit {
 
   step = 0;
   isAsistencial: boolean = false;
+  isSituacionRevistaEnabled = false;
 
 
   constructor(
@@ -84,8 +91,10 @@ export class LegajoCreateComponent implements OnInit {
     private adicionalService: AdicionalService,
     private cargaHorariaService: CargaHorariaService,
     private tipoRevistaService: TipoRevistaService,
+    private tipoGuardiaService: TipoGuardiaService,
     private revistaService: RevistaService,
     private toastr: ToastrService,
+    private location: Location
   ) {
 
     this.legajoForm = this.fb.group({
@@ -99,13 +108,12 @@ export class LegajoCreateComponent implements OnInit {
       udo: ['', Validators.required],
       efectores: ['', Validators.required],
       especialidades: [[]],
-      matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      actual: ['', Validators.required],
-      legal: ['', Validators.required],
+      matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
+      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
+      esAutoridad: ['', Validators.required],
       fechaInicio: ['', Validators.required],
       fechaFinal: [''],
-      cargo: ['', Validators.required],
+      tipoGuardias: ['', Validators.required],
     });
 
 
@@ -126,124 +134,90 @@ export class LegajoCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Si hay datos iniciales quito la validación
-    if (this.initialData) {
+  // Si hay datos iniciales quito la validación
+  if (this.initialData) {
+    const personaId = this.initialData.id;
 
-      this.legajoForm.get('idPersona')?.clearValidators(); // Quita la validación
-      this.inputValue = `${this.initialData.apellido} ${this.initialData.nombre}`;
-      this.legajoForm.patchValue({ idPersona: this.initialData.id }); // Carga el id del asistencial/noAsistencial
+    // Log para ver el ID de persona inicial
+    console.log('ID de persona inicial:', personaId);
+
+    // Verificar si idPersona está disponible y es un número válido
+    if (personaId !== undefined && personaId !== null) {
+      // Obtener todos los legajos y filtrar los activos
+      this.legajoService.list().subscribe(legajos => {
+        // Log para ver todos los legajos recibidos del backend
+        console.log('Legajos obtenidos del backend:', legajos);
+
+        // Filtramos los legajos activos para la persona
+        const legajosActivos = legajos.filter(legajo => 
+          legajo.persona?.id === personaId && legajo.activo
+        );
+
+        // Log para ver los legajos activos que se filtraron
+        console.log('Legajos activos para la persona con ID:', personaId, legajosActivos);
+
+        // Verificamos si la persona ya tiene 2 legajos activos
+        if (legajosActivos.length >= 2) {
+          // Si ya tiene 2 legajos activos, mostramos un mensaje y redirigimos
+          this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga.', 'Limite de legajos alcanzado', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          // Redirigir a otra página o deshabilitar el formulario
+          this.location.back();
+        } else {
+          // Si no tiene 2 legajos activos, podemos proceder a cargar el formulario
+          this.legajoForm.get('idPersona')?.setValidators([Validators.required]); // Vuelve a establecer la validación si es necesario
+          this.legajoForm.get('idPersona')?.updateValueAndValidity(); // Asegúrate de que la validación sea evaluada
+        }
+      }, error => {
+        console.error('Error al obtener los legajos:', error);
+        // Aquí podrías manejar el error si es necesario
+      });
+    } else {
+      console.error('ID de persona no disponible o no es válido');
     }
-
-    this.listProfesiones();
+  }
+  
+  // Llamar a los métodos para cargar los datos iniciales
     this.listUdos();
     this.listCargos();
-    this.listEspecialidades();
     this.listCategorias();
     this.listAdicionales();
     this.listCargaHoraria();
     this.listTipoRevista();
-
-  }
-
-  /*openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
-      width: '800px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Actualizo el valor legible para mostrarlo y el id para el formulario
-        this.inputValue = `${result.apellido} ${result.nombre}`;
-        this.legajoForm.patchValue({ idPersona: result.id });
+    this.listTipoGuardia();
+  
+    // Inicialización del formulario y deshabilitar el campo de especialidades al principio
+    this.legajoForm.get('especialidades')?.disable();
+  
+    // Llamar a la función que lista las profesiones
+    this.listProfesiones();
+  
+    // Cambiar especialidades cuando se cambia la profesión seleccionada
+    this.legajoForm.get('profesion')?.valueChanges.subscribe((profesionId) => {
+      if (profesionId) {
+        // Filtrar especialidades por la profesión seleccionada
+        this.filterEspecialidadesByProfesion(profesionId);
       } else {
-        this.toastr.info('No se seleccionó un profesional', 'Información', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+        // Limpiar especialidades si no se ha seleccionado ninguna profesión
+        this.especialidades = [];
+        this.legajoForm.get('especialidades')?.disable(); // Deshabilitar especialidades si no hay profesión seleccionada
       }
-    }, error => {
-      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }*/
-
-  /* listAsistenciales(): void {
-
-    this.asistencialService.listForLegajosDtos().subscribe(data => {
-      this.personas = data;
-      //console.log('Datos recibidos:', this.personas);
-
-      if (this.selectedPersona) {
-        const selectedId = this.selectedPersona.id;
-        if (!this.personas.find(p => p.id === selectedId)) {
-          this.personas.push(this.selectedPersona as AsistencialListDto);
-        }
+  
+    // Borrar selección de especialidades si la profesión seleccionada no tiene especialidades
+    this.legajoForm.get('profesion')?.valueChanges.subscribe((profesionId) => {
+      const profesion = this.profesiones.find(p => p.id === profesionId);
+  
+      // Si la nueva profesión no tiene especialidades, limpiar la selección de especialidades
+      if (profesion && !profesion.especialidades?.length) {
+        this.legajoForm.get('especialidades')?.setValue([]);  // Limpiar la selección de especialidades
       }
-    }, error => {
-      console.log(error);
-    });
-  } */
-
-  /*  setupFormValueChanges(): void {
-     this.legajoForm.get('persona')?.valueChanges.subscribe((selectedPersona: AsistencialListDto) => {
-       if (selectedPersona) {
-         this.selectedPersona = selectedPersona;
-         this.checkTipoGuardia(selectedPersona);
-       }
-     });
-   } */
-
-  /* checkTipoGuardia(persona: AsistencialListDto): void {
-    if (persona.nombresTiposGuardias && persona.nombresTiposGuardias.includes('CONTRAFACTURA')) {
-      this.isContrafactura = true;
-      // Limpiar validadores de los campos que no son necesarios para CONTRAFACTURA
-    this.legajoForm.get('agrupacion')?.clearValidators();
-    this.legajoForm.get('categoria')?.clearValidators();
-    this.legajoForm.get('adicional')?.clearValidators();
-    this.legajoForm.get('cargaHoraria')?.clearValidators();
-    this.legajoForm.get('tipoRevista')?.clearValidators();
-    this.legajoForm.get('udo')?.clearValidators();
-    this.legajoForm.get('cargo')?.clearValidators();
-    } else {
-      this.isContrafactura = false;
-      // Restablecer validadores en caso de que no sea CONTRAFACTURA
-    this.legajoForm.get('agrupacion')?.setValidators(Validators.required);
-    this.legajoForm.get('categoria')?.setValidators(Validators.required);
-    this.legajoForm.get('adicional')?.setValidators(Validators.required);
-    this.legajoForm.get('cargaHoraria')?.setValidators(Validators.required);
-    this.legajoForm.get('tipoRevista')?.setValidators(Validators.required);
-    this.legajoForm.get('udo')?.setValidators(Validators.required);
-    this.legajoForm.get('cargo')?.setValidators(Validators.required);
-    }
-
-    // Actualizar el estado de los campos en el formulario
-  this.legajoForm.get('agrupacion')?.updateValueAndValidity();
-  this.legajoForm.get('categoria')?.updateValueAndValidity();
-  this.legajoForm.get('adicional')?.updateValueAndValidity();
-  this.legajoForm.get('cargaHoraria')?.updateValueAndValidity();
-  this.legajoForm.get('tipoRevista')?.updateValueAndValidity();
-  this.legajoForm.get('udo')?.updateValueAndValidity();
-  this.legajoForm.get('cargo')?.updateValueAndValidity();
-  } */
-
-  /* isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
-  } */
-
-  listProfesiones(): void {
-    this.profesionService.list().subscribe(data => {
-      this.profesiones = data;
-    }, error => {
-      console.log(error);
     });
   }
-
+    
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
     this.hospitalService.list().subscribe(data => {
@@ -261,11 +235,92 @@ export class LegajoCreateComponent implements OnInit {
     });
   }
 
-  listEspecialidades(): void {
-    this.especialidadService.list().subscribe(data => {
-      this.especialidades = data;
+  listProfesiones(): void {
+    this.profesionService.list().subscribe(data => {
+      this.profesiones = data;
     }, error => {
       console.log(error);
+    });
+  }
+
+  listTipoGuardia(): void {
+    this.tipoGuardiaService.list().subscribe(data => {
+      this.tipoGuardias = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  onTipoGuardiaSelectionChange(event: any): void {
+    const selectedValues = this.legajoForm.get('tipoGuardias')!.value;
+  
+    // Si se selecciona el tipo 4 (CONTRAFACTURA), deseleccionar todas las demás opciones
+    if (selectedValues.includes(4)) {
+      this.legajoForm.patchValue({
+        tipoGuardias: [4]  // Solo mantener el tipo 4
+      });
+    } else if (selectedValues.includes(5)) {
+      // Si se selecciona el tipo 5 (PASIVA), deseleccionar todas las demás opciones
+      this.legajoForm.patchValue({
+        tipoGuardias: [5]  // Solo mantener el tipo 5
+      });
+    } else {
+      // Si se seleccionan otras opciones (1, 2, 3), mantenerlas
+      this.legajoForm.patchValue({
+        tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
+      });
+    }
+  
+    // Comprobar si se seleccionaron tipos de guardia 4 o 5 para deshabilitar el panel de Situación de Revista
+    this.toggleSituacionRevista(selectedValues);
+  }
+  
+  toggleSituacionRevista(selectedValues: number[]): void {
+    // Si se selecciona el tipo 4 o 5, deshabilitar "Situación de Revista"
+    if (selectedValues.length === 0 || selectedValues.includes(4) || selectedValues.includes(5)) {
+      this.isSituacionRevistaEnabled = false;
+      this.disableSituacionRevistaFields();
+    } else {
+      this.isSituacionRevistaEnabled = true;
+      this.enableSituacionRevistaFields();
+    }
+  }
+    
+  disableSituacionRevistaFields(): void {
+    this.legajoForm.get('agrupacion')?.disable();
+    this.legajoForm.get('categoria')?.disable();
+    this.legajoForm.get('adicional')?.disable();
+    this.legajoForm.get('cargaHoraria')?.disable();
+    this.legajoForm.get('tipoRevista')?.disable();
+    this.legajoForm.get('udo')?.disable();
+    this.legajoForm.get('efectores')?.disable();
+  }
+  
+  enableSituacionRevistaFields(): void {
+    this.legajoForm.get('agrupacion')?.enable();
+    this.legajoForm.get('categoria')?.enable();
+    this.legajoForm.get('adicional')?.enable();
+    this.legajoForm.get('cargaHoraria')?.enable();
+    this.legajoForm.get('tipoRevista')?.enable();
+    this.legajoForm.get('udo')?.enable();
+    this.legajoForm.get('efectores')?.enable();
+  }
+  
+  filterEspecialidadesByProfesion(profesionId: number): void {
+    this.especialidadService.list().subscribe(data => {
+      this.especialidades = data.filter(especialidad => especialidad.profesion.id === profesionId);
+  
+      if (this.especialidades.length > 0) {
+        this.legajoForm.get('especialidades')?.enable();
+        this.noEspecialidadesMessage = '';
+      } else {
+        this.legajoForm.get('especialidades')?.disable();
+        this.noEspecialidadesMessage = 'La profesión seleccionada no posee especialidades.';
+      }
+    }, error => {
+      console.log('Error al cargar las especialidades:', error);
+      this.legajoForm.get('especialidades')?.disable();
+      this.noEspecialidadesMessage = 'Error al cargar las especialidades. Intente nuevamente.';
     });
   }
 
@@ -301,140 +356,99 @@ export class LegajoCreateComponent implements OnInit {
     });
   }
 
-  /* loadDropdowns(): void {
-    this.asistencialService.list().subscribe(data => this.personas = data, error => console.error('Error al cargar personas', error));
-    this.profesionService.list().subscribe(data => this.profesiones = data, error => console.error('Error al cargar profesiones', error));
-    this.hospitalService.list().subscribe(data => this.efectores = data, error => console.error('Error al cargar efectores', error));
-    this.cargoService.list().subscribe(data => this.cargos = data, error => console.error('Error al cargar cargos', error));
-    this.especialidadService.list().subscribe(data => this.especialidades = data, error => console.error('Error al cargar especialidades', error));
-    this.categoriaService.list().subscribe(data => this.categorias = data, error => console.error('Error al cargar categorias', error));
-    this.adicionalService.list().subscribe(data => this.adicionales = data, error => console.error('Error al cargar adicionales', error));
-    this.cargaHorariaService.list().subscribe(data => this.cargasHorarias = data, error => console.error('Error al cargar cargas horarias', error));
-    this.tipoRevistaService.list().subscribe(data => this.tiposRevistas = data, error => console.error('Error al cargar tipos de revistas', error));
-    this.revistaService.list().subscribe(data => this.revistas = data, error => console.error('Error al cargar revistas', error));
-  } */
-
-  /* saveLegajo(): void {
-    if (this.legajoForm.valid) {
-      const legajoData = this.legajoForm.value;
-      const legajoDto = new LegajoDto(
-        legajoData.fechaInicio,
-        legajoData.fechaFinal,
-        legajoData.actual,
-        legajoData.legal,
-        legajoData.activo,
-        legajoData.matriculaNacional,
-        legajoData.matriculaProvincial,
-        legajoData.tipoRevista.id,
-        legajoData.udo.id,
-        legajoData.persona.id,
-        legajoData.cargo.id,
-        legajoData.efectores,
-        legajoData.especialidades,
-        legajoData.profesion.id
-      );
-
-      if (this.esEdicion) {
-        this.legajoService.update(legajoData.id, legajoDto).subscribe({
-          next: (result) => {
-            this.toastr.success('Legajo actualizado exitosamente!', 'Actualización Exitosa', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            this.router.navigate(['/legajo']);
-          },
-          error: (error) => {
-            this.toastr.error('Error al actualizar el legajo.', 'Error', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            console.error('Error al actualizar el legajo', error);
-          }
-        });
-      } else {
-        this.legajoService.save(legajoDto).subscribe({
-          next: (result) => {
-            this.toastr.success('Legajo creado exitosamente!', 'Creación Exitosa', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            this.router.navigate(['/legajo']);
-          },
-          error: (error) => {
-            this.toastr.error('Error al crear el legajo.', 'Error', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-            console.error('Error al crear el legajo', error);
-          }
-        });
-      }
-    } else {
-      this.toastr.warning('Por favor complete todos los campos requeridos.', 'Formulario Incompleto', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-    }
-  } */
-
   saveLegajo(): void {
     if (this.legajoForm.valid) {
       const legajoData = this.legajoForm.value;
-
-      const revistaDto = new RevistaDto(
-        legajoData.tipoRevista,
-        legajoData.categoria,
-        legajoData.adicional,
-        legajoData.cargaHoraria,
-        legajoData.agrupacion
-      );
-      // Verifica si existe una revista con los atributos especificados
-      this.revistaService.checkRevista(revistaDto).subscribe(
-        (existingRevista) => {
-          // Si existe, usa su ID
-          if (existingRevista && existingRevista.id !== undefined) {
-            console.log("fecha que tiene ", legajoData.fechaInicio)
-            this.createLegajoDtoAndSave(legajoData, existingRevista.id);
-          } else {
-            console.error('La revista existente no tiene un ID.');
-          }
-        },
-        (error) => {
-          // Si no existe, crea una nueva revista
-          console.log('##### Revista no encontrada, creando una nueva.');
-          this.revistaService.save(revistaDto).subscribe(
-            () => {
-              // Una vez creada, busca la revista nuevamente
-              this.revistaService.checkRevista(revistaDto).subscribe(
-                (newRevista) => {
-                  if (newRevista && newRevista.id !== undefined) {
-                    console.log('%%%Nueva revista creada y encontrada:', newRevista);
-                    this.createLegajoDtoAndSave(legajoData, newRevista.id);
-                  } else {
-                    console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
-                  }
-                },
-                (error) => {
-                  console.error('Error al buscar la revista después de crearla', error);
-                }
-              );
-            },
-            (error) => {
-              console.error('%%%%%%%Error al crear la revista', error);
+      
+      // Verifica si el tipo de guardia incluye 4 (CONTRAFACTURA) o 5 (PASIVA)
+      const tiposGuardiasSeleccionados = legajoData.tipoGuardias;
+      const tiposGuardiaExcluidos = [4, 5];
+      
+      // Si los tipos 4 o 5 están seleccionados, no se guarda la revista
+      if (tiposGuardiasSeleccionados.some((id: number) => tiposGuardiaExcluidos.includes(id))) {
+        // Si se seleccionan 4 o 5, deshabilita el panel de revista (ya no necesita crearla)
+        console.log('No se crea revista debido a tipos de guardia seleccionados: ', tiposGuardiasSeleccionados);
+        
+        // Crear legajo directamente sin pasar por la creación de la revista
+        this.createLegajoDtoAndSave(legajoData, null);  // Aquí pasas `null`
+      } else {
+        // Si los tipos de guardia son válidos, proceder con la creación de la revista
+        const revistaDto = new RevistaDto(
+          legajoData.tipoRevista,
+          legajoData.categoria,
+          legajoData.adicional,
+          legajoData.cargaHoraria,
+          legajoData.agrupacion
+        );
+        
+        // Verifica si existe una revista con los atributos especificados
+        this.revistaService.checkRevista(revistaDto).subscribe(
+          (existingRevista) => {
+            if (existingRevista && existingRevista.id !== undefined) {
+              console.log("Revista encontrada:", existingRevista);
+              // Usamos la ID de la revista existente
+              this.createLegajoDtoAndSave(legajoData, existingRevista.id);
+            } else {
+              console.error('La revista existente no tiene un ID.');
             }
-          );
-        }
-      );
-      //}
+          },
+          (error) => {
+            console.log('Revista no encontrada, creando una nueva.');
+            
+            // Si no existe, crear una nueva revista
+            this.revistaService.save(revistaDto).subscribe(
+              () => {
+                // Después de crearla, buscamos la revista
+                this.revistaService.checkRevista(revistaDto).subscribe(
+                  (newRevista) => {
+                    if (newRevista && newRevista.id !== undefined) {
+                      console.log('Nueva revista creada:', newRevista);
+                      this.createLegajoDtoAndSave(legajoData, newRevista.id);
+                    } else {
+                      console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
+                    }
+                  },
+                  (error) => {
+                    console.error('Error al buscar la revista después de crearla', error);
+                  }
+                );
+              },
+              (error) => {
+                console.error('Error al crear la revista', error);
+              }
+            );
+          }
+        );
+      }
     }
   }
-
-  createLegajoDtoAndSave(legajoData: any, revistaId: number): void {
+  
+  createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
+      // Aseguro que 'efectores' sea un array ya que asi lo recibe el back sino da error
+  if (legajoData.efectores && !Array.isArray(legajoData.efectores)) {
+    legajoData.efectores = [legajoData.efectores];
+  }
 
     const legajoDto = new LegajoDto(
       legajoData.fechaInicio,
-      legajoData.fechaFinal,
-      legajoData.actual,
-      legajoData.legal,
-      legajoData.activo,
+      legajoData.esAutoridad,
+      true,
       legajoData.matriculaNacional,
       legajoData.matriculaProvincial,
-      revistaId!, // Usa el ID de la revista (existente o nueva)
-      legajoData.udo.id,
       legajoData.idPersona,
-      legajoData.cargo.id,
-      legajoData.efectores,
+      legajoData.profesion,
+      legajoData.fechaFinal,                
+      null, // idSuspencion
+      revistaId,
+      legajoData.udo?.id ?? null,
+      legajoData.efectores ?? null,
       legajoData.especialidades,
-      legajoData.profesion.id
+      legajoData.tipoGuardias
     );
 
-    console.log("dto creado para guardar", legajoDto);
-
+    console.log("DTO creado para guardar legajo:", legajoDto);
+  
+    // Guardar el legajo sin la parte de revista si no corresponde
     this.legajoService.save(legajoDto).subscribe(
       (result) => {
         this.toastr.success('Legajo creado con éxito', 'EXITO', {
@@ -442,8 +456,7 @@ export class LegajoCreateComponent implements OnInit {
           positionClass: 'toast-top-center',
           progressBar: true
         });
-
-        // Redirige según de dónde vino
+  
         if (this.fromAsistencial) {
           this.router.navigate(['/personal']);
         } else if (this.fromNoAsistencial) {
@@ -478,28 +491,25 @@ export class LegajoCreateComponent implements OnInit {
       return;
     }
 
-    this.step = (this.step + 1) % 3;  // Cambia 3 por el número total de pasos en el wizard
+    this.step = (this.step + 1) % 3;
   }
 
   prevStep(): void {
-    this.step = (this.step - 1 + 3) % 3;  // Cambia 3 por el número total de pasos en el wizard
+    this.step = (this.step - 1 + 3) % 3;
   }
 
   isPanel1Valid(): boolean {
-    // Verifica si los campos obligatorios en el panel 1 son válidos
-    const panel1Controls = ['idPersona', 'profesion', 'especialidades', 'cargo', 'matriculaNacional', 'matriculaProvincial'];
+    const panel1Controls = ['idPersona', 'profesion', 'matriculaProvincial'];
     return panel1Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
   isPanel2Valid(): boolean {
-    // Verifica si los campos obligatorios en el panel 2 son válidos
-    const panel2Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo'];
+    const panel2Controls = ['esAutoridad', 'fechaInicio', 'tipoGuardias'];
     return panel2Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
   isPanel3Valid(): boolean {
-    // Verifica si los campos obligatorios en el panel 3 son válidos
-    const panel3Controls = ['actual', 'legal', 'fechaInicio'];
+    const panel3Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo', 'efectores'];
     return panel3Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
@@ -517,11 +527,10 @@ export class LegajoCreateComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    // Redirige según de dónde vino
     if (this.fromAsistencial) {
-      this.router.navigate(['/personal']);
+      this.location.back();
     } else if (this.fromNoAsistencial) {
-      this.router.navigate(['/personal-no-asistencial']);
+      this.location.back();
     } else {
       this.router.navigate(['/personal-legajo-select']);
     }

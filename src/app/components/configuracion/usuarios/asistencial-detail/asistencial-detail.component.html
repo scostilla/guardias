@@ -40,14 +40,14 @@
           <th scope="row">Sexo</th>
           <td>{{asistencial.sexo}}</td>
         </tr>
-        <tr>
+        <!--<tr>
           <th scope="row">Tipos de guardia</th>
             <td>
                 <ng-container *ngFor="let efector of asistencial.tiposGuardias; let i = index">
                     {{ efector.nombre }}<span *ngIf="!isLast(i, asistencial.tiposGuardias)">, </span>
                 </ng-container>
             </td>
-        </tr>
+        </tr>-->
     </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">

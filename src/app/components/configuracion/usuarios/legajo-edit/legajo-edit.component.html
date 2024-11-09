@@ -29,7 +29,7 @@
                 <div class="book-marker">
                   <span class="marker-number">1</span>
                 </div>
-                <span class="negrita">Datos personal</span>
+                <span class="negrita">Datos profesión</span>
               </mat-panel-title>
             </mat-expansion-panel-header>
 
@@ -44,26 +44,21 @@
                 
             <mat-form-field appearance="fill">
               <mat-label>Profesión</mat-label>
-              <mat-select formControlName="profesion" [compareWith]="compareFn">
-                <mat-option *ngFor="let profesion of profesiones" [value]="profesion">{{ profesion.nombre }}</mat-option>
+              <mat-select formControlName="profesion">
+                <mat-option *ngFor="let profesion of profesiones" [value]="profesion.id">{{ profesion.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('profesion')?.errors?.['required']">La profesión es requerida.</mat-error>
             </mat-form-field>
-
+            
             <mat-form-field appearance="fill" *ngIf="isAsistencial">
               <mat-label>Especialidades</mat-label>
               <mat-select formControlName="especialidades" multiple>
                 <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre }}</mat-option>
               </mat-select>
+              <div class="simple-message" *ngIf="noEspecialidadesMessage">
+                {{ noEspecialidadesMessage }}
+              </div>
             </mat-form-field>
-                    
-            <mat-form-field appearance="fill">
-              <mat-label>Cargo</mat-label>
-              <mat-select formControlName="cargo" [compareWith]="compareFn">
-                <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('cargo')?.errors?.['required']">El cargo es requerido.</mat-error>
-            </mat-form-field>    
 
             <mat-form-field appearance="fill">
               <mat-label>Matrícula Nacional</mat-label>
@@ -75,8 +70,8 @@
             <mat-form-field appearance="fill">
               <mat-label>Matrícula Provincial</mat-label>
               <input matInput formControlName="matriculaProvincial">
-              <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['pattern']">El n° de matrícula puede tener
-                letras y números (entre 5 y 20 caracteres).</mat-error>
+              <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['required']">El n° de matrícula es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['pattern']">El n° de matrícula puede tener solo números (entre 5 y 10 digitos).</mat-error>
             </mat-form-field>
             
             <mat-action-row>
@@ -90,6 +85,61 @@
               <mat-panel-title>
                 <div class="book-marker">
                   <span class="marker-number">2</span>
+                </div>
+                <span class="negrita">Datos legajo</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
+              <mat-label>Tipo de legajo</mat-label>
+              <mat-select formControlName="esAutoridad">
+                <mat-option [value]="false">General</mat-option>
+                <mat-option [value]="true">Autoridad</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('esAutoridad')?.errors?.['required']">El campo es requerido.</mat-error>
+            </mat-form-field>
+                
+            <mat-form-field appearance="fill">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="fill">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+              <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Tipo guardia</mat-label>
+              <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
+                <!-- Mostrar el mensaje si 4 o 5 están seleccionados -->
+                <div *ngIf="legajoForm.get('tipoGuardias')?.value.includes(4) || legajoForm.get('tipoGuardias')?.value.includes(5)">
+                  <p class="simple-message">La opción seleccionada no puede combinarse con las demás guardias.</p>
+                </div>
+            
+                <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias.id">{{ tipoGuardias.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('tipoGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+            </mat-form-field>
+          
+            <mat-action-row>
+              <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
+              <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        
+          <!-- Panel 3 -->
+          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle id="panel3" *ngIf="isSituacionRevistaEnabled">
+            <mat-expansion-panel-header class="custom-header">
+              <mat-panel-title>
+                <div class="book-marker">
+                  <span class="marker-number">3</span>
                 </div>
                 <span class="negrita">Situación de revista</span>
               </mat-panel-title>
@@ -105,7 +155,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Categoría</mat-label>
-              <mat-select formControlName="categoria" [compareWith]="compareFn2">
+              <mat-select formControlName="categoria" [compareWith]="compareFn_id">
                 <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('categoria')?.errors?.['required']">La categoría es requerida.</mat-error>
@@ -113,7 +163,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Adicional</mat-label>
-              <mat-select formControlName="adicional" [compareWith]="compareFn2">
+              <mat-select formControlName="adicional" [compareWith]="compareFn_id">
                 <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
@@ -121,7 +171,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Carga Horaria</mat-label>
-              <mat-select formControlName="cargaHoraria" [compareWith]="compareFn2">
+              <mat-select formControlName="cargaHoraria" [compareWith]="compareFn_id">
                 <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria.id">{{ cargaHoraria.cantidad
                   }}</mat-option>
               </mat-select>
@@ -131,7 +181,7 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Tipo de revista</mat-label>
-              <mat-select formControlName="tipoRevista" [compareWith]="compareFn2">
+              <mat-select formControlName="tipoRevista" [compareWith]="compareFn_id">
                 <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista.id">{{ tipoRevista.nombre
                   }}</mat-option>
               </mat-select>
@@ -153,58 +203,7 @@
                 <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
             </mat-form-field>
-          
-            <mat-action-row>
-              <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-              <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
-            </mat-action-row>
-          </mat-expansion-panel>
-        
-          <!-- Panel 3 -->
-          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle id="panel3">
-            <mat-expansion-panel-header class="custom-header">
-              <mat-panel-title>
-                <div class="book-marker">
-                  <span class="marker-number">3</span>
-                </div>
-                <span class="negrita">Datos del legajo</span>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-        
-            <mat-form-field appearance="fill" style="margin-top: 20px;">
-              <mat-label>Actual</mat-label>
-              <mat-select formControlName="actual">
-                <mat-option [value]="true">Si</mat-option>
-                <mat-option [value]="false">No</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('actual')?.errors?.['required']">El campo es requerido.</mat-error>
-            </mat-form-field>
-        
-            <mat-form-field appearance="fill">
-              <mat-label>Legal</mat-label>
-              <mat-select formControlName="legal">
-                <mat-option [value]="true">Si</mat-option>
-                <mat-option [value]="false">No</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('legal')?.errors?.['required']">El campo es requerido.</mat-error>
-            </mat-form-field>
-        
-            <mat-form-field appearance="fill">
-              <mat-label>Fecha Inicio</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="legajoForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
-            </mat-form-field>
-        
-            <mat-form-field appearance="fill">
-              <mat-label>Fecha Fin</mat-label>
-              <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
-              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-              <mat-datepicker #picker2></mat-datepicker>
-              <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
-            </mat-form-field>
-            
+
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-button color="primary" type="button" (click)="cerrarPanel()">Cerrar paneles</button>

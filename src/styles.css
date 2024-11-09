@@ -707,6 +707,8 @@ mat-label{
   padding: 0;
 }
 
+/*-- Carteles y mensajes -- */
+
 .container-mensajes {
   margin-bottom: 20px;
   padding: 10px 0 10px 0;
@@ -747,6 +749,42 @@ mat-label{
   font-weight: bold;
 }
 
+.simple-message {
+  color: rgb(180, 180, 180);
+  font-size: 0.8em;
+  margin-left: 15px;
+}
+
+.simple-message::before {
+  content: '\00bb';
+  margin-right: 5px;
+}
+
+.ribbon-autoridad {
+  background-color: #C0CF50;
+  color: #fff;
+  font-size: 0.9em;
+  padding: 5px 10px;
+  font-weight: bold;
+  text-align: center;
+  position: relative;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  float: left;
+  margin-left: -16px;
+}
+
+.ribbon-autoridad::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 100%;
+  border-left: 20px solid #C0CF50;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+}
 
 /* --referencias-- */
 .ref {

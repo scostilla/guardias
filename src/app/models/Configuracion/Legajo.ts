@@ -3,56 +3,60 @@ import { Person } from './Person';
 import { Efector } from './Efector';
 import { Revista } from './Revista';
 import { Especialidad } from './Especialidad';
-import { Cargo } from './Cargo';
+import { Suspension } from './Suspension';
+import { TipoGuardia } from './TipoGuardia';
 
 export class Legajo {
-    id?: number;
-    fechaInicio: Date;
-    fechaFinal: Date;
-    actual: boolean;
-    legal: boolean;
+    id?: number | null;
+    fechaInicio: Date | null;
+    fechaFinal?: Date | null;
+    esAutoridad: boolean;
     activo:boolean;
     matriculaNacional: string;
     matriculaProvincial: string;
-    revista:Revista;
-    udo: Efector;
-    persona: Person;
-    cargo: Cargo;
+    suspencion?: Suspension | null;
+    revista?:Revista | null;
+    udo?: Efector | null;
+    persona?: Person | null;
     efectores: Efector[];
     especialidades: Especialidad[];
     profesion: Profesion;
+    tipoGuardias: TipoGuardia[];
     
     constructor(
-        fechaInicio: Date,
-        fechaFinal: Date,
-        actual: boolean,
-        legal: boolean, 
-        activo:boolean, 
-        matriculaNacional: string, 
+        fechaInicio: Date | null,
+        esAutoridad: boolean,
+        activo:boolean,
+        matriculaNacional: string,
         matriculaProvincial: string,
-        profesion: Profesion, 
-        revista: Revista, 
-        udo: Efector, 
-        persona: Person, 
-        cargo: Cargo,
         efectores: Efector[],
-        especialidades:Especialidad[]
-    ) {
+        especialidades: Especialidad[],
+        profesion: Profesion,
+        tipoGuardias: TipoGuardia[],
+
+        // Parámetros opcionales
+        fechaFinal?: Date | null,
+        suspencion?: Suspension | null,
+        revista?:Revista | null,
+        udo?: Efector | null,
+        persona?: Person | null,
+
+        ) {
         
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
-        this.actual = actual;
-        this.legal = legal;
+        this.esAutoridad = esAutoridad;
         this.activo = activo;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
+        this.suspencion = suspencion;
         this.profesion = profesion;
         this.revista = revista;
         this.udo = udo;
         this.persona = persona;
-        this.cargo = cargo;
         this.efectores = efectores;
         this.especialidades = especialidades;
+        this.tipoGuardias = tipoGuardias;
     }
 
   }

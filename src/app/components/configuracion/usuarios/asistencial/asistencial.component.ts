@@ -146,6 +146,17 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     });
   }
+    
+  tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
+    return legajos.some(legajo => 
+      legajo.tipoGuardias.some(tipoGuardia => tipoGuardia.id === 4 || tipoGuardia.id === 5)
+    );
+  }
+
+  mostrarBotones(asistencial: AsistencialListDto): boolean {
+    const legajosAsistencial = this.legajos.filter(legajo => legajo.persona?.id === asistencial.id);
+    return !this.tipoGuardiaNoPermiteAcciones(legajosAsistencial);
+  }
   
   formatCuil(cuil: string): string {
     if (!cuil) return '';
@@ -237,7 +248,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   hayLegajos(asistencial: AsistencialListDto): boolean {
-    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
+    return this.legajos.some(legajo => legajo.persona?.id === asistencial.id);
   }
 
   verLegajo(asistencial: AsistencialListDto): void {

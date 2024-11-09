@@ -4,8 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { ToastrService } from 'ngx-toastr';
 
 import { error } from 'console';
@@ -24,7 +22,6 @@ import { AuthService } from 'src/app/services/login/auth.service';
 
 export class PersonEditComponent implements OnInit {
   asistencialForm: FormGroup;
-  tiposGuardias: TipoGuardia[] = [];
   initialData: any;
   asistencialId!: number;
   roles: Rol[] = [];
@@ -33,7 +30,6 @@ export class PersonEditComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private asistencialService: AsistencialService,
-    private tipoGuardiaService: TipoGuardiaService,
     private route: ActivatedRoute,
     private toastr: ToastrService,
     private rolService: RolService,
@@ -51,13 +47,11 @@ export class PersonEditComponent implements OnInit {
       fechaNacimiento: ['', Validators.required],
       sexo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: [[], [Validators.required]],
       nombreUsuario: ['', [Validators.required]],
       password: ['', [Validators.required]],
       roles: [[], [Validators.required]]
     });
 
-    this.listTipoGuardia();
     this.listRoles();
   }
 
@@ -81,7 +75,6 @@ export class PersonEditComponent implements OnInit {
         // Adaptar el formato de los datos para el formulario
         const adaptedData = {
           ...asistencialData,
-          tiposGuardias: asistencialData.tiposGuardias ? asistencialData.tiposGuardias.map((tipoGuardia: TipoGuardia) => tipoGuardia.id) : [],
           roles: asistencialData.usuario && asistencialData.usuario.roles ? asistencialData.usuario.roles.map((rolId: string) => parseInt(rolId, 10)) : [] // Convertir roles de string a ID numérico si es necesario
         };
         
@@ -93,14 +86,6 @@ export class PersonEditComponent implements OnInit {
     }, error => {
       console.log(error);
       this.toastr.error('Ocurrió un error al cargar los datos.', 'Error');
-    });
-  }
-
-  listTipoGuardia(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      this.tiposGuardias = data;
-    }, error => {
-      console.log(error);
     });
   }
 
@@ -210,7 +195,6 @@ export class PersonEditComponent implements OnInit {
       asistencialData.esAsistencial,
       asistencialData.activo,
       usuarioId,
-      asistencialData.tiposGuardias
     );
   
     console.log('Guardando asistencial:', asistencialDto);
@@ -252,163 +236,8 @@ export class PersonEditComponent implements OnInit {
 
     this.router.navigate(['/personal']);
   }
-
-  onTipoGuardiaSelectionChange(event: any): void {
-    const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
-  
-    // Si se selecciona CONTRAFACTURA, deseleccionar las demás opciones
-    if (selectedValues.includes(1)) {
-      this.asistencialForm.patchValue({
-        tiposGuardias: [1]
-      });
-    } else if (selectedValues.includes(5)) {
-      // Si se selecciona PASIVA, deseleccionar las demás opciones
-      this.asistencialForm.patchValue({
-        tiposGuardias: [5]
-      });
-    } else {
-      // Si se seleccionan las opciones 2, 3 o 4, permitir que se elijan juntas
-      this.asistencialForm.patchValue({
-        tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
-      });
-    }
-  }
   
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
   }
 }
-
-
-
-/*import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-
-
-@Component({
-  selector: 'app-person-edit',
-  templateUrl: './person-edit.component.html',
-  styleUrls: ['./person-edit.component.css']
-})
-export class PersonEditComponent implements OnInit {
-  asistencialForm: FormGroup;
-  initialData: any;
-  tiposGuardias: TipoGuardia[] = [];
-
-  constructor(
-    private fb: FormBuilder,
-    public dialogRef: MatDialogRef<PersonEditComponent>,
-    private asistencialService: AsistencialService,
-    private tipoGuardiaService: TipoGuardiaService,
-    @Inject(MAT_DIALOG_DATA) public data: Asistencial
-  ) {
-    this.asistencialForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
-      apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
-      dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
-      domicilio: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      esAsistencial: ['', Validators.required],
-      cuil: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
-      fechaNacimiento: ['', Validators.required],
-      sexo: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      tiposGuardias: [[], [Validators.required]] 
-    });
-
-    this.listTipoGuardia();
-
-    if (data) {
-      this.asistencialForm.patchValue({
-        ...data,
-        tiposGuardias: data.tiposGuardias ? data.tiposGuardias.map((tipoGuardia: any) => tipoGuardia.id) : []
-      });
-    }
-  }
-
-  ngOnInit(): void {
-    this.initialData = this.asistencialForm.value;
-  }
-
-  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
-  }
-
-  listTipoGuardia(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      this.tiposGuardias = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  saveAsistencial(): void {
-    if (this.asistencialForm.valid) {
-      const asistencialData = this.asistencialForm.value;
-
-      const asistencialDto = new AsistencialDto(
-        asistencialData.nombre,
-        asistencialData.apellido,
-        asistencialData.dni,
-        asistencialData.cuil,
-        asistencialData.fechaNacimiento,
-        asistencialData.sexo,
-        asistencialData.telefono,
-        asistencialData.email,
-        asistencialData.domicilio,
-        asistencialData.esAsistencial,
-        asistencialData.activo,
-        asistencialData.tiposGuardias
-      );
-
-      if (this.data && this.data.id) {
-        this.asistencialService.update(this.data.id, asistencialDto).subscribe(
-          result => {
-            this.dialogRef.close({ type: 'save', data: result });
-          },
-          error => {
-            this.dialogRef.close({ type: 'error', data: error });
-          }
-        );
-      } else {
-        this.asistencialService.save(asistencialDto).subscribe(
-          result => {
-            this.dialogRef.close({ type: 'save', data: result });
-          },
-          error => {
-            this.dialogRef.close({ type: 'error', data: error });
-          }
-        );
-      }
-    }
-  }
-
-  cancel(): void {
-    this.dialogRef.close({ type: 'cancel' });
-  }
-
-  onTipoGuardiaSelectionChange(event: any): void {
-    const selectedValues = this.asistencialForm.get('tiposGuardias')!.value;
-  
-    if (selectedValues.includes(1)) {
-      this.asistencialForm.patchValue({
-        tiposGuardias: [1]
-      });
-    } else if (selectedValues.includes(5)) {
-      this.asistencialForm.patchValue({
-        tiposGuardias: [5]
-      });
-    } else {
-      this.asistencialForm.patchValue({
-        tiposGuardias: selectedValues.filter((value: number) => value !== 1 && value !== 5)
-      });
-    }
-  }
-}
-  */
