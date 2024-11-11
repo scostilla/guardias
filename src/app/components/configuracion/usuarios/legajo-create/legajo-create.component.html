@@ -32,7 +32,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <mat-form-field appearance="fill" style="margin-top: 20px;"> 
+            <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Profesional</mat-label>
               <input matInput [value]="inputValue" readonly required>
               <mat-icon matSuffix>person</mat-icon>
@@ -102,18 +102,18 @@
                 
             <mat-form-field appearance="fill">
               <mat-label>Fecha Inicio</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+              <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="legajoForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.hasError('required')">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.hasError('futureDate')">La fecha no puede ser posterior a la fecha actual.</mat-error>
             </mat-form-field>
-        
+                    
             <mat-form-field appearance="fill">
               <mat-label>Fecha Fin</mat-label>
-              <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
-              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-              <mat-datepicker #picker2></mat-datepicker>
-              <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
+              <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final" [disabled]="!legajoForm.get('fechaFinal')?.enabled">
+              <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFinal></mat-datepicker>
             </mat-form-field>
 
             <mat-form-field appearance="fill" class="form-field">

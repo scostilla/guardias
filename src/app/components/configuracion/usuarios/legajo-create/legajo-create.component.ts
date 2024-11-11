@@ -28,6 +28,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { Location } from '@angular/common';
 
 
@@ -73,6 +74,8 @@ export class LegajoCreateComponent implements OnInit {
   ];
 
   step = 0;
+  maxDate!: Date;
+  minFechaFinal!: Date;
   isAsistencial: boolean = false;
   isSituacionRevistaEnabled = false;
 
@@ -111,12 +114,31 @@ export class LegajoCreateComponent implements OnInit {
       matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
       matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
       esAutoridad: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
+      fechaInicio: ['', [Validators.required, this.dateNotInFuture]],
       fechaFinal: [''],
       tipoGuardias: ['', Validators.required],
     });
 
-
+    this.maxDate = new Date();
+    // Deshabilitar fechaFinal hasta que se seleccione fechaInicio
+    this.legajoForm.get('fechaFinal')?.disable();
+  
+    // Habilitar fechaFinal cuando fechaInicio tiene un valor
+    this.legajoForm.get('fechaInicio')?.valueChanges.subscribe(fechaInicio => {
+      if (fechaInicio) {
+        // Habilitar fechaFinal
+        this.legajoForm.get('fechaFinal')?.enable();
+  
+        // Establecer el valor mínimo de fechaFinal como el día siguiente a fechaInicio
+        const fechaInicioDate = new Date(fechaInicio);
+        fechaInicioDate.setDate(fechaInicioDate.getDate() + 1); // Aumentar un día a la fechaInicio
+        this.minFechaFinal = fechaInicioDate; // Asignamos la fecha de "minFechaFinal"
+      } else {
+        // Si no hay fechaInicio, deshabilitar fechaFinal
+        this.legajoForm.get('fechaFinal')?.disable();
+      }
+    });
+    
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
@@ -137,8 +159,14 @@ export class LegajoCreateComponent implements OnInit {
   // Si hay datos iniciales quito la validación
   if (this.initialData) {
     const personaId = this.initialData.id;
+    this.inputValue = `${this.initialData.nombre} ${this.initialData.apellido}`;
 
-    // Log para ver el ID de persona inicial
+    // Establecemos el valor de idPersona en el formulario
+    this.legajoForm.get('idPersona')?.setValue(personaId);
+
+    // Realizar las validaciones necesarias
+    this.legajoForm.get('idPersona')?.updateValueAndValidity();
+    
     console.log('ID de persona inicial:', personaId);
 
     // Verificar si idPersona está disponible y es un número válido
@@ -217,6 +245,19 @@ export class LegajoCreateComponent implements OnInit {
       }
     });
   }
+
+dateNotInFuture(control: any) {
+  const currentDate = new Date();
+  if (control.value && new Date(control.value) > currentDate) {
+    return { 'matDatepickerMin': true };  // Error: la fecha no puede ser futura
+  }
+  return null; // No hay error
+}
+
+    onDateChange(event: MatDatepickerInputEvent<Date>) {
+      const selectedDate = event.value;
+      console.log('Fecha seleccionada:', selectedDate);
+    }
     
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
