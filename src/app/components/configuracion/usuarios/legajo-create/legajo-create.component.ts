@@ -219,6 +219,13 @@ export class LegajoCreateComponent implements OnInit {
               // Habilitar el campo esAutoridad para que el usuario pueda ver el cambio
               this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar campo porque ya tiene un legajo activo
               
+              // Informar al usuario que ya posee un legajo y que solo puede cargar el tipo contrario
+              this.toastr.info('La persona ya posee un legajo activo. Solo podrás cargar el tipo de legajo no existente.', 'Información sobre carga', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+              
             } else {
               // Si no tiene legajos activos, podemos permitir elegir 'esAutoridad' como true o false
               this.legajoForm.get('esAutoridad')?.setValue(true);  // Establecer por defecto como true
@@ -233,7 +240,7 @@ export class LegajoCreateComponent implements OnInit {
             // Si no es autoridad, verificar si tiene 1 legajo activo
             if (legajosActivos.length >= 1) {
               // Si ya tiene un legajo activo, mostramos un mensaje y redirigimos
-              this.toastr.warning('La persona ya tiene un legajo activo. No se puede agregar más legajos.', 'Limite de legajos alcanzado', {
+              this.toastr.warning('La persona ya tiene un legajo activo. No se pueden agregar más legajos.', 'Limite de legajos alcanzado', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
