@@ -8,6 +8,8 @@ import { AutoridadService } from 'src/app/services/Configuracion/autoridad.servi
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { CargoService } from 'src/app/services/Configuracion/cargo.service';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 
@@ -21,6 +23,7 @@ export class AutoridadEditComponent implements OnInit {
   autoridadForm: FormGroup;
   initialData: any;
   efectores: Efector[] = [];
+  cargos: Cargo[] = [];
   inputValue: string = '';
   autoridades: Autoridad[] = []; 
 
@@ -30,6 +33,7 @@ export class AutoridadEditComponent implements OnInit {
     public dialogRef: MatDialogRef<AutoridadEditComponent>,
     private autoridadService: AutoridadService,
     private hospitalService : HospitalService,
+    private cargoService : CargoService,
     public dialog: MatDialog,
     private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
@@ -39,24 +43,25 @@ export class AutoridadEditComponent implements OnInit {
       nombre: ['', Validators.required],
       fechaInicio: ['', Validators.required],
       fechaFinal: [''],
-      esActual: ['', Validators.required],
       esRegional: ['', Validators.required],
-      idEfector: ['', Validators.required]
+      idEfector: ['', Validators.required],
+      idCargo: ['']
     });
 
     this.listEfectores();
+    this.listCargos();
     this.loadAutoridades();
 
     if (data) {
-      this.inputValue = `${data.persona.apellido} ${data.persona.nombre}`; // Guarda el nombre completo
+      this.inputValue = `${data.persona!.apellido} ${data.persona!.nombre}`; // Guarda el nombre completo
       this.autoridadForm.patchValue({
-          idPersona: data.persona.id, // Solo guardamos el id
+          idPersona: data.persona!.id, // Solo guardamos el id
           nombre: data.nombre,
           fechaInicio: moment(data.fechaInicio), // Convertir a objeto Moment
           fechaFinal: data.fechaFinal ? moment(data.fechaFinal) : null, // Convertir a objeto Moment o null
-          esActual: data.esActual,
           esRegional: data.esRegional,
-          idEfector: data.efector // Aquí se asigna el objeto completo
+          idEfector: data.efector, // Aquí se asigna el objeto completo
+          idCargo: data.cargo
       });
   }
 
@@ -79,6 +84,16 @@ export class AutoridadEditComponent implements OnInit {
       console.log(error);
     });
   }
+
+  listCargos(): void {
+    this.cargoService.list().subscribe(data => {
+      console.log('Lista de cargos:', data);
+      this.cargos = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
 
   loadAutoridades(): void {
     this.autoridadService.list().subscribe(data => {
@@ -122,7 +137,7 @@ export class AutoridadEditComponent implements OnInit {
   
       if (!this.data || !this.data.id) {
         const existing = this.autoridades.find(a => 
-          a.persona.id === autoridadData.idPersona && a.activo === true
+          a.persona!.id === autoridadData.idPersona && a.activo === true
         );
   
         if (existing) {
@@ -138,11 +153,12 @@ export class AutoridadEditComponent implements OnInit {
       const autoridadDto = new AutoridadDto(
         autoridadData.nombre,
         autoridadData.fechaInicio,
-        autoridadData.fechaFinal,
-        autoridadData.esActual,
+        autoridadData.fechaFinal || null,
         autoridadData.esRegional,
+        true,
         autoridadData.idEfector.id,
-        autoridadData.idPersona
+        autoridadData.idPersona,
+        autoridadData.idCargo.id,
       );
   
       console.log('Datos a enviar:', autoridadDto);
@@ -170,6 +186,10 @@ export class AutoridadEditComponent implements OnInit {
   }
 
   compareEfector(p1: Efector, p2: Efector): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  compareCargo(p1: Cargo, p2: Cargo): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 

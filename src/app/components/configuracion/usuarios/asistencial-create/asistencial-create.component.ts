@@ -201,7 +201,7 @@ export class AsistencialCreateComponent implements OnInit {
 
   isPanel1Valid(): boolean {
     // Verifica si los campos obligatorios en el panel 1 son válidos
-    const panel1Controls = ['nombre', 'apellido', 'dni', 'domicilio', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'tiposGuardias', 'email'];
+    const panel1Controls = ['nombre', 'apellido', 'dni', 'domicilio', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'email'];
     return panel1Controls.every(control => this.asistencialForm.get(control)?.valid);
   }
 

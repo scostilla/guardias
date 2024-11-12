@@ -186,21 +186,75 @@ export class LegajoCreateComponent implements OnInit {
         // Log para ver los legajos activos que se filtraron
         console.log('Legajos activos para la persona con ID:', personaId, legajosActivos);
 
-        // Verificamos si la persona ya tiene 2 legajos activos
-        if (legajosActivos.length >= 2) {
-          // Si ya tiene 2 legajos activos, mostramos un mensaje y redirigimos
-          this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga.', 'Limite de legajos alcanzado', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          // Redirigir a otra página o deshabilitar el formulario
-          this.location.back();
-        } else {
-          // Si no tiene 2 legajos activos, podemos proceder a cargar el formulario
-          this.legajoForm.get('idPersona')?.setValidators([Validators.required]); // Vuelve a establecer la validación si es necesario
-          this.legajoForm.get('idPersona')?.updateValueAndValidity(); // Asegúrate de que la validación sea evaluada
-        }
+        // Verificar si la persona es una autoridad
+        this.legajoService.verificarAutoridad(personaId).subscribe(response => {
+          console.log('Respuesta de verificarAutoridad:', response);
+          
+          const esAutoridad = response.mensaje === 'Este asistencial es una autoridad';
+          
+          if (esAutoridad) {
+            // Si la persona es autoridad, verificar si tiene 2 legajos activos
+            if (legajosActivos.length >= 2) {
+              // Si ya tiene 2 legajos activos, mostramos un mensaje y redirigimos
+              this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga.', 'Limite de legajos alcanzado', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+              this.location.back();  // Redirigir a la página anterior
+            } else if (legajosActivos.length === 1) {
+              // Si tiene un solo legajo activo, verificar el valor de 'esAutoridad' del legajo
+              const legajoActivo = legajosActivos[0];
+              const esAutoridadActivo = legajoActivo.esAutoridad; // Suposición: 'esAutoridad' es un campo booleano en el legajo
+
+              // Establecer el valor contrario de esAutoridad para el nuevo legajo
+              if (esAutoridadActivo) {
+                // Si el legajo activo tiene esAutoridad = true, solo se permite esAutoridad = false en el nuevo legajo
+                this.legajoForm.get('esAutoridad')?.setValue(false);
+              } else {
+                // Si el legajo activo tiene esAutoridad = false, solo se permite esAutoridad = true en el nuevo legajo
+                this.legajoForm.get('esAutoridad')?.setValue(true);
+              }
+
+              // Habilitar el campo esAutoridad para que el usuario pueda ver el cambio
+              this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar campo porque ya tiene un legajo activo
+              
+            } else {
+              // Si no tiene legajos activos, podemos permitir elegir 'esAutoridad' como true o false
+              this.legajoForm.get('esAutoridad')?.setValue(true);  // Establecer por defecto como true
+              this.legajoForm.get('esAutoridad')?.enable();  // Habilitar el campo esAutoridad para elección
+              this.toastr.info('La persona está registrada como autoridad.', 'Información sobre carga', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+            }
+          } else {
+            // Si no es autoridad, verificar si tiene 1 legajo activo
+            if (legajosActivos.length >= 1) {
+              // Si ya tiene un legajo activo, mostramos un mensaje y redirigimos
+              this.toastr.warning('La persona ya tiene un legajo activo. No se puede agregar más legajos.', 'Limite de legajos alcanzado', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+              this.location.back();  // Redirigir a la página anterior
+            } else {
+              // Si no tiene legajos activos, podemos proceder a cargar el formulario
+              this.legajoForm.get('idPersona')?.setValidators([Validators.required]); // Vuelve a establecer la validación si es necesario
+              this.legajoForm.get('idPersona')?.updateValueAndValidity(); // Asegúrate de que la validación sea evaluada
+              this.toastr.info('La persona no está registrada como autoridad, solo puedes cargar un legajo general.', 'Información sobre carga', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+              this.legajoForm.get('esAutoridad')?.setValue(false);  // Asegurar que esté en false
+              this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar el campo esAutoridad
+            }
+          }
+        }, error => {
+          console.error('Error al verificar si la persona es autoridad:', error);
+        });
       }, error => {
         console.error('Error al obtener los legajos:', error);
         // Aquí podrías manejar el error si es necesario
@@ -209,7 +263,7 @@ export class LegajoCreateComponent implements OnInit {
       console.error('ID de persona no disponible o no es válido');
     }
   }
-  
+
   // Llamar a los métodos para cargar los datos iniciales
     this.listUdos();
     this.listCargos();
@@ -525,12 +579,12 @@ dateNotInFuture(control: any) {
     }
 
     if (this.step === 1 && !this.isPanel2Valid()) {
-      this.toastr.warning('Complete todos los campos obligatorios en situación de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
 
     if (this.step === 2 && !this.isPanel3Valid()) {
-      this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      this.toastr.warning('Complete todos los campos obligatorios en situación de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
 
@@ -547,7 +601,7 @@ dateNotInFuture(control: any) {
   }
 
   isPanel2Valid(): boolean {
-    const panel2Controls = ['esAutoridad', 'fechaInicio', 'tipoGuardias'];
+    const panel2Controls = [/*'esAutoridad', */'fechaInicio', 'tipoGuardias'];
     return panel2Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 

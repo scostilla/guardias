@@ -6,7 +6,7 @@
         <tbody>
           <tr class="bg-light">
             <th scope="row">Apellido y nombre</th>
-            <td>{{autoridad.persona.apellido}}, {{autoridad.persona.nombre}}</td>
+            <td>{{autoridad.persona!.apellido}}, {{autoridad.persona!.nombre}}</td>
           </tr>    
           <tr>
             <th scope="row">Cargo</th>
@@ -21,16 +21,16 @@
             <td>{{autoridad.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>    
           <tr>
-            <th scope="row">Actual</th>
-            <td>{{autoridad.esActual ? 'Si' : 'No'}}</td>
-          </tr>
-          <tr>
             <th scope="row">Regional</th>
             <td>{{autoridad.esRegional ? 'Si' : 'No'}}</td>
           </tr>
           <tr>
             <th scope="row">Efector</th>
-            <td>{{autoridad.efector.nombre}}</td>
+            <td>{{autoridad.efector!.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Cargo</th>
+            <td>{{autoridad.cargo!.nombre}}</td>
           </tr>
         </tbody>
       </table>

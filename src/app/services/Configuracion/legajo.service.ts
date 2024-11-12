@@ -51,7 +51,7 @@ public delete(id:number): Observable<any> {
 
 // Método para verificar si el asistencial es autoridad
 public verificarAutoridad(id: number): Observable<any> {
-  return this.httpClient.get<any>(`http://localhost:8080/esAutoridad/${id}`);
+  return this.httpClient.get<any>(`http://localhost:8080/legajo/esAutoridad/${id}`);
 }
 
 }
