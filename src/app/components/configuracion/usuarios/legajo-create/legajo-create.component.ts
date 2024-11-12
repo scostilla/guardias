@@ -77,6 +77,7 @@ export class LegajoCreateComponent implements OnInit {
   minFechaFinal!: Date;
   isAsistencial: boolean = false;
   isSituacionRevistaEnabled = false;
+  isAutoridad: boolean = false;
 
 
   constructor(
@@ -114,7 +115,7 @@ export class LegajoCreateComponent implements OnInit {
       matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
       esAutoridad: ['', Validators.required],
       fechaInicio: ['', [Validators.required, this.dateNotInFuture]],
-      fechaFinal: [''],
+      fechaFinal: [{ value: '', disabled: true }],
       tipoGuardias: ['', Validators.required],
     });
 
@@ -140,6 +141,11 @@ export class LegajoCreateComponent implements OnInit {
         this.legajoForm.get('fechaFinal')?.setValue('');
       }
     });
+
+        // Escuchar cambios en 'esAutoridad'
+        this.legajoForm.get('esAutoridad')?.valueChanges.subscribe(isAutoridad => {
+          this.toggleTipoGuardia(isAutoridad);
+        });
 
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
@@ -191,6 +197,7 @@ export class LegajoCreateComponent implements OnInit {
           console.log('Respuesta de verificarAutoridad:', response);
           
           const esAutoridad = response.mensaje === 'Este asistencial es una autoridad';
+          this.isAutoridad = esAutoridad;
           
           if (esAutoridad) {
             // Si la persona es autoridad, verificar si tiene 2 legajos activos
@@ -220,7 +227,7 @@ export class LegajoCreateComponent implements OnInit {
               this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar campo porque ya tiene un legajo activo
               
               // Informar al usuario que ya posee un legajo y que solo puede cargar el tipo contrario
-              this.toastr.info('La persona ya posee un legajo activo. Solo podrás cargar el tipo de legajo no existente.', 'Información sobre carga', {
+              this.toastr.info('La persona posee un legajo activo. Podrás cargar un tipo de legajo no existente.', 'Información', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
@@ -230,7 +237,7 @@ export class LegajoCreateComponent implements OnInit {
               // Si no tiene legajos activos, podemos permitir elegir 'esAutoridad' como true o false
               this.legajoForm.get('esAutoridad')?.setValue(true);  // Establecer por defecto como true
               this.legajoForm.get('esAutoridad')?.enable();  // Habilitar el campo esAutoridad para elección
-              this.toastr.info('La persona está registrada como autoridad.', 'Información sobre carga', {
+              this.toastr.info('La persona está registrada como autoridad.', 'Información', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
@@ -240,7 +247,7 @@ export class LegajoCreateComponent implements OnInit {
             // Si no es autoridad, verificar si tiene 1 legajo activo
             if (legajosActivos.length >= 1) {
               // Si ya tiene un legajo activo, mostramos un mensaje y redirigimos
-              this.toastr.warning('La persona ya tiene un legajo activo. No se pueden agregar más legajos.', 'Limite de legajos alcanzado', {
+              this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga', 'Limite de legajos alcanzado', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
@@ -250,7 +257,7 @@ export class LegajoCreateComponent implements OnInit {
               // Si no tiene legajos activos, podemos proceder a cargar el formulario
               this.legajoForm.get('idPersona')?.setValidators([Validators.required]); // Vuelve a establecer la validación si es necesario
               this.legajoForm.get('idPersona')?.updateValueAndValidity(); // Asegúrate de que la validación sea evaluada
-              this.toastr.info('La persona no está registrada como autoridad, solo puedes cargar un legajo general.', 'Información sobre carga', {
+              this.toastr.info('La persona no está registrada como autoridad, solo puedes cargar un legajo general.', 'Información', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
@@ -321,6 +328,22 @@ dateNotInFuture(control: any) {
       const selectedDate = event.value;
       console.log('Fecha seleccionada:', selectedDate);
     }
+    
+    toggleTipoGuardia(isAutoridad: boolean): void {
+      const tipoGuardiasControl = this.legajoForm.get('tipoGuardias');
+      
+      if (isAutoridad) {
+        // Si es Autoridad, ocultar el campo y desmarcar como obligatorio
+        tipoGuardiasControl?.setValue([]);  // Cambiar a un array vacío en lugar de null
+        tipoGuardiasControl?.clearValidators();  // Elimina la validación
+        tipoGuardiasControl?.updateValueAndValidity();
+      } else {
+        // Si no es Autoridad, mostrar el campo y hacer obligatorio
+        tipoGuardiasControl?.setValidators([Validators.required]);  // Hacer obligatorio
+        tipoGuardiasControl?.updateValueAndValidity();
+      }
+    }
+      
     
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */

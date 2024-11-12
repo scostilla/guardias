@@ -111,24 +111,27 @@
                     
             <mat-form-field appearance="fill">
               <mat-label>Fecha Fin</mat-label>
-              <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final" [disabled]="!legajoForm.get('fechaFinal')?.enabled">
+              <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final">
               <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
               <mat-datepicker #pickerFinal></mat-datepicker>
             </mat-form-field>
 
-            <mat-form-field appearance="fill" class="form-field">
+            <mat-form-field appearance="fill" class="form-field" *ngIf="!legajoForm.get('esAutoridad')?.value">
               <mat-label>Tipo guardia</mat-label>
               <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
-                <!-- Mostrar el mensaje si 4 o 5 están seleccionados -->
-                <div *ngIf="legajoForm.get('tipoGuardias')?.value.includes(4) || legajoForm.get('tipoGuardias')?.value.includes(5)">
+                <!-- Usar ng-container para la lógica de filtro de tipo guardia -->
+                <ng-container *ngFor="let tipoGuardia of tipoGuardias">
+                  <mat-option *ngIf="isAutoridad ? !(tipoGuardia.id === 1 || tipoGuardia.id === 2) : true" [value]="tipoGuardia.id">
+                    {{ tipoGuardia.nombre }}
+                  </mat-option>
+                </ng-container>
+                <div *ngIf="legajoForm.get('tipoGuardias')?.value?.includes(4) || legajoForm.get('tipoGuardias')?.value?.includes(5)">
                   <p class="simple-message">La opción seleccionada no puede combinarse con las demás guardias.</p>
                 </div>
-            
-                <mat-option *ngFor="let tipoGuardias of tipoGuardias" [value]="tipoGuardias.id">{{ tipoGuardias.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('tipoGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
             </mat-form-field>
-                      
+
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
               <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
@@ -156,33 +159,34 @@
       
             <mat-form-field appearance="fill">
               <mat-label>Categoría</mat-label>
-              <mat-select formControlName="categoria" [compareWith]="compareFn">
+              <mat-select formControlName="categoria">
                 <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('categoria')?.errors?.['required']">La categoría es requerida.</mat-error>
             </mat-form-field>
-      
-            <mat-form-field appearance="fill">
-              <mat-label>Adicional</mat-label>
-              <mat-select formControlName="adicional" [compareWith]="compareFn">
-                <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
-            </mat-form-field>
-      
+            
             <mat-form-field appearance="fill">
               <mat-label>Carga Horaria</mat-label>
-              <mat-select formControlName="cargaHoraria" [compareWith]="compareFn">
+              <mat-select formControlName="cargaHoraria">
                 <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria.id">{{ cargaHoraria.cantidad
                   }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('cargaHoraria')?.errors?.['required']">La carga horaria es
                 requerida.</mat-error>
             </mat-form-field>
+          
+            <mat-form-field appearance="fill">
+              <mat-label>Adicional</mat-label>
+              <mat-select formControlName="adicional">
+                <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
+            </mat-form-field>
+
       
             <mat-form-field appearance="fill">
               <mat-label>Tipo de revista</mat-label>
-              <mat-select formControlName="tipoRevista" [compareWith]="compareFn">
+              <mat-select formControlName="tipoRevista">
                 <mat-option *ngFor="let tipoRevista of tiposRevistas" [value]="tipoRevista.id">{{ tipoRevista.nombre
                   }}</mat-option>
               </mat-select>
@@ -192,7 +196,7 @@
 
             <mat-form-field appearance="fill">
               <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
-              <mat-select formControlName="udo" [compareWith]="compareFn">
+              <mat-select formControlName="udo">
                 <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
