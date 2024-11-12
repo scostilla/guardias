@@ -49,4 +49,9 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.legajosURL + `delete/${id}`, {});
 }
 
+// Método para verificar si el asistencial es autoridad
+public verificarAutoridad(id: number): Observable<any> {
+  return this.httpClient.get<any>(`http://localhost:8080/esAutoridad/${id}`);
+}
+
 }

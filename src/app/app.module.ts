@@ -247,6 +247,8 @@ import { RegistroActividadesEgresoComponent } from './components/actividades/reg
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
 import { PermisosComponent } from './components/configuracion/permisos/permisos.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
+import { LegajoCreateNoasistencialComponent } from './components/configuracion/usuarios/legajo-create-noasistencial/legajo-create-noasistencial.component';
+import { LegajoEditNoasistencialComponent } from './components/configuracion/usuarios/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 
 @NgModule({
   declarations: [
@@ -443,6 +445,8 @@ import { HomeAutoridadComponent } from './components/home-autoridad/home-autorid
     RegistroActividadesIngresoComponent,
     PermisosComponent,
     HomeAutoridadComponent,
+    LegajoCreateNoasistencialComponent,
+    LegajoEditNoasistencialComponent,
     
   ],
 

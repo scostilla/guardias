@@ -67,7 +67,6 @@ export class LegajoCreateComponent implements OnInit {
   /* Form de revista */
   agrupaciones: Agrup[] = [
     { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
-    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
     { value: 'PROFESIONALES', viewValue: 'Profesionales' },
     { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
     { value: 'TECNICOS', viewValue: 'Técnicos' },
@@ -120,25 +119,28 @@ export class LegajoCreateComponent implements OnInit {
     });
 
     this.maxDate = new Date();
+  
     // Deshabilitar fechaFinal hasta que se seleccione fechaInicio
     this.legajoForm.get('fechaFinal')?.disable();
   
     // Habilitar fechaFinal cuando fechaInicio tiene un valor
     this.legajoForm.get('fechaInicio')?.valueChanges.subscribe(fechaInicio => {
       if (fechaInicio) {
-        // Habilitar fechaFinal
         this.legajoForm.get('fechaFinal')?.enable();
-  
-        // Establecer el valor mínimo de fechaFinal como el día siguiente a fechaInicio
+    
+        // valor mínimo de fechaFinal, día siguiente a fechaInicio
         const fechaInicioDate = new Date(fechaInicio);
-        fechaInicioDate.setDate(fechaInicioDate.getDate() + 1); // Aumentar un día a la fechaInicio
-        this.minFechaFinal = fechaInicioDate; // Asignamos la fecha de "minFechaFinal"
+        fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+        this.minFechaFinal = fechaInicioDate;
+    
+        // Reseteo fechaFinal en caso se modifique fechaInicio
+        this.legajoForm.get('fechaFinal')?.setValue('');
       } else {
-        // Si no hay fechaInicio, deshabilitar fechaFinal
         this.legajoForm.get('fechaFinal')?.disable();
+        this.legajoForm.get('fechaFinal')?.setValue('');
       }
     });
-    
+
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {

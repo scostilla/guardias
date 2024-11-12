@@ -70,6 +70,8 @@ import { LegajoDetailComponent } from './components/configuracion/usuarios/legaj
 import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
 import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
 import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
+import { LegajoCreateNoasistencialComponent } from './components/configuracion/usuarios/legajo-create-noasistencial/legajo-create-noasistencial.component';
+import { LegajoEditNoasistencialComponent } from './components/configuracion/usuarios/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
@@ -292,6 +294,9 @@ const routes: Routes = [
   {path: 'legajo-edit/:id', component:LegajoEditComponent},
   {path: 'legajo-edit', component:LegajoEditComponent},
   {path: 'legajo-no-asistencial', component:LegajoNoAsistencialComponent},
+  {path: 'legajo-create-noasistencial', component: LegajoCreateNoasistencialComponent},
+  {path: 'legajo-edit-noasistencial/:id', component:LegajoEditNoasistencialComponent},
+  {path: 'legajo-edit-noasistencial', component:LegajoEditNoasistencialComponent},
   {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'personal-dh', component:PersonalDhComponent},
