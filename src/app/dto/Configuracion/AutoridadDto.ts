@@ -1,5 +1,4 @@
 export class AutoridadDto {
-    nombre: string;
     fechaInicio: Date;
     fechaFinal: Date | null;
     esRegional: boolean;
@@ -9,7 +8,6 @@ export class AutoridadDto {
     idCargo: number | null;
 
     constructor(
-        nombre: string,
         fechaInicio: Date,
         fechaFinal: Date | null,
         esRegional: boolean,
@@ -18,7 +16,6 @@ export class AutoridadDto {
         idPersona: number,
         idCargo: number | null
     ) { 
-        this.nombre=nombre;
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
         this.esRegional = esRegional;

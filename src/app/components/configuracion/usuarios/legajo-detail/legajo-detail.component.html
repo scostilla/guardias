@@ -9,16 +9,16 @@
             <td>{{legajo.persona?.apellido}}, {{legajo.persona?.nombre}}</td>
           </tr>    
           <tr>
-            <th scope="row">Es autoridad</th>
-            <td>{{legajo.esAutoridad ? 'Si' : 'No'}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Fecha final</th>
-            <td>{{legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+            <th scope="row">Tipo de legajo</th>
+            <td>{{legajo.esAutoridad ? 'Autoridad' : 'General'}}</td>
           </tr>
           <tr>
             <th scope="row">Fecha inicio</th>
             <td>{{legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha final</th>
+            <td>{{legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>
           <tr>
             <th scope="row">Matricula Nacional</th>

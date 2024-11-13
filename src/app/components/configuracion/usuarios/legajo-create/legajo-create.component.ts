@@ -214,7 +214,7 @@ export class LegajoCreateComponent implements OnInit {
               // Si tiene un solo legajo activo, verificar el valor de 'esAutoridad' del legajo
               const legajoActivo = legajosActivos[0];
               const esAutoridadActivo = legajoActivo.esAutoridad; // Suposición: 'esAutoridad' es un campo booleano en el legajo
-
+        
               // Establecer el valor contrario de esAutoridad para el nuevo legajo
               if (esAutoridadActivo) {
                 // Si el legajo activo tiene esAutoridad = true, solo se permite esAutoridad = false en el nuevo legajo
@@ -223,7 +223,7 @@ export class LegajoCreateComponent implements OnInit {
                 // Si el legajo activo tiene esAutoridad = false, solo se permite esAutoridad = true en el nuevo legajo
                 this.legajoForm.get('esAutoridad')?.setValue(true);
               }
-
+        
               // Habilitar el campo esAutoridad para que el usuario pueda ver el cambio
               this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar campo porque ya tiene un legajo activo
               
@@ -244,6 +244,22 @@ export class LegajoCreateComponent implements OnInit {
                 progressBar: true
               });
             }
+        
+            // Nueva verificación: Si la persona es autoridad, verificar los legajos activos
+            const legajoConTipoGuardiaCargo = legajosActivos.find(legajo => 
+              !legajo.esAutoridad && 
+              legajo.tipoGuardias.some(tipo => tipo.id === 1 || tipo.id === 2)
+            );
+        
+            if (legajoConTipoGuardiaCargo) {
+              this.toastr.warning('Para poder cargar un legajo de autoridad, debes dar de baja el legajo existente con tipo guardia de cargo y agrupacion.', 'Acción Requerida', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+              this.location.back();  // Redirigir a la página anterior
+            }
+        
           } else {
             // Si no es autoridad, verificar si tiene 1 legajo activo
             if (legajosActivos.length >= 1) {
@@ -539,7 +555,6 @@ updateCargaHorarias(categoriaNombre: string): void {
     });
   }
 
-  // Método para cargar las cargas horarias (ya está definido en tu código)
   listCargaHoraria(): void {
     this.cargaHorariaService.list().subscribe(data => {
       this.cargasHorarias = data;
@@ -637,6 +652,8 @@ updateCargaHorarias(categoriaNombre: string): void {
   if (legajoData.efectores && !Array.isArray(legajoData.efectores)) {
     legajoData.efectores = [legajoData.efectores];
   }
+
+  legajoData.esAutoridad = this.isAutoridad;
 
     const legajoDto = new LegajoDto(
       legajoData.fechaInicio,

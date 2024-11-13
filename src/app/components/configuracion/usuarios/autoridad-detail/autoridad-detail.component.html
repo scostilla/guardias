@@ -9,9 +9,17 @@
             <td>{{autoridad.persona!.apellido}}, {{autoridad.persona!.nombre}}</td>
           </tr>    
           <tr>
+            <th scope="row">Efector</th>
+            <td>{{autoridad.efector!.nombre}}</td>
+          </tr>
+          <tr>
             <th scope="row">Cargo</th>
-            <td>{{autoridad.nombre}}</td>
-          </tr>    
+            <td>{{autoridad.cargo!.nombre}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Regional</th>
+            <td>{{autoridad.esRegional ? 'Si' : 'No'}}</td>
+          </tr>
           <tr>
             <th scope="row">Fecha Inicio</th>
             <td>{{autoridad.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
@@ -20,18 +28,6 @@
             <th scope="row">Fecha Final</th>
             <td>{{autoridad.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>    
-          <tr>
-            <th scope="row">Regional</th>
-            <td>{{autoridad.esRegional ? 'Si' : 'No'}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Efector</th>
-            <td>{{autoridad.efector!.nombre}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Cargo</th>
-            <td>{{autoridad.cargo!.nombre}}</td>
-          </tr>
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">

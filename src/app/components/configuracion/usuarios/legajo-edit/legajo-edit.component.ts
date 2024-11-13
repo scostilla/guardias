@@ -69,6 +69,8 @@ export class LegajoEditComponent implements OnInit {
   noEspecialidadesMessage: string = '';
   isSituacionRevistaEnabled = false;
   isUpdatingTipoGuardias: boolean = false;
+  filteredCargasHorarias: CargaHoraria[] = [];
+
 
   agrupaciones: Agrup[] = [
     { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
@@ -223,12 +225,95 @@ export class LegajoEditComponent implements OnInit {
         this.isUpdatingTipoGuardias = false;
       }
     });
+
+      // Inicialmente deshabilita el campo cargaHoraria
+  this.legajoForm.get('cargaHoraria')?.disable();
+
+
+    // Suscribirse a los cambios en el campo categoria
+    this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
+      this.legajoForm.get('cargaHoraria')?.enable();
+      this.onCategoriaChange(); // Llama a la función para actualizar cargaHoraria cuando cambie la categoría
+    });
+  
+    this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe(() => {
+      this.onCargaHorariaChange(); // Llama a la función para actualizar la visibilidad del campo adicional cuando cambie cargaHoraria
+    });
+  
+
+    this.legajoForm.get('esAutoridad')?.disable();
   }
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
   }
 
+// Función llamada cuando cambia la categoría seleccionada
+onCategoriaChange(): void {
+  const categoriaId = this.legajoForm.get('categoria')?.value;
+  const categoriaSeleccionada = this.categorias.find(categoria => categoria.id === categoriaId);
+
+  // Si no se selecciona ninguna categoría, deshabilitamos cargaHoraria
+  if (!categoriaSeleccionada) {
+    this.legajoForm.get('cargaHoraria')?.disable(); // Deshabilitar cargaHoraria
+    this.legajoForm.get('cargaHoraria')?.setValue(null); // Limpiar el valor de cargaHoraria
+    this.filteredCargasHorarias = []; // Limpiamos las opciones de cargaHoraria
+
+    // Deshabilitar adicional y limpiarlo
+    this.legajoForm.get('adicional')?.disable();
+    this.legajoForm.get('adicional')?.setValue(null);
+
+    // Limpiar validación en adicional
+    this.legajoForm.get('adicional')?.clearValidators();
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+  } else {
+    this.legajoForm.get('cargaHoraria')?.enable(); // Habilitar cargaHoraria
+    this.updateCargaHorarias(categoriaSeleccionada.nombre); // Actualizar las opciones de cargaHoraria
+
+    // Llamar a onCargaHorariaChange para verificar el estado de adicional
+    this.onCargaHorariaChange();
+  }
+}
+
+// Función llamada cuando cambia la carga horaria seleccionada
+onCargaHorariaChange(): void {
+  const cargaHorariaId = this.legajoForm.get('cargaHoraria')?.value;
+
+  // Buscar la carga horaria seleccionada en el array de cargasHorarias
+  const cargaHorariaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaHorariaId);
+
+  // Verificar si la cantidad de horas es 40
+  if (cargaHorariaSeleccionada?.cantidad === 40) {
+    // Habilitar el campo 'adicional' si la carga horaria es 40
+    this.legajoForm.get('adicional')?.enable();
+
+    // Hacer obligatorio el campo adicional
+    this.legajoForm.get('adicional')?.setValidators([Validators.required]);
+  } else {
+    // Deshabilitar el campo 'adicional' si la carga horaria no es 40
+    this.legajoForm.get('adicional')?.disable();
+    
+    // Resetear el valor de 'adicional' a null si se deshabilita
+    this.legajoForm.get('adicional')?.setValue(null);
+
+    // Eliminar validación obligatoria
+    this.legajoForm.get('adicional')?.clearValidators();
+  }
+
+  // Actualizar la validez de 'adicional' después de modificar los validadores
+  this.legajoForm.get('adicional')?.updateValueAndValidity();
+}
+
+// Función para actualizar las opciones de cargaHoraria según la categoría seleccionada
+updateCargaHorarias(categoriaNombre: string): void {
+  if (categoriaNombre === "24 HS") {
+    // Si la categoría es "24 HS", solo mostramos la opción de carga horaria 24
+    this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+  } else {
+    // Si se selecciona cualquier otra categoría, mostramos todas las opciones menos 24
+    this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+  }
+}
 
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
@@ -447,6 +532,8 @@ export class LegajoEditComponent implements OnInit {
 
   createLegajoDtoAndUpdate(legajoData: any, revistaId: number | null): void {
 
+    legajoData.esAutoridad = this.legajoForm.get('esAutoridad')?.value;
+
     const legajoDto = new LegajoDto(
       legajoData.fechaInicio,
       legajoData.esAutoridad,
@@ -454,7 +541,7 @@ export class LegajoEditComponent implements OnInit {
       legajoData.matriculaNacional,
       legajoData.matriculaProvincial,
       this.personId,
-      legajoData.profesion.id,
+      legajoData.profesion,
       legajoData.fechaFinal,                
       null, // idSuspencion
       revistaId,
@@ -505,12 +592,12 @@ export class LegajoEditComponent implements OnInit {
     }
 
     if (this.step === 1 && !this.isPanel2Valid()) {
-      this.toastr.warning('Complete todos los campos obligatorios en situación de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
 
     if (this.step === 2 && !this.isPanel3Valid()) {
-      this.toastr.warning('Complete todos los campos obligatorios en datos del legajo.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
+      this.toastr.warning('Complete todos los campos obligatorios en situacion de revista.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
       return;
     }
 
@@ -527,12 +614,12 @@ export class LegajoEditComponent implements OnInit {
   }
 
   isPanel2Valid(): boolean {
-    const panel2Controls = ['esAutoridad', 'fechaInicio', 'tipoGuardias'];
+    const panel2Controls = [/*'esAutoridad', */'fechaInicio', 'tipoGuardias'];
     return panel2Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
   isPanel3Valid(): boolean {
-    const panel3Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo', 'efectores'];
+    const panel3Controls = ['agrupacion', 'categoria',/* 'adicional',*/ 'cargaHoraria', 'tipoRevista', 'udo', 'efectores'];
     return panel3Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 

@@ -40,7 +40,6 @@ export class AutoridadEditComponent implements OnInit {
   ){
     this.autoridadForm = this.fb.group({
       idPersona: ['', Validators.required],
-      nombre: ['', Validators.required],
       fechaInicio: ['', Validators.required],
       fechaFinal: [''],
       esRegional: ['', Validators.required],
@@ -56,7 +55,6 @@ export class AutoridadEditComponent implements OnInit {
       this.inputValue = `${data.persona!.apellido} ${data.persona!.nombre}`; // Guarda el nombre completo
       this.autoridadForm.patchValue({
           idPersona: data.persona!.id, // Solo guardamos el id
-          nombre: data.nombre,
           fechaInicio: moment(data.fechaInicio), // Convertir a objeto Moment
           fechaFinal: data.fechaFinal ? moment(data.fechaFinal) : null, // Convertir a objeto Moment o null
           esRegional: data.esRegional,
@@ -151,7 +149,6 @@ export class AutoridadEditComponent implements OnInit {
       }
   
       const autoridadDto = new AutoridadDto(
-        autoridadData.nombre,
         autoridadData.fechaInicio,
         autoridadData.fechaFinal || null,
         autoridadData.esRegional,

@@ -15,9 +15,11 @@
         </mat-form-field>
         
         <mat-form-field appearance="fill">
-            <mat-label>Cargo asignado</mat-label>
-            <input matInput formControlName="nombre">
-            <mat-error *ngIf="autoridadForm.get('nombre')?.errors?.['required']">El nombre del cargo es requerido.</mat-error>
+            <mat-label>Cargo</mat-label>
+            <mat-select formControlName="idCargo" [compareWith]="compareCargo">
+                <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="autoridadForm.get('idCargo')?.errors?.['required']">El cargo es requerido.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
@@ -26,14 +28,6 @@
                 <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre }}</mat-option>
             </mat-select>
             <mat-error *ngIf="autoridadForm.get('idEfector')?.errors?.['required']">El efector es requerida.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Tipo de cargo</mat-label>
-            <mat-select formControlName="idCargo" [compareWith]="compareCargo">
-                <mat-option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo.nombre }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="autoridadForm.get('idCargo')?.errors?.['required']">El efector es requerida.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">

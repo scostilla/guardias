@@ -23,7 +23,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AutoridadDetailComponent>;
-  displayedColumns: string[] = ['persona', 'nombre', 'fechaInicio', 'efector', 'acciones'];
+  displayedColumns: string[] = ['persona', 'cargo', 'fechaInicio', 'efector', 'acciones'];
   dataSource!: MatTableDataSource<Autoridad>;
   suscription!: Subscription;
 
@@ -71,7 +71,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.dataSource.filterPredicate = (data: Autoridad, filter: string) => {
-      return this.accentFilter(data.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
+      return this.accentFilter(data.cargo!.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
        this.accentFilter(data.persona!.nombre.toLowerCase()).includes(this.accentFilter(filter)) ||
        this.accentFilter(data.persona!.apellido.toLowerCase()).includes(this.accentFilter(filter)) ||
        this.accentFilter(data.efector!.nombre.toLowerCase()).includes(this.accentFilter(filter));
