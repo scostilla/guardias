@@ -226,9 +226,8 @@ export class LegajoEditComponent implements OnInit {
       }
     });
 
-      // Inicialmente deshabilita el campo cargaHoraria
-  this.legajoForm.get('cargaHoraria')?.disable();
-
+    this.legajoForm.get('cargaHoraria')?.disable();
+    this.legajoForm.get('adicional')?.disable();
 
     // Suscribirse a los cambios en el campo categoria
     this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
@@ -237,6 +236,7 @@ export class LegajoEditComponent implements OnInit {
     });
   
     this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe(() => {
+      this.legajoForm.get('adicional')?.enable();
       this.onCargaHorariaChange(); // Llama a la función para actualizar la visibilidad del campo adicional cuando cambie cargaHoraria
     });
   
@@ -450,6 +450,7 @@ updateCargaHorarias(categoriaNombre: string): void {
   listCargaHoraria(): void {
     this.cargaHorariaService.list().subscribe(data => {
       this.cargasHorarias = data;
+      this.filteredCargasHorarias = data; // Inicialmente mostramos todas las opciones
     }, error => {
       console.log(error);
     });
