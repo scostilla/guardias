@@ -168,13 +168,15 @@
             <mat-form-field appearance="fill">
               <mat-label>Carga Horaria</mat-label>
               <mat-select formControlName="cargaHoraria">
-                <mat-option *ngFor="let cargaHoraria of cargasHorarias" [value]="cargaHoraria.id">{{ cargaHoraria.cantidad
-                  }}</mat-option>
+                <mat-option *ngFor="let cargaHoraria of filteredCargasHorarias" [value]="cargaHoraria.id">
+                  {{ cargaHoraria.cantidad }}
+                </mat-option>
               </mat-select>
-              <mat-error *ngIf="legajoForm.get('cargaHoraria')?.errors?.['required']">La carga horaria es
-                requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('cargaHoraria')?.errors?.['required']">
+                La carga horaria es requerida.
+              </mat-error>
             </mat-form-field>
-          
+                                  
             <mat-form-field appearance="fill">
               <mat-label>Adicional</mat-label>
               <mat-select formControlName="adicional">

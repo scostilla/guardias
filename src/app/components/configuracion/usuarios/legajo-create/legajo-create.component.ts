@@ -78,6 +78,7 @@ export class LegajoCreateComponent implements OnInit {
   isAsistencial: boolean = false;
   isSituacionRevistaEnabled = false;
   isAutoridad: boolean = false;
+  filteredCargasHorarias: CargaHoraria[] = [];
 
 
   constructor(
@@ -286,7 +287,18 @@ export class LegajoCreateComponent implements OnInit {
     this.listCargaHoraria();
     this.listTipoRevista();
     this.listTipoGuardia();
-  
+
+    
+
+  // Suscribirse a los cambios en el campo categoria
+  this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
+    this.onCategoriaChange(); // Llama a la función para actualizar cargaHoraria cuando cambie la categoría
+  });
+
+  this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe(() => {
+    this.onCargaHorariaChange(); // Llama a la función para actualizar la visibilidad del campo adicional cuando cambie cargaHoraria
+  });
+
     // Inicialización del formulario y deshabilitar el campo de especialidades al principio
     this.legajoForm.get('especialidades')?.disable();
   
@@ -343,8 +355,74 @@ dateNotInFuture(control: any) {
         tipoGuardiasControl?.updateValueAndValidity();
       }
     }
-      
+
+// Función llamada cuando cambia la categoría seleccionada
+onCategoriaChange(): void {
+  const categoriaId = this.legajoForm.get('categoria')?.value;
+  const categoriaSeleccionada = this.categorias.find(categoria => categoria.id === categoriaId);
+
+  // Si no se selecciona ninguna categoría, deshabilitamos cargaHoraria
+  if (!categoriaSeleccionada) {
+    this.legajoForm.get('cargaHoraria')?.disable(); // Deshabilitar cargaHoraria
+    this.legajoForm.get('cargaHoraria')?.setValue(null); // Limpiar el valor de cargaHoraria
+    this.filteredCargasHorarias = []; // Limpiamos las opciones de cargaHoraria
+
+    // Deshabilitar adicional y limpiarlo
+    this.legajoForm.get('adicional')?.disable();
+    this.legajoForm.get('adicional')?.setValue(null);
+
+    // Limpiar validación en adicional
+    this.legajoForm.get('adicional')?.clearValidators();
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+  } else {
+    this.legajoForm.get('cargaHoraria')?.enable(); // Habilitar cargaHoraria
+    this.updateCargaHorarias(categoriaSeleccionada.nombre); // Actualizar las opciones de cargaHoraria
+
+    // Llamar a onCargaHorariaChange para verificar el estado de adicional
+    this.onCargaHorariaChange();
+  }
+}
+
+// Función llamada cuando cambia la carga horaria seleccionada
+onCargaHorariaChange(): void {
+  const cargaHorariaId = this.legajoForm.get('cargaHoraria')?.value;
+
+  // Buscar la carga horaria seleccionada en el array de cargasHorarias
+  const cargaHorariaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaHorariaId);
+
+  // Verificar si la cantidad de horas es 40
+  if (cargaHorariaSeleccionada?.cantidad === 40) {
+    // Habilitar el campo 'adicional' si la carga horaria es 40
+    this.legajoForm.get('adicional')?.enable();
+
+    // Hacer obligatorio el campo adicional
+    this.legajoForm.get('adicional')?.setValidators([Validators.required]);
+  } else {
+    // Deshabilitar el campo 'adicional' si la carga horaria no es 40
+    this.legajoForm.get('adicional')?.disable();
     
+    // Resetear el valor de 'adicional' a null si se deshabilita
+    this.legajoForm.get('adicional')?.setValue(null);
+
+    // Eliminar validación obligatoria
+    this.legajoForm.get('adicional')?.clearValidators();
+  }
+
+  // Actualizar la validez de 'adicional' después de modificar los validadores
+  this.legajoForm.get('adicional')?.updateValueAndValidity();
+}
+
+// Función para actualizar las opciones de cargaHoraria según la categoría seleccionada
+updateCargaHorarias(categoriaNombre: string): void {
+  if (categoriaNombre === "24 HS") {
+    // Si la categoría es "24 HS", solo mostramos la opción de carga horaria 24
+    this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+  } else {
+    // Si se selecciona cualquier otra categoría, mostramos todas las opciones menos 24
+    this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+  }
+}
+
   listUdos(): void {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
     this.hospitalService.list().subscribe(data => {
@@ -408,11 +486,12 @@ dateNotInFuture(control: any) {
       this.isSituacionRevistaEnabled = false;
       this.disableSituacionRevistaFields();
     } else {
+      // Si no se selecciona 4 o 5, habilitar "Situación de Revista"
       this.isSituacionRevistaEnabled = true;
       this.enableSituacionRevistaFields();
     }
   }
-    
+      
   disableSituacionRevistaFields(): void {
     this.legajoForm.get('agrupacion')?.disable();
     this.legajoForm.get('categoria')?.disable();
@@ -451,6 +530,7 @@ dateNotInFuture(control: any) {
     });
   }
 
+  // Método para cargar las categorías (ya está definido en tu código)
   listCategorias(): void {
     this.categoriaService.list().subscribe(data => {
       this.categorias = data;
@@ -459,17 +539,19 @@ dateNotInFuture(control: any) {
     });
   }
 
-  listAdicionales(): void {
-    this.adicionalService.list().subscribe(data => {
-      this.adicionales = data;
+  // Método para cargar las cargas horarias (ya está definido en tu código)
+  listCargaHoraria(): void {
+    this.cargaHorariaService.list().subscribe(data => {
+      this.cargasHorarias = data;
+      this.filteredCargasHorarias = data; // Inicialmente mostramos todas las opciones
     }, error => {
       console.log(error);
     });
   }
 
-  listCargaHoraria(): void {
-    this.cargaHorariaService.list().subscribe(data => {
-      this.cargasHorarias = data;
+  listAdicionales(): void {
+    this.adicionalService.list().subscribe(data => {
+      this.adicionales = data;
     }, error => {
       console.log(error);
     });
@@ -636,7 +718,7 @@ dateNotInFuture(control: any) {
   }
 
   isPanel3Valid(): boolean {
-    const panel3Controls = ['agrupacion', 'categoria', 'adicional', 'cargaHoraria', 'tipoRevista', 'udo', 'efectores'];
+    const panel3Controls = ['agrupacion', 'categoria', /*'adicional', */'cargaHoraria', 'tipoRevista', 'udo', 'efectores'];
     return panel3Controls.every(control => this.legajoForm.get(control)?.valid);
   }
 
