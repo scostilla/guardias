@@ -227,37 +227,9 @@ export class LegajoEditComponent implements OnInit {
       }
     });
 
-    if (this.initialData) {
-      const categoriaNombre = this.initialData?.revista?.categoria?.nombre;  // Obtener el nombre de la categoría
-      const cargaHorariaId = this.initialData?.revista?.cargaHoraria?.id; // Obtener el valor inicial de cargaHoraria
-      const adicionalId = this.initialData?.revista?.adicional?.id; // Obtener el valor inicial de adicional
-  
-      // Asignar los valores iniciales al formulario
-      this.legajoForm.patchValue({
-        ...this.initialData,
-        cargaHoraria: cargaHorariaId, // Asignar valor inicial a cargaHoraria
-        adicional: adicionalId // Asignar valor inicial a adicional
-      });
-  
-      // Filtrar las opciones de cargaHoraria según la categoría seleccionada
-      if (categoriaNombre === "24 HS") {
-        // Si la categoría es "24 HS", solo mostrar la opción con cantidad 24
-        this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
-      } else {
-        // Si no es "24 HS", mostrar todas las opciones excepto la de cantidad 24
-        this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
-      }
-  
-      // Asegurarse de que cargaHoraria esté habilitado
-      this.legajoForm.get('cargaHoraria')?.enable();
-  
-      // Habilitar/deshabilitar el campo adicional según cargaHoraria
-      this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe((cargaHorariaId: number | null) => {
-        // Si el valor de cargaHoraria es undefined, lo tratamos como null
-        this.updateAdicionalState(cargaHorariaId ?? null);
-      });
-    }
-  
+    // Llamar al método para configurar cargaHoraria y adicional
+    this.initializeCargaHorariaAndAdicional();
+    
     // Suscribirse a los cambios en el campo categoria
     this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
       this.onCategoriaChange(); // Llama a la función para actualizar cargaHoraria cuando cambie la categoría
@@ -289,10 +261,38 @@ export class LegajoEditComponent implements OnInit {
     this.legajoForm.get('adicional')?.updateValueAndValidity();
   }
 
+  initializeCargaHorariaAndAdicional(): void {
+    const categoriaNombre = this.initialData?.revista?.categoria?.nombre; 
+    const cargaHorariaId = this.initialData?.revista?.cargaHoraria?.id;
+    const adicionalId = this.initialData?.revista?.adicional?.id;
+  
+    // Asignar los valores iniciales al formulario
+    this.legajoForm.patchValue({
+      cargaHoraria: cargaHorariaId,
+      adicional: adicionalId
+    });
+  
+    // Filtrar las opciones de cargaHoraria según la categoría seleccionada
+    if (categoriaNombre === "24 HS") {
+      // Si la categoría es "24 HS", solo mostrar la opción con cantidad 24
+      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+    } else {
+      // Si no es "24 HS", mostrar todas las opciones excepto la de cantidad 24
+      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+    }
+  
+    // Asegurarse de que cargaHoraria esté habilitado
+    this.legajoForm.get('cargaHoraria')?.enable();
+  
+    // Habilitar/deshabilitar el campo adicional según cargaHoraria
+    this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe((cargaHorariaId: number | null) => {
+      // Si el valor de cargaHoraria es undefined, lo tratamos como null
+      this.updateAdicionalState(cargaHorariaId ?? null);
+    });
+  }
 
 // Función llamada cuando cambia la categoría seleccionada
 onCategoriaChange(categoriaId?: number): void {
-  // Si se pasa un categoriaId, usamos ese valor para la lógica
   if (!categoriaId) {
     categoriaId = this.legajoForm.get('categoria')?.value;
   }
@@ -600,12 +600,13 @@ listCargaHoraria(): void {
       legajoData.fechaInicio,
       legajoData.esAutoridad,
       true,
-      legajoData.matriculaNacional,
       legajoData.matriculaProvincial,
       this.personId,
       legajoData.profesion,
-      legajoData.fechaFinal,                
+      legajoData.fechaFinal,  
+      legajoData.matriculaNacional ?? null,              
       null, // idSuspencion
+      null, //motivoBaja
       revistaId,
       legajoData.udo?.id ?? null,
       legajoData.efectores ?? null,

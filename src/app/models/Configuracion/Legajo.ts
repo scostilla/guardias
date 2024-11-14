@@ -12,8 +12,9 @@ export class Legajo {
     fechaFinal?: Date | null;
     esAutoridad: boolean;
     activo:boolean;
-    matriculaNacional: string;
+    matriculaNacional?: string | null;
     matriculaProvincial: string;
+    motivoBaja?: string | null; 
     suspencion?: Suspension | null;
     revista?:Revista | null;
     udo?: Efector | null;
@@ -27,7 +28,6 @@ export class Legajo {
         fechaInicio: Date | null,
         esAutoridad: boolean,
         activo:boolean,
-        matriculaNacional: string,
         matriculaProvincial: string,
         efectores: Efector[],
         especialidades: Especialidad[],
@@ -36,6 +36,8 @@ export class Legajo {
 
         // Parámetros opcionales
         fechaFinal?: Date | null,
+        matriculaNacional?: string | null,
+        motivoBaja?: string | null,
         suspencion?: Suspension | null,
         revista?:Revista | null,
         udo?: Efector | null,
@@ -49,6 +51,7 @@ export class Legajo {
         this.activo = activo;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
+        this.motivoBaja = motivoBaja;
         this.suspencion = suspencion;
         this.profesion = profesion;
         this.revista = revista;

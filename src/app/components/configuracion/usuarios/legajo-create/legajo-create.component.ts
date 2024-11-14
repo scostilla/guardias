@@ -665,12 +665,13 @@ updateCargaHorarias(categoriaNombre: string): void {
       legajoData.fechaInicio,
       legajoData.esAutoridad,
       true,
-      legajoData.matriculaNacional,
       legajoData.matriculaProvincial,
       legajoData.idPersona,
       legajoData.profesion,
-      legajoData.fechaFinal,                
+      legajoData.fechaFinal,
+      legajoData.matriculaNacional ?? null,                             
       null, // idSuspencion
+      null, //motivoBaja
       revistaId,
       legajoData.udo?.id ?? null,
       legajoData.efectores ?? null,
