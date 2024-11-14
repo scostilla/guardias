@@ -760,8 +760,7 @@ mat-label{
   margin-right: 5px;
 }
 
-.ribbon-autoridad {
-  background-color: #C0CF50;
+.ribbon-autoridad, .ribbon-general {
   color: #fff;
   font-size: 0.9em;
   padding: 5px 10px;
@@ -773,7 +772,7 @@ mat-label{
   margin-left: -16px;
 }
 
-.ribbon-autoridad::after {
+.ribbon-autoridad::after, .ribbon-general::after  {
   content: "";
   position: absolute;
   top: 50%;
@@ -781,11 +780,22 @@ mat-label{
   transform: translateY(-50%);
   width: 0;
   height: 100%;
-  border-left: 20px solid #C0CF50;
   border-top: 15px solid transparent;
   border-bottom: 15px solid transparent;
 }
 
+.ribbon-autoridad {
+  background-color: #C0CF50;}
+
+.ribbon-autoridad::after  {
+  border-left: 20px solid #C0CF50;}
+
+.ribbon-general {
+  background-color: #243c74;}
+  
+.ribbon-general::after  {
+  border-left: 20px solid #243c74;}
+  
 /* --referencias-- */
 .ref {
   font-weight: bold;

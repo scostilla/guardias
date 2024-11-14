@@ -26,10 +26,11 @@
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
         
         <ng-container matColumnDef="esAutoridad">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"></th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Tipo</th>
           <td mat-cell *matCellDef="let legajo">
             <!-- Si esAutoridad es true, muestra el ribbon amarillo -->
             <span *ngIf="legajo.esAutoridad" class="ribbon-autoridad">Autoridad</span>
+            <span *ngIf="!legajo.esAutoridad" class="ribbon-general">General</span>
           </td>
         </ng-container>
 
