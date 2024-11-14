@@ -496,10 +496,12 @@ updateCargaHorarias(categoriaNombre: string): void {
       } else {
         // Si los tipos de guardia son válidos, proceder con la creación de la revista
 
+      const adicional = legajoData.adicional ? legajoData.adicional : null;
+
       const revistaDto = new RevistaDto(
         legajoData.tipoRevista,
         legajoData.categoria,
-        legajoData.adicional,
+        adicional,
         legajoData.cargaHoraria,
         legajoData.agrupacion
       );
