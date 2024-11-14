@@ -172,6 +172,7 @@ export class LegajoEditComponent implements OnInit {
         tipoRevista: this.initialData.revista?.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
         tipoGuardias: this.initialData.tipoGuardias ? this.initialData.tipoGuardias.map((tipoGuardias: any) => tipoGuardias.id) : [],
       });
+
   
       // Si la profesión ya está seleccionada, filtrar las especialidades
       const profesionId = this.initialData.profesion?.id;
@@ -226,62 +227,104 @@ export class LegajoEditComponent implements OnInit {
       }
     });
 
-    this.legajoForm.get('cargaHoraria')?.disable();
-    this.legajoForm.get('adicional')?.disable();
-
+    if (this.initialData) {
+      const categoriaNombre = this.initialData?.revista?.categoria?.nombre;  // Obtener el nombre de la categoría
+      const cargaHorariaId = this.initialData?.revista?.cargaHoraria?.id; // Obtener el valor inicial de cargaHoraria
+      const adicionalId = this.initialData?.revista?.adicional?.id; // Obtener el valor inicial de adicional
+  
+      // Asignar los valores iniciales al formulario
+      this.legajoForm.patchValue({
+        ...this.initialData,
+        cargaHoraria: cargaHorariaId, // Asignar valor inicial a cargaHoraria
+        adicional: adicionalId // Asignar valor inicial a adicional
+      });
+  
+      // Filtrar las opciones de cargaHoraria según la categoría seleccionada
+      if (categoriaNombre === "24 HS") {
+        // Si la categoría es "24 HS", solo mostrar la opción con cantidad 24
+        this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+      } else {
+        // Si no es "24 HS", mostrar todas las opciones excepto la de cantidad 24
+        this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+      }
+  
+      // Asegurarse de que cargaHoraria esté habilitado
+      this.legajoForm.get('cargaHoraria')?.enable();
+  
+      // Habilitar/deshabilitar el campo adicional según cargaHoraria
+      this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe((cargaHorariaId: number | null) => {
+        // Si el valor de cargaHoraria es undefined, lo tratamos como null
+        this.updateAdicionalState(cargaHorariaId ?? null);
+      });
+    }
+  
     // Suscribirse a los cambios en el campo categoria
     this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
-      this.legajoForm.get('cargaHoraria')?.enable();
       this.onCategoriaChange(); // Llama a la función para actualizar cargaHoraria cuando cambie la categoría
     });
   
-    this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe(() => {
-      this.legajoForm.get('adicional')?.enable();
-      this.onCargaHorariaChange(); // Llama a la función para actualizar la visibilidad del campo adicional cuando cambie cargaHoraria
-    });
-  
+    // Suscribirse a los cambios en cargaHoraria para habilitar/deshabilitar adicional
+    this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe((cargaHorariaId) => {
+      this.updateAdicionalState(cargaHorariaId); // Llama a la función para habilitar/deshabilitar adicional
+    });  
 
     this.legajoForm.get('esAutoridad')?.disable();
   }
 
+  updateAdicionalState(cargaHorariaId: number | null): void {
+    const cargaHorariaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaHorariaId);
+  
+    if (cargaHorariaSeleccionada?.cantidad === 40) {
+      // Si la carga horaria es 40, habilitar adicional y hacerlo obligatorio
+      this.legajoForm.get('adicional')?.enable();
+      this.legajoForm.get('adicional')?.setValidators([Validators.required]);
+    } else {
+      // Si la carga horaria no es 40, deshabilitar adicional y limpiarlo
+      this.legajoForm.get('adicional')?.disable();
+      this.legajoForm.get('adicional')?.setValue(null);
+      this.legajoForm.get('adicional')?.clearValidators(); // Limpiar validaciones
+    }
+  
+    // Actualizar la validez de 'adicional' después de modificar los validadores
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+  }
+
 
 // Función llamada cuando cambia la categoría seleccionada
-onCategoriaChange(): void {
-  const categoriaId = this.legajoForm.get('categoria')?.value;
+onCategoriaChange(categoriaId?: number): void {
+  // Si se pasa un categoriaId, usamos ese valor para la lógica
+  if (!categoriaId) {
+    categoriaId = this.legajoForm.get('categoria')?.value;
+  }
+
   const categoriaSeleccionada = this.categorias.find(categoria => categoria.id === categoriaId);
 
-  // Si no se selecciona ninguna categoría, deshabilitamos cargaHoraria
   if (!categoriaSeleccionada) {
     this.legajoForm.get('cargaHoraria')?.disable();
     this.legajoForm.get('cargaHoraria')?.setValue(null);
     this.filteredCargasHorarias = [];
 
-    // Deshabilitar adicional y limpiarlo
     this.legajoForm.get('adicional')?.disable();
     this.legajoForm.get('adicional')?.setValue(null);
 
-    // Limpiar validación en adicional
     this.legajoForm.get('adicional')?.clearValidators();
     this.legajoForm.get('adicional')?.updateValueAndValidity();
   } else {
     this.legajoForm.get('cargaHoraria')?.enable();
     this.updateCargaHorarias(categoriaSeleccionada.nombre);
 
-    // Si la categoría es "24 HS", establecer el valor de cargaHoraria a 24 automáticamente
     if (categoriaSeleccionada.nombre === "24 HS") {
       const cargaHoraria24 = this.cargasHorarias.find(ch => ch.cantidad === 24);
       if (cargaHoraria24) {
         this.legajoForm.get('cargaHoraria')?.setValue(cargaHoraria24.id);
       }
     } else {
-      // Si no es "24 HS", seleccionamos la primera carga horaria disponible
       if (this.filteredCargasHorarias.length > 0) {
         const primeraCargaHoraria = this.filteredCargasHorarias[0];
         this.legajoForm.get('cargaHoraria')?.setValue(primeraCargaHoraria.id);
       }
     }
 
-    // Llamar a onCargaHorariaChange para verificar el estado de adicional
     this.onCargaHorariaChange();
   }
 }
@@ -461,14 +504,16 @@ updateCargaHorarias(categoriaNombre: string): void {
     });
   }
 
-  listCargaHoraria(): void {
-    this.cargaHorariaService.list().subscribe(data => {
-      this.cargasHorarias = data;
-      this.filteredCargasHorarias = data; // Inicialmente mostramos todas las opciones
-    }, error => {
-      console.log(error);
-    });
-  }
+listCargaHoraria(): void {
+  this.cargaHorariaService.list().subscribe(data => {
+    this.cargasHorarias = data;
+    this.filteredCargasHorarias = data; // Inicialmente mostramos todas las opciones
+
+    this.ngOnInit(); // Volver a llamar ngOnInit para aplicar la lógica de filtrado
+  }, error => {
+    console.log(error);
+  });
+}
 
   listTipoRevista(): void {
     this.tipoRevistaService.list().subscribe(data => {

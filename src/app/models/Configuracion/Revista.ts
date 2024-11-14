@@ -5,11 +5,11 @@ import { TipoRevista } from "./TipoRevista";
 
 export class Revista {
     id?: number;
-    tipoRevista: TipoRevista;//no null
-    categoria: Categoria; //no null
-    adicional: Adicional; //no null
-    cargaHoraria: CargaHoraria; //no null
-    agrupacion: string; //no null
+    tipoRevista: TipoRevista; //obligatorio
+    categoria: Categoria; //obligatorio
+    adicional?: Adicional | null; //opcional
+    cargaHoraria: CargaHoraria; //obligatorio
+    agrupacion: string; //obligatorio
   
     constructor(tipoRevista: TipoRevista, categoria: Categoria, adicional: Adicional, cargaHoraria: CargaHoraria,  agrupacion: string) {
       this.tipoRevista = tipoRevista;

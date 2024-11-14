@@ -18,11 +18,11 @@
           </tr>
           <tr>
             <th scope="row">Fecha final</th>
-            <td>{{legajo.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+            <td>{{ legajo.fechaFinal ? (legajo.fechaFinal | date: 'dd/MM/yyyy') : 'Aún en vigencia.' }}</td>
           </tr>
           <tr>
             <th scope="row">Matricula Nacional</th>
-            <td>{{legajo.matriculaNacional}}</td>
+            <td>{{legajo.matriculaNacional || 'No posee'}}</td>
           </tr>
           <tr>
             <th scope="row">Matricula Provincial</th>
@@ -63,7 +63,7 @@
           <tr *ngIf="revista">
             <th scope="row">Revista</th>
             <td>
-              {{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }} - {{ revista.adicional.nombre }})
+              {{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }}<span *ngIf="revista.adicional"> - </span>{{ revista.adicional?.nombre }})
               <br/> Carga horaria: {{ revista.cargaHoraria.cantidad }} Hs
               <br/>{{ revista.agrupacion }}
             </td>
