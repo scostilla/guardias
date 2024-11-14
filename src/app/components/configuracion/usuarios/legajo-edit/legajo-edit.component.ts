@@ -252,9 +252,9 @@ onCategoriaChange(): void {
 
   // Si no se selecciona ninguna categoría, deshabilitamos cargaHoraria
   if (!categoriaSeleccionada) {
-    this.legajoForm.get('cargaHoraria')?.disable(); // Deshabilitar cargaHoraria
-    this.legajoForm.get('cargaHoraria')?.setValue(null); // Limpiar el valor de cargaHoraria
-    this.filteredCargasHorarias = []; // Limpiamos las opciones de cargaHoraria
+    this.legajoForm.get('cargaHoraria')?.disable();
+    this.legajoForm.get('cargaHoraria')?.setValue(null);
+    this.filteredCargasHorarias = [];
 
     // Deshabilitar adicional y limpiarlo
     this.legajoForm.get('adicional')?.disable();
@@ -264,15 +264,26 @@ onCategoriaChange(): void {
     this.legajoForm.get('adicional')?.clearValidators();
     this.legajoForm.get('adicional')?.updateValueAndValidity();
   } else {
-    this.legajoForm.get('cargaHoraria')?.enable(); // Habilitar cargaHoraria
-    this.updateCargaHorarias(categoriaSeleccionada.nombre); // Actualizar las opciones de cargaHoraria
+    this.legajoForm.get('cargaHoraria')?.enable();
+    this.updateCargaHorarias(categoriaSeleccionada.nombre);
+
+    // Si la categoría es "24 HS", establecer el valor de cargaHoraria a 24 automáticamente
+    if (categoriaSeleccionada.nombre === "24 HS") {
+      const cargaHoraria24 = this.cargasHorarias.find(ch => ch.cantidad === 24);
+      if (cargaHoraria24) {
+        this.legajoForm.get('cargaHoraria')?.setValue(cargaHoraria24.id);
+      }
+    } else {
+      // Si no es "24 HS", seleccionamos la primera carga horaria disponible
+      if (this.filteredCargasHorarias.length > 0) {
+        const primeraCargaHoraria = this.filteredCargasHorarias[0];
+        this.legajoForm.get('cargaHoraria')?.setValue(primeraCargaHoraria.id);
+      }
+    }
 
     // Llamar a onCargaHorariaChange para verificar el estado de adicional
     this.onCargaHorariaChange();
   }
-
-    // Aseguramos que el formulario se revalide al cambiar la categoría
-    this.legajoForm.updateValueAndValidity(); 
 }
 
 // Función llamada cuando cambia la carga horaria seleccionada
@@ -292,7 +303,7 @@ onCargaHorariaChange(): void {
   } else {
     // Deshabilitar el campo 'adicional' si la carga horaria no es 40
     this.legajoForm.get('adicional')?.disable();
-    
+
     // Resetear el valor de 'adicional' a null si se deshabilita
     this.legajoForm.get('adicional')?.setValue(null);
 
@@ -303,8 +314,8 @@ onCargaHorariaChange(): void {
   // Actualizar la validez de 'adicional' después de modificar los validadores
   this.legajoForm.get('adicional')?.updateValueAndValidity();
 
-    // Aseguramos que el formulario se revalide al cambiar la carga horaria
-  this.legajoForm.updateValueAndValidity(); 
+  // Aseguramos que el formulario se revalide al cambiar la carga horaria
+  this.legajoForm.updateValueAndValidity();
 }
 
 // Función para actualizar las opciones de cargaHoraria según la categoría seleccionada
