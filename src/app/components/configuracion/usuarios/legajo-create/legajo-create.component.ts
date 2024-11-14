@@ -397,6 +397,9 @@ onCategoriaChange(): void {
     // Llamar a onCargaHorariaChange para verificar el estado de adicional
     this.onCargaHorariaChange();
   }
+
+    // Aseguramos que el formulario se revalide al cambiar la categoría
+    this.legajoForm.updateValueAndValidity(); 
 }
 
 // Función llamada cuando cambia la carga horaria seleccionada
@@ -426,6 +429,9 @@ onCargaHorariaChange(): void {
 
   // Actualizar la validez de 'adicional' después de modificar los validadores
   this.legajoForm.get('adicional')?.updateValueAndValidity();
+
+    // Aseguramos que el formulario se revalide al cambiar la carga horaria
+  this.legajoForm.updateValueAndValidity(); 
 }
 
 // Función para actualizar las opciones de cargaHoraria según la categoría seleccionada

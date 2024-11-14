@@ -108,8 +108,8 @@ export class LegajoEditComponent implements OnInit {
       udo: ['', Validators.required],
       efectores: ['', Validators.required],
       especialidades: [[]],
-      matriculaNacional: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
-      matriculaProvincial: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. ]{5,20}$')]],
+      matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
+      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
       esAutoridad: ['', Validators.required],
       fechaInicio: ['', Validators.required],
       fechaFinal: [''],
@@ -244,9 +244,6 @@ export class LegajoEditComponent implements OnInit {
     this.legajoForm.get('esAutoridad')?.disable();
   }
 
-  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.legajoForm.value);
-  }
 
 // Función llamada cuando cambia la categoría seleccionada
 onCategoriaChange(): void {
@@ -273,6 +270,9 @@ onCategoriaChange(): void {
     // Llamar a onCargaHorariaChange para verificar el estado de adicional
     this.onCargaHorariaChange();
   }
+
+    // Aseguramos que el formulario se revalide al cambiar la categoría
+    this.legajoForm.updateValueAndValidity(); 
 }
 
 // Función llamada cuando cambia la carga horaria seleccionada
@@ -302,6 +302,9 @@ onCargaHorariaChange(): void {
 
   // Actualizar la validez de 'adicional' después de modificar los validadores
   this.legajoForm.get('adicional')?.updateValueAndValidity();
+
+    // Aseguramos que el formulario se revalide al cambiar la carga horaria
+  this.legajoForm.updateValueAndValidity(); 
 }
 
 // Función para actualizar las opciones de cargaHoraria según la categoría seleccionada
