@@ -31,7 +31,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'fechaFinal', 'acciones'];
+  displayedColumns: string[] = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'acciones'];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];

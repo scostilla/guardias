@@ -73,8 +73,42 @@ export class NovedadesPersonEditComponent implements OnInit {
         this.novedadPersonalForm.get('fechaFinal')?.disable();
       }
     });
+
+  // Observa los cambios en "necesitaReemplazo" para actualizar validaciones
+  this.novedadPersonalForm.get('necesitaReemplazo')?.valueChanges.subscribe(value => {
+    this.toggleSuplenteValidation(value);
+    this.toggleSuplenteDisabled(value);
+  });
+
+  // Inicializa el estado de la validación y deshabilitación al iniciar
+  this.toggleSuplenteValidation(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
+  this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
   }
 
+  toggleSuplenteValidation(necesitaReemplazo: boolean): void {
+    const idSuplenteControl = this.novedadPersonalForm.get('idSuplente');
+    
+    if (necesitaReemplazo) {
+      idSuplenteControl?.setValidators([Validators.required]);
+    } else {
+      idSuplenteControl?.clearValidators();
+    }
+  
+    // Actualiza la validez del campo tras modificar sus validadores
+    idSuplenteControl?.updateValueAndValidity();
+  }
+  
+  // Método para habilitar o deshabilitar el campo idSuplente
+  toggleSuplenteDisabled(necesitaReemplazo: boolean): void {
+    const idSuplenteControl = this.novedadPersonalForm.get('idSuplente');
+    
+    if (necesitaReemplazo) {
+      idSuplenteControl?.enable();
+    } else {
+      idSuplenteControl?.disable();
+    }
+  }
+  
   // Validador personalizado para comprobar que la fechaFinal no sea anterior a fechaInicio
   dateLessThan(start: string, end: string) {
     return (formGroup: AbstractControl) => {
@@ -138,15 +172,15 @@ export class NovedadesPersonEditComponent implements OnInit {
       const formValue = this.novedadPersonalForm.value;
   
       const novedadPersonalDto = new NovedadPersonalDto(
+        formValue.cobraSueldo,
         formValue.fechaInicio,
         formValue.fechaFinal,
-        formValue.puedeRealizarGuardia,
-        formValue.cobraSueldo,
         formValue.necesitaReemplazo,
+        formValue.puedeRealizarGuardia,
         true,
-        formValue.idTipoLicencia,
         this.data.novedadPersonal ? this.data.novedadPersonal.idPersona : this.data.asistencialId,
-        formValue.idSuplente,
+        formValue.idTipoLicencia,
+        formValue.idSuplente ?? null,
       );
       console.log('Datos a guardar:', novedadPersonalDto);
 

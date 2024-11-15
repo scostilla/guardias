@@ -472,7 +472,7 @@ export class DdjjContrafacturaComponent {
       };
   
       const novedades = this.getNovedades(registro.asistencial);
-      const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.descripcion} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
+      const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
   
       exportData['Novedades'] = novedadesString || '-';
   

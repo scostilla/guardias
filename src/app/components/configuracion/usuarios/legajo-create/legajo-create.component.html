@@ -119,7 +119,6 @@
             <mat-form-field appearance="fill" class="form-field" *ngIf="!legajoForm.get('esAutoridad')?.value">
               <mat-label>Tipo guardia</mat-label>
               <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
-                <!-- Usar ng-container para la lógica de filtro de tipo guardia -->
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
                   <mat-option *ngIf="isAutoridad ? !(tipoGuardia.id === 1 || tipoGuardia.id === 2) : true" [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}

@@ -1,43 +1,36 @@
 export class NovedadPersonalDto {
 
-        id?: number;
-        actual: boolean;
         cobraSueldo: boolean;
-        descripcion: string;
-        fechaFinal: Date;
         fechaInicio: Date;
+        fechaFinal: Date;
         necesitaReemplazo: boolean;
         puedeRealizarGuardia: boolean;
-        idArticulo: number;
-        idInciso: number;
+        activo: boolean;
         idPersona: number;
-        idSuplente: number;
+        idTipoLicencia: number;
+        idSuplente?: number;
     
         constructor(
-            actual: boolean,
             cobraSueldo: boolean,
-            descripcion: string,
-            fechaFinal: Date,
             fechaInicio: Date,
+            fechaFinal: Date,
             necesitaReemplazo: boolean,
             puedeRealizarGuardia: boolean,
-            idArticulo: number,
-            idInciso: number,
+            activo: boolean,
             idPersona: number,
-            idSuplente: number,
+            idTipoLicencia: number,
+            idSuplente?: number,
             ) {
     
-            this.actual = actual;
             this.cobraSueldo = cobraSueldo;
-            this.descripcion = descripcion;
-            this.fechaFinal = fechaFinal;
             this.fechaInicio = fechaInicio;
             this.necesitaReemplazo = necesitaReemplazo;
             this.puedeRealizarGuardia = puedeRealizarGuardia;
-            this.idArticulo = idArticulo;
-            this.idInciso = idInciso;
+            this.activo = activo;
             this.idPersona = idPersona;
             this.idSuplente = idSuplente;
+            this.fechaFinal = fechaFinal;
+            this.idTipoLicencia = idTipoLicencia;
         }
     }
     

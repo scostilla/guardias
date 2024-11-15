@@ -22,7 +22,7 @@
         <th scope="row">Novedades</th>
         <td>
           <div *ngFor="let novedad of getNovedadesActivas(asistencial)">
-            {{ novedad.descripcion }} 
+            {{ novedad.tipoLicencia.nombre }} 
             <span>({{ formatDate(novedad.fechaInicio, novedad.fechaFinal) }})</span>
           </div>
         </td>

@@ -122,13 +122,13 @@ applyFilter(event: Event) {
   const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
   this.dataSource.filter = filterValue;
   this.dataSource.filterPredicate = (data: NovedadPersonal, filter: string) => {
-    const descripcion = data.tipoLicencia.toString();
+    const tipoLicencia = data.tipoLicencia.toString();
     const fechaInicioString = data.fechaInicio.toISOString().toLowerCase();
     const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
 
 
     // Aplicar el filtro a los valores convertidos
-    return this.accentFilter(descripcion).includes(this.accentFilter(filter)) || 
+    return this.accentFilter(data.tipoLicencia.nombre).includes(this.accentFilter(filter)) || 
            this.accentFilter(fechaInicioString).includes(this.accentFilter(filter)) || 
            this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
   };

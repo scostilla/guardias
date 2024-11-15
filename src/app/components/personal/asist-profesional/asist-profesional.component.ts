@@ -241,7 +241,7 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string } {
+  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
     const dateMoment = moment(date).startOf('day');
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
@@ -251,18 +251,18 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
   
     return {
       isNovedad: !!novedadFound,
-      descripcion: novedadFound ? novedadFound.descripcion : ''
+      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
     };
   }
   
-  getNovedadCssClass(descripcion: string): string {
-    return clases[descripcion] || '';
+  getNovedadCssClass(tipoLicencia: string): string {
+    return clases[tipoLicencia] || '';
   }
 
   isNovedadClass(date: Date, registro: any): string {
     const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
     if (novedad.isNovedad) {
-      return this.getNovedadCssClass(novedad.descripcion);
+      return this.getNovedadCssClass(novedad.tipoLicencia);
     } else {
       const holiday = this.isHoliday(date);
       if (holiday.isHoliday) {
@@ -277,7 +277,7 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
   calculateTooltip(date: Date, registro: any): string {
     const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
     if (novedad.isNovedad) {
-      return novedad.descripcion;
+      return novedad.tipoLicencia;
     } else {
       const holiday = this.isHoliday(date);
       if (holiday.isHoliday) {
@@ -287,7 +287,7 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
     return '';
   }
   
-  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string, idNovedad: number } {
+  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string, idNovedad: number } {
     const dateMoment = moment(date).startOf('day');
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
@@ -297,7 +297,7 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
   
     return {
       isNovedad: !!novedadFound,
-      descripcion: novedadFound ? novedadFound.descripcion : '',
+      tipoLicencia: novedadFound ? novedadFound.tipoLicencia : '',
       idNovedad: novedadFound?.id ?? 0 
     };
   }*/
@@ -519,7 +519,7 @@ exportarAExcel() {
     };
 
     const novedades = this.getNovedades(registro.asistencial);
-    const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.descripcion} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
+    const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
 
     exportData['Novedades'] = novedadesString || '-';
 
