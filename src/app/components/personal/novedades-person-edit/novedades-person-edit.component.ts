@@ -108,7 +108,7 @@ export class NovedadesPersonEditComponent implements OnInit {
       idSuplenteControl?.disable();
     }
   }
-  
+
   // Validador personalizado para comprobar que la fechaFinal no sea anterior a fechaInicio
   dateLessThan(start: string, end: string) {
     return (formGroup: AbstractControl) => {
@@ -172,15 +172,15 @@ export class NovedadesPersonEditComponent implements OnInit {
       const formValue = this.novedadPersonalForm.value;
   
       const novedadPersonalDto = new NovedadPersonalDto(
-        formValue.cobraSueldo,
         formValue.fechaInicio,
         formValue.fechaFinal,
-        formValue.necesitaReemplazo,
         formValue.puedeRealizarGuardia,
+        formValue.cobraSueldo,
+        formValue.necesitaReemplazo,
         true,
         this.data.novedadPersonal ? this.data.novedadPersonal.idPersona : this.data.asistencialId,
-        formValue.idTipoLicencia,
         formValue.idSuplente ?? null,
+        formValue.idTipoLicencia,
       );
       console.log('Datos a guardar:', novedadPersonalDto);
 
@@ -210,8 +210,12 @@ export class NovedadesPersonEditComponent implements OnInit {
     }
   }
 
-  compareLicencia(p1: TipoLicencia, p2: TipoLicencia): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  compareFn(o1: any, o2: any): boolean {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  }
+
+  compareFn_id(o1: any, o2: any): boolean {
+    return o1 && o2 ? o1 === o2 : o1 === o2;
   }
 
   cancel(): void {
