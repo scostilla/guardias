@@ -1,19 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
-import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
-import { NovedadesPersonEditComponent } from '../novedades-person-edit/novedades-person-edit.component';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { NovedadesPersonCreateComponent } from '../novedades-person-create/novedades-person-create.component';
 import { NovedadesPersonDetailComponent } from '../novedades-person-detail/novedades-person-detail.component';
-import { ActivatedRoute, Router } from '@angular/router';
-
+import { NovedadesPersonEditComponent } from '../novedades-person-edit/novedades-person-edit.component';
 @Component({
   selector: 'app-novedades-person',
   templateUrl: './novedades-person.component.html',
@@ -134,14 +133,14 @@ applyFilter(event: Event) {
   };
 }
 
-openFormChanges(novedadPersonal?: NovedadPersonal): void {
+openFormCreate(novedadPersonal?: NovedadPersonal): void {
   const esEdicion = !!novedadPersonal;
   const dialogData = {
     asistencialId: this.asistencialId,
     novedadPersonal: esEdicion ? novedadPersonal : null
   };
 
-  const dialogRef = this.dialog.open(NovedadesPersonEditComponent, {
+  const dialogRef = this.dialog.open(NovedadesPersonCreateComponent, {
     width: '600px',
     data: dialogData
   });
@@ -169,6 +168,25 @@ openFormChanges(novedadPersonal?: NovedadPersonal): void {
         });
       }
     }
+    });
+  }
+
+  openEditForm(novedad: NovedadPersonal): void {
+    const dialogRef = this.dialog.open(NovedadesPersonEditComponent, {
+      width: '800px',
+      disableClose: true,
+      data: {
+        asistencialId: this.asistencialId,
+        novedadPersonal: novedad
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.type === 'save') {
+        this.toastr.success('Novedad guardada exitosamente', 'Éxito');
+      } else if (result?.type === 'error') {
+        this.toastr.error('Hubo un error al guardar la novedad', 'Error');
+      }
     });
   }
 

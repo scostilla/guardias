@@ -5,7 +5,7 @@
       <div class="titulos">Novedad: <span class="titulos-second">{{nombreCompleto}}</span></div>
     </div>
     <div class="col-6 col-md-1 m d-flex justify-content-end">
-      <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Novedad">
+      <button mat-fab color="primary" (click)="openFormCreate()" matTooltip="Agregar Novedad">
         <mat-icon>library_add</mat-icon>
       </button>
       <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/personal">
@@ -27,7 +27,7 @@
 
           <ng-container matColumnDef="tipoLicencia">
             <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo de licencia </th> 
-            <td mat-cell *matCellDef="let novedad"> {{novedad.tipoLicencia.nombre}} </td>
+            <td mat-cell *matCellDef="let novedad"> {{novedad.tipoLicencia?.nombre}} </td>
           </ng-container>
 
           <ng-container matColumnDef="fechaInicio">
@@ -46,7 +46,7 @@
               <button mat-icon-button matTooltip="Ver" (click)="openDetail(novedad)">
                 <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Editar" (click)="openFormChanges(novedad)">
+              <button mat-icon-button matTooltip="Editar" (click)="openEditForm(novedad)" >
                 <mat-icon class="btnEdit">edit</mat-icon>
               </button>
               <button mat-icon-button matTooltip="Eliminar" (click)="deleteNovedadPersonal(novedad)">
