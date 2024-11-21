@@ -200,7 +200,7 @@ import { TipoLeyComponent } from './components/configuracion/leyes/tipo-ley/tipo
 import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/tipo-licencia-detail/tipo-licencia-detail.component';
 import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
 import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
-import { PermisosComponent } from './components/configuracion/permisos/permisos.component';
+import { PermisosEfectoresComponent } from './components/configuracion/establecimiento/permisos-efectores/permisos-efectores.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
 import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
 import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
@@ -445,7 +445,7 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     PersonalLegajoNoAsistencialComponent,
     RegistroActividadesEgresoComponent,
     RegistroActividadesIngresoComponent,
-    PermisosComponent,
+    PermisosEfectoresComponent,
     HomeAutoridadComponent,
     LegajoCreateNoasistencialComponent,
     LegajoEditNoasistencialComponent,
