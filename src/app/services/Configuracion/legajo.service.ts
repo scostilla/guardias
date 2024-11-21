@@ -54,4 +54,7 @@ public verificarAutoridad(id: number): Observable<any> {
   return this.httpClient.get<any>(`http://localhost:8080/legajo/esAutoridad/${id}`);
 }
 
+tieneTipoGuardiaPermitido(idPersona: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.legajosURL}/tieneTipoGuardiaPermitido/${idPersona}`);
+}
 }

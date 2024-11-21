@@ -53,7 +53,7 @@
             <mat-form-field appearance="fill" *ngIf="isAsistencial">
               <mat-label>Especialidades</mat-label>
               <mat-select formControlName="especialidades" multiple>
-                <mat-option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{ especialidad.nombre }}</mat-option>
+                <mat-option *ngFor="let especialidad of especialidadesList" [value]="especialidad.id">{{ especialidad.nombre }}</mat-option>
               </mat-select>
               <div class="simple-message" *ngIf="noEspecialidadesMessage">
                 {{ noEspecialidadesMessage }}
@@ -98,21 +98,37 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('esAutoridad')?.errors?.['required']">El campo es requerido.</mat-error>
             </mat-form-field>
+
+            <mat-form-field appearance="fill" *ngIf="legajoForm.get('esAutoridad')?.value">
+              <mat-label>Cargo</mat-label>
+              <mat-select formControlName="idCargo" (selectionChange)="onCargoChange()">
+                <mat-option *ngFor="let cargo of cargos" [value]="cargo.nombre">{{ cargo.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('idCargo')?.errors?.['required']">El cargo es requerido.</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="fill" *ngIf="showRegion">
+              <mat-label>Región</mat-label>
+              <mat-select formControlName="idRegion">
+                <mat-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('idRegion')?.errors?.['required']">La región es requerida.</mat-error>
+            </mat-form-field>
                 
             <mat-form-field appearance="fill">
               <mat-label>Fecha Inicio</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+              <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="legajoForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.hasError('required')">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.hasError('futureDate')">La fecha no puede ser posterior a la fecha actual.</mat-error>
             </mat-form-field>
-        
+                    
             <mat-form-field appearance="fill">
               <mat-label>Fecha Fin</mat-label>
-              <input matInput [matDatepicker]="picker2" formControlName="fechaFinal">
-              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-              <mat-datepicker #picker2></mat-datepicker>
-              <!-- <mat-error *ngIf="legajoForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error> -->
+              <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final">
+              <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFinal></mat-datepicker>
             </mat-form-field>
 
             <mat-form-field appearance="fill" class="form-field">
