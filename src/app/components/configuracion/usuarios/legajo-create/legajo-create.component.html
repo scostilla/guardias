@@ -150,9 +150,9 @@
 
             <mat-form-field appearance="fill" class="form-field" *ngIf="showGuardia">
               <mat-label>Tipo guardia</mat-label>
-              <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
+              <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onSelectionChange($event)">
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
-                  <mat-option *ngIf="isAutoridad ? !(tipoGuardia.id === 1 || tipoGuardia.id === 2) : true" [value]="tipoGuardia.id">
+                  <mat-option *ngIf="isAdministrativo ? !(tipoGuardia.id === 4 || tipoGuardia.id === 5) : true" [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}
                   </mat-option>
                 </ng-container>
@@ -161,6 +161,13 @@
                 </div>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('tipoGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="fill" *ngIf="showPermisosEfectores">
+              <mat-label>Asignar efectores</mat-label>
+              <mat-select formControlName="permisosEfectores" multiple>
+                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
             </mat-form-field>
 
             <mat-action-row>

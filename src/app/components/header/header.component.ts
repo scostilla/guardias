@@ -37,27 +37,43 @@ export class HeaderComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    // Verificamos si hay un token de sesión
     if (this.tokenService.getToken()) {
       this.isLogged = true;
 
-      // Obtener los detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-          console.log('Usuario en el header:', this.nombreUsuario, this.apellidoUsuario);
-        },
-        (error) => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
+      // Obtener los detalles del usuario directamente después de un login exitoso
+      this.loadUserDetails();
     } else {
       this.isLogged = false;
       this.nombreUsuario = '';
       this.apellidoUsuario = '';
     }
+
+    // Suscribirse a cambios de ruta para actualizar los datos cuando sea necesario
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        // Si el evento de navegación es "end", comprobamos si estamos logueados
+        if (this.tokenService.getToken()) {
+          this.isLogged = true;
+          this.loadUserDetails();  // Actualizamos los datos del usuario
+        }
+      }
+    });
   }
 
+  private loadUserDetails() {
+    // Llamamos al servicio para obtener los detalles del usuario
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        this.nombreUsuario = response.nombre;
+        this.apellidoUsuario = response.apellido;
+      },
+      (error) => {
+        console.error('Error al obtener detalles del usuario:', error);
+      }
+    );
+  }
+  
   ngOnDestroy(): void {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
@@ -66,6 +82,9 @@ export class HeaderComponent implements OnDestroy, OnInit {
 
   onLogOut(): void {
     this.tokenService.logOut();
+    this.isLogged = false;
+    this.nombreUsuario = '';
+    this.apellidoUsuario = '';
     this.router.navigate(['/']);
   }
 }

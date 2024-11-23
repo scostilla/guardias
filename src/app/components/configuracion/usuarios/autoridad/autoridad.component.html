@@ -5,7 +5,7 @@
       <div class="titulos_extra">AUTORIDADES</div>
     </div>
     <div class="col-12 col-md-1 m d-flex justify-content-end">
-      <button mat-fab class="button-success" (click)="openFormChanges()" matTooltip="Dar alta de Autoridad">
+      <button mat-fab class="button-success" (click)="openFormChanges()" matTooltip="Dar alta de Autoridad" *ngIf="isDph || isSuper">
         <mat-icon>library_add</mat-icon>
       </button>
       <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/personal">

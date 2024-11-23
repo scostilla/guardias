@@ -57,4 +57,9 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.permisosURL + `delete/${id}`, {});
 }
 
+// Verifica si un asistencial tiene permisos asociados a un efector
+tienePermisos(idAsistencial: number, idEfector: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.permisosURL}/tienePermisos/${idAsistencial}/${idEfector}`);
+}
+
 }

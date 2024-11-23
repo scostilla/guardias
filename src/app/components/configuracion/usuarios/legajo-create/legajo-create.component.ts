@@ -6,6 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
 
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+
 //Services
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { RevistaService } from 'src/app/services/Configuracion/revista.service';
@@ -19,6 +25,7 @@ import { AdicionalService } from 'src/app/services/Configuracion/adicional.servi
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { PermisosEfectoresService } from 'src/app/services/Configuracion/permisosEfectores.service';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 
 //Models y Dto
@@ -34,6 +41,8 @@ import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Region } from 'src/app/models/Configuracion/Region';
+import { PermisosEfectores } from 'src/app/models/Configuracion/PermisosEfectores';
+import { PermisosEfectoresDto } from 'src/app/dto/Configuracion/PermisosEfectoresDto';
 
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
@@ -71,6 +80,19 @@ export class LegajoCreateComponent implements OnInit {
   cargos: Cargo[] = [];
   regiones: Region[] = [];
 
+  //Autenticación
+  isLogged = false;
+  roles: string[] =[];
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  userId: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
+  nombresEfectores: EfectorSummaryDto[] = [];
+  usuarioPersona: number | null = null;
+
   //útiles
   step = 0;
   maxDate!: Date;
@@ -82,8 +104,7 @@ export class LegajoCreateComponent implements OnInit {
   showGuardia: boolean = false;
   showRegion: boolean = false;
   showEfectorAutoridad: boolean = false;
-
-
+  showPermisosEfectores: boolean = false;
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -112,6 +133,9 @@ export class LegajoCreateComponent implements OnInit {
     private revistaService: RevistaService,
     private cargoService: CargoService,
     private regionService: RegionService,
+    private permisosEfectoresService: PermisosEfectoresService,
+    private tokenService: TokenService,
+    private authService: AuthService,
     private autoridadService: AutoridadService
   ) {
 
@@ -135,6 +159,7 @@ export class LegajoCreateComponent implements OnInit {
       fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
       fechaFinal: [{ value: '', disabled: true }],
       tipoGuardias: [[]],
+      permisosEfectores: [[]],
     });
 
     //-----Manejo de fechas-----
@@ -182,6 +207,38 @@ export class LegajoCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  if (this.tokenService.getToken()) {
+    this.isLogged = true;
+    this.roles = this.tokenService.getAuthorities();
+
+    this.UserRoles();
+
+    const userIdFromToken = this.tokenService.getUserIdFromToken();
+    this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+    console.log('ID del usuario logeado:',this.userId);
+
+    // Obtener detalles del usuario
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        this.usuarioPersona = response.id;
+        this.nombreUsuario = response.nombre;
+        this.apellidoUsuario = response.apellido;
+        this.nombresEfectores = response.efectores; // Asignar efectores
+
+        // Log para mostrar el usuario y los efectores
+        console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        console.log('Efectores asociados:', this.nombresEfectores);
+      },
+      error => {
+        console.error('Error al obtener detalles del usuario:', error);
+      }
+    );
+  } else {
+    this.isLogged = false;
+    console.log('El usuario no está logueado.');
+    this.router.navigateByUrl('');
+  }
+
   if (this.initialData) {
     const personaId = this.initialData.id;
     this.inputValue = `${this.initialData.nombre} ${this.initialData.apellido}`;
@@ -443,6 +500,14 @@ export class LegajoCreateComponent implements OnInit {
 
 //-----Metodos y funciones-----
 
+  //Roles a usar
+  UserRoles(): void {
+    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
+    this.isUsuario = this.roles.includes('ROLE_USER');
+    this.isDph = this.roles.includes('ROLE_DPH');
+    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+  }
+
   // Form Datos profesional: No permite seleccionar una fecha futura en fechaInicio
   dateLimitePresente(control: any) {
     const currentDate = new Date();
@@ -536,22 +601,40 @@ export class LegajoCreateComponent implements OnInit {
     });
   }
 
-  //Form Datos legajo: Maneja las validaciones en la elección del tipo de Guardia
   onTipoGuardiaSelectionChange(event: any): void {
     const selectedValues = this.legajoForm.get('tipoGuardias')!.value;
   
-    // Si se selecciona el tipo 4 (CONTRAFACTURA), deseleccionar todas las demás opciones
-    if (selectedValues.includes(4)) {
+    // Si el usuario es ADMIN, solo puede seleccionar los tipos 1, 2, 3 (sin 4 ni 5)
+    if (this.isAdministrativo) {
+      // Filtra los valores seleccionados, asegurando que no incluya 4 ni 5
       this.legajoForm.patchValue({
-        tipoGuardias: [4]  // Solo mantener el tipo 4
+        tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
       });
-    } else if (selectedValues.includes(5)) {
-      // Si se selecciona el tipo 5 (PASIVA), deseleccionar todas las demás opciones
-      this.legajoForm.patchValue({
-        tipoGuardias: [5]  // Solo mantener el tipo 5
-      });
-    } else {
-      // Si se seleccionan otras opciones (1, 2, 3), mantenerlas
+    }
+  
+    // Si el usuario es DPH, puede seleccionar todos los tipos (1, 2, 3, 4, 5)
+    else if (this.isDph) {
+      // No hay restricción, los valores seleccionados se mantienen como están
+      // Esto permite seleccionar cualquier combinación de tipos (1, 2, 3, 4, 5)
+      if (selectedValues.includes(4)) {
+        this.legajoForm.patchValue({
+          tipoGuardias: [4]  // Si el tipo 4 es seleccionado, solo mantener el tipo 4
+        });
+      } else if (selectedValues.includes(5)) {
+        this.legajoForm.patchValue({
+          tipoGuardias: [5]  // Si el tipo 5 es seleccionado, solo mantener el tipo 5
+        });
+      } else {
+        // Mantener solo los tipos 1, 2, 3 si no se seleccionan 4 ni 5
+        this.legajoForm.patchValue({
+          tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
+        });
+      }
+    }
+  
+    // Si el usuario no es ni ADMIN ni DPH, se restringen los tipos de guardia a 1, 2 y 3
+    else {
+      // Restringir la selección solo a los tipos 1, 2, 3
       this.legajoForm.patchValue({
         tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
       });
@@ -561,6 +644,31 @@ export class LegajoCreateComponent implements OnInit {
     this.toggleSituacionRevista(selectedValues);
   }
   
+  onGuardiaCF(selectedValues: number[]): void {
+    const permisosEfectoresControl = this.legajoForm.get('permisosEfectores');
+
+    // Si se selecciona el tipo 4 habilita permisosEfectores
+    if (selectedValues.includes(4)) {
+      this.showPermisosEfectores = true;
+      this.legajoForm.get('permisosEfectores')?.setValidators([Validators.required]);
+    } else {
+      // Si no se selecciona 4 ocultar permisosEfectores
+      this.showPermisosEfectores = false;
+      permisosEfectoresControl?.reset();
+      this.legajoForm.get('permisosEfectores')?.clearValidators();
+    }
+
+    // Actualiza la validez de los campos
+    this.legajoForm.get('permisosEfectores')?.updateValueAndValidity();
+  }
+
+  onSelectionChange(event: any): void {
+    this.onTipoGuardiaSelectionChange(event);
+  
+    this.onGuardiaCF(event.value);
+  }
+
+  //aqui oculto o muestro situacion de revista según la guardia seleccionada
   toggleSituacionRevista(selectedValues: number[]): void {
     // Si se selecciona el tipo 4 o 5, deshabilitar "Situación de Revista"
     if (selectedValues.length === 0 || selectedValues.includes(4) || selectedValues.includes(5)) {
@@ -746,7 +854,7 @@ export class LegajoCreateComponent implements OnInit {
       }
     }
     
-    createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
+  createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
   // Aseguro que 'efectores' sea un array si es necesario, de lo contrario uso el otro campo
   let efectoresData = this.isAutoridad ? legajoData.efectoresAutoridad : legajoData.efectores;
 
@@ -787,6 +895,12 @@ export class LegajoCreateComponent implements OnInit {
       );
 
       console.log("DTO creado para guardar legajo:", legajoDto);
+
+      // Verificar si tipoGuardias incluye 4 (CONTRAFACTURA)
+      if (legajoData.tipoGuardias && legajoData.tipoGuardias.includes(4)) {
+      // Llamar al método de guardar permisos de efectores
+      this.savePermisosEfectores(legajoData);
+      }
     
       // Guardar el legajo sin la parte de revista si no corresponde
       this.legajoService.save(legajoDto).subscribe(
@@ -811,6 +925,25 @@ export class LegajoCreateComponent implements OnInit {
             positionClass: 'toast-top-center',
             progressBar: true
           });
+        }
+      );
+    }
+
+    savePermisosEfectores(legajoData: any): void {
+      // Crear el objeto PermisosEfectoresDto
+      const permisosEfectoresDto = new PermisosEfectoresDto(
+        true, // activo
+        legajoData.idPersona,
+        legajoData.permisosEfectores || null
+      );
+    
+      // Llamar al servicio para guardar los permisos de efectores
+      this.permisosEfectoresService.save(permisosEfectoresDto).subscribe(
+        (response) => {
+          console.log("Permisos de efectores guardados correctamente", response);
+        },
+        (error) => {
+          console.error("Error al guardar los permisos de efectores", error);
         }
       );
     }

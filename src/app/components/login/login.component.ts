@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
         // Redireccionnamiento segun roles
-        if (this.roles.includes('ROLE_ADMIN')) {
+        if (this.roles.includes('ROLE_ADMIN') || this.roles.includes('ROLE_DPH')) {
           this.router.navigate(['/home-page']);
         } else if (this.roles.includes('ROLE_USER')) {
           this.router.navigate(['/home-profesional']);

@@ -1,13 +1,26 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
-import { AutoridadDetailComponent } from '../autoridad-detail/autoridad-detail.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { ToastrService } from 'ngx-toastr';
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+
+//Services
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
+
+//Models y Dto
+import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
+
+//Componentes
+import { AutoridadDetailComponent } from '../autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from '../autoridad-edit/autoridad-edit.component';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 
@@ -27,10 +40,24 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<Autoridad>;
   suscription!: Subscription;
 
+  //Autenticación
+  isLogged = false;
+  roles: string[] =[];
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  userId: number | null = null;
+  usuarioPersona: number | null = null;
+  
+
   constructor(
     private autoridadService: AutoridadService,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
+    private tokenService: TokenService,
+    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -46,11 +73,47 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+      this.UserRoles();
+  
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+  
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+  
+          // Log para mostrar el usuario y los efectores
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+  
     this.listAutoridades();
     this.suscription = this.autoridadService.refresh$.subscribe(() => {
       this.listAutoridades();
     })
   }
+
+    //Roles a usar
+    UserRoles(): void {
+      this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
+      this.isUsuario = this.roles.includes('ROLE_USER');
+      this.isDph = this.roles.includes('ROLE_DPH');
+      this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+    }
+  
 
   accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
@@ -98,7 +161,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Autoridad editada con éxito' : 'Autoridad creada con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Autoridad editada con éxito' : 'Autoridad asignada con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -111,7 +174,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
         }
         this.dataSource._updateChangeSubscription();
       } else if (result && result.type === 'error') {
-        this.toastr.error('Ocurrió un error al crear o editar Autoridad', 'Error', {
+        this.toastr.error('Ocurrió un error al asignar o editar la Autoridad', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -134,15 +197,15 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   deleteAutoridad(autoridad: Autoridad): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Confirma la eliminación de '+ autoridad.persona?.apellido +' ' + autoridad.persona?.nombre,
-        title: 'Eliminar',
+        message: 'Confirma la baja de '+ autoridad.persona?.apellido +' ' + autoridad.persona?.nombre,
+        title: 'Dar de baja',
       },
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.autoridadService.delete(autoridad.id!).subscribe(data => {
-          this.toastr.success('Autoridad eliminada con éxito', 'ELIMINADO', {
+          this.toastr.success('Autoridad dada de baja con éxito', 'ELIMINADO', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true

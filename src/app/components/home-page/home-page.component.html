@@ -1,11 +1,25 @@
 <app-spinner></app-spinner>
-<div id="container-title-hosp" >
-    <div class="text-title-hosp"><mat-icon>business</mat-icon>
+<div id="container-title-hosp" *ngIf="isLogged">
+    <div class="text-title-hosp" *ngIf="isAdministrativo"><mat-icon>business</mat-icon>
       <div *ngIf="selectedEfector" class="select-inicio-container">
         {{ selectedEfector.nombre }}
       </div>
     </div>
+
+    <div class="text-title-hosp" *ngIf="isDph || isSuper">
+      <mat-icon>business</mat-icon>
+      <div class="select-inicio-container">
+        <select class="select-inicio" [(ngModel)]="selectedListEfectores" (change)="onEfectorChange($event)">
+          <option [ngValue]="null" disabled selected>Seleccionar efector</option>
+          <option *ngFor="let efector of efectores" [ngValue]="efector.id">
+            {{ efector.nombre }}
+          </option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
 </div>
+
 <div class="container" *ngIf="isLogged">
   <section>
     <div class="container" >

@@ -8,10 +8,6 @@
       <button mat-fab class="button-success" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
       </button>
-      <!--<button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openNovedades()" 
-      matTooltip="Agregar novedad">
-        <mat-icon>event</mat-icon>
-      </button>-->
       <button mat-fab class="button-primary" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
         <mat-icon>av_timer</mat-icon>
       </button>
@@ -26,13 +22,19 @@
 
   <div class="row">
     <div class="row">
-      <div class="col-12">Estás viendo:
+      <div class="col-12 col-md-6">Estás viendo:
         <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales 
           <mat-icon>expand_more</mat-icon></button>
         <mat-menu #menug="matMenu">
           <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
+          <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">Externo</span></button>
+          <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">Sin legajo asignado</span></button>
         </mat-menu>
       </div>
+
+      <div class="col-12 col-md-6 m d-flex justify-content-md-end">Efector: <span class="negrita ps-1">{{efectorNombre}}</span>
+      </div>
+
     </div>
 
     <div *ngIf="showMessage" class="no-selection-message">
@@ -107,6 +109,8 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
+  </div>
+
   <div class="row mt-3">
     <div class="col-lg-3">    
     <mat-accordion>
@@ -135,5 +139,4 @@
     </div>
   </div>
 
-</div>
 </div>

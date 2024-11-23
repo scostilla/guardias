@@ -141,7 +141,7 @@ export class AsistencialCreateComponent implements OnInit {
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/asistencial'], { state: { asistencialCreado: result } }); // Redirigir a la lista de asistenciales y pasar el asistencial creado
+        this.router.navigate(['/personal']); // Redirigir a la lista de asistenciales y pasar el asistencial creado
       },
       (error) => {
         this.toastr.error('Ocurrió un error al crear el Asistencial', error, {
