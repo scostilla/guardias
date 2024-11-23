@@ -17,9 +17,16 @@ export class HeaderComponent implements OnDestroy, OnInit {
   showConfig: boolean = true;
   showHeader: boolean = true;
 
+  //Autentificación
   isLogged = false;
   nombreUsuario = '';
   apellidoUsuario = '';
+  roles: string[] =[];
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+
 
   constructor(
     private router: Router, 
@@ -37,9 +44,12 @@ export class HeaderComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    // Verificamos si hay un token de sesión
+  //Autentificación
     if (this.tokenService.getToken()) {
       this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+
+      this.UserRoles();
 
       // Obtener los detalles del usuario directamente después de un login exitoso
       this.loadUserDetails();
@@ -52,14 +62,22 @@ export class HeaderComponent implements OnDestroy, OnInit {
     // Suscribirse a cambios de ruta para actualizar los datos cuando sea necesario
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        // Si el evento de navegación es "end", comprobamos si estamos logueados
+        // Si el evento de navegación es "end", comprobamos si esta logueado
         if (this.tokenService.getToken()) {
           this.isLogged = true;
-          this.loadUserDetails();  // Actualizamos los datos del usuario
+          this.loadUserDetails();
         }
       }
     });
   }
+
+    //Roles a usar
+    UserRoles(): void {
+      this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
+      this.isUsuario = this.roles.includes('ROLE_USER');
+      this.isDph = this.roles.includes('ROLE_DPH');
+      this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+    }  
 
   private loadUserDetails() {
     // Llamamos al servicio para obtener los detalles del usuario

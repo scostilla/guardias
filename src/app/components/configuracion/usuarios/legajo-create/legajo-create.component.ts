@@ -207,6 +207,7 @@ export class LegajoCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  //Autentificación
   if (this.tokenService.getToken()) {
     this.isLogged = true;
     this.roles = this.tokenService.getAuthorities();
@@ -369,6 +370,7 @@ export class LegajoCreateComponent implements OnInit {
     this.listCargo();
     this.listRegion();
 
+    const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
 
 
 //-----Manejo de validaciones en Revista (categoria, cargaHoraria)-----
@@ -856,7 +858,8 @@ export class LegajoCreateComponent implements OnInit {
     
   createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
   // Aseguro que 'efectores' sea un array si es necesario, de lo contrario uso el otro campo
-  let efectoresData = this.isAutoridad ? legajoData.efectoresAutoridad : legajoData.efectores;
+  const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
+  let efectoresData = esAutoridad ? legajoData.efectoresAutoridad : legajoData.efectores;
 
   // Si 'efectores' o 'efectoresAutoridad' no es un array, lo convierto en uno
   if (efectoresData && !Array.isArray(efectoresData)) {
