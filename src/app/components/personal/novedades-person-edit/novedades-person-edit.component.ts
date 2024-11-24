@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
-import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
-import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
-import { TipoLicenciaService } from 'src/app/services/Configuracion/tipoLicencia.service';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { AbstractControl } from '@angular/forms';
+import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
+import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
+import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import { TipoLicenciaService } from 'src/app/services/Configuracion/tipoLicencia.service';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 
 
 @Component({
@@ -17,12 +17,14 @@ import { AbstractControl } from '@angular/forms';
   styleUrls: ['./novedades-person-edit.component.css']
 })
 export class NovedadesPersonEditComponent implements OnInit {
-  novedadPersonalForm!: FormGroup;
-  initialData: any;
-  asistenciales: Asistencial[] = [];
+  novedadPersonalForm: FormGroup;
+  initialData: NovedadPersonal | undefined;
+  idAsistencial: number = 0;
+
   licencias: TipoLicencia[] = [];
   inputValue: string = '';
   selectedAsistencial?: Asistencial;
+
 
   
   constructor(
@@ -46,26 +48,46 @@ export class NovedadesPersonEditComponent implements OnInit {
 
     this.listLicencia();
 
-    if (data) {
-      this.novedadPersonalForm.patchValue(data);
-    }
   }
 
   ngOnInit(): void {
-    if (this.data.novedadPersonal) {
-      this.novedadPersonalForm.patchValue({
-        idTipoLicencia: this.data.novedadPersonal.idTipoLicencia,
-        fechaInicio: this.data.novedadPersonal.fechaInicio,
-        fechaFinal: this.data.novedadPersonal.fechaFinal,
-        idSuplente: this.data.novedadPersonal.idSuplente,
-        puedeRealizarGuardia: this.data.novedadPersonal.puedeRealizarGuardia,
-        cobraSueldo: this.data.novedadPersonal.cobraSueldo,
-        necesitaReemplazo: this.data.novedadPersonal.necesitaReemplazo,
-      });
-    }
-    this.initialData = this.novedadPersonalForm.value;
 
-    // Observa los cambios en fechaInicio para habilitar o deshabilitar fechaFinal
+    // Si el asistencialId está disponible en los datos inyectados
+  if (this.data.asistencialId) {
+    this.novedadPersonalForm.patchValue({ idAsistencial: this.data.asistencialId });
+  }
+    this.initialData = this.novedadPersonalForm.value;
+    console.log('Datos iniciales del formulario:', this.initialData);
+    // Carga inicial de datos
+    if (this.data.novedadPersonal) {
+      const {  fechaInicio, fechaFinal, idSuplente, puedeRealizarGuardia, 
+        cobraSueldo, necesitaReemplazo,tipoLicencia } = this.data.novedadPersonal;
+        console.log('Datos de la novedad personal cargados:', this.data.novedadPersonal);
+        const idTipoLicencia: number | undefined  = tipoLicencia.id;
+        console.log('tipoLicencia:',idTipoLicencia);
+      this.novedadPersonalForm.patchValue({
+        idTipoLicencia,
+        fechaInicio,
+        fechaFinal,
+        idSuplente,
+        puedeRealizarGuardia,
+        cobraSueldo,
+        necesitaReemplazo,
+      });
+
+      console.log('Datos de la novedad personal cargados:', this.data.novedadPersonal);
+  
+      // Habilitar fechaFinal si ya existe fechaInicio
+      if (fechaInicio) {
+        this.novedadPersonalForm.get('fechaFinal')?.enable();
+      }
+  
+      // Ajustar la validación y habilitación del campo idSuplente en función de necesitaReemplazo
+      this.toggleSuplenteValidation(necesitaReemplazo);
+      this.toggleSuplenteDisabled(necesitaReemplazo);
+    }
+  
+    // Suscripción para controlar cambios en fechaInicio y fechaFinal
     this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(value => {
       if (value) {
         this.novedadPersonalForm.get('fechaFinal')?.enable();
@@ -73,16 +95,12 @@ export class NovedadesPersonEditComponent implements OnInit {
         this.novedadPersonalForm.get('fechaFinal')?.disable();
       }
     });
-
-  // Observa los cambios en "necesitaReemplazo" para actualizar validaciones
-  this.novedadPersonalForm.get('necesitaReemplazo')?.valueChanges.subscribe(value => {
-    this.toggleSuplenteValidation(value);
-    this.toggleSuplenteDisabled(value);
-  });
-
-  // Inicializa el estado de la validación y deshabilitación al iniciar
-  this.toggleSuplenteValidation(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
-  this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
+  
+    // Suscripción a cambios en 'necesitaReemplazo'
+    this.novedadPersonalForm.get('necesitaReemplazo')?.valueChanges.subscribe(value => {
+      this.toggleSuplenteValidation(value);
+      this.toggleSuplenteDisabled(value);
+    });
   }
 
   toggleSuplenteValidation(necesitaReemplazo: boolean): void {
@@ -131,6 +149,7 @@ export class NovedadesPersonEditComponent implements OnInit {
   listLicencia(): void {
     this.tipoLicenciaService.list().subscribe(data => {
       this.licencias = data;
+      console.log('Listado de licencias:', data);
     }, error => {
       console.log(error);
     });
@@ -166,7 +185,7 @@ export class NovedadesPersonEditComponent implements OnInit {
   
 
 
-  saveNovedadPersonal(): void {
+ editNovedadPersonal(): void {
     if (this.novedadPersonalForm.valid) {
       console.log('Valores del formulario:', this.novedadPersonalForm.value);
       const formValue = this.novedadPersonalForm.value;
@@ -178,7 +197,7 @@ export class NovedadesPersonEditComponent implements OnInit {
         formValue.cobraSueldo,
         formValue.necesitaReemplazo,
         true,
-        this.data.novedadPersonal ? this.data.novedadPersonal.idPersona : this.data.asistencialId,
+        formValue.idAsistencial,
         formValue.idSuplente ?? null,
         formValue.idTipoLicencia,
       );
@@ -216,6 +235,10 @@ export class NovedadesPersonEditComponent implements OnInit {
 
   compareFn_id(o1: any, o2: any): boolean {
     return o1 && o2 ? o1 === o2 : o1 === o2;
+  }
+
+  comparteTipoLicencia(p1: TipoLicencia, p2: TipoLicencia): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   cancel(): void {
