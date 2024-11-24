@@ -2,6 +2,7 @@ export class LegajoDto {
     fechaInicio: Date | null;
     fechaFinal?: Date | null;
     esAutoridad: boolean;
+    esRegional?: boolean;
     activo: boolean;
     matriculaNacional?: string  | null;
     matriculaProvincial: string;
@@ -14,6 +15,8 @@ export class LegajoDto {
     idEspecialidades?: number[] | null;
     idProfesion: number;
     idTipoGuardias?: number[] | null;
+    idCargo?: number | null;
+    idRegion?: number | null;
   
     constructor(
       fechaInicio: Date | null,
@@ -25,6 +28,7 @@ export class LegajoDto {
   
       // Parámetros opcionales
       fechaFinal?: Date | null,
+      esRegional?: boolean,
       matriculaNacional?: string | null,
       idSuspencion?: number | null,
       motivoBaja?: string | null,
@@ -32,11 +36,14 @@ export class LegajoDto {
       idUdo?: number  | null,
       idEfectores?: number[]  | null,
       idEspecialidades?: number[] | null,
-      idTipoGuardias?: number[] | null
+      idTipoGuardias?: number[] | null,
+      idCargo?: number | null,
+      idRegion?: number | null  
     ) {
       this.fechaInicio = fechaInicio;
       this.fechaFinal = fechaFinal ?? null;
       this.esAutoridad = esAutoridad;
+      this.esRegional = esRegional;
       this.activo = activo;
       this.matriculaNacional = matriculaNacional ?? null;
       this.matriculaProvincial = matriculaProvincial;
@@ -49,6 +56,8 @@ export class LegajoDto {
       this.idEspecialidades = idEspecialidades ?? null;
       this.idProfesion = idProfesion;
       this.idTipoGuardias = idTipoGuardias ?? null;
+      this.idCargo = idCargo ?? null;
+      this.idRegion = idRegion ?? null;
     }
   }
   

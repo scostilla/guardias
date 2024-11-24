@@ -5,13 +5,10 @@ import { AutoridadDto } from 'src/app/dto/Configuracion/AutoridadDto';
 import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
-import { CargoService } from 'src/app/services/Configuracion/cargo.service';
 import { ToastrService } from 'ngx-toastr';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-autoridad-edit',
@@ -22,8 +19,6 @@ export class AutoridadEditComponent implements OnInit {
 
   autoridadForm: FormGroup;
   initialData: any;
-  efectores: Efector[] = [];
-  cargos: Cargo[] = [];
   inputValue: string = '';
   autoridades: Autoridad[] = []; 
 
@@ -32,34 +27,20 @@ export class AutoridadEditComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<AutoridadEditComponent>,
     private autoridadService: AutoridadService,
-    private hospitalService : HospitalService,
-    private cargoService : CargoService,
     public dialog: MatDialog,
     private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
   ){
     this.autoridadForm = this.fb.group({
       idPersona: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechaFinal: [''],
-      esRegional: ['', Validators.required],
-      idEfector: ['', Validators.required],
-      idCargo: ['']
     });
 
-    this.listEfectores();
-    this.listCargos();
     this.loadAutoridades();
 
     if (data) {
       this.inputValue = `${data.persona!.apellido} ${data.persona!.nombre}`; // Guarda el nombre completo
       this.autoridadForm.patchValue({
-          idPersona: data.persona!.id, // Solo guardamos el id
-          fechaInicio: moment(data.fechaInicio), // Convertir a objeto Moment
-          fechaFinal: data.fechaFinal ? moment(data.fechaFinal) : null, // Convertir a objeto Moment o null
-          esRegional: data.esRegional,
-          idEfector: data.efector, // Aquí se asigna el objeto completo
-          idCargo: data.cargo
+          idPersona: data.persona!.id,
       });
   }
 
@@ -72,26 +53,6 @@ export class AutoridadEditComponent implements OnInit {
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.autoridadForm.value);
   }
-
-  listEfectores(): void {
-    /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
-    this.hospitalService.list().subscribe(data => {
-      console.log('Lista de Efectores:', data);
-      this.efectores = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  listCargos(): void {
-    this.cargoService.list().subscribe(data => {
-      console.log('Lista de cargos:', data);
-      this.cargos = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
 
   loadAutoridades(): void {
     this.autoridadService.list().subscribe(data => {
@@ -149,13 +110,8 @@ export class AutoridadEditComponent implements OnInit {
       }
   
       const autoridadDto = new AutoridadDto(
-        autoridadData.fechaInicio,
-        autoridadData.fechaFinal || null,
-        autoridadData.esRegional,
         true,
-        autoridadData.idEfector.id,
         autoridadData.idPersona,
-        autoridadData.idCargo.id,
       );
   
       console.log('Datos a enviar:', autoridadDto);
@@ -180,14 +136,6 @@ export class AutoridadEditComponent implements OnInit {
         );
       }
     }
-  }
-
-  compareEfector(p1: Efector, p2: Efector): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
-
-  compareCargo(p1: Cargo, p2: Cargo): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   cancel(): void {

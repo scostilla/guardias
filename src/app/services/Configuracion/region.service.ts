@@ -52,4 +52,8 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.regionesURL + `delete/${id}`,{});
 }
 
+listWithoutLegajosActivos(): Observable<Region[]> {
+  return this.httpClient.get<Region[]>(`${this.regionesURL}/listWithoutLegajosActivos`);
+}
+
 }

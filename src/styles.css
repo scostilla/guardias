@@ -640,8 +640,9 @@ mat-label{
   padding: 5px 25px 5px 5px;
   font-size: 16px;
   appearance: none;
-  width: 100%;
+  width: auto;
   cursor: pointer;
+  text-align: center;
 }
 
 .select-inicio:focus {

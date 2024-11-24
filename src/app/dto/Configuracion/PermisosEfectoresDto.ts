@@ -1,5 +1,4 @@
-export class PermisosDto {
-
+export class PermisosEfectoresDto {
     activo: boolean;
     idAsistencial: number;
     idEfectores: number[]

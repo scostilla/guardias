@@ -48,5 +48,9 @@ import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
   public delete(id:number): Observable<any> {
     return this.httpClient.put<any>(this.autoridadURL + `delete/${id}`, {});
   }
+
+  isAutoridad(idPersona: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.autoridadURL}isAutoridad/${idPersona}`);
+  }
   
   }

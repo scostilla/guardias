@@ -99,7 +99,44 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('esAutoridad')?.errors?.['required']">El campo es requerido.</mat-error>
             </mat-form-field>
-                
+
+            <!--<mat-form-field appearance="fill" style="margin-top: 20px;" *ngIf="legajoForm.get('esAutoridad')?.value">
+              <mat-label>Tipo de autoridad</mat-label>
+              <mat-select formControlName="esRegional">
+                <mat-option [value]="false">No es regional</mat-option>
+                <mat-option [value]="true">Es regional</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('esRegional')?.errors?.['required']">El campo es requerido.</mat-error>
+            </mat-form-field>-->
+
+            <mat-form-field appearance="fill" *ngIf="legajoForm.get('esAutoridad')?.value">
+              <mat-label>Cargo</mat-label>
+              <mat-select formControlName="idCargo" (selectionChange)="onCargoChange()">
+                <ng-container *ngFor="let cargo of cargos">
+                  <!--siendo 2 el id del cargo del Director Regional-->
+                  <mat-option *ngIf="isAdministrativo ? cargo.id !== 2 : true" [value]="cargo.id">
+                    {{ cargo.nombre }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('idCargo')?.errors?.['required']">El cargo es requerido.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" *ngIf="showEfectorAutoridad">
+              <mat-label>Efector del cargo</mat-label>
+              <mat-select formControlName="efectoresAutoridad">
+                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="fill" *ngIf="showRegion">
+              <mat-label>Región</mat-label>
+              <mat-select formControlName="idRegion">
+                <mat-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('idRegion')?.errors?.['required']">La región es requerida.</mat-error>
+            </mat-form-field>
+
             <mat-form-field appearance="fill">
               <mat-label>Fecha Inicio</mat-label>
               <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
@@ -116,11 +153,11 @@
               <mat-datepicker #pickerFinal></mat-datepicker>
             </mat-form-field>
 
-            <mat-form-field appearance="fill" class="form-field" *ngIf="!legajoForm.get('esAutoridad')?.value">
+            <mat-form-field appearance="fill" class="form-field" *ngIf="showGuardia">
               <mat-label>Tipo guardia</mat-label>
-              <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onTipoGuardiaSelectionChange($event)">
+              <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onSelectionChange($event)">
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
-                  <mat-option *ngIf="isAutoridad ? !(tipoGuardia.id === 1 || tipoGuardia.id === 2) : true" [value]="tipoGuardia.id">
+                  <mat-option *ngIf="isAdministrativo ? !(tipoGuardia.id === 4 || tipoGuardia.id === 5) : true" [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}
                   </mat-option>
                 </ng-container>
@@ -129,6 +166,13 @@
                 </div>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('tipoGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="fill" *ngIf="showPermisosEfectores">
+              <mat-label>Asignar efectores</mat-label>
+              <mat-select formControlName="permisosEfectores" multiple>
+                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
             </mat-form-field>
 
             <mat-action-row>

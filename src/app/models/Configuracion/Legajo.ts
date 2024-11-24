@@ -5,12 +5,16 @@ import { Revista } from './Revista';
 import { Especialidad } from './Especialidad';
 import { Suspension } from './Suspension';
 import { TipoGuardia } from './TipoGuardia';
+import { Cargo } from './Cargo';
+import { Region } from './Region';
+
 
 export class Legajo {
     id?: number | null;
     fechaInicio: Date | null;
     fechaFinal?: Date | null;
     esAutoridad: boolean;
+    esRegional?: boolean;
     activo:boolean;
     matriculaNacional?: string | null;
     matriculaProvincial: string;
@@ -23,6 +27,8 @@ export class Legajo {
     especialidades: Especialidad[];
     profesion: Profesion;
     tipoGuardias: TipoGuardia[];
+    cargo?: Cargo | null;
+    region?: Region | null;
     
     constructor(
         fechaInicio: Date | null,
@@ -36,18 +42,22 @@ export class Legajo {
 
         // Parámetros opcionales
         fechaFinal?: Date | null,
+        esRegional?: boolean,
         matriculaNacional?: string | null,
         motivoBaja?: string | null,
         suspencion?: Suspension | null,
         revista?:Revista | null,
         udo?: Efector | null,
         persona?: Person | null,
+        cargo?: Cargo | null,
+        region?: Region | null    
 
         ) {
         
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
         this.esAutoridad = esAutoridad;
+        this.esRegional = esRegional;
         this.activo = activo;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
@@ -60,6 +70,8 @@ export class Legajo {
         this.efectores = efectores;
         this.especialidades = especialidades;
         this.tipoGuardias = tipoGuardias;
+        this.cargo = cargo;
+        this.region = region;
     }
 
   }

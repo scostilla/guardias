@@ -43,6 +43,8 @@ import { MinisterioComponent } from './components/configuracion/establecimiento/
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { PermisosEfectoresComponent } from './components/configuracion/establecimiento/permisos-efectores/permisos-efectores.component';
+
 
 //Configuraciones: Profesionales
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
@@ -264,7 +266,9 @@ const routes: Routes = [
   {path: 'caps-edit/:id', component:CapsEditComponent},
   {path: 'region', component:RegionComponent},
   {path: 'region-detail/:id', component:RegionDetailComponent},
-  {path: 'region-edit/:id', component:RegionEditComponent}, 
+  {path: 'region-edit/:id', component:RegionEditComponent},
+  {path: 'permisos-efectores', component:PermisosEfectoresComponent},
+
  
   //Configuraciones: Profesionales
   {path: 'profesion', component:ProfesionComponent},

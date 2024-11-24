@@ -9,11 +9,20 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { Router } from '@angular/router';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 //import { NovedadesFormComponent } from 'src/app/components/personal/novedades-form/novedades-form.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
   selector: 'app-asistencial',
@@ -45,17 +54,35 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   showMessage: boolean = false;
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  //Autenticación
+  isLogged = false;
+  roles: string[] =[];
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  userId: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
+  nombresEfectores: EfectorSummaryDto[] = [];
+  usuarioPersona: number | null = null;
+  
 
   private efectorIdSubscription!: Subscription;
   
   constructor(
     private asistencialService: AsistencialService,
+    private hospitalService: HospitalService,
     private dialog: MatDialog,
     public dialogNov: MatDialog,
     public dialogDistrib: MatDialog,
     private toastr: ToastrService,
     private router: Router,
     private legajoService: LegajoService,
+    private tokenService: TokenService,
+    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -71,10 +98,43 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+      this.UserRoles();
+  
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+  
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+          this.nombresEfectores = response.efectores; // Asignar efectores
+  
+          // Log para mostrar el usuario y los efectores
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+          console.log('Efectores asociados:', this.nombresEfectores);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+  
     this.listLegajos();
 
     // Obtener el ID efector del servicio
     this.efectorId = this.asistencialService.getCurrentEfectorId();
+    this.loadEfectorName();
     
     // Verificar si el ID efector es válido
     if (this.efectorId === null) {
@@ -101,6 +161,31 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     };
   
     this.dataSource.filter = normalizedFilterValue;
+  }
+
+  //Roles a usar
+  UserRoles(): void {
+    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
+    this.isUsuario = this.roles.includes('ROLE_USER');
+    this.isDph = this.roles.includes('ROLE_DPH');
+    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+  }
+
+  loadEfectorName(): void {
+    // Solo intentamos obtener el nombre si tenemos un id válido
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // Aquí puedes acceder al nombre del efector
+          this.efectorNombre = efector.nombre;
+          console.log('Nombre del efector:', this.efectorNombre);
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;  // Si hay un error, establecemos en null
+        }
+      );
+    }
   }
   
   listAsistencial(efectorId: number | null = null): void {
