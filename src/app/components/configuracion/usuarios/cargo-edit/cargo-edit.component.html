@@ -1,1 +1,96 @@
-<p>cargo-edit works!</p>
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Cargo
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
+
+<form [formGroup]="cargoForm" (ngSubmit)="saveCargo()" autocomplete="off">
+    <mat-dialog-content>
+        <div class="row" style="margin-top: 20px">
+            <div class="col">
+              <mat-form-field appearance="fill">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="nombre">
+                <mat-error *ngIf="cargoForm?.get('nombre')?.invalid && cargoForm?.get('nombre')?.touched">
+                    Campo requerido
+                </mat-error>
+                </mat-form-field>
+            </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Descripción</mat-label>
+                    <input matInput formControlName="descripcion">
+                        <mat-error *ngIf="cargoForm?.get('descripcion')?.invalid && cargoForm?.get('descripcion')?.touched">
+                            El campo es obligatorio.
+                            </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Número de Resolución</mat-label>
+                    <input matInput formControlName="nroresolucion" autocomplete="off">
+                        <mat-error *ngIf="cargoForm?.get('nroresolucion')?.invalid && cargoForm?.get('nroresolucion')?.touched">
+                            El campo es obligatorio.
+                            </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Número de Decreto</mat-label>
+                    <input matInput formControlName="nrodecreto" autocomplete="off">
+                        <mat-error *ngIf="cargoForm?.get('nrodecreto')?.invalid && cargoForm?.get('nrodecreto')?.touched">
+                            El campo es obligatorio.
+                            </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Fecha de Resolución</mat-label>
+                    <input matInput [matDatepicker]="pickerResolucion" formControlName="fechaResolucion" autocomplete="off" [max]="maxDate">
+                    <mat-datepicker-toggle matSuffix [for]="pickerResolucion"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerResolucion></mat-datepicker>
+                    <mat-error *ngIf="cargoForm?.get('fechaResolucion')?.invalid && cargoForm?.get('fechaResolucion')?.touched">
+                            El campo es obligatorio.
+                            </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Fecha de Inicio</mat-label>
+                    <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+              <mat-datepicker #pickerInicio></mat-datepicker>
+              <mat-error *ngIf="cargoForm.get('fechaInicio')?.hasError('required')">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="cargoForm.get('fechaInicio')?.hasError('futureDate')">La fecha no puede ser posterior a la fecha actual.</mat-error>
+            </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Fecha Final</mat-label>
+                    <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final">
+              <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFinal></mat-datepicker>
+            </mat-form-field>
+                </div>
+            </div>
+            <div mat-dialog-actions class="action mt-4">
+                <button mat-raised-button color="primary" type="submit" >
+                    {{data ? 'Modificar' : 'Agregar'}}
+                </button>
+                <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                    Cancelar
+                </button>
+            </div>
+    </mat-dialog-content>
+</form>
+            

@@ -1,6 +1,4 @@
-
-export class Cargo {
-    id?: number;
+export class CargoDto{
     nombre: string;
     descripcion: string;
     nroresolucion: string;
@@ -10,7 +8,6 @@ export class Cargo {
     fechaInicio: Date;
     fechaFinal: Date;
     constructor(
-     
       nombre: string,
       descripcion: string,
       nroresolucion: string,
@@ -28,5 +25,7 @@ export class Cargo {
       this.fechaResolucion = fechaResolucion;
       this.fechaInicio = fechaInicio;
       this.fechaFinal = fechaFinal;
+   
+    
     }
-  }
+}

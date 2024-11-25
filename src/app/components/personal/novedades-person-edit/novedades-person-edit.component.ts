@@ -61,9 +61,9 @@ export class NovedadesPersonEditComponent implements OnInit {
     // Carga inicial de datos
     if (this.data.novedadPersonal) {
       const {  fechaInicio, fechaFinal, idSuplente, puedeRealizarGuardia, 
-        cobraSueldo, necesitaReemplazo,tipoLicencia } = this.data.novedadPersonal;
+        cobraSueldo, necesitaReemplazo,idTipoLicencia } = this.data.novedadPersonal;
         console.log('Datos de la novedad personal cargados:', this.data.novedadPersonal);
-        const idTipoLicencia: number | undefined  = tipoLicencia.id;
+        /* const idTipoLicencia: number | undefined  = tipoLicencia.id; */
         console.log('tipoLicencia:',idTipoLicencia);
       this.novedadPersonalForm.patchValue({
         idTipoLicencia,

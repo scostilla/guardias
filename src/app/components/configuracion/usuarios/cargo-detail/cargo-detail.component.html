@@ -1,1 +1,40 @@
-<p>cargo-detail works!</p>
+<h1 mat-dialog-title> DETALLE
+    <h5> CARGO </h5>
+</h1>
+<mat-dialog-content>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Nombre</th>
+                <td>{{cargo.nombre}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Descripción</th>
+                <td>{{cargo.descripcion}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Número de Resolución</th>
+                <td>{{cargo.nroresolucion}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Número de Decreto</th>
+                <td>{{cargo.nrodecreto}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Fecha de Resolución</th>
+                <td>{{cargo.fechaResolucion}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Fecha de Inicio</th>
+                <td>{{cargo.fechaInicio}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Fecha Final</th>
+                <td>{{cargo.fechaFinal}}</td>
+            
+        </tbody>
+    </table>
+    <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+    </div>
+  </mat-dialog-content>
