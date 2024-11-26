@@ -23,12 +23,16 @@ export class PermisosEfectoresService {
       return this.httpClient.get<PermisosEfectoresDto[]>(this.permisosURL + 'list');
   }
 
+  public listAll(): Observable<PermisosEfectoresDto[]> {
+    return this.httpClient.get<PermisosEfectoresDto[]>(this.permisosURL + 'listAll');
+}
+
   public detail(id:number): Observable<PermisosEfectoresDto> {
       return this.httpClient.get<PermisosEfectoresDto>(this.permisosURL + `detail/${id}`);
   }
 
-  getByAsistencial(idAsistencial: number): Observable<PermisosEfectoresDto> {
-    return this.httpClient.get<PermisosEfectoresDto>(`${this.permisosURL}/detailAsistencial/${idAsistencial}`);
+  getPermisoByPersona(idPersona: number): Observable<PermisosEfectoresDto> {
+    return this.httpClient.get<PermisosEfectoresDto>(`${this.permisosURL}/detailAsistencial/${idPersona}`);
   }
 
   public detailnombre(nombre:string): Observable<PermisosEfectoresDto> {
@@ -57,9 +61,13 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.permisosURL + `delete/${id}`, {});
 }
 
+public deleteFisic(id:number): Observable<any> {
+  return this.httpClient.put<any>(this.permisosURL + `fisicdelete/${id}`, {});
+}
+
 // Verifica si un asistencial tiene permisos asociados a un efector
-tienePermisos(idAsistencial: number, idEfector: number): Observable<boolean> {
-  return this.httpClient.get<boolean>(`${this.permisosURL}/tienePermisos/${idAsistencial}/${idEfector}`);
+tienePermisos(idPersona: number, idEfector: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.permisosURL}/tienePermisos/${idPersona}/${idEfector}`);
 }
 
 }

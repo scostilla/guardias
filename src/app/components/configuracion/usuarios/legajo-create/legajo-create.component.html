@@ -157,17 +157,21 @@
               <mat-label>Tipo guardia</mat-label>
               <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onSelectionChange($event)">
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
-                  <mat-option *ngIf="isAdministrativo ? !(tipoGuardia.id === 4 || tipoGuardia.id === 5) : true" [value]="tipoGuardia.id">
+                  <!-- Filtra para el usuario ADMIN, excluyendo CONTRAFACTURA y PASIVA usando sus id -->
+                  <mat-option 
+                  *ngIf="(asignadoAutoridad && (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra)) || 
+                         (isAdministrativo && tipoGuardia.id === idExtra)" [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}
                   </mat-option>
                 </ng-container>
-                <div *ngIf="legajoForm.get('tipoGuardias')?.value?.includes(4) || legajoForm.get('tipoGuardias')?.value?.includes(5)">
+                <!-- Mostrar mensaje si se seleccionan CONTRAFACTURA o PASIVA -->
+                <div *ngIf="legajoForm.get('tipoGuardias')?.value?.includes(idContraFactura) || legajoForm.get('tipoGuardias')?.value?.includes(idPasiva)">
                   <p class="simple-message">La opción seleccionada no puede combinarse con las demás guardias.</p>
                 </div>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('tipoGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
             </mat-form-field>
-            
+                        
             <mat-form-field appearance="fill" *ngIf="showPermisosEfectores">
               <mat-label>Asignar efectores</mat-label>
               <mat-select formControlName="permisosEfectores" multiple>

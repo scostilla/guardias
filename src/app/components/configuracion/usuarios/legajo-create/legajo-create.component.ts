@@ -99,12 +99,15 @@ export class LegajoCreateComponent implements OnInit {
   minFechaFinal!: Date;
   isAsistencial: boolean = false;
   isSituacionRevistaEnabled = false;
-  isAutoridad: boolean = false;
+  asignadoAutoridad: boolean = false;
   noEspecialidadesMessage: string = '';
   showGuardia: boolean = false;
   showRegion: boolean = false;
   showEfectorAutoridad: boolean = false;
   showPermisosEfectores: boolean = false;
+  idContraFactura?: number;
+  idPasiva?: number;
+  idExtra?: number;
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -240,6 +243,22 @@ export class LegajoCreateComponent implements OnInit {
     this.router.navigateByUrl('');
   }
 
+  // Llamamos al servicio para obtener todos los tipos de guardia
+  this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
+    this.tipoGuardias = guardias;
+
+    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+    this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
+    this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
+    this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
+
+    // Imprimir los ids para depuración
+    console.log('ID ContraFactura:', this.idContraFactura);
+    console.log('ID Pasiva:', this.idPasiva);
+    console.log('ID Pasiva:', this.idExtra);
+  });
+
+  //traigo info inicial
   if (this.initialData) {
     const personaId = this.initialData.id;
     this.inputValue = `${this.initialData.nombre} ${this.initialData.apellido}`;
@@ -263,10 +282,10 @@ export class LegajoCreateComponent implements OnInit {
 
   //-----Verificaciones desde tabla autoridades y sus posibles respuestas-----
 
-  this.autoridadService.isAutoridad(personaId).subscribe(response => {
+  this.autoridadService.asignadoAutoridad(personaId).subscribe(response => {
 
     const esAutoridad = response;
-    this.isAutoridad = esAutoridad;
+    this.asignadoAutoridad = esAutoridad;
             
       if (esAutoridad) {
         // Si la persona es autoridad, verifica si tiene 2 legajos activos
@@ -415,8 +434,8 @@ export class LegajoCreateComponent implements OnInit {
   });
 
   //-----Escuchar cambios en 'esAutoridad'-----
-  this.legajoForm.get('esAutoridad')?.valueChanges.subscribe(isAutoridad => {
-    this.onAutoridadChange(isAutoridad);
+  this.legajoForm.get('esAutoridad')?.valueChanges.subscribe(asignadoAutoridad => {
+    this.onAutoridadChange(asignadoAutoridad);
   });  
 
   // Inicializar el estado de los campos al cargar la página
@@ -525,7 +544,7 @@ export class LegajoCreateComponent implements OnInit {
   }
 
   //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
-  onAutoridadChange(isAutoridad: boolean): void {
+  onAutoridadChange(esAutoridad: boolean): void {
     const idCargoControl = this.legajoForm.get('idCargo');
     const idRegionControl = this.legajoForm.get('idRegion');
     const tipoGuardiasControl = this.legajoForm.get('tipoGuardias');
@@ -538,7 +557,7 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('idRegion')?.clearValidators();
     
     // Mostrar/ocultar el campo 'idCargo' y tipoGuardia basado en 'esAutoridad'
-    if (isAutoridad) {
+    if (esAutoridad) {
       // Si es autoridad muestro idCargo y oculto tipoGuardia y situacion de revista
       idCargoControl?.enable();
       this.legajoForm.get('idCargo')?.setValidators([Validators.required]);
@@ -606,55 +625,55 @@ export class LegajoCreateComponent implements OnInit {
   onTipoGuardiaSelectionChange(event: any): void {
     const selectedValues = this.legajoForm.get('tipoGuardias')!.value;
   
-    // Si el usuario es ADMIN, solo puede seleccionar los tipos 1, 2, 3 (sin 4 ni 5)
+    // Si el usuario es ADMIN, solo puede seleccionar los tipos CARGO, AGRUPACION Y EXTRA (sin CF ni PASIVA)
     if (this.isAdministrativo) {
-      // Filtra los valores seleccionados, asegurando que no incluya 4 ni 5
+      // Filtra los valores seleccionados, asegurando que no incluya CF ni PASIVA
       this.legajoForm.patchValue({
-        tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
+        tipoGuardias: selectedValues.filter((value: number) => value !== this.idContraFactura && value !== this.idPasiva)
       });
     }
   
-    // Si el usuario es DPH, puede seleccionar todos los tipos (1, 2, 3, 4, 5)
+    // Si el usuario es DPH, puede seleccionar todos los tipos de guardia
     else if (this.isDph) {
       // No hay restricción, los valores seleccionados se mantienen como están
-      // Esto permite seleccionar cualquier combinación de tipos (1, 2, 3, 4, 5)
-      if (selectedValues.includes(4)) {
+      // Esto permite seleccionar cualquier combinación de tipos de guardia
+      if (selectedValues.includes(this.idContraFactura)) {
         this.legajoForm.patchValue({
-          tipoGuardias: [4]  // Si el tipo 4 es seleccionado, solo mantener el tipo 4
+          tipoGuardias: [this.idContraFactura]  // Si el tipo CF es seleccionado, solo mantener el tipo CF
         });
-      } else if (selectedValues.includes(5)) {
+      } else if (selectedValues.includes(this.idPasiva)) {
         this.legajoForm.patchValue({
-          tipoGuardias: [5]  // Si el tipo 5 es seleccionado, solo mantener el tipo 5
+          tipoGuardias: [this.idPasiva]  // Si el tipo PASIVA es seleccionado, solo mantener el tipo PASIVA
         });
       } else {
-        // Mantener solo los tipos 1, 2, 3 si no se seleccionan 4 ni 5
+        // Mantener solo los tipos 1, 2, 3 si no se seleccionan CF ni PASIVA
         this.legajoForm.patchValue({
-          tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
+          tipoGuardias: selectedValues.filter((value: number) => value !== this.idContraFactura && value !== this.idPasiva)
         });
       }
     }
   
-    // Si el usuario no es ni ADMIN ni DPH, se restringen los tipos de guardia a 1, 2 y 3
+    // Si el usuario no es ni ADMIN ni DPH, se restringen los tipos de guardia a CARGO, AGRUPACION Y EXTRA
     else {
-      // Restringir la selección solo a los tipos 1, 2, 3
+      // Restringir la selección solo a los tipos CARGO, AGRUPACION Y EXTRA
       this.legajoForm.patchValue({
-        tipoGuardias: selectedValues.filter((value: number) => value !== 4 && value !== 5)
+        tipoGuardias: selectedValues.filter((value: number) => value !== this.idContraFactura && value !== this.idPasiva)
       });
     }
   
-    // Comprobar si se seleccionaron tipos de guardia 4 o 5 para deshabilitar el panel de Situación de Revista
+    // Comprobar si se seleccionaron tipos de guardia CF o PASIVA para deshabilitar el panel de Situación de Revista
     this.toggleSituacionRevista(selectedValues);
   }
   
   onGuardiaCF(selectedValues: number[]): void {
     const permisosEfectoresControl = this.legajoForm.get('permisosEfectores');
 
-    // Si se selecciona el tipo 4 habilita permisosEfectores
-    if (selectedValues.includes(4)) {
+    // Si se selecciona CONTRAFACTURA habilita permisosEfectores
+    if (selectedValues.includes(this.idContraFactura!)) {
       this.showPermisosEfectores = true;
       this.legajoForm.get('permisosEfectores')?.setValidators([Validators.required]);
     } else {
-      // Si no se selecciona 4 ocultar permisosEfectores
+      // Si no se selecciona CONTRAFACTURA ocultar permisosEfectores
       this.showPermisosEfectores = false;
       permisosEfectoresControl?.reset();
       this.legajoForm.get('permisosEfectores')?.clearValidators();
@@ -672,12 +691,12 @@ export class LegajoCreateComponent implements OnInit {
 
   //aqui oculto o muestro situacion de revista según la guardia seleccionada
   toggleSituacionRevista(selectedValues: number[]): void {
-    // Si se selecciona el tipo 4 o 5, deshabilitar "Situación de Revista"
-    if (selectedValues.length === 0 || selectedValues.includes(4) || selectedValues.includes(5)) {
+    // Si se selecciona el CONTRAFACTURA O PASIVA, deshabilitar "Situación de Revista"
+    if (selectedValues.length === 0 || selectedValues.includes(this.idContraFactura!) || selectedValues.includes(this.idPasiva!)) {
       this.isSituacionRevistaEnabled = false;
       this.disableSituacionRevistaFields();
     } else {
-      // Si no se selecciona 4 o 5, habilitar "Situación de Revista"
+      // Si no se selecciona CF o PASIVA, habilitar "Situación de Revista"
       this.isSituacionRevistaEnabled = true;
       this.enableSituacionRevistaFields();
     }
@@ -798,9 +817,9 @@ export class LegajoCreateComponent implements OnInit {
         
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || []; // Si es null o undefined, asigna un array vacío
-    const tiposGuardiaExcluidos = [4, 5];
+    const tiposGuardiaExcluidos = [this.idContraFactura, this.idPasiva];
 
-    // Verifica si tipoGuardias está vacío o si incluye 4 (CONTRAFACTURA) o 5 (PASIVA)
+    // Verifica si tipoGuardias está vacío o si incluye CONTRAFACTURA o PASIVA
     if (tiposGuardiasSeleccionados.length === 0 || tiposGuardiasSeleccionados.some((id: number) => tiposGuardiaExcluidos.includes(id))) {
       // Crear legajo directamente sin pasar por la creación de la revista
       this.createLegajoDtoAndSave(legajoData, null);
@@ -874,7 +893,7 @@ export class LegajoCreateComponent implements OnInit {
   // Determinar si esRegional basado en el cargo
     const esRegional = legajoData.idCargo === 2 ? true : false;
 
-    legajoData.esAutoridad = this.isAutoridad;
+    legajoData.esAutoridad = this.asignadoAutoridad;
 
       const legajoDto = new LegajoDto(
         legajoData.fechaInicio,
@@ -899,8 +918,8 @@ export class LegajoCreateComponent implements OnInit {
 
       console.log("DTO creado para guardar legajo:", legajoDto);
 
-      // Verificar si tipoGuardias incluye 4 (CONTRAFACTURA)
-      if (legajoData.tipoGuardias && legajoData.tipoGuardias.includes(4)) {
+      // Verificar si tipoGuardias incluye CONTRAFACTURA
+      if (legajoData.tipoGuardias && legajoData.tipoGuardias.includes(this.idContraFactura)) {
       // Llamar al método de guardar permisos de efectores
       this.savePermisosEfectores(legajoData);
       }

@@ -1,17 +1,19 @@
+import { Person } from "./Person";
+import { Efector } from "./Efector";
 export class PermisosEfectores {
     id?: number;
     activo: boolean;
-    idAsistencial: number;
-    idEfectores: number;
+    persona: Person;
+    efectores: Efector[];
   
     constructor(
         activo: boolean,
-        idAsistencial: number,
-        idEfectores: number    
+        persona: Person,
+        efectores: Efector[]    
     ) {
       this.activo = activo;
-      this.idAsistencial = idAsistencial;
-      this.idEfectores = idEfectores;
+      this.persona = persona;
+      this.efectores = efectores;
     }
   }
   

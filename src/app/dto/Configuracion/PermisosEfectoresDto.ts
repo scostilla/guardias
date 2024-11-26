@@ -1,15 +1,15 @@
 export class PermisosEfectoresDto {
     activo: boolean;
-    idAsistencial: number;
+    idPersona: number;
     idEfectores: number[]
     
     constructor(
         activo: boolean,
-        idAsistencial: number,
+        idPersona: number,
         idEfectores: number[]    
     ){
         this.activo = activo;
-        this.idAsistencial = idAsistencial;
+        this.idPersona = idPersona;
         this.idEfectores = idEfectores
       }
     }
