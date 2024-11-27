@@ -5,10 +5,13 @@
       <div class="titulos_extra">PERSONAL SIN LEGAJO</div>
     </div>
     <div class="col-12 col-md-1 m d-flex justify-content-end">
-      <!--<button mat-fab class="button-success" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
+      <button mat-fab class="button-success" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
-      </button>-->
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="goBack()">
+      </button>
+      <button mat-fab color="accent" style="margin-left: 5px;" (click)="createNoAsistencial()" matTooltip="Agregar Persona No Asistencial">
+        <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" (click)="goBack()">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>

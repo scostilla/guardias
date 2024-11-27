@@ -250,6 +250,14 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  createAsistencial(): void {
+    this.router.navigate(['/asistencial-create']);
+  }
+
+  createNoAsistencial(): void {
+    this.router.navigate(['/no-asistencial-create']);
+  }
     
 // Función para crear un legajo según el tipo (Asistencial o No Asistencial)
 crearLegajo(row: AsistencialListDto | NoAsistencial): void {

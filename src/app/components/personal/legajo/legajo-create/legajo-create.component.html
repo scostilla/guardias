@@ -125,10 +125,12 @@
             <mat-form-field appearance="fill" *ngIf="showEfectorAutoridad">
               <mat-label>Efector del cargo</mat-label>
               <mat-select formControlName="efectoresAutoridad">
-                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+                <mat-option *ngFor="let efector of getEfectoresFiltrados()" [value]="efector.id">
+                  {{ efector.nombre }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
-            
+                        
             <mat-form-field appearance="fill" *ngIf="showRegion">
               <mat-label>Región</mat-label>
               <mat-select formControlName="idRegion">
@@ -159,11 +161,11 @@
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
                   <!-- Filtra para el usuario ADMIN, excluyendo CONTRAFACTURA y PASIVA usando sus id -->
                   <mat-option 
-                  *ngIf="(!asignadoAutoridad && 
-                          (isAdministrativo ? 
-                            (tipoGuardia.id !== idContraFactura && tipoGuardia.id !== idPasiva) : true)) || 
-                         (asignadoAutoridad && 
-                          (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))" 
+                  *ngIf="(asignadoAutoridad && 
+                          (isAdministrativo ? tipoGuardia.id === idExtra : 
+                            (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))) || 
+                         (!asignadoAutoridad && 
+                          (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))"
                   [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}
                   </mat-option>
@@ -258,7 +260,7 @@
             <mat-form-field appearance="fill">
               <mat-label>Efector</mat-label>
               <mat-select formControlName="efectores">
-                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+                <mat-option *ngFor="let efector of getEfectoresFiltrados()" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
             </mat-form-field>
 

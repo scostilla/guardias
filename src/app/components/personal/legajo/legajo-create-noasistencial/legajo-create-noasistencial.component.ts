@@ -432,6 +432,19 @@ if (this.initialData) {
   onDateChange(event: MatDatepickerInputEvent<Date>) {
     const selectedDate = event.value;
   }
+  
+  //en caso sea rol administrativo solo deja cargar su efector
+  getEfectoresFiltrados(): any[] {
+    // Si el usuario es administrativo, solo mostrar los efectores cuyo id esté en idEfectorUser
+    if (this.isAdministrativo) {
+      const idEfectorUser = this.nombresEfectores.map(efector => efector.id);  // Obtener los id de los efectores disponibles para el administrativo
+      return this.efectores.filter(efector => idEfectorUser.includes(efector.id as number));  // Filtrar los efectores que tienen un id en idEfectorUser, asegurando que efector.id es un número
+    }
+  
+    // Si no es administrativo, devuelve todos los efectores
+    return this.efectores;
+  }
+
 
 /*  //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
   onAutoridadChange(esAutoridad: boolean): void {

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
 
@@ -109,6 +110,8 @@ export class LegajoCreateComponent implements OnInit {
   idPasiva?: number;
   idExtra?: number;
   esAutoridadValor: boolean | null = null;
+  idDirectorRegional?: number;
+
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -117,7 +120,6 @@ export class LegajoCreateComponent implements OnInit {
     { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
     { value: 'TECNICOS', viewValue: 'Técnicos' },
   ];
-
 
   constructor(
     private fb: FormBuilder,
@@ -262,6 +264,13 @@ export class LegajoCreateComponent implements OnInit {
     console.log('El usuario no está logueado.');
     this.router.navigateByUrl('');
   }
+
+  // Llamamos al servicio para obtener todos los tipos de guardia
+  this.cargoService.list().subscribe((cargos: Cargo[]) => {
+    this.cargos = cargos;
+    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+    this.idDirectorRegional = this.cargos.find(t => t.nombre === 'DIRECTOR REGIONAL')?.id;
+  });
 
   // Llamamos al servicio para obtener todos los tipos de guardia
   this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
@@ -562,6 +571,18 @@ export class LegajoCreateComponent implements OnInit {
     const selectedDate = event.value;
   }
 
+  //en caso sea rol administrativo solo deja cargar su efector
+  getEfectoresFiltrados(): any[] {
+    // Si el usuario es administrativo, solo mostrar los efectores cuyo id esté en idEfectorUser
+    if (this.isAdministrativo) {
+      const idEfectorUser = this.nombresEfectores.map(efector => efector.id);  // Obtener los id de los efectores disponibles para el administrativo
+      return this.efectores.filter(efector => idEfectorUser.includes(efector.id as number));  // Filtrar los efectores que tienen un id en idEfectorUser, asegurando que efector.id es un número
+    }
+  
+    // Si no es administrativo, devuelve todos los efectores
+    return this.efectores;
+  }
+  
   //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
   onAutoridadChange(esAutoridad: boolean): void {
     const idCargoControl = this.legajoForm.get('idCargo');
@@ -600,10 +621,9 @@ export class LegajoCreateComponent implements OnInit {
     const cargoSeleccionado = this.legajoForm.get('idCargo')?.value;
     const idRegionControl = this.legajoForm.get('idRegion');
     const efectoresAutoridadControl = this.legajoForm.get('efectoresAutoridad');
-    const directorRegionalId = 2; 
 
-    if (cargoSeleccionado === directorRegionalId) {
-      // Si se selecciona "Director regional (id 2)", muestra el campo de región y lo hace obligatorio
+    if (cargoSeleccionado === this.idDirectorRegional) {
+      // Si se selecciona "DIRECTOR REGIONAL", muestra el campo de región y lo hace obligatorio
       this.showRegion = true;
       this.legajoForm.get('idRegion')?.setValidators([Validators.required]);
       this.showEfectorAutoridad = false;
