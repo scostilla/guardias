@@ -17,7 +17,7 @@ export class Legajo {
     esRegional?: boolean;
     activo:boolean;
     matriculaNacional?: string | null;
-    matriculaProvincial: string;
+    matriculaProvincial?: string | null;
     motivoBaja?: string | null; 
     suspencion?: Suspension | null;
     revista?:Revista | null;
@@ -25,7 +25,7 @@ export class Legajo {
     persona?: Person | null;
     efectores: Efector[];
     especialidades: Especialidad[];
-    profesion: Profesion;
+    profesion?: Profesion | null;
     tipoGuardias: TipoGuardia[];
     cargo?: Cargo | null;
     region?: Region | null;
@@ -34,21 +34,21 @@ export class Legajo {
         fechaInicio: Date | null,
         esAutoridad: boolean,
         activo:boolean,
-        matriculaProvincial: string,
         efectores: Efector[],
         especialidades: Especialidad[],
-        profesion: Profesion,
         tipoGuardias: TipoGuardia[],
 
         // Parámetros opcionales
         fechaFinal?: Date | null,
         esRegional?: boolean,
         matriculaNacional?: string | null,
+        matriculaProvincial?: string | null,
         motivoBaja?: string | null,
         suspencion?: Suspension | null,
         revista?:Revista | null,
         udo?: Efector | null,
         persona?: Person | null,
+        profesion?: Profesion | null,
         cargo?: Cargo | null,
         region?: Region | null    
 

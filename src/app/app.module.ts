@@ -59,9 +59,9 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
-import { NovedadesPersonCreateComponent } from './components/personal/novedades-person-create/novedades-person-create.component';
-import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
-import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
+import { NovedadesPersonCreateComponent } from './components/personal/novedades/novedades-person-create/novedades-person-create.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades/novedades-person/novedades-person.component';
 import { PopupComponent } from './components/popup/popup.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
@@ -202,30 +202,30 @@ import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo
 import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
 import { PermisosEfectoresComponent } from './components/configuracion/establecimiento/permisos-efectores/permisos-efectores.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
-import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
-import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
-import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
-import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
-import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
-import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
-import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
-import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
-import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
-import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
-import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
-import { LegajoCreateNoasistencialComponent } from './components/configuracion/usuarios/legajo-create-noasistencial/legajo-create-noasistencial.component';
-import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
-import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
-import { LegajoEditNoasistencialComponent } from './components/configuracion/usuarios/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
-import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
-import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
+import { AsistencialCreateComponent } from './components/personal/personal-contenido/asistencial-create/asistencial-create.component';
+import { AsistencialDetailComponent } from './components/personal/personal-contenido/asistencial-detail/asistencial-detail.component';
+import { AsistencialEditComponent } from './components/personal/personal-contenido/asistencial-edit/asistencial-edit.component';
+import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialComponent } from './components/personal/personal-contenido/asistencial/asistencial.component';
+import { AutoridadDetailComponent } from './components/personal/personal-contenido/autoridad-detail/autoridad-detail.component';
+import { AutoridadEditComponent } from './components/personal/personal-contenido/autoridad-edit/autoridad-edit.component';
+import { AutoridadComponent } from './components/personal/personal-contenido/autoridad/autoridad.component';
+import { CargoDetailComponent } from './components/personal/personal-contenido/cargo-detail/cargo-detail.component';
+import { CargoEditComponent } from './components/personal/personal-contenido/cargo-edit/cargo-edit.component';
+import { CargoComponent } from './components/personal/personal-contenido/cargo/cargo.component';
+import { LegajoCreateNoasistencialComponent } from './components/personal/legajo/legajo-create-noasistencial/legajo-create-noasistencial.component';
+import { LegajoCreateComponent } from './components/personal/legajo/legajo-create/legajo-create.component';
+import { LegajoDetailComponent } from './components/personal/legajo/legajo-detail/legajo-detail.component';
+import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
+import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
+import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
-import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
+import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
-import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
-import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
-import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
-import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
+import { NoAsistencialCreateComponent } from './components/personal/personal-contenido/no-asistencial-create/no-asistencial-create.component';
+import { NoAsistencialDetailComponent } from './components/personal/personal-contenido/no-asistencial-detail/no-asistencial-detail.component';
+import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
+import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
@@ -240,7 +240,7 @@ import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
-import { NovedadesPersonDetailComponent } from './components/personal/novedades-person-detail/novedades-person-detail.component';
+import { NovedadesPersonDetailComponent } from './components/personal/novedades/novedades-person-detail/novedades-person-detail.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
@@ -250,6 +250,11 @@ import { PersonalLegajoComponent } from './components/personal/personal-legajo/p
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
+import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
+import { MotivoBajaDialogComponent } from './components/configuracion/usuarios/motivo-baja-dialog/motivo-baja-dialog.component';
+import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
+import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
+import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 
 @NgModule({
   declarations: [
@@ -449,6 +454,11 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     HomeAutoridadComponent,
     LegajoCreateNoasistencialComponent,
     LegajoEditNoasistencialComponent,
+    SinLegajoComponent,
+    MotivoBajaDialogComponent,
+    PersonalSinLegajoComponent,
+    ExternoComponent,
+    PersonalExternoComponent,
     
   ],
 

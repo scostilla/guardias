@@ -1,0 +1,100 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <div class="titulos">Modificar Legajo 
+      </div>
+    </div>
+    <div class="col-6 m mt-3 d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+  </div>
+
+  <div class="row">
+    <mat-dialog-content class="mat-typography">
+
+      <form [formGroup]="legajoForm" (ngSubmit)="updateLegajo()">
+
+        <mat-form-field appearance="fill" style="margin-top: 20px;"> 
+            <mat-label>Profesional</mat-label>
+            <input matInput [value]="asistencial ? (asistencial.apellido + ', ' + asistencial.nombre) : (noAsistencial?.apellido + ', ' + noAsistencial?.nombre)" readonly required>
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error *ngIf="legajoForm.get('idPersona')?.hasError('required')">
+              El campo profesional es requerido.
+            </mat-error>
+          </mat-form-field>
+              
+          <mat-form-field appearance="fill" style="margin-top: 20px;">
+              <mat-label>Tipo de legajo</mat-label>
+              <mat-select formControlName="esAutoridad">
+                <mat-option [value]="false">General</mat-option>
+                <mat-option [value]="true">Autoridad</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('esAutoridad')?.errors?.['required']">El campo es requerido.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" *ngIf="legajoForm.get('esAutoridad')?.value">
+              <mat-label>Cargo</mat-label>
+              <mat-select formControlName="idCargo" (selectionChange)="onCargoChange()">
+                <mat-option *ngFor="let cargo of cargos" [value]="cargo.nombre">{{ cargo.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('idCargo')?.errors?.['required']">El cargo es requerido.</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="fill" *ngIf="showRegion">
+              <mat-label>Región</mat-label>
+              <mat-select formControlName="idRegion">
+                <mat-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('idRegion')?.errors?.['required']">La región es requerida.</mat-error>
+            </mat-form-field>
+                
+            <mat-form-field appearance="fill">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.hasError('required')">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('fechaInicio')?.hasError('futureDate')">La fecha no puede ser posterior a la fecha actual.</mat-error>
+            </mat-form-field>
+                    
+            <mat-form-field appearance="fill">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final">
+              <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFinal></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
+              <mat-select formControlName="udo" [compareWith]="compareFn">
+                <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Efector</mat-label>
+              <mat-select formControlName="efectores" [compareWith]="compareFn">
+                <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+        
+        <div mat-dialog-actions class="action mt-4">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid" class="me-2">
+            Modificar Legajo
+          </button>
+          <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </mat-dialog-content>
+  </div>
+</div>

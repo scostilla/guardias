@@ -55,33 +55,13 @@ import { ProfesionEditComponent } from './components/configuracion/profesionales
 import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
 
 //Configuraciones: Personas
-import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
-import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
-import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
-import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
-import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
-import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
-import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
-import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
-import { LegajoCreateNoasistencialComponent } from './components/configuracion/usuarios/legajo-create-noasistencial/legajo-create-noasistencial.component';
-import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
-import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
-import { LegajoEditNoasistencialComponent } from './components/configuracion/usuarios/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
-import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
-import { LegajoNoAsistencialComponent } from './components/configuracion/usuarios/legajo-no-asistencial/legajo-no-asistencial.component';
 import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
-import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
 import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
-import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
-import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
-import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
-import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
-import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
-import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+
 
 //Configuraciones: Leyes y novedades
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
@@ -129,9 +109,36 @@ import { PersonalAutoridadComponent } from './components/personal/personal-autor
 import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
-import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
+import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
+import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
+import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 
+import { AsistencialCreateComponent } from './components/personal/personal-contenido/asistencial-create/asistencial-create.component';
+import { AsistencialDetailComponent } from './components/personal/personal-contenido/asistencial-detail/asistencial-detail.component';
+import { AsistencialEditComponent } from './components/personal/personal-contenido/asistencial-edit/asistencial-edit.component';
+import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialComponent } from './components/personal/personal-contenido/asistencial/asistencial.component';
+import { CargoDetailComponent } from './components/personal/personal-contenido/cargo-detail/cargo-detail.component';
+import { CargoEditComponent } from './components/personal/personal-contenido/cargo-edit/cargo-edit.component';
+import { CargoComponent } from './components/personal/personal-contenido/cargo/cargo.component';
+import { NoAsistencialCreateComponent } from './components/personal/personal-contenido/no-asistencial-create/no-asistencial-create.component';
+import { NoAsistencialDetailComponent } from './components/personal/personal-contenido/no-asistencial-detail/no-asistencial-detail.component';
+import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
+import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
+import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
+import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
+
+import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
+import { LegajoCreateNoasistencialComponent } from './components/personal/legajo/legajo-create-noasistencial/legajo-create-noasistencial.component';
+import { LegajoCreateComponent } from './components/personal/legajo/legajo-create/legajo-create.component';
+import { LegajoDetailComponent } from './components/personal/legajo/legajo-detail/legajo-detail.component';
+import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
+import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
+import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
+
+import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
+import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 
 
 //Sección: Cronograma
@@ -188,9 +195,9 @@ import { DailyScheduleComponent } from './components/daily-schedule/daily-schedu
 import { DigestoComponent } from './components/digesto/digesto.component';
 import { MonthTableComponent } from './components/month-table/month-table.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
-import { NovedadesPersonCreateComponent } from './components/personal/novedades-person-create/novedades-person-create.component';
-import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
-import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
+import { NovedadesPersonCreateComponent } from './components/personal/novedades/novedades-person-create/novedades-person-create.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades/novedades-person/novedades-person.component';
 import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
 import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
@@ -218,9 +225,9 @@ import { PruebaDetailComponent } from './components/configuracion/territorio/pru
 import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
 import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
 import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
-import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
-import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
-import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
+import { AutoridadDetailComponent } from './components/personal/personal-contenido/autoridad-detail/autoridad-detail.component';
+import { AutoridadEditComponent } from './components/personal/personal-contenido/autoridad-edit/autoridad-edit.component';
+import { AutoridadComponent } from './components/personal/personal-contenido/autoridad/autoridad.component';
 
 
 
@@ -279,35 +286,12 @@ const routes: Routes = [
   {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
  
   //Configuraciones: Personas
-  {path: 'asistencial-selector', component:AsistencialSelectorComponent},
   {path: 'person', component:PersonComponent},
   {path: 'person-detail/:id', component:PersonDetailComponent},
   {path: 'person-edit/:id', component:PersonEditComponent},
   {path: 'person-edit', component: PersonEditComponent },
-  {path: 'asistencial-create', component:AsistencialCreateComponent},
-  {path: 'asistencial', component:AsistencialComponent},
-  {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
-  {path: 'asistencial-edit', component:AsistencialEditComponent},
-  {path: 'no-asistencial', component:NoAsistencialComponent},
-  {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
-  {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
-  {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
   {path: 'legajo', component:LegajoComponent},
-  {path: 'legajo-create', component: LegajoCreateComponent},
-  {path: 'legajo-detail/:id', component:LegajoDetailComponent},
-  {path: 'legajo-edit/:id', component:LegajoEditComponent},
-  {path: 'legajo-edit', component:LegajoEditComponent},
-  {path: 'legajo-no-asistencial', component:LegajoNoAsistencialComponent},
-  {path: 'legajo-create-noasistencial', component: LegajoCreateNoasistencialComponent},
-  {path: 'legajo-edit-noasistencial/:id', component:LegajoEditNoasistencialComponent},
-  {path: 'legajo-edit-noasistencial', component:LegajoEditNoasistencialComponent},
-  {path: 'legajo-person', component:LegajoPersonComponent},
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
-  {path: 'personal-dh', component:PersonalDhComponent},
-  {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
-  {path: 'cargo', component:CargoComponent},
-  {path: 'cargo-detail/:id', component:CargoDetailComponent},
-  {path: 'cargo-edit/:id', component:CargoEditComponent},
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
   
@@ -361,11 +345,41 @@ const routes: Routes = [
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
+  {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent},
+  {path: 'personal-externo', component:PersonalExternoComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
   {path: 'personal-legajo-no-asistencial', component:PersonalLegajoNoAsistencialComponent},
   {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
+
+  {path: 'asistencial-selector', component:AsistencialSelectorComponent},
+  {path: 'asistencial-create', component:AsistencialCreateComponent},
+  {path: 'asistencial', component:AsistencialComponent},
+  {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
+  {path: 'asistencial-edit', component:AsistencialEditComponent},
+  {path: 'no-asistencial', component:NoAsistencialComponent},
+  {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
+  {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
+  {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
+  {path: 'sin-legajo', component:SinLegajoComponent},
+  {path: 'externo', component:ExternoComponent},
+
+  {path: 'personal-dh', component:PersonalDhComponent},
+  {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
+  {path: 'cargo', component:CargoComponent},
+  {path: 'cargo-detail/:id', component:CargoDetailComponent},
+  {path: 'cargo-edit/:id', component:CargoEditComponent},
+
+  {path: 'legajo-create', component: LegajoCreateComponent},
+  {path: 'legajo-detail/:id', component:LegajoDetailComponent},
+  {path: 'legajo-edit/:id', component:LegajoEditComponent},
+  {path: 'legajo-edit', component:LegajoEditComponent},
+  {path: 'legajo-no-asistencial', component:LegajoNoAsistencialComponent},
+  {path: 'legajo-create-noasistencial', component: LegajoCreateNoasistencialComponent},
+  {path: 'legajo-edit-noasistencial/:id', component:LegajoEditNoasistencialComponent},
+  {path: 'legajo-edit-noasistencial', component:LegajoEditNoasistencialComponent},
+  {path: 'legajo-person', component:LegajoPersonComponent},
 
 
   //Sección: Cronograma

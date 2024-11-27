@@ -1,0 +1,142 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-7">
+      <div class="titulos_extra">PERSONAL</div>
+    </div>
+    <div class="col-12 col-md-1 m d-flex justify-content-end">
+      <button mat-fab class="button-success" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
+        <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab class="button-primary" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
+        <mat-icon>av_timer</mat-icon>
+      </button>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput placeholder="Buscar por nombre, apellido o cuil" (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="row">
+      <div class="col-12 col-md-6">Estás viendo:
+        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales 
+          <mat-icon>expand_more</mat-icon></button>
+        <mat-menu #menug="matMenu">
+          <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
+          <button mat-menu-item routerLink="/personal-externo">Ver <span class="negrita">Externo</span></button>
+          <button mat-menu-item routerLink="/sin-legajo">Ver <span class="negrita">Sin legajo asignado</span></button>
+        </mat-menu>
+      </div>
+
+      <div class="col-12 col-md-6 m d-flex justify-content-md-end">Efector: <span class="negrita ps-1">{{efectorNombre}}</span>
+      </div>
+
+    </div>
+
+    <div *ngIf="showMessage" class="no-selection-message">
+      No has seleccionado ningún hospital en el panel principal, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="sinAsistencialMessage" class="no-selection-message">
+      No se encontraron personas cargadas para interactuar con el efector, haz 
+      <button class="button-primary" routerLink="/home-page">clic aquí</button> para regresar al inicio.
+    </div>
+    
+    <div *ngIf="!showMessage && !sinAsistencialMessage">
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.nombre}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="apellido">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Apellido </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.apellido}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dni">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> DNI </th> 
+          <td mat-cell *matCellDef="let asistencial"> {{asistencial.dni}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cuil">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
+          <td mat-cell *matCellDef="let asistencial" style="white-space: nowrap;"> {{ formatCuil(asistencial.cuil) }} </td>
+        </ng-container>
+                
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef  class="negrita"></th>
+          <td mat-cell *matCellDef="let asistencial" class="cell-actions">
+            <button mat-icon-button matTooltip="Ver {{asistencial.nombre}}" (click)="openDetail(asistencial)">
+              <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Editar {{asistencial.nombre}}" (click)="updateAsistencial(asistencial)">
+              <mat-icon class="btnEdit">edit</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Eliminar {{asistencial.nombre}}" (click)="deleteAsistencial(asistencial)">
+              <mat-icon class="btnRemove">delete</mat-icon>
+            </button>
+
+            <button mat-icon-button matTooltip="{{getTooltip(asistencial)}}" (click)="getButtonAction(asistencial)"
+              *ngIf="!isLoadingLegajos">
+              <mat-icon color="primary">{{getIcon(asistencial)}}</mat-icon>
+            </button>
+            <!-- <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)" *ngIf="!isLoadingLegajos && hayLegajos(asistencial)">
+              <mat-icon color="primary">playlist_play</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Agregar Legajo" (click)="crearLegajo()" *ngIf="!isLoadingLegajos && !hayLegajos(asistencial)">
+              <mat-icon color="primary">playlist_add</mat-icon>
+            </button> -->
+            <button mat-icon-button matTooltip="Ver/Agregar novedad" (click)="verNovedad(asistencial)" *ngIf="hayLegajos(asistencial) && mostrarBotones(asistencial)">
+              <mat-icon color="warn">event</mat-icon>
+            </button>
+          
+            <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)" *ngIf="hayLegajos(asistencial) && mostrarBotones(asistencial)">
+              <mat-icon>calendar_month</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-lg-3">    
+    <mat-accordion>
+        <mat-expansion-panel #miPanel hideToggle>
+          <mat-expansion-panel-header style="pointer-events: none;">
+            <mat-panel-title>
+              <button mat-icon-button color="primary" aria-label="Agregar columnas" matTooltip="Agregar columnas" (click)="miPanel.toggle(); $event.stopPropagation()" style="pointer-events: auto;">
+                <mat-icon>menu</mat-icon>
+              </button>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <ul>
+            <li>
+              <input type="checkbox" [(ngModel)]="dniVisible" (change)="actualizarColumnasVisibles()"> DNI
+            </li>
+            <li>
+              <input type="checkbox" [(ngModel)]="telefonoVisible" (change)="actualizarColumnasVisibles()"> Teléfono
+            </li>
+        </ul>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="col-lg-9">        
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+    </div>
+  </div>
+
+</div>

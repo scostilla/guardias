@@ -4,8 +4,8 @@ export class LegajoDto {
     esAutoridad: boolean;
     esRegional?: boolean;
     activo: boolean;
-    matriculaNacional?: string  | null;
-    matriculaProvincial: string;
+    matriculaNacional?: string | null;
+    matriculaProvincial?: string | null;
     idSuspencion?: number | null;
     motivoBaja?: string | null;
     idRevista?: number | null;
@@ -13,7 +13,7 @@ export class LegajoDto {
     idPersona: number;
     idEfectores?: number[]  | null;
     idEspecialidades?: number[] | null;
-    idProfesion: number;
+    idProfesion?: number | null;
     idTipoGuardias?: number[] | null;
     idCargo?: number | null;
     idRegion?: number | null;
@@ -22,20 +22,20 @@ export class LegajoDto {
       fechaInicio: Date | null,
       esAutoridad: boolean,
       activo: boolean,
-      matriculaProvincial: string,
       idPersona: number,
-      idProfesion: number,
   
       // Parámetros opcionales
       fechaFinal?: Date | null,
       esRegional?: boolean,
       matriculaNacional?: string | null,
+      matriculaProvincial?: string | null,
       idSuspencion?: number | null,
       motivoBaja?: string | null,
       idRevista?: number | null,
       idUdo?: number  | null,
       idEfectores?: number[]  | null,
       idEspecialidades?: number[] | null,
+      idProfesion?: number | null,
       idTipoGuardias?: number[] | null,
       idCargo?: number | null,
       idRegion?: number | null  
