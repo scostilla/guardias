@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 
@@ -42,7 +43,8 @@ export class HomePageComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private hospitalService: HospitalService,
-    private asistencialService: AsistencialService
+    private asistencialService: AsistencialService,
+    private efectorService: EfectorService
   ) {}
 
   ngOnInit(): void {
@@ -87,7 +89,7 @@ export class HomePageComponent implements OnInit {
   // Carga el efector para el rol 'Dph y Super'
   loadEfectoresForDphOrSuper(): void {
     // Primero, intentamos recuperar el id previamente seleccionado desde el servicio
-    const previouslySelectedId = this.asistencialService.getCurrentEfectorId();
+    const previouslySelectedId = this.efectorService.getCurrentEfectorId();
     if (previouslySelectedId) {
       this.selectedListEfectores = previouslySelectedId;
       console.log('Efector previamente seleccionado:', this.selectedListEfectores);
@@ -108,7 +110,7 @@ export class HomePageComponent implements OnInit {
   
         // Si la lista de efectores tiene datos y el id es válido, lo podemos guardar en el servicio
         if (this.efectores.length > 0 && this.selectedListEfectores !== null) {
-          this.asistencialService.setCurrentEfectorId(this.selectedListEfectores);
+          this.efectorService.setCurrentEfectorId(this.selectedListEfectores);
           console.log('ID del efector seleccionado para DPH o Super:', this.selectedListEfectores);
         } else {
           // Si no hay efectores o si selectedListEfectores es null, limpiamos el valor
@@ -131,9 +133,9 @@ loadEfectorForAdministrativo(): void {
       console.log('Respuesta de detailPersonBasicPanel:', response);
       if (response.efectores && response.efectores.length > 0) {
         this.selectedEfector = response.efectores[0];  // Solo tomamos el primer efector
-        this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+        this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
         console.log('Efector administrativo seleccionado:', this.selectedEfector);
-        this.fetchAsistenciales(this.selectedEfector.id);
+        /*this.fetchAsistenciales(this.selectedEfector.id);*/
       } else {
         console.warn('No hay efectores disponibles para Administrativo');
         this.selectedEfector = null;
@@ -149,12 +151,12 @@ loadEfectorForAdministrativo(): void {
   onEfectorChange(event: Event): void {
     const selectedListEfectores = this.selectedListEfectores;  // Usamos solo el ID del efector
     if (selectedListEfectores) {
-      this.asistencialService.setCurrentEfectorId(selectedListEfectores);  // Guardamos el ID en el BehaviorSubject
+      this.efectorService.setCurrentEfectorId(selectedListEfectores);  // Guardamos el ID en el BehaviorSubject
       console.log('Efector seleccionado para DPH o Super:', selectedListEfectores);
     }
   }
 
-  fetchAsistenciales(efectorId: number) {
+  /*fetchAsistenciales(efectorId: number) {
     this.asistencialService.listByEfectorAndTipoGuardia(efectorId).subscribe(
       (asistenciales) => {
         console.log('Asistenciales filtrados para efector ID:', efectorId, asistenciales);
@@ -163,7 +165,7 @@ loadEfectorForAdministrativo(): void {
         console.error('Error al obtener asistenciales:', error);
       }
     );
-  }
+  }*/
   
   goToProfessionalForm() {
     this.router.navigateByUrl('/professional-form');
@@ -171,7 +173,7 @@ loadEfectorForAdministrativo(): void {
 
   onLogOut(): void {
     this.tokenService.logOut(); // Limpiar el sessionStorage
-    this.asistencialService.setCurrentEfectorId(null); // Reiniciar el ID del efector
+    this.efectorService.setCurrentEfectorId(null); // Reiniciar el ID del efector
     window.location.reload(); // Recargar la página
   }
 }

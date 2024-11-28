@@ -9,8 +9,10 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { Router } from '@angular/router';
 //import { NovedadesFormComponent } from 'src/app/components/personal/novedades-form/novedades-form.component';
 
+
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
@@ -95,6 +97,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   
   constructor(
     private asistencialService: AsistencialService,
+    private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private dialog: MatDialog,
     public dialogNov: MatDialog,
@@ -167,7 +170,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.listLegajos();
 
     // Obtener el ID efector del servicio
-    this.efectorId = this.asistencialService.getCurrentEfectorId();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
     
     // Verificar si el ID efector es válido
@@ -205,6 +208,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.isSuper = this.roles.includes('ROLE_SUPERUSER');
   }
 
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
     // Solo intentamos obtener el nombre si tenemos un id válido
     if (this.efectorId) {
@@ -275,6 +279,14 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
     
   tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
+    // Verifica si hay al menos un tipo de guardia asignado
+    const tieneGuardias = legajos.some(legajo => legajo.tipoGuardias && legajo.tipoGuardias.length > 0);
+    
+    // Si no tiene ningún tipo de guardia, no se permiten acciones
+    if (!tieneGuardias) {
+      return true;
+    }
+  
     // Verifica si las guardias 'cargo', 'agrupacion' y 'extra' cumplen con la lógica específica
     const tieneGuardiasCombinadas = legajos.some(legajo => {
       const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id);
@@ -289,10 +301,10 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       return false;
     });
   
-    // Si 'extra' está sola, no permite acciones
+    // Si 'extra' está sola o no tiene guardias, no permite acciones
     return tieneGuardiasCombinadas;
   }
-  
+    
   mostrarBotones(asistencial: AsistencialListDto): boolean {
     const legajosAsistencial = this.legajos.filter(legajo => legajo.persona?.id === asistencial.id);
     return !this.tipoGuardiaNoPermiteAcciones(legajosAsistencial);

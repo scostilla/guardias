@@ -9,9 +9,18 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Router } from '@angular/router';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
   selector: 'app-no-asistencial',
@@ -43,6 +52,21 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   showMessage: boolean = false;
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  //Autenticación
+  isLogged = false;
+  roles: string[] =[];
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  userId: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
+  nombresEfectores: EfectorSummaryDto[] = [];
+  usuarioPersona: number | null = null;
+  
 
   constructor(
     private noasistencialService: NoAsistencialService,
@@ -50,6 +74,10 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private router: Router,
     private legajoService: LegajoService,
+    private efectorService: EfectorService,
+    private hospitalService: HospitalService,
+    private tokenService: TokenService,
+    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -65,10 +93,42 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+      this.UserRoles();
+  
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+  
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+  
+          // Log para mostrar el usuario y los efectores
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+
     this.listLegajos();
 
     // Obtener el ID efector del servicio
-    this.efectorId = this.noasistencialService.getCurrentEfectorId();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
     
     // Verificar si el ID efector es válido
     if (this.efectorId === null) {
@@ -96,6 +156,34 @@ applyFilter(event: Event) {
 
   this.dataSource.filter = normalizedFilterValue;
 }
+
+  //Roles a usar
+  UserRoles(): void {
+    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
+    this.isUsuario = this.roles.includes('ROLE_USER');
+    this.isDph = this.roles.includes('ROLE_DPH');
+    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+  }
+
+  //Trae el nombre del efector esta en sesion
+  loadEfectorName(): void {
+    // Solo intentamos obtener el nombre si tenemos un id válido
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // Aquí puedes acceder al nombre del efector
+          this.efectorNombre = efector.nombre;
+          console.log('Nombre del efector:', this.efectorNombre);
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;  // Si hay un error, establecemos en null
+        }
+      );
+    }
+  }
+
+
 
   /* accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
@@ -125,7 +213,7 @@ applyFilter(event: Event) {
         // Filtra los datos para asegurarte de que tengan al menos un legajo activo
         const filteredData = data.filter(noAsistencial => 
           noAsistencial.legajos.some(legajo => 
-            legajo.efectores.some(efector => efector.id === efectorId) && legajo.activo // Asegurarse de que el legajo esté activo
+            legajo.efectores.some(efector => efector.id === efectorId) && legajo.activo // Verifica que el legajo esté asociado al efector y si el legajo esta activo
           )
         );
     

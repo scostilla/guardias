@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 
@@ -20,7 +21,8 @@ export class HomeAutoridadComponent implements OnInit {
     private router: Router,
     private tokenService: TokenService,
     private authService: AuthService,
-    private asistencialService: AsistencialService
+    private asistencialService: AsistencialService,
+    private efectorService: EfectorService
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class HomeAutoridadComponent implements OnInit {
           if (this.nombresEfectores && this.nombresEfectores.length > 0) {
             console.log('Efectores disponibles, iniciando selección del efector');
             
-            const savedEfectorId = this.asistencialService.getCurrentEfectorId(); // Obtener el ID del efector actual
+            const savedEfectorId = this.efectorService.getCurrentEfectorId(); // Obtener el ID del efector actual
             console.log('ID del efector guardado:', savedEfectorId);
   
             if (savedEfectorId) {
@@ -56,7 +58,7 @@ export class HomeAutoridadComponent implements OnInit {
             }
   
             // Establece el ID en el BehaviorSubject
-            this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+            this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
             console.log('ID del efector seleccionado guardado en el BehaviorSubject:', this.selectedEfector.id);
             
             // Fetch asistenciales
@@ -80,7 +82,7 @@ export class HomeAutoridadComponent implements OnInit {
         
   onEfectorChange() {
     if (this.selectedEfector) {
-      this.asistencialService.setCurrentEfectorId(this.selectedEfector.id);
+      this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
       this.fetchAsistenciales(this.selectedEfector.id);
     }
   }
@@ -102,7 +104,7 @@ export class HomeAutoridadComponent implements OnInit {
 
   onLogOut(): void {
     this.tokenService.logOut(); // Limpiar el sessionStorage
-    this.asistencialService.setCurrentEfectorId(null); // Reiniciar el ID del efector
+    this.efectorService.setCurrentEfectorId(null); // Reiniciar el ID del efector
     window.location.reload(); // Recargar la página
   }
 }

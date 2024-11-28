@@ -20,15 +20,15 @@
             <th scope="row">Fecha final</th>
             <td>{{ legajo.fechaFinal ? (legajo.fechaFinal | date: 'dd/MM/yyyy') : 'Aún en vigencia.' }}</td>
           </tr>
-          <tr>
+          <tr *ngIf="legajo.matriculaNacional">
             <th scope="row">Matricula Nacional</th>
             <td>{{legajo.matriculaNacional || 'No posee'}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="legajo.matriculaProvincial">
             <th scope="row">Matricula Provincial</th>
             <td>{{legajo.matriculaProvincial}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="legajo.profesion?.nombre">
             <th scope="row">Profesión</th>
             <td>{{legajo.profesion?.nombre || 'No posee'}}</td>
           </tr>
@@ -40,7 +40,7 @@
             </ng-container>
           </td>
         </tr>
-        <tr>
+        <tr *ngIf="legajo.tipoGuardias">
           <th scope="row">Tipo de guardia</th>
           <td>
             <ng-container *ngFor="let tipoGuardias of legajo.tipoGuardias; let i = index">
