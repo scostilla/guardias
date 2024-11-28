@@ -7,8 +7,6 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Router } from '@angular/router';
-//import { NovedadesFormComponent } from 'src/app/components/personal/novedades-form/novedades-form.component';
-
 
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
@@ -17,7 +15,6 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
-
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -28,10 +25,8 @@ import { HabilitacionesGuardias } from 'src/app/models/Configuracion/Habilitacio
 import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 
-
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
-
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
@@ -210,17 +205,15 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
-    // Solo intentamos obtener el nombre si tenemos un id válido
     if (this.efectorId) {
       this.hospitalService.getById(this.efectorId).subscribe(
         (efector: Efector) => {
-          // Aquí puedes acceder al nombre del efector
+          // traigo nombre del efector
           this.efectorNombre = efector.nombre;
-          console.log('Nombre del efector:', this.efectorNombre);
         },
         (error) => {
           console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;  // Si hay un error, establecemos en null
+          this.efectorNombre = null;
         }
       );
     }

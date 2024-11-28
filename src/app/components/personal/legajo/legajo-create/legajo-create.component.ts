@@ -104,6 +104,7 @@ export class LegajoCreateComponent implements OnInit {
   noEspecialidadesMessage: string = '';
   showGuardia: boolean = false;
   showRegion: boolean = false;
+  showSiEsAutoridad: boolean = false;
   showEfectorAutoridad: boolean = false;
   showHabilitacionesGuardias: boolean = false;
   idContraFactura?: number;
@@ -599,6 +600,7 @@ export class LegajoCreateComponent implements OnInit {
     // Mostrar/ocultar el campo 'idCargo' y tipoGuardia basado en 'esAutoridad'
     if (esAutoridad) {
       // Si es autoridad muestro idCargo y oculto tipoGuardia y situacion de revista
+      this.showSiEsAutoridad = true;
       idCargoControl?.enable();
       this.legajoForm.get('idCargo')?.setValidators([Validators.required]);
       this.showGuardia = false;

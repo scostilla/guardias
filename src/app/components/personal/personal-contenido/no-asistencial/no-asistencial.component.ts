@@ -6,15 +6,21 @@ import { MatSort } from '@angular/material/sort';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { Router } from '@angular/router';
+
+//Services
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Router } from '@angular/router';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+
+//Models y dto
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+
+//Componentes
+import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
@@ -30,16 +36,16 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 export class NoAsistencialComponent implements OnInit, OnDestroy {
 
+  @ViewChild(MatTable) table!: MatTable<NoAsistencial>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   dniVisible: boolean = false;
   domicilioVisible: boolean = false;
   estadoVisible: boolean = false;
   fechaNacimientoVisible: boolean = false;
   telefonoVisible: boolean = false;
   emailVisible: boolean = false;
-
-  @ViewChild(MatTable) table!: MatTable<NoAsistencial>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<NoAsistencialDetailComponent>;
   displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
@@ -93,7 +99,6 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
@@ -142,20 +147,20 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     });
 
     this.actualizarColumnasVisibles();
-}
+  }
 
-applyFilter(event: Event) {
-  const filterValue = (event.target as HTMLInputElement).value;
-  const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
-    const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return normalizedData.indexOf(normalizedFilterValue) !== -1;
-  };
+    this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return normalizedData.indexOf(normalizedFilterValue) !== -1;
+    };
 
-  this.dataSource.filter = normalizedFilterValue;
-}
+    this.dataSource.filter = normalizedFilterValue;
+  }
 
   //Roles a usar
   UserRoles(): void {
@@ -167,74 +172,55 @@ applyFilter(event: Event) {
 
   //Trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    // Solo intentamos obtener el nombre si tenemos un id válido
     if (this.efectorId) {
       this.hospitalService.getById(this.efectorId).subscribe(
         (efector: Efector) => {
-          // Aquí puedes acceder al nombre del efector
+          // traigo nombre del efector
           this.efectorNombre = efector.nombre;
-          console.log('Nombre del efector:', this.efectorNombre);
         },
         (error) => {
           console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;  // Si hay un error, establecemos en null
+          this.efectorNombre = null;
         }
       );
     }
   }
 
-
-
-  /* accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
+  listNoAsistencial(efectorId: number | null = null): void {
+    // Si no hay un ID de efector, muestra el mensaje
+    if (efectorId === null) {
+      this.showMessage = true;
+      this.sinAsistencialMessage = false;
+      this.dataSource = new MatTableDataSource<NoAsistencial>([]); // Si no hay efector, limpiar los datos
+      return;
+    }
+    
+    this.noasistencialService.list().subscribe(data => {
+      // Filtra los datos para asegurarte de que tengan al menos un legajo activo
+      const filteredData = data.filter(noAsistencial => 
+        noAsistencial.legajos.some(legajo => 
+        legajo.efectores.some(efector => efector.id === efectorId) && legajo.activo // Verifica que el legajo esté asociado al efector y si el legajo esta activo
+        )
+      );
+    
+      // Maneja los mensajes según los resultados
+      if (filteredData.length === 0) {
+        this.showMessage = false;
+        this.sinAsistencialMessage = true; // Muestra el mensaje si no se encuentra ningún legajo activo
       } else {
-        output += input[i];
-      }
-    }
-    return output;
-  } */
-
-    listNoAsistencial(efectorId: number | null = null): void {
-      // Si no hay un ID de efector, muestra el mensaje
-      if (efectorId === null) {
-        this.showMessage = true;
-        this.sinAsistencialMessage = false;
-        this.dataSource = new MatTableDataSource<NoAsistencial>([]); // Si no hay efector, limpiar los datos
-        return;
+        this.showMessage = false;
+        this.sinAsistencialMessage = false; // No hay mensaje de "sin legajos"
+        this.dataSource = new MatTableDataSource<NoAsistencial>(filteredData); // Establece los datos filtrados
       }
     
-      this.noasistencialService.list().subscribe(data => {
-        // Filtra los datos para asegurarte de que tengan al menos un legajo activo
-        const filteredData = data.filter(noAsistencial => 
-          noAsistencial.legajos.some(legajo => 
-            legajo.efectores.some(efector => efector.id === efectorId) && legajo.activo // Verifica que el legajo esté asociado al efector y si el legajo esta activo
-          )
-        );
-    
-        // Maneja los mensajes según los resultados
-        if (filteredData.length === 0) {
-          this.showMessage = false;
-          this.sinAsistencialMessage = true; // Muestra el mensaje si no se encuentra ningún legajo activo
-        } else {
-          this.showMessage = false;
-          this.sinAsistencialMessage = false; // No hay mensaje de "sin legajos"
-          this.dataSource = new MatTableDataSource<NoAsistencial>(filteredData); // Establece los datos filtrados
-        }
-    
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      }, error => {
-        console.error('Error al obtener no asistenciales:', error);
-        this.showMessage = true;
-        this.sinAsistencialMessage = false; // En caso de error, mostrar el mensaje correspondiente
-      });
-    }
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }, error => {
+      console.error('Error al obtener no asistenciales:', error);
+      this.showMessage = true;
+      this.sinAsistencialMessage = false; // En caso de error, mostrar el mensaje correspondiente
+    });
+  }
       
   getCurrentEfectorId(): number | null {
     return this.efectorId;
@@ -376,5 +362,4 @@ applyFilter(event: Event) {
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
   }
-
 }

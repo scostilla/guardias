@@ -109,7 +109,7 @@
               <mat-error *ngIf="legajoForm.get('esRegional')?.errors?.['required']">El campo es requerido.</mat-error>
             </mat-form-field>-->
 
-            <mat-form-field appearance="fill" *ngIf="legajoForm.get('esAutoridad')?.value">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
               <mat-label>Cargo</mat-label>
               <mat-select formControlName="idCargo" (selectionChange)="onCargoChange()">
                 <ng-container *ngFor="let cargo of cargos">
@@ -139,6 +139,26 @@
               <mat-error *ngIf="legajoForm.get('idRegion')?.errors?.['required']">La región es requerida.</mat-error>
             </mat-form-field>
 
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>N° resolución</mat-label>
+              <input matInput formControlName="nroResolucion">
+              <mat-error *ngIf="legajoForm.get('nroResolucion')?.errors?.['pattern']">El n° de resolución puede tener solo números (entre 5 y 10 digitos).</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>N° decreto</mat-label>
+              <input matInput formControlName="nroDecreto">
+              <mat-error *ngIf="legajoForm.get('nroDecreto')?.errors?.['pattern']">El n° de decreto puede tener solo números (entre 5 y 10 digitos).</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>Fecha Resolución</mat-label>
+              <input matInput [matDatepicker]="pickerResolucion" formControlName="fechaResolucion">
+              <mat-datepicker-toggle matSuffix [for]="pickerResolucion"></mat-datepicker-toggle>
+              <mat-datepicker #pickerResolucion></mat-datepicker>
+              <mat-error *ngIf="legajoForm.get('fechaResolucion')?.hasError('required')">La fecha es requerida.</mat-error>
+            </mat-form-field>
+
             <mat-form-field appearance="fill">
               <mat-label>Fecha Inicio</mat-label>
               <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
@@ -161,11 +181,12 @@
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
                   <!-- Filtra para el usuario ADMIN, excluyendo CONTRAFACTURA y PASIVA usando sus id -->
                   <mat-option 
-                  *ngIf="(asignadoAutoridad && 
-                          (isAdministrativo ? tipoGuardia.id === idExtra : 
-                            (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))) || 
-                         (!asignadoAutoridad && 
-                          (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))"
+                  *ngIf="
+                    (asignadoAutoridad && 
+                      (isAdministrativo ? tipoGuardia.id === idExtra : 
+                        (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))) || 
+                    (!asignadoAutoridad && !isAdministrativo) || 
+                    (!asignadoAutoridad && isAdministrativo && tipoGuardia.id !== idContraFactura && tipoGuardia.id !== idPasiva)"
                   [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}
                   </mat-option>

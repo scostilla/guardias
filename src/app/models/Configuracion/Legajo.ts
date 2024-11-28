@@ -29,6 +29,10 @@ export class Legajo {
     tipoGuardias: TipoGuardia[];
     cargo?: Cargo | null;
     region?: Region | null;
+    nroResolucion?: string;
+    nroDecreto?: string;
+    fechaResolucion?: string;
+    fechaBajaSistema?: string;
     
     constructor(
         fechaInicio: Date | null,
@@ -50,8 +54,11 @@ export class Legajo {
         persona?: Person | null,
         profesion?: Profesion | null,
         cargo?: Cargo | null,
-        region?: Region | null    
-
+        region?: Region | null,
+        nroResolucion?: string,
+        nroDecreto?: string,
+        fechaResolucion?: string,
+        fechaBajaSistema?: string
         ) {
         
         this.fechaInicio = fechaInicio;
@@ -72,6 +79,10 @@ export class Legajo {
         this.tipoGuardias = tipoGuardias;
         this.cargo = cargo;
         this.region = region;
+        this.nroResolucion = nroResolucion;
+        this.nroDecreto = nroDecreto;
+        this.fechaResolucion = fechaResolucion;
+        this.fechaBajaSistema = fechaBajaSistema;
     }
 
   }

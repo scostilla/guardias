@@ -17,6 +17,10 @@ export class LegajoDto {
     idTipoGuardias?: number[] | null;
     idCargo?: number | null;
     idRegion?: number | null;
+    nroResolucion?: string;  // solo para autoridad
+    nroDecreto?: string; // solo para autoridad
+    fechaResolucion?: string;  // solo para autoridad
+    fechaBajaSistema?: string;  // esto lo carga el back
   
     constructor(
       fechaInicio: Date | null,
@@ -38,7 +42,11 @@ export class LegajoDto {
       idProfesion?: number | null,
       idTipoGuardias?: number[] | null,
       idCargo?: number | null,
-      idRegion?: number | null  
+      idRegion?: number | null,
+      nroResolucion?: string,  // solo para autoridad
+      nroDecreto?: string, // solo para autoridad
+      fechaResolucion?: string,  // solo para autoridad
+      fechaBajaSistema?: string,  // esto lo carga el back  
     ) {
       this.fechaInicio = fechaInicio;
       this.fechaFinal = fechaFinal ?? null;
@@ -58,6 +66,10 @@ export class LegajoDto {
       this.idTipoGuardias = idTipoGuardias ?? null;
       this.idCargo = idCargo ?? null;
       this.idRegion = idRegion ?? null;
+      this.nroResolucion = nroResolucion ?? undefined;
+      this.nroDecreto = nroDecreto ?? undefined;
+      this.fechaResolucion = fechaResolucion ?? undefined;
+      this.fechaBajaSistema = fechaBajaSistema ?? undefined;
     }
   }
   
