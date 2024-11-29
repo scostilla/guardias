@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Caps } from 'src/app/models/Configuracion/Caps';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { CapsDetailComponent } from '../caps-detail/caps-detail.component';
 import { CapsEditComponent } from '../caps-edit/caps-edit.component';
-import { CapsDetailComponent } from '../caps-detail/caps-detail.component'; 
 
 @Component({
   selector: 'app-caps',
@@ -129,6 +129,7 @@ export class CapsComponent implements OnInit, OnDestroy {
   
 
   openDetail(caps: Caps): void {
+    console.log('Datos enviados al diálogo:', caps); // Log para inspeccionar los datos
     this.dialogRef = this.dialog.open(CapsDetailComponent, { 
       width: '600px',
       data: caps
