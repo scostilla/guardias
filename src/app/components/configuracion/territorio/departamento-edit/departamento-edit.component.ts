@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DepartamentoDto } from 'src/app/dto/Configuracion/DepartamentoDto';
 import { Departamento } from 'src/app/models/Configuracion/Departamento';
-import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
 import { Provincia } from 'src/app/models/Configuracion/Provincia';
+import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
 import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
-
 @Component({
   selector: 'app-departamento-edit',
   templateUrl: './departamento-edit.component.html',
@@ -53,6 +53,38 @@ export class DepartamentoEditComponent implements OnInit {
   }
 
   saveDepartamento(): void {
+    if (this.form?.valid) {
+      const departamentoData = this.form?.value;
+
+      const departamentoDto = new DepartamentoDto(
+        departamentoData.nombre,
+        departamentoData.codigoPostal,
+        departamentoData.provincia.id
+      );
+
+      if (this.data && this.data.id) {
+        this.departamentoService.update(this.data.id, departamentoDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      } else {
+        this.departamentoService.save(departamentoDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      }
+    }
+  }
+
+  /* saveDepartamento(): void {
     const id = this.form?.get('id')?.value;
     const nombre = this.form?.get('nombre')?.value;
     const codigoPostal = this.form?.get('codigoPostal')?.value;
@@ -60,6 +92,15 @@ export class DepartamentoEditComponent implements OnInit {
 
     const departamento = new Departamento(codigoPostal, nombre, provincia);
     departamento.id = id;
+
+     // Log para verificar los datos a guardar
+  console.log('### Datos a guardar:');
+  console.log('ID:', departamento.id);
+  console.log('Nombre:', departamento.nombre);
+  console.log('Código Postal:', departamento.codigoPostal);
+  console.log('Provincia (ID):', departamento.provincia?.id);
+  console.log('Provincia (Nombre):', departamento.provincia?.nombre);
+
 
     if (this.esEdicion) {
       this.departamentoService.update(id, departamento).subscribe(data => {
@@ -70,7 +111,7 @@ export class DepartamentoEditComponent implements OnInit {
         this.dialogRef.close(data);
       });
     }
-  }
+  } */
 
   compareProvincia(p1: Provincia, p2: Provincia): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;

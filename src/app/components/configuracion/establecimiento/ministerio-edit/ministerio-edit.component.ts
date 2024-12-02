@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import { MinisterioDto } from 'src/app/dto/Configuracion/MinisterioDto';
 import { Localidad } from 'src/app/models/Configuracion/Localidad';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { Region } from 'src/app/models/Configuracion/Region';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -79,19 +79,19 @@ export class MinisterioEditComponent implements OnInit {
     this.ministerioForm.get('nombre')?.setValue(uppercaseValue);
   }
 
-  saveMinisterio(): void {
-    if (this.ministerioForm.valid) {
-      const formValue = this.ministerioForm.value;
-  
-      const ministerioDto = new MinisterioDto(
-        formValue.nombre.toUpperCase(),
-        formValue.domicilio,
-        formValue.region.id,
-        formValue.localidad.id,
-        formValue.telefono,
-        formValue.observacion,
-        this.data ? this.data.idCabecera : 1
-      );
+    saveMinisterio(): void {
+      if (this.ministerioForm.valid) {
+        const formValue = this.ministerioForm.value;
+    
+        const ministerioDto = new MinisterioDto(
+          formValue.nombre.toUpperCase(),
+          formValue.domicilio,
+          formValue.region.id,
+          formValue.localidad.id,
+          formValue.telefono,
+          formValue.observacion,
+          this.data ? this.data.idCabecera : 1
+        );
   
       console.log('MinisterioDto:', ministerioDto);
   

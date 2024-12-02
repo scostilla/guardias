@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Localidad } from 'src/app/models/Configuracion/Localidad';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { LocalidadDto } from 'src/app/dto/Configuracion/LocalidadDto';
 import { Departamento } from 'src/app/models/Configuracion/Departamento';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { DepartamentoService } from 'src/app/services/Configuracion/departamento.service';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 
 @Component({
   selector: 'app-localidad-edit',
@@ -52,6 +53,36 @@ export class LocalidadEditComponent implements OnInit {
   }
 
   saveLocalidad(): void {
+    if (this.form?.valid) {
+      const localidadData = this.form?.value;
+
+      const localidadDto = new LocalidadDto(
+        localidadData.nombre,
+        localidadData.departamento.id,
+      );
+
+      if (this.data && this.data.id) {
+        this.localidadService.update(this.data.id, localidadDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      } else {
+        this.localidadService.save(localidadDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      }
+    }
+  }
+/*   saveLocalidad(): void {
     const id = this.form?.get('id')?.value;
     const nombre = this.form?.get('nombre')?.value;
     const departamento = this.form?.get('departamento')?.value;
@@ -68,7 +99,7 @@ export class LocalidadEditComponent implements OnInit {
         this.dialogRef.close(data);
       });
     }
-  }
+  } */
 
   compareDepartamento(p1: Departamento, p2: Departamento): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
