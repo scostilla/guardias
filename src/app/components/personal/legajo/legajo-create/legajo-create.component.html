@@ -91,6 +91,8 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
 
+            
+            <div class="form-row">
             <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Tipo de legajo</mat-label>
               <mat-select formControlName="esAutoridad">
@@ -99,22 +101,14 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('esAutoridad')?.errors?.['required']">El campo es requerido.</mat-error>
             </mat-form-field>
+            </div>
 
-            <!--<mat-form-field appearance="fill" style="margin-top: 20px;" *ngIf="legajoForm.get('esAutoridad')?.value">
-              <mat-label>Tipo de autoridad</mat-label>
-              <mat-select formControlName="esRegional">
-                <mat-option [value]="false">No es regional</mat-option>
-                <mat-option [value]="true">Es regional</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('esRegional')?.errors?.['required']">El campo es requerido.</mat-error>
-            </mat-form-field>-->
-
+            <div class="form-row">
             <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
               <mat-label>Cargo</mat-label>
               <mat-select formControlName="idCargo" (selectionChange)="onCargoChange()">
                 <ng-container *ngFor="let cargo of cargos">
-                  <!--siendo 2 el id del cargo del Director Regional-->
-                  <mat-option *ngIf="isAdministrativo ? cargo.id !== 2 : true" [value]="cargo.id">
+                  <mat-option *ngIf="isAdministrativo ? cargo.id !== this.idDirectorRegional : true" [value]="cargo.id">
                     {{ cargo.nombre }}
                   </mat-option>
                 </ng-container>
@@ -130,7 +124,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-                        
+
             <mat-form-field appearance="fill" *ngIf="showRegion">
               <mat-label>Región</mat-label>
               <mat-select formControlName="idRegion">
@@ -138,27 +132,36 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('idRegion')?.errors?.['required']">La región es requerida.</mat-error>
             </mat-form-field>
+          </div>
 
-            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
-              <mat-label>N° resolución</mat-label>
-              <input matInput formControlName="nroResolucion">
-              <mat-error *ngIf="legajoForm.get('nroResolucion')?.errors?.['pattern']">El n° de resolución puede tener solo números (entre 5 y 10 digitos).</mat-error>
-            </mat-form-field>
-
+          <div class="form-row">
             <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
               <mat-label>N° decreto</mat-label>
               <input matInput formControlName="nroDecreto">
-              <mat-error *ngIf="legajoForm.get('nroDecreto')?.errors?.['pattern']">El n° de decreto puede tener solo números (entre 5 y 10 digitos).</mat-error>
+              <mat-error *ngIf="legajoForm.get('nroDecreto')?.errors?.['required']">El n° de decreto es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('nroDecreto')?.errors?.['pattern']">El n° de decreto puede tener solo números (entre 1 y 5 digitos).</mat-error>
+            </mat-form-field>
+          </div>
+
+            <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>N° resolución</mat-label>
+              <input matInput formControlName="nroResolucion">
+              <mat-error *ngIf="legajoForm.get('nroResolucion')?.errors?.['required']">El n° de resolución es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('nroResolucion')?.errors?.['pattern']">El n° de resolución puede tener solo números (entre 1 y 5 digitos).</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
               <mat-label>Fecha Resolución</mat-label>
-              <input matInput [matDatepicker]="pickerResolucion" formControlName="fechaResolucion">
+              <input matInput [matDatepicker]="pickerResolucion" formControlName="fechaResolucion" [max]="maxDate">
               <mat-datepicker-toggle matSuffix [for]="pickerResolucion"></mat-datepicker-toggle>
               <mat-datepicker #pickerResolucion></mat-datepicker>
+              <mat-error *ngIf="legajoForm.get('fechaResolucion')?.errors?.['required']">La fecha es requerida.</mat-error>
               <mat-error *ngIf="legajoForm.get('fechaResolucion')?.hasError('required')">La fecha es requerida.</mat-error>
             </mat-form-field>
+            </div>
 
+            <div class="form-row">
             <mat-form-field appearance="fill">
               <mat-label>Fecha Inicio</mat-label>
               <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [max]="maxDate" (dateChange)="onDateChange($event)">
@@ -174,7 +177,9 @@
               <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
               <mat-datepicker #pickerFinal></mat-datepicker>
             </mat-form-field>
+            </div>
 
+            <div class="form-row">
             <mat-form-field appearance="fill" class="form-field" *ngIf="showGuardia">
               <mat-label>Tipo guardia</mat-label>
               <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onSelectionChange($event)">
@@ -198,13 +203,16 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('tipoGuardias')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
             </mat-form-field>
-                        
+            </div>
+
+            <div class="form-row">
             <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
               <mat-label>Asignar efectores</mat-label>
               <mat-select formControlName="habilitacionesGuardias" multiple>
                 <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
             </mat-form-field>
+            </div>
 
             <mat-action-row>
               <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>

@@ -163,6 +163,9 @@ export class LegajoCreateComponent implements OnInit {
       esAutoridad: [false, Validators.required],
       idCargo: [null],
       idRegion: [null],
+      nroResolucion: [null],
+      nroDecreto: [null],
+      fechaResolucion: [null],
       fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
       fechaFinal: [{ value: '', disabled: true }],
       tipoGuardias: [[]],
@@ -269,10 +272,10 @@ export class LegajoCreateComponent implements OnInit {
   // Llamamos al servicio para obtener todos los tipos de guardia
   this.cargoService.list().subscribe((cargos: Cargo[]) => {
     this.cargos = cargos;
-    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
-    this.idDirectorRegional = this.cargos.find(t => t.nombre === 'DIRECTOR REGIONAL')?.id;
+    // Verifico si existe el cargo 'DIRECTOR REGIONAL' sin importar la capitalización
+    this.idDirectorRegional = this.cargos.find(t => t.nombre.toLowerCase() === 'director regional'.toLowerCase())?.id;
   });
-
+  
   // Llamamos al servicio para obtener todos los tipos de guardia
   this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
     this.tipoGuardias = guardias;
@@ -587,13 +590,23 @@ export class LegajoCreateComponent implements OnInit {
   //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
   onAutoridadChange(esAutoridad: boolean): void {
     const idCargoControl = this.legajoForm.get('idCargo');
+    const idNroResolucionControl = this.legajoForm.get('nroResolucion');
+    const idNroDecretoControl = this.legajoForm.get('nroDecreto');
+    const idFechaResolucionControl = this.legajoForm.get('fechaResolucion');
     const idRegionControl = this.legajoForm.get('idRegion');
     const tipoGuardiasControl = this.legajoForm.get('tipoGuardias');
+    const efectoresAutoridadControl = this.legajoForm.get('efectoresAutoridad');
     
     // Cuando cambia idAutoridad reseteo el valor de idCargo, tipoGuardia e idRegion; tambien oculto y hago no obligatorio idRegional
     idCargoControl?.reset();
+    idNroResolucionControl?.reset();
+    idNroDecretoControl?.reset();
+    idFechaResolucionControl?.reset();
     tipoGuardiasControl?.reset();
     idRegionControl?.reset();
+    efectoresAutoridadControl?.reset();
+    this.showEfectorAutoridad = false;
+    this.legajoForm.get('efectoresAutoridad')?.clearValidators();
     this.showRegion = false;
     this.legajoForm.get('idRegion')?.clearValidators();
     
@@ -603,20 +616,37 @@ export class LegajoCreateComponent implements OnInit {
       this.showSiEsAutoridad = true;
       idCargoControl?.enable();
       this.legajoForm.get('idCargo')?.setValidators([Validators.required]);
+      idNroResolucionControl?.enable();
+      this.legajoForm.get('nroResolucion')?.setValidators([Validators.required, Validators.pattern('^[0-9]{1,5}$')]);
+      idNroDecretoControl?.enable();
+      this.legajoForm.get('nroDecreto')?.setValidators([Validators.required, Validators.pattern('^[0-9]{1,5}$')]);
+      idFechaResolucionControl?.enable();
+      this.legajoForm.get('fechaResolucion')?.setValidators([Validators.required]);
       this.showGuardia = false;
       this.legajoForm.get('tipoGuardias')?.clearValidators();
       this.isSituacionRevistaEnabled = false;
       this.disableSituacionRevistaFields();
     } else {
       // Si no es autoridad oculto idCargo y muestro tipoGuardia haciendola obligatoria
+      this.showSiEsAutoridad = false;
       idCargoControl?.disable();
       idCargoControl?.clearValidators(); // Remuevo validadores si no es autoridad
+      idNroResolucionControl?.disable();
+      idNroResolucionControl?.clearValidators(); // Remuevo validadores si no es autoridad
+      idNroDecretoControl?.disable();
+      idNroDecretoControl?.clearValidators(); // Remuevo validadores si no es autoridad
+      idFechaResolucionControl?.disable();
+      idFechaResolucionControl?.clearValidators(); // Remuevo validadores si no es autoridad
+      
       this.showGuardia = true;
       this.legajoForm.get('tipoGuardias')?.setValidators([Validators.required]);      
     }
   
     // Actualizo la validez de los campos después de modificar los validadores y visibilidad
     idCargoControl?.updateValueAndValidity();
+    idNroResolucionControl?.updateValueAndValidity();
+    idNroDecretoControl?.updateValueAndValidity();
+    idFechaResolucionControl?.updateValueAndValidity();
   }
   
   onCargoChange(): void {
@@ -938,7 +968,7 @@ export class LegajoCreateComponent implements OnInit {
   }
   
   // Determinar si esRegional basado en el cargo
-    const esRegional = legajoData.idCargo === 2 ? true : false;
+    const esRegional = legajoData.idCargo === this.idDirectorRegional ? true : false;
 
       const legajoDto = new LegajoDto(
         legajoData.fechaInicio,
@@ -959,6 +989,9 @@ export class LegajoCreateComponent implements OnInit {
         legajoData.tipoGuardias ??  null,
         legajoData.idCargo ?? null,
         legajoData.idRegion ?? null,
+        legajoData.nroResolucion ?? null,
+        legajoData.nroDecreto ?? null,
+        legajoData.fechaResolucion ?? null
       );
 
       console.log("DTO creado para guardar legajo:", legajoDto);
