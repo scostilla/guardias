@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Provincia } from 'src/app/models/Configuracion/Provincia';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ProvinciaDto } from 'src/app/dto/Configuracion/ProvinciaDto';
-import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
 import { Pais } from 'src/app/models/Configuracion/Pais';
+import { Provincia } from 'src/app/models/Configuracion/Provincia';
 import { PaisService } from 'src/app/services/Configuracion/pais.service';
+import { ProvinciaService } from 'src/app/services/Configuracion/provincia.service';
 
 @Component({
   selector: 'app-provincia-edit',
@@ -64,7 +64,7 @@ export class ProvinciaEditComponent implements OnInit {
       const provinciaDto = new ProvinciaDto(
         provinciaData.nombre,
         provinciaData.gentilicio,
-        provinciaData.idPais,
+        provinciaData.pais.id,
       );
 
       /* AYUDA: si this.data tiene un valor y un ID asociado */
