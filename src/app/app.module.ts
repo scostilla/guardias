@@ -255,6 +255,9 @@ import { MotivoBajaDialogComponent } from './components/configuracion/usuarios/m
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
+import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
+import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
+import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
 
 @NgModule({
   declarations: [
@@ -459,6 +462,9 @@ import { PersonalExternoComponent } from './components/personal/personal-externo
     PersonalSinLegajoComponent,
     ExternoComponent,
     PersonalExternoComponent,
+    UsuarioComponent,
+    UsuarioDetailComponent,
+    UsuarioEditComponent,
     
   ],
 

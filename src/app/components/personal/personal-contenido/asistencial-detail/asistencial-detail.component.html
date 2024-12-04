@@ -22,11 +22,11 @@
         </tr>
         <tr>
           <th scope="row">Domicilio</th>
-          <td>{{asistencial.domicilio}}</td>
+          <td>{{asistencial.domicilio || 'Sin información'}}</td>
         </tr>
         <tr>
           <th scope="row">Teléfono</th>
-          <td>{{asistencial.telefono}}</td>
+          <td>{{asistencial.telefono || 'Sin información'}}</td>
         </tr>
         <tr>
           <th scope="row">E-mail</th>
@@ -38,16 +38,8 @@
         </tr>
         <tr>
           <th scope="row">Sexo</th>
-          <td>{{asistencial.sexo}}</td>
+          <td>{{asistencial.sexo || 'Sin información'}}</td>
         </tr>
-        <!--<tr>
-          <th scope="row">Tipos de guardia</th>
-            <td>
-                <ng-container *ngFor="let efector of asistencial.tiposGuardias; let i = index">
-                    {{ efector.nombre }}<span *ngIf="!isLast(i, asistencial.tiposGuardias)">, </span>
-                </ng-container>
-            </td>
-        </tr>-->
     </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">

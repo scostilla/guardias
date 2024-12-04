@@ -6,7 +6,6 @@ import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Rol } from 'src/app/models/Configuracion/Rol';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { Location } from '@angular/common';
 
@@ -20,13 +19,11 @@ export class AsistencialEditComponent implements OnInit {
   asistencialForm: FormGroup;
   initialData: Asistencial | undefined;
   idAsistencial: number = 0;
-  roles: Rol[] = [];
 
   constructor(
     private fb: FormBuilder,
     private asistencialService: AsistencialService,
     private router: Router,
-    private rolService: RolService,
     private authService: AuthService,
     private location: Location,
     private toastr: ToastrService,
@@ -36,19 +33,14 @@ export class AsistencialEditComponent implements OnInit {
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
-      domicilio: ['', Validators.required],
-      esAsistencial: [true, Validators.required],
+      domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
       fechaNacimiento: ['', Validators.required],
-      sexo: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      //email: [''/* , [Validators.required, Validators.email] */],
-      //nombreUsuario: [''/* , [Validators.required] */],
-      //password: [''/* , [Validators.required] */],
-      //roles: [[]/* , [Validators.required] */],
+      sexo: [''],
+      telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
+      email: ['' , [Validators.required, Validators.email]],
     });
 
-    //this.listRoles();
 
     // recupera el estado del router
     const navigation = this.router.getCurrentNavigation();
@@ -79,14 +71,6 @@ export class AsistencialEditComponent implements OnInit {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
   }
 
-  listRoles(): void {
-    this.rolService.list().subscribe(data => {
-      this.roles = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
   updateAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
@@ -102,13 +86,12 @@ export class AsistencialEditComponent implements OnInit {
         asistencialData.dni,
         asistencialData.cuil,
         asistencialData.fechaNacimiento,
-        asistencialData.sexo,
-        asistencialData.telefono,
         asistencialData.email,
-        asistencialData.domicilio,
-        asistencialData.esAsistencial,
-        asistencialData.activo,
-        this.initialData?.usuario?.id ?? 0
+        true,
+        true,
+        asistencialData.sexo ?? null,
+        asistencialData.telefono ?? null,
+        asistencialData.domicilio ?? null
       );
 
       console.log("asistencial dto que quiero guardar", asistencialDto);
@@ -120,7 +103,7 @@ export class AsistencialEditComponent implements OnInit {
             positionClass: 'toast-top-center',
             progressBar: true
           });
-          this.router.navigate(['/personal'], { state: { asistencialModificado: result } }); // Redirijo a la lista de asistenciales y paso el asistencial modificado
+          this.location.back();
         },
         (error) => {
           this.toastr.error('Ocurrió un error al crear el Asistencial', error, {

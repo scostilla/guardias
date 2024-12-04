@@ -5,13 +5,12 @@ export class PersonDto {
   dni: number;
   cuil: string;
   fechaNacimiento: Date;
-  sexo: string;
-  telefono: string;
+  sexo?: string;
+  telefono?: string;
   email: string;
-  domicilio: string;
+  domicilio?: string;
   esAsistencial:boolean;
   activo: boolean;
-  idUsuario: number;
      
 
   constructor(
@@ -20,13 +19,12 @@ export class PersonDto {
       dni: number,
       cuil: string,
       fechaNacimiento: Date,
-      sexo: string,
-      telefono: string,
       email: string,
-      domicilio: string,
       esAsistencial:boolean,
       activo: boolean,
-      idUsuario: number       
+      sexo?: string,
+      telefono?: string,
+      domicilio?: string,
       ) {
       this.nombre = nombre;
       this.apellido = apellido;
@@ -39,7 +37,6 @@ export class PersonDto {
       this.domicilio = domicilio;
       this.esAsistencial=esAsistencial;
       this.activo = activo;
-      this.idUsuario = idUsuario;
   }
 
 }

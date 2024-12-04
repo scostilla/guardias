@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NoAsistencialDto } from 'src/app/dto/Configuracion/NoAsistencialDto';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
-import { Rol } from 'src/app/models/Configuracion/Rol';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { Location } from '@angular/common';
 
@@ -18,7 +17,6 @@ export class NoAsistencialEditComponent implements OnInit {
   noAsistencialForm: FormGroup;
   initialData: any;
   idNoAsistencial: number = 0;
-  roles: Rol[] = [];
   
   constructor(
     private fb: FormBuilder,
@@ -31,16 +29,12 @@ export class NoAsistencialEditComponent implements OnInit {
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
-      domicilio: ['', Validators.required],
-      esAsistencial: [true, Validators.required],
+      domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
       fechaNacimiento: ['', Validators.required],
-      sexo: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
-      //email: [''/* , [Validators.required, Validators.email] */],
-      //nombreUsuario: [''/* , [Validators.required] */],
-      //password: [''/* , [Validators.required] */],
-      //roles: [[]/* , [Validators.required] */],
+      sexo: [''],
+      telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
+      email: ['' , [Validators.required, Validators.email]],
     });
 
     // recupera el estado del router
@@ -59,7 +53,7 @@ export class NoAsistencialEditComponent implements OnInit {
         ...this.initialData
       });
 
-                // Formatear el CUIL después de cargar los datos
+    // Formatear el CUIL después de cargar los datos
     const formattedCuil = this.formatCuilValue(this.initialData.cuil);
     this.noAsistencialForm.get('cuil')?.setValue(formattedCuil, { emitEvent: false });
 
@@ -86,13 +80,12 @@ export class NoAsistencialEditComponent implements OnInit {
         noAsistencialData.dni,
         noAsistencialData.cuil,
         noAsistencialData.fechaNacimiento,
-        noAsistencialData.sexo,
-        noAsistencialData.telefono,
         noAsistencialData.email,
-        noAsistencialData.domicilio,
-        noAsistencialData.esAsistencial,
-        noAsistencialData.activo,
-        this.initialData?.usuario?.id ?? 0
+        false,
+        true,
+        noAsistencialData.sexo ?? null,
+        noAsistencialData.telefono ?? null,
+        noAsistencialData.domicilio ?? null
       );
 
       console.log("No asistencial dto que quiero guardar", noAsistencialDto);
@@ -104,7 +97,8 @@ export class NoAsistencialEditComponent implements OnInit {
             positionClass: 'toast-top-center',
             progressBar: true
           });
-          this.router.navigate(['/personal-no-asistencial'], { state: { noAsistencialModificado: result } }); // Redirijo a la lista de noAsistenciales y paso el noAsistencial modificado
+          this.location.back();
+          /*this.router.navigate(['/personal-no-asistencial'], { state: { noAsistencialModificado: result } }); // Redirijo a la lista de noAsistenciales y paso el noAsistencial modificado */
         },
         (error) => {
           this.toastr.error('Ocurrió un error al crear el No asistencial', error, {

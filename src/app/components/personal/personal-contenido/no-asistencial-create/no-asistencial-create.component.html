@@ -18,17 +18,6 @@
   <div class="row">
       <mat-dialog-content class="mat-typography">
       <form [formGroup]="noAsistencialForm" (ngSubmit)="saveNoAsistencial()">
-        <mat-accordion>
-          <!-- Panel 1 -->
-          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle id="panel1">
-            <mat-expansion-panel-header class="custom-header">
-              <mat-panel-title>
-                <div class="book-marker">
-                  <span class="marker-number">1</span>
-                </div>
-                <span class="negrita">Datos personales</span>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
 
         <div class="form-row" style="margin-top: 20px;">
           <mat-form-field appearance="fill" class="form-field">
@@ -56,7 +45,6 @@
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>CUIL</mat-label>
-            <!-- <input matInput formControlName="cuil" (input)="formatCuil($event)"> -->
             <input matInput formControlName="cuil" (input)="formatCuil($event)">
             <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['required']">El CUIL es requerido.</mat-error>
             <mat-error *ngIf="noAsistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
@@ -93,61 +81,17 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Teléfono</mat-label>
             <input matInput formControlName="telefono">
-            <mat-error *ngIf="noAsistencialForm.get('telefono')?.errors?.['required']">El teléfono es requerido.</mat-error>
             <mat-error *ngIf="noAsistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
           </mat-form-field>
-
+        </div>
+        
+        <div class="form-row">
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Domicilio</mat-label>
             <input matInput formControlName="domicilio">
-            <mat-error *ngIf="noAsistencialForm.get('domicilio')?.errors?.['required']">El domicilio es requerido.</mat-error>
+            <mat-error *ngIf="noAsistencialForm.get('domicilio')?.errors?.['pattern']">El domicilio puede contener carácteres, números y los simbolos ,.#/-° (hasta 90 carácteres).</mat-error>
           </mat-form-field>
         </div>
-
-        <mat-action-row>
-          <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-    
-      <!-- Panel 2 -->
-      <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle id="panel2">
-        <mat-expansion-panel-header class="custom-header">
-          <mat-panel-title>
-            <div class="book-marker">
-              <span class="marker-number">2</span>
-            </div>
-            <span class="negrita">Datos usuario</span>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-
-
-        <div class="form-row" style="margin-top: 20px;">
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Nombre de Usuario</mat-label>
-            <input matInput formControlName="nombreUsuario">
-            <mat-error *ngIf="noAsistencialForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
-          </mat-form-field>
-      
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Contraseña</mat-label>
-            <input matInput formControlName="password">
-            <mat-error *ngIf="noAsistencialForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
-          </mat-form-field>
-      
-          <mat-form-field appearance="fill" class="form-field">
-            <mat-label>Roles</mat-label>
-            <mat-select formControlName="roles" multiple>
-              <mat-option *ngFor="let rol of roles" [value]="rol.rolNombre">{{ rol.rolNombre }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <mat-action-row>
-          <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-          <button mat-button color="primary" type="button" (click)="cerrarPanel()">Cerrar paneles</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-    </mat-accordion>
 
         <div mat-dialog-actions class="action mt-4">
           <button mat-raised-button color="primary" type="submit" [disabled]="!noAsistencialForm.valid"  class="me-2">
