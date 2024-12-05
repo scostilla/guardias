@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+
+/*import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
@@ -12,7 +14,7 @@ import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Rol } from 'src/app/models/Configuracion/Rol';
 import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { AuthService } from 'src/app/services/login/auth.service';
-
+*/
 
 @Component({
   selector: 'app-person-edit',
@@ -20,8 +22,11 @@ import { AuthService } from 'src/app/services/login/auth.service';
   styleUrls: ['./person-edit.component.css']
 })
 
+export class PersonEditComponent {
+
+    /*
 export class PersonEditComponent implements OnInit {
-  asistencialForm: FormGroup;
+asistencialForm: FormGroup;
   initialData: any;
   asistencialId!: number;
   roles: Rol[] = [];
@@ -239,5 +244,5 @@ export class PersonEditComponent implements OnInit {
   
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.asistencialForm.value);
-  }
+  }*/
 }

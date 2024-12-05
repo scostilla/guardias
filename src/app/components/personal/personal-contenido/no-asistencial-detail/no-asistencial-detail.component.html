@@ -22,11 +22,11 @@
         </tr>
         <tr>
           <th scope="row">Domicilio</th>
-          <td>{{noasistencial.domicilio}}</td>
+          <td>{{noasistencial.domicilio || 'Sin información'}}</td>
         </tr>
         <tr>
           <th scope="row">Teléfono</th>
-          <td>{{noasistencial.telefono}}</td>
+          <td>{{noasistencial.telefono || 'Sin información'}}</td>
         </tr>
         <tr>
           <th scope="row">E-mail</th>
@@ -38,12 +38,8 @@
         </tr>
         <tr>
           <th scope="row">Sexo</th>
-          <td>{{noasistencial.sexo}}</td>
+          <td>{{noasistencial.sexo || 'Sin información'}}</td>
         </tr>
-        <!-- <tr>
-          <th scope="row">Descripción</th>
-          <td>{{noasistencial.descripcion}}</td>
-        </tr> -->
       </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">

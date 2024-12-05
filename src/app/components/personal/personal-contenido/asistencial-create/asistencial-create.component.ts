@@ -3,10 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
-import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
-import { Rol } from 'src/app/models/Configuracion/Rol';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 
 @Component({
@@ -18,15 +15,12 @@ import { AuthService } from 'src/app/services/login/auth.service';
 export class AsistencialCreateComponent implements OnInit {
 
   asistencialForm: FormGroup;
-  roles: Rol[] = [];
-  step = 0;
 
 
   constructor(
     private fb: FormBuilder,
     private asistencialService: AsistencialService,
     private router: Router,
-    private rolService: RolService,
     private authService: AuthService,
     private toastr: ToastrService,
   ) {
@@ -34,103 +28,38 @@ export class AsistencialCreateComponent implements OnInit {
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{7,20}$/)]],
-      domicilio: ['', Validators.required],
-      esAsistencial: [true, Validators.required],
+      domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
       fechaNacimiento: ['', Validators.required],
-      sexo: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9,30}$/)]],
+      sexo: [''],
+      telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
       email: ['', [Validators.required, Validators.email]],
-      nombreUsuario: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      roles: [[], [Validators.required]],
     });
 
-    this.listRoles();
   }
 
   ngOnInit(): void {
     
   }
 
-  listRoles(): void {
-    this.rolService.list().subscribe(data => {
-      this.roles = data;
-    }, error => {
-      console.log(error);
-    });
-  }
-
   saveAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
 
-      asistencialData.nombre = this.capitalizeWords(asistencialData.nombre);
-      asistencialData.apellido = this.capitalizeWords(asistencialData.apellido);
-
       asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
 
-      const nuevoUsuario = new NuevoUsuario(
-        asistencialData.nombreUsuario,
-        asistencialData.email,
-        asistencialData.password,
-        asistencialData.roles
-      );
-      // Verifica si existe un usuario con el nombreUsuario especificado
-      this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
-        (existingUsuario) => {
-          if (!existingUsuario) {
-            // Usuario no encontrado, creamos
-            console.log("roles para el usuari que se creará", nuevoUsuario);
-            this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
-          } else {
-            console.error('El nombre de usuario ya existe.');
-          }
-        },
-        (error) => {
-          console.log('Error al buscar el usuario existente', error);
-        }
-      );
-    }
-  }
-
-  createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
-    //creamos el usuario
-    this.authService.create(nuevoUsuario).subscribe(
-      () => {
-        // buscar el usuario recién creado
-        this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
-          (newUsuario) => {
-            if (newUsuario && newUsuario.id !== undefined) {
-              //creo el asistencial con el id de usuario creado
-              this.createAsistencialDtoAndSave(asistencialData, newUsuario.id);
-            }
-          },
-          (searchError) => {
-            console.error('Error al buscar el usuario después de crearlo', searchError);
-          }
-        );
-      },
-      (createError) => {
-        console.error('Error al crear el usuario', createError);
-      }
-    );
-  }
-
-  createAsistencialDtoAndSave(asistencialData: any, usuarioId: number): void {
     const asistencialDto = new AsistencialDto(
       asistencialData.nombre,
       asistencialData.apellido,
       asistencialData.dni,
       asistencialData.cuil,
       asistencialData.fechaNacimiento,
-      asistencialData.sexo,
-      asistencialData.telefono,
       asistencialData.email,
-      asistencialData.domicilio,
-      asistencialData.esAsistencial,
-      asistencialData.activo,
-      usuarioId
+      true,
+      true,
+      asistencialData.sexo ?? null,
+      asistencialData.telefono ?? null,
+      asistencialData.domicilio ?? null
     );
 
     console.log("asistencial dto que quiero guardar", asistencialDto);
@@ -153,6 +82,7 @@ export class AsistencialCreateComponent implements OnInit {
       }
     );
   }
+}
 
   capitalizeWords(value: string): string {
     return value.split(' ').map(word => 
@@ -180,44 +110,6 @@ export class AsistencialCreateComponent implements OnInit {
     }
     event.target.value = value;
     this.asistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
-  }
-
-  nextStep(): void {
-    if (this.step === 0 && !this.isPanel1Valid()) {
-      this.toastr.warning('Complete todos los campos obligatorios en datos personales.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-      return;
-    }
-
-    if (this.step === 1 && !this.isPanel2Valid()) {
-      this.toastr.warning('Complete todos los campos obligatorios en datos usuario.', 'Campos Incompletos', { timeOut: 6000, positionClass: 'toast-top-center', progressBar: true });
-      return;
-    }
-
-    this.step = (this.step + 1) % 2;  // Cambia 3 por el número total de pasos en el wizard
-  }
-
-  prevStep(): void {
-    this.step = (this.step - 1 + 2) % 2;  // Cambia 3 por el número total de pasos en el wizard
-  }
-
-  isPanel1Valid(): boolean {
-    // Verifica si los campos obligatorios en el panel 1 son válidos
-    const panel1Controls = ['nombre', 'apellido', 'dni', 'domicilio', 'cuil', 'fechaNacimiento', 'sexo', 'telefono', 'email'];
-    return panel1Controls.every(control => this.asistencialForm.get(control)?.valid);
-  }
-
-  isPanel2Valid(): boolean {
-    // Verifica si los campos obligatorios en el panel 2 son válidos
-    const panel2Controls = ['nombreUsuario', 'password', 'roles'];
-    return panel2Controls.every(control => this.asistencialForm.get(control)?.valid);
-  }
-
-  setStep(index: number) {
-    this.step = index;
-  }
-
-  cerrarPanel() {
-    this.step = -1;
   }
 
   cancel(): void {

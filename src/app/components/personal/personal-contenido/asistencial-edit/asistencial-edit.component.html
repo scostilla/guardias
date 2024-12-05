@@ -80,19 +80,24 @@
 
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
+                      <mat-label>Email</mat-label>
+                      <input matInput formControlName="email">
+                      <mat-error *ngIf="asistencialForm.get('email')?.errors?.['required']">El email es requerido.</mat-error>
+                      <mat-error *ngIf="asistencialForm.get('email')?.errors?.['email']">Debe ser un email válido.</mat-error>
+                    </mat-form-field>          
+
+                    <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Teléfono</mat-label>
                         <input matInput formControlName="telefono">
-                        <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['required']">El teléfono es
-                            requerido.</mat-error>
-                        <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener
-                            solo números (entre 9 y 30 dígitos).</mat-error>
+                        <mat-error *ngIf="asistencialForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener solo números (entre 9 y 30 dígitos).</mat-error>
                     </mat-form-field>
+                </div>
 
+                <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Domicilio</mat-label>
                         <input matInput formControlName="domicilio">
-                        <mat-error *ngIf="asistencialForm.get('domicilio')?.errors?.['required']">El domicilio es
-                            requerido.</mat-error>
+                        <mat-error *ngIf="asistencialForm.get('domicilio')?.errors?.['pattern']">El domicilio puede contener carácteres, números y los simbolos ,.#/-° (hasta 90 carácteres).</mat-error>
                     </mat-form-field>
                 </div>
 

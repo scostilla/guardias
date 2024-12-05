@@ -274,7 +274,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
     // Verifica si hay al menos un tipo de guardia asignado
     const tieneGuardias = legajos.some(legajo => legajo.tipoGuardias && legajo.tipoGuardias.length > 0);
-    
+  
     // Si no tiene ningún tipo de guardia, no se permiten acciones
     if (!tieneGuardias) {
       return true;
@@ -282,22 +282,25 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   
     // Verifica si las guardias 'cargo', 'agrupacion' y 'extra' cumplen con la lógica específica
     const tieneGuardiasCombinadas = legajos.some(legajo => {
-      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id);
+      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id); // Suponiendo que 'id' es lo que estamos buscando
+  
+      // Verifica si tiene guardias de tipo 'cargo' o 'agrupación'
       const tieneCargoOAgrupacion = tiposGuardias.includes(this.idCargo) || tiposGuardias.includes(this.idAgrupacion);
-      const tieneExtra = tiposGuardias.includes(this.idExtra);
-      
+  
       // Si tiene 'extra' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
+      const tieneExtra = tiposGuardias.includes(this.idExtra);
       if (tieneExtra && !tieneCargoOAgrupacion) {
         return true; // No se permite acción si 'extra' está solo
       }
-      
-      return false;
+  
+      // Si no tiene ni 'cargo' ni 'agrupación' ni cumple con las combinaciones, no permitir acciones
+      return !tieneCargoOAgrupacion;
     });
   
-    // Si 'extra' está sola o no tiene guardias, no permite acciones
+    // Si no tiene guardias combinadas de 'cargo' o 'agrupación', no permitir acciones
     return tieneGuardiasCombinadas;
   }
-    
+      
   mostrarBotones(asistencial: AsistencialListDto): boolean {
     const legajosAsistencial = this.legajos.filter(legajo => legajo.persona?.id === asistencial.id);
     return !this.tipoGuardiaNoPermiteAcciones(legajosAsistencial);

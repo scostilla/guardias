@@ -8,7 +8,6 @@ import { JwtDTO } from 'src/app/models/login/jwt-dto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
 
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +18,18 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
+  get refresh$(){
+    return this._refresh$;
+  }
+
   public create(nuevoUsuario : NuevoUsuario): Observable<any>{
     console.log("rol que envio", nuevoUsuario);
     return this.httpClient.post<any>(this.authUrl + 'create',nuevoUsuario);
   }
+
+  public list(): Observable<Usuario[]> {
+    return this.httpClient.get<Usuario[]>(this.authUrl + 'list');
+}
 
   public login(loginUsuario : LoginUsuario): Observable<JwtDTO>{
     /* console.log("console de auth login "+ loginUsuario.nombreUsuario);

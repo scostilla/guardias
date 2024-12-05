@@ -61,6 +61,9 @@ import { PersonDetailComponent } from './components/configuracion/usuarios/perso
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
+import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
+import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
+import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
 
 
 //Configuraciones: Leyes y novedades
@@ -294,6 +297,9 @@ const routes: Routes = [
   {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
+  {path: 'usuario', component:UsuarioComponent},
+  {path: 'usuario-detail/:id', component:UsuarioDetailComponent},
+  {path: 'usuario-edit/:id', component:UsuarioEditComponent},
   
   //Configuraciones: Leyes y novedades
   {path: 'articulo', component:ArticuloComponent},
