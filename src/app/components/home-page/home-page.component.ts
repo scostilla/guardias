@@ -36,6 +36,7 @@ export class HomePageComponent implements OnInit {
   apellidoUsuario: string = '';
   nombresEfectores: EfectorSummaryDto[] = [];
   usuarioPersona: number | null = null;
+  idPersona: number = 0;
 
   selectedListEfectores: number | null = null;
   selectedEfector: EfectorSummaryDto | null = null;
@@ -64,6 +65,22 @@ export class HomePageComponent implements OnInit {
   
       const userId = this.tokenService.getUserIdFromToken();
       console.log('ID del usuario logeado:', userId);
+
+          // Obtener detalles del usuario
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        this.usuarioPersona = response.id;
+
+        const idPersona = this.usuarioPersona;
+
+        // Log para mostrar el usuario y los efectores
+        console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        console.log('Efectores asociados:', this.nombresEfectores);
+      },
+      error => {
+        console.error('Error al obtener detalles del usuario:', error);
+      }
+    );
   
       // Selección de Efector según el rol
       if (this.isDph || this.isSuper) {
@@ -72,10 +89,9 @@ export class HomePageComponent implements OnInit {
       } else if (this.isAdministrativo) {
         // Carga los efectores para Administrativos
         this.loadEfectorForAdministrativo();
-      /*} else if (this.isAutoridad) {
+      } else if (this.isAutoridad) {
         // Carga los efectores para Autoridades
-        this.loadEfectoresForAutoridades(idPersona);*/ //habilitar cuando tenga id en PersonBasicPanelDto
-      } else {
+        this.loadEfectoresForAutoridades(this.idPersona);
         console.warn('El usuario no tiene un rol válido para proceder');
       }
 
