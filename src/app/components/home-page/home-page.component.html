@@ -18,6 +18,19 @@
         <span class="arrow">▼</span>
       </div>
     </div>
+
+    <div class="text-title-hosp" *ngIf="isAutoridad">
+      <mat-icon>business</mat-icon>
+      <div class="select-inicio-container">
+        <select class="select-inicio" [(ngModel)]="selectedListEfectores" (change)="onEfectorChange($event)">
+          <option [ngValue]="null" disabled selected>Seleccionar efector</option>
+          <option *ngFor="let efector of efectores" [ngValue]="efector.id">
+            {{ efector.nombre }}
+          </option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
 </div>
 
 <div class="container" *ngIf="isLogged">

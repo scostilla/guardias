@@ -88,6 +88,7 @@ export class LegajoCreateComponent implements OnInit {
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
+  isAutoridad: boolean = false;
   userId: number | null = null;
   nombreUsuario: string = '';
   apellidoUsuario: string = '';
@@ -110,7 +111,7 @@ export class LegajoCreateComponent implements OnInit {
   idContraFactura?: number;
   idPasiva?: number;
   idExtra?: number;
-  esAutoridadValor: boolean | null = null;
+  esAutoridadValor: boolean = false;
   idDirectorRegional?: number;
 
 
@@ -559,6 +560,7 @@ export class LegajoCreateComponent implements OnInit {
     this.isUsuario = this.roles.includes('ROLE_USER');
     this.isDph = this.roles.includes('ROLE_DPH');
     this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+    this.isAutoridad = this.roles.includes('ROLE_AUTORIDAD');
   }
 
   // Form Datos profesional: No permite seleccionar una fecha futura en fechaInicio
@@ -736,11 +738,11 @@ export class LegajoCreateComponent implements OnInit {
     this.toggleSituacionRevista(selectedValues);
   }
   
-  onGuardiaCF(selectedValues: number[]): void {
+  onGuardiaCfExtra(selectedValues: number[]): void {
     const HabilitacionesGuardiasControl = this.legajoForm.get('habilitacionesGuardias');
 
     // Si se selecciona CONTRAFACTURA habilita HabilitacionesGuardias
-    if (selectedValues.includes(this.idContraFactura!)) {
+    if (selectedValues.includes(this.idContraFactura!) || selectedValues.includes(this.idExtra!)) {
       this.showHabilitacionesGuardias = true;
       this.legajoForm.get('habilitacionesGuardias')?.setValidators([Validators.required]);
     } else {
@@ -757,7 +759,7 @@ export class LegajoCreateComponent implements OnInit {
   onSelectionChange(event: any): void {
     this.onTipoGuardiaSelectionChange(event);
   
-    this.onGuardiaCF(event.value);
+    this.onGuardiaCfExtra(event.value);
   }
 
   //aqui oculto o muestro situacion de revista según la guardia seleccionada

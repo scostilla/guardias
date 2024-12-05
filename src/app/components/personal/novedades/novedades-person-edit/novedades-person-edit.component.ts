@@ -68,14 +68,17 @@ export class NovedadesPersonEditComponent implements OnInit {
     });
   
 
-    this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(() => {
-      this.novedadPersonalForm.get('fechaFinal')?.updateValueAndValidity(); // Actualiza la validez de fechaFinal
-    });
+  // Esta suscripción asegura que cuando cambie 'fechaInicio', 'fechaFinal' se limpie.
+  this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(value => {
+    if (value) {
+      this.novedadPersonalForm.get('fechaFinal')?.enable();
+      this.novedadPersonalForm.get('fechaFinal')?.setValue(''); // Limpiar el valor de fechaFinal
+    } else {
+      this.novedadPersonalForm.get('fechaFinal')?.disable();
+    }
+    this.novedadPersonalForm.get('fechaFinal')?.updateValueAndValidity(); // Revalidar
+  });
   
-    this.novedadPersonalForm.get('fechaFinal')?.valueChanges.subscribe(() => {
-   
-    });
-
     // Si el asistencialId está disponible en los datos inyectados
   if (this.data.asistencialId) {
     this.novedadPersonalForm.patchValue({ idAsistencial: this.data.asistencialId });

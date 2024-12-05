@@ -24,11 +24,11 @@
                 <mat-icon>build</mat-icon>
                 <span>Configuraciones</span>
               </button>
-              <button mat-menu-item routerLink="/home-profesional">
+              <button mat-menu-item routerLink="/home-profesional" *ngIf="isSuper">
                 <mat-icon>face</mat-icon>
                 <span>Home Profesional</span>
               </button>
-              <button mat-menu-item routerLink="/usuario">
+              <button mat-menu-item routerLink="/usuario" *ngIf="isSuper">
                 <mat-icon>face</mat-icon>
                 <span>Usuarios</span>
               </button>

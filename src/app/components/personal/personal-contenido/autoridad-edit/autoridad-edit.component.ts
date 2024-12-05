@@ -100,7 +100,7 @@ export class AutoridadEditComponent implements OnInit {
         );
   
         if (existing) {
-          this.toastr.warning('Ya existe un registro activo para esta persona.', 'Advertencia', {
+          this.toastr.warning('Ya existe una asignación activa para esta persona.', 'Advertencia', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true

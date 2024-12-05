@@ -1,15 +1,20 @@
-<p>usuario-edit works!</p>
-<!--<div class="form-row" style="margin-top: 20px;">
+<!--<h2 mat-dialog-title>{{data ? 'Modificar' : 'Dar alta de'}} Usuario
+  <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
+<mat-dialog-content class="mat-typography">
+
+  <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">
+
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Nombre de Usuario</mat-label>
       <input matInput formControlName="nombreUsuario">
-      <mat-error *ngIf="asistencialForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
+      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Contraseña</mat-label>
       <input matInput formControlName="password">
-      <mat-error *ngIf="asistencialForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
+      <mat-error *ngIf="usuarioForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="form-field">
@@ -18,4 +23,18 @@
         <mat-option *ngFor="let rol of roles" [value]="rol.rolNombre">{{ rol.rolNombre }}</mat-option>
       </mat-select>
     </mat-form-field>
-  </div>-->
+      
+      <div mat-dialog-actions class="action mt-4">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!usuarioForm.valid || !isModified()">
+              {{data ? 'Modificar' : 'Crear usuario'}}
+          </button>
+          <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+              Cancelar
+          </button>
+      </div>
+  </form>
+</mat-dialog-content>
+
+
+
+-->

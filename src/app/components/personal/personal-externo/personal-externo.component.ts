@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./personal-externo.component.css']
 })
 export class PersonalExternoComponent {
-
+  panelOpenState = true;
 }

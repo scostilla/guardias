@@ -207,7 +207,7 @@
 
             <div class="form-row">
             <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
-              <mat-label>Asignar efectores</mat-label>
+              <mat-label>Asignar efectores (para Extra o Contrafactura)</mat-label>
               <mat-select formControlName="habilitacionesGuardias" multiple>
                 <mat-option *ngFor="let efector of efectores" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
@@ -291,6 +291,7 @@
               <mat-select formControlName="efectores">
                 <mat-option *ngFor="let efector of getEfectoresFiltrados()" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
+              <mat-error *ngIf="legajoForm.get('efectores')?.errors?.['required']">El efector es requerido.</mat-error>
             </mat-form-field>
 
             <mat-action-row>
