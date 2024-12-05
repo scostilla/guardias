@@ -7,10 +7,10 @@
 
           <mat-form-field appearance="fill">
             <mat-label>Tipo de licencia</mat-label>
-              <mat-select formControlName="idTipoLicencia" [compareWith]="comparteTipoLicencia">
-                <mat-option *ngFor="let licencia of licencias" [value]="licencia.id" >{{ licencia.nombre }}</mat-option>
+              <mat-select formControlName="tipoLicencia" [compareWith]="compareFn" placeholder="Seleccione una licencia">
+                <mat-option *ngFor="let licencia of licencias" [value]="licencia" >{{ licencia.nombre }}</mat-option>
               </mat-select>
-            <mat-error *ngIf="novedadPersonalForm.get('idTipoLicencia')?.errors?.['required']">El campo es requerido.</mat-error>
+            <mat-error *ngIf="novedadPersonalForm.get('tipoLicencia')?.errors?.['required']">El campo es requerido.</mat-error>
           </mat-form-field>
           
 
@@ -57,9 +57,17 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Reemplazo</mat-label>
-          <input matInput formControlName="idSuplente" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
-          <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-          <mat-error *ngIf="novedadPersonalForm.get('idSuplente')?.errors?.['required']">El campo es requerido.</mat-error>
+        <input
+          matInput
+          [value]="novedadPersonalForm.get('suplente')?.value?.nombre + ' ' + novedadPersonalForm.get('suplente')?.value?.apellido || ''"
+          (click)="openAsistencialDialog()"
+          readonly
+          required
+        />
+        <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+        <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['required']">
+          El campo es requerido.
+        </mat-error>
       </mat-form-field>
 
     <div mat-dialog-actions class="action mt-4">
