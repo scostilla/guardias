@@ -8,7 +8,15 @@ import { AutoridadService } from 'src/app/services/Configuracion/autoridad.servi
 import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+
 
 @Component({
   selector: 'app-autoridad-edit',
@@ -22,6 +30,16 @@ export class AutoridadEditComponent implements OnInit {
   inputValue: string = '';
   autoridades: Autoridad[] = []; 
 
+  //Autenticación
+  isLogged = false;
+  roles: string[] =[];
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  userId: number | null = null;
+  usuarioPersona: number | null = null;
+
 
   constructor(
     private fb: FormBuilder,
@@ -29,9 +47,13 @@ export class AutoridadEditComponent implements OnInit {
     private autoridadService: AutoridadService,
     public dialog: MatDialog,
     private toastr: ToastrService,
+    private router: Router,
+    private tokenService: TokenService,
+    private authService: AuthService,
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
   ){
     this.autoridadForm = this.fb.group({
+      confirmado: ['', Validators.required],
       idPersona: ['', Validators.required],
     });
 
@@ -47,8 +69,33 @@ export class AutoridadEditComponent implements OnInit {
 }
 
   ngOnInit(): void {
+
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+      this.UserRoles();
+  
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+  
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+
     this.initialData = this.autoridadForm.value;
   }
+
+  //Roles a usar
+  UserRoles(): void {
+    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
+    this.isUsuario = this.roles.includes('ROLE_USER');
+    this.isDph = this.roles.includes('ROLE_DPH');
+    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+  }  
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.autoridadForm.value);
@@ -111,6 +158,7 @@ export class AutoridadEditComponent implements OnInit {
   
       const autoridadDto = new AutoridadDto(
         true,
+        autoridadData.confirmado ?? null,
         autoridadData.idPersona,
       );
   

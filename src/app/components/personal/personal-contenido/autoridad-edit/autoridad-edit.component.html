@@ -13,6 +13,17 @@
                 El campo profesional es requerido.
             </mat-error>
         </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="isSuper">
+            <mat-label>Confirmar</mat-label>
+            <mat-select formControlName="confirmado">
+                <mat-option [value]="false">Rechazar</mat-option>
+                <mat-option [value]="true">Confirmar</mat-option>
+            </mat-select>
+            <mat-error *ngIf="autoridadForm.get('confirmado')?.hasError('required')">
+                Debe confirmar o rechazar la asignación de autoridad.
+            </mat-error>
+        </mat-form-field> 
         
         <div mat-dialog-actions class="action mt-4">
             <button mat-raised-button color="primary" type="submit" [disabled]="!autoridadForm.valid || !isModified()">

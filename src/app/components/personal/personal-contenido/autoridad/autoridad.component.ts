@@ -36,7 +36,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AutoridadDetailComponent>;
-  displayedColumns: string[] = ['persona', 'acciones'];
+  displayedColumns: string[] = ['persona', 'confirmado', 'acciones'];
   dataSource!: MatTableDataSource<Autoridad>;
   suscription!: Subscription;
 
@@ -161,7 +161,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Autoridad editada con éxito' : 'Autoridad asignada con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

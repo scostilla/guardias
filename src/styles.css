@@ -664,6 +664,13 @@ mat-label{
   color: white;
 }
 
+.radio-group-with-line {
+  border-top: 1px solid #bbbbbb;
+  border-left: 1px solid #bbbbbb;
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
 /* --Panel de expanción-- */
 .custom-header {
   display: flex;

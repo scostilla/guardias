@@ -37,7 +37,7 @@ import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
   }
   
   public update(id:number, autoridad:AutoridadDto): Observable<any> {
-    return this.httpClient.put<any>(this.autoridadURL + `update/${id}`, autoridad)
+    return this.httpClient.put<any>(this.autoridadURL + `confirmar/${id}`, autoridad)
     .pipe(
       tap(() => {
        this._refresh$.next(); 
