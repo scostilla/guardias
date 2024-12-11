@@ -68,6 +68,9 @@
         <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['required']">
           El campo es requerido.
         </mat-error>
+        <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['sameAsAsistencial']">
+          El suplente no puede ser la misma persona previamente cargada.
+        </mat-error>
       </mat-form-field>
 
     <div mat-dialog-actions class="action mt-4">

@@ -129,6 +129,8 @@ export class NovedadesPersonEditComponent implements OnInit {
     this.toggleSuplenteDisabled(value);
   });
 
+  this.validateSuplenteDifferent();
+
   }
 
   toggleSuplenteValidation(necesitaReemplazo: boolean): void {
@@ -222,6 +224,32 @@ dateLessThan(start: string, end: string) {
         });
       }
     });
+  }
+
+  validateSuplenteDifferent(): void {
+    const suplenteControl = this.novedadPersonalForm.get('suplente');
+    if (suplenteControl) {
+      suplenteControl.valueChanges.subscribe(selectedSuplente => {
+        if (selectedSuplente && selectedSuplente.id === this.data.asistencialId) {
+          suplenteControl.setErrors({ sameAsAsistencial: true });
+          this.toastr.error('El suplente no puede ser la misma persona cargada.', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true,
+          });
+        } else {
+          if (suplenteControl.errors) {
+            const currentErrors = suplenteControl.errors;
+            delete currentErrors['sameAsAsistencial'];
+            if (Object.keys(currentErrors).length === 0) {
+              suplenteControl.setErrors(null); // Limpiar errores si no quedan más
+            } else {
+              suplenteControl.setErrors(currentErrors);
+            }
+          }
+        }
+      });
+    }
   }
   
 /*   get suplenteNombre(): string {
