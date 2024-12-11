@@ -9,6 +9,9 @@ import { AsistencialSelectorComponent } from 'src/app/components/personal/person
 import { MatDialog } from '@angular/material/dialog';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { ToastrService } from 'ngx-toastr';
+import { RolService } from 'src/app/services/Configuracion/rol.service';
+import { Rol } from 'src/app/models/Configuracion/Rol';
+
 
 @Component({
   selector: 'app-usuario-edit',
@@ -20,30 +23,44 @@ export class UsuarioEditComponent implements OnInit {
   usuarioForm: FormGroup;
   initialData: any;
   inputValue: string = '';
-  usuarioes: Usuario[] = []; 
+  usuarioes: Usuario[] = [];
+  roles: Rol[] = [];
+  hide = true; 
 
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<UsuarioEditComponent>,
     private authService: AuthService,
+    private rolService: RolService,
     public dialog: MatDialog,
     private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Usuario
   ){
     this.usuarioForm = this.fb.group({
-      idPersona: ['', Validators.required],
+      nombreUsuario: ['', Validators.required],
+      password: ['', Validators.required],
+      roles: ['', Validators.required],
+      idPerson: ['', Validators.required],
     });
 
     this.loadUsuarioes();
+    this.listRoles();
+
 
     if (data) {
+      console.log('Datos del usuario:', data);
+      console.log('Roles:', data.roles);  // Imprime los roles en la consola
+
       this.inputValue = `${data.person!.apellido} ${data.person!.nombre}`; // Guarda el nombre completo
       this.usuarioForm.patchValue({
-          idPersona: data.person!.id,
+        idPerson: data.person!.id,
+        nombreUsuario: data.nombreUsuario,
+        password: data.password,
+        roles: data.roles.map((rol: any) => rol.rolNombre),
       });
-  }
-
+    }
+    
 }
 
   ngOnInit(): void {
@@ -62,6 +79,14 @@ export class UsuarioEditComponent implements OnInit {
     });
   }
 
+  listRoles(): void {
+    this.rolService.list().subscribe(data => {
+      this.roles = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
@@ -72,7 +97,7 @@ export class UsuarioEditComponent implements OnInit {
       if (result) {
         // Actualizo el valor legible para mostrarlo y el id para el formulario
         this.inputValue = `${result.apellido} ${result.nombre}`;
-        this.usuarioForm.patchValue({ idPersona: result.id });
+        this.usuarioForm.patchValue({ idPerson: result.id });
       } else {
         this.toastr.info('No se seleccionó un profesional', 'Información', {
           timeOut: 6000,
@@ -89,18 +114,18 @@ export class UsuarioEditComponent implements OnInit {
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
   }
-/*
-  saveAutoridad(): void {
+
+  saveUsuario(): void {
     if (this.usuarioForm.valid) {
       const usuarioData = this.usuarioForm.value;
 
       if (!this.data || !this.data.id) {
         const existing = this.usuarioes.find(a => 
-          a.person!.id === usuarioData.idPersona && a.activo === true
+          a.person!.id === usuarioData.idPerson && a.activo === true
         );
 
         if (existing) {
-          this.toastr.warning('El nombre de usuario que estas intentando crear ya existe.', 'Advertencia', {
+          this.toastr.warning('El nombre de usuario que estas intentando crear ya existe. Debes usar otro nombre.', 'Advertencia', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -111,22 +136,23 @@ export class UsuarioEditComponent implements OnInit {
 
       const nuevoUsuario = new NuevoUsuario(
         usuarioData.nombreUsuario,
-        usuarioData.email,
         usuarioData.password,
-        usuarioData.roles
+        usuarioData.roles,
+        usuarioData.idPerson,
+        true,
       );
   
       console.log('Datos a enviar:', nuevoUsuario);
 
       if (this.data && this.data.id) {
-        this.authService.update(this.data.id, nuevoUsuario).subscribe(
+        /*this.authService.update(this.data.id, nuevoUsuario).subscribe(
           result => {
             this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
             this.dialogRef.close({ type: 'error', data: error });
           }
-        );
+        );*/
       } else {
         this.authService.create(nuevoUsuario).subscribe(
           result => {
@@ -139,7 +165,7 @@ export class UsuarioEditComponent implements OnInit {
       }
     }
   }
-*/
+
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
@@ -149,68 +175,3 @@ export class UsuarioEditComponent implements OnInit {
     this.dialogRef.close({ type: 'cancel' });
   }
 }
-
-
- /* 
-       nombreUsuario: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      roles: [[], [Validators.required]],
-
-
- 
- saveAsistencial(): void {
-    if (this.asistencialForm.valid) {
-      const asistencialData = this.asistencialForm.value;
-
-      asistencialData.nombre = this.capitalizeWords(asistencialData.nombre);
-      asistencialData.apellido = this.capitalizeWords(asistencialData.apellido);
-
-      asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
-
-      const nuevoUsuario = new NuevoUsuario(
-        asistencialData.nombreUsuario,
-        asistencialData.email,
-        asistencialData.password,
-        asistencialData.roles
-      );
-      // Verifica si existe un usuario con el nombreUsuario especificado
-      this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
-        (existingUsuario) => {
-          if (!existingUsuario) {
-            // Usuario no encontrado, creamos
-            console.log("roles para el usuari que se creará", nuevoUsuario);
-            this.createNewUserAndAsistencial(nuevoUsuario, asistencialData);
-          } else {
-            console.error('El nombre de usuario ya existe.');
-          }
-        },
-        (error) => {
-          console.log('Error al buscar el usuario existente', error);
-        }
-      );
-    }
-  }
-
-  createNewUserAndAsistencial(nuevoUsuario: NuevoUsuario, asistencialData: any): void {
-    //creamos el usuario
-    this.authService.create(nuevoUsuario).subscribe(
-      () => {
-        // buscar el usuario recién creado
-        this.authService.detail(nuevoUsuario.nombreUsuario).subscribe(
-          (newUsuario) => {
-            if (newUsuario && newUsuario.id !== undefined) {
-              //creo el asistencial con el id de usuario creado
-              this.createAsistencialDtoAndSave(asistencialData, newUsuario.id);
-            }
-          },
-          (searchError) => {
-            console.error('Error al buscar el usuario después de crearlo', searchError);
-          }
-        );
-      },
-      (createError) => {
-        console.error('Error al crear el usuario', createError);
-      }
-    );
-  }   */
-

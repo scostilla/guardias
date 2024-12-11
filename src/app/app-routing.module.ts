@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { LoginComponent } from './components/login/login.component';
 
@@ -239,6 +240,7 @@ const routes: Routes = [
   //Principales
   {path: '', component: LoginComponent },
   {path:"home-page", component:HomePageComponent},
+  {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent},

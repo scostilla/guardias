@@ -92,9 +92,12 @@
               (click)="deleteNoAsistencial(noAsistencial)">
               <mat-icon class="btnRemove">delete</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="{{getTooltip(noAsistencial)}}" (click)="getButtonAction(noAsistencial)"
+            <!--<button mat-icon-button matTooltip="{{getTooltip(noAsistencial)}}" (click)="getButtonAction(noAsistencial)"
               *ngIf="!isLoadingLegajos">
               <mat-icon color="primary">{{getIcon(noAsistencial)}}</mat-icon>
+            </button>-->
+           <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(noAsistencial)">
+              <mat-icon color="primary">playlist_play</mat-icon>
             </button>
           </td>
         </ng-container>

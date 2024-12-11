@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Caps } from 'src/app/models/Configuracion/Caps';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
+import { EfectorSelectorComponent } from './efector-selector/efector-selector.component';
 
 
 //Autenticación
@@ -53,6 +56,7 @@ export class HomePageComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
     private ministerioService: MinisterioService,
     private habilitacionesGeneralesService: HabilitacionesGeneralesService,
     private asistencialService: AsistencialService,

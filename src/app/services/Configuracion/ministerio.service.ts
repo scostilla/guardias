@@ -53,4 +53,9 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.ministeriosURL + `delete/${id}`, {});
 }
 
+  // Método para verificar si el id corresponde a un CAPS
+  isMinisterio(id: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.ministeriosURL}isMinisterio/${id}`);
+  }
+
 }

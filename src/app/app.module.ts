@@ -16,6 +16,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 //Angular nativo
 
@@ -258,6 +259,7 @@ import { PersonalExternoComponent } from './components/personal/personal-externo
 import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
 import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
 import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
+import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 
 @NgModule({
   declarations: [
@@ -465,6 +467,7 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     UsuarioComponent,
     UsuarioDetailComponent,
     UsuarioEditComponent,
+    EfectorSelectorComponent,
     
   ],
 
@@ -506,6 +509,7 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     MatDatepickerModule,
     MatMomentDateModule,
     MatTabsModule,
+    MatBottomSheetModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,

@@ -1,9 +1,18 @@
-<!--<h2 mat-dialog-title>{{data ? 'Modificar' : 'Dar alta de'}} Usuario
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Dar alta de'}} Usuario
   <h5 class="['required']Field">*Campos Obligatorios</h5>
 </h2>
 <mat-dialog-content class="mat-typography">
 
   <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Profesional</mat-label>
+      <input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+      <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+      <mat-error *ngIf="usuarioForm.get('idPerson')?.hasError('required')">
+          El campo profesional es requerido.
+      </mat-error>
+    </mat-form-field>
 
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Nombre de Usuario</mat-label>
@@ -13,7 +22,10 @@
 
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Contraseña</mat-label>
-      <input matInput formControlName="password">
+      <input matInput formControlName="password" type="{{ hide ? 'password' : 'text' }}">
+      <mat-icon class="mat-icon-size mat-icon-color" matSuffix (click)="hide = !hide">
+        {{hide ? 'visibility_off' : 'visibility'}}
+      </mat-icon>
       <mat-error *ngIf="usuarioForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
     </mat-form-field>
 
@@ -35,6 +47,3 @@
   </form>
 </mat-dialog-content>
 
-
-
--->

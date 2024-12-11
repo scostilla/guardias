@@ -118,6 +118,8 @@ export class LegajoCreateComponent implements OnInit {
   showEfectorAutoridad: boolean = false;
   showHabilitacionesGuardias: boolean = false;
   showHabilitacionesGenerales: boolean = false;
+  idCargo?: number;
+  idAgrupacion?: number;
   idContraFactura?: number;
   idPasiva?: number;
   idExtra?: number;
@@ -175,7 +177,7 @@ export class LegajoCreateComponent implements OnInit {
       udo: [null, Validators.required],
       tipoEfector: [null, Validators.required],
       efectores: [null, Validators.required],
-      tipoEfectorCargo: [null, Validators.required],
+      tipoEfectorCargo: [''],
       efectoresAutoridad: [[]],
       especialidades: [[]],
       matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
@@ -305,6 +307,8 @@ export class LegajoCreateComponent implements OnInit {
     this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
     this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
     this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
+    this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
+    this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
 
     // Imprimir los ids para depuración
     console.log('ID ContraFactura:', this.idContraFactura);
@@ -388,7 +392,7 @@ export class LegajoCreateComponent implements OnInit {
         // Si la persona es autoridad, verificar los legajos activos
         const legajoConTipoGuardiaCargo = legajosActivos.find(legajo => 
           !legajo.esAutoridad && 
-          legajo.tipoGuardias.some(tipo => tipo.id === 1 || tipo.id === 2)
+          legajo.tipoGuardias.some(tipo => tipo.id === this.idCargo || tipo.id === this.idAgrupacion)
         );
         
         if (legajoConTipoGuardiaCargo) {

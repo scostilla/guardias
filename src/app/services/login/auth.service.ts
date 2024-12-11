@@ -24,9 +24,14 @@ export class AuthService {
 
   public create(nuevoUsuario : NuevoUsuario): Observable<any>{
     console.log("rol que envio", nuevoUsuario);
-    return this.httpClient.post<any>(this.authUrl + 'create',nuevoUsuario);
+    return this.httpClient.post<any>(this.authUrl + 'create',nuevoUsuario)
+    .pipe(
+      tap(() => {
+       this._refresh$.next();
+      })
+    )
   }
-
+  
   public list(): Observable<Usuario[]> {
     return this.httpClient.get<Usuario[]>(this.authUrl + 'list');
 }
@@ -52,15 +57,6 @@ export class AuthService {
 
   public detailPersonBasicPanel(): Observable<PersonBasicPanelDto> {
     return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel`);
-  }
-
-  public checkUsuario(nuevoUsuario: NuevoUsuario): Observable<Usuario> {
-    return this.httpClient.post<Usuario>(this.authUrl + `check`,nuevoUsuario)
-    .pipe(
-      tap(() => {
-        this._refresh$.next();
-      })
-    )
   }
 
 }
