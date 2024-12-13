@@ -57,19 +57,23 @@ export class HeaderComponent implements OnDestroy, OnInit {
       this.isLogged = false;
       this.nombreUsuario = '';
       this.apellidoUsuario = '';
+      this.roles = [];  // Aseguramos que los roles estén vacíos si no hay token
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
 
-    // Suscribirse a cambios de ruta para actualizar los datos cuando sea necesario
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        // Si el evento de navegación es "end", comprobamos si esta logueado
-        if (this.tokenService.getToken()) {
-          this.isLogged = true;
-          this.loadUserDetails();
-        }
+  // Suscribimos a los eventos de la ruta para manejar cambios al navegar
+  this.router.events.subscribe(event => {
+    if (event instanceof NavigationEnd) {
+      if (this.tokenService.getToken()) {
+        this.isLogged = true;
+        this.loadUserDetails();
       }
-    });
-  }
+    }
+  });
+}
 
     //Roles a usar
     UserRoles(): void {
@@ -103,6 +107,11 @@ export class HeaderComponent implements OnDestroy, OnInit {
     this.isLogged = false;
     this.nombreUsuario = '';
     this.apellidoUsuario = '';
+    this.roles = [];
+    this.isAdministrativo = false;
+    this.isUsuario = false;
+    this.isDph = false;
+    this.isSuper = false;
     this.router.navigate(['/']);
   }
 }

@@ -14,15 +14,20 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 //Services
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
 
 //Models y Dto
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { Caps } from 'src/app/models/Configuracion/Caps';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Region } from 'src/app/models/Configuracion/Region';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
@@ -52,6 +57,9 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
 
   //Listas
   efectores: Efector[] = [];
+  hospitales: Hospital[] = [];
+  ministerios: Ministerio[] = [];
+  caps: Caps[] = [];
   cargos: Cargo[] = [];
   regiones: Region[] = [];
 
@@ -80,9 +88,15 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
   showRegion: boolean = false;
   showEfectorAutoridad: boolean = false;
   showHabilitacionesGuardias: boolean = false;
+  idCargo?: number;
+  idAgrupacion?: number;
   idContraFactura?: number;
   idPasiva?: number;
   idExtra?: number;
+  esAutoridadValor: boolean = false;
+  idDirectorRegional?: number;
+  udoOptions: any[] = [];
+  efectorOptions: any[] = [];
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -101,6 +115,8 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
     private location: Location,
     private legajoService: LegajoService,
     private hospitalService: HospitalService,
+    private ministerioService: MinisterioService,
+    private capsService: CapsService,
     private cargoService: CargoService,
     private regionService: RegionService,
     private habilitacionesGuardiasService: HabilitacionesGuardiasService,
@@ -111,8 +127,10 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
 
     this.legajoForm = this.fb.group({
       idPersona: ['', Validators.required],
-      udo: ['', Validators.required],
-      efectores: ['', Validators.required],
+      tipoUdo: [null, Validators.required],
+      udo: [null, Validators.required],
+      tipoEfector: [null, Validators.required],
+      efectores: [null, Validators.required],
       efectoresAutoridad: [[]],
       esAutoridad: [false, Validators.required],
       idCargo: [null],
@@ -287,6 +305,9 @@ if (this.initialData) {
 
   //-----Llamo métodos para cargar los datos iniciales-----
     this.listUdos();
+    this.listMinisterios();
+    this.listHospitales();
+    this.listCaps();
     /*this.listCategorias();
     this.listAdicionales();
     this.listCargaHoraria();
@@ -339,6 +360,30 @@ if (this.initialData) {
     /* aqui falta agregar metodo en back para que liste todos los efectores, de momento solo mostramos hospitales */
     this.hospitalService.list().subscribe(data => {
       this.efectores = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listMinisterios(): void {
+    this.ministerioService.list().subscribe(data => {
+      this.ministerios = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listHospitales(): void {
+    this.hospitalService.list().subscribe(data => {
+      this.hospitales = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  listCaps(): void {
+    this.capsService.list().subscribe(data => {
+      this.caps = data;
     }, error => {
       console.log(error);
     });
@@ -444,6 +489,53 @@ if (this.initialData) {
     // Si no es administrativo, devuelve todos los efectores
     return this.efectores;
   }
+
+    // Método para cambiar las opciones de la seleccion de udo
+    onTipoUdoChange(event: any): void {
+      const tipoUdo = event.value;
+  
+      // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+      if (tipoUdo === 1) { // Ministerio
+        this.udoOptions = this.ministerios;
+      } else if (tipoUdo === 2) { // Hospital
+        this.udoOptions = this.hospitales;
+      } else if (tipoUdo === 3) { // CAPS
+        this.udoOptions = this.caps;  // Opciones específicas para CAPS
+      }
+  
+      // Habilitar el select de UDO después de haber elegido un tipo de efector
+      const udoControl = this.legajoForm.get('udo');
+      if (udoControl) {
+        udoControl.enable(); // Habilitar el select de UDO
+      }
+  
+      // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+      this.legajoForm.get('udo')?.reset();
+    }
+  
+    // Método para cambiar las opciones de la seleccion de efector
+    onTipoEfectorChange(event: any): void {
+      const tipoEfector = event.value;
+  
+      // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+      if (tipoEfector === 1) { // Ministerio
+        this.efectorOptions = this.ministerios;
+      } else if (tipoEfector === 2) { // Hospital
+        this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
+      } else if (tipoEfector === 3) { // CAPS
+        this.efectorOptions = this.caps;  // Opciones específicas para CAPS
+      }
+  
+      // Habilitar el select de efector después de haber elegido un tipo de efector
+      const efectorControl = this.legajoForm.get('efectores');
+      if (efectorControl) {
+        efectorControl.enable(); // Habilitar el select de efector
+      }
+  
+      // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
+      this.legajoForm.get('efectores')?.reset();
+    }
+  
 
 
 /*  //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo

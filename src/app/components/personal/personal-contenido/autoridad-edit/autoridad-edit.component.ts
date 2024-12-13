@@ -53,7 +53,7 @@ export class AutoridadEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
   ){
     this.autoridadForm = this.fb.group({
-      confirmado: ['', Validators.required],
+      confirmado: [null, Validators.required],
       idPersona: ['', Validators.required],
     });
 
@@ -65,6 +65,8 @@ export class AutoridadEditComponent implements OnInit {
           idPersona: data.persona!.id,
       });
   }
+
+  this.setConfirmadoValidation();
 
 }
 
@@ -95,7 +97,17 @@ export class AutoridadEditComponent implements OnInit {
     this.isUsuario = this.roles.includes('ROLE_USER');
     this.isDph = this.roles.includes('ROLE_DPH');
     this.isSuper = this.roles.includes('ROLE_SUPERUSER');
-  }  
+  }
+
+  // Establecer la validación del campo 'confirmado' de acuerdo al rol
+  setConfirmadoValidation(): void {
+    if (this.isSuper) {
+      this.autoridadForm.get('confirmado')?.setValidators([Validators.required]);
+    } else {
+      this.autoridadForm.get('confirmado')?.clearValidators();
+    }
+    this.autoridadForm.get('confirmado')?.updateValueAndValidity();
+  }
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.autoridadForm.value);

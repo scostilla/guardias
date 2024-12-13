@@ -161,7 +161,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito. Solicita confirmación con informática.', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

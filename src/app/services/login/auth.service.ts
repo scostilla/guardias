@@ -29,7 +29,32 @@ export class AuthService {
       tap(() => {
        this._refresh$.next();
       })
-    )
+    );
+  }
+
+  // Verificar si un usuario tiene un legajo activo
+  verificarLegajoActivo(idPersona: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.authUrl}legajoActivo/${idPersona}`);
+  }
+  
+  // Verificar si la persona tiene un usuario activo asociado
+  verificarUsuarioActivo(idPersona: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.authUrl}usuarioActivo/${idPersona}`);
+  }
+
+  // Método para verificar si un nombre de usuario ya existe
+  checkUsername(nombreUsuario: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.authUrl}checkUsername/${nombreUsuario}`);
+  }
+
+  // Actualizar un usuario
+  update(id: number, nuevoUsuario: NuevoUsuario): Observable<any> {
+    return this.httpClient.put<any>(`${this.authUrl}update/${id}`, nuevoUsuario)
+    .pipe(
+      tap(() => {
+       this._refresh$.next();
+      })
+    );
   }
   
   public list(): Observable<Usuario[]> {

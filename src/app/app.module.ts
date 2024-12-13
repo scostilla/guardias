@@ -9,6 +9,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserModule } from '@angular/platform-browser';
 import { CalendarCommonModule, CalendarModule, CalendarMonthModule, DateAdapter } from 'angular-calendar';
@@ -502,6 +503,7 @@ import { EfectorSelectorComponent } from './components/home-page/efector-selecto
     MatDatepickerModule,
     MatCardModule,   
     MatRadioModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
     MatListModule,
     BrowserModule,

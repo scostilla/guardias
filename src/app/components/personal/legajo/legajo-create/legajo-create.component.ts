@@ -907,7 +907,9 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('adicional')?.disable();
     this.legajoForm.get('cargaHoraria')?.disable();
     this.legajoForm.get('tipoRevista')?.disable();
+    this.legajoForm.get('tipoUdo')?.disable();
     this.legajoForm.get('udo')?.disable();
+    this.legajoForm.get('tipoEfector')?.disable();
     this.legajoForm.get('efectores')?.disable();
   }
   
@@ -917,7 +919,9 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('adicional')?.enable();
     this.legajoForm.get('cargaHoraria')?.enable();
     this.legajoForm.get('tipoRevista')?.enable();
+    this.legajoForm.get('tipoUdo')?.enable();
     this.legajoForm.get('udo')?.enable();
+    this.legajoForm.get('tipoEfectores')?.enable();
     this.legajoForm.get('efectores')?.enable();
   }
     

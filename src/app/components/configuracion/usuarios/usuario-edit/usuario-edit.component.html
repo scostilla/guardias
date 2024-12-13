@@ -16,18 +16,19 @@
 
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Nombre de Usuario</mat-label>
-      <input matInput formControlName="nombreUsuario">
-      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
+      <input matInput formControlName="nombreUsuario" (blur)="verificarUsuarioExistente()">
+      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.hasError('required')">El nombre de usuario es requerido.</mat-error>
+      <mat-error *ngIf="nombreUsuarioError">{{ nombreUsuarioError }}</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="form-field">
+    <!--<mat-form-field appearance="fill" class="form-field">
       <mat-label>Contraseña</mat-label>
       <input matInput formControlName="password" type="{{ hide ? 'password' : 'text' }}">
       <mat-icon class="mat-icon-size mat-icon-color" matSuffix (click)="hide = !hide">
         {{hide ? 'visibility_off' : 'visibility'}}
       </mat-icon>
       <mat-error *ngIf="usuarioForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
-    </mat-form-field>
+    </mat-form-field>-->
 
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Roles</mat-label>
@@ -35,6 +36,8 @@
         <mat-option *ngFor="let rol of roles" [value]="rol.rolNombre">{{ rol.rolNombre }}</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <mat-checkbox *ngIf="data" (change)="onResetPasswordChange($event)" formControlName="resetPassword">Resetear contraseña</mat-checkbox>
       
       <div mat-dialog-actions class="action mt-4">
           <button mat-raised-button color="primary" type="submit" [disabled]="!usuarioForm.valid || !isModified()">

@@ -176,7 +176,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Usuario editada con éxito' : 'Usuario asignada con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Usuario editado con éxito' : 'Usuario asignado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -189,7 +189,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
         }
         this.dataSource._updateChangeSubscription();
       } else if (result && result.type === 'error') {
-        this.toastr.error('Ocurrió un error al asignar o editar la Usuario', 'Error', {
+        this.toastr.error('Ocurrió un error al asignar o editar el Usuario', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
