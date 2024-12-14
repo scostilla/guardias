@@ -154,50 +154,111 @@ export class AutoridadEditComponent implements OnInit {
       const autoridadData = this.autoridadForm.value;
   
       if (!this.data || !this.data.id) {
-        const existing = this.autoridades.find(a => 
-          a.persona!.id === autoridadData.idPersona && a.activo === true
-        );
+        // Verificar si la persona ya está asignada como autoridad activa
+        this.autoridadService.asignadoAutoridad(autoridadData.idPersona).subscribe(
+          (isAssigned: boolean) => {
+            if (isAssigned) {
+              this.toastr.warning('Ya existe una asignación activa para esta persona.', 'Advertencia', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+              return;
+            }
   
-        if (existing) {
-          this.toastr.warning('Ya existe una asignación activa para esta persona.', 'Advertencia', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          return;
-        }
-      }
+            // Verificar si la persona posee un legajo activo con guardia de cargo y/o agrupación
+            this.autoridadService.validateForCreation(autoridadData.idPersona).subscribe(
+              (canCreate: boolean) => {
+                if (!canCreate) {
+                  this.toastr.warning('Debes dar de baja el legajo activo con guardia de cargo y/o agrupación para poder asignarlo como autoridad.', 'Advertencia', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  });
+                  return;
+                }
   
-      const autoridadDto = new AutoridadDto(
-        true,
-        autoridadData.confirmado ?? null,
-        autoridadData.idPersona,
-      );
+                // Si pasa todas las validaciones, continuar con la creación o actualización
+                const autoridadDto = new AutoridadDto(
+                  true,
+                  autoridadData.confirmado ?? null,
+                  autoridadData.idPersona,
+                );
   
-      console.log('Datos a enviar:', autoridadDto);
+                console.log('Datos a enviar:', autoridadDto);
   
-      if (this.data && this.data.id) {
-        this.autoridadService.update(this.data.id, autoridadDto).subscribe(
-          result => {
-            this.dialogRef.close({ type: 'save', data: result });
+                if (this.data && this.data.id) {
+                  this.autoridadService.update(this.data.id, autoridadDto).subscribe(
+                    result => {
+                      this.dialogRef.close({ type: 'save', data: result });
+                    },
+                    error => {
+                      this.dialogRef.close({ type: 'error', data: error });
+                    }
+                  );
+                } else {
+                  this.autoridadService.save(autoridadDto).subscribe(
+                    result => {
+                      this.dialogRef.close({ type: 'save', data: result });
+                    },
+                    error => {
+                      this.dialogRef.close({ type: 'error', data: error });
+                    }
+                  );
+                }
+              },
+              error => {
+                // Manejo de errores en validateForCreation
+                this.toastr.error('Error al verificar el legajo para creación de autoridad.', 'Error', {
+                  timeOut: 6000,
+                  positionClass: 'toast-top-center',
+                  progressBar: true
+                });
+              }
+            );
           },
           error => {
-            this.dialogRef.close({ type: 'error', data: error });
+            // Manejo de errores en asignadoAutoridad
+            this.toastr.error('Error al verificar la asignación de autoridad.', 'Error', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
           }
         );
       } else {
-        this.autoridadService.save(autoridadDto).subscribe(
-          result => {
-            this.dialogRef.close({ type: 'save', data: result });
-          },
-          error => {
-            this.dialogRef.close({ type: 'error', data: error });
-          }
+        // Si la entidad existe, continuar con la actualización o creación
+        const autoridadDto = new AutoridadDto(
+          true,
+          autoridadData.confirmado ?? null,
+          autoridadData.idPersona,
         );
+  
+        console.log('Datos a enviar:', autoridadDto);
+  
+        if (this.data && this.data.id) {
+          this.autoridadService.update(this.data.id, autoridadDto).subscribe(
+            result => {
+              this.dialogRef.close({ type: 'save', data: result });
+            },
+            error => {
+              this.dialogRef.close({ type: 'error', data: error });
+            }
+          );
+        } else {
+          this.autoridadService.save(autoridadDto).subscribe(
+            result => {
+              this.dialogRef.close({ type: 'save', data: result });
+            },
+            error => {
+              this.dialogRef.close({ type: 'error', data: error });
+            }
+          );
+        }
       }
     }
   }
-
+  
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,

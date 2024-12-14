@@ -41,7 +41,7 @@ export class UsuarioEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Usuario
   ){
     this.usuarioForm = this.fb.group({
-      nombreUsuario: ['', Validators.required],
+      nombreUsuario: ['', [Validators.required, Validators.pattern('^[a-z0-9]+$')]],
       roles: ['', Validators.required],
       idPerson: ['', Validators.required],
       resetPassword: [false]
@@ -189,22 +189,26 @@ export class UsuarioEditComponent implements OnInit {
     
   // Método para generar el nombre de usuario automáticamente, normalizando caracteres especiales
   generarNombreUsuario(nombre: string, apellido: string): string {
-    // Dividimos el nombre por espacio para obtener las palabras del nombre
+    // Divide el nombre por espacio para obtener las palabras del nombre
     const nombres = nombre.split(' ');
   
-    // Tomamos la primera letra de cada nombre
+    // Toma la primera letra de cada nombre
     const iniciales = nombres.map(n => this.normalizarTexto(n.charAt(0).toLowerCase())).join('');
   
-    // Normalizamos el apellido y concatenamos la primera letra de cada nombre con el apellido
+    // Normaliza el apellido y concatena la primera letra de cada nombre con el apellido
     const apellidoNormalizado = this.normalizarTexto(apellido.toLowerCase());
   
-    // Unimos la primera letra de cada nombre + el apellido completo (normalizado)
+    // Une la primera letra de cada nombre + el apellido completo (normalizado)
     return iniciales + apellidoNormalizado;
   }
   
   normalizarTexto(texto: string): string {
-    // Usamos la función normalize() para convertir caracteres acentuados a sus equivalentes sin acento
-    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    // Convertir a minúsculas, eliminar acentos y símbolos
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '')
+      .toLowerCase();
   }
 
   saveUsuario(): void {

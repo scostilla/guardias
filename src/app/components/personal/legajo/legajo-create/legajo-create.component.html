@@ -214,20 +214,20 @@
               <mat-label>Tipo guardia</mat-label>
               <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onSelectionChange($event)">
                 <ng-container *ngFor="let tipoGuardia of tipoGuardias">
-                  <!-- Filtra para el usuario ADMIN, excluyendo CONTRAFACTURA y PASIVA usando sus id -->
+                  <!-- Filtra para el usuario ADMIN, excluyendo CONTRAFACTURA usando sus id -->
                   <mat-option 
                   *ngIf="
                     (asignadoAutoridad && 
                       (isAdministrativo ? tipoGuardia.id === idExtra : 
-                        (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra))) || 
+                        (tipoGuardia.id === idContraFactura || tipoGuardia.id === idExtra || tipoGuardia.id === idPasiva))) || 
                     (!asignadoAutoridad && !isAdministrativo) || 
-                    (!asignadoAutoridad && isAdministrativo && tipoGuardia.id !== idContraFactura && tipoGuardia.id !== idPasiva)"
+                    (!asignadoAutoridad && isAdministrativo && tipoGuardia.id !== idContraFactura)"
                   [value]="tipoGuardia.id">
                     {{ tipoGuardia.nombre }}
                   </mat-option>
                 </ng-container>
-                <!-- Mostrar mensaje si se seleccionan CONTRAFACTURA o PASIVA -->
-                <div *ngIf="legajoForm.get('tipoGuardias')?.value?.includes(idContraFactura) || legajoForm.get('tipoGuardias')?.value?.includes(idPasiva)">
+                <!-- Mostrar mensaje si se seleccionan CONTRAFACTURA -->
+                <div *ngIf="legajoForm.get('tipoGuardias')?.value?.includes(idContraFactura)">
                   <p class="simple-message">La opción seleccionada no puede combinarse con las demás guardias.</p>
                 </div>
               </mat-select>
@@ -235,11 +235,17 @@
             </mat-form-field>
             </div>
 
+            <mat-radio-group formControlName="tipoHabilitacionesGuardias" *ngIf="showHabilitacionesGuardias" (change)="onTipoHabilitacionesGuardiasChange($event)" class="radio-group-with-line">
+              <mat-radio-button [value]="2" style="margin-right: 10px;">Hospital</mat-radio-button>
+              <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="legajoForm.get('tipoHabilitacionesGuardias')?.errors?.['required']">Requiere seleccionar: Hospital o Caps.</mat-error>
+
             <div class="form-row">
             <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
-              <mat-label>Asignar efectores (para Extra o Contrafactura)</mat-label>
+              <mat-label>Asignar efectores (para Extra/Contrafactura/Pasiva)</mat-label>
               <mat-select formControlName="habilitacionesGuardias" multiple>
-                <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
+                <mat-option *ngFor="let efector of habilitacionesGuardiasOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
             </mat-form-field>
             </div>

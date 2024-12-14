@@ -18,6 +18,7 @@
       <mat-label>Nombre de Usuario</mat-label>
       <input matInput formControlName="nombreUsuario" (blur)="verificarUsuarioExistente()">
       <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.hasError('required')">El nombre de usuario es requerido.</mat-error>
+      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.hasError('pattern')">Debe contener solo minúsculas y números sin espacios ni símbolos.</mat-error>
       <mat-error *ngIf="nombreUsuarioError">{{ nombreUsuarioError }}</mat-error>
     </mat-form-field>
 
@@ -36,6 +37,10 @@
         <mat-option *ngFor="let rol of roles" [value]="rol.rolNombre">{{ rol.rolNombre }}</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <div *ngIf="!data" class="negrita">
+      La contraseña inicial asignada será igual al nombre de usuario.
+    </div>
 
     <mat-checkbox *ngIf="data" (change)="onResetPasswordChange($event)" formControlName="resetPassword">Resetear contraseña</mat-checkbox>
       
