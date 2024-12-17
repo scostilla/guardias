@@ -56,7 +56,10 @@
                 </div>
               </div>
               <div class="perfil-cargo">
-                Administrativo
+                <span *ngIf="isAdministrativo">Administrativo</span>
+                <span *ngIf="isDph">Dirección de Hospitales (Dph)</span>
+                <span *ngIf="isUsuario">Usuario</span>
+                <span *ngIf="isSuper">Super Usuario</span>
               </div>
             </div>
             <div class="col" type="button" (click)="onLogOut()" >

@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { LegajoBajaDto } from 'src/app/dto/Configuracion/LegajoBajaDto';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
 import { Router } from '@angular/router';
@@ -15,6 +16,7 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { Location } from '@angular/common';
+import { MotivoBajaDialogComponent } from '../motivo-baja-dialog/motivo-baja-dialog.component';
 
 @Component({
   selector: 'app-legajo-person',
@@ -215,34 +217,53 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   deleteLegajo(legajo: Legajo): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        message: 'Confirma la eliminación de ' + legajo.id,
-        title: 'Eliminar',
-      },
+    const dialogRef = this.dialog.open(MotivoBajaDialogComponent, {
+      width: '400px',
+      data: { legajo: legajo }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.legajoService.delete(legajo.id!).subscribe(data => {
-          this.toastr.success('Legajo eliminado con éxito', 'ELIMINADO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-
-          const index = this.dataSource.data.findIndex(p => p.id === legajo.id);
-          this.dataSource.data.splice(index, 1);
-          this.dataSource._updateChangeSubscription();
-        }, err => {
-          this.toastr.error(err.message, 'Error, no se pudo eliminar el legajo', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        });
+        // Aquí recibimos los datos del formulario del diálogo
+        const bajaData = result;
+  
+        // Asegúrate de que la fecha sea un objeto Date
+        let fechaFinal: Date;
+        if (bajaData.fechaFinal instanceof Date) {
+          fechaFinal = bajaData.fechaFinal; // Si ya es un Date, lo usamos tal cual
+        } else {
+          // Si la fecha no es un Date, la convertimos a Date desde una cadena, si es necesario
+          fechaFinal = new Date(bajaData.fechaFinal);
+        }
+  
+        // Crear el DTO con la fecha como objeto Date
+        const legajoBajaDto = new LegajoBajaDto(fechaFinal, bajaData.motivoBaja);
+  
+        // Llamamos al servicio para eliminar lógicamente y pasamos ambos parámetros
+        this.legajoService.delete(legajo.id!, legajoBajaDto).subscribe(
+          data => {
+            this.toastr.success('Legajo eliminado con éxito', 'ELIMINADO', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+  
+            // Actualizamos la tabla
+            const index = this.dataSource.data.findIndex(p => p.id === legajo.id);
+            if (index !== -1) {
+              this.dataSource.data.splice(index, 1);
+              this.dataSource._updateChangeSubscription();
+            }
+          },
+          err => {
+            this.toastr.error(err.message, 'Error, no se pudo eliminar el legajo', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+          }
+        );
       }
     });
   }
-
 }

@@ -103,6 +103,7 @@ export class LegajoCreateComponent implements OnInit {
   apellidoUsuario: string = '';
   nombresEfectores: EfectorSummaryDto[] = [];
   usuarioPersona: number | null = null;
+  currentRole: string | null = null;
 
   //útiles
   step = 0;
@@ -266,7 +267,11 @@ export class LegajoCreateComponent implements OnInit {
     this.isLogged = true;
     this.roles = this.tokenService.getAuthorities();
 
-    this.UserRoles();
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+    });
 
     const userIdFromToken = this.tokenService.getUserIdFromToken();
     this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
@@ -598,13 +603,21 @@ export class LegajoCreateComponent implements OnInit {
 
 //-----Metodos y funciones-----
 
-  //Roles a usar
+  // Roles a usar
   UserRoles(): void {
-    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
-    this.isUsuario = this.roles.includes('ROLE_USER');
-    this.isDph = this.roles.includes('ROLE_DPH');
-    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
-    this.isAutoridad = this.roles.includes('ROLE_AUTORIDAD');
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
   // Form Datos profesional: No permite seleccionar una fecha futura en fechaInicio

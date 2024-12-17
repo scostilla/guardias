@@ -9,6 +9,7 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { LoginComponent } from './components/login/login.component';
+import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
 
 //Configuraciones: Generales
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
@@ -56,8 +57,6 @@ import { ProfesionEditComponent } from './components/configuracion/profesionales
 import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
 
 //Configuraciones: Personas
-import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
@@ -239,6 +238,7 @@ const routes: Routes = [
   
   //Principales
   {path: '', component: LoginComponent },
+  {path:"selector-roles", component:SelectorRolesComponent},
   {path:"home-page", component:HomePageComponent},
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
@@ -295,8 +295,6 @@ const routes: Routes = [
   {path: 'person-detail/:id', component:PersonDetailComponent},
   {path: 'person-edit/:id', component:PersonEditComponent},
   {path: 'person-edit', component: PersonEditComponent },
-  {path: 'legajo', component:LegajoComponent},
-  {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
   {path: 'usuario', component:UsuarioComponent},

@@ -221,9 +221,7 @@ import { LegajoDetailComponent } from './components/personal/legajo/legajo-detai
 import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
 import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
-import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
 import { NoAsistencialCreateComponent } from './components/personal/personal-contenido/no-asistencial-create/no-asistencial-create.component';
 import { NoAsistencialDetailComponent } from './components/personal/personal-contenido/no-asistencial-detail/no-asistencial-detail.component';
 import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
@@ -253,7 +251,7 @@ import { PersonalNoAsistencialComponent } from './components/personal/personal-n
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
-import { MotivoBajaDialogComponent } from './components/configuracion/usuarios/motivo-baja-dialog/motivo-baja-dialog.component';
+import { MotivoBajaDialogComponent } from './components/personal/legajo/motivo-baja-dialog/motivo-baja-dialog.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
@@ -261,6 +259,7 @@ import { UsuarioComponent } from './components/configuracion/usuarios/usuario/us
 import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
 import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
+import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
 
 @NgModule({
   declarations: [
@@ -396,7 +395,6 @@ import { EfectorSelectorComponent } from './components/home-page/efector-selecto
     NoAsistencialComponent,
     NoAsistencialEditComponent,
     NoAsistencialDetailComponent,
-    LegajoComponent,
     LegajoEditComponent,
     LegajoDetailComponent,
     RevistaComponent,
@@ -411,7 +409,6 @@ import { EfectorSelectorComponent } from './components/home-page/efector-selecto
     CargoComponent,
     CargoEditComponent,
     CargoDetailComponent,
-    LegajoPersonEditComponent,
     CronogramaDetailComponent,
     PersonalComponent,
     PersonalLegajoComponent,
@@ -469,6 +466,7 @@ import { EfectorSelectorComponent } from './components/home-page/efector-selecto
     UsuarioDetailComponent,
     UsuarioEditComponent,
     EfectorSelectorComponent,
+    SelectorRolesComponent,
     
   ],
 

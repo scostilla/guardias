@@ -13,6 +13,9 @@ import * as CryptoJS from 'crypto-js';
 export class EfectorService {
   private secretKey = 'Dph*FfLlMmNn99';
 
+  private currentEfectorIdSubject = new BehaviorSubject<number | null>(this.getCurrentEfectorId());
+  currentEfectorId$ = this.currentEfectorIdSubject.asObservable();
+  
   efectoresURL = 'http://localhost:8080/efector/';
   private _refresh$ = new Subject<void>();
 
@@ -56,9 +59,6 @@ public update(id:number, efectores:Efector): Observable<any> {
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.efectoresURL + `delete/${id}`, {});
 }
-
-  private currentEfectorIdSubject = new BehaviorSubject<number | null>(null);
-  currentEfectorId$ = this.currentEfectorIdSubject.asObservable();
   
   // Encriptar
   encrypt(text: string): string {
@@ -71,6 +71,7 @@ public delete(id:number): Observable<any> {
     return bytes.toString(CryptoJS.enc.Utf8);
   }
   
+  //Establece el efector
   setCurrentEfectorId(efectorId: number | null) {
     if (efectorId !== null) {
       const encryptedId = this.encrypt(efectorId.toString());
@@ -80,6 +81,7 @@ public delete(id:number): Observable<any> {
     }
   }
   
+  //Obtiene el efector
   getCurrentEfectorId(): number | null {
     const encryptedId = sessionStorage.getItem('currentEfectorId');
     if (encryptedId) {
