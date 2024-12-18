@@ -20,16 +20,11 @@ export class LoginComponent implements OnInit {
   loginUsuario?: LoginUsuario;
   nombreUsuario?: string;
   password?: string;
-  roles: string[] =[];
+  roles: string[] = [];
   errMsj?: string;
   
   hide = true; 
 
-  /* loginForm: FormGroup = this.fb.group({
-    nombreUsuario: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
-  });
- */
   constructor(
     private fb: FormBuilder,
     private toastr: ToastrService,
@@ -40,11 +35,22 @@ export class LoginComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
+    // Si ya está logueado, verificamos los roles y gestionamos el flujo
     if(this.tokenService.getToken()){
       this.isLogged = true;
       this.isLoginFail = false;
       this.roles = this.tokenService.getAuthorities();
-      console.log("roless" + this.roles);
+      console.log("Roles: ", this.roles);
+
+      if (this.roles.length > 1) {
+        // Si tiene más de un rol, mostramos el diálogo para seleccionar el rol
+        this.openRoleSelectionDialog();
+      } else if (this.roles.length === 1) {
+        // Si tiene solo un rol, lo asignamos y lo redirigimos al home correspondiente
+        const selectedRole = this.roles[0];
+        this.tokenService.setCurrentRole(selectedRole);
+        this.redirectUserBasedOnRole(selectedRole);
+      }
     }
   }
 
@@ -52,9 +58,10 @@ export class LoginComponent implements OnInit {
     this.loginUsuario = new LoginUsuario(this.nombreUsuario!, this.password!);
     console.log("Usuario " + this.nombreUsuario);
     console.log("pass " + this.password);
+
     this.authService.login(this.loginUsuario).subscribe(
       data => {
-
+        // Al hacer login, se almacena el token, roles y nombre de usuario
         this.isLogged = true;
         this.isLoginFail = false;
         this.tokenService.setToken(data.token);
@@ -62,35 +69,31 @@ export class LoginComponent implements OnInit {
         this.tokenService.setAuthorities(data.authorities);
         this.roles = this.tokenService.getAuthorities();
 
-
-        // Verificamos los roles disponibles
-        if (this.roles.length === 1) {
-          // Si solo tiene un rol, lo asignamos directamente
-          const selectedRole = this.roles[0];  // Asumimos que hay solo un rol
-          this.tokenService.setCurrentRole(selectedRole);  // Aquí actualizas el BehaviorSubject
-          this.router.navigate([`/home-page`]);
-
-        } else if (this.roles.length > 1) {
-          // Si tiene más de un rol, mostramos el diálogo para elegir el rol
+        // Si tiene más de un rol, mostramos el diálogo para seleccionar el rol
+        if (this.roles.length > 1) {
           this.openRoleSelectionDialog();
+        } else if (this.roles.length === 1) {
+          // Si tiene solo un rol, lo asignamos y lo redirigimos al home correspondiente
+          const selectedRole = this.roles[0];
+          this.tokenService.setCurrentRole(selectedRole);
+          this.redirectUserBasedOnRole(selectedRole);
         }
 
         this.toastr.success(data.nombreUsuario, 'Bienvenido', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
-    
-    },
-    err => {
-      this.isLogged = false;
-      this.isLoginFail = true;
-      this.errMsj = err.error.message;
-      this.toastr.error(err.message, 'Error, usuario y/o contraseña incorrecto.', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-    }
-  );        
+      },
+      err => {
+        this.isLogged = false;
+        this.isLoginFail = true;
+        this.errMsj = err.error.message;
+        this.toastr.error(err.message, 'Error, usuario y/o contraseña incorrecto.', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    );        
   } 
 
   // Función para abrir el diálogo de selección de rol
@@ -104,11 +107,8 @@ export class LoginComponent implements OnInit {
       if (result) {
         // Si el usuario selecciona un rol, lo asignamos y redirigimos
         const selectedRole = result;
-        if (selectedRole === 'ROLE_ADMIN' || selectedRole === 'ROLE_DPH' || selectedRole === 'ROLE_SUPERUSER') {
-          this.router.navigate(['/home-page']);
-        } else if (selectedRole === 'ROLE_USER') {
-          this.router.navigate(['/home-profesional']);
-        }
+        this.tokenService.setCurrentRole(selectedRole);  // Actualizar el rol en el BehaviorSubject
+        this.redirectUserBasedOnRole(selectedRole);
       } else {
         // Si el usuario cancela el diálogo, cerramos sesión
         this.tokenService.logOut();
@@ -116,6 +116,15 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/']); // Redirige a la página de login
       }
     });
+  }
+
+  // Redirigir al home según el rol
+  redirectUserBasedOnRole(role: string): void {
+    if (role === 'ROLE_ADMIN' || role === 'ROLE_DPH' || role === 'ROLE_SUPERUSER') {
+      this.router.navigate(['/home-page']);
+    } else if (role === 'ROLE_USER') {
+      this.router.navigate(['/home-profesional']);
+    }
   }
 
   onForgotPassword() {

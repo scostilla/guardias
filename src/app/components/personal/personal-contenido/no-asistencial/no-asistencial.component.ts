@@ -109,8 +109,13 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-    });
-  
+     
+      // Si currentRole es false (null o vacío), redirige al login
+      if (!this.currentRole) {
+        this.router.navigateByUrl('');
+      }
+    });  
+    
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
       console.log('ID del usuario logeado:',this.userId);

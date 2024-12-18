@@ -271,8 +271,13 @@ export class LegajoCreateComponent implements OnInit {
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-    });
-
+     
+      // Si currentRole es false (null o vacío), redirige al login
+      if (!this.currentRole) {
+        this.router.navigateByUrl('');
+      }
+    });  
+  
     const userIdFromToken = this.tokenService.getUserIdFromToken();
     this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
     console.log('ID del usuario logeado:',this.userId);
@@ -1169,11 +1174,21 @@ if (legajoData.tipoGuardias &&
     // Llamar al método de guardar permisos de efectores
       this.saveHabilitacionesGuardias(legajoData);
       }
-      // Verificar si cargo no incluye Direcor regional
-      if (legajoData.idCargo && legajoData.idCargo.includes(this.idDirectorRegional)) {
-      // Llamar al método de guardar permisos de efectores para autoridad
+    // Verificar si el cargo es Director Regional
+    if (legajoData.idCargo === this.idDirectorRegional) {
+      // Llamar al servicio para guardar habilitaciones para Director Regional
+      this.habilitacionesGeneralesService.addHabilitacionesAutoridadRegional(legajoData.idPersona, legajoData.idRegion).subscribe(
+        () => {
+          console.log("Habilitaciones para autoridad regional guardadas con éxito.");
+        },
+        (error) => {
+          console.error("Error al guardar habilitaciones para autoridad regional", error);
+        }
+      );
+    } else {
+      // Para otros casos, llamar al método de habilitaciones generales
       this.saveHabilitacionesGenerales(legajoData);
-      }
+    }
     
       // Guardar el legajo sin la parte de revista si no corresponde
       this.legajoService.save(legajoDto).subscribe(

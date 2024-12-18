@@ -75,8 +75,13 @@ export class HomePageComponent implements OnInit {
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-    });
-  
+     
+      // Si currentRole es false (null o vacío), redirige al login
+     if (!this.currentRole) {
+      this.router.navigateByUrl('');
+    }
+  });  
+
       console.log('Usuario logeado, token encontrado');
   
       const userId = this.tokenService.getUserIdFromToken();
@@ -114,6 +119,7 @@ export class HomePageComponent implements OnInit {
     } else {
       this.isLogged = false;
       console.log('No hay token, el usuario no está logeado');
+      this.router.navigateByUrl('');
       this.selectedEfector = null;
       this.selectedListEfectores = null; 
     }
