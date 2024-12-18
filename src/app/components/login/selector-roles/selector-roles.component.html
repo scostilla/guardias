@@ -1,15 +1,14 @@
-<h1 mat-dialog-title>Selecciona un Rol</h1>
 <div mat-dialog-content>
-  <mat-form-field appearance="fill" style="width: 100%; margin: 0;">
+  <mat-form-field appearance="outline" style="width: 100%; margin: 0;">
     <mat-label>Rol</mat-label>
     <mat-select [(value)]="selectedRole">
       <mat-option *ngFor="let role of data.roles" [value]="role">
-        {{ role }}
+        {{ getRoleNombres(role) }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 </div>
-<div mat-dialog-actions>
+<div mat-dialog-actions align="center">
   <button mat-raised-button color="secondary" type="button" (click)="cancelar()">Cancelar</button>
   <button mat-raised-button color="primary" type="submit" (click)="onSelectRole(selectedRole)" [disabled]="!selectedRole">Ingresar</button>
 </div>

@@ -172,7 +172,7 @@ export class DistHorariaComponent {
       width: '800px',
       disableClose: true
     });
-    
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedAsistencial = result;
@@ -182,23 +182,29 @@ export class DistHorariaComponent {
         // Resetear el select del mes de vigencia
         this.vigenciaForm.patchValue({ mesVigencia: null });
   
-        const legajosActivos = result.legajos.filter((legajo: { activo: boolean; }) => legajo.activo === true);
-        const ultimoLegajoActivo = legajosActivos.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id)[0];
+        // Filtrar legajos activos y que no sean autoridades
+        const legajosActivos = result.legajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
+          legajo.activo === true && legajo.esAutoridad === false
+        );
+  
+        // Obtener el último legajo activo
+        const ultimoLegajoActivo = legajosActivos.sort((a: { id: number }, b: { id: number }) => b.id - a.id)[0];
   
         if (ultimoLegajoActivo) {
-          if (ultimoLegajoActivo.udo) {
-            this.idEfector = ultimoLegajoActivo.udo.id;
+          if (ultimoLegajoActivo.efectores && ultimoLegajoActivo.efectores.length > 0) {
+            // Se usa el primer efector de la lista
+            this.idEfector = ultimoLegajoActivo.efectores[0].id;
             this.listCaps();
           } else {
             this.idEfector = undefined;
             this.capss = [];
-            this.listTiposGuardia();
           }
-          
+  
           if (ultimoLegajoActivo.revista && ultimoLegajoActivo.revista.cargaHoraria) {
             this.cargaHoraria = ultimoLegajoActivo.revista.cargaHoraria.cantidad;
             this.isProfessionalLoaded = true;
-            this.tiposGuardiaOptions = result.tiposGuardias;
+            this.tiposGuardiaOptions = ultimoLegajoActivo.tipoGuardias; // Usamos tipoGuardias desde el último legajo activo
+            console.log('Tipos de guardia:', this.tiposGuardiaOptions);
           } else {
             this.cargaHoraria = undefined;
             this.isProfessionalLoaded = false;
@@ -211,7 +217,7 @@ export class DistHorariaComponent {
         } else {
           this.cargaHoraria = undefined;
           this.isProfessionalLoaded = false;
-          this.toastr.warning('El profesional seleccionado no posee un legajo.', 'Aviso', {
+          this.toastr.warning('El profesional seleccionado no posee un legajo válido o activo.', 'Aviso', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -235,8 +241,7 @@ export class DistHorariaComponent {
       });
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }
-    
+  }        
     
   private updateHorasStatus(): void {
     const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
@@ -382,18 +387,6 @@ export class DistHorariaComponent {
     }
   }
 
-  listTiposGuardia(): void {
-    if (this.idEfector) {
-      this.asistencialService.listByUdoAndTipoGuardia(this.idEfector).subscribe(data => {
-        console.log('Tipos de guardia obtenidos:', data);
-        this.tiposGuardiaOptions = data;
-      }, error => {
-        console.log('Error al listar tipos de guardia:', error);
-      });
-    } else {
-      this.tiposGuardiaOptions = [];
-    }
-  }
 
   //Permite el select mes de vigencia cree la ultima fecha del mes elegido
   private generarMeses(): void {

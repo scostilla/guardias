@@ -53,10 +53,10 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   currentRole: string | null = null;
 
   nombresRoles: { [key: string]: string } = {
-    'ROLE_ADMIN': 'Admin',
-    'ROLE_USER': 'User',
+    'ROLE_ADMIN': 'Administrativo',
+    'ROLE_USER': 'Usuario',
     'ROLE_DPH': 'DPH',
-    'ROLE_SUPERUSER': 'Superuser',
+    'ROLE_SUPERUSER': 'Super usuario',
     'ROLE_AUTORIDAD': 'Autoridad'
   };
 

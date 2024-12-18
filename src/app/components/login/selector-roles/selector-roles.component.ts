@@ -12,6 +12,14 @@ export class SelectorRolesComponent {
 
   selectedRole!: string;
 
+  nombresRoles: { [key: string]: string } = {
+    'ROLE_ADMIN': 'Administrativo',
+    'ROLE_USER': 'Usuario',
+    'ROLE_DPH': 'DPH',
+    'ROLE_SUPERUSER': 'Super usuario',
+    'ROLE_AUTORIDAD': 'Autoridad'
+  };
+
   constructor(
     public dialogRef: MatDialogRef<SelectorRolesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -23,6 +31,11 @@ export class SelectorRolesComponent {
   onSelectRole(role: string): void {
     this.tokenService.setCurrentRole(role);
     this.dialogRef.close(role);
+  }
+
+  // Método para obtener el nombre legible de un rol
+  getRoleNombres(role: string): string {
+    return this.nombresRoles[role] || role;  // Si no se encuentra el rol, devuelve el rol tal cual
   }
 
   cancelar(): void {
