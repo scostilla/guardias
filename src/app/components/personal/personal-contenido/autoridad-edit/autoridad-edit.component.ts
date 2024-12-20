@@ -65,6 +65,7 @@ export class AutoridadEditComponent implements OnInit {
       this.inputValue = `${data.persona!.apellido} ${data.persona!.nombre}`; // Guarda el nombre completo
       this.autoridadForm.patchValue({
           idPersona: data.persona!.id,
+          confirmado: data.confirmado,
       });
   }
 
