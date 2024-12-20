@@ -21,7 +21,6 @@ import { ProfesionService } from 'src/app/services/Configuracion/profesion.servi
 import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
@@ -42,6 +41,7 @@ import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { Caps } from 'src/app/models/Configuracion/Caps';
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Categoria } from 'src/app/models/Configuracion/Categoria';
 import { Adicional } from 'src/app/models/Configuracion/Adicional';
@@ -79,7 +79,7 @@ export class LegajoCreateComponent implements OnInit {
   efectores: Efector[] = [];
   hospitales: Hospital[] = [];
   ministerios: Ministerio[] = [];
-  caps: Caps[] = [];
+  caps: CapsDto[] = [];
   especialidades: Especialidad[] = [];
   categorias: Categoria[] = [];
   adicionales: Adicional[] = [];
@@ -130,6 +130,10 @@ export class LegajoCreateComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
+  tipoUdo!: number;
+  tipoEfector!: number;
+  tipoHabilitacionesGuardias!: number;
+  tipoEfectorCargo!: number;
 
 
   /* Form de revista */
@@ -150,7 +154,6 @@ export class LegajoCreateComponent implements OnInit {
     private profesionService: ProfesionService,
     private hospitalService: HospitalService,
     private ministerioService: MinisterioService,
-    private capsService: CapsService,
     private especialidadService: EspecialidadService,
     private categoriaService: CategoriaService,
     private adicionalService: AdicionalService,
@@ -177,9 +180,12 @@ export class LegajoCreateComponent implements OnInit {
       profesion: ['', Validators.required],
       tipoUdo: [null, Validators.required],
       udo: [null, Validators.required],
+      hospitalUdo: ['', Validators.required],
       tipoEfector: [null, Validators.required],
       efectores: [null, Validators.required],
+      hospitalEfectores: ['', Validators.required],
       tipoEfectorCargo: [''],
+      hospitalEfectorCargo: [''],
       efectoresAutoridad: [[]],
       especialidades: [[]],
       matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
@@ -195,6 +201,7 @@ export class LegajoCreateComponent implements OnInit {
       tipoGuardias: [[]],
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
+      hospitalHabilitacionesGuardias: ['', Validators.required],
       habilitacionesGenerales: [[]],
     });
 
@@ -454,7 +461,6 @@ export class LegajoCreateComponent implements OnInit {
   //-----Llamo métodos para cargar los datos iniciales-----
     this.listMinisterios();
     this.listHospitales();
-    this.listCaps();
     this.listCategorias();
     this.listAdicionales();
     this.listCargaHoraria();
@@ -533,13 +539,6 @@ export class LegajoCreateComponent implements OnInit {
     });
   }
 
-  listCaps(): void {
-    this.capsService.list().subscribe(data => {
-      this.caps = data;
-    }, error => {
-      console.log(error);
-    });
-  }
 
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
@@ -651,9 +650,10 @@ export class LegajoCreateComponent implements OnInit {
     return this.hospitales;
   }
 
-  // Método para cambiar las opciones de la seleccion de udo
+  // Método para cambiar las opciones de la selección de UDO
   onTipoUdoChange(event: any): void {
     const tipoUdo = event.value;
+    this.tipoUdo = tipoUdo;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
     if (tipoUdo === 1) { // Ministerio
@@ -661,7 +661,7 @@ export class LegajoCreateComponent implements OnInit {
     } else if (tipoUdo === 2) { // Hospital
       this.udoOptions = this.hospitales;
     } else if (tipoUdo === 3) { // CAPS
-      this.udoOptions = this.caps;  // Opciones específicas para CAPS
+      this.udoOptions = this.caps;
     }
 
     // Habilitar el select de UDO después de haber elegido un tipo de efector
@@ -671,12 +671,36 @@ export class LegajoCreateComponent implements OnInit {
     }
 
     // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+    this.legajoForm.get('hospitalUdo')?.reset();
     this.legajoForm.get('udo')?.reset();
+  }
+
+  // Cargar CAPS correspondientes al hospital seleccionado
+  onHospitalUdoChange(event: any): void {
+    const hospitalId = event.value;
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.udoOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('udo')?.reset(); // Limpiar la selección actual de UDO
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
   }
 
   // Método para cambiar las opciones de la seleccion de efector
   onTipoEfectorChange(event: any): void {
     const tipoEfector = event.value;
+    this.tipoEfector = tipoEfector;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
     if (tipoEfector === 1) { // Ministerio
@@ -694,12 +718,38 @@ export class LegajoCreateComponent implements OnInit {
     }
 
     // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
+    this.legajoForm.get('hospitalEfectores')?.reset();
     this.legajoForm.get('efectores')?.reset();
+  }
+
+  // Método para cargar los CAPS correspondientes al hospital seleccionado
+  onHospitalEfectorChange(event: any): void {
+    const hospitalId = event.value;
+    
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.efectorOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('efectores')?.reset(); // Limpiar la selección actual de UDO
+
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
   }
 
   // Método para cambiar las opciones de la seleccion de efector
   onTipoHabilitacionesGuardiasChange(event: any): void {
     const tipoHabilitacionesGuardias = event.value;
+    this.tipoHabilitacionesGuardias = tipoHabilitacionesGuardias;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
     if (tipoHabilitacionesGuardias === 2) { // Ministerio
@@ -716,11 +766,37 @@ export class LegajoCreateComponent implements OnInit {
 
     // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
     this.legajoForm.get('habilitacionesGuardias')?.reset();
+    this.legajoForm.get('hospitalHabilitacionesGuardias')?.reset();
+  }
+
+  // Método para cargar los CAPS correspondientes al hospital seleccionado
+  onHospitalHabilitacionesGuardiasChange(event: any): void {
+    const hospitalId = event.value;
+    
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.habilitacionesGuardiasOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('habilitacionesGuardias')?.reset(); // Limpiar la selección actual de UDO
+
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
   }
   
   // Método para cambiar las opciones de la selección de efector
   onTipoEfectorCargoChange(event: any): void {
     const tipoEfectorCargo = event.value;
+    this.tipoEfectorCargo = tipoEfectorCargo;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
     if (tipoEfectorCargo === 1) { // Ministerio
@@ -739,6 +815,31 @@ export class LegajoCreateComponent implements OnInit {
 
     // Restablecer el valor de 'efectoresAutoridad' para evitar errores si la selección actual no es válida
     this.legajoForm.get('efectoresAutoridad')?.reset();
+    this.legajoForm.get('hospitalesEfectoresCargo')?.reset();
+  }
+
+  // Método para cargar los CAPS correspondientes al hospital seleccionado
+  onHospitalEfectorCargoChange(event: any): void {
+    const hospitalId = event.value;
+    
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.efectorCargoOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('efectoresAutoridad')?.reset(); // Limpiar la selección actual de UDO
+
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
   }
 
   //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
@@ -769,6 +870,8 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('idRegion')?.clearValidators();
     this.showHabilitacionesGenerales = false;
     this.legajoForm.get('habilitacionesGenerales')?.clearValidators();
+    this.showHabilitacionesGuardias = false;
+    this.legajoForm.get('habilitacionesGuardias')?.clearValidators();
     this.showHabilitacionesGuardias = false;
     this.legajoForm.get('habilitacionesGuardias')?.clearValidators();
 
@@ -946,8 +1049,10 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('tipoRevista')?.disable();
     this.legajoForm.get('tipoUdo')?.disable();
     this.legajoForm.get('udo')?.disable();
+    this.legajoForm.get('hospitalUdo')?.disable();
     this.legajoForm.get('tipoEfector')?.disable();
     this.legajoForm.get('efectores')?.disable();
+    this.legajoForm.get('hospitalEfectores')?.disable();
   }
   
   enableSituacionRevistaFields(): void {
@@ -958,8 +1063,10 @@ export class LegajoCreateComponent implements OnInit {
     this.legajoForm.get('tipoRevista')?.enable();
     this.legajoForm.get('tipoUdo')?.enable();
     this.legajoForm.get('udo')?.enable();
+    this.legajoForm.get('hospitalUdo')?.enable();
     this.legajoForm.get('tipoEfector')?.enable();
     this.legajoForm.get('efectores')?.enable();
+    this.legajoForm.get('hospitalEfectores')?.enable();
   }
     
   // Form Revista: Función llamada cuando cambia la categoría seleccionada
