@@ -304,14 +304,14 @@ export class LegajoCreateComponent implements OnInit {
     this.router.navigateByUrl('');
   }
 
-  // Llamamos al servicio para obtener todos los tipos de guardia
+  // Llamo al servicio para obtener todos los tipos de cargo
   this.cargoService.list().subscribe((cargos: Cargo[]) => {
     this.cargos = cargos;
     // Verifico si existe el cargo 'DIRECTOR REGIONAL' sin importar la capitalización
     this.idDirectorRegional = this.cargos.find(t => t.nombre.toLowerCase() === 'director regional'.toLowerCase())?.id;
   });
   
-  // Llamamos al servicio para obtener todos los tipos de guardia
+  // Llamo al servicio para obtener todos los tipos de guardia
   this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
     this.tipoGuardias = guardias;
 

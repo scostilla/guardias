@@ -260,6 +260,8 @@ import { UsuarioDetailComponent } from './components/configuracion/usuarios/usua
 import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
+import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
+import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
 
 @NgModule({
   declarations: [
@@ -467,6 +469,8 @@ import { SelectorRolesComponent } from './components/login/selector-roles/select
     UsuarioEditComponent,
     EfectorSelectorComponent,
     SelectorRolesComponent,
+    SinEfectorComponent,
+    PersonalSinEfectorComponent,
     
   ],
 
