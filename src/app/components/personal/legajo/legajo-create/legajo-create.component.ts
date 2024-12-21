@@ -40,7 +40,6 @@ import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
-import { Caps } from 'src/app/models/Configuracion/Caps';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Categoria } from 'src/app/models/Configuracion/Categoria';
@@ -105,6 +104,15 @@ export class LegajoCreateComponent implements OnInit {
   usuarioPersona: number | null = null;
   currentRole: string | null = null;
 
+  //mostrar/ocultar
+  showGuardia: boolean = false;
+  showRegion: boolean = false;
+  showSiEsAutoridad: boolean = false;
+  showEfectorAutoridad: boolean = false;
+  showHabilitacionesGuardias: boolean = false;
+  showHabilitacionesGenerales: boolean = false;
+
+
   //útiles
   step = 0;
   maxDate!: Date;
@@ -113,12 +121,6 @@ export class LegajoCreateComponent implements OnInit {
   isSituacionRevistaEnabled = false;
   asignadoAutoridad: boolean = false;
   noEspecialidadesMessage: string = '';
-  showGuardia: boolean = false;
-  showRegion: boolean = false;
-  showSiEsAutoridad: boolean = false;
-  showEfectorAutoridad: boolean = false;
-  showHabilitacionesGuardias: boolean = false;
-  showHabilitacionesGenerales: boolean = false;
   idCargo?: number;
   idAgrupacion?: number;
   idContraFactura?: number;
