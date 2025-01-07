@@ -13,7 +13,7 @@
     <h2 class="inactive underlineHover">Solicitar usuario</h2>
 
     <form #f="ngForm" (ngSubmit)="onLogin()" novalidate>
-      <mat-form-field appearance="fill" class="fadeIn second form-group">
+      <mat-form-field appearance="outline" class="fadeIn second form-group">
         <mat-icon class="mat-icon-size" matPrefix color="primary">person</mat-icon>
         <mat-label>Nombre de Usuario</mat-label>
         
@@ -21,7 +21,7 @@
         <mat-error *ngIf="f.submitted && usernameInput.invalid && usernameInput.errors">El nombre de usuario es <strong>requerido</strong></mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="fadeIn third form-group">
+      <mat-form-field appearance="outline" class="fadeIn third form-group">
         <mat-icon class="mat-icon-size" matPrefix color="primary">vpn_key</mat-icon>
         <mat-label>Contraseña</mat-label>
         <input matInput type="{{ hide ? 'password' : 'text' }}" name="password" id="password" [(ngModel)]="password" required>
@@ -38,40 +38,4 @@
     </div>
 
   </div>
-
-
-  <!-- <div class="container d-flex justify-content-center">
-      <div class="card">
-          <div class="card-header">
-              <ul class="nav nav-tabs">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/login">Iniciar Sesión</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" routerLink="/registro">Crear Cuenta</a>
-                  </li>
-                  
-                </ul>
-          </div>
-          <div class="card-body">
-              <form #f="ngForm" (ngSubmit)="onLogin()" novalidate>
-                  <div class="form-group">
-                      <label for="nombreUsuario">Nombre de Usuario</label>
-                      <input type="text" name="nombreUsuario" id="nombreUsuario" class="form-control"
-                      [(ngModel)]="nombreUsuario" required>
-                  </div>
-                  <div class="form-group">
-                      <label for="password">Contraseña</label>
-                      <input type="password" name="password" id="password" class="form-control"
-                      [(ngModel)]="password" required>
-                  </div>
-                  <div class="form-group">
-                      <button class="btn btn-outline-success btn-block" [disabled]="!f.valid">
-                          <i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
-                  </div>
-              </form>
-              <div *ngIf="f.submitted && isLoginFail" class="alert alert-danger mt-3">Error en el login: {{errMsj}}</div>            
-            </div>
-      </div>
-  </div> -->
 </ng-template>

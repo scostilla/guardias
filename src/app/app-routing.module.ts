@@ -6,8 +6,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { LoginComponent } from './components/login/login.component';
+import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
 
 //Configuraciones: Generales
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
@@ -55,8 +57,6 @@ import { ProfesionEditComponent } from './components/configuracion/profesionales
 import { ProfesionComponent } from './components/configuracion/profesionales/profesion/profesion.component';
 
 //Configuraciones: Personas
-import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
@@ -114,6 +114,7 @@ import { PersonalLegajoSelectComponent } from './components/personal/personal-le
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
+import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 
@@ -130,6 +131,7 @@ import { NoAsistencialDetailComponent } from './components/personal/personal-con
 import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
+import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
 import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
@@ -238,7 +240,9 @@ const routes: Routes = [
   
   //Principales
   {path: '', component: LoginComponent },
+  {path:"selector-roles", component:SelectorRolesComponent},
   {path:"home-page", component:HomePageComponent},
+  {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
@@ -293,8 +297,6 @@ const routes: Routes = [
   {path: 'person-detail/:id', component:PersonDetailComponent},
   {path: 'person-edit/:id', component:PersonEditComponent},
   {path: 'person-edit', component: PersonEditComponent },
-  {path: 'legajo', component:LegajoComponent},
-  {path: 'legajo-person-edit/:id', component:LegajoPersonEditComponent},
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
   {path: 'usuario', component:UsuarioComponent},
@@ -351,6 +353,7 @@ const routes: Routes = [
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
+  {path: 'personal-sin-efector', component:PersonalSinEfectorComponent},
   {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent},
   {path: 'personal-externo', component:PersonalExternoComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
@@ -368,7 +371,7 @@ const routes: Routes = [
   {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
-  {path: 'sin-legajo', component:SinLegajoComponent},
+  {path: 'sin-efector', component:SinEfectorComponent},
   {path: 'externo', component:ExternoComponent},
 
   {path: 'personal-dh', component:PersonalDhComponent},

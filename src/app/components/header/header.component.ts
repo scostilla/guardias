@@ -22,17 +22,19 @@ export class HeaderComponent implements OnDestroy, OnInit {
   nombreUsuario = '';
   apellidoUsuario = '';
   roles: string[] =[];
+  isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
+  currentRole: string | null = null;
 
 
   constructor(
     private router: Router, 
     private toastr: ToastrService,
     private tokenService: TokenService,
-    private authService: AuthService // Asegúrate de inyectar el servicio
+    private authService: AuthService
   ) {
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -49,38 +51,55 @@ export class HeaderComponent implements OnDestroy, OnInit {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
 
-      this.UserRoles();
-
-      // Obtener los detalles del usuario directamente después de un login exitoso
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+    });
+    
+    // Obtener los detalles del usuario directamente después de un login exitoso
       this.loadUserDetails();
     } else {
       this.isLogged = false;
       this.nombreUsuario = '';
       this.apellidoUsuario = '';
+      this.roles = [];  // Aseguramos que los roles estén vacíos si no hay token
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
 
-    // Suscribirse a cambios de ruta para actualizar los datos cuando sea necesario
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        // Si el evento de navegación es "end", comprobamos si esta logueado
-        if (this.tokenService.getToken()) {
-          this.isLogged = true;
-          this.loadUserDetails();
-        }
+  // Suscribimos a los eventos de la ruta para manejar cambios al navegar
+  this.router.events.subscribe(event => {
+    if (event instanceof NavigationEnd) {
+      if (this.tokenService.getToken()) {
+        this.isLogged = true;
+        this.loadUserDetails();
       }
-    });
+    }
+  });
+}
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
-    //Roles a usar
-    UserRoles(): void {
-      this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
-      this.isUsuario = this.roles.includes('ROLE_USER');
-      this.isDph = this.roles.includes('ROLE_DPH');
-      this.isSuper = this.roles.includes('ROLE_SUPERUSER');
-    }  
-
   private loadUserDetails() {
-    // Llamamos al servicio para obtener los detalles del usuario
+    // Llamo al servicio para obtener los detalles del usuario
     this.authService.detailPersonBasicPanel().subscribe(
       (response: PersonBasicPanelDto) => {
         this.nombreUsuario = response.nombre;
@@ -103,6 +122,11 @@ export class HeaderComponent implements OnDestroy, OnInit {
     this.isLogged = false;
     this.nombreUsuario = '';
     this.apellidoUsuario = '';
+    this.roles = [];
+    this.isAdministrativo = false;
+    this.isUsuario = false;
+    this.isDph = false;
+    this.isSuper = false;
     this.router.navigate(['/']);
   }
 }

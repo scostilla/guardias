@@ -43,13 +43,14 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   //Autenticación
   isLogged = false;
   roles: string[] =[];
+  isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
   userId: number | null = null;
   usuarioPersona: number | null = null;
-  
+  currentRole: string | null = null;
 
   constructor(
     private autoridadService: AutoridadService,
@@ -77,8 +78,17 @@ export class AutoridadComponent implements OnInit, OnDestroy {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
   
-      this.UserRoles();
-  
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+     
+      // Si currentRole es false (null o vacío), redirige al login
+      if (!this.currentRole) {
+        this.router.navigateByUrl('');
+      }
+    });  
+    
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
       console.log('ID del usuario logeado:',this.userId);
@@ -106,14 +116,22 @@ export class AutoridadComponent implements OnInit, OnDestroy {
     })
   }
 
-    //Roles a usar
-    UserRoles(): void {
-      this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
-      this.isUsuario = this.roles.includes('ROLE_USER');
-      this.isDph = this.roles.includes('ROLE_DPH');
-      this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
-  
+  }
 
   accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
@@ -161,7 +179,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito', 'EXITO', {
+        this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito. Solicita confirmación con informática.', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true

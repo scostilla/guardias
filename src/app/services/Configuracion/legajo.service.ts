@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Legajo } from "src/app/models/Configuracion/Legajo";
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
+import { LegajoBajaDto } from 'src/app/dto/Configuracion/LegajoBajaDto';
 
 @Injectable({
   providedIn: 'root'
@@ -45,8 +46,8 @@ public update(id:number, legajo:LegajoDto): Observable<any> {
   )
 }
 
-public delete(id:number): Observable<any> {
-  return this.httpClient.put<any>(this.legajosURL + `delete/${id}`, {});
+public delete(id: number, legajoBajaDto: LegajoBajaDto): Observable<any> {
+  return this.httpClient.put<any>(`${this.legajosURL}delete/${id}`, legajoBajaDto);
 }
 
 // Método para verificar si el asistencial es autoridad

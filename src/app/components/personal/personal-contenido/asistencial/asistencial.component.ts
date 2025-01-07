@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
@@ -19,6 +21,9 @@ import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.s
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Caps } from 'src/app/models/Configuracion/Caps';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
@@ -76,6 +81,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   //Autenticación
   isLogged = false;
   roles: string[] =[];
+  isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
@@ -86,7 +92,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   nombresEfectores: EfectorSummaryDto[] = [];
   usuarioPersona: number | null = null;
   tipoGuardias: TipoGuardia[] = [];
-  
+  currentRole: string | null = null;
 
   private efectorIdSubscription!: Subscription;
   
@@ -94,6 +100,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     private asistencialService: AsistencialService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNov: MatDialog,
     public dialogDistrib: MatDialog,
@@ -123,8 +131,17 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
   
-      this.UserRoles();
-  
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+     
+      // Si currentRole es false (null o vacío), redirige al login
+      if (!this.currentRole) {
+        this.router.navigateByUrl('');
+      }
+    });  
+    
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
       console.log('ID del usuario logeado:',this.userId);
@@ -195,12 +212,21 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.dataSource.filter = normalizedFilterValue;
   }
 
-  //Roles a usar
+  // Roles a usar
   UserRoles(): void {
-    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
-    this.isUsuario = this.roles.includes('ROLE_USER');
-    this.isDph = this.roles.includes('ROLE_DPH');
-    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
   //trae el nombre del efector esta en sesion que filtra lo mostrado

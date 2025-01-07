@@ -76,4 +76,9 @@ tieneHabilitacionesGenerales(idPersona: number, idEfector: number): Observable<b
   return this.httpClient.get<boolean>(`${this.permisosURL}tieneHabilitacionesGenerales/${idPersona}/${idEfector}`);
 }
 
+// Añadir habilitaciones a una autoridad regional
+addHabilitacionesAutoridadRegional(idPersona: number, idRegion: number): Observable<any> {
+  return this.httpClient.put(`${this.permisosURL}addHabilitacionesAutoridadRegional/${idPersona}/${idRegion}`, {});
+}
+
 }

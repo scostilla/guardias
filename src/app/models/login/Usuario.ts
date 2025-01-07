@@ -4,15 +4,15 @@ export class Usuario {
     id?: number;
     nombreUsuario: string;
     password: string;
+    activo: boolean;
     roles: string[];
     person: Person;
-
-    rolesDisplay?: string;
     
-    constructor( nombreUsuario: string, password: string, roles:string[], person: Person) {
+    constructor( nombreUsuario: string, password: string, activo: boolean, roles:string[], person: Person) {
         
         this.nombreUsuario = nombreUsuario;
         this.password = password;
+        this.activo = activo;
         this.roles = roles;
         this.person = person;
     }

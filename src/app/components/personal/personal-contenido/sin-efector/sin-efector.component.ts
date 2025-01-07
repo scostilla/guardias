@@ -12,12 +12,13 @@ import { Location } from '@angular/common';
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-
+import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -30,12 +31,12 @@ import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
-  selector: 'app-sin-legajo',
-  templateUrl: './sin-legajo.component.html',
-  styleUrls: ['./sin-legajo.component.css']
+  selector: 'app-sin-efector',
+  templateUrl: './sin-efector.component.html',
+  styleUrls: ['./sin-efector.component.css']
 })
 
-export class SinLegajoComponent implements OnInit, OnDestroy {
+export class SinEfectorComponent implements OnInit, OnDestroy {
 
   dniVisible: boolean = false;
   domicilioVisible: boolean = false;
@@ -56,8 +57,10 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
   asistencial!: Asistencial;
   isLoadingLegajos: boolean = true;
 
-  sinSinLegajoMessage: boolean = false;
+  sinSinEfectorMessage: boolean = false;
   efectorNombre: string | null = null;
+  idContraFactura?: number;
+  tipoGuardias: TipoGuardia[] = [];
 
   //Autenticación
   isLogged = false;
@@ -77,6 +80,7 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
   constructor(
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
+    private tipoGuardiaService: TipoGuardiaService,
     private dialog: MatDialog,
     public dialogNo: MatDialog,
     private toastr: ToastrService,
@@ -138,10 +142,18 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('');
     }
   
-    this.listSinLegajos();
+    this.listSinEfectors();
 
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listSinLegajos();
+      this.listSinEfectors();
+    });
+
+    // Llamamos al servicio para obtener todos los tipos de guardia
+    this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
+      this.tipoGuardias = guardias;
+  
+      // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+      this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
     });
     
   }
@@ -176,7 +188,7 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
     }
   }
   
-  listSinLegajos(): void {
+  listSinEfectors(): void {
     this.asistencialService.list().subscribe(data => {
       console.log('Asistenciales:', data); // Verifica los datos recibidos
       const asistenciales = data.map(asistencial => ({
@@ -194,16 +206,25 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
         const mergedData = [...asistenciales, ...noAsistencialesConTipo];
         console.log('Datos combinados:', mergedData); // Verifica los datos combinados
   
-        const filteredData = mergedData.filter(item => 
-          item.legajos.length === 0 || 
-          item.legajos.every(legajo => legajo.activo === false)
-        );
+        const filteredData = mergedData.filter(item => {
+          // Filtra solo aquellos que tienen al menos un legajo activo
+          const tieneLegajoActivo = item.legajos.some(legajo => legajo.activo === true);
+          
+          // Filtra aquellos legajos activos que cumplen con las condiciones de 'esRegional' o 'tipoGuardias'
+          const cumpleCondiciones = item.legajos.some(legajo => 
+            legajo.activo === true && 
+            (legajo.esRegional === true || legajo.tipoGuardias.some(tipo => tipo.id === this.idContraFactura))
+          );
+          
+          return tieneLegajoActivo && cumpleCondiciones;
+        });
+  
         console.log('Datos filtrados:', filteredData); // Verifica los datos filtrados
   
         if (filteredData.length === 0) {
-          this.sinSinLegajoMessage = true;
+          this.sinSinEfectorMessage = true;
         } else {
-          this.sinSinLegajoMessage = false;
+          this.sinSinEfectorMessage = false;
           this.dataSource = new MatTableDataSource<any>(filteredData);
         }
   
@@ -211,11 +232,11 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
         this.dataSource.sort = this.sort;
       }, error => {
         console.error('Error al obtener no asistenciales:', error);
-        this.sinSinLegajoMessage = false;
+        this.sinSinEfectorMessage = false;
       });
     });
   }
-              
+                
   formatCuil(cuil: string): string {
     if (!cuil) return '';
     // Asegúrate de que el CUIL tenga al menos 11 dígitos
@@ -279,20 +300,29 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
     this.router.navigate(['/no-asistencial-create']);
   }
     
-// Función para crear un legajo según el tipo (Asistencial o No Asistencial)
-crearLegajo(row: AsistencialListDto | NoAsistencial): void {
+
+verLegajo(row: AsistencialListDto | NoAsistencial): void {
   if ((row as Asistencial).esAsistencial) {
     // Si el objeto es de tipo Asistencial
-    this.router.navigate(['/legajo-create'], {
-      state: { asistencial: row, fromAsistencial: true }
-    });
+    if (row && (row as Asistencial).id) {
+      this.router.navigate(['/legajo-person'], {
+        state: { asistencial: row, fromAsistencial: true }
+      });
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
   } else {
     // Si el objeto es de tipo NoAsistencial
-    this.router.navigate(['/legajo-create-noasistencial'], {
-      state: { noAsistencial: row, fromNoAsistencial: true }
-    });
+    if (row && (row as NoAsistencial).id) {
+      this.router.navigate(['/legajo-person'], {
+        state: { noAsistencial: row, fromNoAsistencial: true }
+      });
+    } else {
+      console.error('El objeto no asistencial no tiene un id.');
+    }
   }
 }
+
   
   deleteAsistencial(row: Asistencial | NoAsistencial): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

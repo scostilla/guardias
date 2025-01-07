@@ -1,21 +1,35 @@
-<!--<h2 mat-dialog-title>{{data ? 'Modificar' : 'Dar alta de'}} Usuario
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Dar alta de'}} Usuario
   <h5 class="['required']Field">*Campos Obligatorios</h5>
 </h2>
 <mat-dialog-content class="mat-typography">
 
   <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">
 
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Nombre de Usuario</mat-label>
-      <input matInput formControlName="nombreUsuario">
-      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.errors?.['required']">El nombre de usuario es requerido.</mat-error>
+    <mat-form-field appearance="fill">
+      <mat-label>Profesional</mat-label>
+      <input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+      <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+      <mat-error *ngIf="usuarioForm.get('idPerson')?.hasError('required')">
+          El campo profesional es requerido.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Contraseña</mat-label>
-      <input matInput formControlName="password">
-      <mat-error *ngIf="usuarioForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
+      <mat-label>Nombre de Usuario</mat-label>
+      <input matInput formControlName="nombreUsuario" (blur)="verificarUsuarioExistente()">
+      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.hasError('required')">El nombre de usuario es requerido.</mat-error>
+      <mat-error *ngIf="usuarioForm.get('nombreUsuario')?.hasError('pattern')">Debe contener solo minúsculas y números sin espacios ni símbolos.</mat-error>
+      <mat-error *ngIf="nombreUsuarioError">{{ nombreUsuarioError }}</mat-error>
     </mat-form-field>
+
+    <!--<mat-form-field appearance="fill" class="form-field">
+      <mat-label>Contraseña</mat-label>
+      <input matInput formControlName="password" type="{{ hide ? 'password' : 'text' }}">
+      <mat-icon class="mat-icon-size mat-icon-color" matSuffix (click)="hide = !hide">
+        {{hide ? 'visibility_off' : 'visibility'}}
+      </mat-icon>
+      <mat-error *ngIf="usuarioForm.get('password')?.errors?.['required']">La contraseña es requerida.</mat-error>
+    </mat-form-field>-->
 
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Roles</mat-label>
@@ -23,6 +37,12 @@
         <mat-option *ngFor="let rol of roles" [value]="rol.rolNombre">{{ rol.rolNombre }}</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <div *ngIf="!data" class="negrita">
+      La contraseña inicial asignada será igual al nombre de usuario.
+    </div>
+
+    <mat-checkbox *ngIf="data" (change)="onResetPasswordChange($event)" formControlName="resetPassword">Resetear contraseña</mat-checkbox>
       
       <div mat-dialog-actions class="action mt-4">
           <button mat-raised-button color="primary" type="submit" [disabled]="!usuarioForm.valid || !isModified()">
@@ -35,6 +55,3 @@
   </form>
 </mat-dialog-content>
 
-
-
--->

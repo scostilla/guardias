@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Caps } from 'src/app/models/Configuracion/Caps';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
+import { EfectorSelectorComponent } from './efector-selector/efector-selector.component';
 
 
 //Autenticación
@@ -43,6 +46,7 @@ export class HomePageComponent implements OnInit {
   nombresEfectores: EfectorSummaryDto[] = [];
   usuarioPersona: number | null = null;
   idPersona: number = 0;
+  currentRole: string | null = null;
 
   selectedListEfectores: number | null = null;
   selectedEfector: EfectorSummaryDto | null = null;
@@ -53,6 +57,7 @@ export class HomePageComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
     private ministerioService: MinisterioService,
     private habilitacionesGeneralesService: HabilitacionesGeneralesService,
     private asistencialService: AsistencialService,
@@ -66,8 +71,17 @@ export class HomePageComponent implements OnInit {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
 
-      this.UserRoles();
-  
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+     
+      // Si currentRole es false (null o vacío), redirige al login
+     if (!this.currentRole) {
+      this.router.navigateByUrl('');
+    }
+  });  
+
       console.log('Usuario logeado, token encontrado');
   
       const userId = this.tokenService.getUserIdFromToken();
@@ -105,18 +119,27 @@ export class HomePageComponent implements OnInit {
     } else {
       this.isLogged = false;
       console.log('No hay token, el usuario no está logeado');
+      this.router.navigateByUrl('');
       this.selectedEfector = null;
       this.selectedListEfectores = null; 
     }
   }
 
-  //Roles a usar
+  // Roles a usar
   UserRoles(): void {
-    this.isAdministrativo = this.roles.includes('ROLE_ADMIN');
-    this.isUsuario = this.roles.includes('ROLE_USER');
-    this.isDph = this.roles.includes('ROLE_DPH');
-    this.isSuper = this.roles.includes('ROLE_SUPERUSER');
-    this.isAutoridad = this.roles.includes('ROLE_AUTORIDAD');
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
   // Carga el efector para el rol 'Dph y Super'

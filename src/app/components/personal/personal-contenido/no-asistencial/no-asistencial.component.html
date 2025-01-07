@@ -31,6 +31,7 @@
         <mat-menu #menug="matMenu">
           <button mat-menu-item routerLink="/personal">Ver <span class="negrita">Asistenciales</span></button>
           <button mat-menu-item routerLink="/personal-externo">Ver <span class="negrita">Externo</span></button>
+          <button mat-menu-item routerLink="/personal-sin-efector">Ver <span class="negrita">Regionales y contrafactura</span></button>
           <button mat-menu-item routerLink="/personal-sin-legajo">Ver <span class="negrita">Sin legajo asignado</span></button>
         </mat-menu>
       </div>
@@ -92,9 +93,12 @@
               (click)="deleteNoAsistencial(noAsistencial)">
               <mat-icon class="btnRemove">delete</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="{{getTooltip(noAsistencial)}}" (click)="getButtonAction(noAsistencial)"
+            <!--<button mat-icon-button matTooltip="{{getTooltip(noAsistencial)}}" (click)="getButtonAction(noAsistencial)"
               *ngIf="!isLoadingLegajos">
               <mat-icon color="primary">{{getIcon(noAsistencial)}}</mat-icon>
+            </button>-->
+           <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(noAsistencial)">
+              <mat-icon color="primary">playlist_play</mat-icon>
             </button>
           </td>
         </ng-container>

@@ -1,73 +1,78 @@
-<div class="margen-global shadow" *ngIf="showHeader">
- <div class="header-container">
- <div class="container">
-  <div class="row row-container">
-    <div class="col-12 col-md-4 d-flex justify-content-md-start align-items-center display_movil">
-      <a routerLink="/home-page">
-        <img src="assets/img/pnglogo1.png" width="170" height="100" alt="DPH" />
-      </a>
-    </div>
-    <div class="col-8 col-md-4 d-flex justify-content-start justify-content-md-center mb-3 mb-md-0 align-items-center">
-      <a routerLink="/home-page">
-        <div class="input-group">
-          <img src="assets/img/logo_sigu.png" alt="SIGU" />
-        </div>
-      </a>
-    </div>
-    <div class="col-3 col-md-4 d-flex justify-content-center mb-3 mb-md-0 justify-content-md-end align-items-center">
-        <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showConfig">
-          <mat-icon>settings</mat-icon>
-        </button>
-          <mat-menu #menu_admin="matMenu">
-              <div class="col" type="button">
-              <button mat-menu-item routerLink="/configuracion">
-                <mat-icon>build</mat-icon>
-                <span>Configuraciones</span>
-              </button>
-              <button mat-menu-item routerLink="/home-profesional" *ngIf="isSuper">
-                <mat-icon>face</mat-icon>
-                <span>Home Profesional</span>
-              </button>
-              <button mat-menu-item routerLink="/usuario" *ngIf="isSuper">
-                <mat-icon>face</mat-icon>
-                <span>Usuarios</span>
-              </button>
-              <button mat-menu-item routerLink="/notificacion">
-                <mat-icon  matBadge="2" matBadgeColor="warn">mail</mat-icon>
-                <span>Notificaciones</span>
-              </button>
-              <button mat-menu-item routerLink="/digesto">
-                <mat-icon>picture_as_pdf</mat-icon>
-                <span>Digesto</span>
-              </button>
-            </div>
-          </mat-menu>
-        <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material" >
-          <mat-icon>account_circle</mat-icon>
+<div *ngIf="isLogged">
+  <div class="margen-global shadow" *ngIf="showHeader">
+  <div class="header-container">
+  <div class="container">
+    <div class="row row-container">
+      <div class="col-12 col-md-4 d-flex justify-content-md-start align-items-center display_movil">
+        <a routerLink="/home-page">
+          <img src="assets/img/pnglogo1.png" width="170" height="100" alt="DPH" />
+        </a>
+      </div>
+      <div class="col-8 col-md-4 d-flex justify-content-start justify-content-md-center mb-3 mb-md-0 align-items-center">
+        <a routerLink="/home-page">
+          <div class="input-group">
+            <img src="assets/img/logo_sigu.png" alt="SIGU" />
+          </div>
+        </a>
+      </div>
+      <div class="col-3 col-md-4 d-flex justify-content-center mb-3 mb-md-0 justify-content-md-end align-items-center">
+          <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showConfig">
+            <mat-icon>settings</mat-icon>
           </button>
-          <mat-menu #menu="matMenu">
-            <div class="perfil-content">
-              <div class="perfil-img">
-                <img src="assets/img/profile-user.png">
+            <mat-menu #menu_admin="matMenu">
+                <div class="col" type="button">
+                <button mat-menu-item routerLink="/configuracion">
+                  <mat-icon>build</mat-icon>
+                  <span>Configuraciones</span>
+                </button>
+                <button mat-menu-item routerLink="/home-profesional" *ngIf="isSuper">
+                  <mat-icon>face</mat-icon>
+                  <span>Home Profesional</span>
+                </button>
+                <button mat-menu-item routerLink="/usuario" *ngIf="isSuper">
+                  <mat-icon>face</mat-icon>
+                  <span>Usuarios</span>
+                </button>
+                <button mat-menu-item routerLink="/notificacion">
+                  <mat-icon  matBadge="2" matBadgeColor="warn">mail</mat-icon>
+                  <span>Notificaciones</span>
+                </button>
+                <button mat-menu-item routerLink="/digesto">
+                  <mat-icon>picture_as_pdf</mat-icon>
+                  <span>Digesto</span>
+                </button>
               </div>
-              <div class="perfil-nom">
-                <div *ngIf="isLogged">
-                  {{ nombreUsuario }} {{ apellidoUsuario }}
+            </mat-menu>
+          <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material" >
+            <mat-icon>account_circle</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <div class="perfil-content">
+                <div class="perfil-img">
+                  <img src="assets/img/profile-user.png">
+                </div>
+                <div class="perfil-nom">
+                  <div>
+                    {{ nombreUsuario }} {{ apellidoUsuario }}
+                  </div>
+                </div>
+                <div class="perfil-cargo">
+                  <span *ngIf="isAdministrativo" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Administrativo</span>
+                  <span *ngIf="isDph" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Dirección de Hospitales (Dph)</span>
+                  <span *ngIf="isUsuario" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Usuario</span>
+                  <span *ngIf="isSuper" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Super Usuario</span>
                 </div>
               </div>
-              <div class="perfil-cargo">
-                Administrativo
+              <div class="col" type="button" (click)="onLogOut()" >
+                <button mat-menu-item><mat-icon>exit_to_app</mat-icon><span>Cerrar sesión</span></button>
               </div>
-            </div>
-            <div class="col" type="button" (click)="onLogOut()" >
-              <button mat-menu-item><mat-icon>exit_to_app</mat-icon><span>Cerrar sesión</span></button>
-            </div>
-          </mat-menu>
+            </mat-menu>
+      </div>
     </div>
   </div>
-</div>
-</div>  
-    <nav class="menuNavbar" *ngIf="showNavBar">
-      <app-nav-bar></app-nav-bar>
-    </nav>
+  </div>  
+      <nav class="menuNavbar" *ngIf="showNavBar">
+        <app-nav-bar></app-nav-bar>
+      </nav>
+  </div>
 </div>

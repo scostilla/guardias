@@ -9,6 +9,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserModule } from '@angular/platform-browser';
 import { CalendarCommonModule, CalendarModule, CalendarMonthModule, DateAdapter } from 'angular-calendar';
@@ -16,6 +17,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './components/shared/shared.module';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 //Angular nativo
 
@@ -219,9 +221,7 @@ import { LegajoDetailComponent } from './components/personal/legajo/legajo-detai
 import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
 import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
-import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
 import { NoAsistencialCreateComponent } from './components/personal/personal-contenido/no-asistencial-create/no-asistencial-create.component';
 import { NoAsistencialDetailComponent } from './components/personal/personal-contenido/no-asistencial-detail/no-asistencial-detail.component';
 import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
@@ -251,13 +251,17 @@ import { PersonalNoAsistencialComponent } from './components/personal/personal-n
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
-import { MotivoBajaDialogComponent } from './components/configuracion/usuarios/motivo-baja-dialog/motivo-baja-dialog.component';
+import { MotivoBajaDialogComponent } from './components/personal/legajo/motivo-baja-dialog/motivo-baja-dialog.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
 import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
 import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
+import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
+import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
+import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
+import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
 
 @NgModule({
   declarations: [
@@ -393,7 +397,6 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     NoAsistencialComponent,
     NoAsistencialEditComponent,
     NoAsistencialDetailComponent,
-    LegajoComponent,
     LegajoEditComponent,
     LegajoDetailComponent,
     RevistaComponent,
@@ -408,7 +411,6 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     CargoComponent,
     CargoEditComponent,
     CargoDetailComponent,
-    LegajoPersonEditComponent,
     CronogramaDetailComponent,
     PersonalComponent,
     PersonalLegajoComponent,
@@ -465,6 +467,10 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     UsuarioComponent,
     UsuarioDetailComponent,
     UsuarioEditComponent,
+    EfectorSelectorComponent,
+    SelectorRolesComponent,
+    SinEfectorComponent,
+    PersonalSinEfectorComponent,
     
   ],
 
@@ -499,6 +505,7 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     MatDatepickerModule,
     MatCardModule,   
     MatRadioModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
     MatListModule,
     BrowserModule,
@@ -506,6 +513,7 @@ import { UsuarioEditComponent } from './components/configuracion/usuarios/usuari
     MatDatepickerModule,
     MatMomentDateModule,
     MatTabsModule,
+    MatBottomSheetModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,

@@ -67,7 +67,7 @@ export class NoAsistencialCreateComponent implements OnInit {
 
     this.noAsistencialService.save(noAsistencialDto).subscribe(
       (result) => {
-        this.toastr.success('NoAsistencial creado con éxito', 'EXITO', {
+        this.toastr.success('No Asistencial creado con éxito', 'EXITO', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
@@ -75,7 +75,7 @@ export class NoAsistencialCreateComponent implements OnInit {
         this.router.navigate(['/personal-sin-legajo'], { state: { noAsistencialCreado: result } }); // Redirigir a la lista de no asistenciales y pasar el noAsistencial creado
       },
       (error) => {
-        this.toastr.error('Ocurrió un error al crear el noAsistencial', error, {
+        this.toastr.error('Ocurrió un error al crear el No Asistencial', error, {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
