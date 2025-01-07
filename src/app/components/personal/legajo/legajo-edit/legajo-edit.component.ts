@@ -33,6 +33,7 @@ import { AutoridadService } from 'src/app/services/Configuracion/autoridad.servi
 
 //Models y Dto
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 import { Profesion } from 'src/app/models/Configuracion/Profesion';
@@ -70,7 +71,15 @@ export class LegajoEditComponent implements OnInit {
   fromNoAsistencial: boolean = false;
   inputValue: string = '';
   legajoForm: FormGroup;
-  initialData: Asistencial | NoAsistencial | undefined;
+  //initialData: Asistencial | NoAsistencial | undefined;
+  fromLegajoPerson: boolean = false;
+  fromLegajo: boolean = false;
+  initialData: Legajo | undefined;
+  idLegajo: number = 0;
+  personId!: number;
+  asistencial: Asistencial | undefined;
+  noAsistencial: NoAsistencial | undefined;
+
 
   //Listas
   profesiones: Profesion[] = [];
@@ -87,6 +96,7 @@ export class LegajoEditComponent implements OnInit {
   tipoGuardias: TipoGuardia[] = [];
   cargos: Cargo[] = [];
   regiones: Region[] = [];
+
 
   //Autenticación
   isLogged = false;
@@ -135,6 +145,7 @@ export class LegajoEditComponent implements OnInit {
   tipoEfector!: number;
   tipoHabilitacionesGuardias!: number;
   tipoEfectorCargo!: number;
+  isUpdatingTipoGuardias: boolean = false;
 
 
   /* Form de revista */
@@ -233,10 +244,23 @@ export class LegajoEditComponent implements OnInit {
 
     //-----Recibo el objeto para realizar posteriores verificaciones-----
 
-    // recupera el estado del router
+    // recupero el estado del router
     const navigation = this.router.getCurrentNavigation();
-
     if (navigation?.extras.state) {
+        this.isAsistencial = !!navigation.extras.state['asistencial'];
+        
+        this.initialData = navigation.extras.state['legajo'];
+        this.fromLegajoPerson = !!navigation.extras.state['fromLegajoPerson'];
+        this.fromLegajo = !!navigation.extras.state['fromLegajo'];
+    
+        // Determina si es asistencial o no asistencial
+        this.asistencial = navigation.extras.state['asistencial'] || undefined;
+        this.noAsistencial = navigation.extras.state['noAsistencial'] || undefined;
+    
+    }
+  
+
+    /*if (navigation?.extras.state) {
       // Verifica si los datos recibidos son de tipo Asistencial
       this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
   
@@ -266,7 +290,7 @@ export class LegajoEditComponent implements OnInit {
   
       // Regresa a la vista anterior
       this.location.back();
-    }    
+    }    */
   }
 
   ngOnInit(): void {
@@ -336,128 +360,108 @@ export class LegajoEditComponent implements OnInit {
     console.log('ID Pasiva:', this.idExtra);
   });
 
-  //traigo info inicial
-  if (this.initialData) {
-    const personaId = this.initialData.id;
-    this.inputValue = `${this.initialData.nombre} ${this.initialData.apellido}`;
+      // Verifica si hay datos iniciales
+      if (this.initialData) {
+        this.idLegajo = this.initialData.id ?? 0;
+        this.personId = this.initialData.persona!.id!;
 
-    // Establece el valor de idPersona en el formulario
-    this.legajoForm.get('idPersona')?.setValue(personaId);
-
-    // Realizar las validaciones necesarias
-    this.legajoForm.get('idPersona')?.updateValueAndValidity();
+        // Verifica si el ID de la persona es undefined
+        if (this.initialData.persona?.id === undefined) {
+          this.toastr.warning('ID de la persona no encontrado. Regresando a página de legajos.', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.router.navigate(['/personal-legajo']);
+          return;
+        }
     
-    console.log('ID de persona inicial:', personaId);
-
-    // Verificar si idPersona está disponible y es un número válido
-    if (personaId !== undefined && personaId !== null) {
-      
-    // Obtener todos los legajos y filtrar los activos
-    this.legajoService.list().subscribe(legajos => {
-      const legajosActivos = legajos.filter(legajo => 
-      legajo.persona?.id === personaId && legajo.activo
-    );
-
-  //-----Verificaciones desde tabla autoridades y sus posibles respuestas-----
-
-  this.autoridadService.asignadoAutoridad(personaId).subscribe(response => {
-
-    this.asignadoAutoridad = response;
-            
-      if (this.asignadoAutoridad) {
-        // Si la persona es autoridad, verifica si tiene 2 legajos activos
-        if (legajosActivos.length >= 2) {
-          this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga.', 'Limite de legajos alcanzado', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.location.back();
-
-        } else if (legajosActivos.length === 1) {
-          // Si tiene un solo legajo activo, verifica el valor de 'esAutoridad' en legajo para saber si es un legajo General o de autoridad
-          const legajoActivo = legajosActivos[0];
-          const asignadoAutoridadActivo = legajoActivo.esAutoridad;
+        this.personId = this.initialData.persona.id;
+    
+        // Carga los datos del formulario
+        this.legajoForm.patchValue({
+          ...this.initialData,
+          efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
+          profesion: this.initialData.profesion?.id,  // Asegúrate de que se asigne el ID de la profesión
+          especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
+          adicional: this.initialData.revista?.adicional?.id,  // Cargar adicional del objeto 'Revista'
+          agrupacion: this.initialData.revista?.agrupacion,  // Aquí cargas el valor de 'agrupacion'
+          cargaHoraria: this.initialData.revista?.cargaHoraria?.id,  // Cargar carga horaria del objeto 'Revista'
+          categoria: this.initialData.revista?.categoria?.id ?? null,  // Cargar categoría del objeto 'Revista'
+          tipoRevista: this.initialData.revista?.tipoRevista?.id,  // Cargar tipo de revista del objeto 'Revista'
+          tipoGuardias: this.initialData.tipoGuardias ? this.initialData.tipoGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
+          cargo: this.initialData.cargo?.id,
+          region: this.initialData.region?.id,
+        }); 
         
-          // Aqui se establece el valor contrario de esAutoridad para el nuevo legajo
-          if (asignadoAutoridadActivo) {
-            // Si el legajo activo tiene esAutoridad = true, solo se permite esAutoridad = false en el nuevo legajo
-            this.legajoForm.get('esAutoridad')?.setValue(false);
-            this.esAutoridadValor = false;
-          } else {
-            // Si el legajo activo tiene esAutoridad = false, solo se permite esAutoridad = true en el nuevo legajo
-            this.legajoForm.get('esAutoridad')?.setValue(true);
-            this.esAutoridadValor = true;
-          }
-        
-          this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar campo porque ya tiene un legajo activo
-              
-          this.toastr.info('La persona posee un legajo activo. Podrás cargar un tipo de legajo no existente.', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-              
-        } else {
-          // Si no tiene legajos activos, podemos permitir elegir 'esAutoridad' como true o false
-          this.legajoForm.get('esAutoridad')?.setValue(true);  // Establecer por defecto como true
-          this.legajoForm.get('esAutoridad')?.enable();
-          this.toastr.info('La persona está registrada como autoridad.', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-        
-        // Si la persona es autoridad, verificar los legajos activos
-        const legajoConTipoGuardiaCargo = legajosActivos.find(legajo => 
-          !legajo.esAutoridad && 
-          legajo.tipoGuardias.some(tipo => tipo.id === this.idCargo || tipo.id === this.idAgrupacion)
-        );
-        
-        if (legajoConTipoGuardiaCargo) {
-          this.toastr.warning('Para poder cargar un legajo de autoridad, debes dar de baja el legajo existente con tipo guardia de cargo y agrupacion.', 'Acción Requerida', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.location.back();  // Redirigir a la página anterior
-        }
-      } else {
-        // Si no es autoridad, verificar si tiene 1 legajo activo
-        if (legajosActivos.length >= 1) {
-          // Si ya tiene un legajo activo, mostramos un mensaje y redirigimos
-          this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga', 'Limite de legajos alcanzado', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.location.back();  // Redirigir a la página anterior
-        } else {
-          // Si no tiene legajos activos, podemos proceder a cargar el formulario
-          this.legajoForm.get('idPersona')?.setValidators([Validators.required]); // Vuelve a establecer la validación si es necesario
-          this.legajoForm.get('idPersona')?.updateValueAndValidity(); // Asegúrate de que la validación sea evaluada
-          this.toastr.info('La persona no está registrada como autoridad, solo puedes cargar un legajo general.', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.legajoForm.get('esAutoridad')?.setValue(false);  // Asegurar que esté en false
-          this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar el campo esAutoridad
-        }
+              // Si la profesión ya está seleccionada, filtrar las especialidades
+      const profesionId = this.initialData.profesion?.id;
+      if (profesionId) {
+        this.filterEspecialidadesByProfesion(profesionId);
       }
-    }, error => {
-      console.error('Error al verificar si la persona es autoridad:', error);
-    });
-
-    }, error => {
-    console.error('Error al obtener los legajos:', error);
-    });
-    } else {
-      console.error('ID de persona no disponible o no es válido');
-    }
-
+  
+    // Verifica si tipoGuardias contiene 4 o 5 al inicio y deshabilita los campos de "Situación de Revista"
+    setTimeout(() => {
+      const tipoGuardias = this.initialData?.tipoGuardias ? this.initialData.tipoGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [];
+      this.toggleSituacionRevista(tipoGuardias);  // Llamada a la función en un timeout
+    }, 0);
   }
+
+  // Suscribirse a cambios en la profesión seleccionada
+  this.legajoForm.get('profesion')?.valueChanges.subscribe((profesionId) => {
+    if (profesionId) {
+
+      // Filtrar especialidades según la nueva profesión seleccionada
+      this.filterEspecialidadesByProfesion(profesionId);
+    } else {
+      // Limpiar y deshabilitar el campo si no hay profesión seleccionada
+      this.resetEspecialidades();
+    }
+  });
+    
+    // Suscribirse a cambios en la selección de tipo de guardia
+    this.legajoForm.get('tipoGuardias')?.valueChanges.subscribe((selectedValues) => {
+      // Evitar que el valor de tipoGuardias se actualice automáticamente cuando se cambia el tipo 4 o 5
+      if (!this.isUpdatingTipoGuardias) {
+        this.isUpdatingTipoGuardias = true;
+        // Llamar a toggleSituacionRevista cuando el usuario cambia el valor
+        this.toggleSituacionRevista(selectedValues);
+  
+        // Si se selecciona el tipo 4 (CONTRAFACTURA), deseleccionar todas las demás opciones
+        if (selectedValues.includes(this.idContraFactura)) {
+          this.legajoForm.patchValue({
+            tipoGuardias: [this.idContraFactura]  // Solo mantener el tipo 4
+          }, { emitEvent: false });  // Esto previene que se dispare el evento valueChanges de nuevo
+        } else if (selectedValues.includes(this.idPasiva)) {
+          // Si se selecciona el tipo 5 (PASIVA), deseleccionar todas las demás opciones
+          this.legajoForm.patchValue({
+            tipoGuardias: [this.idPasiva]  // Solo mantener el tipo 5
+          }, { emitEvent: false });  // Esto previene que se dispare el evento valueChanges de nuevo
+        } else {
+          // Si se seleccionan otras opciones (1, 2, 3), mantenerlas
+          this.legajoForm.patchValue({
+            tipoGuardias: selectedValues.filter((value: number) => value !== this.idContraFactura && value !== this.idPasiva)
+          }, { emitEvent: false });  // Esto previene que se dispare el evento valueChanges de nuevo
+        }
+        this.isUpdatingTipoGuardias = false;
+      }
+    });
+
+        // Llamar al método para configurar cargaHoraria y adicional
+        this.initializeCargaHorariaAndAdicional();
+    
+        // Suscribirse a los cambios en el campo categoria
+        this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
+          this.onCategoriaChange(); // Llama a la función para actualizar cargaHoraria cuando cambie la categoría
+        });
+      
+        // Suscribirse a los cambios en cargaHoraria para habilitar/deshabilitar adicional
+        this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe((cargaHorariaId) => {
+          this.updateAdicionalState(cargaHorariaId); // Llama a la función para habilitar/deshabilitar adicional
+        });  
+    
+        this.legajoForm.get('esAutoridad')?.disable();    
+
 
   //-----Llamo métodos para cargar los datos iniciales-----
     this.listMinisterios();
@@ -639,6 +643,13 @@ export class LegajoEditComponent implements OnInit {
     const selectedDate = event.value;
   }
 
+  resetEspecialidades(): void {
+    this.legajoForm.get('especialidades')?.setValue([]);
+    this.especialidades = [];
+    this.legajoForm.get('especialidades')?.disable();
+    this.noEspecialidadesMessage = '';
+  }
+
   //en caso sea rol administrativo solo deja cargar su efector
   getEfectoresFiltrados(): any[] {
     // Si el usuario es administrativo, solo mostrar los efectores cuyo id esté en idEfectorUser
@@ -649,6 +660,54 @@ export class LegajoEditComponent implements OnInit {
   
     // Si no es administrativo, devuelve todos los efectores
     return this.hospitales;
+  }
+
+  updateAdicionalState(cargaHorariaId: number | null): void {
+    const cargaHorariaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaHorariaId);
+  
+    if (cargaHorariaSeleccionada?.cantidad === 40) {
+      // Si la carga horaria es 40, habilitar adicional y hacerlo obligatorio
+      this.legajoForm.get('adicional')?.enable();
+      this.legajoForm.get('adicional')?.setValidators([Validators.required]);
+    } else {
+      // Si la carga horaria no es 40, deshabilitar adicional y limpiarlo
+      this.legajoForm.get('adicional')?.disable();
+      this.legajoForm.get('adicional')?.setValue(null);
+      this.legajoForm.get('adicional')?.clearValidators(); // Limpiar validaciones
+    }
+  
+    // Actualizar la validez de 'adicional' después de modificar los validadores
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+  }
+
+  initializeCargaHorariaAndAdicional(): void {
+    const categoriaNombre = this.initialData?.revista?.categoria?.nombre; 
+    const cargaHorariaId = this.initialData?.revista?.cargaHoraria?.id;
+    const adicionalId = this.initialData?.revista?.adicional?.id;
+  
+    // Asignar los valores iniciales al formulario
+    this.legajoForm.patchValue({
+      cargaHoraria: cargaHorariaId,
+      adicional: adicionalId
+    });
+  
+    // Filtrar las opciones de cargaHoraria según la categoría seleccionada
+    if (categoriaNombre === "24 HS") {
+      // Si la categoría es "24 HS", solo mostrar la opción con cantidad 24
+      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+    } else {
+      // Si no es "24 HS", mostrar todas las opciones excepto la de cantidad 24
+      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+    }
+  
+    // Asegurarse de que cargaHoraria esté habilitado
+    this.legajoForm.get('cargaHoraria')?.enable();
+  
+    // Habilitar/deshabilitar el campo adicional según cargaHoraria
+    this.legajoForm.get('cargaHoraria')?.valueChanges.subscribe((cargaHorariaId: number | null) => {
+      // Si el valor de cargaHoraria es undefined, lo tratamos como null
+      this.updateAdicionalState(cargaHorariaId ?? null);
+    });
   }
 
   // Método para cambiar las opciones de la selección de UDO
@@ -1031,15 +1090,25 @@ export class LegajoEditComponent implements OnInit {
 
   //aqui oculto o muestro situacion de revista según la guardia seleccionada
   toggleSituacionRevista(selectedValues: number[]): void {
-    // Si se selecciona el CONTRAFACTURA, deshabilitar "Situación de Revista"
-    if (selectedValues.length === 0 || selectedValues.includes(this.idContraFactura!)) {
+    // Si se selecciona el tipo 4 o 5, deshabilitar "Situación de Revista"
+    if (selectedValues.length === 0 || selectedValues.includes(this.idContraFactura!) || selectedValues.includes(this.idPasiva!)) {
       this.isSituacionRevistaEnabled = false;
       this.disableSituacionRevistaFields();
+      this.resetSituacionRevistaFields();
     } else {
-      // Si no se selecciona CF, habilitar "Situación de Revista"
       this.isSituacionRevistaEnabled = true;
       this.enableSituacionRevistaFields();
     }
+  }
+
+  resetSituacionRevistaFields(): void {
+    this.legajoForm.get('agrupacion')?.setValue(null);
+    this.legajoForm.get('categoria')?.setValue(null);
+    this.legajoForm.get('adicional')?.setValue(null);
+    this.legajoForm.get('cargaHoraria')?.setValue(null);
+    this.legajoForm.get('tipoRevista')?.setValue(null);
+    this.legajoForm.get('udo')?.setValue(null);
+    this.legajoForm.get('efectores')?.setValue(null);
   }
       
   disableSituacionRevistaFields(): void {
@@ -1164,13 +1233,16 @@ export class LegajoEditComponent implements OnInit {
     // Verifica si tipoGuardias está vacío o si incluye CONTRAFACTURA o PASIVA
     if (tiposGuardiasSeleccionados.length === 0 || tiposGuardiasSeleccionados.some((id: number) => tiposGuardiaExcluidos.includes(id))) {
       // Crear legajo directamente sin pasar por la creación de la revista
-      this.createLegajoDtoAndSave(legajoData, null);
+      this.updateLegajoDtoAndSave(legajoData, null);
     } else {
+
+      const adicional = legajoData.adicional ? legajoData.adicional : null;
+
           // Si los tipos de guardia son válidos, procede con la creación de la revista
           const revistaDto = new RevistaDto(
             legajoData.tipoRevista,
             legajoData.categoria,
-            legajoData.adicional,
+            adicional,
             legajoData.cargaHoraria,
             legajoData.agrupacion
           );
@@ -1181,7 +1253,7 @@ export class LegajoEditComponent implements OnInit {
               if (existingRevista && existingRevista.id !== undefined) {
                 console.log("Revista encontrada:", existingRevista);
                 // Usa la ID de la revista existente
-                this.createLegajoDtoAndSave(legajoData, existingRevista.id);
+                this.updateLegajoDtoAndSave(legajoData, existingRevista.id);
               } else {
                 console.error('La revista existente no tiene un ID.');
               }
@@ -1197,7 +1269,7 @@ export class LegajoEditComponent implements OnInit {
                     (newRevista) => {
                       if (newRevista && newRevista.id !== undefined) {
                         console.log('Nueva revista creada:', newRevista);
-                        this.createLegajoDtoAndSave(legajoData, newRevista.id);
+                        this.updateLegajoDtoAndSave(legajoData, newRevista.id);
                       } else {
                         console.error('Error: No se pudo encontrar la nueva revista después de crearla.');
                       }
@@ -1217,7 +1289,7 @@ export class LegajoEditComponent implements OnInit {
       }
     }
     
-  createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
+  updateLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
   // Verifica si el campo 'esAutoridad' está habilitado
   let esAutoridad;
 
@@ -1299,7 +1371,7 @@ if (legajoData.tipoGuardias &&
     }
     
       // Guardar el legajo sin la parte de revista si no corresponde
-      this.legajoService.save(legajoDto).subscribe(
+      this.legajoService.update(this.idLegajo, legajoDto).subscribe(
         (result) => {
           this.toastr.success('Legajo creado con éxito', 'EXITO', {
             timeOut: 6000,

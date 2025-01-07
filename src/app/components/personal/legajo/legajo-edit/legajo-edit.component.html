@@ -2,7 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">Agregar Legajo</div>
+      <div class="titulos">Modificar Legajo</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
@@ -32,9 +32,9 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <mat-form-field appearance="fill" style="margin-top: 20px;">
+            <mat-form-field appearance="fill" style="margin-top: 20px;"> 
               <mat-label>Profesional</mat-label>
-              <input matInput [value]="inputValue" readonly required>
+              <input matInput [value]="asistencial ? (asistencial.apellido + ', ' + asistencial.nombre) : (noAsistencial?.apellido + ', ' + noAsistencial?.nombre)" readonly required>
               <mat-icon matSuffix>person</mat-icon>
               <mat-error *ngIf="legajoForm.get('idPersona')?.hasError('required')">
                 El campo profesional es requerido.
@@ -398,7 +398,7 @@
       
         <div mat-dialog-actions class="action mt-4">
           <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid" class="me-2">
-            Agregar Legajo
+            Modificar Legajo
           </button>
 
           <button mat-raised-button color="secondary" type="button" (click)="cancel()">
