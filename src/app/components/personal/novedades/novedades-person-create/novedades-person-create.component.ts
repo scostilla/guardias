@@ -36,11 +36,14 @@ export class NovedadesPersonCreateComponent implements OnInit {
           idTipoLicencia: ['', [Validators.required]],
           fechaInicio: ['', Validators.required],
           fechaFinal: [{ value: '', disabled: true }, Validators.required],
-          idSuplente: ['', Validators.required],
+          idSuplente: [{ value: '', disabled: true }],
           puedeRealizarGuardia: [''],
           cobraSueldo: [''],
-          necesitaReemplazo: [''],
+          necesitaReemplazo: [{ value: '', disabled: true }],
         }, { validators: this.dateLessThan('fechaInicio', 'fechaFinal') });
+
+        this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
+this.novedadPersonalForm.get('idSuplente')?.disable();
       
         this.listLicencia();
       }
@@ -53,37 +56,115 @@ export class NovedadesPersonCreateComponent implements OnInit {
             this.novedadPersonalForm.get('fechaFinal')?.disable();
           }
         });
-      
+    
+        this.novedadPersonalForm.get('idTipoLicencia')?.valueChanges.subscribe(value => {
+          console.log('Valor recibido en idTipoLicencia:', value);
+          this.updateFormFields(value);
+        });
+    
         this.novedadPersonalForm.get('necesitaReemplazo')?.valueChanges.subscribe(value => {
+          console.log(`El valor de "necesitaReemplazo" cambió a: ${value}`);
           this.toggleSuplenteValidation(value);
           this.toggleSuplenteDisabled(value);
         });
       
+        // Configuración inicial
+        const necesitaReemplazo = this.novedadPersonalForm.get('necesitaReemplazo')?.value || false;
+        this.toggleSuplenteValidation(necesitaReemplazo);
+        this.toggleSuplenteDisabled(necesitaReemplazo);
+          // Iniciar con el campo necesitaReemplazo oculto
+  this.showNecesitaReemplazo(false);
+      }
+
+      updateFormFields(tipoLicenciaIdOrNombre: string | number | null): void {
+        // Si el valor es nulo, no se hace nada
+        if (!tipoLicenciaIdOrNombre) {
+          console.warn('El valor recibido en updateFormFields es nulo.');
+          return;
+        }
+      
+        // Buscar el tipo de licencia por ID o nombre
+        const licencia = typeof tipoLicenciaIdOrNombre === 'string'
+          ? this.licencias.find((l) => l.nombre.toLowerCase() === tipoLicenciaIdOrNombre.toLowerCase())
+          : this.licencias.find((l) => l.id === tipoLicenciaIdOrNombre);
+      
+        if (!licencia) {
+          console.warn('No se encontró un tipo de licencia con el valor proporcionado:', tipoLicenciaIdOrNombre);
+          return;
+        }
+      
+        const nombre = licencia.nombre.toLowerCase();
+      
+        // Define las condiciones basadas en el nombre
+        const cobraSueldo = ['licencia anual ordinaria', 'licencia por maternidad'].includes(nombre);
+        const puedeRealizarGuardia = ['licencia anual ordinaria', 'compensatorio'].includes(nombre);
+        const necesitaReemplazo = [
+          'licencia anual ordinaria',
+          'licencia por maternidad',
+          'largo tratamiento de salud',
+        ].includes(nombre);
+      
+        // Actualiza los valores en el formulario
+        this.novedadPersonalForm.patchValue({
+          cobraSueldo,
+          puedeRealizarGuardia,
+          necesitaReemplazo: necesitaReemplazo ? '' : '',  // Mantener vacío en lugar de false
+        });
+      
+        // Manejo del campo "necesitaReemplazo" y "idSuplente"
+        if (necesitaReemplazo) {
+          this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
+          this.novedadPersonalForm.get('necesitaReemplazo')?.setValidators([Validators.required]); // Habilitar validación
+        } else {
+          this.novedadPersonalForm.get('necesitaReemplazo')?.disable();
+          this.novedadPersonalForm.get('necesitaReemplazo')?.setValue(''); // Establecer vacío
+          this.novedadPersonalForm.get('necesitaReemplazo')?.clearValidators(); // Limpiar validación
+        }
+      
+        // Ocultar o mostrar el campo "necesitaReemplazo"
+        if (necesitaReemplazo) {
+          // Mostrar el campo si la licencia lo requiere
+          this.showNecesitaReemplazo(true);
+        } else {
+          // Ocultar el campo si no lo requiere
+          this.showNecesitaReemplazo(false);
+        }
+      
+        // Re-validar el campo idSuplente
         this.toggleSuplenteValidation(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
         this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
+      }
+      
+      showNecesitaReemplazo(shouldShow: boolean): void {
+        const necesitaReemplazoControl = this.novedadPersonalForm.get('necesitaReemplazo');
+        if (shouldShow) {
+          // Si debe mostrarse, habilitar el campo
+          necesitaReemplazoControl?.enable();
+        } else {
+          // Si no debe mostrarse, deshabilitar el campo y establecer el valor vacío
+          necesitaReemplazoControl?.disable();
+          necesitaReemplazoControl?.setValue(null);
+        }
       }
 
 toggleSuplenteValidation(necesitaReemplazo: boolean): void {
   const idSuplenteControl = this.novedadPersonalForm.get('idSuplente');
-  
   if (necesitaReemplazo) {
     idSuplenteControl?.setValidators([Validators.required]);
   } else {
     idSuplenteControl?.clearValidators();
   }
-
-  // Actualiza la validez del campo tras modificar sus validadores
   idSuplenteControl?.updateValueAndValidity();
 }
 
-// Método para habilitar o deshabilitar el campo idSuplente
+// Método para habilitar o deshabilitar el campo idSuplente y control visual
 toggleSuplenteDisabled(necesitaReemplazo: boolean): void {
   const idSuplenteControl = this.novedadPersonalForm.get('idSuplente');
-  
   if (necesitaReemplazo) {
     idSuplenteControl?.enable();
   } else {
     idSuplenteControl?.disable();
+    idSuplenteControl?.setValue(null);
   }
 }
 
@@ -125,30 +206,32 @@ openFormcreate(novedadPersonal?: NovedadPersonal): void {
 
 
 openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
-      width: '800px',
-      disableClose: true
-    });
-    dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.selectedAsistencial = result;
-          this.inputValue = `${result.apellido} ${result.nombre}`;
-          this.novedadPersonalForm.patchValue({ idSuplente: result.id });
-        } else {
-          this.toastr.info('No se seleccionó un profesional', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      }, error => {
-        this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        console.error('Error al abrir el diálogo de carga de profesional:', error);
+  const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+    width: '800px',
+    disableClose: true
+  });
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.selectedAsistencial = result;
+      this.inputValue = `${result.apellido} ${result.nombre}`;
+      this.novedadPersonalForm.patchValue({ idSuplente: result.id });
+      // Habilitar el campo idSuplente después de seleccionar un suplente
+      this.novedadPersonalForm.get('idSuplente')?.enable();
+    } else {
+      this.toastr.info('No se seleccionó un profesional', 'Información', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
       });
+    }
+  }, error => {
+    this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+    console.error('Error al abrir el diálogo de carga de profesional:', error);
+  });
 }
 
 saveNovedadPersonal(): void {
@@ -180,6 +263,26 @@ saveNovedadPersonal(): void {
       );
     }
       
+}
+
+validateSuplenteDifferent(): void {
+  const idSuplenteControl = this.novedadPersonalForm.get('idSuplente');
+  if (idSuplenteControl) {
+    idSuplenteControl.valueChanges.subscribe(selectedSuplente => {
+      if (selectedSuplente && selectedSuplente === this.data.asistencialId) {
+        idSuplenteControl.setErrors({ sameAsAsistencial: true });
+        this.toastr.error('El suplente no puede ser la misma persona cargada.', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true,
+        });
+      } else {
+        const currentErrors = idSuplenteControl.errors || {};
+        delete currentErrors['sameAsAsistencial'];
+        idSuplenteControl.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
+      }
+    });
+  }
 }
 cancel(): void {
     this.dialogRef.close();

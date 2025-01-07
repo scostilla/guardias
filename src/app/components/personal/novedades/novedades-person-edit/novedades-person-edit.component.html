@@ -2,7 +2,7 @@
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
   
-  <form [formGroup]="novedadPersonalForm!" (ngSubmit)="editNovedadPersonal()">
+  <form [formGroup]="novedadPersonalForm" (ngSubmit)="novedadPersonalForm.valid && editNovedadPersonal()">
     <mat-dialog-content>
 
           <mat-form-field appearance="fill">
@@ -31,7 +31,7 @@
             <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['dateLessThan']">La fecha de finalización no puede ser anterior a la fecha de inicio.</mat-error>
           </mat-form-field>
           
-      <mat-form-field appearance="fill" class="form-field">
+      <!-- <mat-form-field appearance="fill" class="form-field">
         <mat-label>Cobra sueldo?</mat-label>
         <mat-select formControlName="cobraSueldo">
           <mat-option [value]="true">Si</mat-option>
@@ -45,9 +45,9 @@
           <mat-option [value]="true">Si</mat-option>
           <mat-option [value]="false">No</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
 
-      <mat-form-field appearance="fill" class="form-field">
+      <mat-form-field  *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.enabled">
         <mat-label>Necesita reemplazo?</mat-label>
         <mat-select formControlName="necesitaReemplazo">
           <mat-option [value]="true">Si</mat-option>
@@ -55,7 +55,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
+      <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.value" appearance="fill">
         <mat-label>Reemplazo</mat-label>
         <input
           matInput
@@ -68,9 +68,7 @@
         <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['required']">
           El campo es requerido.
         </mat-error>
-        <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['sameAsAsistencial']">
-          El suplente no puede ser la misma persona previamente cargada.
-        </mat-error>
+       
       </mat-form-field>
 
     <div mat-dialog-actions class="action mt-4">
