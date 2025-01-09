@@ -326,13 +326,13 @@
             </mat-form-field>
 
             <mat-radio-group formControlName="tipoUdo" (change)="onTipoUdoChange($event)" class="radio-group-with-line">
-              <mat-radio-button color="primary" [value]="1" style="margin-right: 10px;">Ministerio</mat-radio-button>
-              <mat-radio-button [value]="2" style="margin-right: 10px;">Hospital</mat-radio-button>
-              <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
+              <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">Ministerio</mat-radio-button>
+              <mat-radio-button [value]="'HOSPITAL'" style="margin-right: 10px;">Hospital</mat-radio-button>
+              <mat-radio-button color="warn" [value]="'CAPS'">CAPS</mat-radio-button>
             </mat-radio-group>
             <mat-error *ngIf="legajoForm.get('tipoUdo')?.errors?.['required']">U.D.O. requiere seleccionar: Ministerio, Hospital o Caps.</mat-error>
             
-            <mat-form-field *ngIf="tipoUdo === 3" appearance="fill">
+            <mat-form-field *ngIf="tipoUdo === 'CAPS'" appearance="fill">
               <mat-label>Seleccionar Hospital para listar Caps</mat-label>
               <mat-select formControlName="hospitalUdo" (selectionChange)="onHospitalUdoChange($event)">
                 <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
@@ -365,13 +365,13 @@
             </mat-form-field>-->
 
             <mat-radio-group formControlName="tipoEfector" (change)="onTipoEfectorChange($event)" class="radio-group-with-line">
-              <mat-radio-button color="primary" [value]="1" style="margin-right: 10px;">Ministerio</mat-radio-button>
-              <mat-radio-button [value]="2" style="margin-right: 10px;">Hospital</mat-radio-button>
-              <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
+              <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">Ministerio</mat-radio-button>
+              <mat-radio-button [value]="'HOSPITAL'" style="margin-right: 10px;">Hospital</mat-radio-button>
+              <mat-radio-button color="warn" [value]="'CAPS'">CAPS</mat-radio-button>
             </mat-radio-group>
             <mat-error *ngIf="legajoForm.get('tipoEfector')?.errors?.['required']">Efector requiere seleccionar: Ministerio, Hospital o Caps.</mat-error>
 
-            <mat-form-field *ngIf="tipoEfector === 3" appearance="fill">
+            <mat-form-field *ngIf="tipoEfector === 'CAPS'" appearance="fill">
               <mat-label>Seleccionar Hospital para listar Caps</mat-label>
               <mat-select formControlName="hospitalEfectores" (selectionChange)="onHospitalEfectorChange($event)">
                 <mat-option *ngFor="let hospital of getEfectoresFiltrados()" [value]="hospital.id">{{ hospital.nombre }}</mat-option>

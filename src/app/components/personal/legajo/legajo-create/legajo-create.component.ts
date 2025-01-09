@@ -1,54 +1,53 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
 
 //Services
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
-import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
-import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
-import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
-import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
-import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
+import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 //Models y Dto
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
+import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
-import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
-import { Profesion } from 'src/app/models/Configuracion/Profesion';
-import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { Categoria } from 'src/app/models/Configuracion/Categoria';
 import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { Region } from 'src/app/models/Configuracion/Region';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
-import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
@@ -132,8 +131,8 @@ export class LegajoCreateComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
-  tipoUdo!: number;
-  tipoEfector!: number;
+  tipoUdo!: string;
+  tipoEfector!: string;
   tipoHabilitacionesGuardias!: number;
   tipoEfectorCargo!: number;
 
@@ -145,6 +144,7 @@ export class LegajoCreateComponent implements OnInit {
     { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
     { value: 'TECNICOS', viewValue: 'Técnicos' },
   ];
+
 
   constructor(
     private fb: FormBuilder,
@@ -658,11 +658,11 @@ export class LegajoCreateComponent implements OnInit {
     this.tipoUdo = tipoUdo;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoUdo === 1) { // Ministerio
+    if (tipoUdo === 'MINISTERIO') { // Ministerio
       this.udoOptions = this.ministerios;
-    } else if (tipoUdo === 2) { // Hospital
+    } else if (tipoUdo === 'HOSPITAL') { // Hospital
       this.udoOptions = this.hospitales;
-    } else if (tipoUdo === 3) { // CAPS
+    } else if (tipoUdo === 'CAPS') { // CAPS
       this.udoOptions = this.caps;
     }
 
@@ -705,11 +705,11 @@ export class LegajoCreateComponent implements OnInit {
     this.tipoEfector = tipoEfector;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoEfector === 1) { // Ministerio
+    if (tipoEfector === 'MINISTERIO') { // Ministerio
       this.efectorOptions = this.ministerios;
-    } else if (tipoEfector === 2) { // Hospital
+    } else if (tipoEfector === 'HOSPITAL') { // Hospital
       this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoEfector === 3) { // CAPS
+    } else if (tipoEfector === 'CAPS') { // CAPS
       this.efectorOptions = this.caps;  // Opciones específicas para CAPS
     }
 
@@ -1269,7 +1269,9 @@ export class LegajoCreateComponent implements OnInit {
         legajoData.idRegion ?? null,
         legajoData.nroResolucion ?? null,
         legajoData.nroDecreto ?? null,
-        legajoData.fechaResolucion ?? null
+        legajoData.fechaResolucion ?? null,
+        legajoData.tipoEfector ?? null,
+        legajoData.tipoUdo ?? null
       );
 
       console.log("DTO creado para guardar legajo:", legajoDto);
@@ -1410,6 +1412,8 @@ if (legajoData.tipoGuardias &&
 
     cerrarPanel() {
       this.step = -1;
+      //log para ver los valores del form cuando se cierra el panel
+      console.log(this.legajoForm.value);
     }
 
 }
