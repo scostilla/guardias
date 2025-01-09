@@ -24,7 +24,7 @@
     <div class="col-md-1">
       <div class="contenedor-bocadillo">
         <div>{{ nombreMes }}</div>
-        <div>{{ anoActual }}</div>
+        <div>{{ anoSeleccionado  }}</div>
       </div>
     </div>
     <div class="col-md-8 d-flex justify-content-start">
@@ -33,11 +33,16 @@
       </div>
     </div>
     <div class="col-md-3 d-flex justify-content-start">
-      <div class="contenedor-subtitulo-bocadillo">
-        ACTUAL
-      </div>  
+        <div class="contenedor-subtitulo-bocadillo">
+          <div class="select-inicio-container">
+            <select class="select-inicio" [(ngModel)]="mesSeleccionado" (change)="onMonthChange($event)">
+                <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
+            </select>
+            <span class="arrow">▼</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
   <div class="row">
   <div class="table-responsive">
@@ -224,17 +229,29 @@
   </div>
 
   <div class="row">
-  <div class="container-mensajes">
-    <div *ngIf="cargaHoraria !== undefined" class="carga-horaria-display">
-      <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong> hs</p>
-      <p *ngIf="cargaHoraria === undefined">
-        No hay carga horaria disponible para este profesional.
-      </p>
+    <div class="container-mensajes">
+      <div *ngIf="cargaHoraria !== undefined" class="carga-horaria-display">
+        <p>Carga Horaria actual: <strong>{{ cargaHoraria }}</strong> hs</p>
+        <p *ngIf="cargaHoraria === undefined">
+          No hay carga horaria disponible para este profesional.
+        </p>
+      </div>
+  
+      <div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
+        <p>{{ mensajeCargaHoraria }}</p>
+      </div>
     </div>
 
-    <div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
-      <p>{{ mensajeCargaHoraria }}</p>
+    <div *ngIf="novedades && novedades.length > 0; else noNovedades">
+      <div *ngFor="let novedad of novedades">
+        {{ novedad.tipoLicencia!.nombre }}, desde {{ novedad.fechaInicio | date:'dd/MM/yyyy' }} hasta {{ novedad.fechaFinal | date:'dd/MM/yyyy' }}.
+      </div>
     </div>
-  </div>
-  </div>
+    
+    <ng-template #noNovedades>
+      <p>No hay novedades disponibles para el mes seleccionado.</p>
+    </ng-template>
+    
+    </div>  
+
 </div>

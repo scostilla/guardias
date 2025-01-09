@@ -181,7 +181,8 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   goBack(): void {
-    this.location.back();
+    //this.location.back();
+    window.history.back();
   }
   
   ngOnDestroy(): void {

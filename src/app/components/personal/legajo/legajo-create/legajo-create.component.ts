@@ -182,10 +182,10 @@ export class LegajoCreateComponent implements OnInit {
       profesion: ['', Validators.required],
       tipoUdo: [null, Validators.required],
       udo: [null, Validators.required],
-      hospitalUdo: ['', Validators.required],
+      hospitalUdo: [''],
       tipoEfector: [null, Validators.required],
       efectores: [null, Validators.required],
-      hospitalEfectores: ['', Validators.required],
+      hospitalEfectores: [''],
       tipoEfectorCargo: [''],
       hospitalEfectorCargo: [''],
       efectoresAutoridad: [[]],
@@ -203,7 +203,7 @@ export class LegajoCreateComponent implements OnInit {
       tipoGuardias: [[]],
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
-      hospitalHabilitacionesGuardias: ['', Validators.required],
+      hospitalHabilitacionesGuardias: [''],
       habilitacionesGenerales: [[]],
     });
 
