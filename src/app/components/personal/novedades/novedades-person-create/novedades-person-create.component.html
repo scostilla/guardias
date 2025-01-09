@@ -37,7 +37,7 @@
         </mat-error>
       </mat-form-field>
   
-      <mat-form-field appearance="fill" class="form-field">
+     <!--  <mat-form-field appearance="fill" class="form-field">
         <mat-label>Cobra sueldo?</mat-label>
         <mat-select formControlName="cobraSueldo">
           <mat-option [value]="true">Sí</mat-option>
@@ -51,21 +51,25 @@
           <mat-option [value]="true">Sí</mat-option>
           <mat-option [value]="false">No</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
   
-      <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Necesita reemplazo?</mat-label>
+      <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.enabled">
+        <mat-label>¿Necesita Reemplazo?</mat-label>
         <mat-select formControlName="necesitaReemplazo">
           <mat-option [value]="true">Sí</mat-option>
           <mat-option [value]="false">No</mat-option>
         </mat-select>
       </mat-form-field>
-  
-      <mat-form-field appearance="fill">
+      
+      <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.value" appearance="fill">
         <mat-label>Reemplazo</mat-label>
-        <input matInput formControlName="idSuplente" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+        <input matInput
+               formControlName="idSuplente"
+               [value]="inputValue"
+               (click)="openAsistencialDialog()"
+               readonly>
         <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-        <mat-error *ngIf="novedadPersonalForm.get('idSuplente')?.errors?.['required']">
+        <mat-error *ngIf="novedadPersonalForm.get('idSuplente')?.hasError('required')">
           El campo es requerido.
         </mat-error>
       </mat-form-field>
