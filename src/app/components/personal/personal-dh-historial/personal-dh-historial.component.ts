@@ -6,6 +6,10 @@ import { DistribucionGuardiaService } from 'src/app/services/personal/distribuci
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service'; 
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
+import { ToastrService } from 'ngx-toastr';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -21,6 +25,8 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
   asistencial: Asistencial | null = null;
   nombreMes!: string;
   anoActual!: number;
+  anoSeleccionado!: number;
+  novedades: NovedadPersonal[] = [];
   
 
   mesesDisponibles: { value: string; label: string }[] = [];
@@ -53,79 +59,85 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     private distribucionConsultorioService: DistribucionConsultorioService,
     private distribucionGiraService: DistribucionGiraService,
     private distribucionOtroService: DistribucionOtroService,
+    private novedadPersonalService: NovedadPersonalService,
+    private toastr: ToastrService,
+    private location: Location,
     private router: Router,
   ) {
     const fechaActual = moment();
     this.anoActual = fechaActual.year();
     
     // Calcular el mes anterior
-    const mesAnterior = fechaActual.month() === 0 ? 12 : fechaActual.month(); // Diciembre si es enero
-    const anioDelMesAnterior = fechaActual.month() === 0 ? fechaActual.year() - 1 : fechaActual.year();
+    let mesAnterior = fechaActual.month() === 0 ? 11 : fechaActual.month() - 1; // Enero (0) es diciembre (11) del año anterior
+    let anioDelMesAnterior = fechaActual.month() === 0 ? fechaActual.year() - 1 : fechaActual.year();
     
-    this.mesSeleccionado = `${mesAnterior}-${anioDelMesAnterior}`; // Formato MM-YYYY
+    this.mesSeleccionado = `${mesAnterior + 1}-${anioDelMesAnterior}`; // Formato MM-YYYY (agregamos 1 al mes para que sea 1-12)
   }
 
   ngOnInit(): void {
     this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
       console.log('Asistencial recibido:', this.asistencial);
-      
-      if (this.asistencial?.id) {
-        this.loadDistribuciones(this.asistencial.id); // Cargar todas las distribuciones
-        this.loadCargaHoraria(); // Cargar la carga horaria
+  
+      if (!this.asistencial?.id) {
+        //this.toastr.warning('Vuelve a seleccionar el asistencial.', 'Advertencia');
+        this.location.back(); // Redirigir a la página anterior
       } else {
-        console.warn('Asistencial no tiene un ID válido.');
+        // Si hay un asistencial con id, cargar distribuciones y carga horaria
+        this.loadDistribuciones(this.asistencial.id);
+        this.loadCargaHoraria();
+        this.loadNovedades(this.asistencial.id);
       }
     });
   
     const fechaActual = moment();
-    this.nombreMes = this.getMonthName(fechaActual.month());
     this.anoActual = fechaActual.year();
-
+  
+    // Establecer mes seleccionado como el mes anterior al actual
+    let mesAnterior = fechaActual.month() === 0 ? 11 : fechaActual.month() - 1; // Si es enero, mostrar diciembre del año anterior
+    let anioDelMesAnterior = fechaActual.month() === 0 ? fechaActual.year() - 1 : fechaActual.year();
+    
+    this.mesSeleccionado = `${mesAnterior + 1}-${anioDelMesAnterior}`; // Formato MM-YYYY (agregamos 1 al mes para que sea 1-12)
+    this.nombreMes = this.getMonthName(mesAnterior); // Establecer nombre del mes
+    this.anoSeleccionado = anioDelMesAnterior; // Inicializamos el año seleccionado con el año del mes anterior
+  
     this.generarMesesDisponibles();
   }
+  
+generarMesesDisponibles(): void {
+  const fechaActual = moment();
+  const mesesPasados = [];
 
-  generarMesesDisponibles(): void {
-    const fechaActual = moment();
-    const mesesPasados = [];
-  
-    // Agregar meses desde enero hasta el mes anterior al actual
-    for (let i = 1; i < fechaActual.month(); i++) {
-      mesesPasados.push({
-        value: `${i}-${this.anoActual}`, // Formato MM-YYYY
-        label: moment().month(i - 1).format('MMMM YYYY').toUpperCase()
-      });
-    }
-  
-    // Agregar el mes anterior
-    if (fechaActual.month() > 0) { // Si no es enero
-      mesesPasados.push({
-        value: `${fechaActual.month()}-${this.anoActual}`,
-        label: moment().month(fechaActual.month() - 1).format('MMMM YYYY').toUpperCase()
-      });
-    } else { // Si es enero, agregar diciembre del año anterior
-      mesesPasados.push({
-        value: `12-${this.anoActual - 1}`,
-        label: moment().month(11).format('MMMM YYYY').toUpperCase()
-      });
-    }
-  
-    this.mesesDisponibles = mesesPasados;
-  
-    // Establecer mes y año por defecto
-    this.mesSeleccionado = this.mesesDisponibles[this.mesesDisponibles.length - 1].value; // El último mes disponible
-    this.nombreMes = moment().month(fechaActual.month() - 1).format('MMMM').toUpperCase(); // Nombre en mayúsculas
+  this.anoActual = fechaActual.year();
+
+  // Agregar hasta 6 meses atrás desde el mes actual
+  for (let i = 1; i <= 6; i++) {
+    let mesSeleccionado = fechaActual.clone().subtract(i, 'months');
+    mesesPasados.push({
+      value: `${mesSeleccionado.month() + 1}-${mesSeleccionado.year()}`,
+      label: mesSeleccionado.format('MMMM YYYY').toUpperCase(),
+    });
   }
+
+  this.mesesDisponibles = mesesPasados.reverse(); // Invertimos el orden para mostrar desde el mes más reciente al más antiguo
+
+  console.log('Meses disponibles:', this.mesesDisponibles);
+}
   
-  onMonthChange(event: any): void {
-    const [mes, anio] = event.target.value.split('-').map(Number);
-    this.mesSeleccionado = event.target.value;
-    this.nombreMes = moment().month(mes - 1).format('MMMM').toUpperCase(); // Nombre del mes en mayúsculas
-    this.anoActual = anio;
-  
-    this.filtrarDistribucionesPorMes(); // Opcional: Filtrar distribuciones cuando cambie el mes
+onMonthChange(event: any): void {
+  const [mes, anio] = event.target.value.split('-').map(Number);
+  this.mesSeleccionado = event.target.value;
+  this.nombreMes = moment().month(mes - 1).format('MMMM').toUpperCase(); // Nombre del mes en mayúsculas
+  this.anoSeleccionado = anio; // Actualizamos el año con el valor seleccionado
+
+  // Actualizar las novedades al cambiar el mes
+  if (this.asistencial?.id) {
+    this.loadNovedades(this.asistencial.id);
   }
-      
+
+  this.filtrarDistribucionesPorMes(); // Opcional: Filtrar distribuciones cuando cambie el mes
+}
+
   filtrarDistribucionesPorMes(): void {
     const [mes, anio] = this.mesSeleccionado.split('-').map(Number);
     console.log(`Filtrar distribuciones para: ${mes}/${anio}`);
@@ -301,6 +313,30 @@ getMonthName(monthIndex: number): string {
     }
 }
 
+// Método en el componente PersonalDhHistorialComponent
+loadNovedades(idPersona: number): void {
+  const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+
+  // Establecer el rango de fechas para el mes seleccionado
+  const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
+  const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
+
+  // Llamada al servicio de novedades personales
+  this.novedadPersonalService.list().subscribe(novedades => {
+    this.novedades = novedades.filter(novedad => {
+      // Filtrar novedades donde la persona es el asistencial y la fecha está dentro del rango del mes seleccionado
+      const fechaInicio = moment(novedad.fechaInicio);
+      const fechaFinal = moment(novedad.fechaFinal);
+
+      return (novedad.persona.id === idPersona) && 
+        ((fechaInicio.isBefore(finDelMes) && fechaFinal.isAfter(inicioDelMes)) ||
+         (fechaInicio.isSameOrAfter(inicioDelMes) && fechaFinal.isBefore(finDelMes)) ||
+         (fechaInicio.isSameOrBefore(inicioDelMes) && fechaFinal.isSameOrAfter(finDelMes)));
+    });
+
+    console.log('Novedades filtradas:', this.novedades);
+  });
+}
   
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();

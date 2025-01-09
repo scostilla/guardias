@@ -175,12 +175,10 @@ export class DistHorariaComponent {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        // Inicializar selectedAsistencial y limpiar inputValue al principio, pero no asignar id aún
         this.selectedAsistencial = result;
-        this.inputValue = `${result.apellido} ${result.nombre}`;
-        this.updateIdPersona(result.id);
-  
-        // Resetear el select del mes de vigencia
-        this.vigenciaForm.patchValue({ mesVigencia: null });
+        this.inputValue = ''; // Dejar vacío el inputValue inicialmente
+        this.idEfector = undefined; // Asegurarse de que idEfector esté vacío también
   
         // Filtrar legajos activos y que no sean autoridades
         const legajosActivos = result.legajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
@@ -204,7 +202,26 @@ export class DistHorariaComponent {
             this.cargaHoraria = ultimoLegajoActivo.revista.cargaHoraria.cantidad;
             this.isProfessionalLoaded = true;
             this.tiposGuardiaOptions = ultimoLegajoActivo.tipoGuardias; // Usamos tipoGuardias desde el último legajo activo
-            console.log('Tipos de guardia:', this.tiposGuardiaOptions);
+  
+            // Filtrar para verificar si existen "CARGO" o "AGRUPACION"
+            const tieneGuardiaCargoAgrupacion = this.tiposGuardiaOptions.some(tipo => tipo.nombre.includes('CARGO') || tipo.nombre.includes('AGRUPACION'));
+  
+            if (!tieneGuardiaCargoAgrupacion) {
+              // Limpiar el valor en inputValue y no asignar id
+              this.inputValue = '';
+              this.cargaHoraria = undefined;
+              this.isProfessionalLoaded = false;    
+              this.toastr.warning('El profesional seleccionado no posee guardia de cargo o agrupación en su legajo activo', 'Aviso', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+            } else {
+              // Asignar inputValue y id solo si se encuentra una guardia de "CARGO" o "AGRUPACION"
+              this.inputValue = `${result.apellido} ${result.nombre}`;
+              this.updateIdPersona(result.id); // Asignamos el id correctamente
+              console.log('Tipos de guardia:', this.tiposGuardiaOptions);
+            }
           } else {
             this.cargaHoraria = undefined;
             this.isProfessionalLoaded = false;
@@ -215,6 +232,8 @@ export class DistHorariaComponent {
             });
           }
         } else {
+          // Limpiar inputValue y no asignar id cuando no se encuentra un legajo activo válido
+          this.inputValue = '';
           this.cargaHoraria = undefined;
           this.isProfessionalLoaded = false;
           this.toastr.warning('El profesional seleccionado no posee un legajo válido o activo.', 'Aviso', {
@@ -241,8 +260,8 @@ export class DistHorariaComponent {
       });
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }        
-    
+  }
+      
   private updateHorasStatus(): void {
     const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
     const consultorioHoras = Number(this.consultorioForm.get('cantidadHoras')?.value ?? 0);
