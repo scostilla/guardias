@@ -71,7 +71,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   selectedMonth: number = moment().month();
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
-  years: number[] = [2023, 2024];
+  years: number[] = [2023, 2024, 2025];
 
   selectedHospitalId: number | null = null;
   selectedHospitalNombre: string = '';
