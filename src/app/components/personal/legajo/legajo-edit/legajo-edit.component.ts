@@ -1,56 +1,56 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
 
 //Services
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
-import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
-import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
-import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
-import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
-import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
+import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 //Models y Dto
-import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
-import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
-import { Profesion } from 'src/app/models/Configuracion/Profesion';
-import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
+import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
+import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
+import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { Region } from 'src/app/models/Configuracion/Region';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
-import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 
+import { forkJoin } from 'rxjs';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 
@@ -141,8 +141,8 @@ export class LegajoEditComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
-  tipoUdo!: number;
-  tipoEfector!: number;
+  tipoUdo!: string;
+  tipoEfector!: string;
   tipoHabilitacionesGuardias!: number;
   tipoEfectorCargo!: number;
   isUpdatingTipoGuardias: boolean = false;
@@ -336,6 +336,100 @@ export class LegajoEditComponent implements OnInit {
     this.router.navigateByUrl('');
   }
 
+    // Inicializar el formulario
+    this.legajoForm = this.fb.group({
+      tipoUdo: [this.initialData?.tipoUdo || '', Validators.required],
+      udo: [{ value: null, disabled: true }],
+      agrupacion: ['', Validators.required],
+      categoria: ['', Validators.required],
+      adicional: ['', Validators.required],
+      cargaHoraria: ['', Validators.required],
+      tipoRevista: ['', Validators.required],
+      idPersona: ['', Validators.required],
+      profesion: ['', Validators.required],
+      hospitalUdo: ['', Validators.required],
+      tipoEfector: [null, Validators.required],
+      efectores: [null, Validators.required],
+      hospitalEfectores: ['', Validators.required],
+      tipoEfectorCargo: [''],
+      hospitalEfectorCargo: [''],
+      efectoresAutoridad: [[]],
+      especialidades: [[]],
+      matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
+      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
+      esAutoridad: [false, Validators.required],
+      idCargo: [null],
+      idRegion: [null],
+      nroResolucion: [null],
+      nroDecreto: [null],
+      fechaResolucion: [null],
+      fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
+      fechaFinal: [{ value: '', disabled: true }],
+    tipoGuadias: [[]],
+      tipoHabilitacionesGuardias: [''],
+      habilitacionesGuardias: [[]],
+      hospitalHabilitacionesGuardias: ['', Validators.required],
+      habilitacionesGenerales: [[]],
+      
+      
+      
+    });
+  
+
+ // Inicializar udoOptions al principio del formulario
+ this.udoOptions = [];
+ this.efectorOptions = [];
+ this.loadInitialData(); // Inicialización básica para evitar errores
+
+
+// Si hay datos iniciales, configurar udoOptions
+if (this.initialData) {
+  const tipoUdoInicial = this.initialData.tipoUdo ??'';
+  const tipoEfectorInicial = this.initialData.tipoEfector ?? '';
+  console.log('Tipo UDO inicial:', tipoUdoInicial);
+  console.log('Tipo Efector inicial:', tipoEfectorInicial);
+
+  if (tipoUdoInicial === 'MINISTERIO') {
+    this.udoOptions = this.ministerios;
+  } else if (tipoUdoInicial === 'HOSPITAL') {
+    this.udoOptions = this.hospitales;
+  } else if (tipoUdoInicial === 'CAPS') {
+    this.udoOptions = this.caps;
+  }
+
+  if (tipoEfectorInicial === 'MINISTERIO') {
+    this.efectorOptions = this.ministerios;
+  } else if (tipoEfectorInicial === 'HOSPITAL') {
+    this.efectorOptions = this.hospitales;
+  } else if (tipoEfectorInicial === 'CAPS') {
+    this.efectorOptions = this.caps;
+  }
+
+  console.log('Opciones iniciales de UDO:', this.udoOptions);
+  console.log('Opciones iniciales de Efector:', this.efectorOptions);
+
+  const udoControl = this.legajoForm.get('udo');
+if (udoControl) {
+  if (this.udoOptions?.length > 0) {
+    udoControl.enable();
+    udoControl.setValue(this.initialData?.udo ?? null); // Establecer el valor inicial
+  } else {
+    udoControl.disable();
+  }
+}
+
+const efectorControl = this.legajoForm.get('udo');
+if (efectorControl) {
+  if (this.efectorOptions?.length > 0) {
+    efectorControl.enable();
+    efectorControl.setValue(this.initialData?.udo ?? null); // Establecer el valor inicial
+  } else {
+    efectorControl.disable();
+  }
+}
+
+
+
   // Llamo al servicio para obtener todos los tipos de cargo
   this.cargoService.list().subscribe((cargos: Cargo[]) => {
     this.cargos = cargos;
@@ -392,7 +486,20 @@ export class LegajoEditComponent implements OnInit {
           tipoGuardias: this.initialData.tipoGuardias ? this.initialData.tipoGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
           cargo: this.initialData.cargo?.id,
           region: this.initialData.region?.id,
+          tipoUdo: this.initialData.tipoUdo, 
+          udo: this.initialData.udo,
+          tipoEfector: this.initialData.tipoEfector,
+          
         }); 
+
+
+ // Llamar al método para manejar cambios en tipoUdo
+ this.onTipoUdoChange({ value: this.initialData.tipoUdo });
+}
+
+
+        //log para ver los datos cargados 
+        console.log('Datos cargados:', this.initialData);
         
               // Si la profesión ya está seleccionada, filtrar las especialidades
       const profesionId = this.initialData.profesion?.id;
@@ -475,6 +582,8 @@ export class LegajoEditComponent implements OnInit {
     this.listRegion();
 
 
+    this.tipoUdo = this.initialData?.tipoUdo ?? ''; // Asignar tipoUdo inicial
+    this.onTipoUdoChange({ value: this.tipoUdo });
 //-----Manejo de validaciones en Revista (categoria, cargaHoraria)-----
 
   this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
@@ -524,17 +633,49 @@ export class LegajoEditComponent implements OnInit {
   // Inicializar el estado de los campos al cargar la página
   this.onAutoridadChange(this.legajoForm.get('esAutoridad')?.value);
 
+ 
+
 }
+
+
+// Cargar datos iniciales
+private loadInitialData(): void {
+  this.listMinisterios();
+  this.listHospitales();
+  
+
+  // Esperar a que las listas se carguen y configurar tipoUdo
+  forkJoin({
+    ministerios: this.ministerioService.list(),
+    hospitales: this.hospitalService.list(),
+  
+  }).subscribe(({ ministerios, hospitales }: { ministerios: Ministerio[], hospitales: Hospital[] }) => {
+    this.ministerios = ministerios;
+    this.hospitales = hospitales;
+  
+
+    console.log('Listas cargadas:');
+    console.log('Ministerios:', this.ministerios);
+    console.log('Hospitales:', this.hospitales);
+   
+
+    const tipoUdoInicial = this.initialData?.tipoUdo || '';
+    const tipoEfectorInicial = this.initialData?.tipoEfector || '';
+    this.onTipoUdoChange({ value: tipoUdoInicial });
+    this.onTipoEfectorChange({ value: tipoEfectorInicial });
+  });
+}
+
 
 //------LISTAS--------
 
-  listMinisterios(): void {
-    this.ministerioService.list().subscribe(data => {
-      this.ministerios = data;
-    }, error => {
-      console.log(error);
-    });
-  }
+listMinisterios(): void {
+  // Asegúrate de que este servicio retorne los ministerios correctamente
+  this.ministerioService.list().subscribe((ministerios) => {
+    this.ministerios = ministerios;
+  });
+  
+}
 
   listHospitales(): void {
     this.hospitalService.list().subscribe(data => {
@@ -543,6 +684,7 @@ export class LegajoEditComponent implements OnInit {
       console.log(error);
     });
   }
+  
 
 
   listProfesiones(): void {
@@ -710,29 +852,31 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  // Método para cambiar las opciones de la selección de UDO
+  // Manejar cambios en tipoUdo
   onTipoUdoChange(event: any): void {
     const tipoUdo = event.value;
     this.tipoUdo = tipoUdo;
-
-    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoUdo === 1) { // Ministerio
+    console.log('Tipo UDO seleccionado:', tipoUdo);
+    
+  
+    if (tipoUdo === 'MINISTERIO') {
       this.udoOptions = this.ministerios;
-    } else if (tipoUdo === 2) { // Hospital
+    } else if (tipoUdo === 'HOSPITAL') {
       this.udoOptions = this.hospitales;
-    } else if (tipoUdo === 3) { // CAPS
+    } else if (tipoUdo === 'CAPS') {
       this.udoOptions = this.caps;
     }
-
-    // Habilitar el select de UDO después de haber elegido un tipo de efector
+  
     const udoControl = this.legajoForm.get('udo');
     if (udoControl) {
       udoControl.enable(); // Habilitar el select de UDO
     }
 
-    // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
-    this.legajoForm.get('hospitalUdo')?.reset();
-    this.legajoForm.get('udo')?.reset();
+      // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+      this.legajoForm.get('hospitalUdo')?.reset();
+      this.legajoForm.get('udo')?.reset();
+  
+    console.log('Opciones UDO:', this.udoOptions);
   }
 
   // Cargar CAPS correspondientes al hospital seleccionado
@@ -761,14 +905,15 @@ export class LegajoEditComponent implements OnInit {
   onTipoEfectorChange(event: any): void {
     const tipoEfector = event.value;
     this.tipoEfector = tipoEfector;
+    console.log('Tipo efector seleccionado:', tipoEfector);
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoEfector === 1) { // Ministerio
+    if (tipoEfector === 'MINISTERIO') { // Ministerio
       this.efectorOptions = this.ministerios;
-    } else if (tipoEfector === 2) { // Hospital
+    } else if (tipoEfector === 'HOSPITAL') { // Hospital
       this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoEfector === 3) { // CAPS
-      this.efectorOptions = this.caps;  // Opciones específicas para CAPS
+    } else if (tipoEfector === 'CAPS') { // CAPS
+      this.efectorOptions = this.caps;
     }
 
     // Habilitar el select de efector después de haber elegido un tipo de efector
@@ -777,11 +922,12 @@ export class LegajoEditComponent implements OnInit {
       efectorControl.enable(); // Habilitar el select de efector
     }
 
-    // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
-    this.legajoForm.get('hospitalEfectores')?.reset();
-    this.legajoForm.get('efectores')?.reset();
-  }
-
+      // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+      this.legajoForm.get('hospitalEfector')?.reset();
+      this.legajoForm.get('efectores')?.reset();
+  
+  console.log('Opciones de efector:', this.efectorOptions);
+}
   // Método para cargar los CAPS correspondientes al hospital seleccionado
   onHospitalEfectorChange(event: any): void {
     const hospitalId = event.value;
@@ -1433,6 +1579,7 @@ if (legajoData.tipoGuardias &&
           console.error("Error al guardar los permisos de efectores", error);
         }
       );
+      
     }
 
   //-----Manejo de paneles-----
@@ -1481,7 +1628,12 @@ if (legajoData.tipoGuardias &&
 
     cerrarPanel() {
       this.step = -1;
+      console.log('Tipo Udo:', this.legajoForm.get('tipoUdo')?.value);
+      console.log('Tipo Efector:', this.legajoForm.get('tipoEfector')?.value);
+      console.log('Udo:', this.legajoForm.get('udo')?.value);
+      
     }
+  
 
 }
 

@@ -20,9 +20,10 @@ export class LegajoDto {
     nroResolucion?: string;  // solo para autoridad
     nroDecreto?: string; // solo para autoridad
     fechaResolucion?: string;  // solo para autoridad
-    fechaBajaSistema?: string;  // esto lo carga el back
     tipoEfector?: string;
     tipoUdo?: string;
+    fechaBajaSistema?: string;  // esto lo carga el back
+    
   
     constructor(
       fechaInicio: Date | null,
@@ -48,9 +49,10 @@ export class LegajoDto {
       nroResolucion?: string,  // solo para autoridad
       nroDecreto?: string, // solo para autoridad
       fechaResolucion?: string,  // solo para autoridad
-      fechaBajaSistema?: string,  // esto lo carga el back  
       tipoEfector?: string,
-      tipoUdo?: string
+      tipoUdo?: string,
+      fechaBajaSistema?: string,  // esto lo carga el back  
+    
     ) {
       this.fechaInicio = fechaInicio;
       this.fechaFinal = fechaFinal ?? null;
@@ -73,9 +75,10 @@ export class LegajoDto {
       this.nroResolucion = nroResolucion ?? undefined;
       this.nroDecreto = nroDecreto ?? undefined;
       this.fechaResolucion = fechaResolucion ?? undefined;
-      this.fechaBajaSistema = fechaBajaSistema ?? undefined;
       this.tipoEfector = tipoEfector ?? undefined;
       this.tipoUdo = tipoUdo ?? undefined
+      this.fechaBajaSistema = fechaBajaSistema ?? undefined;
+      
     }
   }
   

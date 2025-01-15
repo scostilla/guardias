@@ -1,12 +1,12 @@
-import { Profesion } from './Profesion';
-import { Person } from './Person';
+import { Cargo } from './Cargo';
 import { Efector } from './Efector';
-import { Revista } from './Revista';
 import { Especialidad } from './Especialidad';
+import { Person } from './Person';
+import { Profesion } from './Profesion';
+import { Region } from './Region';
+import { Revista } from './Revista';
 import { Suspension } from './Suspension';
 import { TipoGuardia } from './TipoGuardia';
-import { Cargo } from './Cargo';
-import { Region } from './Region';
 
 
 export class Legajo {
@@ -32,9 +32,10 @@ export class Legajo {
     nroResolucion?: string;
     nroDecreto?: string;
     fechaResolucion?: string;
-    fechaBajaSistema?: string;
     tipoEfector?: string;
     tipoUdo?: string;
+    fechaBajaSistema?: string;
+   
     
     constructor(
         fechaInicio: Date | null,
@@ -60,9 +61,10 @@ export class Legajo {
         nroResolucion?: string,
         nroDecreto?: string,
         fechaResolucion?: string,
-        fechaBajaSistema?: string,
         tipoEfector?: string,
-        tipoUdo?: string
+        tipoUdo?: string,
+        fechaBajaSistema?: string
+      
         ) {
         
         this.fechaInicio = fechaInicio;
@@ -86,9 +88,10 @@ export class Legajo {
         this.nroResolucion = nroResolucion;
         this.nroDecreto = nroDecreto;
         this.fechaResolucion = fechaResolucion;
-        this.fechaBajaSistema = fechaBajaSistema;
         this.tipoEfector = tipoEfector;
         this.tipoUdo = tipoUdo;
+        this.fechaBajaSistema = fechaBajaSistema;
+    
     }
 
   }
