@@ -23,10 +23,13 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ActivatedRoute } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+
 
 interface ClasesNovedad {
   Compensatorio: string;
-  'L.A.O.': string;
+  'Licencia anual ordinaria': string;
   Maternidad: string;
   'Parte de enfermo': string;
   'Familiar enfermo': string;
@@ -36,7 +39,7 @@ interface ClasesNovedad {
 
 const clases: ClasesNovedad = {
   Compensatorio: 'novedad-personal-compensatorio',
-  'L.A.O.': 'novedad-personal-lao',
+  'Licencia anual ordinaria': 'novedad-personal-lao',
   Maternidad: 'novedad-personal-maternidad',
   'Parte de enfermo': 'novedad-personal-parte-enfermo',
   'Familiar enfermo': 'novedad-personal-familiar-enfermo',
@@ -77,6 +80,10 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   selectedHospitalNombre: string = '';
   botonDph = true;
   revisandoDPH: boolean = false;
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  private efectorIdSubscription!: Subscription;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -85,6 +92,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
+    private efectorService: EfectorService,
     private route: ActivatedRoute
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -111,6 +119,25 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
 
     this.obtenerParametroRuta();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+
+  }
+
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
   }
 
   obtenerParametroRuta(){
@@ -171,7 +198,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.selectedHospitalId;
+    const idEfector = this.efectorId;
     
     console.log("id del efector que se usa para cargar reg mensuales"+ idEfector);
 
@@ -375,7 +402,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       if (tipoGuardia.id === 1) {
         return '#91A8DA'; // Color para CARGO
       } else if (tipoGuardia.id === 2) {
-        return '#F4AF88'; // Color para REAGRUPACION DE HS
+        return '#eb7430'; // Color para REAGRUPACION DE HS
       }
     }
     return ''; // Color por defecto
@@ -396,7 +423,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       if (tipoGuardia.id === 1) {
         return '#91A8DA'; // Color para CARGO
       } else if (tipoGuardia.id === 2) {
-        return '#F4AF88'; // Color para REAGRUPACION DE HS
+        return '#eb7430'; // Color para REAGRUPACION DE HS
       }
     }
     return ''; // Color por defecto
@@ -615,6 +642,7 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
+    this.efectorIdSubscription?.unsubscribe();
   }
 
 }
