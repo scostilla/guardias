@@ -365,7 +365,7 @@ export class LegajoEditComponent implements OnInit {
       fechaResolucion: [null],
       fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
       fechaFinal: [{ value: '', disabled: true }],
-    tipoGuadias: [[]],
+      tipoGuardias: [[]], 
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: ['', Validators.required],
@@ -492,6 +492,8 @@ if (efectorControl) {
           
         }); 
 
+        
+
 
  // Llamar al método para manejar cambios en tipoUdo
  this.onTipoUdoChange({ value: this.initialData.tipoUdo });
@@ -500,6 +502,8 @@ if (efectorControl) {
 
         //log para ver los datos cargados 
         console.log('Datos cargados:', this.initialData);
+
+        console.log('tipo guardias cargadas:', this.initialData.tipoGuardias);
         
               // Si la profesión ya está seleccionada, filtrar las especialidades
       const profesionId = this.initialData.profesion?.id;
@@ -528,6 +532,9 @@ if (efectorControl) {
     
     // Suscribirse a cambios en la selección de tipo de guardia
     this.legajoForm.get('tipoGuardias')?.valueChanges.subscribe((selectedValues) => {
+
+      if (selectedValues) { // Asegurarse de que no sea null
+        this.toggleSituacionRevista(selectedValues);
       // Evitar que el valor de tipoGuardias se actualice automáticamente cuando se cambia el tipo 4 o 5
       if (!this.isUpdatingTipoGuardias) {
         this.isUpdatingTipoGuardias = true;
@@ -552,6 +559,7 @@ if (efectorControl) {
         }
         this.isUpdatingTipoGuardias = false;
       }
+    }
     });
 
         // Llamar al método para configurar cargaHoraria y adicional
