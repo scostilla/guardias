@@ -23,10 +23,12 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
 
 interface ClasesNovedad {
   Compensatorio: string;
-  'L.A.O.': string;
+  'Licencia anual ordinaria': string;
   Maternidad: string;
   'Parte de enfermo': string;
   'Familiar enfermo': string;
@@ -36,7 +38,7 @@ interface ClasesNovedad {
 
 const clases: ClasesNovedad = {
   Compensatorio: 'novedad-personal-compensatorio',
-  'L.A.O.': 'novedad-personal-lao',
+  'Licencia anual ordinaria': 'novedad-personal-lao',
   Maternidad: 'novedad-personal-maternidad',
   'Parte de enfermo': 'novedad-personal-parte-enfermo',
   'Familiar enfermo': 'novedad-personal-familiar-enfermo',
@@ -71,13 +73,16 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   selectedMonth: number = moment().month();
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
-  years: number[] = [2023, 2024];
+  years: number[] = [2023, 2024, 2025];
 
   selectedHospitalId: number | null = null;
   selectedHospitalNombre: string = '';
   botonDph = true;
   revisandoDPH: boolean = false;
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
 
+  private efectorIdSubscription!: Subscription;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -86,6 +91,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
+    private efectorService: EfectorService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -113,6 +119,24 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     });
 
     this.obtenerParametroRuta();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+  }
+
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
   }
 
   obtenerParametroRuta(){
@@ -141,7 +165,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.selectedHospitalId;
+    const idEfector = this.efectorId;
   
     if (idEfector === null) {
       console.error("El ID del hospital no puede ser null");
@@ -603,6 +627,7 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
+    this.efectorIdSubscription?.unsubscribe();
   }
 
 }

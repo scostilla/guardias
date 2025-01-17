@@ -7,6 +7,10 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Person } from 'src/app/models/Configuracion/Person';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-asistencial-selector',
@@ -23,10 +27,16 @@ export class AsistencialSelectorComponent implements OnInit {
   displayedColumns: string[] = ['apellido', 'nombre', 'cuil'];
   selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  private efectorIdSubscription!: Subscription;
+
   constructor(
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
     public dialogRef: MatDialogRef<AsistencialSelectorComponent>,
+    private efectorService: EfectorService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -50,6 +60,8 @@ export class AsistencialSelectorComponent implements OnInit {
     /* this.asistencialService.list().subscribe(data => {
       this.dataSource.data = data;
     }); */
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
   }
 
   // Método que se ejecuta al cambiar entre Asistencial y NoAsistencial
@@ -68,6 +80,22 @@ export class AsistencialSelectorComponent implements OnInit {
       this.noAsistencialService.list().subscribe(data => {
         this.dataSource.data = data;
       });
+    }
+  }
+  
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.efectorService.getEfectorTipo(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
   }
 
@@ -100,4 +128,8 @@ export class AsistencialSelectorComponent implements OnInit {
   cerrar(): void {
     this.dialogRef.close();
   }
+
+  ngOnDestroy(): void {
+    this.efectorIdSubscription?.unsubscribe();
+  }  
 }

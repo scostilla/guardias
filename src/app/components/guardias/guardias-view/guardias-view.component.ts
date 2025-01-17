@@ -5,6 +5,10 @@ import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import * as moment from 'moment';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-guardias-view',
@@ -22,11 +26,16 @@ export class GuardiasViewComponent {
   extraButtonDisabled: boolean = true;
   cargoAgrupButtonDisabled: boolean = true;
   contraFacturaButtonDisabled: boolean = true;
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  private efectorIdSubscription!: Subscription;
 
   constructor(
     private hospitalService: HospitalService,
     private http: HttpClient,
     private router: Router,
+    private efectorService: EfectorService,
     private registroActividadService: RegistroActividadService
   ) {
   }
@@ -36,6 +45,8 @@ export class GuardiasViewComponent {
     this.fechaActual = moment().format('dddd, D [de] MMMM [de] YYYY');
     
     this.listHospitales();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
     
     this.http
       .get<any[]>('../assets/jsonFiles/servicios.json')
@@ -43,7 +54,22 @@ export class GuardiasViewComponent {
         this.services = data;
       });
   }
-  
+
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.efectorService.getEfectorTipo(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
+  }
 
   listHospitales(): void {
     this.hospitalService.list().subscribe(data => {
@@ -65,6 +91,10 @@ export class GuardiasViewComponent {
     console.log('#### hospital que se envía: #####'+this.selectedHospital);
     this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
   }
+
+  ngOnDestroy(): void {
+    this.efectorIdSubscription?.unsubscribe();
+  }  
 
   /*updateHospital() {
     if (this.services) {

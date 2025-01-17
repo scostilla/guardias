@@ -153,7 +153,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
   
-          // Log para mostrar el usuario y los efectores
+          // Log para mostrar el usuario
           console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
         },
         error => {
