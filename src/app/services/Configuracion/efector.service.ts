@@ -59,6 +59,11 @@ public update(id:number, efectores:Efector): Observable<any> {
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.efectoresURL + `delete/${id}`, {});
 }
+
+// Método para obtener el tipo de efector
+getEfectorTipo(id: number): Observable<any> {
+  return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
+}
   
   // Encriptar
   encrypt(text: string): string {

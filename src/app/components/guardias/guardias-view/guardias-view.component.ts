@@ -58,7 +58,7 @@ export class GuardiasViewComponent {
   //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
     if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
+      this.efectorService.getEfectorTipo(this.efectorId).subscribe(
         (efector: Efector) => {
           // traigo nombre del efector
           this.efectorNombre = efector.nombre;
