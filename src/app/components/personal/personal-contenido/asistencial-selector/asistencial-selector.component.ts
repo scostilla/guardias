@@ -27,6 +27,7 @@ export class AsistencialSelectorComponent implements OnInit {
   displayedColumns: string[] = ['apellido', 'nombre', 'cuil'];
   selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
+  suscription!: Subscription;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
@@ -73,11 +74,11 @@ export class AsistencialSelectorComponent implements OnInit {
   // Cargar la lista de asistenciales o noAsistenciales según el tipo
   loadDataByType(type: string): void {
     if (type === 'asistencial') {
-      this.asistencialService.list().subscribe(data => {
+      this.asistencialService.getAsistencialesByEfector(this.efectorId!).subscribe(data => { //falta cambiar el service para traer solo del efector correspondiente
         this.dataSource.data = data;
       });
     } else if (type === 'noAsistencial') {
-      this.noAsistencialService.list().subscribe(data => {
+      this.noAsistencialService.getByEfector(this.efectorId!).subscribe(data => {
         this.dataSource.data = data;
       });
     }
@@ -130,6 +131,7 @@ export class AsistencialSelectorComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
     this.efectorIdSubscription?.unsubscribe();
   }  
 }

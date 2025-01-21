@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -91,40 +91,11 @@ export class DistHorariaComponent {
     private fb: FormBuilder
   ) {
     this.guardiaForm = this.fb.group({
-      idPersona: ['', Validators.required],
-      tipoGuardia: ['', Validators.required],
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      idServicio: ['', Validators.required]
-    });
-
-    this.consultorioForm = this.fb.group({
-      idPersona: ['', Validators.required],
-      tipoConsultorio: ['', Validators.required],
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      idServicio: ['', Validators.required]
-    });
-
-    this.giraForm = this.fb.group({
-      idPersona: ['', Validators.required],
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      puestoSalud: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      destino: ['', Validators.required]
-    });
-
-    this.otroForm = this.fb.group({
-      idPersona: ['', Validators.required],
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      lugar: ['', Validators.required]
+      guardias: this.fb.array([]),
+      consultorios: this.fb.array([]),
+      giras: this.fb.array([]),
+      otros: this.fb.array([]),
+      vigencia: this.vigenciaForm
     });
 
     this.vigenciaForm = this.fb.group({
@@ -166,6 +137,76 @@ export class DistHorariaComponent {
     this.giraForm.valueChanges.subscribe(() => this.updateHorasStatus());
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
+
+  // Getter para acceder a cada array de formularios
+get guardias() {
+  return this.guardiaForm.get('guardias') as FormArray;
+}
+
+get consultorios() {
+  return this.guardiaForm.get('consultorios') as FormArray;
+}
+
+get giras() {
+  return this.guardiaForm.get('giras') as FormArray;
+}
+
+get otros() {
+  return this.guardiaForm.get('otros') as FormArray;
+}
+
+// Método para agregar un formulario de guardia
+agregarGuardia() {
+  const guardiaGroup = this.fb.group({
+    idPersona: ['', Validators.required],
+    tipoGuardia: ['', Validators.required],
+    dia: ['', Validators.required],
+    cantidadHoras: ['', Validators.required],
+    horaIngreso: ['', Validators.required],
+    idServicio: ['', Validators.required]
+  });
+  this.guardias.push(guardiaGroup);
+}
+
+// Método para agregar un formulario de consultorio
+agregarConsultorio() {
+  const consultorioGroup = this.fb.group({
+    idPersona: ['', Validators.required],
+    tipoConsultorio: ['', Validators.required],
+    dia: ['', Validators.required],
+    cantidadHoras: ['', Validators.required],
+    horaIngreso: ['', Validators.required],
+    idServicio: ['', Validators.required]
+  });
+  this.consultorios.push(consultorioGroup);
+}
+
+// Método para agregar un formulario de gira
+agregarGira() {
+  const giraGroup = this.fb.group({
+    idPersona: ['', Validators.required],
+    dia: ['', Validators.required],
+    cantidadHoras: ['', Validators.required],
+    horaIngreso: ['', Validators.required],
+    puestoSalud: ['', Validators.required],
+    descripcion: ['', Validators.required],
+    destino: ['', Validators.required]
+  });
+  this.giras.push(giraGroup);
+}
+
+// Método para agregar un formulario de otra actividad
+agregarOtro() {
+  const otroGroup = this.fb.group({
+    idPersona: ['', Validators.required],
+    dia: ['', Validators.required],
+    cantidadHoras: ['', Validators.required],
+    horaIngreso: ['', Validators.required],
+    descripcion: ['', Validators.required],
+    lugar: ['', Validators.required]
+  });
+  this.otros.push(otroGroup);
+}
 
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {

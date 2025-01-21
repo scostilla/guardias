@@ -61,7 +61,9 @@ export class GuardiasViewComponent {
       this.efectorService.getEfectorTipo(this.efectorId).subscribe(
         (efector: Efector) => {
           // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
+          console.log('Efector recibido:', efector);  // Log para verificar el objeto efector recibido
+          this.efectorNombre = efector.nombre;  // Asigna el nombre del efector a la variable
+          console.log('Nombre del efector:', this.efectorNombre);  // Log para verificar el nombre del efector
         },
         (error) => {
           console.error('Error al obtener el efector:', error);

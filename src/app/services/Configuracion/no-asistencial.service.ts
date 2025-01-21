@@ -83,7 +83,7 @@ export class NoAsistencialService {
     return bytes.toString(CryptoJS.enc.Utf8);
   }
 
-  public getNoAsistencialesByEfector(idEfector: number): Observable<NoAsistencial[]> {
-    return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + `listByEfector/${idEfector}`);
+  getByEfector(idEfector: number): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.noasistencialesURL}listByEfector/${idEfector}`);
   }
 }
