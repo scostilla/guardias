@@ -35,8 +35,12 @@ export class AsistencialService {
   }
 
   // Lista Asistenciales por Efector
-  getAsistencialesByEfector(idEfector: number): Observable<AsistencialEfectorDto[]> {
+  /*getByEfector(idEfector: number): Observable<AsistencialEfectorDto[]> {
     return this.httpClient.get<AsistencialEfectorDto[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
+  }*/
+
+  getByEfector(idEfector: number): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
   }
 
   public listByUdoAndTipoGuardia(idUdo: number): Observable<AsistencialDto[]> {
