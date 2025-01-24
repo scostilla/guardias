@@ -1,3 +1,5 @@
+import { Legajo } from "src/app/models/Configuracion/Legajo";
+
 export class AsistencialEfectorDto {
     id: number;
     nombre: string;
@@ -11,6 +13,7 @@ export class AsistencialEfectorDto {
     domicilio: string | null;
     esAsistencial: boolean | null;
     activo: boolean;
+    idLegajos: Legajo[];
   
     constructor(
       id: number,
@@ -24,7 +27,8 @@ export class AsistencialEfectorDto {
       email: string | null,
       domicilio: string | null,
       esAsistencial: boolean | null,
-      activo: boolean
+      activo: boolean,
+      idLegajos: Legajo[],
     ) {
       this.id = id;
       this.nombre = nombre;
@@ -38,5 +42,6 @@ export class AsistencialEfectorDto {
       this.domicilio = domicilio;
       this.esAsistencial = esAsistencial;
       this.activo = activo;
+      this.idLegajos = idLegajos
     }
 }

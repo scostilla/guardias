@@ -54,4 +54,24 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.distribucionGuardiasURL + `delete/${id}`, {});
 }
 
+// Verificar si existe distribución para un efector
+getDistribucionesByEfector(idEfector: number): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailefector/${idEfector}`);
+}
+
+// Verificar si existe distribución para una persona
+getDistribucionesByPersona(idPersona: number): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailpersona/${idPersona}`);
+}
+
+// Verificar si existe una distribución
+existDistribucion(dia: string, fecha: string, idAsistencial: number, idEfector: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.distribucionGuardiasURL}existDistribucion/${dia}/${fecha}/${idAsistencial}/${idEfector}`);
+}
+
+// Verificar si es guardia en una fecha específica
+esGuardia(dia: string, fecha: string, idAsistencial: number, idEfector: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.distribucionGuardiasURL}esGuardia/${dia}/${fecha}/${idAsistencial}/${idEfector}`);
+}
+
 }

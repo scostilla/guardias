@@ -24,14 +24,25 @@ export class DistribucionGiraService {
       return this.httpClient.get<DistribucionGira[]>(this.distribucionGirasURL + 'list');
   }
 
-  public detail(id:number): Observable<DistribucionGira> {
-      return this.httpClient.get<DistribucionGira>(this.distribucionGirasURL + `detail/${id}`);
+  // Obtener distribuciones por fecha de inicio
+  getDistribucionesByFechaInicio(fechaInicio: string): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}list/${fechaInicio}`);
   }
 
-  public detailnombre(nombre:string): Observable<DistribucionGira> {
-    return this.httpClient.get<DistribucionGira>(this.distribucionGirasURL + `detailnombre/${nombre}`);
-}
+  // Obtener detalle de una distribución por ID
+  getDistribucionById(id: number): Observable<DistribucionGira> {
+    return this.httpClient.get<DistribucionGira>(`${this.distribucionGirasURL}detail/${id}`);
+  }
 
+  // Obtener distribuciones por ID de Efector
+  getDistribucionesByEfector(idEfector: number): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}detailefector/${idEfector}`);
+  }
+
+  // Obtener distribuciones por ID de Persona
+  getDistribucionesByPersona(idPersona: number): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}detailpersona/${idPersona}`);
+  }
 public save(distribucionGiraes:DistribucionGiraDto): Observable<any> {
   return this.httpClient.post<any>(this.distribucionGirasURL + 'create', distribucionGiraes)
   .pipe(

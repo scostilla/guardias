@@ -6,6 +6,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
@@ -37,7 +38,7 @@ import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionCon
 export class DistHorariaComponent {
 
   inputValue: string = '';
-  selectedAsistencial?: Asistencial;
+  selectedAsistencial?: AsistencialEfectorDto;
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
@@ -181,7 +182,7 @@ export class DistHorariaComponent {
         this.idEfector = undefined; // Asegurarse de que idEfector esté vacío también
   
         // Filtrar legajos activos y que no sean autoridades
-        const legajosActivos = result.legajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
+        const legajosActivos = result.idLegajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
           legajo.activo === true && legajo.esAutoridad === false
         );
   
