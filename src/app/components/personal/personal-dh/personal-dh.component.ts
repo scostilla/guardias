@@ -28,7 +28,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   asistencial: Asistencial | null = null;
   distribuciones: DistribucionGuardiaWithHoras[] = [];
-  displayedColumns: string[] = ['tipoGuardia'];  // Inicia solo con la columna Tipo
+  displayedColumns: string[] = [];
   novedadesPersonales: NovedadPersonal[] = [];
 
   // Variables para el selector de mes y año
@@ -192,19 +192,19 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     return ocurrenciasPorDia;
   }
       
-  setupColumns(): void {
+ setupColumns(): void {
     if (!this.distribuciones.length) return;
     const fechaInicio = this.distribuciones[0].fechaInicio;
     const startOfMonth = moment(fechaInicio).startOf('month');
     const endOfMonth = moment(fechaInicio).endOf('month');
     const daysInMonth = endOfMonth.diff(startOfMonth, 'days') + 1;
-    const columns: string[] = ['tipoGuardia', 'totalHorasFinDeSemana', 'totalHorasLunesAViernes', 'totalHoras'];
+    const columns: string[] = ['clase', 'totalHoras', 'totalHorasFinDeSemana', 'totalHorasLunesAViernes'];
 
     for (let i = 0; i < daysInMonth; i++) {
       columns.push(startOfMonth.clone().add(i, 'days').format('YYYY_MM_DD'));
     }
 
-    this.displayedColumns = columns;
+    this.displayedColumns = columns; // Se actualiza aquí
   }
 
   getFechaFromColumnId(columnId: string): string {

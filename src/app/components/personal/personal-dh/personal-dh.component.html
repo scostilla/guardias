@@ -13,10 +13,18 @@
 
 <table mat-table [dataSource]="distribuciones" class="mat-elevation-z8" matSort>
   <!-- Columna Tipo -->
-  <ng-container matColumnDef="tipoGuardia">
+  <ng-container matColumnDef="clase">
     <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Clase</th>
     <td mat-cell *matCellDef="let distribucion">
-      Guardias
+      {{ distribucion.clase }}
+    </td>
+  </ng-container>
+
+  <!-- Columna Total Horas (suma de los dos anteriores) -->
+  <ng-container matColumnDef="totalHoras">
+    <th mat-header-cell *matHeaderCellDef class="negrita">Total</th>
+    <td mat-cell *matCellDef="let distribucion">
+      {{ distribucion.totalHoras }} horas
     </td>
   </ng-container>
 
@@ -36,31 +44,23 @@
     </td>
   </ng-container>
 
-  <!-- Columna Total Horas (suma de los dos anteriores) -->
-  <ng-container matColumnDef="totalHoras">
-    <th mat-header-cell *matHeaderCellDef class="negrita">Total</th>
-    <td mat-cell *matCellDef="let distribucion">
-      {{ distribucion.totalHoras }} horas
+  <!-- Columnas de fecha (una por cada día del mes) -->
+  <ng-container *ngFor="let fechaColumna of displayedColumns.slice(4)" [matColumnDef]="fechaColumna">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">
+      {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
+    </th>
+    <td mat-cell *matCellDef="let distribucion" 
+        [ngClass]="getNovedadClass(getFechaFromColumnId(fechaColumna) || '')"
+        [matTooltip]="getNovedadTooltip(getFechaFromColumnId(fechaColumna) || '')">
+      <ng-container *ngFor="let entry of getHorasForDate(distribucion, fechaColumna); let i = index">
+        <span [matTooltip]="entry.tooltip" matTooltipPosition="right">
+          {{ entry.horas }}
+        </span>
+        <span *ngIf="i < getHorasForDate(distribucion, fechaColumna).length - 1">; </span> <!-- Agregar punto y coma si no es el último -->
+      </ng-container>
     </td>
   </ng-container>
 
-  <!-- Columnas de fecha (una por cada día del mes) -->
-<ng-container *ngFor="let fechaColumna of displayedColumns.slice(4)" [matColumnDef]="fechaColumna">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">
-    {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
-  </th>
-  <td mat-cell *matCellDef="let distribucion" 
-      [ngClass]="getNovedadClass(getFechaFromColumnId(fechaColumna) || '')"
-      [matTooltip]="getNovedadTooltip(getFechaFromColumnId(fechaColumna) || '')">
-    <ng-container *ngFor="let entry of getHorasForDate(distribucion, fechaColumna); let i = index">
-      <span [matTooltip]="entry.tooltip" matTooltipPosition="right">
-        {{ entry.horas }}
-      </span>
-      <span *ngIf="i < getHorasForDate(distribucion, fechaColumna).length - 1">; </span> <!-- Agregar punto y coma si no es el último -->
-    </ng-container>
-  </td>
-</ng-container>
-      
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
