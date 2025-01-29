@@ -342,10 +342,10 @@
 
             <mat-form-field  appearance="fill" >
               <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
-              <mat-select formControlName="udo">
-                <mat-option *ngFor="let udo of udoOptions" [value]="udo">{{ udo.nombre }}</mat-option>
+              <mat-select formControlName="udoSelected">
+                <mat-option *ngFor="let udoIter of udoOptions" [value]="udoIter.id">{{udoIter.nombre }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('udoSelected')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
             </mat-form-field>
                         
             <!--<mat-form-field appearance="fill">
@@ -383,10 +383,10 @@
             
             <mat-form-field appearance="fill">
               <mat-label>Efector (lugar de trabajo)</mat-label>
-              <mat-select formControlName="efectores">
-                <mat-option *ngFor="let efector of efectorOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              <mat-select formControlName="efectoresSelected">
+                <mat-option *ngFor="let efector of efectorOptions" [value]="efector.id">{{efector.nombre }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="legajoForm.get('efectores')?.errors?.['required']">El efector es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('efectoresSelected')?.errors?.['required']">El efector es requerido.</mat-error>
             </mat-form-field>
 
             <mat-action-row>
