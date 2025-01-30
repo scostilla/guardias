@@ -50,6 +50,7 @@ import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 
 import { forkJoin } from 'rxjs';
+import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 
@@ -193,7 +194,7 @@ export class LegajoEditComponent implements OnInit {
       udoSelected: [null, Validators.required],
       hospitalUdo: [''],
       tipoEfector: [null, Validators.required],
-      efectoresSelected: [[], Validators.required],
+      efectoresSelected: [[]],
       hospitalEfectores: [''],
       tipoEfectorCargo: [''],
       hospitalEfectorCargo: [''],
@@ -348,7 +349,7 @@ export class LegajoEditComponent implements OnInit {
       profesion: ['', Validators.required],
       hospitalUdo: [''],
       tipoEfector: [null, Validators.required],
-      efectoresSelected: [[null], Validators.required],
+      efectoresSelected: [[]],
       hospitalEfectores: [''],
       tipoEfectorCargo: [''],
       hospitalEfectorCargo: [''],
@@ -479,9 +480,10 @@ console.log('¿Incluye WENCESLAO GALLARDO?', this.udoOptions.some(udo => udo.nom
         // Carga los datos del formulario
         this.legajoForm.patchValue({
           ...this.initialData,
-          efectoresSelected: this.initialData?.efectores 
+         /*  efectoresSelected: this.initialData?.efectores 
           ? this.initialData.efectores.map((efector: any) => efector.id) 
-          : [], 
+          : [],  */
+          efectoresSelected: this.initialData?.efectores ? this.initialData.efectores[0].id : 0,
           profesion: this.initialData.profesion?.id,  // Asegúrate de que se asigne el ID de la profesión
           especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
           adicional: this.initialData.revista?.adicional?.id,  // Cargar adicional del objeto 'Revista'
@@ -702,9 +704,10 @@ private loadInitialData(): void {
       console.log('efectores selected:', this.initialData?.efectores ? this.initialData.efectores[0].id : 0,)
       console.log('Udo cargada:? ', this.initialData?.udo?.id);
       this.legajoForm.patchValue({
-        efectoresSelected: this.initialData?.efectores 
+        /* efectoresSelected: this.initialData?.efectores 
         ? this.initialData.efectores.map((efector: any) => efector.id) 
-        : [],
+        : [], */
+        efectoresSelected: this.initialData?.efectores ? this.initialData.efectores[0].id : 0,
         tipoGuardias: this.initialData?.tipoGuardias?.map((tipo: any) => tipo.id) || [],
         cargaHoraria: this.initialData?.revista?.cargaHoraria?.id || null,
         adicional: this.initialData?.revista?.adicional?.id || null,
@@ -1450,9 +1453,7 @@ listMinisterios(): void {
 
     if (this.legajoForm.valid) {
         const legajoData = this.legajoForm.value;
-        const efectoresSelected = Array.isArray(legajoData.efectoresSelected)
-  ? legajoData.efectoresSelected
-  : [];
+       
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || []; // Si es null o undefined, asigna un array vacío
     const tiposGuardiaExcluidos = [this.idContraFactura, this.idPasiva];
@@ -1551,6 +1552,11 @@ listMinisterios(): void {
   // Determinar si esRegional basado en el cargo
     const esRegional = legajoData.idCargo === this.idDirectorRegional ? true : false;
 console.log('legajo data', legajoData);
+
+const efectoresSelected = Array.isArray(legajoData.efectoresSelected)
+  ? legajoData.efectoresSelected
+  : legajoData.efectoresSelected ? [legajoData.efectoresSelected] : [];
+  console.log('efectoresSelected', efectoresSelected);
       const legajoDto = new LegajoDto(
         legajoData.fechaInicio,
         esAutoridad,
@@ -1564,7 +1570,7 @@ console.log('legajo data', legajoData);
         null, //motivoBaja
         revistaId,
         legajoData.udoSelected ?? null,
-        legajoData.efectoresSelected ?? null,
+        efectoresSelected,
         legajoData.especialidades ??  null,
         legajoData.profesion,
         legajoData.tipoGuardias ??  null,
@@ -1607,7 +1613,7 @@ if (legajoData.tipoGuardias &&
       );
     } else {
       // Para otros casos, llamar al método de habilitaciones generales
-     /*  this.saveHabilitacionesGenerales(legajoData); */
+      this.saveHabilitacionesGenerales(legajoData); 
     }
     
       // Guardar el legajo sin la parte de revista si no corresponde
@@ -1656,7 +1662,7 @@ if (legajoData.tipoGuardias &&
       );
     }
 
-   /*  saveHabilitacionesGenerales(legajoData: any): void {
+    saveHabilitacionesGenerales(legajoData: any): void {
       // Crear el objeto HabilitacionesGuardiasDto
       const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
         true, // activo
@@ -1674,7 +1680,7 @@ if (legajoData.tipoGuardias &&
         }
       );
       
-    } */
+    } 
 
   //-----Manejo de paneles-----
 
