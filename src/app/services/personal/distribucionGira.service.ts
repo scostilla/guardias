@@ -40,7 +40,7 @@ export class DistribucionGiraService {
   }
 
   // Obtener distribuciones por ID de Persona
-  getDistribucionesByPersona(idPersona: number): Observable<DistribucionGira[]> {
+  getDistribucionesGiraByPersona(idPersona: number): Observable<DistribucionGira[]> {
     return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}detailpersona/${idPersona}`);
   }
 public save(distribucionGiraes:DistribucionGiraDto): Observable<any> {

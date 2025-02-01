@@ -60,7 +60,7 @@ getDistribucionesByEfector(idEfector: number): Observable<DistribucionGuardia[]>
 }
 
 // Verificar si existe distribución para una persona
-getDistribucionesByPersona(idPersona: number): Observable<DistribucionGuardia[]> {
+getDistribucionesGuardiaByPersona(idPersona: number): Observable<DistribucionGuardia[]> {
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailpersona/${idPersona}`);
 }
 

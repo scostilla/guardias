@@ -39,7 +39,7 @@ export class DistribucionOtroService {
   }
 
   // Obtener distribuciones por ID de Persona
-  getDistribucionesByPersona(idPersona: number): Observable<DistribucionOtro[]> {
+  getDistribucionesOtroByPersona(idPersona: number): Observable<DistribucionOtro[]> {
     return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}detailpersona/${idPersona}`);
   }
 
