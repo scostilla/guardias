@@ -198,6 +198,8 @@
               <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final">
               <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
               <mat-datepicker #pickerFinal></mat-datepicker>
+              <mat-error *ngIf="legajoForm.hasError('fechaInvalida')" class="text-danger">
+                La fecha final no puede ser menor que la fecha de inicio.</mat-error>
             </mat-form-field>
             </div>
 

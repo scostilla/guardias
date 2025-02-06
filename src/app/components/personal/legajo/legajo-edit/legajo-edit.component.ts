@@ -208,39 +208,15 @@ export class LegajoEditComponent implements OnInit {
       nroResolucion: [null],
       nroDecreto: [null],
       fechaResolucion: [null],
-      fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
-      fechaFinal: [{ value: '', disabled: true }],
+      fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
+  fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
       tipoGuardias: [[]],
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: ['', Validators.required],
       habilitacionesGenerales: [[]],
-    });
+    }, { validator: this.validarFechas });
 
-    //-----Manejo de fechas-----
-
-      this.maxDate = new Date();
-    
-      // Deshabilitar fechaFinal hasta que se seleccione fechaInicio
-      this.legajoForm.get('fechaFinal')?.disable();
-    
-      // Habilitar fechaFinal cuando fechaInicio tiene un valor
-      this.legajoForm.get('fechaInicio')?.valueChanges.subscribe(fechaInicio => {
-        if (fechaInicio) {
-          this.legajoForm.get('fechaFinal')?.enable();
-      
-          // valor mínimo de fechaFinal, día siguiente a fechaInicio
-          const fechaInicioDate = new Date(fechaInicio);
-          fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
-          this.minFechaFinal = fechaInicioDate;
-      
-          // Reseteo fechaFinal en caso se modifique fechaInicio
-          this.legajoForm.get('fechaFinal')?.setValue('');
-        } else {
-          this.legajoForm.get('fechaFinal')?.disable();
-          this.legajoForm.get('fechaFinal')?.setValue('');
-        }
-      });
 
     //-----Recibo el objeto para realizar posteriores verificaciones-----
 
@@ -292,8 +268,58 @@ export class LegajoEditComponent implements OnInit {
       this.location.back();
     }    */
   }
+  validarFechas(formGroup: FormGroup) {
+    const fechaInicio = formGroup.get('fechaInicio')?.value;
+    const fechaFinal = formGroup.get('fechaFinal')?.value;
+
+    if (fechaInicio && fechaFinal) {
+        const inicio = new Date(fechaInicio);
+        const final = new Date(fechaFinal);
+
+        // Si la fecha final no es al menos un día después de la fecha de inicio, retorna un error
+        if (final <= inicio) {
+            return { fechaInvalida: true };
+        }
+    }
+
+    return null;
+}
+
+
 
   ngOnInit(): void {
+    if (this.initialData?.fechaInicio) {
+      const fechaInicioDate = new Date(this.initialData.fechaInicio);
+      fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+      this.minFechaFinal = fechaInicioDate;
+    }
+    
+          this.maxDate = new Date();
+        
+          // Deshabilitar fechaFinal hasta que se seleccione fechaInicio
+          this.legajoForm.get('fechaFinal')?.enable();
+        
+          // Habilitar fechaFinal cuando fechaInicio tiene un valor
+          this.legajoForm.get('fechaInicio')?.valueChanges.subscribe(fechaInicio => {
+            if (fechaInicio) {
+                const fechaInicioDate = new Date(fechaInicio);
+                fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+        
+                // Establece la fecha mínima para fechaFinal
+                this.minFechaFinal = fechaInicioDate;
+        
+                // Si la fecha final es inválida, la actualiza
+                const fechaFinalControl = this.legajoForm.get('fechaFinal');
+                const fechaFinalActual = fechaFinalControl?.value ? new Date(fechaFinalControl.value) : null;
+        
+                if (!fechaFinalActual || fechaFinalActual <= fechaInicioDate) {
+                    fechaFinalControl?.setValue(fechaInicioDate);
+                }
+            } else {
+                this.legajoForm.get('fechaFinal')?.setValue('');
+            }
+        });
+          
   //Autentificación
   if (this.tokenService.getToken()) {
     this.isLogged = true;
@@ -363,17 +389,14 @@ export class LegajoEditComponent implements OnInit {
       nroResolucion: [null],
       nroDecreto: [null],
       fechaResolucion: [null],
-      fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
-      fechaFinal: [{ value: '', disabled: true }],
+      fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
+  fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
       tipoGuardias: [[]], 
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: [''],
       habilitacionesGenerales: [[]],
-      
-
-      
-    });
+    }, { validator: this.validarFechas });
 
 
  // Inicializar udoOptions al principio del formulario
@@ -498,8 +521,9 @@ console.log('¿Incluye WENCESLAO GALLARDO?', this.udoOptions.some(udo => udo.nom
           tipoEfector: this.initialData.tipoEfector,
           udoSelected: this.initialData.udo?.id,
           persona: this.initialData.persona?.id,
-          fechaInicio: this.initialData.fechaInicio ? new Date(this.initialData.fechaInicio) : null,
-          
+          //revisar el formato de fecha para el back para que tome el formato correcto de fecha y hora
+          fechaInicio: this.initialData.fechaInicio ? new Date(this.initialData.fechaInicio + 'T00:00:00') : null,
+          fechaFinal: this.initialData.fechaFinal ? new Date(this.initialData.fechaFinal + 'T00:00:00' ) : null,
         }); 
       
         console.log('Valores iniciales de tipoGuardias:', this.initialData.tipoGuardias);
@@ -853,6 +877,24 @@ listMinisterios(): void {
   //Form Datos profesional: Habilita la fecha minima para fechaFinalizacion
   onDateChange(event: MatDatepickerInputEvent<Date>) {
     const selectedDate = event.value;
+    const nuevaFechaInicio = event.value;
+  
+    // Puedes agregar más lógica si es necesario, por ejemplo:
+    if (nuevaFechaInicio) {
+      const fechaInicioDate = new Date(nuevaFechaInicio);
+      fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+  
+      // Establecer la fecha mínima para la fecha final
+      this.minFechaFinal = fechaInicioDate;
+  
+      // Si la fecha final es inválida, actualizarla
+      const fechaFinalControl = this.legajoForm.get('fechaFinal');
+      const fechaFinalActual = fechaFinalControl?.value ? new Date(fechaFinalControl.value) : null;
+  
+      if (!fechaFinalActual || fechaFinalActual <= fechaInicioDate) {
+        fechaFinalControl?.setValue(fechaInicioDate);
+      }
+    }
   }
 
   resetEspecialidades(): void {
