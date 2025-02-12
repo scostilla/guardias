@@ -1702,9 +1702,13 @@ if (legajoData.tipoGuardias &&
       // Crear el objeto HabilitacionesGuardiasDto
       const habilitacionesGuardiasDto = new HabilitacionesGuardiasDto(
         true, // activo
-        legajoData.idPersona = legajoData.persona?.id || null,
+        legajoData.idPersona,  // Verificamos `idPersona`
         legajoData.habilitacionesGuardias || null
       );
+
+      // Log para verificar el objeto que se enviará
+      console.log("Enviando DTO a /habilitacionesGuardias/create:", habilitacionesGuardiasDto);
+
     
       // Llamar al servicio para guardar los permisos de efectores
       this.habilitacionesGuardiasService.save(habilitacionesGuardiasDto).subscribe(
