@@ -511,6 +511,10 @@ mat-table {
   background-color: #D32916 !important;
 }
 
+.novedad-personal-otros {
+  background-color: #7eb0df !important;
+}
+
 .mat-cell,
 .mat-header-cell {
   word-wrap: initial;

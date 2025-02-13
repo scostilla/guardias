@@ -27,6 +27,7 @@ export class AsistencialSelectorComponent implements OnInit {
   displayedColumns: string[] = ['apellido', 'nombre', 'cuil'];
   selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
+  suscription!: Subscription;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
@@ -62,6 +63,9 @@ export class AsistencialSelectorComponent implements OnInit {
     }); */
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
+
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   // Método que se ejecuta al cambiar entre Asistencial y NoAsistencial
@@ -73,16 +77,20 @@ export class AsistencialSelectorComponent implements OnInit {
   // Cargar la lista de asistenciales o noAsistenciales según el tipo
   loadDataByType(type: string): void {
     if (type === 'asistencial') {
-      this.asistencialService.list().subscribe(data => {
-        this.dataSource.data = data;
+      this.asistencialService.getByEfector(this.efectorId!).subscribe(data => {
+        this.dataSource.data = data; // Asignar los datos a la fuente de datos
+        this.dataSource.paginator = this.paginator; // Asegurarse de que el paginator esté asignado
+        this.dataSource.sort = this.sort; // Asegurarse de que el sort esté asignado
       });
     } else if (type === 'noAsistencial') {
-      this.noAsistencialService.list().subscribe(data => {
-        this.dataSource.data = data;
+      this.noAsistencialService.getByEfector(this.efectorId!).subscribe(data => {
+        this.dataSource.data = data; // Asignar los datos a la fuente de datos
+        this.dataSource.paginator = this.paginator; // Asegurarse de que el paginator esté asignado
+        this.dataSource.sort = this.sort; // Asegurarse de que el sort esté asignado
       });
     }
   }
-  
+    
   //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
     if (this.efectorId) {
@@ -130,6 +138,7 @@ export class AsistencialSelectorComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
     this.efectorIdSubscription?.unsubscribe();
   }  
 }

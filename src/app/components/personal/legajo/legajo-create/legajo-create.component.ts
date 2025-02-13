@@ -1285,24 +1285,25 @@ if (legajoData.tipoGuardias &&
     // Llamar al método de guardar permisos de efectores
       this.saveHabilitacionesGuardias(legajoData);
       }
-    // Verificar si el cargo es Director Regional
-    if (esAutoridad) {
-      // Si esAutoridad es true, verificar si el cargo es Director Regional
-      if (legajoData.idCargo === this.idDirectorRegional) {
-        // Llamar al servicio para guardar habilitaciones para Director Regional
-        this.habilitacionesGeneralesService.addHabilitacionesAutoridadRegional(legajoData.idPersona, legajoData.idRegion).subscribe(
-          () => {
-            console.log("Habilitaciones para autoridad regional guardadas con éxito.");
-          },
-          (error) => {
-            console.error("Error al guardar habilitaciones para autoridad regional", error);
-          }
-        );
-      } else {
-        // Si no es Director Regional, guardar habilitaciones generales
-        this.saveHabilitacionesGenerales(legajoData);
+    
+      // Verificar si el cargo es Director Regional
+      if (esAutoridad) {
+        // Si esAutoridad es true, verificar si el cargo es Director Regional
+        if (legajoData.idCargo === this.idDirectorRegional) {
+          // Llamar al servicio para guardar habilitaciones para Director Regional
+          this.habilitacionesGeneralesService.addHabilitacionesAutoridadRegional(legajoData.idPersona, legajoData.idRegion).subscribe(
+            () => {
+              console.log("Habilitaciones para autoridad regional guardadas con éxito.");
+            },
+            (error) => {
+              console.error("Error al guardar habilitaciones para autoridad regional", error);
+            }
+          );
+        } else {
+          // Si no es Director Regional, guardar habilitaciones generales
+          this.saveHabilitacionesGenerales(legajoData);
+        }
       }
-    }
     
       // Guardar el legajo sin la parte de revista si no corresponde
       this.legajoService.save(legajoDto).subscribe(

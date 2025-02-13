@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
+import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
 import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { Person } from "src/app/models/Configuracion/Person";
 import { forkJoin } from 'rxjs';
@@ -31,6 +32,15 @@ export class AsistencialService {
 
   public list(): Observable<Asistencial[]> {
     return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list')
+  }
+
+  // Lista Asistenciales por Efector
+  /*getByEfector(idEfector: number): Observable<AsistencialEfectorDto[]> {
+    return this.httpClient.get<AsistencialEfectorDto[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
+  }*/
+
+  getByEfector(idEfector: number): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
   }
 
   public listByUdoAndTipoGuardia(idUdo: number): Observable<AsistencialDto[]> {

@@ -6,16 +6,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
-import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
-import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
-import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
+import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
-import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
@@ -37,7 +29,7 @@ import { ServicioService } from 'src/app/services/servicio.service';
 export class DistHorariaComponent {
 
   inputValue: string = '';
-  selectedAsistencial?: Asistencial;
+  selectedAsistencial?: AsistencialEfectorDto;
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
@@ -136,7 +128,7 @@ export class DistHorariaComponent {
     this.minDate = new Date();
     this.subscribeToFormChanges();
   }
-
+  
   ngOnInit() {
     this.listServicios();
     this.listCaps();
@@ -181,7 +173,7 @@ export class DistHorariaComponent {
         this.idEfector = undefined; // Asegurarse de que idEfector esté vacío también
   
         // Filtrar legajos activos y que no sean autoridades
-        const legajosActivos = result.legajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
+        const legajosActivos = result.idLegajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
           legajo.activo === true && legajo.esAutoridad === false
         );
   
