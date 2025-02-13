@@ -1,5 +1,5 @@
-import { Person } from "./Person";
 import { Efector } from "./Efector";
+import { Person } from "./Person";
 export class HabilitacionesGuardias {
     id?: number;
     activo: boolean;
