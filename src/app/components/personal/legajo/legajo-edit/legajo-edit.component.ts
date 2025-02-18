@@ -1736,12 +1736,14 @@ if (legajoData.tipoGuardias &&
           if (error.status === 404) {
             // Si no existe una habilitación, se crea una nueva
             console.log("No se encontró una habilitación existente, creando nueva.");
-    
+            console.log('legajoData.habilitacionesGenerales:', legajoData.habilitacionesGenerales);
             const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
               true, // activo
               legajoData.idPersona,
-              legajoData.habilitacionesGuardias ?? null
+              legajoData.habilitacionesGuardias
             );
+            console.log('legajoData.habilitacionesGenerales:', legajoData.habilitacionesGenerales);
+            console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);
     
             this.habilitacionesGeneralesService.save(habilitacionesGeneralesDto).subscribe(
               (response) => {

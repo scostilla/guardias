@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { HabilitacionesGuardias } from "src/app/models/Configuracion/HabilitacionesGuardias";
 import { HabilitacionesGuardiasDto } from "src/app/dto/Configuracion/HabilitacionesGuardiasDto";
+import { HabilitacionesGuardias } from "src/app/models/Configuracion/HabilitacionesGuardias";
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +32,8 @@ export class HabilitacionesGuardiasService {
       return this.httpClient.get<HabilitacionesGuardias>(this.permisosURL + `detail/${id}`);
   }
 
-  getPermisoByPersona(idPersona: number): Observable<HabilitacionesGuardias> {
-    return this.httpClient.get<HabilitacionesGuardias>(`${this.permisosURL}detailAsistencial/${idPersona}`);
+  getPermisoByPersona(idAsistencial: number): Observable<HabilitacionesGuardias> {
+    return this.httpClient.get<HabilitacionesGuardias>(`${this.permisosURL}detailAsistencial/${idAsistencial}`);
   }
 
   public detailnombre(nombre:string): Observable<HabilitacionesGuardias> {
@@ -72,8 +72,8 @@ listHabilitacionesByEfector(idEfector: number): Observable<HabilitacionesGuardia
 }
 
 // Verifica si un asistencial tiene permisos asociados a un efector
-tieneHabilitacionesGuardias(idPersona: number, idEfector: number): Observable<boolean> {
-  return this.httpClient.get<boolean>(`${this.permisosURL}tieneHabilitacionesGuardias/${idPersona}/${idEfector}`);
+tieneHabilitacionesGuardias(idAsistencial: number, idEfector: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.permisosURL}tieneHabilitacionesGuardias/${idAsistencial}/${idEfector}`);
 }
 
 }
