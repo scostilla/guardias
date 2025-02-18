@@ -1,56 +1,56 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
 
 //Services
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
-import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
-import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
-import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
-import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
 import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
 import { CargoService } from 'src/app/services/Configuracion/cargo.service';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
-import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
+import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 //Models y Dto
-import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
-import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
-import { Profesion } from 'src/app/models/Configuracion/Profesion';
-import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
+import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
+import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { Adicional } from 'src/app/models/Configuracion/Adicional';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { Region } from 'src/app/models/Configuracion/Region';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
-import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 
+import { forkJoin } from 'rxjs';
+import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 
@@ -141,8 +141,8 @@ export class LegajoEditComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
-  tipoUdo!: number;
-  tipoEfector!: number;
+  tipoUdo!: string;
+  tipoEfector!: string;
   tipoHabilitacionesGuardias!: number;
   tipoEfectorCargo!: number;
   isUpdatingTipoGuardias: boolean = false;
@@ -188,14 +188,14 @@ export class LegajoEditComponent implements OnInit {
       adicional: ['', Validators.required],
       cargaHoraria: ['', Validators.required],
       tipoRevista: ['', Validators.required],
-      idPersona: ['', Validators.required],
+      idPersona: [this.asistencial?.id || this.noAsistencial?.id, Validators.required],
       profesion: ['', Validators.required],
       tipoUdo: [null, Validators.required],
-      udo: [null, Validators.required],
-      hospitalUdo: ['', Validators.required],
+      udoSelected: [null, Validators.required],
+      hospitalUdo: [''],
       tipoEfector: [null, Validators.required],
-      efectores: [null, Validators.required],
-      hospitalEfectores: ['', Validators.required],
+      efectoresSelected: [[]],
+      hospitalEfectores: [''],
       tipoEfectorCargo: [''],
       hospitalEfectorCargo: [''],
       efectoresAutoridad: [[]],
@@ -208,39 +208,15 @@ export class LegajoEditComponent implements OnInit {
       nroResolucion: [null],
       nroDecreto: [null],
       fechaResolucion: [null],
-      fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
-      fechaFinal: [{ value: '', disabled: true }],
+      fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
+  fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
       tipoGuardias: [[]],
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: ['', Validators.required],
       habilitacionesGenerales: [[]],
-    });
+    }, { validator: this.validarFechas });
 
-    //-----Manejo de fechas-----
-
-      this.maxDate = new Date();
-    
-      // Deshabilitar fechaFinal hasta que se seleccione fechaInicio
-      this.legajoForm.get('fechaFinal')?.disable();
-    
-      // Habilitar fechaFinal cuando fechaInicio tiene un valor
-      this.legajoForm.get('fechaInicio')?.valueChanges.subscribe(fechaInicio => {
-        if (fechaInicio) {
-          this.legajoForm.get('fechaFinal')?.enable();
-      
-          // valor mínimo de fechaFinal, día siguiente a fechaInicio
-          const fechaInicioDate = new Date(fechaInicio);
-          fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
-          this.minFechaFinal = fechaInicioDate;
-      
-          // Reseteo fechaFinal en caso se modifique fechaInicio
-          this.legajoForm.get('fechaFinal')?.setValue('');
-        } else {
-          this.legajoForm.get('fechaFinal')?.disable();
-          this.legajoForm.get('fechaFinal')?.setValue('');
-        }
-      });
 
     //-----Recibo el objeto para realizar posteriores verificaciones-----
 
@@ -292,8 +268,58 @@ export class LegajoEditComponent implements OnInit {
       this.location.back();
     }    */
   }
+  validarFechas(formGroup: FormGroup) {
+    const fechaInicio = formGroup.get('fechaInicio')?.value;
+    const fechaFinal = formGroup.get('fechaFinal')?.value;
+
+    if (fechaInicio && fechaFinal) {
+        const inicio = new Date(fechaInicio);
+        const final = new Date(fechaFinal);
+
+        // Si la fecha final no es al menos un día después de la fecha de inicio, retorna un error
+        if (final <= inicio) {
+            return { fechaInvalida: true };
+        }
+    }
+
+    return null;
+}
+
+
 
   ngOnInit(): void {
+    if (this.initialData?.fechaInicio) {
+      const fechaInicioDate = new Date(this.initialData.fechaInicio);
+      fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+      this.minFechaFinal = fechaInicioDate;
+    }
+    
+          this.maxDate = new Date();
+        
+          // Deshabilitar fechaFinal hasta que se seleccione fechaInicio
+          this.legajoForm.get('fechaFinal')?.enable();
+        
+          // Habilitar fechaFinal cuando fechaInicio tiene un valor
+          this.legajoForm.get('fechaInicio')?.valueChanges.subscribe(fechaInicio => {
+            if (fechaInicio) {
+                const fechaInicioDate = new Date(fechaInicio);
+                fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+        
+                // Establece la fecha mínima para fechaFinal
+                this.minFechaFinal = fechaInicioDate;
+        
+                // Si la fecha final es inválida, la actualiza
+                const fechaFinalControl = this.legajoForm.get('fechaFinal');
+                const fechaFinalActual = fechaFinalControl?.value ? new Date(fechaFinalControl.value) : null;
+        
+                if (!fechaFinalActual || fechaFinalActual <= fechaInicioDate) {
+                    fechaFinalControl?.setValue(fechaInicioDate);
+                }
+            } else {
+                this.legajoForm.get('fechaFinal')?.setValue('');
+            }
+        });
+          
   //Autentificación
   if (this.tokenService.getToken()) {
     this.isLogged = true;
@@ -336,6 +362,98 @@ export class LegajoEditComponent implements OnInit {
     this.router.navigateByUrl('');
   }
 
+    // Inicializar el formulario
+    this.legajoForm = this.fb.group({
+      tipoUdo: [this.initialData?.tipoUdo || '', Validators.required],
+      udoSelected: ['', Validators.required],
+      agrupacion: ['', Validators.required],
+      categoria: ['', Validators.required],
+      adicional: ['', Validators.required],
+      cargaHoraria: ['', Validators.required],
+      tipoRevista: ['', Validators.required],
+      idPersona: [this.asistencial?.id || this.noAsistencial?.id, Validators.required],
+      profesion: ['', Validators.required],
+      hospitalUdo: [''],
+      tipoEfector: [null, Validators.required],
+      efectoresSelected: [[]],
+      hospitalEfectores: [''],
+      tipoEfectorCargo: [''],
+      hospitalEfectorCargo: [''],
+      efectoresAutoridad: [[]],
+      especialidades: [[]],
+      matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
+      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
+      esAutoridad: [false, Validators.required],
+      idCargo: [null],
+      idRegion: [null],
+      nroResolucion: [null],
+      nroDecreto: [null],
+      fechaResolucion: [null],
+      fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
+  fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
+      tipoGuardias: [[]], 
+      tipoHabilitacionesGuardias: [''],
+      habilitacionesGuardias: [[]],
+      hospitalHabilitacionesGuardias: [''],
+      habilitacionesGenerales: [[]],
+    }, { validator: this.validarFechas });
+
+
+ // Inicializar udoOptions al principio del formulario
+ this.udoOptions = [];
+ this.efectorOptions = [];
+ this.loadInitialData(); // Inicialización básica para evitar errores
+
+
+// Si hay datos iniciales, configurar udoOptions
+if (this.initialData) {
+  const tipoUdoInicial = this.initialData.tipoUdo ??'';
+  const tipoEfectorInicial = this.initialData.tipoEfector ?? '';
+  console.log('Tipo UDO inicial:', tipoUdoInicial);
+  console.log('Tipo Efector inicial:', tipoEfectorInicial);
+
+  if (tipoUdoInicial === 'MINISTERIO') {
+    this.udoOptions = this.ministerios;
+  } else if (tipoUdoInicial === 'HOSPITAL') {
+    this.udoOptions = this.hospitales;
+  } else if (tipoUdoInicial === 'CAPS') {
+    this.udoOptions = this.caps;
+  }
+
+  if (tipoEfectorInicial === 'MINISTERIO') {
+    this.efectorOptions = this.ministerios;
+  } else if (tipoEfectorInicial === 'HOSPITAL') {
+    this.efectorOptions = this.hospitales;
+  } else if (tipoEfectorInicial === 'CAPS') {
+    this.efectorOptions = this.caps;
+  }
+
+  console.log('Opciones iniciales de UDO:', this.udoOptions);
+  console.log('Opciones iniciales de Efector:', this.efectorOptions);
+
+  const udoControl = this.legajoForm.get('udo');
+if (udoControl) {
+  if (this.udoOptions?.length > 0) {
+    udoControl.enable();
+    udoControl.setValue(this.initialData?.udo ?? null); // Establecer el valor inicial
+  } else {
+    udoControl.disable();
+  }
+}
+
+const efectorControl = this.legajoForm.get('efectores');
+if (efectorControl) {
+  if (this.efectorOptions?.length > 0) {
+    efectorControl.enable();
+    efectorControl.setValue(this.initialData?.udo ?? null); // Establecer el valor inicial
+  } else {
+    efectorControl.disable();
+  }
+}
+
+console.log('udoOptions inicial:', this.udoOptions);
+console.log('¿Incluye WENCESLAO GALLARDO?', this.udoOptions.some(udo => udo.nombre === 'WENCESLAO GALLARDO'));
+
   // Llamo al servicio para obtener todos los tipos de cargo
   this.cargoService.list().subscribe((cargos: Cargo[]) => {
     this.cargos = cargos;
@@ -346,6 +464,7 @@ export class LegajoEditComponent implements OnInit {
   // Llamo al servicio para obtener todos los tipos de guardia
   this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
     this.tipoGuardias = guardias;
+    console.log('Tipos de guardia disponibles:', this.tipoGuardias);
 
     // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
     this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
@@ -362,6 +481,7 @@ export class LegajoEditComponent implements OnInit {
 
       // Verifica si hay datos iniciales
       if (this.initialData) {
+        this.onTipoUdoChange({ value: this.initialData.tipoUdo });
         this.idLegajo = this.initialData.id ?? 0;
         this.personId = this.initialData.persona!.id!;
 
@@ -377,11 +497,16 @@ export class LegajoEditComponent implements OnInit {
         }
     
         this.personId = this.initialData.persona.id;
-    
+        console.log('efectores selected:', this.initialData?.efectores ? this.initialData.efectores[0].id : 0,)
+        console.log('udo:', this.initialData.udo);
+        console.log('udo cargado:', this.initialData?.udo?.id);
         // Carga los datos del formulario
         this.legajoForm.patchValue({
           ...this.initialData,
-          efectores: this.initialData.efectores ? this.initialData.efectores.map((efector: any) => efector.id) : [],
+         /*  efectoresSelected: this.initialData?.efectores 
+          ? this.initialData.efectores.map((efector: any) => efector.id) 
+          : [],  */
+          efectoresSelected: this.initialData?.efectores ? this.initialData.efectores[0].id : 0,
           profesion: this.initialData.profesion?.id,  // Asegúrate de que se asigne el ID de la profesión
           especialidades: this.initialData.especialidades ? this.initialData.especialidades.map((especialidad: any) => especialidad.id) : [],
           adicional: this.initialData.revista?.adicional?.id,  // Cargar adicional del objeto 'Revista'
@@ -392,13 +517,38 @@ export class LegajoEditComponent implements OnInit {
           tipoGuardias: this.initialData.tipoGuardias ? this.initialData.tipoGuardias.map((tipoGuardia: any) => tipoGuardia.id) : [],
           cargo: this.initialData.cargo?.id,
           region: this.initialData.region?.id,
+          tipoUdo: this.initialData.tipoUdo,
+          tipoEfector: this.initialData.tipoEfector,
+          udoSelected: this.initialData.udo?.id,
+          persona: this.initialData.persona?.id,
+          //revisar el formato de fecha para el back para que tome el formato correcto de fecha y hora
+          fechaInicio: this.initialData.fechaInicio ? new Date(this.initialData.fechaInicio + 'T00:00:00') : null,
+          fechaFinal: this.initialData.fechaFinal ? new Date(this.initialData.fechaFinal + 'T00:00:00' ) : null,
         }); 
+      
+        console.log('Valores iniciales de tipoGuardias:', this.initialData.tipoGuardias);
+        console.log('Formulario tipoGuardias:', this.legajoForm.get('tipoGuardias')?.value);
+        console.log('Lista de tipoGuardias:', this.tipoGuardias);
+        console.log('Tipo Guardias Inicial:', this.initialData?.tipoGuardias);
+console.log('Formulario Tipo Guardias:', this.legajoForm.get('tipoGuardias')?.value);
+
+// Llamar al método para manejar cambios en tipoUdo
+ this.onTipoUdoChange({ value: this.initialData.tipoUdo });
+}
+
+
+        //log para ver los datos cargados 
+        console.log('Datos cargados:', this.initialData);
+
+        console.log('tipo guardias cargadas:', this.initialData.tipoGuardias);
         
               // Si la profesión ya está seleccionada, filtrar las especialidades
       const profesionId = this.initialData.profesion?.id;
       if (profesionId) {
         this.filterEspecialidadesByProfesion(profesionId);
       }
+
+      
   
     // Verifica si tipoGuardias contiene 4 o 5 al inicio y deshabilita los campos de "Situación de Revista"
     setTimeout(() => {
@@ -418,9 +568,13 @@ export class LegajoEditComponent implements OnInit {
       this.resetEspecialidades();
     }
   });
+  
     
     // Suscribirse a cambios en la selección de tipo de guardia
     this.legajoForm.get('tipoGuardias')?.valueChanges.subscribe((selectedValues) => {
+
+      if (selectedValues) { // Asegurarse de que no sea null
+        this.toggleSituacionRevista(selectedValues);
       // Evitar que el valor de tipoGuardias se actualice automáticamente cuando se cambia el tipo 4 o 5
       if (!this.isUpdatingTipoGuardias) {
         this.isUpdatingTipoGuardias = true;
@@ -445,6 +599,7 @@ export class LegajoEditComponent implements OnInit {
         }
         this.isUpdatingTipoGuardias = false;
       }
+    }
     });
 
         // Llamar al método para configurar cargaHoraria y adicional
@@ -475,6 +630,8 @@ export class LegajoEditComponent implements OnInit {
     this.listRegion();
 
 
+    this.tipoUdo = this.initialData?.tipoUdo ?? ''; // Asignar tipoUdo inicial
+    this.onTipoUdoChange({ value: this.tipoUdo });
 //-----Manejo de validaciones en Revista (categoria, cargaHoraria)-----
 
   this.legajoForm.get('categoria')?.valueChanges.subscribe(() => {
@@ -524,17 +681,89 @@ export class LegajoEditComponent implements OnInit {
   // Inicializar el estado de los campos al cargar la página
   this.onAutoridadChange(this.legajoForm.get('esAutoridad')?.value);
 
+ 
+
 }
+
+
+// Cargar datos iniciales
+private loadInitialData(): void {
+  this.listMinisterios();
+  this.listHospitales();
+
+  // Un solo forkJoin para cargar todos los datos necesarios
+  forkJoin({
+    ministerios: this.ministerioService.list(),
+    hospitales: this.hospitalService.list(),
+    tipoGuardias: this.tipoGuardiaService.list(),
+    cargaHorarias: this.cargaHorariaService.list(),
+    adicionales: this.adicionalService.list(),
+
+  }).subscribe(
+    ({ ministerios, hospitales, tipoGuardias, cargaHorarias, adicionales }: {
+      ministerios: Ministerio[],
+      hospitales: Hospital[],
+      tipoGuardias: TipoGuardia[],
+      cargaHorarias: CargaHoraria[],
+      adicionales: Adicional[]
+      
+    }) => {
+      // Asignar listas cargadas
+      this.ministerios = ministerios;
+      this.hospitales = hospitales;
+      this.tipoGuardias = tipoGuardias;
+      this.cargasHorarias = cargaHorarias;
+      this.adicionales = adicionales;
+     
+
+      console.log('Listas cargadas:');
+      console.log('Ministerios:', this.ministerios);
+      console.log('Hospitales:', this.hospitales);
+      console.log('Tipo de guardias:', this.tipoGuardias);
+      console.log('Carga horaria:', this.cargasHorarias);
+      console.log('Adicionales:', this.adicionales);
+     
+
+      // Cargar valores iniciales del formulario
+      console.log('efectores selected:', this.initialData?.efectores ? this.initialData.efectores[0].id : 0,)
+      console.log('Udo cargada:? ', this.initialData?.udo?.id);
+      this.legajoForm.patchValue({
+        /* efectoresSelected: this.initialData?.efectores 
+        ? this.initialData.efectores.map((efector: any) => efector.id) 
+        : [], */
+        efectoresSelected: this.initialData?.efectores ? this.initialData.efectores[0].id : 0,
+        tipoGuardias: this.initialData?.tipoGuardias?.map((tipo: any) => tipo.id) || [],
+        cargaHoraria: this.initialData?.revista?.cargaHoraria?.id || null,
+        adicional: this.initialData?.revista?.adicional?.id || null,
+        udoSelected: this.initialData?.udo?.id || null,
+        persona: this.initialData?.persona?.id,
+     
+      });
+      console.log('udo cargado:', this.initialData?.udo?.id);
+
+      // Configuración adicional basada en tipoUdo y tipoEfector
+      const tipoUdoInicial = this.initialData?.tipoUdo || '';
+      const tipoEfectorInicial = this.initialData?.tipoEfector || '';
+      this.onTipoUdoChange({ value: tipoUdoInicial });
+      this.onTipoEfectorChange({ value: tipoEfectorInicial });
+    },
+    (error) => {
+      console.error('Error al cargar los datos iniciales:', error);
+    }
+  );
+}
+
+
 
 //------LISTAS--------
 
-  listMinisterios(): void {
-    this.ministerioService.list().subscribe(data => {
-      this.ministerios = data;
-    }, error => {
-      console.log(error);
-    });
-  }
+listMinisterios(): void {
+  // Asegúrate de que este servicio retorne los ministerios correctamente
+  this.ministerioService.list().subscribe((ministerios) => {
+    this.ministerios = ministerios;
+  });
+  
+}
 
   listHospitales(): void {
     this.hospitalService.list().subscribe(data => {
@@ -542,7 +771,9 @@ export class LegajoEditComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+    
   }
+  
 
 
   listProfesiones(): void {
@@ -631,8 +862,13 @@ export class LegajoEditComponent implements OnInit {
 
   // Form Datos profesional: No permite seleccionar una fecha futura en fechaInicio
   dateLimitePresente(control: any) {
+    if (!control.value) {
+      return null; // No validar si no hay valor
+    }
+    const startDate = new Date(control.value);
     const currentDate = new Date();
-    if (control.value && new Date(control.value) > currentDate) {
+
+    if (startDate > currentDate) {
       return { 'matDatepickerMin': true };
     }
     return null;
@@ -641,6 +877,24 @@ export class LegajoEditComponent implements OnInit {
   //Form Datos profesional: Habilita la fecha minima para fechaFinalizacion
   onDateChange(event: MatDatepickerInputEvent<Date>) {
     const selectedDate = event.value;
+    const nuevaFechaInicio = event.value;
+  
+    // Puedes agregar más lógica si es necesario, por ejemplo:
+    if (nuevaFechaInicio) {
+      const fechaInicioDate = new Date(nuevaFechaInicio);
+      fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
+  
+      // Establecer la fecha mínima para la fecha final
+      this.minFechaFinal = fechaInicioDate;
+  
+      // Si la fecha final es inválida, actualizarla
+      const fechaFinalControl = this.legajoForm.get('fechaFinal');
+      const fechaFinalActual = fechaFinalControl?.value ? new Date(fechaFinalControl.value) : null;
+  
+      if (!fechaFinalActual || fechaFinalActual <= fechaInicioDate) {
+        fechaFinalControl?.setValue(fechaInicioDate);
+      }
+    }
   }
 
   resetEspecialidades(): void {
@@ -710,29 +964,30 @@ export class LegajoEditComponent implements OnInit {
     });
   }
 
-  // Método para cambiar las opciones de la selección de UDO
+  // Manejar cambios en tipoUdo
   onTipoUdoChange(event: any): void {
     const tipoUdo = event.value;
     this.tipoUdo = tipoUdo;
+    console.log('Tipo UDO seleccionado:', tipoUdo);
 
-    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoUdo === 1) { // Ministerio
+    if (tipoUdo === 'MINISTERIO') {
       this.udoOptions = this.ministerios;
-    } else if (tipoUdo === 2) { // Hospital
+    } else if (tipoUdo === 'HOSPITAL') {
       this.udoOptions = this.hospitales;
-    } else if (tipoUdo === 3) { // CAPS
+    } else if (tipoUdo === 'CAPS') {
       this.udoOptions = this.caps;
     }
-
-    // Habilitar el select de UDO después de haber elegido un tipo de efector
+  
     const udoControl = this.legajoForm.get('udo');
     if (udoControl) {
       udoControl.enable(); // Habilitar el select de UDO
     }
 
-    // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
-    this.legajoForm.get('hospitalUdo')?.reset();
-    this.legajoForm.get('udo')?.reset();
+      // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+      this.legajoForm.get('hospitalUdo')?.reset();
+      this.legajoForm.get('udo')?.reset();
+  
+    console.log('Opciones UDO:', this.udoOptions);
   }
 
   // Cargar CAPS correspondientes al hospital seleccionado
@@ -761,14 +1016,15 @@ export class LegajoEditComponent implements OnInit {
   onTipoEfectorChange(event: any): void {
     const tipoEfector = event.value;
     this.tipoEfector = tipoEfector;
+    console.log('Tipo efector seleccionado:', tipoEfector);
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoEfector === 1) { // Ministerio
+    if (tipoEfector === 'MINISTERIO') { // Ministerio
       this.efectorOptions = this.ministerios;
-    } else if (tipoEfector === 2) { // Hospital
+    } else if (tipoEfector === 'HOSPITAL') { // Hospital
       this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoEfector === 3) { // CAPS
-      this.efectorOptions = this.caps;  // Opciones específicas para CAPS
+    } else if (tipoEfector === 'CAPS') { // CAPS
+      this.efectorOptions = this.caps;
     }
 
     // Habilitar el select de efector después de haber elegido un tipo de efector
@@ -777,11 +1033,12 @@ export class LegajoEditComponent implements OnInit {
       efectorControl.enable(); // Habilitar el select de efector
     }
 
-    // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
-    this.legajoForm.get('hospitalEfectores')?.reset();
-    this.legajoForm.get('efectores')?.reset();
-  }
-
+      // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+      this.legajoForm.get('hospitalEfector')?.reset();
+      this.legajoForm.get('efectores')?.reset();
+  
+  console.log('Opciones de efector:', this.efectorOptions);
+}
   // Método para cargar los CAPS correspondientes al hospital seleccionado
   onHospitalEfectorChange(event: any): void {
     const hospitalId = event.value;
@@ -1026,7 +1283,10 @@ export class LegajoEditComponent implements OnInit {
   }
 
   onTipoGuardiaSelectionChange(event: any): void {
+  
     const selectedValues = this.legajoForm.get('tipoGuardias')!.value;
+
+    console.log('Tipos de guardia seleccionados:', selectedValues);
   
     // Si el usuario es ADMIN, solo puede seleccionar los tipos CARGO, AGRUPACION Y EXTRA (sin CF)
     if (this.isAdministrativo) {
@@ -1107,7 +1367,7 @@ export class LegajoEditComponent implements OnInit {
     this.legajoForm.get('adicional')?.setValue(null);
     this.legajoForm.get('cargaHoraria')?.setValue(null);
     this.legajoForm.get('tipoRevista')?.setValue(null);
-    this.legajoForm.get('udo')?.setValue(null);
+    this.legajoForm.get('udoSelected')?.setValue(null);
     this.legajoForm.get('efectores')?.setValue(null);
   }
       
@@ -1118,7 +1378,7 @@ export class LegajoEditComponent implements OnInit {
     this.legajoForm.get('cargaHoraria')?.disable();
     this.legajoForm.get('tipoRevista')?.disable();
     this.legajoForm.get('tipoUdo')?.disable();
-    this.legajoForm.get('udo')?.disable();
+    this.legajoForm.get('udoSelected')?.disable();
     this.legajoForm.get('hospitalUdo')?.disable();
     this.legajoForm.get('tipoEfector')?.disable();
     this.legajoForm.get('efectores')?.disable();
@@ -1132,7 +1392,7 @@ export class LegajoEditComponent implements OnInit {
     this.legajoForm.get('cargaHoraria')?.enable();
     this.legajoForm.get('tipoRevista')?.enable();
     this.legajoForm.get('tipoUdo')?.enable();
-    this.legajoForm.get('udo')?.enable();
+    this.legajoForm.get('udoSelected')?.enable();
     this.legajoForm.get('hospitalUdo')?.enable();
     this.legajoForm.get('tipoEfector')?.enable();
     this.legajoForm.get('efectores')?.enable();
@@ -1218,14 +1478,29 @@ export class LegajoEditComponent implements OnInit {
       progressBar: true
     });
     this.location.back();
+    console.log('datos enviados a guardar:', this.legajoForm.value);
   }
 
   //-----Save-----
     
   updateLegajo(): void {
+    console.log('Formulario enviado:', this.legajoForm.value);
+  console.log('Estado del formulario:', this.legajoForm.valid);
+
+  if (this.legajoForm.invalid) {
+    console.log('Formulario inválido. Errores detectados:');
+    Object.keys(this.legajoForm.controls).forEach((controlName) => {
+      const control = this.legajoForm.get(controlName);
+      if (control?.invalid) {
+        console.log(`Control "${controlName}" es inválido. Errores:`, control.errors);
+      }
+    });
+    return; // Sal de la función si el formulario es inválido
+  }
+
     if (this.legajoForm.valid) {
         const legajoData = this.legajoForm.value;
-        
+       
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || []; // Si es null o undefined, asigna un array vacío
     const tiposGuardiaExcluidos = [this.idContraFactura, this.idPasiva];
@@ -1286,7 +1561,12 @@ export class LegajoEditComponent implements OnInit {
             }
           );
         }
+      } else {
+        console.warn('Formulario inválido, no se puede proceder.');
       }
+      
+      
+      
     }
     
   updateLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
@@ -1318,7 +1598,12 @@ export class LegajoEditComponent implements OnInit {
   
   // Determinar si esRegional basado en el cargo
     const esRegional = legajoData.idCargo === this.idDirectorRegional ? true : false;
+console.log('legajo data', legajoData);
 
+const efectoresSelected = Array.isArray(legajoData.efectoresSelected)
+  ? legajoData.efectoresSelected
+  : legajoData.efectoresSelected ? [legajoData.efectoresSelected] : [];
+  console.log('efectoresSelected', efectoresSelected);
       const legajoDto = new LegajoDto(
         legajoData.fechaInicio,
         esAutoridad,
@@ -1331,8 +1616,8 @@ export class LegajoEditComponent implements OnInit {
         null, // idSuspencion
         null, //motivoBaja
         revistaId,
-        legajoData.udo?.id ?? null,
-        efectoresData ?? null,
+        legajoData.udoSelected ?? null,
+        efectoresSelected,
         legajoData.especialidades ??  null,
         legajoData.profesion,
         legajoData.tipoGuardias ??  null,
@@ -1340,7 +1625,9 @@ export class LegajoEditComponent implements OnInit {
         legajoData.idRegion ?? null,
         legajoData.nroResolucion ?? null,
         legajoData.nroDecreto ?? null,
-        legajoData.fechaResolucion ?? null
+        legajoData.fechaResolucion ?? null,
+        legajoData.tipoEfector ?? null,
+        legajoData.tipoUdo ?? null,
       );
 
       console.log("DTO creado para guardar legajo:", legajoDto);
@@ -1352,10 +1639,16 @@ if (legajoData.tipoGuardias &&
    legajoData.tipoGuardias.includes(this.idPasiva))) {
     
     // Llamar al método de guardar permisos de efectores
-      this.saveHabilitacionesGuardias(legajoData);
+       this.saveHabilitacionesGuardias(legajoData); 
       }
+
+      
     // Verificar si el cargo es Director Regional
     if (legajoData.idCargo === this.idDirectorRegional) {
+      
+      //datos cargados en habilitacionesgenerales
+      console.log('datos cargados en habilitacionesgenerales', legajoData);
+
       // Llamar al servicio para guardar habilitaciones para Director Regional
       this.habilitacionesGeneralesService.addHabilitacionesAutoridadRegional(legajoData.idPersona, legajoData.idRegion).subscribe(
         () => {
@@ -1367,7 +1660,7 @@ if (legajoData.tipoGuardias &&
       );
     } else {
       // Para otros casos, llamar al método de habilitaciones generales
-      this.saveHabilitacionesGenerales(legajoData);
+      this.saveHabilitacionesGenerales(legajoData); 
     }
     
       // Guardar el legajo sin la parte de revista si no corresponde
@@ -1398,12 +1691,24 @@ if (legajoData.tipoGuardias &&
     }
 
     saveHabilitacionesGuardias(legajoData: any): void {
+      this.habilitacionesGuardiasService.getPermisoByPersona(legajoData.idPersona).subscribe(
+        (habilitacionExistente) => {
+          console.log("Habilitación existente encontrada, no se creará una nueva:", habilitacionExistente);
+        },
+        (error) => {
+          if (error.status === 404) {
+            console.log("No se encontró una habilitación existente, creando nueva.");
+
       // Crear el objeto HabilitacionesGuardiasDto
       const habilitacionesGuardiasDto = new HabilitacionesGuardiasDto(
         true, // activo
-        legajoData.idPersona,
+        legajoData.idPersona,  // Verificamos `idPersona`
         legajoData.habilitacionesGuardias || null
       );
+
+      // Log para verificar el objeto que se enviará
+      console.log("Enviando DTO a /habilitacionesGuardias/create:", habilitacionesGuardiasDto);
+
     
       // Llamar al servicio para guardar los permisos de efectores
       this.habilitacionesGuardiasService.save(habilitacionesGuardiasDto).subscribe(
@@ -1414,23 +1719,43 @@ if (legajoData.tipoGuardias &&
           console.error("Error al guardar los permisos de efectores", error);
         }
       );
+    } else {
+      console.error("Error al verificar habilitación existente", error);
+    }
+  }
+);
     }
 
     saveHabilitacionesGenerales(legajoData: any): void {
-      // Crear el objeto HabilitacionesGuardiasDto
-      const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
-        true, // activo
-        legajoData.idPersona,
-        legajoData.habilitacionesGenerales || null
-      );
-    
-      // Llamar al servicio para guardar los permisos de efectores
-      this.habilitacionesGeneralesService.save(habilitacionesGeneralesDto).subscribe(
-        (response) => {
-          console.log("Permisos de efectores guardados correctamente", response);
+      this.habilitacionesGeneralesService.getPermisoByPersona(legajoData.idPersona).subscribe(
+        (habilitacionExistente) => {
+          // Si ya existe una habilitación, simplemente la usamos y no hacemos nada
+          console.log("Habilitación existente encontrada, no se creará una nueva:", habilitacionExistente);
         },
         (error) => {
-          console.error("Error al guardar los permisos de efectores", error);
+          if (error.status === 404) {
+            // Si no existe una habilitación, se crea una nueva
+            console.log("No se encontró una habilitación existente, creando nueva.");
+            console.log('legajoData.habilitacionesGenerales:', legajoData.habilitacionesGenerales);
+            const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
+              true, // activo
+              legajoData.idPersona,
+              legajoData.habilitacionesGuardias
+            );
+            console.log('legajoData.habilitacionesGenerales:', legajoData.habilitacionesGenerales);
+            console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);
+    
+            this.habilitacionesGeneralesService.save(habilitacionesGeneralesDto).subscribe(
+              (response) => {
+                console.log("Habilitación creada correctamente", response);
+              },
+              (error) => {
+                console.error("Error al crear la habilitación", error);
+              }
+            );
+          } else {
+            console.error("Error al verificar habilitación existente", error);
+          }
         }
       );
     }
@@ -1471,7 +1796,7 @@ if (legajoData.tipoGuardias &&
     }
 
     isPanel3Valid(): boolean {
-      const panel3Controls = ['agrupacion', 'categoria', /*'adicional', */'cargaHoraria', 'tipoRevista', 'udo', 'efectores'];
+      const panel3Controls = ['agrupacion', 'categoria', /*'adicional', */'cargaHoraria', 'tipoRevista', 'udoSelected', 'efectores'];
       return panel3Controls.every(control => this.legajoForm.get(control)?.valid);
     }
 
@@ -1481,7 +1806,13 @@ if (legajoData.tipoGuardias &&
 
     cerrarPanel() {
       this.step = -1;
+      console.log('Tipo Udo:', this.legajoForm.get('tipoUdo')?.value);
+      console.log('Tipo Efector:', this.legajoForm.get('tipoEfector')?.value);
+      console.log('Udo:', this.legajoForm.get('udoSelected')?.value);
+      console.log('datos en legajo data:', this.legajoForm.value);
+      
     }
+  
 
 }
 

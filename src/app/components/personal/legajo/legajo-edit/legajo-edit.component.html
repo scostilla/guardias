@@ -198,6 +198,8 @@
               <input matInput [matDatepicker]="pickerFinal" formControlName="fechaFinal" [min]="minFechaFinal" placeholder="Fecha Final">
               <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
               <mat-datepicker #pickerFinal></mat-datepicker>
+              <mat-error *ngIf="legajoForm.hasError('fechaInvalida')" class="text-danger">
+                La fecha final no puede ser menor que la fecha de inicio.</mat-error>
             </mat-form-field>
             </div>
 
@@ -326,13 +328,13 @@
             </mat-form-field>
 
             <mat-radio-group formControlName="tipoUdo" (change)="onTipoUdoChange($event)" class="radio-group-with-line">
-              <mat-radio-button color="primary" [value]="1" style="margin-right: 10px;">Ministerio</mat-radio-button>
-              <mat-radio-button [value]="2" style="margin-right: 10px;">Hospital</mat-radio-button>
-              <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
+              <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">MINISTERIO</mat-radio-button>
+              <mat-radio-button [value]="'HOSPITAL'" style="margin-right: 10px;">Hospital</mat-radio-button>
+              <mat-radio-button color="warn" [value]="'CAPS'">CAPS</mat-radio-button>
             </mat-radio-group>
             <mat-error *ngIf="legajoForm.get('tipoUdo')?.errors?.['required']">U.D.O. requiere seleccionar: Ministerio, Hospital o Caps.</mat-error>
             
-            <mat-form-field *ngIf="tipoUdo === 3" appearance="fill">
+            <mat-form-field *ngIf="tipoUdo === 'CAPS'" appearance="fill">
               <mat-label>Seleccionar Hospital para listar Caps</mat-label>
               <mat-select formControlName="hospitalUdo" (selectionChange)="onHospitalUdoChange($event)">
                 <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
@@ -340,12 +342,12 @@
               <mat-error *ngIf="legajoForm.get('hospitalUdo')?.errors?.['required']">El hospital es requerido para seleccionar un caps.</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="fill">
+            <mat-form-field  appearance="fill" >
               <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
-              <mat-select formControlName="udo">
-                <mat-option *ngFor="let udo of udoOptions" [value]="udo">{{ udo.nombre }}</mat-option>
+              <mat-select formControlName="udoSelected">
+                <mat-option *ngFor="let udoIter of udoOptions" [value]="udoIter.id">{{udoIter.nombre }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('udoSelected')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
             </mat-form-field>
                         
             <!--<mat-form-field appearance="fill">
@@ -365,13 +367,13 @@
             </mat-form-field>-->
 
             <mat-radio-group formControlName="tipoEfector" (change)="onTipoEfectorChange($event)" class="radio-group-with-line">
-              <mat-radio-button color="primary" [value]="1" style="margin-right: 10px;">Ministerio</mat-radio-button>
-              <mat-radio-button [value]="2" style="margin-right: 10px;">Hospital</mat-radio-button>
-              <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
+              <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">MINISTERIO</mat-radio-button>
+              <mat-radio-button [value]="'HOSPITAL'" style="margin-right: 10px;">Hospital</mat-radio-button>
+              <mat-radio-button color="warn" [value]="'CAPS'">CAPS</mat-radio-button>
             </mat-radio-group>
             <mat-error *ngIf="legajoForm.get('tipoEfector')?.errors?.['required']">Efector requiere seleccionar: Ministerio, Hospital o Caps.</mat-error>
 
-            <mat-form-field *ngIf="tipoEfector === 3" appearance="fill">
+            <mat-form-field *ngIf="tipoEfector === 'CAPS'" appearance="fill">
               <mat-label>Seleccionar Hospital para listar Caps</mat-label>
               <mat-select formControlName="hospitalEfectores" (selectionChange)="onHospitalEfectorChange($event)">
                 <mat-option *ngFor="let hospital of getEfectoresFiltrados()" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
@@ -383,10 +385,10 @@
             
             <mat-form-field appearance="fill">
               <mat-label>Efector (lugar de trabajo)</mat-label>
-              <mat-select formControlName="efectores">
-                <mat-option *ngFor="let efector of efectorOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              <mat-select formControlName="efectoresSelected">
+                <mat-option *ngFor="let efector of efectorOptions" [value]="efector.id">{{efector.nombre }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="legajoForm.get('efectores')?.errors?.['required']">El efector es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('efectoresSelected')?.errors?.['required']">El efector es requerido.</mat-error>
             </mat-form-field>
 
             <mat-action-row>

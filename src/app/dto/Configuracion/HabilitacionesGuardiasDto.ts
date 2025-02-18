@@ -1,15 +1,15 @@
 export class HabilitacionesGuardiasDto {
     activo: boolean;
-    idPersona: number;
+    idAsistencial: number;
     idEfectores: number[]
     
     constructor(
         activo: boolean,
-        idPersona: number,
+        idAsistencial: number,
         idEfectores: number[]    
     ){
         this.activo = activo;
-        this.idPersona = idPersona;
+        this.idAsistencial = idAsistencial;
         this.idEfectores = idEfectores
       }
     }

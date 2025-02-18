@@ -1269,7 +1269,9 @@ export class LegajoCreateComponent implements OnInit {
         legajoData.idRegion ?? null,
         legajoData.nroResolucion ?? null,
         legajoData.nroDecreto ?? null,
-        legajoData.fechaResolucion ?? null
+        legajoData.fechaResolucion ?? null,
+        legajoData.tipoEfector ?? null,
+        legajoData.tipoUdo ?? null
       );
 
       console.log("DTO creado para guardar legajo:", legajoDto);
