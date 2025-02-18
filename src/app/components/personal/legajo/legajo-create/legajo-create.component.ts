@@ -121,7 +121,7 @@ export class LegajoCreateComponent implements OnInit {
   isSituacionRevistaEnabled = false;
   asignadoAutoridad: boolean = false;
   noEspecialidadesMessage: string = '';
-  idCargo?: number;
+  idGuardiaCargo?: number;
   idAgrupacion?: number;
   idContraFactura?: number;
   idPasiva?: number;
@@ -328,7 +328,7 @@ export class LegajoCreateComponent implements OnInit {
     this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
     this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
     this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
-    this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
+    this.idGuardiaCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
     this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
 
     // Imprimir los ids para depuración
@@ -413,7 +413,7 @@ export class LegajoCreateComponent implements OnInit {
         // Si la persona es autoridad, verificar los legajos activos
         const legajoConTipoGuardiaCargo = legajosActivos.find(legajo => 
           !legajo.esAutoridad && 
-          legajo.tipoGuardias.some(tipo => tipo.id === this.idCargo || tipo.id === this.idAgrupacion)
+          legajo.tipoGuardias.some(tipo => tipo.id === this.idGuardiaCargo || tipo.id === this.idAgrupacion)
         );
         
         if (legajoConTipoGuardiaCargo) {
@@ -1350,11 +1350,11 @@ if (legajoData.tipoGuardias &&
     }
 
     saveHabilitacionesGenerales(legajoData: any): void {
-      // Crear el objeto HabilitacionesGuardiasDto
+      // Crear el objeto HabilitacionesGeneralesDto
       const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
         true, // activo
         legajoData.idPersona,
-        legajoData.habilitacionesGuardias || null
+        legajoData.habilitacionesGenerales || null
       );
     
       // Llamar al servicio para guardar los permisos de efectores

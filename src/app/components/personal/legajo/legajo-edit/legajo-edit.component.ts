@@ -1421,7 +1421,7 @@ if (legajoData.tipoGuardias &&
       const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
         true, // activo
         legajoData.idPersona,
-        legajoData.habilitacionesGuardias || null
+        legajoData.habilitacionesGenerales || null
       );
     
       // Llamar al servicio para guardar los permisos de efectores
