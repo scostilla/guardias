@@ -118,7 +118,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
         this.loadDistribuciones();  // Cargar las distribuciones
         this.loadNovedades();
         this.loadCargaHoraria();
-        this.calcularEstadoCargaHoraria();
+        //this.calcularEstadoCargaHoraria();
       }
 
       // Inicializar el mes y año actual
@@ -193,6 +193,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
 
     // Cargar las distribuciones filtradas por mes y año
     this.loadDistribuciones();
+    this.loadNovedades();
   }
 
 
@@ -337,18 +338,20 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     if (this.asistencial) {
       this.novedadPersonalService.getNovedadesByPersona(this.asistencial.id!).subscribe((novedades) => {
         // Filtrar las novedades que coinciden con el mes y año seleccionados
-        const mesSeleccionadoMoment = moment(this.mesSeleccionado, 'MM-YYYY');
+        const mesSeleccionadoMoment = moment(this.mesSeleccionado, 'MM-YYYY');  // Captura la fecha seleccionada
         this.novedadesPersonales = novedades.filter(novedad => {
           const fechaInicio = moment(novedad.fechaInicio);
           const fechaFinal = moment(novedad.fechaFinal);
-          return (fechaInicio.month() === mesSeleccionadoMoment.month() && fechaInicio.year() === mesSeleccionadoMoment.year()) ||
-                (fechaFinal.month() === mesSeleccionadoMoment.month() && fechaFinal.year() === mesSeleccionadoMoment.year());
+          return (
+            (fechaInicio.month() === mesSeleccionadoMoment.month() && fechaInicio.year() === mesSeleccionadoMoment.year()) ||
+            (fechaFinal.month() === mesSeleccionadoMoment.month() && fechaFinal.year() === mesSeleccionadoMoment.year())
+          );
         });
         this.setupColumns();  // Configurar columnas dinámicamente para reflejar las novedades
       });
     }
   }
-
+  
   aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): DistribucionGuardiaWithHoras {
     // Filtrar distribuciones por mes y año
     const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
@@ -617,7 +620,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     }
   }
 
-  calcularEstadoCargaHoraria(): void {
+  /*calcularEstadoCargaHoraria(): void {
     // Obtener los totales sin ocurrencias para cada tipo de distribución
     const totalHorasGuardiaSinOcurrencias = this.aggregateDistribucionesGuardia(this.distribucionesGuardia).totalHorasSinOcurrencias;
     const totalHorasConsultorioSinOcurrencias = this.aggregateDistribucionesConsultorio(this.distribucionesConsultorio).totalHorasSinOcurrencias;
@@ -642,7 +645,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
         this.tipoMensajeCargaHoraria = 'error-message';
       }
     }
-  }
+  }*/
     
   verDistribucionHistorial(): void {
     if (this.asistencial && this.asistencial.id) {

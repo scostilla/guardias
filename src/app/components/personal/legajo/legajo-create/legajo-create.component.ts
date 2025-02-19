@@ -132,10 +132,10 @@ export class LegajoCreateComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
-  tipoUdo!: number;
-  tipoEfector!: number;
+  tipoUdo!: string;
+  tipoEfector!: string;
   tipoHabilitacionesGuardias!: number;
-  tipoEfectorCargo!: number;
+  tipoEfectorCargo!: string;
 
 
   /* Form de revista */
@@ -658,11 +658,11 @@ export class LegajoCreateComponent implements OnInit {
     this.tipoUdo = tipoUdo;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoUdo === 1) { // Ministerio
+    if (tipoUdo === 'MINISTERIO') { // Ministerio
       this.udoOptions = this.ministerios;
-    } else if (tipoUdo === 2) { // Hospital
+    } else if (tipoUdo === 'HOSPITAL') { // Hospital
       this.udoOptions = this.hospitales;
-    } else if (tipoUdo === 3) { // CAPS
+    } else if (tipoUdo === 'CAPS') { // CAPS
       this.udoOptions = this.caps;
     }
 
@@ -705,11 +705,11 @@ export class LegajoCreateComponent implements OnInit {
     this.tipoEfector = tipoEfector;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoEfector === 1) { // Ministerio
+    if (tipoEfector === 'MINISTERIO') { // Ministerio
       this.efectorOptions = this.ministerios;
-    } else if (tipoEfector === 2) { // Hospital
+    } else if (tipoEfector === 'HOSPITAL') { // Hospital
       this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoEfector === 3) { // CAPS
+    } else if (tipoEfector === 'CAPS') { // CAPS
       this.efectorOptions = this.caps;  // Opciones específicas para CAPS
     }
 
@@ -801,11 +801,11 @@ export class LegajoCreateComponent implements OnInit {
     this.tipoEfectorCargo = tipoEfectorCargo;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoEfectorCargo === 1) { // Ministerio
+    if (tipoEfectorCargo === 'MINISTERIO') { // Ministerio
       this.efectorCargoOptions = this.ministerios;
-    } else if (tipoEfectorCargo === 2) { // Hospital
+    } else if (tipoEfectorCargo === 'HOSPITAL') { // Hospital
       this.efectorCargoOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoEfectorCargo === 3) { // CAPS
+    } else if (tipoEfectorCargo === 'CAPS') { // CAPS
       this.efectorCargoOptions = this.caps;  // Opciones específicas para CAPS
     }
 

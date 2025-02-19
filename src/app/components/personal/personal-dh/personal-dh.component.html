@@ -114,20 +114,17 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row mt-3" *ngIf="showTable && cargaHoraria !== undefined">
     <div class="container-mensajes">
-      <div *ngIf="cargaHoraria !== undefined" class="carga-horaria-display">
-        <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong> hs</p>
-        <p *ngIf="cargaHoraria === undefined">
-          No hay carga horaria disponible para este profesional.
-        </p>
+      <div class="carga-horaria-display">
+        <p>Carga horaria semanal: <strong>{{ cargaHoraria }}</strong> hs</p>
+        <p *ngIf="cargaHoraria === undefined">No hay carga horaria disponible para este profesional.</p>
       </div>
-  
-      <div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
+      <!--<div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
         <p>{{ mensajeCargaHoraria }}</p>
-      </div>
+      </div>-->
     </div>
-    </div>
+  </div>
   
 
 </div>

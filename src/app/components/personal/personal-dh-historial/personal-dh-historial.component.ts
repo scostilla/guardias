@@ -1,18 +1,58 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';  // Si tienes este servicio
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
+import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
-import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service'; 
+import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
+import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
+import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
+import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
-import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import * as moment from 'moment';
-import 'moment/locale/es';
+
+// Interfaz temporal para agrupar las horas por día y calcular totales
+interface DistribucionGuardiaWithHoras extends DistribucionGuardia {
+  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  totalHorasFinDeSemana: number;  // Total horas sábado y domingo
+  totalHorasLunesAViernes: number;  // Total horas lunes a viernes
+  totalHoras: number;  // Total de todas las horas
+  totalHorasSinOcurrencias: number;
+  clase?: string;
+}
+
+interface DistribucionConsultorioWithHoras extends DistribucionConsultorio {
+  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  totalHorasFinDeSemana: number;
+  totalHorasLunesAViernes: number;
+  totalHoras: number;
+  totalHorasSinOcurrencias: number;
+  clase?: string;
+}
+
+interface DistribucionGiraWithHoras extends DistribucionGira {
+  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  totalHorasFinDeSemana: number;
+  totalHorasLunesAViernes: number;
+  totalHoras: number;
+  totalHorasSinOcurrencias: number;
+  clase?: string;
+}
+
+interface DistribucionOtroWithHoras extends DistribucionOtro {
+  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  totalHorasFinDeSemana: number;
+  totalHorasLunesAViernes: number;
+  totalHoras: number;
+  totalHorasSinOcurrencias: number;
+  clase?: string;
+}
 
 @Component({
   selector: 'app-personal-dh-historial',
@@ -20,38 +60,41 @@ import 'moment/locale/es';
   styleUrls: ['./personal-dh-historial.component.css']
 })
 export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
+
+  @ViewChild(MatSort) sort!: MatSort;
   suscription!: Subscription;
-
   asistencial: Asistencial | null = null;
-  nombreMes!: string;
-  anoActual!: number;
-  anoSeleccionado!: number;
-  novedades: NovedadPersonal[] = [];
-  
+  distribucionesGuardia: DistribucionGuardiaWithHoras[] = [];
+  distribucionesConsultorio: DistribucionConsultorioWithHoras[] = [];
+  distribucionesGira: DistribucionGiraWithHoras[] = [];
+  distribucionesOtro: DistribucionOtroWithHoras[] = [];
+  displayedColumns: string[] = [];
+  novedadesPersonales: NovedadPersonal[] = [];
 
-  mesesDisponibles: { value: string; label: string }[] = [];
-  mesSeleccionado!: string;
+  // Variables para el selector de mes y año
+  mesSeleccionado: string = ''; // MM-YYYY
+  mesesDisponibles: { value: string, label: string }[] = [];
+  nombreMes: string = '';
+  anoSeleccionado: number = 0;
 
-  horasPorDia: { [key: string]: { cantidad: number; horaIngreso?: Date } } = {
-    lunesGuardia: { cantidad: 0 }, martesGuardia: { cantidad: 0 }, miercolesGuardia: { cantidad: 0 }, juevesGuardia: { cantidad: 0 },
-    viernesGuardia: { cantidad: 0 }, sabadoGuardia: { cantidad: 0 }, domingoGuardia: { cantidad: 0 },
-    lunesConsultorio: { cantidad: 0 }, martesConsultorio: { cantidad: 0 }, miercolesConsultorio: { cantidad: 0 }, juevesConsultorio: { cantidad: 0 },
-    viernesConsultorio: { cantidad: 0 }, sabadoConsultorio: { cantidad: 0 }, domingoConsultorio: { cantidad: 0 },
-    lunesOtro: { cantidad: 0 }, martesOtro: { cantidad: 0 }, miercolesOtro: { cantidad: 0 }, juevesOtro: { cantidad: 0 },
-    viernesOtro: { cantidad: 0 }, sabadoOtro: { cantidad: 0 }, domingoOtro: { cantidad: 0 },
-    lunesGira: { cantidad: 0 }, martesGira: { cantidad: 0 }, miercolesGira: { cantidad: 0 }, juevesGira: { cantidad: 0 },
-    viernesGira: { cantidad: 0 }, sabadoGira: { cantidad: 0 }, domingoGira: { cantidad: 0 }
-  };
-  
-  totalHorasGuardia: number = 0;
-  totalHorasConsultorio: number = 0;
-  totalHorasOtro: number = 0;
-  totalHorasGira: number = 0;
+  showDetails: boolean = false;
+  showTable = false;
+  isLoading = true;
 
   cargaHoraria: number | undefined;
   mensajeCargaHoraria: string | null = null;
   tipoMensajeCargaHoraria: string | null = null;
-  
+
+
+  mapaDias: { [key: string]: string } = {
+  'LUNES': 'lunes',
+  'MARTES': 'martes',
+  'MIERCOLES': 'miércoles',
+  'JUEVES': 'jueves',
+  'VIERNES': 'viernes',
+  'SABADO': 'sábado',
+  'DOMINGO': 'domingo'
+};
 
   constructor(
     private asistencialService: AsistencialService,
@@ -59,233 +102,508 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     private distribucionConsultorioService: DistribucionConsultorioService,
     private distribucionGiraService: DistribucionGiraService,
     private distribucionOtroService: DistribucionOtroService,
-    private novedadPersonalService: NovedadPersonalService,
-    private toastr: ToastrService,
-    private location: Location,
     private router: Router,
-  ) {
-    const fechaActual = moment();
-    this.anoActual = fechaActual.year();
-    
-    // Calcular el mes anterior
-    let mesAnterior = fechaActual.month() === 0 ? 11 : fechaActual.month() - 1; // Enero (0) es diciembre (11) del año anterior
-    let anioDelMesAnterior = fechaActual.month() === 0 ? fechaActual.year() - 1 : fechaActual.year();
-    
-    this.mesSeleccionado = `${mesAnterior + 1}-${anioDelMesAnterior}`; // Formato MM-YYYY (agregamos 1 al mes para que sea 1-12)
-  }
+    private location: Location,
+    private novedadPersonalService: NovedadPersonalService
+  ) { }
 
   ngOnInit(): void {
     this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
       console.log('Asistencial recibido:', this.asistencial);
-  
+
       if (!this.asistencial?.id) {
-        //this.toastr.warning('Vuelve a seleccionar el asistencial.', 'Advertencia');
-        this.location.back(); // Redirigir a la página anterior
+        this.location.back();
       } else {
-        // Si hay un asistencial con id, cargar distribuciones y carga horaria
-        this.loadDistribuciones(this.asistencial.id);
+        this.loadDistribuciones();  // Cargar las distribuciones
+        this.loadNovedades();
         this.loadCargaHoraria();
-        this.loadNovedades(this.asistencial.id);
+        //this.calcularEstadoCargaHoraria();
       }
+
+      // Inicializar el mes y año en un mes anterior al actual
+      const fechaActual = moment();
+      const fechaAnterior = fechaActual.clone().subtract(1, 'months'); // Resta 1 mes al mes actual
+
+      this.mesSeleccionado = `${fechaAnterior.month() + 1}-${fechaAnterior.year()}`;  // Formato MM-YYYY
+      this.nombreMes = fechaAnterior.format('MMMM').toUpperCase();  // Nombre del mes anterior
+      this.anoSeleccionado = fechaAnterior.year();  // Año del mes anterior
+
+      this.generarMesesDisponibles();  // Generar meses disponibles
     });
-  
-    const fechaActual = moment();
-    this.anoActual = fechaActual.year();
-  
-    // Establecer mes seleccionado como el mes anterior al actual
-    let mesAnterior = fechaActual.month() === 0 ? 11 : fechaActual.month() - 1; // Si es enero, mostrar diciembre del año anterior
-    let anioDelMesAnterior = fechaActual.month() === 0 ? fechaActual.year() - 1 : fechaActual.year();
-    
-    this.mesSeleccionado = `${mesAnterior + 1}-${anioDelMesAnterior}`; // Formato MM-YYYY (agregamos 1 al mes para que sea 1-12)
-    this.nombreMes = this.getMonthName(mesAnterior); // Establecer nombre del mes
-    this.anoSeleccionado = anioDelMesAnterior; // Inicializamos el año seleccionado con el año del mes anterior
-  
-    this.generarMesesDisponibles();
   }
+
+  // Función para combinar los datos y aplicar la agregación
+  getCombinedData() {
+    const combinedDataGuardia = this.distribucionesGuardia.length > 0 ? [this.aggregateDistribucionesGuardia(this.distribucionesGuardia)] : [];
+    const combinedDataConsultorio = this.distribucionesConsultorio.length > 0 ? [this.aggregateDistribucionesConsultorio(this.distribucionesConsultorio)] : [];
+    const combinedDataGira = this.distribucionesGira.length > 0 ? [this.aggregateDistribucionesGira(this.distribucionesGira)] : [];
+    const combinedDataOtro = this.distribucionesOtro.length > 0 ? [this.aggregateDistribucionesOtro(this.distribucionesOtro)] : [];
   
+    const combinedData = [
+      ...combinedDataGuardia,
+      ...combinedDataConsultorio,
+      ...combinedDataGira,
+      ...combinedDataOtro
+    ];
+  
+    console.log('Combined Data:', combinedData);  // Verifica la estructura de los datos combinados
+  
+    return combinedData; // Si está vacío, no se mostrará la tabla
+  }
+
+  ngOnDestroy(): void {
+    if (this.suscription) {
+      this.suscription.unsubscribe();
+    }
+  }
+
+// Función para generar los meses disponibles (6 meses hacia atrás, comenzando desde el mes anterior)
 generarMesesDisponibles(): void {
   const fechaActual = moment();
-  const mesesPasados = [];
+  const mesesAnteriores = [];
 
-  this.anoActual = fechaActual.year();
-
-  // Agregar hasta 6 meses atrás desde el mes actual
-  for (let i = 1; i <= 6; i++) {
-    let mesSeleccionado = fechaActual.clone().subtract(i, 'months');
-    mesesPasados.push({
+  // Agregar hasta 6 meses hacia atrás, comenzando desde el mes anterior
+  for (let i = -1; i >= -6; i--) {
+    const mesSeleccionado = fechaActual.clone().add(i, 'months');
+    mesesAnteriores.push({
       value: `${mesSeleccionado.month() + 1}-${mesSeleccionado.year()}`,
       label: mesSeleccionado.format('MMMM YYYY').toUpperCase(),
     });
   }
 
-  this.mesesDisponibles = mesesPasados.reverse(); // Invertimos el orden para mostrar desde el mes más reciente al más antiguo
-
+  this.mesesDisponibles = mesesAnteriores; // Mostramos los meses desde el pasado hasta el mes anterior
   console.log('Meses disponibles:', this.mesesDisponibles);
 }
-  
-onMonthChange(event: any): void {
-  const [mes, anio] = event.target.value.split('-').map(Number);
-  this.mesSeleccionado = event.target.value;
-  this.nombreMes = moment().month(mes - 1).format('MMMM').toUpperCase(); // Nombre del mes en mayúsculas
-  this.anoSeleccionado = anio; // Actualizamos el año con el valor seleccionado
 
-  // Actualizar las novedades al cambiar el mes
-  if (this.asistencial?.id) {
-    this.loadNovedades(this.asistencial.id);
+  resetData(): void {
+    this.distribucionesGuardia = [];
+    this.distribucionesConsultorio = [];
+    this.distribucionesGira = [];
+    this.distribucionesOtro = [];
+    this.showTable = false;
+  }
+  
+  // Función que se ejecuta cuando se selecciona un mes y año
+  onMonthChange(event: any): void {
+    const [mes, anio] = event.target.value.split('-').map(Number);
+    this.mesSeleccionado = event.target.value;
+    this.nombreMes = moment().month(mes - 1).format('MMMM').toUpperCase(); // Nombre del mes
+    this.anoSeleccionado = anio; // Año seleccionado
+
+    this.resetData(); // Resetear datos antes de cargar nuevas distribuciones
+
+    // Cargar las distribuciones filtradas por mes y año
+    this.loadDistribuciones();
+    this.loadNovedades();
   }
 
-  this.filtrarDistribucionesPorMes(); // Opcional: Filtrar distribuciones cuando cambie el mes
-}
 
-  filtrarDistribucionesPorMes(): void {
-    const [mes, anio] = this.mesSeleccionado.split('-').map(Number);
-    console.log(`Filtrar distribuciones para: ${mes}/${anio}`);
+
+  loadDistribuciones(): void {
+    if (!this.asistencial) return;
+    
+    this.isLoading = true;
+    this.showTable = false
+
+    this.loadDistribucionGuardia();
+    this.loadDistribucionConsultorio();
+    this.loadDistribucionGira();
+    this.loadDistribucionOtro();
+  }
   
-    this.resetHorasPorDia(); // Reiniciar los contadores antes de filtrar
+  // Cargar distribuciones por tipo y aplicar filtro
+  loadDistribucionGuardia(): void {
+    this.distribucionGuardiaService.getDistribucionesGuardiaByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGuardia[]) => {
+      this.distribucionesGuardia = this.filterDistribucionesPorMes(distribuciones);
+      this.checkLoadingState();
+      this.setupColumns();
+    });
+  }
   
-    if (this.asistencial?.id !== undefined) {
-      this.loadDistribuciones(this.asistencial.id); // Cargar distribuciones filtradas
-    } else {
-      console.warn('No hay un asistencial válido para cargar las distribuciones.');
+  loadDistribucionConsultorio(): void {
+    this.distribucionConsultorioService.getDistribucionesConsultorioByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionConsultorio[]) => {
+      this.distribucionesConsultorio = this.filterDistribucionesPorMes(distribuciones);
+      this.checkLoadingState();
+      this.setupColumns();
+    });
+  }
+  
+  loadDistribucionGira(): void {
+    this.distribucionGiraService.getDistribucionesGiraByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGira[]) => {
+      this.distribucionesGira = this.filterDistribucionesPorMes(distribuciones);
+      this.checkLoadingState();
+      this.setupColumns();
+    });
+  }
+  
+  loadDistribucionOtro(): void {
+    this.distribucionOtroService.getDistribucionesOtroByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionOtro[]) => {
+      this.distribucionesOtro = this.filterDistribucionesPorMes(distribuciones);
+      this.checkLoadingState();
+      this.setupColumns();
+    });
+  }
+
+    // Método para verificar el estado de carga
+    checkLoadingState() {
+      if (
+        !this.distribucionesGuardia.length &&
+        !this.distribucionesConsultorio.length &&
+        !this.distribucionesGira.length &&
+        !this.distribucionesOtro.length
+      ) {
+        this.showTable = false; // No mostrar la tabla si no hay datos
+      } else {
+        this.showTable = true; // Mostrar la tabla si hay datos
+      }
+      this.isLoading = false; // Terminar el estado de carga
     }
-  }
 
-  resetHorasPorDia(): void {
-    for (const key in this.horasPorDia) {
-      this.horasPorDia[key].cantidad = 0;
-      this.horasPorDia[key].horaIngreso = undefined;
-    }
-  
-    this.totalHorasGuardia = 0;
-    this.totalHorasConsultorio = 0;
-    this.totalHorasOtro = 0;
-    this.totalHorasGira = 0;
-  }
-  
-  loadDistribuciones(idPersona: number): void {
-    this.loadDistribucionesGuardia(idPersona);
-    this.loadDistribucionesConsultorio(idPersona);
-    this.loadDistribucionesGira(idPersona);
-    this.loadDistribucionesOtro(idPersona);
-  }
-
-  loadDistribucionesGuardia(idPersona: number): void {
-    this.distribucionGuardiaService.list().subscribe(distribuciones => {
-        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
-        
-        // Establecer el rango de fechas para el mes seleccionado
-        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
-        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
-
-        // Resetear horas antes de sumar
-        this.resetHorasPorDia();
-
-        distribuciones.forEach(distr => {
-          if (distr.persona.id === idPersona) {
-              const fechaInicio = moment(distr.fechaInicio);
-              const fechaFinalizacion = moment(distr.fechaFinalizacion);
+    // Filtrar distribuciones por mes
+    filterDistribucionesPorMes(distribuciones: any[]): any[] {
+      // Convertir el mes y año seleccionados en números
+      const mesSeleccionado = parseInt(this.mesSeleccionado.split('-')[0], 10) - 1; // Restar 1 porque los meses en moment.js son 0-based
+      const anoSeleccionado = parseInt(this.anoSeleccionado.toString(), 10);
       
-              // Verificar si el mes seleccionado está dentro del rango de fechas
-              if ((fechaInicio.isBefore(finDelMes) && fechaFinalizacion.isAfter(inicioDelMes)) || 
-                  (fechaInicio.isSame(inicioDelMes, 'month') || fechaFinalizacion.isSame(finDelMes, 'month'))) {
-                  
-                  // Usar locale y asegurarse que se utilice 'dddd' y toLowerCase
-                  const diaKey = moment(fechaInicio).locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
-                  const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
-                  this.horasPorDia[diaConAcento + 'Guardia'].cantidad += distr.cantidadHoras;
-              }
-          }
+      return distribuciones.filter(d => {
+        const fechaInicio = moment(d.fechaInicio);
+        const fechaFinalizacion = moment(d.fechaFinalizacion);
+    
+        // Filtrar las distribuciones por el mes y año seleccionados
+        return fechaInicio.month() === mesSeleccionado && fechaInicio.year() === anoSeleccionado;
       });
+    }
+    
+  // Función para configurar las columnas dinámicas
+  setupColumns(): void {
+    if (!this.distribucionesGuardia.length) return;
+    const fechaInicio = this.distribucionesGuardia[0].fechaInicio;
+    const startOfMonth = moment(fechaInicio).startOf('month');
+    const endOfMonth = moment(fechaInicio).endOf('month');
+    const daysInMonth = endOfMonth.diff(startOfMonth, 'days') + 1;
+    const columns: string[] = ['clase', 'totalHoras', 'totalHorasFinDeSemana', 'totalHorasLunesAViernes'];
+    for (let i = 0; i < daysInMonth; i++) {
+      columns.push(startOfMonth.clone().add(i, 'days').format('YYYY_MM_DD'));
+    }
+    this.displayedColumns = columns;
+  }
 
-        // Calcular total de horas de Guardia
-        this.totalHorasGuardia = distribuciones.reduce((total, distr) => {
-            const fechaInicio = moment(distr.fechaInicio);
-            const fechaFinalizacion = moment(distr.fechaFinalizacion);
-            if (distr.persona.id === idPersona && 
-                (fechaInicio.isBefore(finDelMes) && fechaFinalizacion.isAfter(inicioDelMes))) {
-                return total + distr.cantidadHoras;
-            }
-            return total;
-        }, 0);
-    });
+  getFechaFromColumnId(columnId: string): string {
+    const fecha = moment(columnId, 'YYYY_MM_DD').toDate();
+    return fecha ? fecha.toISOString().split('T')[0] : '';
+  }
+
+getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsultorioWithHoras | DistribucionGiraWithHoras | DistribucionOtroWithHoras, fechaColumna: string): { horas: string, tooltip: string, showDetails: boolean }[] {
+  const diaColumn = moment(fechaColumna, 'YYYY_MM_DD').format('dddd').toLowerCase();
+  const horasPorDia = distribucion.horasPorDia;
+  if (horasPorDia[diaColumn]) {
+    // Si ya existe un arreglo de horas para el día, devolver todas las entradas
+    return horasPorDia[diaColumn].map(entry => ({
+      ...entry,
+      showDetails: this.showDetails // El valor de `showDetails` controla si se muestran los detalles
+    }));
+  } else {
+    return []; // Si no hay horas para ese día, devolver un arreglo vacío
+  }
 }
 
-loadDistribucionesConsultorio(idPersona: number): void {
-    this.distribucionConsultorioService.list().subscribe(distribuciones => {
-        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+  // Función que alterna la visibilidad de los detalles globalmente
+  toggleAllDetails(): void {
+    this.showDetails = !this.showDetails; // Alterna la visibilidad de los detalles
+  }
 
-        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
-        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
+  getNovedadClass(fecha: string): string {
+    const novedad = this.novedadesPersonales.find(novedad => {
+      const inicio = moment(novedad.fechaInicio);
+      const final = moment(novedad.fechaFinal);
+      const current = moment(fecha, 'YYYY-MM-DD');
+      return current.isBetween(inicio, final, 'days', '[]');
+    });
+    return novedad ? this.getNovedadClassFromTipo(novedad) : '';
+  }
 
-        const distribucionesConsultorio = distribuciones.filter(d => 
-            d.persona.id === idPersona &&
-            moment(d.fechaInicio).isBefore(finDelMes) && 
-            moment(d.fechaFinalizacion).isAfter(inicioDelMes) // Verifica que el mes esté dentro del rango
-        );
+  getNovedadClassFromTipo(novedad: NovedadPersonal): string {
+    switch (novedad.tipoLicencia.nombre.toLowerCase()) {
+      case 'compensatorio': return 'novedad-personal-compensatorio';
+      case 'licencia anual ordinaria': return 'novedad-personal-lao';
+      case 'licencia por maternidad': return 'novedad-personal-maternidad';
+      case 'parte por enfermedad': return 'novedad-personal-parte-enfermo';
+      case 'parte por cuidado de familiar enfermo': return 'novedad-personal-familiar-enfermo';
+      case 'falta sin aviso': return 'novedad-personal-falta-sin-aviso';
+      default: return 'novedad-personal-otros';
+    }
+  }
 
-        distribucionesConsultorio.forEach(distr => {
-            const fechaInicio = moment(distr.fechaInicio);
-            const diaKey = fechaInicio.locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
-            const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
-            this.horasPorDia[diaConAcento + 'Consultorio'].cantidad += distr.cantidadHoras;
+  // Cargar las novedades personales
+  loadNovedades(): void {
+    if (this.asistencial) {
+      this.novedadPersonalService.getNovedadesByPersona(this.asistencial.id!).subscribe((novedades) => {
+        // Filtrar las novedades que coinciden con el mes y año seleccionados
+        const mesSeleccionadoMoment = moment(this.mesSeleccionado, 'MM-YYYY');  // Captura la fecha seleccionada
+        this.novedadesPersonales = novedades.filter(novedad => {
+          const fechaInicio = moment(novedad.fechaInicio);
+          const fechaFinal = moment(novedad.fechaFinal);
+          return (
+            (fechaInicio.month() === mesSeleccionadoMoment.month() && fechaInicio.year() === mesSeleccionadoMoment.year()) ||
+            (fechaFinal.month() === mesSeleccionadoMoment.month() && fechaFinal.year() === mesSeleccionadoMoment.year())
+          );
         });
+        this.setupColumns();  // Configurar columnas dinámicamente para reflejar las novedades
+      });
+    }
+  }
+  
+  aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): DistribucionGuardiaWithHoras {
+    // Filtrar distribuciones por mes y año
+    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
+    console.log('Distribuciones filtradas para Guardias:', distribucionesFiltradas);
+    
+    if (distribucionesFiltradas.length === 0) {
+      console.log('No hay distribuciones disponibles.');
+      return {} as DistribucionGuardiaWithHoras;
+    }
+  
+    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionGuardiaWithHoras;
+    aggregatedDistribucion.clase = 'Guardias';
+    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+    let totalHorasFinDeSemana = 0;
+    let totalHorasLunesAViernes = 0;
+    let totalHoras = 0;
+    let totalHorasSinOcurrencias = 0;
+    
+    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
+  
+    distribucionesFiltradas.forEach(distribucion => {
+      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
+      if (!dia) {
+        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
+        return;
+      }
+      const horas = distribucion.cantidadHoras;
+      const cantidadOcurrencias = ocurrenciasPorDia[dia];
+      const horasTotalesPorDia = horas * cantidadOcurrencias;
+      const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
-        this.totalHorasConsultorio = distribucionesConsultorio.reduce((total, distr) => total + distr.cantidadHoras, 0);
+      totalHorasSinOcurrencias += horas;
+
+      if (horasPorDia[dia]) {
+        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
+      } else {
+        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
+      }
+  
+      if (dia === 'sábado' || dia === 'domingo') {
+        totalHorasFinDeSemana += horasTotalesPorDia;
+      } else {
+        totalHorasLunesAViernes += horasTotalesPorDia;
+      }
+  
+      totalHoras += horasTotalesPorDia;
     });
-}
+  
+    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+    aggregatedDistribucion.horasPorDia = horasPorDia;
+    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
+    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
+    aggregatedDistribucion.totalHoras = totalHoras;
+  
+    console.log('Distribución agregada:', aggregatedDistribucion);
+  
+    return aggregatedDistribucion;
+  }
+      
+  aggregateDistribucionesConsultorio(distribuciones: DistribucionConsultorio[]): DistribucionConsultorioWithHoras {
+    // Filtrar distribuciones por mes y año
+    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
+  
+    if (distribucionesFiltradas.length === 0) {
+      return {} as DistribucionConsultorioWithHoras;
+    }
+  
+    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionConsultorioWithHoras;
+    aggregatedDistribucion.clase = 'Consultorio';
+    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+    let totalHorasFinDeSemana = 0;
+    let totalHorasLunesAViernes = 0;
+    let totalHoras = 0;
+    let totalHorasSinOcurrencias = 0;
 
-loadDistribucionesGira(idPersona: number): void {
-    this.distribucionGiraService.list().subscribe(distribuciones => {
-        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
+    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
+  
+    distribucionesFiltradas.forEach(distribucion => {
+      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
+      if (!dia) {
+        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
+        return;
+      }
+      const horas = distribucion.cantidadHoras;
+      const cantidadOcurrencias = ocurrenciasPorDia[dia];
+      const horasTotalesPorDia = horas * cantidadOcurrencias;
+      const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
-        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
-        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
-
-        const distribucionesGira = distribuciones.filter(d => 
-            d.persona.id === idPersona &&
-            moment(d.fechaInicio).isBefore(finDelMes) && 
-            moment(d.fechaFinalizacion).isAfter(inicioDelMes) // Verifica que el mes esté dentro del rango
-        );
-
-        distribucionesGira.forEach(distr => {
-            const fechaInicio = moment(distr.fechaInicio);
-            const diaKey = fechaInicio.locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
-            const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
-            this.horasPorDia[diaConAcento + 'Gira'].cantidad += distr.cantidadHoras;
-        });
-
-        this.totalHorasGira = distribucionesGira.reduce((total, distr) => total + distr.cantidadHoras, 0);
+      totalHorasSinOcurrencias += horas;
+  
+      if (horasPorDia[dia]) {
+        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
+      } else {
+        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
+      }
+  
+      if (dia === 'sábado' || dia === 'domingo') {
+        totalHorasFinDeSemana += horasTotalesPorDia;
+      } else {
+        totalHorasLunesAViernes += horasTotalesPorDia;
+      }
+      totalHoras += horasTotalesPorDia;
     });
-}
+  
+    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+    aggregatedDistribucion.horasPorDia = horasPorDia;
+    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
+    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
+    aggregatedDistribucion.totalHoras = totalHoras;
+  
+    return aggregatedDistribucion;
+  }
+    
+  aggregateDistribucionesGira(distribuciones: DistribucionGira[]): DistribucionGiraWithHoras {
+    // Filtrar distribuciones por mes y año
+    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
+  
+    if (distribucionesFiltradas.length === 0) {
+      return {} as DistribucionGiraWithHoras;
+    }
+  
+    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionGiraWithHoras;
+    aggregatedDistribucion.clase = 'Giras';
+    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+    let totalHorasFinDeSemana = 0;
+    let totalHorasLunesAViernes = 0;
+    let totalHoras = 0;
+    let totalHorasSinOcurrencias = 0;
 
-loadDistribucionesOtro(idPersona: number): void {
-    this.distribucionOtroService.list().subscribe(distribuciones => {
-        const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
-
-        const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
-        const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
-
-        const distribucionesOtro = distribuciones.filter(d => 
-            d.persona.id === idPersona &&
-            moment(d.fechaInicio).isBefore(finDelMes) && 
-            moment(d.fechaFinalizacion).isAfter(inicioDelMes) // Verifica que el mes esté dentro del rango
-        );
-
-        distribucionesOtro.forEach(distr => {
-            const fechaInicio = moment(distr.fechaInicio);
-            const diaKey = fechaInicio.locale('es').format('dddd').toLowerCase(); // Obtener el día de la semana en español
-            const diaConAcento = diaKey === 'miércoles' ? 'miercoles' : diaKey === 'sábado' ? 'sabado' : diaKey;
-            this.horasPorDia[diaConAcento + 'Otro'].cantidad += distr.cantidadHoras;
-        });
-
-        this.totalHorasOtro = distribucionesOtro.reduce((total, distr) => total + distr.cantidadHoras, 0);
+    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
+  
+    distribucionesFiltradas.forEach(distribucion => {
+      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
+      if (!dia) {
+        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
+        return;
+      }
+      const horas = distribucion.cantidadHoras;
+      const cantidadOcurrencias = ocurrenciasPorDia[dia];
+      const horasTotalesPorDia = horas * cantidadOcurrencias;
+      const tooltip = `${distribucion.puestoSalud}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+      
+      totalHorasSinOcurrencias += horas;
+  
+      if (horasPorDia[dia]) {
+        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
+      } else {
+        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
+      }
+  
+      if (dia === 'sábado' || dia === 'domingo') {
+        totalHorasFinDeSemana += horasTotalesPorDia;
+      } else {
+        totalHorasLunesAViernes += horasTotalesPorDia;
+      }
+      totalHoras += horasTotalesPorDia;
     });
-}
+  
+    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+    aggregatedDistribucion.horasPorDia = horasPorDia;
+    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
+    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
+    aggregatedDistribucion.totalHoras = totalHoras;
+  
+    return aggregatedDistribucion;
+  }
+    
+  aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtroWithHoras {
+    // Filtrar distribuciones por mes y año
+    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
+  
+    if (distribucionesFiltradas.length === 0) {
+      return {} as DistribucionOtroWithHoras;
+    }
+  
+    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionOtroWithHoras;
+    aggregatedDistribucion.clase = 'Otros';
+    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+    let totalHorasFinDeSemana = 0;
+    let totalHorasLunesAViernes = 0;
+    let totalHoras = 0;
+    let totalHorasSinOcurrencias = 0;
 
-getMonthName(monthIndex: number): string {
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    return monthNames[monthIndex];
+    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
+  
+    distribucionesFiltradas.forEach(distribucion => {
+      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
+      if (!dia) {
+        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
+        return;
+      }
+      const horas = distribucion.cantidadHoras;
+      const cantidadOcurrencias = ocurrenciasPorDia[dia];
+      const horasTotalesPorDia = horas * cantidadOcurrencias;
+      const tooltip = `${distribucion.descripcion}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+      totalHorasSinOcurrencias += horas;
+  
+      if (horasPorDia[dia]) {
+        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
+      } else {
+        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
+      }
+  
+      if (dia === 'sábado' || dia === 'domingo') {
+        totalHorasFinDeSemana += horasTotalesPorDia;
+      } else {
+        totalHorasLunesAViernes += horasTotalesPorDia;
+      }
+      totalHoras += horasTotalesPorDia;
+    });
+  
+    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+    aggregatedDistribucion.horasPorDia = horasPorDia;
+    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
+    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
+    aggregatedDistribucion.totalHoras = totalHoras;
+  
+    return aggregatedDistribucion;
+  }
+        
+      
+  // Contar las ocurrencias de cada día en el mes
+  contarOcurrenciasDeDiasEnMes(): { [key: string]: number } {
+    const startOfMonth = moment().startOf('month');
+    const endOfMonth = moment().endOf('month');
+    const diasDeLaSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+    const ocurrenciasPorDia: { [key: string]: number } = {};
+
+    for (let m = startOfMonth; m.isBefore(endOfMonth, 'day'); m.add(1, 'days')) {
+      const diaSemana = m.format('dddd').toLowerCase();
+      if (!ocurrenciasPorDia[diaSemana]) {
+        ocurrenciasPorDia[diaSemana] = 0;
+      }
+      ocurrenciasPorDia[diaSemana]++;
+    }
+
+    return ocurrenciasPorDia;
+  }
+        
+  getNovedadTooltip(fecha: string): string {
+    const novedad = this.novedadesPersonales.find(novedad => {
+      const inicio = moment(novedad.fechaInicio);
+      const final = moment(novedad.fechaFinal);
+      const current = moment(fecha, 'YYYY-MM-DD');
+      return current.isBetween(inicio, final, 'days', '[]');
+    });
+  
+    return novedad ? novedad.tipoLicencia.nombre : '';
+    
   }
 
   loadCargaHoraria(): void {
@@ -297,48 +615,48 @@ getMonthName(monthIndex: number): string {
         this.cargaHoraria = ultimoLegajoActivo.revista.cargaHoraria.cantidad;
       } else {
         this.cargaHoraria = undefined; // Si no hay carga horaria
-        // Puedes agregar un mensaje de advertencia aquí si lo deseas
+        // agregar un mensaje de advertencia aquí
       }
     } else {
       this.cargaHoraria = undefined; // No hay legajos activos
     }
   }
 
-  volverDistribucion(): void {
+  /*calcularEstadoCargaHoraria(): void {
+    // Obtener los totales sin ocurrencias para cada tipo de distribución
+    const totalHorasGuardiaSinOcurrencias = this.aggregateDistribucionesGuardia(this.distribucionesGuardia).totalHorasSinOcurrencias;
+    const totalHorasConsultorioSinOcurrencias = this.aggregateDistribucionesConsultorio(this.distribucionesConsultorio).totalHorasSinOcurrencias;
+    const totalHorasGiraSinOcurrencias = this.aggregateDistribucionesGira(this.distribucionesGira).totalHorasSinOcurrencias;
+    const totalHorasOtroSinOcurrencias = this.aggregateDistribucionesOtro(this.distribucionesOtro).totalHorasSinOcurrencias;
+  
+    // Calcular el total de horas sin ocurrencias
+    const totalHorasSinOcurrencias = totalHorasGuardiaSinOcurrencias + totalHorasConsultorioSinOcurrencias + totalHorasGiraSinOcurrencias + totalHorasOtroSinOcurrencias;
+    console.log('Total Horas Sin Ocurrencias:', totalHorasSinOcurrencias);
+    console.log('Carga Horaria:', this.cargaHoraria);
+  
+    // Comprobar la carga horaria
+    if (this.cargaHoraria !== undefined) {
+      if (totalHorasSinOcurrencias === this.cargaHoraria) {
+        this.mensajeCargaHoraria = "El total de horas semanales cargadas coincide con las horas de carga horaria.";
+        this.tipoMensajeCargaHoraria = 'success-message';
+      } else if (totalHorasSinOcurrencias < this.cargaHoraria) {
+        this.mensajeCargaHoraria = "Faltan horas semanales por cargar para completar las horas de carga horaria informada.";
+        this.tipoMensajeCargaHoraria = 'pending-message';
+      } else {
+        this.mensajeCargaHoraria = "El total de horas semanales cargadas supera la carga horaria informada. Es necesario corregir.";
+        this.tipoMensajeCargaHoraria = 'error-message';
+      }
+    }
+  }*/
+    
+  verDistribucionHistorial(): void {
     if (this.asistencial && this.asistencial.id) {
       this.asistencialService.setCurrentAsistencial(this.asistencial);
-      this.router.navigate(['/personal-dh']); 
+      this.router.navigate(['/personal-dh-historial']); 
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }
-}
+  }  
 
-// Método en el componente PersonalDhHistorialComponent
-loadNovedades(idPersona: number): void {
-  const [mesSeleccionado, anioSeleccionado] = this.mesSeleccionado.split('-').map(Number);
-
-  // Establecer el rango de fechas para el mes seleccionado
-  const inicioDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).startOf('month');
-  const finDelMes = moment().year(anioSeleccionado).month(mesSeleccionado - 1).endOf('month');
-
-  // Llamada al servicio de novedades personales
-  this.novedadPersonalService.list().subscribe(novedades => {
-    this.novedades = novedades.filter(novedad => {
-      // Filtrar novedades donde la persona es el asistencial y la fecha está dentro del rango del mes seleccionado
-      const fechaInicio = moment(novedad.fechaInicio);
-      const fechaFinal = moment(novedad.fechaFinal);
-
-      return (novedad.persona.id === idPersona) && 
-        ((fechaInicio.isBefore(finDelMes) && fechaFinal.isAfter(inicioDelMes)) ||
-         (fechaInicio.isSameOrAfter(inicioDelMes) && fechaFinal.isBefore(finDelMes)) ||
-         (fechaInicio.isSameOrBefore(inicioDelMes) && fechaFinal.isSameOrAfter(finDelMes)));
-    });
-
-    console.log('Novedades filtradas:', this.novedades);
-  });
-}
   
-  ngOnDestroy(): void {
-    this.suscription?.unsubscribe();
-  }
 }
