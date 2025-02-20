@@ -141,11 +141,14 @@ export class LegajoEditComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
+  habilitacionesGeneralesOptions: any[] = [];
   tipoUdo!: string;
   tipoEfector!: string;
-  tipoHabilitacionesGuardias!: number;
+  tipoHabilitacionesGuardias!: string;
   tipoEfectorCargo!: number;
   isUpdatingTipoGuardias: boolean = false;
+  tipoHabilitacionesGenerales!: string;
+  isSelectDisabled: boolean = true;
 
 
   /* Form de revista */
@@ -215,6 +218,8 @@ export class LegajoEditComponent implements OnInit {
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: ['', Validators.required],
       habilitacionesGenerales: [[]],
+      tipoHabilitacionesGenerales: [''],
+      hospitalHabilitacionesGenerales: [''],
     }, { validator: this.validarFechas });
 
 
@@ -396,6 +401,8 @@ export class LegajoEditComponent implements OnInit {
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: [''],
       habilitacionesGenerales: [[]],
+      tipoHabilitacionesGenerales: [''],
+      hospitalHabilitacionesGenerales: [''],
     }, { validator: this.validarFechas });
 
 
@@ -445,7 +452,7 @@ const efectorControl = this.legajoForm.get('efectores');
 if (efectorControl) {
   if (this.efectorOptions?.length > 0) {
     efectorControl.enable();
-    efectorControl.setValue(this.initialData?.udo ?? null); // Establecer el valor inicial
+    efectorControl.setValue(this.initialData?.efectores ?? null); // Establecer el valor inicial
   } else {
     efectorControl.disable();
   }
@@ -581,20 +588,15 @@ console.log('Formulario Tipo Guardias:', this.legajoForm.get('tipoGuardias')?.va
         // Llamar a toggleSituacionRevista cuando el usuario cambia el valor
         this.toggleSituacionRevista(selectedValues);
   
-        // Si se selecciona el tipo 4 (CONTRAFACTURA), deseleccionar todas las demás opciones
+        // Si se selecciona el tipo CONTRAFACTURA, deseleccionar todas las demás opciones
         if (selectedValues.includes(this.idContraFactura)) {
           this.legajoForm.patchValue({
             tipoGuardias: [this.idContraFactura]  // Solo mantener el tipo 4
           }, { emitEvent: false });  // Esto previene que se dispare el evento valueChanges de nuevo
-        } else if (selectedValues.includes(this.idPasiva)) {
-          // Si se selecciona el tipo 5 (PASIVA), deseleccionar todas las demás opciones
-          this.legajoForm.patchValue({
-            tipoGuardias: [this.idPasiva]  // Solo mantener el tipo 5
-          }, { emitEvent: false });  // Esto previene que se dispare el evento valueChanges de nuevo
         } else {
           // Si se seleccionan otras opciones (1, 2, 3), mantenerlas
           this.legajoForm.patchValue({
-            tipoGuardias: selectedValues.filter((value: number) => value !== this.idContraFactura && value !== this.idPasiva)
+            tipoGuardias: selectedValues.filter((value: number) => value !== this.idContraFactura)
           }, { emitEvent: false });  // Esto previene que se dispare el evento valueChanges de nuevo
         }
         this.isUpdatingTipoGuardias = false;
@@ -1069,9 +1071,9 @@ listMinisterios(): void {
     this.tipoHabilitacionesGuardias = tipoHabilitacionesGuardias;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoHabilitacionesGuardias === 2) { // Ministerio
+    if (tipoHabilitacionesGuardias === 'HOSPITAL') { // HOSPITAL
       this.habilitacionesGuardiasOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoHabilitacionesGuardias === 3) { // CAPS
+    } else if (tipoHabilitacionesGuardias === 'CAPS') { // CAPS
       this.habilitacionesGuardiasOptions = this.caps;  // Opciones específicas para CAPS
     }
 
@@ -1094,6 +1096,53 @@ listMinisterios(): void {
       this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
       this.habilitacionesGuardiasOptions = this.caps; // Asignamos los CAPS al select de UDO
       this.legajoForm.get('habilitacionesGuardias')?.reset(); // Limpiar la selección actual de UDO
+
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
+  }
+
+  // Método para cambiar las opciones de la seleccion de efector
+  onTipoHabilitacionesGeneralesChange(event: any): void {
+    const tipoHabilitacionesGenerales = event.value;
+    this.tipoHabilitacionesGenerales = tipoHabilitacionesGenerales;
+
+    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+    if (tipoHabilitacionesGenerales === 'HOSPITAL') { // HOSPITAL
+      this.habilitacionesGeneralesOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
+    } else if (tipoHabilitacionesGenerales === 'CAPS') { // CAPS
+      this.habilitacionesGeneralesOptions = this.caps;  // Opciones específicas para CAPS
+    }
+
+    // Habilitar el select de efector después de haber elegido un tipo de efector
+    const efectorControl = this.legajoForm.get('habilitacionesGenerales');
+    if (efectorControl) {
+      efectorControl.enable(); // Habilitar el select de efector
+    }
+
+    // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
+    this.legajoForm.get('habilitacionesGenerales')?.reset();
+    this.legajoForm.get('hospitalHabilitacionesGenerales')?.reset();
+  }
+
+  // Método para cargar los CAPS correspondientes al hospital seleccionado
+  onHospitalHabilitacionesGeneralesChange(event: any): void {
+    const hospitalId = event.value;
+    
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.habilitacionesGeneralesOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('habilitacionesGenerales')?.reset(); // Limpiar la selección actual de UDO
 
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
@@ -1703,7 +1752,8 @@ if (legajoData.tipoGuardias &&
       const habilitacionesGuardiasDto = new HabilitacionesGuardiasDto(
         true, // activo
         legajoData.idPersona,  // Verificamos `idPersona`
-        legajoData.habilitacionesGuardias || null
+        legajoData.habilitacionesGuardias || null,
+        legajoData.tipoEfectorEx
       );
 
       // Log para verificar el objeto que se enviará
@@ -1740,7 +1790,8 @@ if (legajoData.tipoGuardias &&
             const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
               true, // activo
               legajoData.idPersona,
-              legajoData.habilitacionesGuardias
+              legajoData.habilitacionesGuardias,
+              legajoData.tipoEfectorEx
             );
             console.log('legajoData.habilitacionesGenerales:', legajoData.habilitacionesGenerales);
             console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);
