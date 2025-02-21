@@ -1333,25 +1333,16 @@ if (legajoData.tipoGuardias &&
     }
 
     saveHabilitacionesGuardias(legajoData: any): void {
-      this.habilitacionesGuardiasService.getPermisoByPersona(legajoData.idPersona).subscribe(
-        (habilitacionExistente) => {
-          console.log("Habilitación existente encontrada, no se creará una nueva:", habilitacionExistente);
-        },
-        (error) => {
-          if (error.status === 404) {
-            console.log("No se encontró una habilitación existente, creando nueva.");
-
       // Crear el objeto HabilitacionesGuardiasDto
       const habilitacionesGuardiasDto = new HabilitacionesGuardiasDto(
         true, // activo
-        legajoData.idPersona,  // Verificamos `idPersona`
+        legajoData.idPersona,
         legajoData.habilitacionesGuardias || null
       );
+  
+       // Log para verificar el objeto que se enviará
+    console.log("Enviando DTO a /habilitacionesGuardias/create:", habilitacionesGuardiasDto);
 
-      // Log para verificar el objeto que se enviará
-      console.log("Enviando DTO a /habilitacionesGuardias/create:", habilitacionesGuardiasDto);
-
-    
       // Llamar al servicio para guardar los permisos de efectores
       this.habilitacionesGuardiasService.save(habilitacionesGuardiasDto).subscribe(
         (response) => {
@@ -1361,49 +1352,28 @@ if (legajoData.tipoGuardias &&
           console.error("Error al guardar los permisos de efectores", error);
         }
       );
-    } else {
-      console.error("Error al verificar habilitación existente", error);
-    }
-  }
-);
     }
 
     saveHabilitacionesGenerales(legajoData: any): void {
-      this.habilitacionesGeneralesService.getPermisoByPersona(legajoData.idPersona).subscribe(
-        (habilitacionExistente) => {
-          // Si ya existe una habilitación, simplemente la usamos y no hacemos nada
-          console.log("Habilitación existente encontrada, no se creará una nueva:", habilitacionExistente);
+      // Crear el objeto HabilitacionesGeneralesDto
+      const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
+        true, // activo
+        legajoData.idPersona,
+        legajoData.habilitacionesGenerales || null
+      );
+
+      console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);
+    
+      // Llamar al servicio para guardar los permisos de efectores
+      this.habilitacionesGeneralesService.save(habilitacionesGeneralesDto).subscribe(
+        (response) => {
+          console.log("Permisos de efectores guardados correctamente", response);
         },
         (error) => {
-          if (error.status === 404) {
-            // Si no existe una habilitación, se crea una nueva
-            console.log("No se encontró una habilitación existente, creando nueva.");
-    
-            const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
-              true, // activo
-              legajoData.idPersona,
-              legajoData.habilitacionesGenerales ?? null
-            );
-
-            console.log('legajoData.habilitacionesGenerales:', legajoData.habilitacionesGenerales);
-            console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);
-    
-    
-            this.habilitacionesGeneralesService.save(habilitacionesGeneralesDto).subscribe(
-              (response) => {
-                console.log("Habilitación creada correctamente", response);
-              },
-              (error) => {
-                console.error("Error al crear la habilitación", error);
-              }
-            );
-          } else {
-            console.error("Error al verificar habilitación existente", error);
-          }
+          console.error("Error al guardar los permisos de efectores", error);
         }
       );
     }
-
 
   //-----Manejo de paneles-----
 
