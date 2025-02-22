@@ -399,9 +399,9 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     })
   }*/
 
-  openDistribucion() {
+  /*openDistribucion() {
     this.router.navigate(['/dist-horaria']);
-  }
+  }*/
 
   verNovedad(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {

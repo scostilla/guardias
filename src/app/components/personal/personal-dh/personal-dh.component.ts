@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';  // Si tienes este servicio
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
@@ -646,6 +646,12 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       }
     }
   }*/
+
+  crearDistribucion(): void {
+    this.router.navigate(['/dist-horaria'], {
+      state: { asistencial: this.asistencial }
+    });
+  }
     
   verDistribucionHistorial(): void {
     if (this.asistencial && this.asistencial.id) {
