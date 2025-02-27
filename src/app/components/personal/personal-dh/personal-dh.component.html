@@ -1,4 +1,4 @@
-<app-spinner *ngIf="isLoading"></app-spinner>
+<app-spinner></app-spinner>
 
 <div class="container">
   <div class="row">
@@ -12,9 +12,12 @@
       <button mat-fab color="primary" style="margin-left: 5px;" (click)="crearDistribucion()" matTooltip="Agregar distribución horaria">
         <mat-icon>av_timer</mat-icon>
       </button>
-      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
-        <mat-icon>get_app</mat-icon>
+      <button mat-fab class="button-success" style="margin-left: 5px;" (click)="editarMes()" matTooltip="Editar distribución {{ nombreMes }}">
+        <mat-icon>edit</mat-icon>
       </button>
+      <!--<button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
+        <mat-icon>get_app</mat-icon>
+      </button>-->
       <button mat-fab class="button-pase" style="margin-left: 5px;" matTooltip="Ver historial" (click)="verDistribucionHistorial()">
         <mat-icon>calendar_month</mat-icon>
       </button>
@@ -103,7 +106,7 @@
     </table>
     
   <!-- Mensaje si no hay registros -->
-  <div *ngIf="!isLoading && !showTable">
+  <div *ngIf="noHayDistribuciones">
     No hay distribuciones cargadas para el mes y año seleccionado.
   </div>
 
@@ -128,8 +131,6 @@
       </div>-->
     </div>
   </div>
-  
-
 </div>
 
 

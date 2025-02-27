@@ -33,16 +33,17 @@ import { Location } from '@angular/common';
 
 
 @Component({
-  selector: 'app-dist-horaria',
-  templateUrl: './dist-horaria.component.html',
-  styleUrls: ['./dist-horaria.component.css'],
+  selector: 'app-personal-dh-edit',
+  templateUrl: './personal-dh-edit.component.html',
+  styleUrls: ['./personal-dh-edit.component.css'],
 })
-export class DistHorariaComponent {
+export class PersonalDhEditComponent {
 
   inputValue: string = '';
   suscription!: Subscription;
   asistencial: Asistencial | null = null;
   idPersona!: number;
+  mesSeleccionado!: string;
   tipoGuardias: TipoGuardia[] = [];
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
@@ -73,7 +74,6 @@ export class DistHorariaComponent {
   private distribucionesOtro: DistribucionOtro[] = [];
 
   isButtonDisabled: boolean = true;
-  isPanelsEnabled: boolean = true;
 
   options: any[] | undefined;
   
@@ -112,31 +112,6 @@ export class DistHorariaComponent {
       otros: this.fb.array([this.createOtro()])
     });
 
-    /*this.consultorioForm = this.fb.group({
-      tipoConsultorio: ['', Validators.required],
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      idServicio: ['', Validators.required]
-    });
-
-    this.giraForm = this.fb.group({
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      puestoSalud: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      destino: ['', Validators.required]
-    });
-
-    this.otroForm = this.fb.group({
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      lugar: ['', Validators.required]
-    });*/
-
     this.vigenciaForm = this.fb.group({
       mesVigencia: [null, Validators.required],
       fechaInicio: [{ value: null, disabled: true }],
@@ -148,39 +123,41 @@ export class DistHorariaComponent {
   }
   
   ngOnInit() {
-    this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-      this.asistencial = asistencial;
-      console.log('Asistencial recibido:', this.asistencial);
-
-      if (!this.asistencial?.id) {
-        this.location.back();
-        } else {
-        this.idPersona = this.asistencial.id;
-        this.listServicios();
-        this.listCaps();
-        this.generarMeses();
-        this.loadCargaHoraria();
-        this.filterLegajosAndGetTipoGuardia();
-      }
-
+    this.route.queryParams.subscribe(params => {
+      const asistencialId = params['asistencialId'];
+      const mesSeleccionado = params['mes'];
+  
+      // Suscripción al observable currentAsistencial$
+      this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
+        this.asistencial = asistencial;
+        if (this.asistencial?.id) {
+          this.idPersona = this.asistencial.id;
+          this.listServicios();
+          this.listCaps();
+          this.generarMeses();
+          this.loadCargaHoraria();
+          this.filterLegajosAndGetTipoGuardia();
+          this.loadDistribuciones(mesSeleccionado);
+          
+        }
+      });
+    });
+  
+    // Otros servicios que necesites cargar
     this.distribucionConsultorioService.list().subscribe(data => {
       this.distribucionesConsultorio = data;
     });
-    
     this.distribucionGuardiaService.list().subscribe(data => {
       this.distribucionesGuardia = data;
     });
-    
     this.distribucionGiraService.list().subscribe(data => {
       this.distribucionesGira = data;
     });
-    
     this.distribucionOtroService.list().subscribe(data => {
       this.distribucionesOtro = data;
     });
-  });
   }
-
+    
   private subscribeToFormChanges(): void {
     this.guardiaForm.valueChanges.subscribe(() => this.updateHorasStatus());
     this.consultorioForm.valueChanges.subscribe(() => this.updateHorasStatus());
@@ -188,6 +165,117 @@ export class DistHorariaComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
+  loadDistribuciones(mesSeleccionado: string): void {
+    // Extraer mes y año del formato MM-YYYY
+    const [mes, anio] = mesSeleccionado.split('-');
+    
+    // Crear la fecha de inicio usando el mes y año extraídos
+    const fechaInicio = `${anio}-${mes.padStart(2, '0')}-01`;
+  
+    // Filtrar las distribuciones por asistencial.id y fecha de inicio
+    const idAsistencial = this.asistencial?.id;
+  
+    if (!idAsistencial) {
+      this.toastr.error('Asistencial no encontrado.');
+      return;
+    }
+  
+    // Obtener distribuciones de Consultorio filtradas por fecha y activo
+    this.distribucionConsultorioService.getDistribucionesByFechaInicio(fechaInicio)
+      .subscribe(distribucionesConsultorio => {
+        // Filtrar por asistencial.id y activo = true
+        const distribucionesConsultorioFiltradas = distribucionesConsultorio.filter(d => 
+          d.persona.id === idAsistencial && d.activo === true
+        );
+        this.updateForm(distribucionesConsultorioFiltradas, this.consultorioForm);
+      });
+  
+    // Obtener distribuciones de Guardia filtradas por fecha y activo
+    this.distribucionGuardiaService.getDistribucionesByFechaInicio(fechaInicio)
+      .subscribe(distribucionesGuardia => {
+        // Filtrar por asistencial.id y activo = true
+        const distribucionesGuardiaFiltradas = distribucionesGuardia.filter(d => 
+          d.persona.id === idAsistencial && d.activo === true
+        );
+        this.updateForm(distribucionesGuardiaFiltradas, this.guardiaForm);
+      });
+  
+    // Obtener distribuciones de Gira filtradas por fecha y activo
+    this.distribucionGiraService.getDistribucionesByFechaInicio(fechaInicio)
+      .subscribe(distribucionesGira => {
+        // Filtrar por asistencial.id y activo = true
+        const distribucionesGiraFiltradas = distribucionesGira.filter(d => 
+          d.persona.id === idAsistencial && d.activo === true
+        );
+        this.updateForm(distribucionesGiraFiltradas, this.giraForm);
+      });
+  
+    // Obtener distribuciones de Otro filtradas por fecha y activo
+    this.distribucionOtroService.getDistribucionesByFechaInicio(fechaInicio)
+      .subscribe(distribucionesOtro => {
+        // Filtrar por asistencial.id y activo = true
+        const distribucionesOtroFiltradas = distribucionesOtro.filter(d => 
+          d.persona.id === idAsistencial && d.activo === true
+        );
+        this.updateForm(distribucionesOtroFiltradas, this.otroForm);
+      });
+  }
+    
+  private updateForm(distribuciones: any[], formGroup: FormGroup): void {
+    // Resetear el FormArray antes de agregar los nuevos registros
+    const formArray = (formGroup.get('consultorios') || formGroup.get('guardias') || formGroup.get('giras') || formGroup.get('otros')) as FormArray;
+    formArray.clear();
+  
+    // Añadir los registros obtenidos a la forma
+    distribuciones.forEach(d => {
+      let form;
+      console.log('Distribución recibida:', d); // Log de la distribución recibida
+      // Asegurarse de que horaIngreso esté en el formato adecuado
+      const horaIngresoFormateada = moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm');
+  
+      if (formGroup === this.consultorioForm) {
+        form = this.createConsultorio();
+        form.patchValue({
+          dia: d.dia,
+          cantidadHoras: d.cantidadHoras,
+          horaIngreso: horaIngresoFormateada,
+          idServicio: d.servicio ? d.servicio.id : null,
+        });
+      } else if (formGroup === this.guardiaForm) {
+        form = this.createGuardia();
+        form.patchValue({
+          dia: d.dia,
+          horaIngreso: horaIngresoFormateada,
+          idServicio: d.servicio ? d.servicio.id : null,
+          tipoGuardia: d.tipoGuardia,
+          cantidadHoras: d.cantidadHoras,
+        });
+        console.log('Después de patchValue (Guardia):', form.value);
+      } else if (formGroup === this.giraForm) {
+        form = this.createGira();
+        form.patchValue({
+          dia: d.dia,
+          cantidadHoras: d.cantidadHoras,
+          horaIngreso: horaIngresoFormateada,
+          puestoSalud: d.puestoSalud,
+          descripcion: d.descripcion,
+          destino: d.destino,
+        });
+      } else if (formGroup === this.otroForm) {
+        form = this.createOtro();
+        form.patchValue({
+          dia: d.dia,
+          cantidadHoras: d.cantidadHoras,
+          horaIngreso: horaIngresoFormateada,
+          descripcion: d.descripcion,
+          lugar: d.lugar,
+        });
+      }
+  
+      formArray.push(form);
+    });
+  }
+    
   createGuardia(): FormGroup {
     return this.fb.group({
       dia: ['', Validators.required],
@@ -467,92 +555,30 @@ export class DistHorariaComponent {
     }
   }
 
-  updateFechas() {
-    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
-    const idPersonaSeleccionado = this.idPersona;
-  
-    // Verificación de datos
-    if (!mesVigencia) {
-      console.warn('Mes de vigencia no está definido.');
-      return;
-    }
-    if (!idPersonaSeleccionado) {
-      console.warn('ID de persona no está definido.');
-      return;
-    }
-  
-    const fechaInicio = moment(mesVigencia).startOf('month').toDate();
-    const fechaFinalizacion = moment(mesVigencia).endOf('month').toDate();
-  
-    this.vigenciaForm.patchValue({
-      fechaInicio: fechaInicio,
-      fechaFinalizacion: fechaFinalizacion
-    });
-  
-    // Obtener mes y año de vigencia
-    const mesesParaVerificar = [];
-    let inicio = moment().add(1, 'month').startOf('month'); // Comienza desde el siguiente mes
-    const fin = moment(mesVigencia).endOf('month');
-  
-    while (inicio.isSameOrBefore(fin, 'month')) {
-      mesesParaVerificar.push({ mes: inicio.month(), año: inicio.year() });
-      inicio.add(1, 'month');
-    }
-  
-    // Verificar si ya hay registros en cada uno de los meses calculados
-    let existenRegistros = false;
-    for (const { mes, año } of mesesParaVerificar) {
-      if (
-        this.verificarRegistros(this.distribucionesConsultorio, mes, año, idPersonaSeleccionado) ||
-        this.verificarRegistros(this.distribucionesGuardia, mes, año, idPersonaSeleccionado) ||
-        this.verificarRegistros(this.distribucionesGira, mes, año, idPersonaSeleccionado) ||
-        this.verificarRegistros(this.distribucionesOtro, mes, año, idPersonaSeleccionado)
-      ) {
-        existenRegistros = true;
-        break; // Si se encuentra al menos un registro, salir del bucle
-      }
-    }
-  
-    if (existenRegistros) {
-      this.toastr.warning('Ya existen cargas para uno o más de los meses seleccionados.', 'Carga no permitida', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      this.isPanelsEnabled = false; // Deshabilitar los paneles
-    } else {
-      this.isPanelsEnabled = true; // Habilitar los paneles si no existen registros
-    }
+updateFechas(): void {
+  const idPersonaSeleccionado = this.idPersona;
+
+  // Verificación de datos
+  if (!idPersonaSeleccionado) {
+    console.warn('ID de persona no está definido.');
+    return;
   }
-        
-  private verificarRegistros(distribuciones: any[], mes: number, año: number, idPersona: number): boolean {
-    return distribuciones.some(distribucion => {
-      const fechaDistribucionInicio = new Date(distribucion.fechaInicio);
-      const fechaDistribucionFin = new Date(distribucion.fechaFinalizacion);
-      const activo = distribucion.activo; // Verifica que 'activo' es correcto
-      const personaId = distribucion.persona.id; // Verifica que 'persona' tiene la propiedad 'id'
+
+  // Extraer mes y año de mesSeleccionado (formato MM-YYYY)
+  const [mes, anio] = this.mesSeleccionado.split('-');
   
-      // Log para depuración
-      console.log('Verificando distribución:', {
-        activo,
-        personaId,
-        idPersona,
-        fechaDistribucionInicio,
-        fechaDistribucionFin,
-        mes,
-        año
-      });
-  
-      return (
-        activo &&
-        personaId === idPersona &&
-        // Verifica que el mes y el año coincidan tanto en inicio como en fin
-        ((fechaDistribucionInicio.getMonth() === mes && fechaDistribucionInicio.getFullYear() === año) ||
-        (fechaDistribucionFin.getMonth() === mes && fechaDistribucionFin.getFullYear() === año))
-      );
-    });
-  }
-    
+  // Crear la fecha de inicio y fecha de finalización usando el mes y el año
+  const fechaInicio = moment([parseInt(anio), parseInt(mes) - 1]).startOf('month').toDate();
+  const fechaFinalizacion = moment([parseInt(anio), parseInt(mes) - 1]).endOf('month').toDate();
+
+  // Actualizar las fechas en el formulario
+  this.vigenciaForm.patchValue({
+    fechaInicio: fechaInicio,
+    fechaFinalizacion: fechaFinalizacion
+  });
+
+}
+            
   listServicios(): void {
     this.servicioService.list().subscribe(data => {
       console.log('Lista de servicios:', data);
@@ -614,8 +640,8 @@ export class DistHorariaComponent {
   saveDistribuciones() {
     this.isButtonDisabled = true;
 
-    // Obtener fechas de inicio y finalización para cada formulario
-    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
+    // Obtener mesSeleccionado
+    const mesSeleccionado = this.mesSeleccionado; // Asumiendo que mesSeleccionado es una variable ya cargada (ej. "02-2025")
 
     if (this.idEfector === undefined) {
         this.toastr.error('El profesional no esta definido o no posee un legajo.', 'Error', {
@@ -641,6 +667,7 @@ export class DistHorariaComponent {
         { form: this.otroForm, name: 'Otras actividades' }
     ];
 
+    // Validación de formularios
     for (const { form, name } of formChecks) {
         if (form.dirty && !form.valid) {
             this.toastr.warning(`Faltan datos obligatorios para el panel ${name}.`, 'Advertencia', {
@@ -656,154 +683,213 @@ export class DistHorariaComponent {
     const savePromises: Promise<any>[] = [];
     const errorMessages: string[] = [];
 
-    // Calcula meses para cada distribución
-    const guardiaMeses = this.calcularMeses(mesVigencia);
-    const consultorioMeses = this.calcularMeses(mesVigencia);
-    const giraMeses = this.calcularMeses(mesVigencia);
-    const otroMeses = this.calcularMeses(mesVigencia);
+    // Convertir mesSeleccionado en fecha de inicio y finalización
+    const [mes, anio] = mesSeleccionado.split('-');
+    const anioNum = parseInt(anio, 10);
+    const fechaInicio = new Date(anioNum, parseInt(mes, 10) - 1, 1); // El mes es 0-indexado en JavaScript (enero es 0)
+    const fechaFinalizacion = new Date(anioNum, parseInt(mes, 10), 0); // Usar el último día del mes
 
-    if (this.guardiaForm.valid) {
-      const guardiaFormArray = this.guardiaForm.get('guardias') as FormArray;
-      guardiaFormArray.controls.forEach((control) => {
-        guardiaMeses.forEach((mes) => {
-          const distribucionGuardiaDto = new DistribucionGuardiaDto(
-            control.value.dia,
-            control.value.cantidadHoras,
-            this.idPersona ?? null,
-            this.idEfector ?? 0,
-            mes.fechaInicio, // Usar el inicio del mes
-            mes.fechaFinalizacion, // Usar la fecha de finalización del mes
-            control.value.horaIngreso,
-            control.value.tipoGuardia,
-            control.value.idServicio.id
-          );
-  
-          savePromises.push(
-            this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-              .catch(() => {
-                errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
-              })
-          );
-        });
-      });
-    }
-  
-    // Guarda consultorio
-    if (this.consultorioForm.valid) {
-      const consultorioFormArray = this.consultorioForm.get('consultorios') as FormArray;
-      consultorioFormArray.controls.forEach((control) => {
-        consultorioMeses.forEach((mes) => {
-            const distribucionConsultorioDto = new DistribucionConsultorioDto(
-                control.value.dia,
-                control.value.cantidadHoras,
-                this.idPersona ?? null,
-                this.idEfector ?? 0,
-                mes.fechaInicio,
-                mes.fechaFinalizacion,
-                control.value.horaIngreso,
-                control.value.idServicio.id,
-                "EXTERNO"
-            );
+     // Convertir fechaInicio a formato string 'yyyy-MM-dd' para usar con el servicio
+     const fechaInicioString = fechaInicio.toISOString().split('T')[0];
 
-            savePromises.push(
-              this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
-                  .catch(() => {
-                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionConsultorioDto.dia}`);
-              })
-              );
-          });
-      });
-    }
-        
-    // Guarda gira médica
-    if (this.giraForm.valid) {
-      const giraFormArray = this.giraForm.get('giras') as FormArray;
-      giraFormArray.controls.forEach((control) => {
-        giraMeses.forEach((mes) => {
-            const distribucionGiraDto = new DistribucionGiraDto(
-                control.value.dia,
-                control.value.cantidadHoras,
-                this.idPersona ?? null,
-                this.idEfector ?? 0,
-                mes.fechaInicio,
-                mes.fechaFinalizacion,
-                control.value.horaIngreso,
-                control.value.puestoSalud,
-                control.value.descripcion,
-                control.value.destino
-            );
+    // Paso 1: Eliminar distribuciones existentes
+    const deletePromises: Promise<any>[] = [];
 
-            savePromises.push(
-              this.distribucionGiraService.save(distribucionGiraDto).toPromise()
-                  .catch(() => {
-                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGiraDto.dia}`);
-              })
-              );
-          });
-      });
-    }
-
-    // Guarda otras actividades
-    if (this.otroForm.valid) {
-      const otroFormArray = this.otroForm.get('otros') as FormArray;
-      otroFormArray.controls.forEach((control) => {
-        guardiaMeses.forEach((mes) => {
-            const distribucionOtroDto = new DistribucionOtroDto(
-                control.value.dia,
-                control.value.cantidadHoras,
-                this.idPersona ?? null,
-                this.idEfector ?? 0,
-                mes.fechaInicio,
-                mes.fechaFinalizacion,
-                control.value.horaIngreso,
-                control.value.descripcion,
-                control.value.lugar
-            );
-
-            savePromises.push(
-              this.distribucionOtroService.save(distribucionOtroDto).toPromise()
-                  .catch(() => {
-                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionOtroDto.dia}`);
-                    })
-                  );
-              });
-          });
-        }
-    
-    // Envia los datos cargados para guardar
-    Promise.all(savePromises)
-        .then(() => {
-            // Mostrar mensaje de éxito
-            this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
+    // Eliminar distribuciones de Guardia
+    this.distribucionGuardiaService.getDistribucionesByFechaInicio(fechaInicioString)
+        .subscribe(distribucionesGuardia => {
+            const distribucionesGuardiaFiltradas = distribucionesGuardia.filter(d => d.persona.id === this.idPersona);
+            distribucionesGuardiaFiltradas.forEach(d => {
+                deletePromises.push(this.distribucionGuardiaService.delete(d.id ?? 0).toPromise());
             });
+        });
 
-            // Si hubo errores, mostrar detalle
-            if (errorMessages.length > 0) {
-                this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
+    // Eliminar distribuciones de Consultorio
+    this.distribucionConsultorioService.getDistribucionesByFechaInicio(fechaInicioString)
+        .subscribe(distribucionesConsultorio => {
+            const distribucionesConsultorioFiltradas = distribucionesConsultorio.filter(d => d.persona.id === this.idPersona);
+            distribucionesConsultorioFiltradas.forEach(d => {
+                deletePromises.push(this.distribucionConsultorioService.delete(d.id ?? 0).toPromise());
+            });
+        });
+
+    // Eliminar distribuciones de Gira
+    this.distribucionGiraService.getDistribucionesByFechaInicio(fechaInicioString)
+        .subscribe(distribucionesGira => {
+            const distribucionesGiraFiltradas = distribucionesGira.filter(d => d.persona.id === this.idPersona);
+            distribucionesGiraFiltradas.forEach(d => {
+                deletePromises.push(this.distribucionGiraService.delete(d.id ?? 0).toPromise());
+            });
+        });
+
+    // Eliminar distribuciones de Otro
+    this.distribucionOtroService.getDistribucionesByFechaInicio(fechaInicioString)
+        .subscribe(distribucionesOtro => {
+            const distribucionesOtroFiltradas = distribucionesOtro.filter(d => d.persona.id === this.idPersona);
+            distribucionesOtroFiltradas.forEach(d => {
+                deletePromises.push(this.distribucionOtroService.delete(d.id ?? 0).toPromise());
+            });
+        });
+
+    // Paso 2: Esperar a que todas las eliminaciones terminen
+    Promise.all(deletePromises)
+        .then(() => {
+            // Una vez que todas las distribuciones anteriores sean eliminadas, guardamos las nuevas
+            const guardiaMeses = [fechaInicio]; // Aquí puedes mantener la lógica que calculaba los meses para cada distribución
+            const consultorioMeses = [fechaInicio];
+            const giraMeses = [fechaInicio];
+            const otroMeses = [fechaInicio];
+
+            // Guardar guardias
+            if (this.guardiaForm.valid) {
+                const guardiaFormArray = this.guardiaForm.get('guardias') as FormArray;
+                guardiaFormArray.controls.forEach((control) => {
+                    guardiaMeses.forEach((mes) => {
+                        const distribucionGuardiaDto = new DistribucionGuardiaDto(
+                            control.value.dia,
+                            control.value.cantidadHoras,
+                            this.idPersona ?? null,
+                            this.idEfector ?? 0,
+                            fechaInicio, // Usar el inicio del mes
+                            fechaFinalizacion, // Usar la fecha de finalización del mes
+                            control.value.horaIngreso,
+                            control.value.tipoGuardia,
+                            control.value.idServicio.id
+                        );
+
+                        savePromises.push(
+                            this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+                                .catch(() => {
+                                    errorMessages.push(`Guardia en ${fechaInicio}: ${distribucionGuardiaDto.dia}`);
+                                })
+                        );
+                    });
                 });
             }
 
-            this.router.navigate(['/personal'], {
-            });
-        
-        })
-        .catch(() => {
-            this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+            // Guardar consultorios
+            if (this.consultorioForm.valid) {
+                const consultorioFormArray = this.consultorioForm.get('consultorios') as FormArray;
+                consultorioFormArray.controls.forEach((control) => {
+                    consultorioMeses.forEach((mes) => {
+                        const distribucionConsultorioDto = new DistribucionConsultorioDto(
+                            control.value.dia,
+                            control.value.cantidadHoras,
+                            this.idPersona ?? null,
+                            this.idEfector ?? 0,
+                            fechaInicio,
+                            fechaFinalizacion,
+                            control.value.horaIngreso,
+                            control.value.idServicio.id,
+                            "EXTERNO"
+                        );
+
+                        savePromises.push(
+                            this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
+                                .catch(() => {
+                                    errorMessages.push(`Consultorio en ${fechaInicio}: ${distribucionConsultorioDto.dia}`);
+                                })
+                        );
+                    });
+                });
+            }
+
+            // Guardar giras médicas
+            if (this.giraForm.valid) {
+                const giraFormArray = this.giraForm.get('giras') as FormArray;
+                giraFormArray.controls.forEach((control) => {
+                    giraMeses.forEach((mes) => {
+                        const distribucionGiraDto = new DistribucionGiraDto(
+                            control.value.dia,
+                            control.value.cantidadHoras,
+                            this.idPersona ?? null,
+                            this.idEfector ?? 0,
+                            fechaInicio,
+                            fechaFinalizacion,
+                            control.value.horaIngreso,
+                            control.value.puestoSalud,
+                            control.value.descripcion,
+                            control.value.destino
+                        );
+
+                        savePromises.push(
+                            this.distribucionGiraService.save(distribucionGiraDto).toPromise()
+                                .catch(() => {
+                                    errorMessages.push(`Gira en ${fechaInicio}: ${distribucionGiraDto.dia}`);
+                                })
+                        );
+                    });
+                });
+            }
+
+            // Guardar otras actividades
+            if (this.otroForm.valid) {
+                const otroFormArray = this.otroForm.get('otros') as FormArray;
+                otroFormArray.controls.forEach((control) => {
+                    otroMeses.forEach((mes) => {
+                        const distribucionOtroDto = new DistribucionOtroDto(
+                            control.value.dia,
+                            control.value.cantidadHoras,
+                            this.idPersona ?? null,
+                            this.idEfector ?? 0,
+                            fechaInicio,
+                            fechaFinalizacion,
+                            control.value.horaIngreso,
+                            control.value.descripcion,
+                            control.value.lugar
+                        );
+
+                        savePromises.push(
+                            this.distribucionOtroService.save(distribucionOtroDto).toPromise()
+                                .catch(() => {
+                                    errorMessages.push(`Otro en ${fechaInicio}: ${distribucionOtroDto.dia}`);
+                                })
+                        );
+                    });
+                });
+            }
+
+            // Enviar las nuevas distribuciones para guardar
+            Promise.all(savePromises)
+                .then(() => {
+                    // Mostrar mensaje de éxito
+                    this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    });
+
+                    // Si hubo errores, mostrar detalle
+                    if (errorMessages.length > 0) {
+                        this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
+                            timeOut: 6000,
+                            positionClass: 'toast-top-center',
+                            progressBar: true
+                        });
+                    }
+
+                    this.router.navigate(['/personal']);
+                })
+                .catch(() => {
+                    this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                    });
+                })
+                .finally(() => {
+                    this.isButtonDisabled = false;
+                });
+
+        }).catch(() => {
+            this.toastr.error('Error al eliminar distribuciones antiguas.', 'Error', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
             });
-        })
-        .finally(() => {
             this.isButtonDisabled = false;
         });
-  }
+}
 
 // Función para calcular los meses de un rango de fechas
 calcularMeses(mesVigencia: string): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
@@ -844,33 +930,27 @@ calcularMeses(mesVigencia: string): Array<{ mes: string, fechaInicio: Date, fech
     this.step = index;
   }
 
-get isMesVigenciaSelected(): boolean {
-  return !!this.vigenciaForm.get('mesVigencia')?.value;
-}
 
-get isPanelEnabled(): boolean {
-  return this.isMesVigenciaSelected && this.isPanelsEnabled;
-}
 
 get isPanel0Expanded(): boolean {
-  return this.isPanelEnabled && this.step === 0;
+  return this.step === 0;
 }
 
 get isPanel1Expanded(): boolean {
-  return this.isPanelEnabled && this.step === 1;
+  return this.step === 1;
 }
 
 get isPanel2Expanded(): boolean {
-  return this.isPanelEnabled && this.step === 2;
+  return this.step === 2;
 }
 
 get isPanel3Expanded(): boolean {
-  return this.isPanelEnabled && this.step === 3;
+  return this.step === 3;
 }
 
-  compareServicio(s1: Servicio, s2: Servicio): boolean {
-    return s1 && s2 ? s1.id === s2.id : s1 === s2;
-  }
+compareServicio(s1: Servicio, s2: any): boolean {
+  return s1 && s2 ? s1.id === s2 : s1 === s2;  // Compara el objeto con el id
+}
 
   compareHospital(h1: Hospital, h2: Hospital): boolean {
     return h1 && h2 ? h1.id === h2.id : h1 === h2;

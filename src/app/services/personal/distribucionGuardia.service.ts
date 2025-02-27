@@ -59,6 +59,11 @@ getDistribucionesByEfector(idEfector: number): Observable<DistribucionGuardia[]>
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailefector/${idEfector}`);
 }
 
+// Obtener distribuciones por fecha de inicio
+getDistribucionesByFechaInicio(fechaInicio: string): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}list/${fechaInicio}`);
+}
+
 // Verificar si existe distribución para una persona
 getDistribucionesGuardiaByPersona(idPersona: number): Observable<DistribucionGuardia[]> {
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailpersona/${idPersona}`);

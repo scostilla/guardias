@@ -79,7 +79,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
 
   showDetails: boolean = false;
   showTable = false;
-  isLoading = true;
+  noHayDistribuciones: boolean = false;
 
   cargaHoraria: number | undefined;
   mensajeCargaHoraria: string | null = null;
@@ -179,7 +179,6 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     this.distribucionesConsultorio = [];
     this.distribucionesGira = [];
     this.distribucionesOtro = [];
-    this.showTable = false;
   }
   
   // Función que se ejecuta cuando se selecciona un mes y año
@@ -190,6 +189,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     this.anoSeleccionado = anio; // Año seleccionado
 
     this.resetData(); // Resetear datos antes de cargar nuevas distribuciones
+    this.showTable = false;
 
     // Cargar las distribuciones filtradas por mes y año
     this.loadDistribuciones();
@@ -201,15 +201,20 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   loadDistribuciones(): void {
     if (!this.asistencial) return;
     
-    this.isLoading = true;
-    this.showTable = false
-
-    this.loadDistribucionGuardia();
-    this.loadDistribucionConsultorio();
-    this.loadDistribucionGira();
-    this.loadDistribucionOtro();
+    // Usar promesas para esperar que todas las distribuciones se hayan cargado
+    Promise.all([
+      this.loadDistribucionGuardia(),
+      this.loadDistribucionConsultorio(),
+      this.loadDistribucionGira(),
+      this.loadDistribucionOtro()
+    ]).then(() => {
+      this.getCombinedData(); // Llamamos a la agregación después de cargar todos los datos
+      this.checkLoadingState(); // Verificamos si los datos están completos
+    }).catch(error => {
+      console.error("Error al cargar distribuciones", error);
+    });
   }
-  
+    
   // Cargar distribuciones por tipo y aplicar filtro
   loadDistribucionGuardia(): void {
     this.distribucionGuardiaService.getDistribucionesGuardiaByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGuardia[]) => {
@@ -245,19 +250,16 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
 
     // Método para verificar el estado de carga
     checkLoadingState() {
-      if (
-        !this.distribucionesGuardia.length &&
-        !this.distribucionesConsultorio.length &&
-        !this.distribucionesGira.length &&
-        !this.distribucionesOtro.length
-      ) {
-        this.showTable = false; // No mostrar la tabla si no hay datos
-      } else {
-        this.showTable = true; // Mostrar la tabla si hay datos
-      }
-      this.isLoading = false; // Terminar el estado de carga
+      // Verificar si alguna de las distribuciones tiene elementos
+      const hayDatos = this.distribucionesGuardia.length > 0 || 
+                       this.distribucionesConsultorio.length > 0 || 
+                       this.distribucionesGira.length > 0 || 
+                       this.distribucionesOtro.length > 0;
+    
+      this.showTable = hayDatos;
+      this.noHayDistribuciones = !hayDatos;
     }
-
+    
     // Filtrar distribuciones por mes
     filterDistribucionesPorMes(distribuciones: any[]): any[] {
       // Convertir el mes y año seleccionados en números
@@ -662,6 +664,16 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     }
   }  
 
+  editarMes(): void {
+    this.router.navigate(['/personal-dh-edit'], {
+      queryParams: {
+        asistencialId: this.asistencial?.id,
+        mes: this.mesSeleccionado,
+      }
+    });
+    
+
+  }
   
 }
 

@@ -270,6 +270,11 @@ footer {
   color: #fff !important;
 }
 
+.button-delete {
+  background-color: #9c1d13 !important;
+  color: #fff !important;
+}
+
 .text-pase {
   background-color: #ffdc13 !important;
   color: #775906;
@@ -301,7 +306,7 @@ footer {
 }
 
 
-.button-success:hover, .button-primary:hover, .button-pase:hover {
+.button-success:hover, .button-primary:hover, .button-pase:hover, .button-delete:hover {
   background-color: #37BBED !important;
 }
 
