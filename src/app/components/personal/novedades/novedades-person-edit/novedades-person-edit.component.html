@@ -16,7 +16,7 @@
 
           <mat-form-field appearance="fill">
             <mat-label>Fecha Inicio</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+            <input matInput [matDatepicker]="picker" formControlName="fechaInicio" (dateChange)="onFechaInicioChange()">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error *ngIf="novedadPersonalForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
@@ -24,11 +24,10 @@
 
           <mat-form-field appearance="fill">
             <mat-label>Fecha Finalizacion</mat-label>
-            <input matInput [matDatepicker]="picker1" formControlName="fechaFinal">
+            <input matInput [matDatepicker]="picker1" formControlName="fechaFinal" [min]="fechaMinFinal">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
             <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
-            <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['dateLessThan']">La fecha de finalización no puede ser anterior a la fecha de inicio.</mat-error>
           </mat-form-field>
           
       <!-- <mat-form-field appearance="fill" class="form-field">
