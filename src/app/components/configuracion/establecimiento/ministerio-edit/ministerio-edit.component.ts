@@ -79,26 +79,19 @@ export class MinisterioEditComponent implements OnInit {
     this.ministerioForm.get('nombre')?.setValue(uppercaseValue);
   }
 
-  saveMinisterio(): void {
-    if (this.ministerioForm.valid) {
-      const formValue = this.ministerioForm.value;
-  
-      // Verifica que tanto region como localidad estén definidos antes de acceder a su id
-      const regionId = formValue.region ? formValue.region.id : null;
-      const localidadId = formValue.localidad ? formValue.localidad.id : null;
-      
-      // Asegúrate de que `cabecera` también esté definido
-      const cabeceraId = formValue.cabecera ? formValue.cabecera.id : null;
-      
-      const ministerioDto = new MinisterioDto(
-        formValue.nombre.toUpperCase(),
-        formValue.domicilio,
-        regionId,
-        localidadId,
-        formValue.telefono,
-        formValue.observacion,
-        cabeceraId,
-      );
+    saveMinisterio(): void {
+      if (this.ministerioForm.valid) {
+        const formValue = this.ministerioForm.value;
+    
+        const ministerioDto = new MinisterioDto(
+          formValue.nombre.toUpperCase(),
+          formValue.domicilio,
+          formValue.region.id,
+          formValue.localidad.id,
+          formValue.telefono,
+          formValue.observacion,
+          this.data ? this.data.idCabecera : 1
+        );
   
       console.log('MinisterioDto:', ministerioDto);
   

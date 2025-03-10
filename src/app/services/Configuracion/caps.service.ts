@@ -60,9 +60,4 @@ getCabeceraNameByCapsId(id: number): Observable<string> {
   return this.httpClient.get<string>(this.capsURL + `${id}/cabecera`, { responseType: 'text' as 'json' });
 }
 
-  // Método para verificar si el id corresponde a un CAPS
-  isCaps(id: number): Observable<boolean> {
-    return this.httpClient.get<boolean>(`${this.capsURL}isCaps/${id}`);
-  }
-
 }
