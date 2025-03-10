@@ -1,0 +1,19 @@
+import { Efector } from "./Efector";
+import { Person } from "./Person";
+export class HabilitacionesGuardias {
+    id?: number;
+    activo: boolean;
+    persona: Person;
+    efectores: Efector[];
+  
+    constructor(
+        activo: boolean,
+        persona: Person,
+        efectores: Efector[]    
+    ) {
+      this.activo = activo;
+      this.persona = persona;
+      this.efectores = efectores;
+    }
+  }
+  

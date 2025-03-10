@@ -24,7 +24,7 @@ export class LocalidadComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LocalidadDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'departamento', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'departamento', 'acciones'];
   dataSource!: MatTableDataSource<Localidad>;
   suscription!: Subscription;
 

@@ -1,58 +1,97 @@
-import { Profesion } from './Profesion';
-import { Person } from './Person';
-import { Efector } from './Efector';
-import { Revista } from './Revista';
-import { Especialidad } from './Especialidad';
 import { Cargo } from './Cargo';
+import { Efector } from './Efector';
+import { Especialidad } from './Especialidad';
+import { Person } from './Person';
+import { Profesion } from './Profesion';
+import { Region } from './Region';
+import { Revista } from './Revista';
+import { Suspension } from './Suspension';
+import { TipoGuardia } from './TipoGuardia';
+
 
 export class Legajo {
-    id?: number;
-    fechaInicio: Date;
-    fechaFinal: Date;
-    actual: boolean;
-    legal: boolean;
+    id?: number | null;
+    fechaInicio: Date | null;
+    fechaFinal?: Date | null;
+    esAutoridad: boolean;
+    esRegional?: boolean;
     activo:boolean;
-    matriculaNacional: string;
-    matriculaProvincial: string;
-    revista:Revista;
-    udo: Efector;
-    persona: Person;
-    cargo: Cargo;
+    matriculaNacional?: string | null;
+    matriculaProvincial?: string | null;
+    motivoBaja?: string | null; 
+    suspencion?: Suspension | null;
+    revista?:Revista | null;
+    udo?: Efector | null;
+    persona?: Person | null;
     efectores: Efector[];
     especialidades: Especialidad[];
-    profesion: Profesion;
+    profesion?: Profesion | null;
+    tipoGuardias: TipoGuardia[];
+    cargo?: Cargo | null;
+    region?: Region | null;
+    nroResolucion?: string;
+    nroDecreto?: string;
+    fechaResolucion?: string;
+    tipoEfector?: string;
+    tipoUdo?: string;
+    fechaBajaSistema?: string;
+   
     
     constructor(
-        fechaInicio: Date,
-        fechaFinal: Date,
-        actual: boolean,
-        legal: boolean, 
-        activo:boolean, 
-        matriculaNacional: string, 
-        matriculaProvincial: string,
-        profesion: Profesion, 
-        revista: Revista, 
-        udo: Efector, 
-        persona: Person, 
-        cargo: Cargo,
+        fechaInicio: Date | null,
+        esAutoridad: boolean,
+        activo:boolean,
         efectores: Efector[],
-        especialidades:Especialidad[]
-    ) {
+        especialidades: Especialidad[],
+        tipoGuardias: TipoGuardia[],
+
+        // Parámetros opcionales
+        fechaFinal?: Date | null,
+        esRegional?: boolean,
+        matriculaNacional?: string | null,
+        matriculaProvincial?: string | null,
+        motivoBaja?: string | null,
+        suspencion?: Suspension | null,
+        revista?:Revista | null,
+        udo?: Efector | null,
+        persona?: Person | null,
+        profesion?: Profesion | null,
+        cargo?: Cargo | null,
+        region?: Region | null,
+        nroResolucion?: string,
+        nroDecreto?: string,
+        fechaResolucion?: string,
+        tipoEfector?: string,
+        tipoUdo?: string,
+        fechaBajaSistema?: string
+      
+        ) {
         
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
-        this.actual = actual;
-        this.legal = legal;
+        this.esAutoridad = esAutoridad;
+        this.esRegional = esRegional;
         this.activo = activo;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
+        this.motivoBaja = motivoBaja;
+        this.suspencion = suspencion;
         this.profesion = profesion;
         this.revista = revista;
         this.udo = udo;
         this.persona = persona;
-        this.cargo = cargo;
         this.efectores = efectores;
         this.especialidades = especialidades;
+        this.tipoGuardias = tipoGuardias;
+        this.cargo = cargo;
+        this.region = region;
+        this.nroResolucion = nroResolucion;
+        this.nroDecreto = nroDecreto;
+        this.fechaResolucion = fechaResolucion;
+        this.tipoEfector = tipoEfector;
+        this.tipoUdo = tipoUdo;
+        this.fechaBajaSistema = fechaBajaSistema;
+    
     }
 
   }

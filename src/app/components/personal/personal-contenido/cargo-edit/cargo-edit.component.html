@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Agregar'}} Cargo
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
+
+<form [formGroup]="cargoForm" (ngSubmit)="saveCargo()" autocomplete="off">
+    <mat-dialog-content>
+        <div class="row" style="margin-top: 20px">
+            <div class="col">
+              <mat-form-field appearance="fill">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="nombre">
+                <mat-error *ngIf="cargoForm?.get('nombre')?.invalid && cargoForm?.get('nombre')?.touched">
+                    Campo requerido
+                </mat-error>
+                </mat-form-field>
+            </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                    <mat-label>Descripción</mat-label>
+                    <input matInput formControlName="descripcion">
+                        <mat-error *ngIf="cargoForm?.get('descripcion')?.invalid && cargoForm?.get('descripcion')?.touched">
+                            El campo es obligatorio.
+                            </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div mat-dialog-actions class="action mt-4">
+                <button mat-raised-button color="primary" type="submit" >
+                    {{data ? 'Modificar' : 'Agregar'}}
+                </button>
+                <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                    Cancelar
+                </button>
+            </div>
+    </mat-dialog-content>
+</form>
+            

@@ -5,7 +5,7 @@
       <mat-dialog-content>
                 <mat-form-field appearance="fill" style="margin-top: 20px">
                   <mat-label>Nombre</mat-label>
-                    <input matInput formControlName="nombre">
+                    <input matInput formControlName="nombre" (input)="onNombreInput($event)">
                     <mat-error *ngIf="capsForm?.get('nombre')?.hasError('required')">Este campo es obligatorio.</mat-error>
                     <mat-error *ngIf="capsForm?.get('nombre')?.hasError('pattern')">El campo puede tener solo letras (entre 2 y 50 caracteres).</mat-error>
                 </mat-form-field>

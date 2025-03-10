@@ -13,7 +13,7 @@
     <h2 class="inactive underlineHover">Solicitar usuario</h2>
 
     <form #f="ngForm" (ngSubmit)="onLogin()" novalidate>
-      <mat-form-field appearance="fill" class="fadeIn second form-group">
+      <mat-form-field appearance="outline" class="fadeIn second form-group">
         <mat-icon class="mat-icon-size" matPrefix color="primary">person</mat-icon>
         <mat-label>Nombre de Usuario</mat-label>
         
@@ -21,7 +21,7 @@
         <mat-error *ngIf="f.submitted && usernameInput.invalid && usernameInput.errors">El nombre de usuario es <strong>requerido</strong></mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="fadeIn third form-group">
+      <mat-form-field appearance="outline" class="fadeIn third form-group">
         <mat-icon class="mat-icon-size" matPrefix color="primary">vpn_key</mat-icon>
         <mat-label>Contraseña</mat-label>
         <input matInput type="{{ hide ? 'password' : 'text' }}" name="password" id="password" [(ngModel)]="password" required>
@@ -38,5 +38,4 @@
     </div>
 
   </div>
-
 </ng-template>

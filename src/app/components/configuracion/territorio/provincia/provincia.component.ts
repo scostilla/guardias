@@ -24,7 +24,7 @@ export class ProvinciaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<ProvinciaDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'gentilicio', 'pais', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'gentilicio', 'pais', 'acciones'];
   dataSource!: MatTableDataSource<Provincia>;
   suscription!: Subscription;
 

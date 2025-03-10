@@ -28,9 +28,15 @@ export class NovedadPersonalService {
       return this.httpClient.get<NovedadPersonal>(this.novedadesPersonalesURL + `detail/${id}`);
   }
 
-  public detailnombre(nombre:string): Observable<NovedadPersonal> {
-    return this.httpClient.get<NovedadPersonal>(this.novedadesPersonalesURL + `detailnombre/${nombre}`);
-}
+  // Obtener novedades por persona (ID de persona)
+  getNovedadesByPersona(id: number): Observable<NovedadPersonal[]> {
+    return this.httpClient.get<NovedadPersonal[]>(`${this.novedadesPersonalesURL}detailpersona/${id}`);
+  }
+
+  // Obtener novedades por fecha
+  getNovedadesByFecha(fecha: string): Observable<NovedadPersonal[]> {
+    return this.httpClient.get<NovedadPersonal[]>(`${this.novedadesPersonalesURL}detailfecha/${fecha}`);
+  }
 
 public save(novedadesPersonales:NovedadPersonalDto): Observable<any> {
   return this.httpClient.post<any>(this.novedadesPersonalesURL + 'create', novedadesPersonales)
@@ -52,6 +58,11 @@ public update(id:number, novedadesPersonales:NovedadPersonalDto): Observable<any
 
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.novedadesPersonalesURL + `delete/${id}`, {});
+}
+
+// Verificar si una persona puede hacer guardia
+puedeHacerGuardia(idPersona: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}puedeHacerGuardia/${idPersona}`);
 }
 
 }

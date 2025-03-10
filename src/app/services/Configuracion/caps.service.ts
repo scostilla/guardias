@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Caps } from "src/app/models/Configuracion/Caps";
 import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
+import { Caps } from "src/app/models/Configuracion/Caps";
 
 
 @Injectable({
@@ -24,9 +24,9 @@ export class CapsService {
       return this.httpClient.get<Caps[]>(this.capsURL + 'list');
   }
 
-  public detail(id:number): Observable<Caps> {
-      return this.httpClient.get<Caps>(this.capsURL + `detail/${id}`);
-  }
+  public detail( id:number): Observable<Caps> {
+    return this.httpClient.get<Caps>(this.capsURL + `detail/${id}`);
+}
 
   public detailnombre(nombre:string): Observable<Caps> {
     return this.httpClient.get<Caps>(this.capsURL + `detailnombre/${nombre}`);
@@ -53,5 +53,16 @@ public update(id:number, caps:CapsDto): Observable<any> {
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.capsURL + `delete/${id}`, {});
 }
+
+// Método para obtener el nombre del hospital asociado a un CAPS
+getCabeceraNameByCapsId(id: number): Observable<string> {
+  console.log('Llamando al backend con ID:', id);
+  return this.httpClient.get<string>(this.capsURL + `${id}/cabecera`, { responseType: 'text' as 'json' });
+}
+
+  // Método para verificar si el id corresponde a un CAPS
+  isCaps(id: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.capsURL}isCaps/${id}`);
+  }
 
 }

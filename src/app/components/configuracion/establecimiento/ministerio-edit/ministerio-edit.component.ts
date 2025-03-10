@@ -1,12 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import { MinisterioDto } from 'src/app/dto/Configuracion/MinisterioDto';
 import { Localidad } from 'src/app/models/Configuracion/Localidad';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { Region } from 'src/app/models/Configuracion/Region';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
 
 
@@ -27,7 +28,8 @@ export class MinisterioEditComponent implements OnInit {
     public dialogRef: MatDialogRef<MinisterioEditComponent>,
     private ministerioService: MinisterioService,
     private localidadService: LocalidadService, 
-    private regionService: RegionService, 
+    private regionService: RegionService,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Ministerio
   ) {
     this.ministerioForm = this.fb.group({
@@ -71,19 +73,31 @@ export class MinisterioEditComponent implements OnInit {
     });
   }
 
+  onNombreInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const uppercaseValue = input.value.toUpperCase();
+    this.ministerioForm.get('nombre')?.setValue(uppercaseValue);
+  }
+
   saveMinisterio(): void {
     if (this.ministerioForm.valid) {
       const formValue = this.ministerioForm.value;
   
+      // Verifica que tanto region como localidad estén definidos antes de acceder a su id
+      const regionId = formValue.region ? formValue.region.id : null;
+      const localidadId = formValue.localidad ? formValue.localidad.id : null;
+      
+      // Asegúrate de que `cabecera` también esté definido
+      const cabeceraId = formValue.cabecera ? formValue.cabecera.id : null;
+      
       const ministerioDto = new MinisterioDto(
-        formValue.nombre,
+        formValue.nombre.toUpperCase(),
         formValue.domicilio,
-        formValue.region.id,
-        formValue.localidad.id,
+        regionId,
+        localidadId,
         formValue.telefono,
         formValue.observacion,
-        this.data ? this.data.porcentajePorZona : 1,
-        this.data ? this.data.idCabecera : 1
+        cabeceraId,
       );
   
       console.log('MinisterioDto:', ministerioDto);
@@ -124,6 +138,11 @@ export class MinisterioEditComponent implements OnInit {
 
 
   cancel(): void {
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
     this.dialogRef.close({ type: 'cancel' });
   }
 }

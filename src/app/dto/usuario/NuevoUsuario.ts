@@ -1,16 +1,18 @@
 export class NuevoUsuario{
     
     nombreUsuario: string;
-    email: string;
     password: string;
     roles: string[];
+    idPerson: number;
+    activo?: boolean;
     
-    constructor( nombreUsuario: string, email: string, password: string, roles:string[]) {
+    constructor( nombreUsuario: string, password: string, roles:string[], idPerson: number, activo?: boolean) {
         
         this.nombreUsuario = nombreUsuario;
-        this.email = email;
         this.password = password;
         this.roles = roles;
+        this.idPerson = idPerson;
+        this.activo = activo;
     }
 
 }

@@ -1,50 +1,84 @@
 export class LegajoDto {
     fechaInicio: Date | null;
-    fechaFinal: Date | null;
-    actual: boolean;
-    legal: boolean;
-    activo:boolean;
-    matriculaNacional: string;
-    matriculaProvincial: string;
-    idRevista:number;
-    idUdo: number;
+    fechaFinal?: Date | null;
+    esAutoridad: boolean;
+    esRegional?: boolean;
+    activo: boolean;
+    matriculaNacional?: string | null;
+    matriculaProvincial?: string | null;
+    idSuspencion?: number | null;
+    motivoBaja?: string | null;
+    idRevista?: number | null;
+    idUdo?: number  | null;
     idPersona: number;
-    idCargo: number;
-    idEfectores: number[];
-    idEspecialidades: number[];
-    idProfesion: number;
+    idEfectores?: number[]  | null;
+    idEspecialidades?: number[] | null;
+    idProfesion?: number | null;
+    idTipoGuardias?: number[] | null;
+    idCargo?: number | null;
+    idRegion?: number | null;
+    nroResolucion?: string;  // solo para autoridad
+    nroDecreto?: string; // solo para autoridad
+    fechaResolucion?: string;  // solo para autoridad
+    tipoEfector?: string;
+    tipoUdo?: string;
+    fechaBajaSistema?: string;  // esto lo carga el back
     
+  
     constructor(
-        fechaInicio: Date,
-        fechaFinal: Date,
-        actual: boolean, 
-        legal: boolean, 
-        activo:boolean, 
-        matriculaNacional: string, 
-        matriculaProvincial: string,
-        idRevista:number,
-        idUdo: number,
-        idPersona: number,
-        idCargo: number,
-        idEfectores: number[],
-        idEspecialidades: number[],
-        idProfesion: number
+      fechaInicio: Date | null,
+      esAutoridad: boolean,
+      activo: boolean,
+      idPersona: number,
+  
+      // Parámetros opcionales
+      fechaFinal?: Date | null,
+      esRegional?: boolean,
+      matriculaNacional?: string | null,
+      matriculaProvincial?: string | null,
+      idSuspencion?: number | null,
+      motivoBaja?: string | null,
+      idRevista?: number | null,
+      idUdo?: number  | null,
+      idEfectores?: number[]  | null,
+      idEspecialidades?: number[] | null,
+      idProfesion?: number | null,
+      idTipoGuardias?: number[] | null,
+      idCargo?: number | null,
+      idRegion?: number | null,
+      nroResolucion?: string,  // solo para autoridad
+      nroDecreto?: string, // solo para autoridad
+      fechaResolucion?: string,  // solo para autoridad
+      tipoEfector?: string,
+      tipoUdo?: string,
+      fechaBajaSistema?: string,  // esto lo carga el back  
+    
     ) {
-        
-        this.fechaInicio = fechaInicio;
-        this.fechaFinal = fechaFinal;
-        this.actual = actual;
-        this.legal = legal;
-        this.activo = activo;
-        this.matriculaNacional = matriculaNacional;
-        this.matriculaProvincial = matriculaProvincial;
-        this.idRevista = idRevista;
-        this.idUdo = idUdo;
-        this.idPersona = idPersona;
-        this.idCargo = idCargo;
-        this.idEfectores=idEfectores;
-        this.idEspecialidades=idEspecialidades;
-        this.idProfesion = idProfesion;
+      this.fechaInicio = fechaInicio;
+      this.fechaFinal = fechaFinal ?? null;
+      this.esAutoridad = esAutoridad;
+      this.esRegional = esRegional;
+      this.activo = activo;
+      this.matriculaNacional = matriculaNacional ?? null;
+      this.matriculaProvincial = matriculaProvincial;
+      this.idSuspencion = idSuspencion ?? null;
+      this.motivoBaja = motivoBaja ?? null;
+      this.idRevista = idRevista;
+      this.idUdo = idUdo;
+      this.idPersona = idPersona;
+      this.idEfectores = idEfectores;
+      this.idEspecialidades = idEspecialidades ?? null;
+      this.idProfesion = idProfesion;
+      this.idTipoGuardias = idTipoGuardias ?? null;
+      this.idCargo = idCargo ?? null;
+      this.idRegion = idRegion ?? null;
+      this.nroResolucion = nroResolucion ?? undefined;
+      this.nroDecreto = nroDecreto ?? undefined;
+      this.fechaResolucion = fechaResolucion ?? undefined;
+      this.tipoEfector = tipoEfector ?? undefined;
+      this.tipoUdo = tipoUdo ?? undefined
+      this.fechaBajaSistema = fechaBajaSistema ?? undefined;
+      
     }
-
   }
+  

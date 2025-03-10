@@ -113,7 +113,7 @@
             Datos Usuarios
           </mat-panel-title>
           <mat-panel-description>
-            Personas, Usuarios, Autoridades, Legajo, Revista.
+            Personas, Usuarios, Autoridades, Legajo, Revista, Cargo.
           </mat-panel-description>
         </mat-expansion-panel-header>
           <div class="btnMenu-button-row">
@@ -122,23 +122,24 @@
               <button mat-raised-button color="warn" routerLink="/autoridad">Autoridades</button>
               <button mat-raised-button routerLink="/legajo">Legajo</button>
               <button mat-raised-button routerLink="/revista">Revista</button>
+              <button mat-raised-button routerLink="/cargo">Cargo</button>
           </div>
       </mat-expansion-panel>
       <mat-expansion-panel (opened)="panelOpenState = true"
       (closed)="panelOpenState = false">
 <mat-expansion-panel-header>
 <mat-panel-title class="panel-title">
-Datos Leyes
+Datos Leyes y novedades
 </mat-panel-title>
 <mat-panel-description>
-Tipo ley, Articulo, Inciso, Tipo Licencias.
+Tipo ley, Articulo, Inciso, tipo licencias. 
 </mat-panel-description>
 </mat-expansion-panel-header>
 <div class="btnMenu-button-row">
 <button mat-raised-button color="primary" routerLink="/tipo-ley">Tipo ley</button>
 <button mat-raised-button color="accent" routerLink="/articulo">Articulo</button>
 <button mat-raised-button color="warn" routerLink="/inciso">Inciso</button>
-<button mat-raised-button routerLink="/tipo-licencia">Tipo Licencia</button>
+<button mat-raised-button routerLink="/tipo-licencia">Tipo licencia</button>
 </div>
 </mat-expansion-panel>
             <mat-expansion-panel (opened)="panelOpenState = true"

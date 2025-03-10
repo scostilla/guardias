@@ -67,7 +67,6 @@ export class ProvinciaEditComponent implements OnInit {
         provinciaData.nombre,
         provinciaData.gentilicio,
         provinciaData.pais.id,
-        provinciaData.activo
       );
 
       /* AYUDA: si this.data tiene un valor y un ID asociado */

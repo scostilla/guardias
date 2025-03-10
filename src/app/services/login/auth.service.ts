@@ -8,7 +8,6 @@ import { JwtDTO } from 'src/app/models/login/jwt-dto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
 
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +18,48 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
+  get refresh$(){
+    return this._refresh$;
+  }
+
   public create(nuevoUsuario : NuevoUsuario): Observable<any>{
     console.log("rol que envio", nuevoUsuario);
-    return this.httpClient.post<any>(this.authUrl + 'create',nuevoUsuario);
+    return this.httpClient.post<any>(this.authUrl + 'create',nuevoUsuario)
+    .pipe(
+      tap(() => {
+       this._refresh$.next();
+      })
+    );
   }
+
+  // Verificar si un usuario tiene un legajo activo
+  verificarLegajoActivo(idPersona: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.authUrl}legajoActivo/${idPersona}`);
+  }
+  
+  // Verificar si la persona tiene un usuario activo asociado
+  verificarUsuarioActivo(idPersona: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.authUrl}usuarioActivo/${idPersona}`);
+  }
+
+  // Método para verificar si un nombre de usuario ya existe
+  checkUsername(nombreUsuario: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.authUrl}checkUsername/${nombreUsuario}`);
+  }
+
+  // Actualizar un usuario
+  update(id: number, nuevoUsuario: NuevoUsuario): Observable<any> {
+    return this.httpClient.put<any>(`${this.authUrl}update/${id}`, nuevoUsuario)
+    .pipe(
+      tap(() => {
+       this._refresh$.next();
+      })
+    );
+  }
+  
+  public list(): Observable<Usuario[]> {
+    return this.httpClient.get<Usuario[]>(this.authUrl + 'list');
+}
 
   public login(loginUsuario : LoginUsuario): Observable<JwtDTO>{
     /* console.log("console de auth login "+ loginUsuario.nombreUsuario);
@@ -45,15 +82,6 @@ export class AuthService {
 
   public detailPersonBasicPanel(): Observable<PersonBasicPanelDto> {
     return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel`);
-  }
-
-  public checkUsuario(nuevoUsuario: NuevoUsuario): Observable<Usuario> {
-    return this.httpClient.post<Usuario>(this.authUrl + `check`,nuevoUsuario)
-    .pipe(
-      tap(() => {
-        this._refresh$.next();
-      })
-    )
   }
 
 }

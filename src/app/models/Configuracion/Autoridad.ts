@@ -1,34 +1,18 @@
-import { Efector } from "./Efector";
 import { Person } from "./Person";
 
 export class Autoridad {
     id?: number;
-    nombre: string;
-    fechaInicio: Date;
-    fechaFinal: Date;
-    esActual: boolean;
-    esRegional: boolean;
     activo: boolean;
-    efector: Efector;
-    persona: Person;
+    confirmado: boolean | null;
+    persona: Person | null;
 
     constructor(
-        nombre: string,
-        fechaInicio: Date,
-        fechaFinal: Date,
-        esActual: boolean,
-        esRegional: boolean,
         activo: boolean,
-        efector: Efector,
-        persona: Person
+        confirmado: boolean | null,
+        persona: Person | null,
     ) {
-        this.nombre = nombre;
-        this.fechaInicio = fechaInicio
-        this.fechaFinal = fechaFinal;
-        this.esActual = esActual;
-        this.esRegional = esRegional;
         this.activo = activo;
-        this.efector = efector;
+        this.confirmado = confirmado;
         this.persona = persona;
     }
 }

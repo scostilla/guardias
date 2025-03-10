@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, Subject, tap } from "rxjs";
+import { Observable, Subject, BehaviorSubject, tap } from "rxjs";
 import { RegistroActividad } from "../models/RegistroActividad";
 import { RegistroActividadDto } from "../dto/RegistroActividadDto";
 
@@ -11,20 +11,33 @@ import { RegistroActividadDto } from "../dto/RegistroActividadDto";
   
     registroActividadURL = 'http://localhost:8080/registroActividad/';
     private _refresh$ = new Subject<void>();
+    private registroIdSubject = new BehaviorSubject<number | null>(null);
   
     constructor(private httpClient: HttpClient) { }
   
     get refresh$(){
       return this._refresh$;
     }
+
+    get registroId$() {
+      return this.registroIdSubject.asObservable();
+  }
+
+  setRegistroId(id: number): void {
+    this.registroIdSubject.next(id);
+}
+
+clearRegistroId(): void {
+    this.registroIdSubject.next(null);
+}
   
     public list(): Observable<RegistroActividad[]> {
         return this.httpClient.get<RegistroActividad[]>(this.registroActividadURL + 'list');
     }
   
-    public detail(id:number): Observable<RegistroActividad> {
-        return this.httpClient.get<RegistroActividad>(this.registroActividadURL + `detail/${id}`);
-    }
+    public detail(id: number): Observable<RegistroActividad> {
+      return this.httpClient.get<RegistroActividad>(this.registroActividadURL + `detail/${id}`);
+  }
   
   public save(registroActividad:RegistroActividadDto): Observable<any> {
     return this.httpClient.post<any>(this.registroActividadURL + 'create', registroActividad)
@@ -43,9 +56,18 @@ import { RegistroActividadDto } from "../dto/RegistroActividadDto";
       })
     )
   }
+
+  public registrarSalida(id: number, registroActividad: RegistroActividadDto): Observable<any> {
+    return this.httpClient.put<any>(this.registroActividadURL + `registrarSalida/${id}`, registroActividad)
+    .pipe(
+      tap(() => {
+       this._refresh$.next(); 
+      })
+    )
+}
   
   public delete(id:number): Observable<any> {
     return this.httpClient.put<any>(this.registroActividadURL + `delete/${id}`, {});
   }
-  
-  }
+
+}

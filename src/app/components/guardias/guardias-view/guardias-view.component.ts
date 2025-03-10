@@ -2,9 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { Subscription } from 'rxjs';
+import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
+
 
 @Component({
   selector: 'app-guardias-view',
@@ -23,18 +27,49 @@ export class GuardiasViewComponent implements OnInit {
   extraButtonDisabled: boolean = true;
   cargoAgrupButtonDisabled: boolean = true;
   contraFacturaButtonDisabled: boolean = true;
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  private efectorIdSubscription!: Subscription;
 
   constructor(
     private hospitalService: HospitalService,
     private http: HttpClient,
     private router: Router,
+    private efectorService: EfectorService,
     private registroActividadService: RegistroActividadService
   ) { }
 
   ngOnInit() {
     this.fechaActual = moment().format('dddd, D [de] MMMM [de] YYYY');
-    this.loadHospitales();
-    this.loadServices();
+    
+    this.listHospitales();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+    
+    this.http
+      .get<any[]>('../assets/jsonFiles/servicios.json')
+      .subscribe((data) => {
+        this.services = data;
+      });
+  }
+
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.efectorService.getEfectorTipo(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          console.log('Efector recibido:', efector);  // Log para verificar el objeto efector recibido
+          this.efectorNombre = efector.nombre;  // Asigna el nombre del efector a la variable
+          console.log('Nombre del efector:', this.efectorNombre);  // Log para verificar el nombre del efector
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
   }
 
   private loadHospitales() {
@@ -99,9 +134,9 @@ export class GuardiasViewComponent implements OnInit {
     this.router.navigate(['/ddjj-extra'], { queryParams: { hospital: this.selectedHospital } });
   }
 
-  navigateToCF() {
-    this.router.navigate(['/ddjj-contrafactura'], { queryParams: { hospital: this.selectedHospital } });
-  }
+  ngOnDestroy(): void {
+    this.efectorIdSubscription?.unsubscribe();
+  }  
 
   /*updateHospital() {
     if (this.services) {

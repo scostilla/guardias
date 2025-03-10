@@ -1,27 +1,15 @@
 export class AutoridadDto {
-    nombre: string;
-    fechaInicio: Date;
-    fechaFinal: Date;
-    esActual: boolean;
-    esRegional: boolean
-    idEfector: number;
+    activo: boolean;
+    confirmado: boolean | null;
     idPersona: number;
 
     constructor(
-        nombre: string,
-        fechaInicio: Date,
-        fechaFinal: Date,
-        esActual: boolean,
-        esRegional: boolean,
-        idEfector: number,
-        idPersona: number
+        activo: boolean,
+        confirmado: boolean | null,
+        idPersona: number,
     ) { 
-        this.nombre=nombre;
-        this.fechaInicio = fechaInicio;
-        this.fechaFinal = fechaFinal;
-        this.esActual = esActual;
-        this.esRegional = esRegional;
-        this.idEfector = idEfector;
+        this.activo = activo;
+        this.confirmado = confirmado;
         this.idPersona = idPersona;
     }
 }

@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>Confirmar baja de Legajo</h1>
+<div mat-dialog-content>
+  <form [formGroup]="bajaForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Motivo de la baja</mat-label>
+      <textarea matInput formControlName="motivoBaja" rows="4"></textarea>
+      <mat-error *ngIf="bajaForm.controls['motivoBaja'].hasError('required')">
+        El motivo es obligatorio
+      </mat-error>
+      <mat-error *ngIf="bajaForm.controls['motivoBaja'].hasError('minlength')">
+        El motivo debe tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Fecha Final</mat-label>
+      <input matInput formControlName="fechaFinal" [matDatepicker]="picker" required />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="bajaForm.controls['fechaFinal'].hasError('required')">
+        La fecha final es obligatoria
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="secondary" type="button" (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" type="submit" (click)="darBaja()" [disabled]="bajaForm.invalid">Confirmar</button>
+</div>

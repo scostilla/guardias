@@ -1,46 +1,39 @@
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Articulo } from 'src/app/models/Configuracion/Articulo';
-import { Inciso } from 'src/app/models/Configuracion/Inciso';
+import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
 
 export class NovedadPersonal {
         id?: number;
         persona: Asistencial;
         suplente : Asistencial;
-        articulo: Articulo;
-        inciso: Inciso;
         fechaInicio: Date;
         fechaFinal: Date;
         puedeRealizarGuardia: boolean;
         cobraSueldo: boolean;
         necesitaReemplazo: boolean;
-        actual: boolean;
-        descripcion: string;
+        activo: boolean;
+        tipoLicencia: TipoLicencia;
     
     
     
         constructor(
             persona: Asistencial,
             suplente : Asistencial,
-            articulo: Articulo,
-            inciso: Inciso,
             fechaInicio: Date,
             fechaFinal: Date,
             puedeRealizarGuardia: boolean,
             cobraSueldo: boolean,
             necesitaReemplazo: boolean,
-            actual: boolean,
-            descripcion: string,
+            activo: boolean,
+            tipoLicencia: TipoLicencia,
             ){
             this.persona = persona;
             this.suplente = suplente;
-            this.articulo = articulo;
-            this.inciso = inciso;
             this.fechaInicio = fechaInicio;
             this.fechaFinal = fechaFinal;
             this.puedeRealizarGuardia = puedeRealizarGuardia;
             this.cobraSueldo = cobraSueldo;
             this.necesitaReemplazo = necesitaReemplazo;
-            this.actual = actual;
-            this.descripcion = descripcion;
+            this.activo = activo;
+            this.tipoLicencia = tipoLicencia;
         }
 }

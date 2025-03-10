@@ -24,13 +24,25 @@ export class DistribucionConsultorioService {
       return this.httpClient.get<DistribucionConsultorio[]>(this.distribucionConsultoriosURL + 'list');
   }
 
-  public detail(id:number): Observable<DistribucionConsultorio> {
-      return this.httpClient.get<DistribucionConsultorio>(this.distribucionConsultoriosURL + `detail/${id}`);
+  // Obtener distribuciones por fecha de inicio
+  getDistribucionesByFechaInicio(fechaInicio: string): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}list/${fechaInicio}`);
   }
 
-  public detailnombre(nombre:string): Observable<DistribucionConsultorio> {
-    return this.httpClient.get<DistribucionConsultorio>(this.distribucionConsultoriosURL + `detailnombre/${nombre}`);
-}
+  // Obtener detalle de una distribución por ID
+  getDistribucionById(id: number): Observable<DistribucionConsultorio> {
+    return this.httpClient.get<DistribucionConsultorio>(`${this.distribucionConsultoriosURL}detail/${id}`);
+  }
+
+  // Obtener distribuciones por ID de Efector
+  getDistribucionesByEfector(idEfector: number): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}detailefector/${idEfector}`);
+  }
+
+  // Obtener distribuciones por ID de Persona
+  getDistribucionesByPersona(idPersona: number): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}detailpersona/${idPersona}`);
+  }
 
 public save(distribucionConsultorioes:DistribucionConsultorioDto): Observable<any> {
   return this.httpClient.post<any>(this.distribucionConsultoriosURL + 'create', distribucionConsultorioes)

@@ -8,15 +8,14 @@ export class NoAsistencialDto extends PersonDto {
         dni: number,
         cuil: string,
         fechaNacimiento: Date,
-        sexo: string,
-        telefono: string,
         email: string,
-        domicilio: string,
         esAsistencial: boolean,
         activo: boolean,
-        idUsuario: number
+        sexo?: string,
+        telefono?: string,
+        domicilio?: string,
     ) {
-        super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, esAsistencial, activo, idUsuario);
+        super(nombre, apellido, dni, cuil, fechaNacimiento, email, esAsistencial, activo, sexo, telefono, domicilio);
         
     }
 

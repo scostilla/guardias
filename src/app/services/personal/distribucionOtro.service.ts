@@ -28,9 +28,20 @@ export class DistribucionOtroService {
       return this.httpClient.get<DistribucionOtro>(this.distribucionOtrosURL + `detail/${id}`);
   }
 
-  public detailnombre(nombre:string): Observable<DistribucionOtro> {
-    return this.httpClient.get<DistribucionOtro>(this.distribucionOtrosURL + `detailnombre/${nombre}`);
-}
+  // Obtener distribuciones por fecha de inicio
+  getDistribucionesByFechaInicio(fechaInicio: string): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}list/${fechaInicio}`);
+  }
+
+  // Obtener distribuciones por ID de Efector
+  getDistribucionesByEfector(idEfector: number): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}detailefector/${idEfector}`);
+  }
+
+  // Obtener distribuciones por ID de Persona
+  getDistribucionesByPersona(idPersona: number): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}detailpersona/${idPersona}`);
+  }
 
 public save(distribucionOtroes:DistribucionOtroDto): Observable<any> {
   return this.httpClient.post<any>(this.distribucionOtrosURL + 'create', distribucionOtroes)

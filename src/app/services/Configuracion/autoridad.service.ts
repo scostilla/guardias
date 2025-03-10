@@ -27,26 +27,34 @@ import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
         return this.httpClient.get<Autoridad>(this.autoridadURL + `detail/${id}`);
     }
   
-  public save(autoridad:AutoridadDto): Observable<any> {
-    return this.httpClient.post<any>(this.autoridadURL + 'create', autoridad)
-    .pipe(
-      tap(() => {
-       this._refresh$.next(); 
-      })
-    )
-  }
-  
-  public update(id:number, autoridad:AutoridadDto): Observable<any> {
-    return this.httpClient.put<any>(this.autoridadURL + `update/${id}`, autoridad)
-    .pipe(
-      tap(() => {
-       this._refresh$.next(); 
-      })
-    )
-  }
-  
-  public delete(id:number): Observable<any> {
-    return this.httpClient.put<any>(this.autoridadURL + `delete/${id}`, {});
-  }
-  
+    public save(autoridad:AutoridadDto): Observable<any> {
+      return this.httpClient.post<any>(this.autoridadURL + 'create', autoridad)
+      .pipe(
+        tap(() => {
+        this._refresh$.next(); 
+        })
+      )
+    }
+    
+    public update(id:number, autoridad:AutoridadDto): Observable<any> {
+      return this.httpClient.put<any>(this.autoridadURL + `confirmar/${id}`, autoridad)
+      .pipe(
+        tap(() => {
+        this._refresh$.next(); 
+        })
+      )
+    }
+    
+    public delete(id:number): Observable<any> {
+      return this.httpClient.put<any>(this.autoridadURL + `delete/${id}`, {});
+    }
+
+    asignadoAutoridad(idPersona: number): Observable<boolean> {
+      return this.httpClient.get<boolean>(`${this.autoridadURL}isAutoridad/${idPersona}`);
+    }
+    
+    // Validar si se puede crear una autoridad para una persona
+    validateForCreation(idPersona: number): Observable<boolean> {
+      return this.httpClient.get<boolean>(`${this.autoridadURL}validar/${idPersona}`);
+    }
   }

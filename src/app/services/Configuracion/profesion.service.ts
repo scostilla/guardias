@@ -23,6 +23,18 @@ export class ProfesionService {
       return this.httpClient.get<Profesion[]>(this.profesionesURL + 'list');
   }
 
+  listProfesionesSummary(): Observable<Profesion[]> {
+    return this.httpClient.get<Profesion[]>(`${this.profesionesURL}/listProfesionesSummary`);
+  }
+
+  listAsistenciales(): Observable<Profesion[]> {
+    return this.httpClient.get<Profesion[]>(`${this.profesionesURL}/listasistenciales`);
+  }
+
+  listNoAsistenciales(): Observable<Profesion[]> {
+    return this.httpClient.get<Profesion[]>(`${this.profesionesURL}/listnoasistenciales`);
+  }
+
   public detail(id:number): Observable<Profesion> {
       return this.httpClient.get<Profesion>(this.profesionesURL + `detail/${id}`);
   }

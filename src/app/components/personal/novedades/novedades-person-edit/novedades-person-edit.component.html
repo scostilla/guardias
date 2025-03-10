@@ -1,0 +1,83 @@
+<h2 mat-dialog-title>Modificar Novedad Personal 
+    <h5 class="requiredField">*Campos Obligatorios</h5>
+  </h2>
+  
+  <form [formGroup]="novedadPersonalForm" (ngSubmit)="novedadPersonalForm.valid && editNovedadPersonal()">
+    <mat-dialog-content>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Tipo de licencia</mat-label>
+              <mat-select formControlName="tipoLicencia" [compareWith]="compareFn" placeholder="Seleccione una licencia">
+                <mat-option *ngFor="let licencia of licencias" [value]="licencia" >{{ licencia.nombre }}</mat-option>
+              </mat-select>
+            <mat-error *ngIf="novedadPersonalForm.get('tipoLicencia')?.errors?.['required']">El campo es requerido.</mat-error>
+          </mat-form-field>
+          
+
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Inicio</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Fecha Finalizacion</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="fechaFinal">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
+            <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['dateLessThan']">La fecha de finalización no puede ser anterior a la fecha de inicio.</mat-error>
+          </mat-form-field>
+          
+      <!-- <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Cobra sueldo?</mat-label>
+        <mat-select formControlName="cobraSueldo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Puede realizar guardia?</mat-label>
+        <mat-select formControlName="puedeRealizarGuardia">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field> -->
+
+      <mat-form-field  *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.enabled">
+        <mat-label>Necesita reemplazo?</mat-label>
+        <mat-select formControlName="necesitaReemplazo">
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.value" appearance="fill">
+        <mat-label>Reemplazo</mat-label>
+        <input
+          matInput
+          [value]="novedadPersonalForm.get('suplente')?.value?.nombre + ' ' + novedadPersonalForm.get('suplente')?.value?.apellido || ''"
+          (click)="openAsistencialDialog()"
+          readonly
+          required
+        />
+        <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+        <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['required']">
+          El campo es requerido.
+        </mat-error>
+       
+      </mat-form-field>
+
+    <div mat-dialog-actions class="action mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!novedadPersonalForm.valid">
+          Modificar
+        </button>
+        <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+      </mat-dialog-content>
+  </form>

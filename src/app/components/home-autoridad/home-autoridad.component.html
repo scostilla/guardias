@@ -1,0 +1,84 @@
+<app-spinner></app-spinner>
+<div id="container-title-hosp" >
+    <div class="text-title-hosp"><mat-icon>business</mat-icon>
+      <div class="select-inicio-container">
+        <select class="select-inicio" [(ngModel)]="selectedEfector" (change)="onEfectorChange()">
+          <option *ngFor="let efector of nombresEfectores" [ngValue]="efector">
+            {{ efector.nombre }}
+          </option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+</div>
+<div class="container" *ngIf="isLogged">
+  <section>
+    <div class="container" >
+      <!-- Page Features-->
+      <div class="row mb-4 ">
+        <div class="col-lg" >
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-actividades">
+            <div class="icon1_btnMenu">
+              <img class="img-fluid" src="/assets/img/i_actividades.png" />
+            </div>
+            <div class="card-body text-center">
+              <h2 class="fs-4 fw-bold"><span>ACTIVIDADES</span></h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/personal">
+            <div class="icon2_btnMenu">
+              <img class="img-fluid" src="/assets/img/i_profesionales.png" />
+            </div>
+            <div class="card-body text-center">
+              <h2 class="fs-4 fw-bold"><span>GESTION PERSONAL</span></h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/cronograma">
+            <div class="icon3_btnMenu">
+              <img class="img-fluid" src="/assets/img/i_cronogramas.png" />
+            </div>
+            <div class="card-body text-center">
+              <h2 class="fs-4 fw-bold"><span>CRONOGRAMAS</span></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/guardias-view">
+            <div class="icon4_btnMenu">
+              <img class="img-fluid" src="/assets/img/i_guardias.png" />
+            </div>
+            <div class="card-body text-center">
+              <h2 class="fs-4 fw-bold"><span>GUARDIAS</span></h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/disponibilidad">
+            <div class="icon5_btnMenu">
+              <img class="img-fluid" src="/assets/img/i_disponibilidad.png" />
+            </div>
+            <div class="card-body text-center">
+              <h2 class="fs-4 fw-bold" routerLink="/disponibilidad"><span>RRHH DISPONIBLE</span></h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="btnMenu card border-0 align-items-center" type="button"  routerLink="/historial">
+            <div class="icon6_btnMenu">
+              <img class="img-fluid" src="/assets/img/i_historial.png" />
+            </div>
+            <div class="card-body text-center">
+              <h2 class="fs-4 fw-bold"><span>REPORTES</span></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

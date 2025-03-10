@@ -12,8 +12,8 @@ import { PersonDetailComponent } from '../person-detail/person-detail.component'
 import { PersonEditComponent } from '../person-edit/person-edit.component';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoEditComponent } from '../legajo-edit/legajo-edit.component';
-import { NovedadesPersonEditComponent } from '../../../personal/novedades-person-edit/novedades-person-edit.component';
+import { LegajoEditComponent } from '../../../personal/legajo/legajo-edit/legajo-edit.component';
+import { NovedadesPersonEditComponent } from '../../../personal/novedades/novedades-person-edit/novedades-person-edit.component';
 import { DistHorariaComponent } from '../../../personal/dist-horaria/dist-horaria.component';
 
 import { Router } from '@angular/router';
@@ -109,7 +109,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   hayLegajos(asistencial: Asistencial): boolean {
-    return this.legajos.some(legajo => legajo.persona.id === asistencial.id);
+    return this.legajos.some(legajo => legajo.persona?.id === asistencial.id);
   }
 
   verLegajo(asistencial: Asistencial): void {

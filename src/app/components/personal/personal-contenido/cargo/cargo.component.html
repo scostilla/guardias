@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="row">
+        <div class="col-6 col-md-7">
+            <div class="titulos">CARGOS</div>
+        </div>
+        <div class="col-6 col-md-1 m d-flex justify-content-end">
+            <button mat-fab color="primary" (click)="openFormChanges()" matTooltip="Agregar Cargo">
+                <mat-icon>library_add</mat-icon>
+            </button>
+        </div>
+        <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <mat-form-field>
+              <mat-label>Filtro</mat-label>
+              <input matInput placeholder="Buscar por número o descripción" >
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="table-responsive">
+            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z6">
+
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+                    <td mat-cell *matCellDef="let cargo"> {{cargo.nombre}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
+                    <td mat-cell *matCellDef="let cargo"> {{cargo.descripcion}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="negrita"> Acciones </th>
+                    <td mat-cell *matCellDef="let cargo" class="cell-actions">
+                        <button mat-icon-button matTooltip="Ver {{cargo.nombre}}" (click)="openDetail(cargo)">
+                            <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Editar {{cargo.nombre}}" (click)="openFormChanges(cargo)">
+                            <mat-icon class="btnEdit"> edit</mat-icon>
+                          </button>
+                        <button mat-icon-button matTooltip="Eliminar {{cargo.nombre}}" (click)="deleteCargo(cargo)">
+                            <mat-icon class="btnRemove">delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+        </table>
+      </div>
+    </div>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>
+

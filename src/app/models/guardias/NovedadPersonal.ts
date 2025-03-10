@@ -1,46 +1,39 @@
 import { Person } from "../Configuracion/Person";
-import { Articulo } from "./Articulo";
-import { Inciso } from "./Inciso";
+import { TipoLicencia } from "../Configuracion/TipoLicencia";
 
 
 export class NovedadPersonal {
     id?: number;
-    actual: boolean;
+    activo: boolean;
     cobraSueldo: boolean;
-    descripcion: string;
-    fechaFinal: Date;
     fechaInicio: Date;
+    fechaFinal: Date;
     necesitaReemplazo: boolean;
     puedeRealizarGuardia: boolean;
-    articulo: Articulo;
-    inciso: Inciso;
     persona: Person;
-    suplente: Person;
+    tipoLicencia: TipoLicencia;
+    suplente?: Person;
 
     constructor(
-        actual: boolean,
+        activo: boolean,
         cobraSueldo: boolean,
-        descripcion: string,
-        fechaFinal: Date,
         fechaInicio: Date,
+        fechaFinal: Date,
         necesitaReemplazo: boolean,
         puedeRealizarGuardia: boolean,
-        articulo: Articulo,
-        inciso: Inciso,
         persona: Person,
-        suplente: Person,
+        tipoLicencia: TipoLicencia,
+        suplente?: Person,
     ) {
 
-        this.actual = actual;
+        this.activo = activo;
         this.cobraSueldo = cobraSueldo;
-        this.descripcion = descripcion;
         this.fechaFinal = fechaFinal;
         this.fechaInicio = fechaInicio;
         this.necesitaReemplazo = necesitaReemplazo;
         this.puedeRealizarGuardia = puedeRealizarGuardia;
-        this.articulo = articulo;
-        this.inciso = inciso;
         this.persona = persona;
+        this.tipoLicencia = tipoLicencia;
         this.suplente = suplente;
     }
 }

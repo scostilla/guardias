@@ -1,31 +1,32 @@
-import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { AsistencialSelectorComponent } from 'src/app/components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
-import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
-import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
-import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
-import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
-import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/servicio.service';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
-import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
+import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
+import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
-import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
-import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
+import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
+import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
+import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
+import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
+import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
+import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
+import { ServicioService } from 'src/app/services/servicio.service';
 
 
 
@@ -37,7 +38,7 @@ import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionCon
 export class DistHorariaComponent {
 
   inputValue: string = '';
-  selectedAsistencial?: Asistencial;
+  selectedAsistencial?: AsistencialEfectorDto;
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
@@ -136,7 +137,7 @@ export class DistHorariaComponent {
     this.minDate = new Date();
     this.subscribeToFormChanges();
   }
-
+  
   ngOnInit() {
     this.listServicios();
     this.listCaps();
@@ -172,33 +173,56 @@ export class DistHorariaComponent {
       width: '800px',
       disableClose: true
     });
-    
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        // Inicializar selectedAsistencial y limpiar inputValue al principio, pero no asignar id aún
         this.selectedAsistencial = result;
-        this.inputValue = `${result.apellido} ${result.nombre}`;
-        this.updateIdPersona(result.id);
+        this.inputValue = ''; // Dejar vacío el inputValue inicialmente
+        this.idEfector = undefined; // Asegurarse de que idEfector esté vacío también
   
-        // Resetear el select del mes de vigencia
-        this.vigenciaForm.patchValue({ mesVigencia: null });
+        // Filtrar legajos activos y que no sean autoridades
+        const legajosActivos = result.idLegajos.filter((legajo: { activo: boolean; esAutoridad: boolean }) => 
+          legajo.activo === true && legajo.esAutoridad === false
+        );
   
-        const legajosActivos = result.legajos.filter((legajo: { activo: boolean; }) => legajo.activo === true);
-        const ultimoLegajoActivo = legajosActivos.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id)[0];
+        // Obtener el último legajo activo
+        const ultimoLegajoActivo = legajosActivos.sort((a: { id: number }, b: { id: number }) => b.id - a.id)[0];
   
         if (ultimoLegajoActivo) {
-          if (ultimoLegajoActivo.udo) {
-            this.idEfector = ultimoLegajoActivo.udo.id;
+          if (ultimoLegajoActivo.efectores && ultimoLegajoActivo.efectores.length > 0) {
+            // Se usa el primer efector de la lista
+            this.idEfector = ultimoLegajoActivo.efectores[0].id;
             this.listCaps();
           } else {
             this.idEfector = undefined;
             this.capss = [];
-            this.listTiposGuardia();
           }
-          
+  
           if (ultimoLegajoActivo.revista && ultimoLegajoActivo.revista.cargaHoraria) {
             this.cargaHoraria = ultimoLegajoActivo.revista.cargaHoraria.cantidad;
             this.isProfessionalLoaded = true;
-            this.tiposGuardiaOptions = result.tiposGuardias;
+            this.tiposGuardiaOptions = ultimoLegajoActivo.tipoGuardias; // Usamos tipoGuardias desde el último legajo activo
+  
+            // Filtrar para verificar si existen "CARGO" o "AGRUPACION"
+            const tieneGuardiaCargoAgrupacion = this.tiposGuardiaOptions.some(tipo => tipo.nombre.includes('CARGO') || tipo.nombre.includes('AGRUPACION'));
+  
+            if (!tieneGuardiaCargoAgrupacion) {
+              // Limpiar el valor en inputValue y no asignar id
+              this.inputValue = '';
+              this.cargaHoraria = undefined;
+              this.isProfessionalLoaded = false;    
+              this.toastr.warning('El profesional seleccionado no posee guardia de cargo o agrupación en su legajo activo', 'Aviso', {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+            } else {
+              // Asignar inputValue y id solo si se encuentra una guardia de "CARGO" o "AGRUPACION"
+              this.inputValue = `${result.apellido} ${result.nombre}`;
+              this.updateIdPersona(result.id); // Asignamos el id correctamente
+              console.log('Tipos de guardia:', this.tiposGuardiaOptions);
+            }
           } else {
             this.cargaHoraria = undefined;
             this.isProfessionalLoaded = false;
@@ -209,9 +233,11 @@ export class DistHorariaComponent {
             });
           }
         } else {
+          // Limpiar inputValue y no asignar id cuando no se encuentra un legajo activo válido
+          this.inputValue = '';
           this.cargaHoraria = undefined;
           this.isProfessionalLoaded = false;
-          this.toastr.warning('El profesional seleccionado no posee un legajo.', 'Aviso', {
+          this.toastr.warning('El profesional seleccionado no posee un legajo válido o activo.', 'Aviso', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -236,8 +262,7 @@ export class DistHorariaComponent {
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
   }
-    
-    
+      
   private updateHorasStatus(): void {
     const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
     const consultorioHoras = Number(this.consultorioForm.get('cantidadHoras')?.value ?? 0);
@@ -382,18 +407,6 @@ export class DistHorariaComponent {
     }
   }
 
-  listTiposGuardia(): void {
-    if (this.idEfector) {
-      this.asistencialService.listByUdoAndTipoGuardia(this.idEfector).subscribe(data => {
-        console.log('Tipos de guardia obtenidos:', data);
-        this.tiposGuardiaOptions = data;
-      }, error => {
-        console.log('Error al listar tipos de guardia:', error);
-      });
-    } else {
-      this.tiposGuardiaOptions = [];
-    }
-  }
 
   //Permite el select mes de vigencia cree la ultima fecha del mes elegido
   private generarMeses(): void {

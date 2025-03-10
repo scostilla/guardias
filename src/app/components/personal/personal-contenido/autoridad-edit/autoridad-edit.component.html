@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>{{data ? 'Modificar' : 'Dar alta de'}} Autoridad
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
+<mat-dialog-content class="mat-typography">
+
+    <form [formGroup]="autoridadForm" (ngSubmit)="saveAutoridad()">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Profesional</mat-label>
+            <input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+            <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+            <mat-error *ngIf="autoridadForm.get('idPersona')?.hasError('required')">
+                El campo profesional es requerido.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="isSuper">
+            <mat-label>Confirmar</mat-label>
+            <mat-select formControlName="confirmado">
+                <mat-option [value]="false">Rechazado</mat-option>
+                <mat-option [value]="true">Confirmado</mat-option>
+            </mat-select>
+            <mat-error *ngIf="autoridadForm.get('confirmado')?.hasError('required')">
+                Debe confirmar o rechazar la asignación de autoridad.
+            </mat-error>
+        </mat-form-field> 
+        
+        <div mat-dialog-actions class="action mt-4">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!autoridadForm.valid || !isModified()">
+                {{data ? 'Modificar' : 'Asignar como autoridad'}}
+            </button>
+            <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                Cancelar
+            </button>
+        </div>
+    </form>
+</mat-dialog-content>

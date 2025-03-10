@@ -2,14 +2,14 @@ export class RevistaDto{
 
     idTipoRevista: number;
     idCategoria : number;
-    idAdicional: number;
+    idAdicional: number | null;
     idCargaHoraria: number;
     agrupacion: string;
 
     constructor(
         idTipoRevista: number,
         idCategoria : number,
-        idAdicional: number,
+        idAdicional: number | null,
         idCargaHoraria: number,
         agrupacion: string,
     ){

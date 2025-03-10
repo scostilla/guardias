@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
+import { RegionDto } from 'src/app/dto/Configuracion/RegionDto';
 import { Region } from 'src/app/models/Configuracion/Region';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
 
@@ -19,6 +21,7 @@ export class RegionEditComponent implements OnInit {
     private fb: FormBuilder,
     private regionService: RegionService,
     private dialogRef: MatDialogRef<RegionEditComponent>,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) private data: Region 
   ) { }
 
@@ -35,9 +38,45 @@ export class RegionEditComponent implements OnInit {
     });
   }
 
+  onNombreInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const uppercaseValue = input.value.toUpperCase();
+    this.form?.get('nombre')?.setValue(uppercaseValue);
+  }
+
   saveRegion(): void {
+    if (this.form?.valid) {
+      const regionData =this.form?.value;
+
+      const regionDto = new RegionDto(
+        regionData.nombre
+      );
+
+      if (this.data && this.data.id) {
+        this.regionService.update(this.data.id, regionDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      } else {
+        this.regionService.save(regionDto).subscribe(
+          result => {
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            this.dialogRef.close({ type: 'error', data: error });
+          }
+        );
+      }
+    }
+  }
+
+  /* saveRegion(): void {
     const id = this.form?.get('id')?.value;
-    const nombre = this.form?.get('nombre')?.value;
+    const nombre = this.form?.get('nombre')?.value.toUpperCase();
 
     const region = new Region(nombre);
     region.id = id;
@@ -51,9 +90,14 @@ export class RegionEditComponent implements OnInit {
         this.dialogRef.close(data);
       });
     }
-  }
+  } */
 
   cancelar(): void {
+    this.toastr.info('No se guardaron los datos.', 'Cancelado', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
     this.dialogRef.close();
   }
 

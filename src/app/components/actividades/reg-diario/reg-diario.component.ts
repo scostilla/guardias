@@ -150,16 +150,16 @@ export class RegDiarioComponent {
       
 
       const registroDto = new RegistroActividadDto(
-        registroData.fecIngreso,
-        registroData.fecEgreso ,
+        registroData.fechaIngreso,
+        registroData.fechaEgreso ,
         registroData.eventStartTime,
         registroData.eventEndTime,
         registroData.tipoGuardia.id,
         registroData.activo, 
         registroData.asistencial.id,
         registroData.servicio.id,
-        registroData.efector.id
-        
+        registroData.efector.id,
+        1
     );
     if (this.data && this.data.id) {
       this.registroActividadService.update(this.data.id, registroDto).subscribe(

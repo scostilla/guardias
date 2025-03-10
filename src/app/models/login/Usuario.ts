@@ -1,16 +1,19 @@
+import { Person } from '../../models/Configuracion/Person';
 export class Usuario {
 
     id?: number;
     nombreUsuario: string;
-    email: string;
     password: string;
+    activo: boolean;
     roles: string[];
+    person: Person;
     
-    constructor( nombreUsuario: string, email: string, password: string, roles:string[]) {
+    constructor( nombreUsuario: string, password: string, activo: boolean, roles:string[], person: Person) {
         
         this.nombreUsuario = nombreUsuario;
-        this.email = email;
         this.password = password;
+        this.activo = activo;
         this.roles = roles;
+        this.person = person;
     }
 }

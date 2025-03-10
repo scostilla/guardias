@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Subscription } from 'rxjs';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
@@ -17,16 +18,14 @@ import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
-import { RegistroMensualService } from 'src/app/services/registroMensual.service';
-import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
-import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+
 
 interface ClasesNovedad {
   Compensatorio: string;
-  'L.A.O.': string;
+  'Licencia anual ordinaria': string;
   Maternidad: string;
   'Parte de enfermo': string;
   'Familiar enfermo': string;
@@ -36,7 +35,7 @@ interface ClasesNovedad {
 
 const clases: ClasesNovedad = {
   Compensatorio: 'novedad-personal-compensatorio',
-  'L.A.O.': 'novedad-personal-lao',
+  'Licencia anual ordinaria': 'novedad-personal-lao',
   Maternidad: 'novedad-personal-maternidad',
   'Parte de enfermo': 'novedad-personal-parte-enfermo',
   'Familiar enfermo': 'novedad-personal-familiar-enfermo',
@@ -71,12 +70,16 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   selectedMonth: number = moment().month();
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
-  years: number[] = [2023, 2024];
+  years: number[] = [2023, 2024, 2025];
 
   selectedHospitalId: number | null = null;
   selectedHospitalNombre: string = '';
   botonDph = true;
   revisandoDPH: boolean = false;
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  private efectorIdSubscription!: Subscription;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -85,6 +88,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
+    private efectorService: EfectorService,
     private route: ActivatedRoute
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -111,6 +115,25 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
 
     this.obtenerParametroRuta();
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+
+  }
+
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.efectorService.getEfectorTipo(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
   }
 
   obtenerParametroRuta(){
@@ -171,7 +194,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.selectedHospitalId;
+    const idEfector = this.efectorId;
     
     console.log("id del efector que se usa para cargar reg mensuales ES: "+ idEfector);
 
@@ -270,7 +293,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string } {
+  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
     const dateMoment = moment(date).startOf('day');
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
@@ -280,18 +303,18 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   
     return {
       isNovedad: !!novedadFound,
-      descripcion: novedadFound ? novedadFound.descripcion : ''
+      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
     };
   }
   
-  getNovedadCssClass(descripcion: string): string {
-    return clases[descripcion] || '';
+  getNovedadCssClass(tipoLicencia: string): string {
+    return clases[tipoLicencia] || '';
   }
 
   isNovedadClass(date: Date, registro: any): string {
     const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
     if (novedad.isNovedad) {
-      return this.getNovedadCssClass(novedad.descripcion);
+      return this.getNovedadCssClass(novedad.tipoLicencia);
     } else {
       const holiday = this.isHoliday(date);
       if (holiday.isHoliday) {
@@ -306,7 +329,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   calculateTooltip(date: Date, registro: any): string {
     const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
     if (novedad.isNovedad) {
-      return novedad.descripcion;
+      return novedad.tipoLicencia;
     } else {
       const holiday = this.isHoliday(date);
       if (holiday.isHoliday) {
@@ -316,7 +339,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return '';
   }
   
-  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, descripcion: string, idNovedad: number } {
+  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string, idNovedad: number } {
     const dateMoment = moment(date).startOf('day');
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
@@ -326,7 +349,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   
     return {
       isNovedad: !!novedadFound,
-      descripcion: novedadFound ? novedadFound.descripcion : '',
+      tipoLicencia: novedadFound ? novedadFound.tipoLicencia : '',
       idNovedad: novedadFound?.id ?? 0 
     };
   }*/
@@ -377,8 +400,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       if (tipoGuardia.nombre === "CARGO") {
         console.log("PASOO: " + tipoGuardia.nombre)
         return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.nombre === "AGRUPACION") {
-        return '#F4AF88'; // Color para REAGRUPACION DE HS
+      } else if (tipoGuardia.id === 2) {
+        return '#eb7430'; // Color para REAGRUPACION DE HS
       }
     }
     return ''; // Color por defecto
@@ -398,8 +421,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     if (tipoGuardia && tipoGuardia.id) {
       if (tipoGuardia.nombre === "CARGO") {
         return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.nombre === "AGRUPACION") {
-        return '#F4AF88'; // Color para REAGRUPACION DE HS
+      } else if (tipoGuardia.id === 2) {
+        return '#eb7430'; // Color para REAGRUPACION DE HS
       }
     }
     return ''; // Color por defecto
@@ -494,8 +517,9 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
   return output;
 }
 
+//aqui decia actual en vez de activo, revisar si corresponde
 getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
-  const legajoActual = asistencial.legajos.find(legajo => legajo.actual);
+  const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
   return legajoActual ? legajoActual : undefined;
 }
 
@@ -550,7 +574,7 @@ exportarAExcel() {
     };
 
     const novedades = this.getNovedades(registro.asistencial);
-    const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.descripcion} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
+    const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
 
     exportData['Novedades'] = novedadesString || '-';
 
@@ -617,6 +641,7 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
+    this.efectorIdSubscription?.unsubscribe();
   }
 
 }

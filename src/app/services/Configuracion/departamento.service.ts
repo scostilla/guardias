@@ -6,7 +6,6 @@ import { DepartamentoDto } from 'src/app/dto/Configuracion/DepartamentoDto';
 import { Departamento } from "src/app/models/Configuracion/Departamento";
 
 
-
 @Injectable({
   providedIn: 'root'
 })

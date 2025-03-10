@@ -24,7 +24,7 @@ export class DepartamentoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<DepartamentoDetailComponent>;
-  displayedColumns: string[] = ['id', 'nombre', 'codigoPostal', 'provincia', 'acciones'];
+  displayedColumns: string[] = ['nombre', 'codigoPostal', 'provincia', 'acciones'];
   dataSource!: MatTableDataSource<Departamento>;
   suscription!: Subscription;
 

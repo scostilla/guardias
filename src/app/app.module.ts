@@ -2,7 +2,9 @@ import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -17,7 +19,6 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { CategoriaCreateComponent } from './components/configuracion/usuarios/categoria-create/categoria-create.component';
 import { SharedModule } from './components/shared/shared.module';
-
 
 //Angular nativo
 
@@ -61,8 +62,9 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
-import { NovedadesPersonEditComponent } from './components/personal/novedades-person-edit/novedades-person-edit.component';
-import { NovedadesPersonComponent } from './components/personal/novedades-person/novedades-person.component';
+import { NovedadesPersonCreateComponent } from './components/personal/novedades/novedades-person-create/novedades-person-create.component';
+import { NovedadesPersonEditComponent } from './components/personal/novedades/novedades-person-edit/novedades-person-edit.component';
+import { NovedadesPersonComponent } from './components/personal/novedades/novedades-person/novedades-person.component';
 import { PopupComponent } from './components/popup/popup.component';
 import { ProfessionalAbmComponent } from './components/professional-abm/professional-abm.component';
 import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
@@ -76,6 +78,7 @@ import { TimePickerComponent } from './components/time-picker/time-picker.compon
 import { ProfessionalDataServiceService } from './services/ProfessionalDataService/professional-data-service.service';
 
 
+import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { DdjjContrafacturaComponent } from './components/guardias/ddjj-contrafactura/ddjj-contrafactura.component';
 import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
 
@@ -177,10 +180,13 @@ import { TablaComponent } from './components/tabla/tabla.component';
 import { SpinnerInterceptor } from './services/spinner-interceptor.service';
 
 import localeEsAr from '@angular/common/locales/es-AR';
+import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
+import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { EfectorDetailComponent } from './components/configuracion/establecimiento/efector-detail/efector-detail.component';
 import { EfectorEditComponent } from './components/configuracion/establecimiento/efector-edit/efector-edit.component';
 import { EfectorComponent } from './components/configuracion/establecimiento/efector/efector.component';
+import { PermisosEfectoresComponent } from './components/configuracion/establecimiento/permisos-efectores/permisos-efectores.component';
 import { UdoDetailComponent } from './components/configuracion/establecimiento/udo-detail/udo-detail.component';
 import { UdoEditComponent } from './components/configuracion/establecimiento/udo-edit/udo-edit.component';
 import { UdoComponent } from './components/configuracion/establecimiento/udo/udo.component';
@@ -188,7 +194,6 @@ import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/v
 import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
-
 import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
 import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
@@ -199,58 +204,64 @@ import { TipoLicenciaDetailComponent } from './components/configuracion/leyes/ti
 import { TipoLicenciaEditComponent } from './components/configuracion/leyes/tipo-licencia-edit/tipo-licencia-edit.component';
 import { TipoLicenciaComponent } from './components/configuracion/leyes/tipo-licencia/tipo-licencia.component';
 import { SoporteFormComponent } from './components/configuracion/soporte-form/soporte-form.component';
-import { AdicionalCreateComponent } from './components/configuracion/usuarios/adicional-create/adicional-create.component';
-import { AdicionalEditComponent } from './components/configuracion/usuarios/adicional-edit/adicional-edit.component';
-import { AsistencialCreateComponent } from './components/configuracion/usuarios/asistencial-create/asistencial-create.component';
-import { AsistencialDetailComponent } from './components/configuracion/usuarios/asistencial-detail/asistencial-detail.component';
-import { AsistencialEditComponent } from './components/configuracion/usuarios/asistencial-edit/asistencial-edit.component';
-import { AsistencialSelectorComponent } from './components/configuracion/usuarios/asistencial-selector/asistencial-selector.component';
-import { AsistencialComponent } from './components/configuracion/usuarios/asistencial/asistencial.component';
-import { AutoridadDetailComponent } from './components/configuracion/usuarios/autoridad-detail/autoridad-detail.component';
-import { AutoridadEditComponent } from './components/configuracion/usuarios/autoridad-edit/autoridad-edit.component';
-import { AutoridadComponent } from './components/configuracion/usuarios/autoridad/autoridad.component';
-import { CargaHorariaCreateComponent } from './components/configuracion/usuarios/carga-horaria-create/carga-horaria-create.component';
-import { CargaHorariaEditComponent } from './components/configuracion/usuarios/carga-horaria-edit/carga-horaria-edit.component';
-import { CargoDetailComponent } from './components/configuracion/usuarios/cargo-detail/cargo-detail.component';
-import { CargoEditComponent } from './components/configuracion/usuarios/cargo-edit/cargo-edit.component';
-import { CargoComponent } from './components/configuracion/usuarios/cargo/cargo.component';
-import { CategoriaEditComponent } from './components/configuracion/usuarios/categoria-edit/categoria-edit.component';
-import { LegajoCreateComponent } from './components/configuracion/usuarios/legajo-create/legajo-create.component';
-import { LegajoDetailComponent } from './components/configuracion/usuarios/legajo-detail/legajo-detail.component';
-import { LegajoEditComponent } from './components/configuracion/usuarios/legajo-edit/legajo-edit.component';
-import { LegajoPersonEditComponent } from './components/configuracion/usuarios/legajo-person-edit/legajo-person-edit.component';
-import { LegajoPersonComponent } from './components/configuracion/usuarios/legajo-person/legajo-person.component';
-import { LegajoComponent } from './components/configuracion/usuarios/legajo/legajo.component';
-import { NoAsistencialCreateComponent } from './components/configuracion/usuarios/no-asistencial-create/no-asistencial-create.component';
-import { NoAsistencialDetailComponent } from './components/configuracion/usuarios/no-asistencial-detail/no-asistencial-detail.component';
-import { NoAsistencialEditComponent } from './components/configuracion/usuarios/no-asistencial-edit/no-asistencial-edit.component';
-import { NoAsistencialComponent } from './components/configuracion/usuarios/no-asistencial/no-asistencial.component';
 import { PersonDetailComponent } from './components/configuracion/usuarios/person-detail/person-detail.component';
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { RevistaDetailComponent } from './components/configuracion/usuarios/revista-detail/revista-detail.component';
 import { RevistaEditComponent } from './components/configuracion/usuarios/revista-edit/revista-edit.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
-import { TipoRevistaCreateComponent } from './components/configuracion/usuarios/tipo-revista-create/tipo-revista-create.component';
 import { TipoRevistaEditComponent } from './components/configuracion/usuarios/tipo-revista-edit/tipo-revista-edit.component';
+import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
+import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
+import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
 import { CronogramaDetailComponent } from './components/cronogramas/cronograma-detail/cronograma-detail.component';
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
-import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
 import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from './components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
+import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
+import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
-import { NovedadesPersonDetailComponent } from './components/personal/novedades-person-detail/novedades-person-detail.component';
+import { LegajoCreateNoasistencialComponent } from './components/personal/legajo/legajo-create-noasistencial/legajo-create-noasistencial.component';
+import { LegajoCreateComponent } from './components/personal/legajo/legajo-create/legajo-create.component';
+import { LegajoDetailComponent } from './components/personal/legajo/legajo-detail/legajo-detail.component';
+import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
+import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
+import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
+import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
+import { MotivoBajaDialogComponent } from './components/personal/legajo/motivo-baja-dialog/motivo-baja-dialog.component';
+import { NovedadesPersonDetailComponent } from './components/personal/novedades/novedades-person-detail/novedades-person-detail.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { AsistencialCreateComponent } from './components/personal/personal-contenido/asistencial-create/asistencial-create.component';
+import { AsistencialDetailComponent } from './components/personal/personal-contenido/asistencial-detail/asistencial-detail.component';
+import { AsistencialEditComponent } from './components/personal/personal-contenido/asistencial-edit/asistencial-edit.component';
+import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialComponent } from './components/personal/personal-contenido/asistencial/asistencial.component';
+import { AutoridadDetailComponent } from './components/personal/personal-contenido/autoridad-detail/autoridad-detail.component';
+import { AutoridadEditComponent } from './components/personal/personal-contenido/autoridad-edit/autoridad-edit.component';
+import { AutoridadComponent } from './components/personal/personal-contenido/autoridad/autoridad.component';
+import { CargoDetailComponent } from './components/personal/personal-contenido/cargo-detail/cargo-detail.component';
+import { CargoEditComponent } from './components/personal/personal-contenido/cargo-edit/cargo-edit.component';
+import { CargoComponent } from './components/personal/personal-contenido/cargo/cargo.component';
+import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
+import { NoAsistencialCreateComponent } from './components/personal/personal-contenido/no-asistencial-create/no-asistencial-create.component';
+import { NoAsistencialDetailComponent } from './components/personal/personal-contenido/no-asistencial-detail/no-asistencial-detail.component';
+import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
+import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
+import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
+import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
+import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
+import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
+import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
-registerLocaleData(localeEsAr, 'es-AR');
-
 
 @NgModule({
   declarations: [
@@ -274,6 +285,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     ProfessionalAbmComponent,
     ProfessionalListComponent,
     NovedadesPersonEditComponent,
+    NovedadesPersonCreateComponent,
     DistHorariaComponent,
     ConfirmDialogComponent,
     GuardiasViewComponent,
@@ -385,7 +397,6 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialComponent,
     NoAsistencialEditComponent,
     NoAsistencialDetailComponent,
-    LegajoComponent,
     LegajoEditComponent,
     LegajoDetailComponent,
     RevistaComponent,
@@ -402,7 +413,6 @@ registerLocaleData(localeEsAr, 'es-AR');
     CategoriaCreateComponent,
     CategoriaEditComponent,
     CargoDetailComponent,
-    LegajoPersonEditComponent,
     CronogramaDetailComponent,
     PersonalComponent,
     PersonalLegajoComponent,
@@ -449,6 +459,29 @@ registerLocaleData(localeEsAr, 'es-AR');
     NoAsistencialCreateComponent,
     PersonalNoAsistencialComponent,
     PersonalLegajoSelectComponent,
+    TipoLicenciaComponent,
+    TipoLicenciaEditComponent,
+    TipoLicenciaDetailComponent,
+    LegajoNoAsistencialComponent,
+    PersonalLegajoNoAsistencialComponent,
+    RegistroActividadesEgresoComponent,
+    RegistroActividadesIngresoComponent,
+    PermisosEfectoresComponent,
+    HomeAutoridadComponent,
+    LegajoCreateNoasistencialComponent,
+    LegajoEditNoasistencialComponent,
+    SinLegajoComponent,
+    MotivoBajaDialogComponent,
+    PersonalSinLegajoComponent,
+    ExternoComponent,
+    PersonalExternoComponent,
+    UsuarioComponent,
+    UsuarioDetailComponent,
+    UsuarioEditComponent,
+    EfectorSelectorComponent,
+    SelectorRolesComponent,
+    SinEfectorComponent,
+    PersonalSinEfectorComponent,
     
   ],
 
@@ -484,6 +517,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     MatDatepickerModule,
     MatCardModule,   
     MatRadioModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
     MatListModule,
     BrowserModule,
@@ -491,6 +525,7 @@ registerLocaleData(localeEsAr, 'es-AR');
     MatDatepickerModule,
     MatMomentDateModule,
     MatTabsModule,
+    MatBottomSheetModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
@@ -516,4 +551,8 @@ registerLocaleData(localeEsAr, 'es-AR');
   
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    registerLocaleData(localeEsAr, 'es-AR');
+  }
+}

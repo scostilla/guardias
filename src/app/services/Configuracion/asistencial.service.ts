@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
+import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
 import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { Person } from "src/app/models/Configuracion/Person";
 import { forkJoin } from 'rxjs';
@@ -17,6 +18,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AsistencialService {
 
+  private secretKey = 'Dph*FfLlMmNn99';
+
 
   asistencialesURL = 'http://localhost:8080/asistencial/';
   private _refresh$ = new Subject<void>();
@@ -29,6 +32,15 @@ export class AsistencialService {
 
   public list(): Observable<Asistencial[]> {
     return this.httpClient.get<Asistencial[]>(this.asistencialesURL + 'list')
+  }
+
+  // Lista Asistenciales por Efector
+  /*getByEfector(idEfector: number): Observable<AsistencialEfectorDto[]> {
+    return this.httpClient.get<AsistencialEfectorDto[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
+  }*/
+
+  getByEfector(idEfector: number): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
   }
 
   public listByUdoAndTipoGuardia(idUdo: number): Observable<AsistencialDto[]> {
@@ -102,6 +114,11 @@ export class AsistencialService {
   setCurrentAsistencial(asistencial: Asistencial) {
     this.currentAsistencialSubject.next(asistencial);
   }
-  
+
+  //uso para filtrar por el efector del usuario logueado
+listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto[]> {
+  console.log('Listando asistenciales para el ID Efector:', efectorId); // Log del efectorId
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTipoGuardia/${efectorId}`);
+}
 
 }
