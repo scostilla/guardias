@@ -251,6 +251,7 @@ import { NoAsistencialEditComponent } from './components/personal/personal-conte
 import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
 import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
+import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
@@ -482,6 +483,7 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     SelectorRolesComponent,
     SinEfectorComponent,
     PersonalSinEfectorComponent,
+    PersonalDhEditComponent,
     
   ],
 

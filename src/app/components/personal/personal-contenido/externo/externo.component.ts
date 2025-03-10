@@ -252,7 +252,7 @@ export class ExternoComponent implements OnInit, OnDestroy {
     this.habilitacionesGuardiasService.listHabilitacionesByEfector(efectorId).subscribe(habilitaciones => {
   
       // Filtro los asistenciales que están asociados a la habilitación del efectorId
-      const asistencialesIds = habilitaciones.map(habilitacion => habilitacion.persona.id);
+      const asistencialesIds = habilitaciones.map(habilitacion => habilitacion.asistencial.id);
   
       // Obtengo todos los asistenciales y filtro los que tienen habilitación para ese efector
       this.asistencialService.list().subscribe(data => {

@@ -1,12 +1,12 @@
+import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
-import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
+import { Subscription } from 'rxjs';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
@@ -15,6 +15,7 @@ import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
 import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
@@ -26,8 +27,6 @@ import { DistribucionConsultorioService } from 'src/app/services/personal/distri
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
-import { ServicioService } from 'src/app/services/servicio.service';
-
 
 
 @Component({
@@ -38,7 +37,10 @@ import { ServicioService } from 'src/app/services/servicio.service';
 export class DistHorariaComponent {
 
   inputValue: string = '';
-  selectedAsistencial?: AsistencialEfectorDto;
+  suscription!: Subscription;
+  asistencial: Asistencial | null = null;
+  idPersona!: number;
+  tipoGuardias: TipoGuardia[] = [];
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
@@ -50,7 +52,7 @@ export class DistHorariaComponent {
   minDate!: Date;
 
   cargaHoraria?: number;
-  idEfector?: number;
+  idEfector: number | undefined = undefined;
   tiposGuardiaOptions: { nombre: string }[] = [];
   meses: { nombre: string; fecha: moment.Moment; }[] = [];
 
@@ -67,7 +69,6 @@ export class DistHorariaComponent {
   private distribucionesGira: DistribucionGira[] = [];
   private distribucionesOtro: DistribucionOtro[] = [];
 
-  isProfessionalLoaded: boolean = false;
   isButtonDisabled: boolean = true;
   isPanelsEnabled: boolean = true;
 
@@ -89,19 +90,26 @@ export class DistHorariaComponent {
     private hospitalService: HospitalService,
     private capsService: CapsService,
     private asistencialService: AsistencialService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private location: Location
   ) {
     this.guardiaForm = this.fb.group({
-      idPersona: ['', Validators.required],
-      tipoGuardia: ['', Validators.required],
-      dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      idServicio: ['', Validators.required]
+      guardias: this.fb.array([this.createGuardia()])
     });
 
     this.consultorioForm = this.fb.group({
-      idPersona: ['', Validators.required],
+      consultorios: this.fb.array([this.createConsultorio()])
+    });
+
+    this.giraForm = this.fb.group({
+      giras: this.fb.array([this.createGira()])
+    });
+
+    this.otroForm = this.fb.group({
+      otros: this.fb.array([this.createOtro()])
+    });
+
+    /*this.consultorioForm = this.fb.group({
       tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
@@ -110,7 +118,6 @@ export class DistHorariaComponent {
     });
 
     this.giraForm = this.fb.group({
-      idPersona: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
       horaIngreso: ['', Validators.required],
@@ -120,13 +127,12 @@ export class DistHorariaComponent {
     });
 
     this.otroForm = this.fb.group({
-      idPersona: ['', Validators.required],
       dia: ['', Validators.required],
       cantidadHoras: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       descripcion: ['', Validators.required],
       lugar: ['', Validators.required]
-    });
+    });*/
 
     this.vigenciaForm = this.fb.group({
       mesVigencia: [null, Validators.required],
@@ -139,9 +145,20 @@ export class DistHorariaComponent {
   }
   
   ngOnInit() {
-    this.listServicios();
-    this.listCaps();
-    this.generarMeses();
+    this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
+      this.asistencial = asistencial;
+      console.log('Asistencial recibido:', this.asistencial);
+
+      if (!this.asistencial?.id) {
+        this.location.back();
+        } else {
+        this.idPersona = this.asistencial.id;
+        this.listServicios();
+        this.listCaps();
+        this.generarMeses();
+        this.loadCargaHoraria();
+        this.filterLegajosAndGetTipoGuardia();
+      }
 
     this.distribucionConsultorioService.list().subscribe(data => {
       this.distribucionesConsultorio = data;
@@ -158,7 +175,7 @@ export class DistHorariaComponent {
     this.distribucionOtroService.list().subscribe(data => {
       this.distribucionesOtro = data;
     });
-  
+  });
   }
 
   private subscribeToFormChanges(): void {
@@ -168,7 +185,148 @@ export class DistHorariaComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
-  openAsistencialDialog(): void {
+  createGuardia(): FormGroup {
+    return this.fb.group({
+      dia: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      idServicio: ['', Validators.required],
+      tipoGuardia: ['', Validators.required],
+      cantidadHoras: ['', Validators.required],
+    });
+  }
+
+  get guardias() {
+    return (this.guardiaForm.get('guardias') as FormArray);
+  }
+
+  addGuardia(): void {
+    this.guardias.push(this.createGuardia());
+  }
+
+  removeGuardia(index: number): void {
+    this.guardias.removeAt(index);
+  }
+
+  createConsultorio(): FormGroup {
+    return this.fb.group({
+      //tipoConsultorio: ['', Validators.required],
+      dia: ['', Validators.required],
+      cantidadHoras: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      idServicio: ['', Validators.required]
+    });
+  }
+
+  get consultorios() {
+    return (this.consultorioForm.get('consultorios') as FormArray);
+  }
+
+  addConsultorio(): void {
+    this.consultorios.push(this.createConsultorio());
+  }
+
+  removeConsultorio(index: number): void {
+    this.consultorios.removeAt(index);
+  }
+
+  createGira(): FormGroup {
+    return this.fb.group({
+      dia: ['', Validators.required],
+      cantidadHoras: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      puestoSalud: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      destino: ['', Validators.required]
+    });
+  }
+
+  get giras() {
+    return (this.giraForm.get('giras') as FormArray);
+  }
+
+  addGira(): void {
+    this.giras.push(this.createGira());
+  }
+
+  removeGira(index: number): void {
+    this.giras.removeAt(index);
+  }
+
+  createOtro(): FormGroup {
+    return this.fb.group({
+      dia: ['', Validators.required],
+      cantidadHoras: ['', Validators.required],
+      horaIngreso: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      lugar: ['', Validators.required]
+    });
+  }
+
+  get otros() {
+    return (this.otroForm.get('otros') as FormArray);
+  }
+
+  addOtro(): void {
+    this.otros.push(this.createOtro());
+  }
+
+  removeOtro(index: number): void {
+    this.guardias.removeAt(index);
+  }
+
+  
+  filterLegajosAndGetTipoGuardia() {
+    if (this.asistencial) {
+      // Filtrar los legajos activos y que no son autoridad
+      const legajosFiltrados = this.asistencial.legajos.filter(legajo => 
+        legajo.activo === true && legajo.esAutoridad === false
+      );
+
+      // Limpiar tipoGuardias y idEfector antes de asignar nuevos valores
+      this.tipoGuardias = [];
+      this.idEfector = undefined;  // Limpiamos idEfector
+
+      // Obtener los tipoGuardias de los legajos filtrados
+      legajosFiltrados.forEach(legajo => {
+        // Filtrar los tipoGuardias por el nombre "CARGO" o "AGRUPACION"
+        const tipoGuardiasFiltrados = legajo.tipoGuardias.filter(tipoGuardia => 
+          tipoGuardia.nombre === 'CARGO' || tipoGuardia.nombre === 'AGRUPACION'
+        );
+
+        // Agregar los tipoGuardias filtrados al array de tipoGuardias
+        this.tipoGuardias = [...this.tipoGuardias, ...tipoGuardiasFiltrados];
+
+        // Obtener el primer efector del legajo (si existe) y asignarlo a idEfector
+        if (legajo.efectores.length > 0 && this.idEfector === undefined) {
+          this.idEfector = legajo.efectores[0].id;  // Solo tomamos el primer efector
+        }
+      });
+
+      console.log('TipoGuardias disponibles (CARGO o AGRUPACION):', this.tipoGuardias);
+      console.log('ID del primer efector:', this.idEfector);
+    }
+  }  
+  
+  loadCargaHoraria(): void { 
+    const legajosActivos = this.asistencial?.legajos.filter(legajo => legajo.activo);
+    
+    if (legajosActivos && legajosActivos.length > 0) {
+      const ultimoLegajoActivo = legajosActivos.sort((a, b) => b.id! - a.id!)[0];
+  
+      if (ultimoLegajoActivo.revista?.cargaHoraria) {
+        this.cargaHoraria = ultimoLegajoActivo.revista.cargaHoraria.cantidad;
+      } else {
+        this.cargaHoraria = undefined; // Si no hay carga horaria
+        console.warn('No hay carga horaria definida para el último legajo activo');
+      }
+    } else {
+      this.cargaHoraria = undefined; // No hay legajos activos
+      console.warn('No hay legajos activos disponibles');
+    }
+  }
+  
+
+  /*openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
       disableClose: true
@@ -261,15 +419,30 @@ export class DistHorariaComponent {
       });
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }
+  }*/
       
   private updateHorasStatus(): void {
-    const guardiaHoras = Number(this.guardiaForm.get('cantidadHoras')?.value ?? 0);
-    const consultorioHoras = Number(this.consultorioForm.get('cantidadHoras')?.value ?? 0);
+    const guardiaHoras = (this.guardiaForm.get('guardias') as FormArray).controls.reduce((sum, formGroup) => {
+      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    }, 0);
+
+    const consultorioHoras = (this.consultorioForm.get('consultorios') as FormArray).controls.reduce((sum, formGroup) => {
+      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    }, 0);
+
+    const giraHoras = (this.giraForm.get('giras') as FormArray).controls.reduce((sum, formGroup) => {
+      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    }, 0);
+
+    const otroHoras = (this.otroForm.get('otros') as FormArray).controls.reduce((sum, formGroup) => {
+      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    }, 0);
+
+/*    const consultorioHoras = Number(this.consultorioForm.get('cantidadHoras')?.value ?? 0);
     const giraHoras = Number(this.giraForm.get('cantidadHoras')?.value ?? 0);
-    const otroHoras = Number(this.otroForm.get('cantidadHoras')?.value ?? 0);
+    const otroHoras = Number(this.otroForm.get('cantidadHoras')?.value ?? 0);*/
     const totalHoras = guardiaHoras + consultorioHoras + giraHoras + otroHoras;
-  
+
     if (this.cargaHoraria !== undefined) {
       if (totalHoras > this.cargaHoraria) {
         this.horasMessage = 'Has superado el total de horas posibles';
@@ -291,17 +464,9 @@ export class DistHorariaComponent {
     }
   }
 
-  updateIdPersona(id: string): void {
-    console.log('Actualizando idPersona:', id);
-    this.guardiaForm.patchValue({ idPersona: id });
-    this.consultorioForm.patchValue({ idPersona: id });
-    this.giraForm.patchValue({ idPersona: id });
-    this.otroForm.patchValue({ idPersona: id });
-  }
-
   updateFechas() {
     const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
-    const idPersonaSeleccionado = this.guardiaForm.get('idPersona')?.value;
+    const idPersonaSeleccionado = this.idPersona;
   
     // Verificación de datos
     if (!mesVigencia) {
@@ -346,7 +511,7 @@ export class DistHorariaComponent {
     }
   
     if (existenRegistros) {
-      this.toastr.warning('Ya existen registros para uno o más de los meses seleccionados.', 'Advertencia', {
+      this.toastr.warning('Ya existen cargas para uno o más de los meses seleccionados.', 'Carga no permitida', {
         timeOut: 6000,
         positionClass: 'toast-top-center',
         progressBar: true
@@ -485,7 +650,7 @@ export class DistHorariaComponent {
         }
     }
 
-    const savePromises = [];
+    const savePromises: Promise<any>[] = [];
     const errorMessages: string[] = [];
 
     // Calcula meses para cada distribución
@@ -494,105 +659,114 @@ export class DistHorariaComponent {
     const giraMeses = this.calcularMeses(mesVigencia);
     const otroMeses = this.calcularMeses(mesVigencia);
 
-    // Guarda guardia
     if (this.guardiaForm.valid) {
-        for (const mes of guardiaMeses) {
-            const distribucionGuardiaDto = new DistribucionGuardiaDto(
-                this.guardiaForm.value.dia,
-                this.guardiaForm.value.cantidadHoras,
-                this.guardiaForm.value.idPersona,
-                this.idEfector,
-                mes.fechaInicio,
-                mes.fechaFinalizacion,
-                this.guardiaForm.value.horaIngreso,
-                this.guardiaForm.value.tipoGuardia,
-                this.guardiaForm.value.idServicio.id
-            );
-
-            console.log('Guardia a guardar:', distribucionGuardiaDto);
-
-            savePromises.push(
-              this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                  .catch(() => {
-                      errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
-                  })
+      const guardiaFormArray = this.guardiaForm.get('guardias') as FormArray;
+      guardiaFormArray.controls.forEach((control) => {
+        guardiaMeses.forEach((mes) => {
+          const distribucionGuardiaDto = new DistribucionGuardiaDto(
+            control.value.dia,
+            control.value.cantidadHoras,
+            this.idPersona ?? null,
+            this.idEfector ?? 0,
+            mes.fechaInicio, // Usar el inicio del mes
+            mes.fechaFinalizacion, // Usar la fecha de finalización del mes
+            control.value.horaIngreso,
+            control.value.tipoGuardia,
+            control.value.idServicio.id
           );
-      }
+  
+          savePromises.push(
+            this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+              .catch(() => {
+                errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
+              })
+          );
+        });
+      });
     }
-
+  
     // Guarda consultorio
     if (this.consultorioForm.valid) {
-        for (const mes of consultorioMeses) {
+      const consultorioFormArray = this.consultorioForm.get('consultorios') as FormArray;
+      consultorioFormArray.controls.forEach((control) => {
+        consultorioMeses.forEach((mes) => {
             const distribucionConsultorioDto = new DistribucionConsultorioDto(
-                this.consultorioForm.value.dia,
-                this.consultorioForm.value.cantidadHoras,
-                this.consultorioForm.value.idPersona,
-                this.idEfector,
+                control.value.dia,
+                control.value.cantidadHoras,
+                this.idPersona ?? null,
+                this.idEfector ?? 0,
                 mes.fechaInicio,
                 mes.fechaFinalizacion,
-                this.consultorioForm.value.horaIngreso,
-                this.consultorioForm.value.idServicio.id,
-                this.consultorioForm.value.tipoConsultorio
+                control.value.horaIngreso,
+                control.value.idServicio.id,
+                "EXTERNO"
             );
 
             savePromises.push(
               this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
                   .catch(() => {
                       errorMessages.push(`Guardia en ${mes.mes}: ${distribucionConsultorioDto.dia}`);
-                  })
-          );
-      }
+              })
+              );
+          });
+      });
     }
-
+        
     // Guarda gira médica
     if (this.giraForm.valid) {
-        for (const mes of giraMeses) {
+      const giraFormArray = this.giraForm.get('giras') as FormArray;
+      giraFormArray.controls.forEach((control) => {
+        giraMeses.forEach((mes) => {
             const distribucionGiraDto = new DistribucionGiraDto(
-                this.giraForm.value.dia,
-                this.giraForm.value.cantidadHoras,
-                this.giraForm.value.idPersona,
-                this.idEfector,
+                control.value.dia,
+                control.value.cantidadHoras,
+                this.idPersona ?? null,
+                this.idEfector ?? 0,
                 mes.fechaInicio,
                 mes.fechaFinalizacion,
-                this.giraForm.value.horaIngreso,
-                this.giraForm.value.puestoSalud,
-                this.giraForm.value.descripcion,
-                this.giraForm.value.destino
+                control.value.horaIngreso,
+                control.value.puestoSalud,
+                control.value.descripcion,
+                control.value.destino
             );
 
             savePromises.push(
               this.distribucionGiraService.save(distribucionGiraDto).toPromise()
                   .catch(() => {
                       errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGiraDto.dia}`);
-                  })
-          );
-      }
+              })
+              );
+          });
+      });
     }
 
     // Guarda otras actividades
     if (this.otroForm.valid) {
-        for (const mes of otroMeses) {
+      const otroFormArray = this.otroForm.get('otros') as FormArray;
+      otroFormArray.controls.forEach((control) => {
+        guardiaMeses.forEach((mes) => {
             const distribucionOtroDto = new DistribucionOtroDto(
-                this.otroForm.value.dia,
-                this.otroForm.value.cantidadHoras,
-                this.otroForm.value.idPersona,
-                this.idEfector,
+                control.value.dia,
+                control.value.cantidadHoras,
+                this.idPersona ?? null,
+                this.idEfector ?? 0,
                 mes.fechaInicio,
                 mes.fechaFinalizacion,
-                this.otroForm.value.horaIngreso,
-                this.otroForm.value.descripcion,
-                this.otroForm.value.lugar
+                control.value.horaIngreso,
+                control.value.descripcion,
+                control.value.lugar
             );
 
             savePromises.push(
               this.distribucionOtroService.save(distribucionOtroDto).toPromise()
                   .catch(() => {
                       errorMessages.push(`Guardia en ${mes.mes}: ${distribucionOtroDto.dia}`);
-                  })
-          );
-      }
-    }
-
+                    })
+                  );
+              });
+          });
+        }
+    
     // Envia los datos cargados para guardar
     Promise.all(savePromises)
         .then(() => {
@@ -612,7 +786,9 @@ export class DistHorariaComponent {
                 });
             }
 
-            this.router.navigate(['/personal']);
+            this.router.navigate(['/personal'], {
+            });
+        
         })
         .catch(() => {
             this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
@@ -670,7 +846,7 @@ get isMesVigenciaSelected(): boolean {
 }
 
 get isPanelEnabled(): boolean {
-  return this.isProfessionalLoaded && this.isMesVigenciaSelected && this.isPanelsEnabled;
+  return this.isMesVigenciaSelected && this.isPanelsEnabled;
 }
 
 get isPanel0Expanded(): boolean {

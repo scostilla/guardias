@@ -148,7 +148,7 @@ import { LegajoCreateComponent } from './components/personal/legajo/legajo-creat
 import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
 
-
+import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 
 
 //Sección: Cronograma
@@ -389,6 +389,7 @@ const routes: Routes = [
   {path: 'externo', component:ExternoComponent},
 
   {path: 'personal-dh', component:PersonalDhComponent},
+  {path: 'personal-dh-edit', component:PersonalDhEditComponent},
   {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},

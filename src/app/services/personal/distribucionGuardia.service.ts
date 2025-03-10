@@ -59,8 +59,23 @@ getDistribucionesByEfector(idEfector: number): Observable<DistribucionGuardia[]>
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailefector/${idEfector}`);
 }
 
+// Obtener distribuciones por fecha de inicio
+getDistribucionesByFechaInicio(fechaInicio: string): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}list/${fechaInicio}`);
+}
+
+// Obtener distribuciones por persona, fecha de inicio y ACTIVO
+getActivoByPersonaFechaInicio(idPersona: number, fechaInicio: string): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
+}
+
+// Obtener distribuciones por persona, fecha de inicio y ACTIVO
+getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+}
+
 // Verificar si existe distribución para una persona
-getDistribucionesByPersona(idPersona: number): Observable<DistribucionGuardia[]> {
+getDistribucionesGuardiaByPersona(idPersona: number): Observable<DistribucionGuardia[]> {
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailpersona/${idPersona}`);
 }
 

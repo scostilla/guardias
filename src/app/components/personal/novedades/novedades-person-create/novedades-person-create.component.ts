@@ -22,6 +22,7 @@ export class NovedadesPersonCreateComponent implements OnInit {
     licencias: TipoLicencia[] = [];
     inputValue: string = '';
     selectedAsistencial?: Asistencial;
+    fechaMinFinal: Date | null = null;
   
     constructor(
         private fb: FormBuilder,
@@ -40,23 +41,23 @@ export class NovedadesPersonCreateComponent implements OnInit {
           puedeRealizarGuardia: [''],
           cobraSueldo: [''],
           necesitaReemplazo: [{ value: '', disabled: true }],
-        }, { validators: this.dateLessThan('fechaInicio', 'fechaFinal') });
+        });
 
         this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
-this.novedadPersonalForm.get('idSuplente')?.disable();
+        this.novedadPersonalForm.get('idSuplente')?.disable();
+        this.novedadPersonalForm.get('fechaFinal')?.updateValueAndValidity();
       
         this.listLicencia();
       }
       
       ngOnInit(): void {
         this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(value => {
-          if (value) {
-            this.novedadPersonalForm.get('fechaFinal')?.enable();
-          } else {
-            this.novedadPersonalForm.get('fechaFinal')?.disable();
-          }
+          this.onFechaInicioChange();
         });
-    
+
+        this.novedadPersonalForm.get('fechaFinal')?.valueChanges.subscribe(value => {
+        });
+
         this.novedadPersonalForm.get('idTipoLicencia')?.valueChanges.subscribe(value => {
           console.log('Valor recibido en idTipoLicencia:', value);
           this.updateFormFields(value);
@@ -72,8 +73,9 @@ this.novedadPersonalForm.get('idSuplente')?.disable();
         const necesitaReemplazo = this.novedadPersonalForm.get('necesitaReemplazo')?.value || false;
         this.toggleSuplenteValidation(necesitaReemplazo);
         this.toggleSuplenteDisabled(necesitaReemplazo);
-          // Iniciar con el campo necesitaReemplazo oculto
-  this.showNecesitaReemplazo(false);
+        
+        // Iniciar con el campo necesitaReemplazo oculto
+        this.showNecesitaReemplazo(false);
       }
 
       updateFormFields(tipoLicenciaIdOrNombre: string | number | null): void {
@@ -168,19 +170,23 @@ toggleSuplenteDisabled(necesitaReemplazo: boolean): void {
   }
 }
 
-// Validador personalizado para comprobar que la fechaFinal no sea anterior a fechaInicio
-dateLessThan(start: string, end: string) {
-    return (formGroup: AbstractControl) => {
-      const startControl = formGroup.get(start);
-      const endControl = formGroup.get(end);
-      if (startControl && endControl) {
-        if (endControl.value && startControl.value && endControl.value < startControl.value) {
-          endControl.setErrors({ dateLessThan: true });
-        } else {
-          endControl.setErrors(null);
-        }
-      }
-    };
+  // actualizar fechaMinFinal cuando cambia la fecha de inicio
+  onFechaInicioChange(): void {
+    const fechaInicio = this.novedadPersonalForm.get('fechaInicio')?.value;
+    
+    // Siempre resetear la fecha final cuando cambia la fecha de inicio
+    this.novedadPersonalForm.get('fechaFinal')?.setValue('');  // Resetear fecha final
+    
+    // Si se seleccionó una fecha de inicio
+    if (fechaInicio) {
+      // Habilitar el campo fechaFinal y actualizar el valor mínimo
+      this.novedadPersonalForm.get('fechaFinal')?.enable();
+      this.fechaMinFinal = new Date(fechaInicio);
+    } else {
+      // Si no se seleccionó fecha de inicio, deshabilitar fechaFinal y resetear valor
+      this.novedadPersonalForm.get('fechaFinal')?.disable();
+      this.fechaMinFinal = null;
+    }
   }
   
     listLicencia(): void {

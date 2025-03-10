@@ -8,9 +8,9 @@
       <button mat-fab class="button-success" (click)="createAsistencial()" matTooltip="Agregar Persona Asistencial">
         <mat-icon>library_add</mat-icon>
       </button>
-      <button mat-fab class="button-primary" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
+      <!--<button mat-fab class="button-primary" style="margin-left: 5px;" (click)="openDistribucion()" matTooltip="Agregar distribución horaria">
         <mat-icon>av_timer</mat-icon>
-      </button>
+      </button>-->
     </div>
     <div class="col-12 col-md-4 mt-3 mt-md-0">
       <mat-form-field>
@@ -100,7 +100,7 @@
               <mat-icon color="warn">event</mat-icon>
             </button>
           
-            <button mat-icon-button matTooltip="Ver Dist. Horaria" (click)="verDistribucion(asistencial)" *ngIf="mostrarBotones(asistencial)">
+            <button mat-icon-button matTooltip="Ver/Agregar Dist. Horaria" (click)="verDistribucion(asistencial)" *ngIf="mostrarBotones(asistencial)">
               <mat-icon>calendar_month</mat-icon>
             </button>
           </td>
