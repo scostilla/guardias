@@ -38,6 +38,16 @@ export class DistribucionOtroService {
     return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
   }
 
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
+  // Verifica distribuciones por persona, fecha de inicio y ACTIVO
+  existsByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}existsByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+
   // Obtener distribuciones por ID de Efector
   getDistribucionesByEfector(idEfector: number): Observable<DistribucionOtro[]> {
     return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}detailefector/${idEfector}`);

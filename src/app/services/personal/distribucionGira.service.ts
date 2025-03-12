@@ -34,6 +34,16 @@ export class DistribucionGiraService {
     return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
   }
 
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
+  // Verifica distribuciones por persona, fecha de inicio y ACTIVO
+  existsByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}existsByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
   // Obtener detalle de una distribución por ID
   getDistribucionById(id: number): Observable<DistribucionGira> {
     return this.httpClient.get<DistribucionGira>(`${this.distribucionGirasURL}detail/${id}`);

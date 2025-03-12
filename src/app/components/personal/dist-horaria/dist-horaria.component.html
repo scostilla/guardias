@@ -1,10 +1,12 @@
+<app-spinner></app-spinner>
+
 <div class="container">
   <div class="row">
     <div class="col-6">
       <div class="titulos" *ngIf="asistencial">Distribución horaria: <span class="titulos-second">{{asistencial.apellido}}, {{asistencial.nombre}}</span></div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>
@@ -23,19 +25,6 @@
 
   <div class="row">
   
-      <!--<form [formGroup]="personaForm">
-        <div class="row">
-          <mat-form-field appearance="fill">
-            <mat-label>Profesional</mat-label>
-            <input matInput formControlName="idPersona" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
-            <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-            <mat-error *ngIf="personaForm.get('idPersona')?.hasError('required')">
-              El campo profesional es requerido.
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </form>-->
-
       <form [formGroup]="vigenciaForm">
         <mat-form-field appearance="fill">
           <mat-label>Mes de Vigencia</mat-label>

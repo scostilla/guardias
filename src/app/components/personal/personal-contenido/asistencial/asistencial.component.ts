@@ -264,7 +264,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
           legajo.efectores.some(efector => efector.id === efectorId) && // Verifica que el legajo esté asociado al efector
           // Verifica que el legajo no tenga guardias de tipo Contrafactura o Pasiva
           !legajo.tipoGuardias.some(tipoGuardia => 
-            tipoGuardia.id === this.idContraFactura || tipoGuardia.id === this.idPasiva
+            tipoGuardia.id === this.idContraFactura
           )
         )
       );
@@ -308,17 +308,17 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   
     // Verifica si las guardias 'cargo', 'agrupacion' y 'extra' cumplen con la lógica específica
     const tieneGuardiasCombinadas = legajos.some(legajo => {
-      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id); // Suponiendo que 'id' es lo que estamos buscando
+      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id);
   
       // Verifica si tiene guardias de tipo 'cargo' o 'agrupación'
       const tieneCargoOAgrupacion = tiposGuardias.includes(this.idCargo) || tiposGuardias.includes(this.idAgrupacion);
   
-      // Si tiene 'extra' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
-      const tieneExtra = tiposGuardias.includes(this.idExtra);
-      if (tieneExtra && !tieneCargoOAgrupacion) {
-        return true; // No se permite acción si 'extra' está solo
-      }
-  
+    // Si tiene 'extra' o 'pasiva' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
+    const tieneExtraOPasiva = tiposGuardias.includes(this.idExtra) || tiposGuardias.includes(this.idPasiva);
+    if (tieneExtraOPasiva && !tieneCargoOAgrupacion) {
+      return true; // No se permite acción si 'extra' o 'pasiva' está solo
+    }
+
       // Si no tiene ni 'cargo' ni 'agrupación' ni cumple con las combinaciones, no permitir acciones
       return !tieneCargoOAgrupacion;
     });

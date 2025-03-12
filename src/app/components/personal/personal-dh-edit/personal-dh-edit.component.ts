@@ -716,7 +716,13 @@ export class PersonalDhEditComponent {
                   });
               }
 
-              this.router.navigate(['/personal']);
+              if (this.asistencial && this.asistencial.id) {
+                this.asistencialService.setCurrentAsistencial(this.asistencial);
+                this.router.navigate(['/personal-dh']);
+              } else {
+                console.error('El objeto asistencial no tiene un id.');
+              }        
+  
           })
           .catch(() => {
               this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
@@ -808,7 +814,12 @@ compareServicio(s1: Servicio, s2: any): boolean {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/personal']);
-  }
+    if (this.asistencial && this.asistencial.id) {
+      this.asistencialService.setCurrentAsistencial(this.asistencial);
+      this.router.navigate(['/personal-dh']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }        
+}
 
 }
