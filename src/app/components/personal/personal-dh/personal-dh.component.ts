@@ -111,15 +111,14 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
-      console.log('Asistencial recibido:', this.asistencial);
+      //console.log('Asistencial recibido:', this.asistencial);
 
       if (!this.asistencial?.id) {
         this.location.back();
       } else {
-        this.loadDistribuciones();  // Cargar las distribuciones
+        this.loadDistribuciones();
         this.loadNovedades();
         this.loadCargaHoraria();
-        //this.calcularEstadoCargaHoraria();
       }
 
       // Inicializar el mes y año actual
@@ -146,7 +145,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       ...combinedDataOtro
     ];
   
-    console.log('Combined Data:', combinedData);  // Verifica la estructura de los datos combinados
+    //console.log('Combined Data:', combinedData);  // Verifica la estructura de los datos combinados
   
     return combinedData; // Si está vacío, no se mostrará la tabla
   }
@@ -162,8 +161,8 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     const fechaActual = moment();
     const mesesFuturos = [];
 
-    // Agregar hasta 6 meses hacia adelante
-    for (let i = 0; i < 6; i++) {
+    // Agregar hasta 6 meses hacia adelante del actual
+    for (let i = 0; i < 7; i++) {
       const mesYanio = fechaActual.clone().add(i, 'months');
       mesesFuturos.push({
         value: `${mesYanio.month() + 1}-${mesYanio.year()}`,
@@ -172,7 +171,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     }
 
     this.mesesDisponibles = mesesFuturos; // Mostramos los meses desde el actual hasta el futuro
-    console.log('Meses disponibles:', this.mesesDisponibles);
+    //console.log('Meses disponibles:', this.mesesDisponibles);
   }
 
   resetData(): void {
@@ -380,7 +379,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
   aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): DistribucionGuardiaWithHoras {
     // Filtrar distribuciones por mes y año
     const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
-    console.log('Distribuciones filtradas para Guardias:', distribucionesFiltradas);
+    //console.log('Distribuciones filtradas para Guardias:', distribucionesFiltradas);
     
     if (distribucionesFiltradas.length === 0) {
       console.log('No hay distribuciones disponibles.');

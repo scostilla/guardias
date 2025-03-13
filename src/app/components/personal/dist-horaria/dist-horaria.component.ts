@@ -58,6 +58,7 @@ export class DistHorariaComponent {
   idEfector: number | undefined = undefined;
   tiposGuardiaOptions: { nombre: string }[] = [];
   meses: { nombre: string; fecha: moment.Moment; }[] = [];
+  mesesSeleccionados: Array<{ nombre: string, fecha: moment.Moment }> = [];
 
   horasStatus: string = '';
   horasMessage: string = '';
@@ -125,7 +126,7 @@ export class DistHorariaComponent {
   ngOnInit() {
     this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
-      console.log('Asistencial recibido:', this.asistencial);
+      //console.log('Asistencial recibido:', this.asistencial);
 
       if (!this.asistencial?.id) {
         this.location.back();
@@ -160,6 +161,7 @@ export class DistHorariaComponent {
     if (this.suscription) {
       this.suscription.unsubscribe();
     }
+    this.toastr.clear();
   }
 
   private subscribeToFormChanges(): void {
@@ -286,8 +288,8 @@ export class DistHorariaComponent {
         }
       });
 
-      console.log('TipoGuardias disponibles (CARGO o AGRUPACION):', this.tipoGuardias);
-      console.log('ID del primer efector:', this.idEfector);
+      //console.log('TipoGuardias disponibles (CARGO o AGRUPACION):', this.tipoGuardias);
+      //console.log('ID del primer efector:', this.idEfector);
     }
   }  
   
@@ -349,30 +351,23 @@ export class DistHorariaComponent {
     }
   }
 
-  updateFechas() {
-    const mesVigencia = this.vigenciaForm.get('mesVigencia')?.value;
-    const idPersonaSeleccionado = this.idPersona;
-  
-    // Verificación de datos (esto sigue presente si es necesario para validar los campos)
-    if (!mesVigencia) {
-      console.warn('Mes de vigencia no está definido.');
-      return;
+  updateFechas(): void {
+    const mesSeleccionado = this.vigenciaForm.get('mesVigencia')?.value;
+
+    if (!mesSeleccionado) {
+        return;
     }
-    if (!idPersonaSeleccionado) {
-      console.warn('ID de persona no está definido.');
-      return;
+
+    // Encuentra el índice del mes seleccionado en la lista de meses generados
+    const indiceMesSeleccionado = this.meses.findIndex(m => m.fecha.isSame(mesSeleccionado, 'month'));
+
+    if (indiceMesSeleccionado !== -1) {
+        // Filtra los meses desde el primero hasta el seleccionado (inclusive)
+        this.mesesSeleccionados = this.meses.slice(0, indiceMesSeleccionado + 1);
     }
-  
-    const fechaInicio = moment(mesVigencia).startOf('month').toDate();
-    const fechaFinalizacion = moment(mesVigencia).endOf('month').toDate();
-  
-    this.vigenciaForm.patchValue({
-      fechaInicio: fechaInicio,
-      fechaFinalizacion: fechaFinalizacion
-    });
-  
-    this.isPanelsEnabled = true;
-  }
+
+    //console.log('Meses seleccionados para guardar:', this.mesesSeleccionados);
+}
   
 /*
   updateFechas() {
@@ -463,7 +458,7 @@ export class DistHorariaComponent {
     */
   listServicios(): void {
     this.servicioService.list().subscribe(data => {
-      console.log('Lista de servicios:', data);
+      //console.log('Lista de servicios:', data);
       this.servicios = data;
     }, error => {
       console.log(error);
@@ -473,7 +468,7 @@ export class DistHorariaComponent {
   listCaps(): void {
     if (this.idEfector) {
       this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(data => {
-        console.log('Caps activos para el efector:', data);
+        //console.log('Caps activos para el efector:', data);
         this.capss = data; // Asigna los datos obtenidos a capss
       }, error => {
         console.log('Error al listar caps activos:', error);
@@ -516,10 +511,10 @@ export class DistHorariaComponent {
       // Añadir la verificación de cada mes a un array de promesas
       const mesVerificacion = this.verificarMesDisponible(mes.month() + 1, mes.year()).then(isAvailable => {
         if (isAvailable) {
-          console.log(`Mes ${mesNombreCapitalizado} (${mes.format('YYYY-MM')}) está disponible y se agrega al select.`);
+          //console.log(`Mes ${mesNombreCapitalizado} (${mes.format('YYYY-MM')}) está disponible y se agrega al select.`);
           mesesVerificar.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
         } else {
-          console.log(`Mes ${mesNombreCapitalizado} (${mes.format('YYYY-MM')}) NO está disponible y no se agrega al select.`);
+          //console.log(`Mes ${mesNombreCapitalizado} (${mes.format('YYYY-MM')}) NO está disponible y no se agrega al select.`);
           mesesOcupados.push(mesNombreCapitalizado); // Agregar mes ocupado a la lista
         }
       });
@@ -535,7 +530,7 @@ export class DistHorariaComponent {
   
     // Si todos los meses están ocupados
     if (mesesOcupados.length === 6) {
-      this.toastr.warning('Los próximos 6 meses ya poseen una distribución cargada.', 'Error', {
+      this.toastr.warning('Los próximos 6 meses ya poseen una distribución cargada.', 'Aviso', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -551,12 +546,16 @@ export class DistHorariaComponent {
     } 
     // Si hay al menos un mes ocupado
     else if (mesesOcupados.length > 0) {
-      const mesesOcupadosStr = mesesOcupados.join(", ");
-      this.toastr.warning(`${mesesOcupadosStr} ya poseen una distribución cargada.`);
+      const mesesOcupadosStr = mesesOcupados.join(" / ");
+      this.toastr.warning('Ya existe una distribución cargada para ${mesesOcupadosStr}.', 'Aviso', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+    });
     }
   
     // Log de todos los meses disponibles
-    console.log("Meses disponibles para el select:", this.meses.map(m => m.nombre).join(", "));
+    //console.log("Meses disponibles para el select:", this.meses.map(m => m.nombre).join(", "));
   }
 
   // Verifica los campos en cada form para colocar su estado (en proceso o finalizado)
@@ -591,12 +590,12 @@ export class DistHorariaComponent {
         return;
     }
 
-    console.log('Datos a guardar:', {
+    /*console.log('Datos a guardar:', {
         guardia: this.guardiaForm.value,
         consultorio: this.consultorioForm.value,
         gira: this.giraForm.value,
         otro: this.otroForm.value,
-    });
+    });*/
 
     const formChecks = [
         { form: this.guardiaForm, name: 'Guardias' },
@@ -621,13 +620,13 @@ export class DistHorariaComponent {
     const errorMessages: string[] = [];
 
     // Filtrar los meses verificados
-    const mesesVerificados = this.meses; // Aquí ya tenemos los meses verificados
+    const mesesSeleccionados = this.mesesSeleccionados; 
 
-    // Calcula los meses solo para los meses verificados
-    const guardiaMeses = this.calcularMeses(mesVigencia, mesesVerificados);
-    const consultorioMeses = this.calcularMeses(mesVigencia, mesesVerificados);
-    const giraMeses = this.calcularMeses(mesVigencia, mesesVerificados);
-    const otroMeses = this.calcularMeses(mesVigencia, mesesVerificados);
+    // Calculamos los meses solo para los meses seleccionados
+    const guardiaMeses = this.calcularMeses(this.mesesSeleccionados);
+    const consultorioMeses = this.calcularMeses(this.mesesSeleccionados);
+    const giraMeses = this.calcularMeses(this.mesesSeleccionados);
+    const otroMeses = this.calcularMeses(this.mesesSeleccionados);
 
     // Guarda guardias
     if (this.guardiaForm.valid) {
@@ -775,24 +774,25 @@ export class DistHorariaComponent {
 }
 
 // Modificada la función para aceptar meses verificados como parámetro
-calcularMeses(mesVigencia: string, mesesVerificados: Array<{ nombre: string, fecha: moment.Moment }>): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
-    const meses: Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> = [];
+calcularMeses(mesesSeleccionados: Array<{ nombre: string, fecha: moment.Moment }>): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
+  const meses: Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> = [];
 
-    // Aquí solo se van a calcular los meses verificados
-    mesesVerificados.forEach((mesVerificado) => {
-        const mesNombreCapitalizado = mesVerificado.nombre;
-        
-        // Asegurarse de que la fecha de finalización sea el último día del mes
-        const fechaFinalizacion = mesVerificado.fecha.endOf('month').startOf('day').toDate();
+  // Iterar sobre los meses seleccionados
+  mesesSeleccionados.forEach((mesSeleccionado) => {
+      const mesNombreCapitalizado = mesSeleccionado.nombre;
+      
+      // Asegurarse de que la fecha de finalización sea el último día del mes
+      const fechaFinalizacion = mesSeleccionado.fecha.endOf('month').startOf('day').toDate();
 
-        meses.push({
-            mes: mesNombreCapitalizado,
-            fechaInicio: mesVerificado.fecha.startOf('month').toDate(),
-            fechaFinalizacion: fechaFinalizacion,
-        });
-    });
+      // Agregar el mes al arreglo resultante
+      meses.push({
+          mes: mesNombreCapitalizado,
+          fechaInicio: mesSeleccionado.fecha.startOf('month').toDate(),
+          fechaFinalizacion: fechaFinalizacion,
+      });
+  });
 
-    return meses;
+  return meses;
 }
 
   nextStep(): void {

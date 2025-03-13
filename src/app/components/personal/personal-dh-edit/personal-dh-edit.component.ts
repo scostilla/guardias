@@ -124,7 +124,7 @@ export class PersonalDhEditComponent {
       const asistencialId = params['asistencialId'];
 
       const mesSeleccionado = params['mes'];
-      console.log('Valor de mesSeleccionado:', mesSeleccionado);
+      //console.log('Valor de mesSeleccionado:', mesSeleccionado);
   
       if (!mesSeleccionado || !mesSeleccionado.includes('-')) {
         this.toastr.error('El mes y año seleccionado es inválido o está vacío.', 'Error', {
@@ -217,7 +217,7 @@ export class PersonalDhEditComponent {
     // Añadir los registros obtenidos a la forma
     distribuciones.forEach(d => {
       let form;
-      console.log('Distribución recibida:', d); // Log de la distribución recibida
+      //console.log('Distribución recibida:', d); // Log de la distribución recibida
       // Asegurarse de que horaIngreso esté en el formato adecuado
       const horaIngresoFormateada = moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm');
   
@@ -238,7 +238,7 @@ export class PersonalDhEditComponent {
           tipoGuardia: d.tipoGuardia,
           cantidadHoras: d.cantidadHoras,
         });
-        console.log('Después de patchValue (Guardia):', form.value);
+        //console.log('Después de patchValue (Guardia):', form.value);
       } else if (formGroup === this.giraForm) {
         form = this.createGira();
         form.patchValue({
@@ -381,8 +381,8 @@ export class PersonalDhEditComponent {
         }
       });
 
-      console.log('TipoGuardias disponibles (CARGO o AGRUPACION):', this.tipoGuardias);
-      console.log('ID del primer efector:', this.idEfector);
+      //console.log('TipoGuardias disponibles (CARGO o AGRUPACION):', this.tipoGuardias);
+      //console.log('ID del primer efector:', this.idEfector);
     }
   }  
   
@@ -446,7 +446,7 @@ export class PersonalDhEditComponent {
             
   listServicios(): void {
     this.servicioService.list().subscribe(data => {
-      console.log('Lista de servicios:', data);
+      //console.log('Lista de servicios:', data);
       this.servicios = data;
     }, error => {
       console.log(error);
@@ -456,7 +456,7 @@ export class PersonalDhEditComponent {
   listCaps(): void {
     if (this.idEfector) {
       this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(data => {
-        console.log('Caps activos para el efector:', data);
+        //console.log('Caps activos para el efector:', data);
         this.capss = data; // Asigna los datos obtenidos a capss
       }, error => {
         console.log('Error al listar caps activos:', error);
@@ -515,12 +515,12 @@ export class PersonalDhEditComponent {
         return;
     }
 
-    console.log('Datos a guardar:', {
+    /*console.log('Datos a guardar:', {
         guardia: this.guardiaForm.value,
         consultorio: this.consultorioForm.value,
         gira: this.giraForm.value,
         otro: this.otroForm.value,
-    });
+    });*/
 
     const formChecks = [
         { form: this.guardiaForm, name: 'Guardias' },
@@ -550,14 +550,14 @@ export class PersonalDhEditComponent {
     const fechaFinalizacion = moment([parseInt(anio), parseInt(mes) - 1]).endOf('month').startOf('day').toDate();
 
     // Log para ver las fechas de inicio y finalización
-    console.log('Fecha de inicio:', fechaInicio);
-    console.log('Fecha de finalización:', fechaFinalizacion);
+    //console.log('Fecha de inicio:', fechaInicio);
+    //console.log('Fecha de finalización:', fechaFinalizacion);
 
     // Convertir fechaInicio a formato string 'yyyy-MM-dd' para usar con el servicio
     const fechaInicioString = moment(fechaInicio).format('YYYY-MM-DD');
 
     // Log para ver el string de fecha en formato 'yyyy-MM-dd'
-    console.log('Fecha de inicio (string):', fechaInicioString);
+    //console.log('Fecha de inicio (string):', fechaInicioString);
     
     // Paso 1: Eliminar distribuciones existentes
     const deletePromises: Promise<any>[] = [];
