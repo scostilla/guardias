@@ -263,6 +263,7 @@ import { SelectorRolesComponent } from './components/login/selector-roles/select
 import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
 import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
+import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 
 @NgModule({
   declarations: [
@@ -473,6 +474,7 @@ import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/
     SinEfectorComponent,
     PersonalSinEfectorComponent,
     PersonalDhEditComponent,
+    PersonalDhCreateComponent,
     
   ],
 

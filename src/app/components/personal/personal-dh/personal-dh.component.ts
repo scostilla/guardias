@@ -672,7 +672,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
   }*/
 
   crearDistribucion(): void {
-    this.router.navigate(['/dist-horaria'], {
+    this.router.navigate(['/personal-dh-create'], {
       state: { asistencial: this.asistencial }
     });
   }
