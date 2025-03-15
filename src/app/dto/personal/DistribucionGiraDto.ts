@@ -2,8 +2,8 @@ import { DistribucionHorariaDto } from "./DistribucionHorariaDto";
 
 export class DistribucionGiraDto extends DistribucionHorariaDto {
     puestoSalud: string;
-    descripcion: string;
-    destino: string;
+    //descripcion: string;
+    //destino: string;
 
 
   constructor(
@@ -16,13 +16,13 @@ export class DistribucionGiraDto extends DistribucionHorariaDto {
     fechaFinalizacion: Date,
     horaIngreso: Date,
     puestoSalud: string,
-    descripcion: string,
-    destino: string,
+    //descripcion: string,
+    //destino: string,
   ) {
     super(dia, cantidadHoras, idPersona, idEfector, fechaInicio, fechaFinalizacion, horaIngreso);
     this.puestoSalud = puestoSalud;
-    this.descripcion = descripcion;
-    this.destino = destino;
+    //this.descripcion = descripcion;
+    //this.destino = destino;
   }
 
 }

@@ -516,7 +516,8 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       const horas = distribucion.cantidadHoras;
       const cantidadOcurrencias = ocurrenciasPorDia[dia];
       const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.puestoSalud}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+      //const tooltip = `${distribucion.puestoSalud}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+      const tooltip = `${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
       
       totalHorasSinOcurrencias += horas;
   

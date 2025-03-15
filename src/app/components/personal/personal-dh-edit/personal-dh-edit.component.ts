@@ -146,10 +146,10 @@ export class PersonalDhEditComponent {
         }else {
           this.idPersona = this.asistencial.id;
           this.listServicios();
+          this.filterLegajosAndGetTipoGuardia();
           this.listCaps();
           this.generarMeses();
           this.loadCargaHoraria();
-          this.filterLegajosAndGetTipoGuardia();
           this.loadDistribuciones(mesSeleccionado);
         
         }
@@ -246,8 +246,8 @@ export class PersonalDhEditComponent {
           cantidadHoras: d.cantidadHoras,
           horaIngreso: horaIngresoFormateada,
           puestoSalud: d.puestoSalud,
-          descripcion: d.descripcion,
-          destino: d.destino,
+          //descripcion: d.descripcion,
+          //destino: d.destino,
         });
       } else if (formGroup === this.otroForm) {
         form = this.createOtro();
@@ -314,8 +314,8 @@ export class PersonalDhEditComponent {
       cantidadHoras: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       puestoSalud: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      destino: ['', Validators.required]
+      //descripcion: ['', Validators.required],
+      //destino: ['', Validators.required]
     });
   }
 
@@ -454,18 +454,22 @@ export class PersonalDhEditComponent {
   }
 
   listCaps(): void {
+    //console.log('idEfector en listCaps:', this.idEfector); // Verifica el valor de idEfector
     if (this.idEfector) {
-      this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(data => {
-        //console.log('Caps activos para el efector:', data);
-        this.capss = data; // Asigna los datos obtenidos a capss
-      }, error => {
-        console.log('Error al listar caps activos:', error);
-      });
+      this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(
+        data => {
+          console.log('Caps activos para el efector:', data); // Verifica los datos
+          this.capss = data;
+        },
+        error => {
+          console.error('Error al listar caps activos:', error); // Verifica si hay errores
+        }
+      );
     } else {
+      console.warn('idEfector no tiene un valor válido en listCaps.');
       this.capss = []; // Si no hay idEfector, limpiar los caps
     }
   }
-
 
   //Permite el select mes de vigencia cree la ultima fecha del mes elegido
   private generarMeses(): void {
@@ -659,8 +663,8 @@ export class PersonalDhEditComponent {
                   fechaFinalizacion,
                   control.value.horaIngreso,
                   control.value.puestoSalud,
-                  control.value.descripcion,
-                  control.value.destino
+                  //control.value.descripcion,
+                  //control.value.destino
               );
 
               savePromises.push(
@@ -717,7 +721,6 @@ export class PersonalDhEditComponent {
               }
 
               if (this.asistencial && this.asistencial.id) {
-                this.asistencialService.setCurrentAsistencial(this.asistencial);
                 this.router.navigate(['/personal-dh']);
               } else {
                 console.error('El objeto asistencial no tiene un id.');
@@ -788,7 +791,7 @@ compareServicio(s1: Servicio, s2: any): boolean {
     return a1 && a2 ? a1.id === a2.id : a1 === a2;
   }
 
-  compareCaps(c1: Hospital, c2: Hospital): boolean {
+  compareCaps(c1: CapsDto, c2: CapsDto): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
@@ -815,9 +818,8 @@ compareServicio(s1: Servicio, s2: any): boolean {
       progressBar: true
     });
     if (this.asistencial && this.asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(this.asistencial);
       this.router.navigate(['/personal-dh']);
-    } else {
+  } else {
       console.error('El objeto asistencial no tiene un id.');
     }        
 }

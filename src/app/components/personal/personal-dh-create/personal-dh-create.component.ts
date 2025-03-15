@@ -117,11 +117,12 @@ export class PersonalDhCreateComponent {
         this.location.back();
         } else {
         this.idPersona = this.asistencial.id;
+
         this.listServicios();
+        this.filterLegajosAndGetTipoGuardia();
         this.listCaps();
         this.verificarMesesDisponibles();
         this.loadCargaHoraria();
-        this.filterLegajosAndGetTipoGuardia();
       }
 
   });
@@ -190,8 +191,8 @@ export class PersonalDhCreateComponent {
       cantidadHoras: ['', Validators.required],
       horaIngreso: ['', Validators.required],
       puestoSalud: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      destino: ['', Validators.required]
+      //descripcion: ['', Validators.required],
+      //destino: ['', Validators.required]
     });
   }
 
@@ -348,18 +349,23 @@ export class PersonalDhCreateComponent {
   }
 
   listCaps(): void {
+    //console.log('idEfector en listCaps:', this.idEfector); // Verifica el valor de idEfector
     if (this.idEfector) {
-      this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(data => {
-        //console.log('Caps activos para el efector:', data);
-        this.capss = data; // Asigna los datos obtenidos a capss
-      }, error => {
-        console.log('Error al listar caps activos:', error);
-      });
+      this.hospitalService.listActiveCapsByHospitalId(this.idEfector).subscribe(
+        data => {
+          console.log('Caps activos para el efector:', data); // Verifica los datos
+          this.capss = data;
+        },
+        error => {
+          console.error('Error al listar caps activos:', error); // Verifica si hay errores
+        }
+      );
     } else {
+      console.warn('idEfector no tiene un valor válido en listCaps.');
       this.capss = []; // Si no hay idEfector, limpiar los caps
     }
   }
-  
+
   private async verificarMesDisponible(mes: number, anio: number): Promise<boolean> {
     // Llamadas al servicio para verificar si hay distribuciones activas para el mes y año dados
     const guardiaDisponible = this.distribucionGuardiaService.existsByActivoPersonaAndFechaInicio(this.idPersona, mes, anio).toPromise();
@@ -420,7 +426,6 @@ export class PersonalDhCreateComponent {
   
       // Redirigir si no hay un asistencial id
       if (this.asistencial && this.asistencial.id) {
-        this.asistencialService.setCurrentAsistencial(this.asistencial);
         this.router.navigate(['/personal-dh']);
       } else {
         console.error('El objeto asistencial no tiene un id.');
@@ -429,7 +434,7 @@ export class PersonalDhCreateComponent {
     // Si hay al menos un mes ocupado
     else if (mesesOcupados.length > 0) {
       const mesesOcupadosStr = mesesOcupados.join(" / ");
-      this.toastr.warning('Ya existe una distribución cargada para ${mesesOcupadosStr}.', 'Aviso', {
+      this.toastr.warning(`Ya existe una distribución cargada para ${mesesOcupadosStr}`, 'Aviso', {
         timeOut: 6000,
         positionClass: 'toast-top-center',
         progressBar: true
@@ -577,9 +582,9 @@ export class PersonalDhCreateComponent {
                     mes.fechaInicio,
                     mes.fechaFinalizacion,
                     control.value.horaIngreso,
-                    control.value.puestoSalud,
-                    control.value.descripcion,
-                    control.value.destino
+                    control.value.puestoSalud.id,
+                    //control.value.descripcion,
+                    //control.value.destino
                 );
 
                 savePromises.push(
@@ -637,7 +642,6 @@ export class PersonalDhCreateComponent {
             }
 
             if (this.asistencial && this.asistencial.id) {
-              this.asistencialService.setCurrentAsistencial(this.asistencial);
               this.router.navigate(['/personal-dh']);
             } else {
               console.error('El objeto asistencial no tiene un id.');
@@ -725,7 +729,7 @@ get isPanel3Expanded(): boolean {
     return a1 && a2 ? a1.id === a2.id : a1 === a2;
   }
 
-  compareCaps(c1: Hospital, c2: Hospital): boolean {
+  compareCaps(c1: CapsDto, c2: CapsDto): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
@@ -752,8 +756,8 @@ get isPanel3Expanded(): boolean {
       progressBar: true
     });
     if (this.asistencial && this.asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(this.asistencial);
       this.router.navigate(['/personal-dh']);
+    
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }

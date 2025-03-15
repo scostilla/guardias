@@ -2,10 +2,10 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-6">
+    <div class="col-10">
       <div class="titulos" *ngIf="asistencial">Distribución horaria: <span class="titulos-second">{{asistencial.apellido}}, {{asistencial.nombre}}</span></div>
     </div>
-    <div class="col-6 m mt-3 d-flex justify-content-end">
+    <div class="col-2 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
@@ -236,12 +236,12 @@
             <mat-form-field appearance="fill">
               <mat-label>Puesto de salud</mat-label>
               <mat-select formControlName="puestoSalud" [compareWith]="compareCaps">
-                <mat-option *ngFor="let cap of capss" [value]="cap.nombre">{{ cap.nombre }}</mat-option>
+                <mat-option *ngFor="let cap of capss" [value]="cap">{{ cap.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="giraForm.get('puestoSalud')?.errors?.['required']">El efector es requerido.</mat-error>
             </mat-form-field>
       
-            <mat-form-field>
+            <!--<mat-form-field>
               <mat-label>Descripción</mat-label>
               <input matInput formControlName="descripcion" />
               <mat-error *ngIf="giraForm.get('descripcion')?.hasError('required')">El campo es obligatorio.</mat-error>
@@ -251,7 +251,7 @@
               <mat-label>Destino</mat-label>
               <input matInput formControlName="destino" />
               <mat-error *ngIf="giraForm.get('destino')?.hasError('required')">El campo es obligatorio.</mat-error>
-            </mat-form-field>
+            </mat-form-field>-->
       
             <mat-form-field>
               <mat-label>Cantidad de horas</mat-label>
