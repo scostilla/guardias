@@ -59,7 +59,11 @@
     
       <ng-container matColumnDef="tipo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Tipo</th>
-        <td mat-cell *matCellDef="let distribucion">{{ distribucion.tipo }}</td>
+        <td mat-cell *matCellDef="let distribucion">{{ distribucion.tipo }}
+          <button mat-icon-button (click)="obtenerDistribucionesYAbrirDialogo(distribucion.tipo)">
+            <mat-icon>search</mat-icon> <!-- Aquí está el ícono de lupa -->
+          </button>
+        </td>
       </ng-container>
     
       <ng-container matColumnDef="clase">
@@ -125,6 +129,12 @@
       <div class="carga-horaria-display">
         <p>Carga horaria semanal: <strong>{{ cargaHoraria }}</strong> hs</p>
         <p *ngIf="cargaHoraria === undefined">No hay carga horaria disponible para este profesional.</p>
+        <p>Ver detalle:
+          <button mat-button *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
+          <button mat-button *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
+          <button mat-button *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
+          <button mat-button *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
+        </p>
       </div>
       <!--<div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
         <p>{{ mensajeCargaHoraria }}</p>

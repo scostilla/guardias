@@ -264,6 +264,7 @@ import { SinEfectorComponent } from './components/personal/personal-contenido/si
 import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
+import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 
 @NgModule({
   declarations: [
@@ -475,6 +476,7 @@ import { PersonalDhCreateComponent } from './components/personal/personal-dh-cre
     PersonalSinEfectorComponent,
     PersonalDhEditComponent,
     PersonalDhCreateComponent,
+    PersonalDhDetailComponent,
     
   ],
 

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
@@ -13,6 +14,7 @@ import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
+import { PersonalDhDetailComponent } from '../personal-dh-detail/personal-dh-detail.component';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import * as moment from 'moment';
@@ -71,6 +73,17 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [];
   novedadesPersonales: NovedadPersonal[] = [];
 
+  //Para el dialog
+  distribucionesGuardia_dialog: DistribucionGuardia[] = [];
+  distribucionesConsultorio_dialog: DistribucionConsultorio[] = [];
+  distribucionesGira_dialog: DistribucionGira[] = [];
+  distribucionesOtro_dialog: DistribucionOtro[] = [];
+
+  hasGuardiaDistributions: boolean = false;
+  hasConsultorioDistributions: boolean = false;
+  hasGiraDistributions: boolean = false;
+  hasOtroDistributions: boolean = false;
+
   // Variables para el selector de mes y año
   mesYanio: string = ''; // MM-YYYY
   mesesDisponibles: { value: string, label: string }[] = [];
@@ -105,6 +118,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     private distribucionOtroService: DistribucionOtroService,
     private router: Router,
     private location: Location,
+    private dialog: MatDialog,
     private novedadPersonalService: NovedadPersonalService
   ) { }
 
@@ -179,8 +193,18 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     this.distribucionesConsultorio = [];
     this.distribucionesGira = [];
     this.distribucionesOtro = [];
-  }
   
+    this.distribucionesGuardia_dialog = [];
+    this.distribucionesConsultorio_dialog = [];
+    this.distribucionesGira_dialog = [];
+    this.distribucionesOtro_dialog = [];
+  
+    this.hasGuardiaDistributions = false;
+    this.hasConsultorioDistributions = false;
+    this.hasGiraDistributions = false;
+    this.hasOtroDistributions = false;
+  }
+    
   // Función que se ejecuta cuando se selecciona un mes y año
   onMonthChange(event: any): void {
     const [mes, anio] = event.target.value.split('-').map(Number);
@@ -188,16 +212,73 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     this.nombreMes = moment().month(mes - 1).format('MMMM').toUpperCase(); // Nombre del mes
     this.anioSeleccionado = anio; // Año seleccionado
     this.mesSeleccionado = mes;
-
+  
     this.resetData(); // Resetear datos antes de cargar nuevas distribuciones
     this.showTable = false;
-
+  
     // Cargar las distribuciones filtradas por mes y año
     this.loadDistribuciones();
     this.loadNovedades();
+  
+    // Verificar si hay distribuciones disponibles para cada tipo
+    this.verificarDistribuciones();
   }
-
-
+  
+  verificarDistribuciones(): void {
+    if (!this.asistencial) {
+      return;
+    }
+  
+    const mes = this.mesSeleccionado;
+    const anio = this.anioSeleccionado;
+  
+    // Inicializamos las variables para controlar la disponibilidad de distribuciones
+    this.hasGuardiaDistributions = false;
+    this.hasConsultorioDistributions = false;
+    this.hasGiraDistributions = false;
+    this.hasOtroDistributions = false;
+  
+    // Verificar distribuciones para cada tipo
+    this.distribucionGuardiaService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
+      (distribuciones) => {
+        this.hasGuardiaDistributions = distribuciones && distribuciones.length > 0;
+      },
+      (error) => {
+        console.error('Error al obtener distribuciones de Guardia:', error);
+        this.hasGuardiaDistributions = false;  // Si hay error, marcamos como false
+      }
+    );
+  
+    this.distribucionConsultorioService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
+      (distribuciones) => {
+        this.hasConsultorioDistributions = distribuciones && distribuciones.length > 0;
+      },
+      (error) => {
+        console.error('Error al obtener distribuciones de Consultorio:', error);
+        this.hasConsultorioDistributions = false;  // Si hay error, marcamos como false
+      }
+    );
+  
+    this.distribucionGiraService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
+      (distribuciones) => {
+        this.hasGiraDistributions = distribuciones && distribuciones.length > 0;
+      },
+      (error) => {
+        console.error('Error al obtener distribuciones de Gira:', error);
+        this.hasGiraDistributions = false;  // Si hay error, marcamos como false
+      }
+    );
+  
+    this.distribucionOtroService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
+      (distribuciones) => {
+        this.hasOtroDistributions = distribuciones && distribuciones.length > 0;
+      },
+      (error) => {
+        console.error('Error al obtener distribuciones de Otro:', error);
+        this.hasOtroDistributions = false;  // Si hay error, marcamos como false
+      }
+    );
+  }  
 
   loadDistribuciones(): void {
     if (!this.asistencial) return;
@@ -430,7 +511,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
     aggregatedDistribucion.totalHoras = totalHoras;
   
-    console.log('Distribución agregada:', aggregatedDistribucion);
+    //console.log('Distribución agregada:', aggregatedDistribucion);
   
     return aggregatedDistribucion;
   }
@@ -694,8 +775,75 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
         mes: this.mesYanio,
       }
     });
-    
-
   }
+
+  obtenerDistribucionesYAbrirDialogo(tipo: string): void {
+    if (!this.asistencial) {
+      console.error("No se ha encontrado el asistencial");
+      return; // No continuar si asistencial es null
+    }
   
+    let distribuciones$: Observable<any>;  // Usamos `any` para ser flexibles con los diferentes tipos
+  
+    // Obtener el mes y año seleccionados
+    const mes = this.mesSeleccionado; // Mes seleccionado (debería ser 1-12)
+    const anio = this.anioSeleccionado; // Año seleccionado (debería ser un número como 2025)
+  
+    // Según el tipo de distribución, llamamos al servicio correspondiente
+    switch (tipo) {
+      case 'guardia':
+        distribuciones$ = this.distribucionGuardiaService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio);
+        break;
+      case 'consultorio':
+        distribuciones$ = this.distribucionConsultorioService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio);
+        break;
+      case 'gira':
+        distribuciones$ = this.distribucionGiraService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio);
+        break;
+      case 'otro':
+        distribuciones$ = this.distribucionOtroService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio);
+        break;
+      default:
+        console.error('Tipo de distribución no reconocido');
+        return;
+    }
+  
+    // Una vez obtenidas las distribuciones, actualizamos las propiedades y abrimos el diálogo
+    distribuciones$.subscribe(
+      (distribuciones: any[]) => {  // `any[]` porque el tipo varía según el tipo de distribución
+        // Almacenar las distribuciones según el tipo
+        switch (tipo) {
+          case 'guardia':
+            this.distribucionesGuardia_dialog = distribuciones;
+            this.hasGuardiaDistributions = distribuciones.length > 0;
+            break;
+          case 'consultorio':
+            this.distribucionesConsultorio_dialog = distribuciones;
+            this.hasConsultorioDistributions = distribuciones.length > 0;
+            break;
+          case 'gira':
+            this.distribucionesGira_dialog = distribuciones;
+            this.hasGiraDistributions = distribuciones.length > 0;
+            break;
+          case 'otro':
+            this.distribucionesOtro_dialog = distribuciones;
+            this.hasOtroDistributions = distribuciones.length > 0;
+            break;
+        }
+  
+        // Abre el diálogo con las distribuciones correspondientes
+        this.dialog.open(PersonalDhDetailComponent, {
+          data: {
+            distribuciones: distribuciones, // Pasa las distribuciones obtenidas
+            tipo: tipo, // Pasa el tipo de distribución
+            idPersona: this.asistencial!.id, // Pasa el idPersona
+            fechaInicio: `${mes}-${anio}` // Pasa el mes y año en formato MM-YYYY
+          }
+        });
+      },
+      (error) => {
+        console.error('Error al obtener distribuciones:', error);
+      }
+    );
+  }
 }
