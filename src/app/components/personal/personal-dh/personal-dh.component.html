@@ -129,11 +129,11 @@
       <div class="carga-horaria-display">
         <p>Carga horaria semanal: <strong>{{ cargaHoraria }}</strong> hs</p>
         <p *ngIf="cargaHoraria === undefined">No hay carga horaria disponible para este profesional.</p>
-        <p>Ver detalle:
-          <button mat-button *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
-          <button mat-button *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
-          <button mat-button *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
-          <button mat-button *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
+        <p>Ver datos completos: 
+          <button mat-button color="primary" *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
+          <button mat-button color="primary" *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
+          <button mat-button color="primary" *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
+          <button mat-button color="primary" *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
         </p>
       </div>
       <!--<div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">

@@ -4,9 +4,20 @@ import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
 import { PruebaFormComponent } from '../../configuracion/territorio/prueba-form/prueba-form.component';
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
-import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
   selector: 'app-cronograma',
@@ -21,7 +32,36 @@ export class CronogramaComponent {
   CalendarView = CalendarView;
   holidays: Feriado[] = [];
 
-  constructor(private feriadoService: FeriadoService, public dialog: MatDialog) {}
+  //Autenticación
+  isLogged = false;
+  roles: string[] =[];
+  isAutoridad: boolean = false;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  userId: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
+  nombresEfectores: EfectorSummaryDto[] = [];
+  usuarioPersona: number | null = null;
+  currentRole: string | null = null;
+
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+  showMessage: boolean = false;
+
+  private efectorIdSubscription!: Subscription;
+
+  constructor(
+    private feriadoService: FeriadoService,
+    public dialog: MatDialog,
+    private router: Router,
+    private tokenService: TokenService,
+    private authService: AuthService,
+    private efectorService: EfectorService,
+    private hospitalService: HospitalService,
+) {}
 
   changeView(view: CalendarView): void {
     this.view = view;
@@ -33,6 +73,56 @@ export class CronogramaComponent {
   }
 
   ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+     
+      // Si currentRole es false (null o vacío), redirige al login
+      if (!this.currentRole) {
+        this.router.navigateByUrl('');
+      }
+    });  
+    
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:',this.userId);
+  
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+  
+          // Log para mostrar el usuario
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+
+    // Obtener el ID efector del servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+    
+    // Verificar si el ID efector es válido
+    if (this.efectorId === null) {
+      this.showMessage = true;
+    } else {
+      //this.listAsistencial(this.efectorId);
+    }
+    
     this.feriadoService.list().subscribe((feriados: Feriado[]) => {
       this.holidays = feriados.map(feriado => ({
         ...feriado,
@@ -41,6 +131,40 @@ export class CronogramaComponent {
       this.refreshView();
     });
   }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
+  }
+
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
+  }
+
   
   refreshView(): void {
     this.viewDate = new Date(this.viewDate.getTime());

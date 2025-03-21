@@ -61,6 +61,7 @@ export class PersonalDhCreateComponent {
 
 
   isButtonDisabled: boolean = true;
+  addButtonDisabled: boolean = false;
   isPanelsEnabled: boolean = true;
 
   options: any[] | undefined;
@@ -147,7 +148,7 @@ export class PersonalDhCreateComponent {
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required],
       tipoGuardia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
+      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[1-9]\d*$/)]],
     });
   }
 
@@ -163,11 +164,19 @@ export class PersonalDhCreateComponent {
     this.guardias.removeAt(index);
   }
 
+  areAllFormsGuardiaValid(): boolean {
+    return this.guardias.controls.every(form => form.valid);
+  }
+
+  hasNoGuardias(): boolean {
+    return this.guardias.length === 0;
+  }
+
   createConsultorio(): FormGroup {
     return this.fb.group({
       //tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
+      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -185,10 +194,18 @@ export class PersonalDhCreateComponent {
     this.consultorios.removeAt(index);
   }
 
+  areAllFormsConsultorioValid(): boolean {
+    return this.consultorios.controls.every(form => form.valid); // Verifica que todos los formularios sean válidos
+  }
+
+  hasNoConsultorio(): boolean {
+    return this.consultorios.length === 0;
+  }
+
   createGira(): FormGroup {
     return this.fb.group({
       dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
+      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
       horaIngreso: ['', Validators.required],
       puestoSalud: ['', Validators.required],
       //descripcion: ['', Validators.required],
@@ -208,10 +225,18 @@ export class PersonalDhCreateComponent {
     this.giras.removeAt(index);
   }
 
+  areAllFormsGiraValid(): boolean {
+    return this.giras.controls.every(form => form.valid); // Verifica que todos los formularios sean válidos
+  }
+
+  hasNoGira(): boolean {
+    return this.giras.length === 0;
+  }
+
   createOtro(): FormGroup {
     return this.fb.group({
       dia: ['', Validators.required],
-      cantidadHoras: ['', Validators.required],
+      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
       horaIngreso: ['', Validators.required],
       descripcion: ['', Validators.required],
       lugar: ['', Validators.required]
@@ -227,9 +252,16 @@ export class PersonalDhCreateComponent {
   }
 
   removeOtro(index: number): void {
-    this.guardias.removeAt(index);
+    this.otros.removeAt(index);
   }
 
+  areAllFormsOtroValid(): boolean {
+    return this.otros.controls.every(form => form.valid); // Verifica que todos los formularios sean válidos
+  }
+
+  hasNoOtro(): boolean {
+    return this.otros.length === 0;
+  }
   
   filterLegajosAndGetTipoGuardia() {
     if (this.asistencial) {
@@ -305,14 +337,17 @@ export class PersonalDhCreateComponent {
         this.horasMessage = 'Has superado el total de horas posibles';
         this.horasMessageClass = 'error-message';
         this.isButtonDisabled = true;
+        this.addButtonDisabled = true;
       } else if (totalHoras < this.cargaHoraria) {
         this.horasMessage = `Total de horas cargadas: ${totalHoras}. Debes alcanzar ${this.cargaHoraria} hs entre todos los formularios.`;
         this.horasMessageClass = 'pending-message';
         this.isButtonDisabled = true;
+        this.addButtonDisabled = false;
       } else {
         this.horasMessage = `Has cargado un total de ${totalHoras} hs`;
         this.horasMessageClass = 'success-message';
         this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
+        this.addButtonDisabled = true;
       }
     } else {
       this.horasMessage = '';

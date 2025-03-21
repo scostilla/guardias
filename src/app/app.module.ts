@@ -476,8 +476,7 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     PersonalSinEfectorComponent,
     PersonalDhEditComponent,
     PersonalDhCreateComponent,
-    PersonalDhDetailComponent,
-    
+    PersonalDhDetailComponent,    
   ],
 
   imports: [

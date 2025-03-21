@@ -126,22 +126,27 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
       //console.log('Asistencial recibido:', this.asistencial);
-
+  
       if (!this.asistencial?.id) {
         this.location.back();
       } else {
+        // Inicializar el mes y año actual
+        const fechaActual = moment();
+        this.mesYanio = `${fechaActual.month() + 1}-${fechaActual.year()}`;  // Formato MM-YYYY
+        this.nombreMes = fechaActual.format('MMMM').toUpperCase();  // Nombre del mes
+        this.anioSeleccionado = fechaActual.year();  // Año actual
+        this.mesSeleccionado = fechaActual.month() + 1;  // Mes actual (1-12)
+  
+        this.generarMesesDisponibles();  // Generar meses disponibles
+  
+        // Cargar distribuciones y novedades
         this.loadDistribuciones();
         this.loadNovedades();
         this.loadCargaHoraria();
+  
+        // Verificar distribuciones después de cargar los datos
+        this.verificarDistribuciones();
       }
-
-      // Inicializar el mes y año actual
-      const fechaActual = moment();
-      this.mesYanio = `${fechaActual.month() + 1}-${fechaActual.year()}`;  // Formato MM-YYYY
-      this.nombreMes = fechaActual.format('MMMM').toUpperCase();  // Nombre del mes
-      this.anioSeleccionado = fechaActual.year();  // Año actual
-
-      this.generarMesesDisponibles();  // Generar meses disponibles
     });
   }
 
@@ -232,54 +237,52 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     const mes = this.mesSeleccionado;
     const anio = this.anioSeleccionado;
   
-    // Inicializamos las variables para controlar la disponibilidad de distribuciones
-    this.hasGuardiaDistributions = false;
-    this.hasConsultorioDistributions = false;
-    this.hasGiraDistributions = false;
-    this.hasOtroDistributions = false;
-  
     // Verificar distribuciones para cada tipo
     this.distribucionGuardiaService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasGuardiaDistributions = distribuciones && distribuciones.length > 0;
+        this.hasGuardiaDistributions = (distribuciones && distribuciones.length > 0) || false;
       },
       (error) => {
+        // Manejo de error
         console.error('Error al obtener distribuciones de Guardia:', error);
-        this.hasGuardiaDistributions = false;  // Si hay error, marcamos como false
+        this.hasGuardiaDistributions = false;
       }
     );
   
     this.distribucionConsultorioService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasConsultorioDistributions = distribuciones && distribuciones.length > 0;
+        this.hasConsultorioDistributions = (distribuciones && distribuciones.length > 0) || false;
       },
       (error) => {
+        // Manejo de error
         console.error('Error al obtener distribuciones de Consultorio:', error);
-        this.hasConsultorioDistributions = false;  // Si hay error, marcamos como false
+        this.hasConsultorioDistributions = false;
       }
     );
   
     this.distribucionGiraService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasGiraDistributions = distribuciones && distribuciones.length > 0;
+        this.hasGiraDistributions = (distribuciones && distribuciones.length > 0) || false;
       },
       (error) => {
+        // Manejo de error
         console.error('Error al obtener distribuciones de Gira:', error);
-        this.hasGiraDistributions = false;  // Si hay error, marcamos como false
+        this.hasGiraDistributions = false;
       }
     );
   
     this.distribucionOtroService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasOtroDistributions = distribuciones && distribuciones.length > 0;
+        this.hasOtroDistributions = (distribuciones && distribuciones.length > 0) || false;
       },
       (error) => {
+        // Manejo de error
         console.error('Error al obtener distribuciones de Otro:', error);
-        this.hasOtroDistributions = false;  // Si hay error, marcamos como false
+        this.hasOtroDistributions = false;
       }
     );
-  }  
-
+  }
+  
   loadDistribuciones(): void {
     if (!this.asistencial) return;
     
