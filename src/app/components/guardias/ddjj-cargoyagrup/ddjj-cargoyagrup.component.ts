@@ -21,6 +21,10 @@ import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { RegistroMensualService } from 'src/app/services/registroMensual.service';
+import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
+import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 
 
 interface ClasesNovedad {
@@ -196,7 +200,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
     const idEfector = this.efectorId;
     
-    console.log("id del efector que se usa para cargar reg mensuales ES: "+ idEfector);
+    console.log("id del efector que se usa para cargar reg mensuales"+ idEfector);
 
     if (idEfector === null) {
       console.error("El ID del hospital no puede ser null");
@@ -227,19 +231,19 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     });
   }
 
-  /* filterDataByDate(month: number, year: number): RegistroMensual[] {
+  filterDataByDate(month: number, year: number): RegistroMensual[] {
     // Filtra los datos según el mes y año proporcionados
     return this.registrosMensuales.filter(registro => {
       // Convertir el mes a formato numérico
     const monthNumber = moment().month(registro.mes).month();
     return monthNumber === month && registro.anio === year;
     });
-  } */
+  }
 
-  /* loadData() {
+  loadData() {
     this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
     this.updateTableDataSource();
-  } */
+  }
 
   getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -380,7 +384,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         if (diffHours > 0) {
           // Obtener el color de la fuente según el tipoGuardia
           const color = this.getColor(registro.tipoGuardia);
-          console.log("COLOR que trae " + color)
           // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
           output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`;
           //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
@@ -396,9 +399,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   getColor(tipoGuardia: TipoGuardia): string {
     if (tipoGuardia && tipoGuardia.id) {
-      console.log("id de guardia: " + tipoGuardia.nombre)
-      if (tipoGuardia.nombre === "CARGO") {
-        console.log("PASOO: " + tipoGuardia.nombre)
+      if (tipoGuardia.id === 1) {
         return '#91A8DA'; // Color para CARGO
       } else if (tipoGuardia.id === 2) {
         return '#eb7430'; // Color para REAGRUPACION DE HS
@@ -419,7 +420,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     const tipoGuardia = registro.tipoGuardia;
     if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.nombre === "CARGO") {
+      if (tipoGuardia.id === 1) {
         return '#91A8DA'; // Color para CARGO
       } else if (tipoGuardia.id === 2) {
         return '#eb7430'; // Color para REAGRUPACION DE HS

@@ -21,6 +21,10 @@ import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { RegistroMensualService } from 'src/app/services/registroMensual.service';
+import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
+import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 
 interface ClasesNovedad {
   Compensatorio: string;
@@ -379,9 +383,11 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
 
   getColor(tipoGuardia: TipoGuardia): string {
     if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.nombre === "EXTRA") {
-        return '#fcc932'; 
-      } 
+      if (tipoGuardia.id === 1) {
+        return '#91A8DA'; // Color para CARGO
+      } else if (tipoGuardia.id === 2) {
+        return '#F4AF88'; // Color para REAGRUPACION DE HS
+      }
     }
     return ''; // Color por defecto
   }
@@ -398,9 +404,11 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
 
     const tipoGuardia = registro.tipoGuardia;
     if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.nombre === "EXTRA") {
-        return '#fcc932';
-      } 
+      if (tipoGuardia.id === 3) {
+        return '#fcc932'; // Color para CARGO
+      } else if (tipoGuardia.id === 2) {
+        return '#F4AF88'; // Color para REAGRUPACION DE HS
+      }
     }
     return ''; // Color por defecto
   }

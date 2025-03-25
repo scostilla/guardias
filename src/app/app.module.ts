@@ -17,7 +17,6 @@ import { CalendarCommonModule, CalendarModule, CalendarMonthModule, DateAdapter 
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { AppRoutingModule } from './app-routing.module';
-import { CategoriaCreateComponent } from './components/configuracion/usuarios/categoria-create/categoria-create.component';
 import { SharedModule } from './components/shared/shared.module';
 
 //Angular nativo
@@ -194,6 +193,7 @@ import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/v
 import { ValoresGuardiasCreateComponent } from './components/configuracion/info/valores-guardias-create/valores-guardias-create.component';
 import { ValoresGuardiasComponent } from './components/configuracion/info/valores-guardias/valores-guardias.component';
 import { ArticuloDetailComponent } from './components/configuracion/leyes/articulo-detail/articulo-detail.component';
+import { ArticuloEditComponent } from './components/configuracion/leyes/articulo-edit/articulo-edit.component';
 import { ArticuloComponent } from './components/configuracion/leyes/articulo/articulo.component';
 import { IncisoDetailComponent } from './components/configuracion/leyes/inciso-detail/inciso-detail.component';
 import { IncisoEditComponent } from './components/configuracion/leyes/inciso-edit/inciso-edit.component';
@@ -251,7 +251,6 @@ import { NoAsistencialEditComponent } from './components/personal/personal-conte
 import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
 import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
-import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
@@ -411,8 +410,6 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     LegajoPersonComponent,
     CargoComponent,
     CargoEditComponent,
-    CategoriaCreateComponent,
-    CategoriaEditComponent,
     CargoDetailComponent,
     CronogramaDetailComponent,
     PersonalComponent,
@@ -431,12 +428,7 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     SoporteFormComponent,
     PersonalAutoridadComponent,
     TipoRevistaEditComponent,
-    TipoRevistaCreateComponent,
     RevistaDetailComponent,
-    AdicionalCreateComponent,
-    AdicionalEditComponent,
-    CargaHorariaCreateComponent,
-    CargaHorariaEditComponent,
     ValoresGuardiasCreateComponent,
     ValoresBonoUtiCreateComponent,
     AsistencialSelectorComponent,
@@ -448,15 +440,11 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     TipoLeyEditComponent,
     ArticuloComponent,
     ArticuloDetailComponent,
- 
+    ArticuloEditComponent,
     IncisoComponent,
     IncisoDetailComponent,
     IncisoEditComponent,
     PersonalDhHistorialComponent,
-
-    TipoLicenciaComponent,
-    TipoLicenciaDetailComponent,
-    TipoLicenciaEditComponent,
     NoAsistencialCreateComponent,
     PersonalNoAsistencialComponent,
     PersonalLegajoSelectComponent,
@@ -483,13 +471,11 @@ import { interceptorProvider } from './interceptors/interceptor.service';
     SelectorRolesComponent,
     SinEfectorComponent,
     PersonalSinEfectorComponent,
-    PersonalDhEditComponent,
     
   ],
 
   imports: [
     BrowserModule,
-    ReactiveFormsModule,
     BrowserAnimationsModule,
     ProfessionalTableComponent,
     NgxMatTimepickerModule,
