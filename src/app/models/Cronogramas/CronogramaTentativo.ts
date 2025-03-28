@@ -10,8 +10,8 @@ export class CronogramaTentativo {
     aceptado: boolean;
     fechaIngreso: Date;
     fechaEgreso: Date;
-    horaIngreso: Date;
-    horaEgreso: Date;
+    horaIngreso: string;
+    horaEgreso: string;
     observacion: string;
     tipoGuardia: TipoGuardia | null;
     asistencial: Asistencial | null;
@@ -22,8 +22,8 @@ export class CronogramaTentativo {
         aceptado: boolean,
         fechaIngreso: Date,
         fechaEgreso: Date,
-        horaIngreso: Date,
-        horaEgreso: Date,
+        horaIngreso: string,
+        horaEgreso: string,
         observacion: string,
         tipoGuardia: TipoGuardia | null,
         asistencial: Asistencial | null,

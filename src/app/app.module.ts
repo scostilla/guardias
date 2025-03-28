@@ -265,6 +265,7 @@ import { PersonalSinEfectorComponent } from './components/personal/personal-sin-
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 
 @NgModule({
   declarations: [
@@ -476,7 +477,8 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     PersonalSinEfectorComponent,
     PersonalDhEditComponent,
     PersonalDhCreateComponent,
-    PersonalDhDetailComponent,    
+    PersonalDhDetailComponent,
+    CronogramaCreateComponent,    
   ],
 
   imports: [

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
 import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
+import { CronogramaCreateComponent } from '../cronograma-create/cronograma-create.component';
+import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { PruebaFormComponent } from '../../configuracion/territorio/prueba-form/prueba-form.component';
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
@@ -12,12 +14,29 @@ import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import * as moment from 'moment';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+
+enum TipoGuardia {
+  CARGO = 'CARGO',
+  AGRUPACION = 'AGRUPACION',
+  EXTRA = 'EXTRA',
+  CONTRAFACTURA = 'CONTRAFACTURA'
+}
+
+// Mapeo de los colores según el tipo de guardia
+const colorMapping: Record<TipoGuardia, { primary: string, secondary: string }> = {
+  [TipoGuardia.CARGO]: { primary: '#91A8DA', secondary: '#B6C6E6' },
+  [TipoGuardia.AGRUPACION]: { primary: '#eb7430', secondary: '#F0B59E' },
+  [TipoGuardia.EXTRA]: { primary: '#fcc932', secondary: '#F9D784' },
+  [TipoGuardia.CONTRAFACTURA]: { primary: '#A9D08F', secondary: '#B8E0A6' }
+};
 
 @Component({
   selector: 'app-cronograma',
@@ -55,12 +74,14 @@ export class CronogramaComponent {
 
   constructor(
     private feriadoService: FeriadoService,
+    private cronogramaService: CronogramaTentativoService,
     public dialog: MatDialog,
     private router: Router,
     private tokenService: TokenService,
     private authService: AuthService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
+    private toastr: ToastrService,
 ) {}
 
   changeView(view: CalendarView): void {
@@ -116,20 +137,27 @@ export class CronogramaComponent {
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
     
-    // Verificar si el ID efector es válido
-    if (this.efectorId === null) {
-      this.showMessage = true;
-    } else {
-      //this.listAsistencial(this.efectorId);
-    }
-    
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.holidays = feriados.map(feriado => ({
-        ...feriado,
-        fecha: this.parseDate(feriado.fecha as unknown as string)
-      }));
-      this.refreshView();
+  // Verificar si el ID efector es válido
+  if (this.efectorId === null) {
+    this.showMessage = true;
+    this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+      timeOut: 5000,
+      positionClass: 'toast-top-center',
+      progressBar: true
     });
+    this.router.navigateByUrl('/home-page');
+  } else {
+  // Cargar los feriados
+  this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+    this.holidays = feriados.map(feriado => ({
+      ...feriado,
+      fecha: moment(feriado.fecha).toDate()
+    }));
+    this.refreshView();
+  });
+
+  this.loadCronogramas();
+    }
   }
 
   // Roles a usar
@@ -165,6 +193,41 @@ export class CronogramaComponent {
     }
   }
 
+  // Método separado que carga los cronogramas
+  loadCronogramas(): void {
+    this.cronogramaService.list().subscribe((cronogramas) => {
+      this.events = cronogramas.map((cronograma) => {
+        const tipoGuardia = cronograma.tipoGuardia?.nombre;
+
+        const fechaHoraIngreso = moment(cronograma.fechaIngreso)
+          .set({
+            hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
+            minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
+            second: 0
+          });
+
+        const fechaHoraEgreso = moment(cronograma.fechaEgreso)
+          .set({
+            hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
+            minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
+            second: 0
+          });
+
+        const color = (Object.values(TipoGuardia).includes(tipoGuardia as TipoGuardia))
+          ? colorMapping[tipoGuardia as TipoGuardia]
+          : { primary: '#cccccc', secondary: '#e0e0e0' };
+
+        return {
+          start: fechaHoraIngreso.toDate(),
+          end: fechaHoraEgreso.toDate(),
+          title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
+          color: color,
+          meta: cronograma
+        };
+      });
+      this.refreshView(); // Refresca la vista del calendario
+    });
+  }
   
   refreshView(): void {
     this.viewDate = new Date(this.viewDate.getTime());
@@ -203,10 +266,11 @@ export class CronogramaComponent {
   }
 
   getHolidayName(date: Date): string | null {
-    const holiday = this.holidays.find(holiday => this.isSameDay(date, holiday.fecha));
+    // Usamos Moment.js para comparar las fechas
+    const holiday = this.holidays.find(holiday => moment(holiday.fecha).isSame(moment(date), 'day'));
     return holiday ? holiday.motivo : null;
   }
-
+  
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
@@ -214,10 +278,11 @@ export class CronogramaComponent {
   }
 
   dayClicked(day: MonthViewDay<any>): void {
-    const dayStart = new Date(day.date).setHours(0, 0, 0, 0);
+    const dayStart = moment(day.date).startOf('day').toDate();
+    
     const events = this.events.filter(event => {
-      const eventStart = new Date(event.start).setHours(0, 0, 0, 0);
-      const eventEnd = new Date(event.end).setHours(0, 0, 0, 0);
+      const eventStart = moment(event.start).startOf('day').toDate();
+      const eventEnd = moment(event.end).startOf('day').toDate();
       return dayStart >= eventStart && dayStart <= eventEnd;
     });
   
@@ -230,12 +295,12 @@ export class CronogramaComponent {
           ...event,
           color: event.color 
         })),
-        holidayName: holidayName 
+        holidayName: holidayName
       }
     });
   }
-
-EventDialog(): void {
+  
+/*EventDialog(): void {
   const dialogRef = this.dialog.open(PruebaFormComponent, {
     width: '600px',
 });
@@ -245,7 +310,7 @@ EventDialog(): void {
       this.addEvent(new Date(result.startDate), new Date(result.endDate), result.title, result.color);
     }
   });
-}
+}*/
 
   nextView(): void {
     if (this.view === CalendarView.Month) {
@@ -275,7 +340,7 @@ EventDialog(): void {
     this.viewDate = new Date();
   }
 
-  addEvent(startDate: Date, endDate: Date, eventTitle: string, color: any): void {
+  /*addEvent(startDate: Date, endDate: Date, eventTitle: string, color: any): void {
     this.events = [
       ...this.events,
       {
@@ -288,7 +353,18 @@ EventDialog(): void {
         }
       }
     ];
-  }
+  }*/
 
-
+    openCronogramaDialog(): void {
+      const dialogRef = this.dialog.open(CronogramaCreateComponent, {
+        width: '600px',
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loadCronogramas();
+          console.log('Nuevo cronograma creado');
+        }
+      });
+    }
 }

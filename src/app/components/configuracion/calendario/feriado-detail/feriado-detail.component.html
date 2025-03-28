@@ -20,6 +20,14 @@
             <th scope="row">Descripción</th>
             <td>{{feriado.descripcion}}</td>
           </tr>
+          <tr>
+            <th scope="row">Patronal</th>
+            <td>{{feriado.esPatronal ? 'Sí' : 'No'}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Efector Patronal</th>
+            <td>{{feriado.efector?.nombre}}</td>
+          </tr>
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">

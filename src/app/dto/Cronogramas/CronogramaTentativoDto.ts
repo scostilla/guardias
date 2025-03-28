@@ -9,7 +9,7 @@ export class CronogramaTentativoDto {
     idTipoGuardia: number;
     idAsistencial: number;
     idEfector: number;
-    observacion: string
+    observacion: string | null
 
     constructor(
         fechaIngreso: Date,  
@@ -21,7 +21,7 @@ export class CronogramaTentativoDto {
         idTipoGuardia: number,
         idAsistencial: number,
         idEfector: number,
-        observacion: string    
+        observacion: string | null    
     ) {
         this.fechaIngreso = fechaIngreso;
         this.fechaEgreso = fechaEgreso;

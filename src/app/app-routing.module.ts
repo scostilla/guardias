@@ -161,6 +161,7 @@ import { CronogramaPHosComponent } from './components/cronogramas/cronograma-p-h
 import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cronograma-p.component';
 import { CronogramaRegComponent } from './components/cronogramas/cronograma-reg/cronograma-reg.component';
 import { CronogramaComponent } from './components/cronogramas/cronograma/cronograma.component';
+import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 
 
 
@@ -399,6 +400,7 @@ const routes: Routes = [
 
   //Sección: Cronograma
   {path: 'cronograma', component:CronogramaComponent},
+  {path: 'cronograma-create', component:CronogramaCreateComponent},
   {path: 'cronograma-detail', component:CronogramaDetailComponent},
   {path: 'cronograma-def', component:CronogramaDefComponent},
   {path: 'cronograma-def-materno', component:CronogramaDefMaternoComponent},

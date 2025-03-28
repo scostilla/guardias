@@ -127,6 +127,89 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Verificar si hay un idEfector antes de hacer cualquier otra cosa
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+  
+    if (this.efectorId === null) {
+      // Si no hay idEfector, redirigir a /home-page con un mensaje
+      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+      return; // Detener ejecución del código
+    }
+  
+    // Continuar solo si existe un idEfector
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+      // BehaviorSubject para obtener el rol seleccionado
+      this.tokenService.currentRole$.subscribe(role => {
+        this.currentRole = role;
+        this.UserRoles();  // Llamar a la función que determina los roles
+  
+        // Si currentRole es false (null o vacío), redirige al login
+        if (!this.currentRole) {
+          this.router.navigateByUrl('');
+        }
+      });
+  
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:', this.userId);
+  
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+  
+          // Log para mostrar el usuario
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+  
+    // Llamar al servicio para obtener los tipos de guardia solo si hay idEfector
+    this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
+      this.tipoGuardias = guardias;
+  
+      // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+      this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
+      this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
+      this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
+      this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
+      this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
+    });
+  
+    // Llamar a listLegajos solo si hay idEfector
+    this.listLegajos();
+  
+    // Llamar a listAsistencial solo si hay idEfector
+    this.listAsistencial(this.efectorId);
+  
+    // Suscripción para refrescar los datos de asistencial
+    this.suscription = this.asistencialService.refresh$.subscribe(() => {
+      this.listAsistencial(this.efectorId); // Usar el efectorId actual
+    });
+  
+    // Actualizar columnas visibles
+    this.actualizarColumnasVisibles();
+  }  
+
+  /*ngOnInit(): void {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
@@ -198,6 +281,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     
     this.actualizarColumnasVisibles();
   }
+*/
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
