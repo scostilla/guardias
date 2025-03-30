@@ -1,0 +1,5 @@
+mat-list-item {
+    min-height: 80px; /* Ajusta el valor según lo que necesites */
+    white-space: normal; /* Permite que el texto se ajuste a varias líneas */
+    word-wrap: break-word; /* Permite que las palabras largas se dividan */
+  }

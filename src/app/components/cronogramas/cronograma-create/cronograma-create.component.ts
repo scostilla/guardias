@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CronogramaTentativoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,15 +20,15 @@ export class CronogramaCreateComponent {
   cronoForm: FormGroup;
   tiposGuardia: any[] = [];
   asistenciales: any[] = [];
-  efectores: any[] = [];
   inputValue: string = '';
+  efectorId: number | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<CronogramaCreateComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private cronoService: CronogramaTentativoService,
-    private hospitalService: HospitalService,
+    private efectorService: EfectorService,
     private tipoGuardiaService: TipoGuardiaService,
     public dialog: MatDialog,
     private toastr: ToastrService
@@ -40,7 +40,6 @@ export class CronogramaCreateComponent {
       horaEgreso: ['', Validators.required],
       tipoGuardia: ['', Validators.required],
       asistencial: ['', Validators.required],
-      efector: ['', Validators.required],
       observacion: ['', [Validators.maxLength(250)]],
     });
   }
@@ -50,9 +49,8 @@ export class CronogramaCreateComponent {
       this.tiposGuardia = data;
     });
 
-    this.hospitalService.list().subscribe(data => {
-      this.efectores = data;
-    });
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    console.log('Efector seleccionado:', this.efectorId);
   }
 
   openAsistencialDialog(): void {
@@ -83,7 +81,7 @@ export class CronogramaCreateComponent {
     });
   }
 
-  saveCronograma(): void {
+  saveCronograma(): void { 
     if (this.cronoForm.valid) {
       const formData = this.cronoForm.value;
       const cronogramaDto = new CronogramaTentativoDto(
@@ -95,30 +93,63 @@ export class CronogramaCreateComponent {
         false, // aceptado
         formData.tipoGuardia.id,
         formData.asistencial,
-        formData.efector.id,
+        this.efectorId!,
         formData.observacion
       );
   
-      this.cronoService.save(cronogramaDto).subscribe(
-        response => {
-          this.toastr.success('Éxito, cronograma tentativo guardado', 'Guardado exitoso', {
+      // Primero, verifica si el cronograma ya existe
+      this.cronoService.existCronograma(cronogramaDto).subscribe(
+        (exists) => {
+          if (exists) {
+            // Si el cronograma ya existe, muestra un mensaje de error y no guarda
+            this.toastr.error('Ya existen guardias asignadas para la fecha seleccionada', 'Error', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+          } else {
+            // Si no existe, guarda el cronograma
+            this.cronoService.save(cronogramaDto).subscribe(
+              response => {
+                this.toastr.success('Cronograma tentativo guardado', 'Éxito', {
+                  timeOut: 6000,
+                  positionClass: 'toast-top-center',
+                  progressBar: true
+                });
+  
+                this.cronoService.refresh$.next();
+                this.dialogRef.close(true);
+              },
+              error => {
+                console.error('Error al guardar el cronograma:', error);
+                this.toastr.error('Hubo un error al guardar el cronograma', 'Error', {
+                  timeOut: 6000,
+                  positionClass: 'toast-top-center',
+                  progressBar: true
+                });
+              }
+            );
+          }
+        },
+        error => {
+          console.error('Error al verificar la existencia del cronograma:', error);
+          this.toastr.error('Hubo un error al verificar la existencia del cronograma', 'Error', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
-  
-          this.cronoService.refresh$.next();
-          this.dialogRef.close(true);
-        },
-        error => {
-          console.error('Error al guardar el cronograma:', error);
         }
       );
     } else {
       console.log('Formulario no válido');
+      this.toastr.error('Por favor complete todos los campos del formulario', 'Formulario inválido', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
     }
   }
-
+  
   closeDialog(): void {
     this.dialogRef.close();
   }

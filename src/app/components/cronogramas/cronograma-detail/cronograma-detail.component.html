@@ -4,13 +4,16 @@
     </h5>
   </h1>
   <mat-dialog-content>
-    <mat-list *ngIf="data.events.length; else noData">
+    <div *ngIf="data.events.length; else noData">
       <ng-container *ngFor="let event of data.events">
-        <mat-list-item><span [style.color]="event.color.primary">{{ event.title }}</span><br/> 
-          Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span></mat-list-item>
+        <div>
+          <span [style.color]="event.color.primary">{{ event.title }}</span><br/> 
+          Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
+          <span *ngIf="event.obs"> {{ event.obs }} </span><mat-icon class="delete-icon" (click)="deleteEvent(event)">delete</mat-icon>
+        </div>
         <mat-divider></mat-divider>
       </ng-container>
-    </mat-list>
+    </div>
   </mat-dialog-content>
   <ng-template #noData><p>No hay profesionales cargados para la fecha seleccionada.</p></ng-template>
   <mat-dialog-actions>

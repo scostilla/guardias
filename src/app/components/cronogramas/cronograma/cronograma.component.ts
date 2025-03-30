@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
+import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent, CalendarDayViewBeforeRenderEvent } from 'angular-calendar';
 import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
 import { CronogramaCreateComponent } from '../cronograma-create/cronograma-create.component';
@@ -195,9 +195,11 @@ export class CronogramaComponent {
 
   // Método separado que carga los cronogramas
   loadCronogramas(): void {
-    this.cronogramaService.list().subscribe((cronogramas) => {
+    this.cronogramaService.listEfector(this.efectorId!).subscribe((cronogramas) => {
       this.events = cronogramas.map((cronograma) => {
         const tipoGuardia = cronograma.tipoGuardia?.nombre;
+        const observacion = cronograma.observacion;
+        const id = cronograma.id;
 
         const fechaHoraIngreso = moment(cronograma.fechaIngreso)
           .set({
@@ -221,6 +223,8 @@ export class CronogramaComponent {
           start: fechaHoraIngreso.toDate(),
           end: fechaHoraEgreso.toDate(),
           title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
+          obs: observacion,
+          id: id,
           color: color,
           meta: cronograma
         };
@@ -261,6 +265,20 @@ export class CronogramaComponent {
     });
   }
 
+  /*beforeDayViewRender(renderEvent: CalendarDayViewBeforeRenderEvent): void {
+    renderEvent.hourColumns.forEach(column => {
+      column.hours.forEach(hour => {
+        hour.segments.forEach(segment => {
+          // Asegúrate de que segment.date es un objeto Date
+          const holiday = this.holidays.find(holiday => this.isSameDay(segment.date, holiday.fecha));
+          if (holiday) {
+            segment.cssClass = 'holiday-class';
+          }
+        });
+      });
+    });
+  }*/
+  
   isHoliday(date: Date): boolean {
     return this.holidays.some(holiday => this.isSameDay(date, holiday.fecha));
   }
@@ -279,7 +297,7 @@ export class CronogramaComponent {
 
   dayClicked(day: MonthViewDay<any>): void {
     const dayStart = moment(day.date).startOf('day').toDate();
-    
+  
     const events = this.events.filter(event => {
       const eventStart = moment(event.start).startOf('day').toDate();
       const eventEnd = moment(event.end).startOf('day').toDate();
@@ -293,13 +311,18 @@ export class CronogramaComponent {
       data: {
         events: events.map(event => ({
           ...event,
-          color: event.color 
+          color: event.color
         })),
         holidayName: holidayName
       }
     });
-  }
   
+    // Nos suscribimos al evento emitido desde el diálogo
+    dialogRef.componentInstance.eventDeleted.subscribe(() => {
+      this.loadCronogramas();  // Refrescamos los cronogramas cuando un evento ha sido eliminado
+    });
+  }
+      
 /*EventDialog(): void {
   const dialogRef = this.dialog.open(PruebaFormComponent, {
     width: '600px',
@@ -363,7 +386,6 @@ export class CronogramaComponent {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.loadCronogramas();
-          console.log('Nuevo cronograma creado');
         }
       });
     }

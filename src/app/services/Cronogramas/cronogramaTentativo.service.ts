@@ -23,6 +23,14 @@ export class CronogramaTentativoService {
         return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + 'list')
       }
 
+      public listEfector(idEfector: number): Observable<CronogramaTentativo[]> {
+        return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + `detailByEfector/${idEfector}`)
+      }
+
+      public listEfectorService(idEfector: number, idServicio: number): Observable<CronogramaTentativo[]> {
+        return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + `detailByEfector/${idEfector}/${idServicio}`)
+      }
+
       public listAll(): Observable<CronogramaTentativo[]> {
         return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + 'listAll')
       }  

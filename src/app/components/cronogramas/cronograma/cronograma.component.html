@@ -59,8 +59,11 @@
         <mat-icon>calendar_today</mat-icon>
       </button>
       <button mat-icon-button color="accent" (click)="changeView(CalendarView.Week)" matTooltip="Ver semana">
-        <mat-icon>calendar_view_day</mat-icon>
+        <mat-icon>view_week</mat-icon>
       </button>
+      <!--<button mat-icon-button color="accent" (click)="changeView(CalendarView.Day)" matTooltip="Ver día">
+        <mat-icon>calendar_view_day</mat-icon>
+      </button>-->
     </div>
   </div>
   <div class="row"> 
@@ -79,5 +82,12 @@
       [events]="events"
       (beforeViewRender)="beforeWeekViewRender($event)">
     </mwl-calendar-week-view>
+
+    <!--<mwl-calendar-day-view
+    *ngIf="view === CalendarView.Day"
+    [viewDate]="viewDate"
+    [events]="events"
+    (beforeViewRender)="beforeDayViewRender($event)">
+  </mwl-calendar-day-view>-->
   </div>
 </div>
