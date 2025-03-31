@@ -15,6 +15,14 @@ export class SpinnerService {
     return this.spinner$.asObservable();
   }
 
+  show(): void {
+    this.spinner$.next(true);
+  }
+
+  hide(): void {
+    this.spinner$.next(false);
+  }
+
   requestStarted() { 
     if (++this.count === 1) {
       this.spinner$.next(true);

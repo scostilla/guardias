@@ -80,7 +80,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   //Autenticación
   isLogged = false;
-  roles: string[] =[];
+  roles: string[] = [];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
@@ -95,7 +95,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   currentRole: string | null = null;
 
   private efectorIdSubscription!: Subscription;
-  
+
   constructor(
     private asistencialService: AsistencialService,
     private efectorService: EfectorService,
@@ -130,29 +130,29 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
+
+      // BehaviorSubject para obtener el rol seleccionado
+      this.tokenService.currentRole$.subscribe(role => {
+        this.currentRole = role;
+        this.UserRoles();  // Llamar a la función que determina los roles
+
+        // Si currentRole es false (null o vacío), redirige al login
+        if (!this.currentRole) {
+          this.router.navigateByUrl('');
+        }
+      });
+
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
+      console.log('ID del usuario logeado:', this.userId);
+
       // Obtener detalles del usuario
       this.authService.detailPersonBasicPanel().subscribe(
         (response: PersonBasicPanelDto) => {
           this.usuarioPersona = response.id;
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
-  
+
           // Log para mostrar el usuario
           console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
         },
@@ -166,25 +166,25 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('');
     }
 
-  // Llamamos al servicio para obtener todos los tipos de guardia
-  this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
-    this.tipoGuardias = guardias;
+    // Llamamos al servicio para obtener todos los tipos de guardia
+    this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
+      this.tipoGuardias = guardias;
 
-    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
-    this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
-    this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
-    this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
-    this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
-    this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
+      // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+      this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
+      this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
+      this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
+      this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
+      this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
 
-  });
-  
+    });
+
     this.listLegajos();
 
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
-    
+
     // Verificar si el ID efector es válido
     if (this.efectorId === null) {
       this.showMessage = true;
@@ -195,20 +195,20 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
       this.listAsistencial(this.efectorId); // Usar el efectorId actual
     });
-    
+
     this.actualizarColumnasVisibles();
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  
+
     this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       return normalizedData.indexOf(normalizedFilterValue) !== -1;
     };
-  
+
     this.dataSource.filter = normalizedFilterValue;
   }
 
@@ -244,7 +244,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       );
     }
   }
-  
+
   listAsistencial(efectorId: number | null = null): void {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
@@ -253,7 +253,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource<Asistencial>([]);
       return;
     }
-  
+
     this.asistencialService.list().subscribe(data => {
       // Filtra los datos para mostrar solo aquellos que tienen al menos un legajo activo y un efector asociado,
       // y que no tienen guardias de tipo "Contrafactura" o "Pasiva"
@@ -263,12 +263,12 @@ export class AsistencialComponent implements OnInit, OnDestroy {
           legajo.activo === true && // Verifica que el legajo esté activo
           legajo.efectores.some(efector => efector.id === efectorId) && // Verifica que el legajo esté asociado al efector
           // Verifica que el legajo no tenga guardias de tipo Contrafactura o Pasiva
-          !legajo.tipoGuardias.some(tipoGuardia => 
+          !legajo.tipoGuardias.some(tipoGuardia =>
             tipoGuardia.id === this.idContraFactura || tipoGuardia.id === this.idPasiva
           )
         )
       );
-  
+
       // Maneja los mensajes según los resultados
       if (filteredData.length === 0) {
         this.showMessage = false;
@@ -278,7 +278,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
         this.sinAsistencialMessage = false;
         this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
       }
-  
+
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }, error => {
@@ -287,7 +287,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.sinAsistencialMessage = false;
     });
   }
-                
+
   listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
@@ -296,50 +296,50 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     });
   }
-    
+
   tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
     // Verifica si hay al menos un tipo de guardia asignado
     const tieneGuardias = legajos.some(legajo => legajo.tipoGuardias && legajo.tipoGuardias.length > 0);
-  
+
     // Si no tiene ningún tipo de guardia, no se permiten acciones
     if (!tieneGuardias) {
       return true;
     }
-  
+
     // Verifica si las guardias 'cargo', 'agrupacion' y 'extra' cumplen con la lógica específica
     const tieneGuardiasCombinadas = legajos.some(legajo => {
       const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id); // Suponiendo que 'id' es lo que estamos buscando
-  
+
       // Verifica si tiene guardias de tipo 'cargo' o 'agrupación'
       const tieneCargoOAgrupacion = tiposGuardias.includes(this.idCargo) || tiposGuardias.includes(this.idAgrupacion);
-  
+
       // Si tiene 'extra' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
       const tieneExtra = tiposGuardias.includes(this.idExtra);
       if (tieneExtra && !tieneCargoOAgrupacion) {
         return true; // No se permite acción si 'extra' está solo
       }
-  
+
       // Si no tiene ni 'cargo' ni 'agrupación' ni cumple con las combinaciones, no permitir acciones
       return !tieneCargoOAgrupacion;
     });
-  
+
     // Si no tiene guardias combinadas de 'cargo' o 'agrupación', no permitir acciones
     return tieneGuardiasCombinadas;
   }
-      
+
   mostrarBotones(asistencial: AsistencialListDto): boolean {
     const legajosAsistencial = this.legajos.filter(legajo => legajo.persona?.id === asistencial.id);
     return !this.tipoGuardiaNoPermiteAcciones(legajosAsistencial);
   }
-  
+
   formatCuil(cuil: string): string {
     if (!cuil) return '';
     // Asegúrate de que el CUIL tenga al menos 11 dígitos
     if (cuil.length < 11) return cuil;
-  
+
     return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
   }
-  
+
   createAsistencial(): void {
     this.router.navigate(['/asistencial-create']);
   }
@@ -429,7 +429,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     if (asistencial && asistencial.id) {
       //this.router.navigate(['/legajo-person', asistencial.id]);
       this.router.navigate(['/legajo-person'], {
-        state: { asistencial , fromAsistencial: true}
+        state: { asistencial, fromAsistencial: true }
       });
     } else {
       console.error('El objeto asistencial no tiene un id.');
@@ -485,5 +485,5 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
     this.efectorIdSubscription?.unsubscribe();
-  }  
+  }
 }

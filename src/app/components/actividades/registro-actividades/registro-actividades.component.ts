@@ -20,6 +20,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 
 @Component({
   selector: 'app-registro-actividades',
@@ -31,7 +33,9 @@ export class RegistroActividadesComponent {
   tiposGuardias: TipoGuardia[] = [];
   asistenciales: Asistencial[] = [];
   servicios: Servicio[] = [];
-  efectores: Efector[] = [];
+  efectorId: number | null = null;
+  efectorNombre: string | null = null; // Propiedad para almacenar el nombre del efector
+  //efectores: Efector[] = [];
   timeControl: FormControl = new FormControl();
   currentDate: Date = new Date();
   initialData: any;
@@ -45,8 +49,6 @@ export class RegistroActividadesComponent {
   ultimoRegistro: RegistroActividad | null = null;
   usuarioPersona: number | null = null;
 
-
-
   constructor(
     private fb: FormBuilder,
     private registroActividadService: RegistroActividadService,
@@ -59,7 +61,8 @@ export class RegistroActividadesComponent {
     public dialog: MatDialog,
     private tokenService: TokenService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private efectorService: EfectorService // Inyectar el servicio EfectorService
   ) {
     this.currentDate = new Date();
 
@@ -70,22 +73,22 @@ export class RegistroActividadesComponent {
       idEfector: ['', Validators.required],
       fechaIngreso: ['', Validators.required],
       eventStartTime: ['', Validators.required],
-      fechaEgreso: [{ value: '', disabled: true }],
+      //fechaEgreso: [{ value: '', disabled: true }],
       eventEndTime: [{ value: '', disabled: true }, Validators.required]
     });
 
-    this.registroForm.get('fechaIngreso')?.valueChanges.subscribe(value => {
+    /* this.registroForm.get('fechaIngreso')?.valueChanges.subscribe(value => {
       this.updateFechaEgresoState(value);
     });
 
     this.registroForm.get('fechaEgreso')?.valueChanges.subscribe(value => {
       this.updateEventEndTimeState(value);
-    });
+    }); */
 
-    this.listTiposGuardias();
+    /* this.listTiposGuardias();
     this.listAsistenciales();
     this.listServicios();
-    this.listEfectores();
+    this.listEfectores(); */
 
     this.route.data.subscribe(data => {
       this.initialData = data['initialData'];
@@ -101,7 +104,7 @@ export class RegistroActividadesComponent {
 
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
+      console.log('ID del usuario logeado:', this.userId);
 
       // Obtener detalles del usuario
       this.authService.detailPersonBasicPanel().subscribe(
@@ -109,29 +112,72 @@ export class RegistroActividadesComponent {
           this.usuarioPersona = response.id;
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
-          this.nombresEfectores = response.efectores; // Asignar efectores
+          //this.nombresEfectores = response.efectores; // Asignar efectores
 
           // Log para mostrar el usuario y los efectores
           console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-          console.log('Efectores asociados:', this.nombresEfectores);
+          //console.log('Efectores asociados:', this.nombresEfectores);
         },
         error => {
           console.error('Error al obtener detalles del usuario:', error);
         }
       );
-  } else {
+    } else {
       this.isLogged = false;
       console.log('El usuario no está logueado.');
       this.router.navigateByUrl('');
     }
+
+    // Obtener el ID efector del servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+
+    this.listTiposGuardias();
+    this.listAsistenciales();
+    this.listServicios();
+    //this.listEfectores();
   }
 
+  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+          // Asignar el idEfector al formulario
+        this.registroForm.get('idEfector')?.setValue(efector.id);
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
+  }
 
-  onTipoGuardiaChange(event: any) {
+  onTipoGuardiaChange(event: any):void {
     console.log("Tipo de guardia seleccionado:", event.value);
+
+    const nuevoTipoGuardia = event.value;
+
+    // Cambiar el tipo de guardia y borrar solo los campos relacionados
+    this.cambiarTipoGuardia(nuevoTipoGuardia);
   }
 
-  private updateFechaEgresoState(fechaIngreso: Date | null): void {
+  // Método para cambiar el tipo de guardia y borrar solo los campos relacionados
+  cambiarTipoGuardia(nuevoTipoGuardia: any): void {
+    // Borrar solo los campos relacionados con el tipo de guardia
+    this.registroForm.get('idAsistencial')?.reset();
+    this.registroForm.get('idServicio')?.reset();
+
+    // Actualizar el tipo de guardia en el formulario
+    this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
+
+  }
+
+
+  /* private updateFechaEgresoState(fechaIngreso: Date | null): void {
     const fechaEgresoControl = this.registroForm.get('fechaEgreso') as FormControl;
 
     if (fechaIngreso) {
@@ -143,9 +189,9 @@ export class RegistroActividadesComponent {
     }
 
     fechaEgresoControl.updateValueAndValidity();
-  }
+  } */
 
-  private updateEventEndTimeState(fechaEgreso: Date | null): void {
+  /* private updateEventEndTimeState(fechaEgreso: Date | null): void {
     const eventEndTimeControl = this.registroForm.get('eventEndTime') as FormControl;
 
     if (fechaEgreso) {
@@ -157,9 +203,9 @@ export class RegistroActividadesComponent {
     }
 
     eventEndTimeControl.updateValueAndValidity();
-  }
+  } */
 
-  private fechaEgresoValidator(fechaIngreso: Date): ValidatorFn {
+  /* private fechaEgresoValidator(fechaIngreso: Date): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const fechaEgreso = control.value ? new Date(control.value) : null;
 
@@ -172,8 +218,8 @@ export class RegistroActividadesComponent {
       const isValid = fechaEgreso >= fechaIngreso;
       return isValid ? null : { fechaEgresoInvalida: true };
     };
-  }
-    
+  } */
+
   listTiposGuardias(): void {
     this.tipoGuardiaService.list().subscribe(data => {
       console.log('Lista de Tipos de Guardias:', data);
@@ -201,7 +247,7 @@ export class RegistroActividadesComponent {
     });
   }
 
-  listEfectores(): void {
+  /* listEfectores(): void {
     this.hospitalService.list().subscribe(data => {
       console.log('Lista de efectores:', data);
       this.efectores = data;
@@ -209,15 +255,19 @@ export class RegistroActividadesComponent {
       console.log(error);
     });
   }
-
+ */
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
   openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+    const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
       width: '800px',
-      disableClose: true
+      disableClose: true,
+      data: {
+        idEfector: this.efectorId, // Pasar el idEfector desde el sessionStorage
+        tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre // Pasar el tipo de guardia seleccionado
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -244,6 +294,10 @@ export class RegistroActividadesComponent {
 
 
   saveRegistro(): void {
+
+    console.log('Formulario válido:', this.registroForm.valid);
+  console.log('Formulario modificado:', this.isModified());
+  console.log('Valores del formulario:', this.registroForm.value);
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
       const registroDto = new RegistroActividadDto(
@@ -252,10 +306,10 @@ export class RegistroActividadesComponent {
         registroData.eventStartTime,
         registroData.eventEndTime,
         registroData.idTipoGuardia.id,
-        true, 
+        true,
         registroData.idAsistencial,
         registroData.idServicio.id,
-        registroData.idEfector.id,
+        registroData.idEfector,
         this.userId!
       );
 

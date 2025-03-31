@@ -47,6 +47,10 @@ export class AsistencialService {
     return this.httpClient.get<AsistencialDto[]>(`${this.asistencialesURL}listByUdoAndTipoGuardia/${idUdo}`);
   }
 
+  public listByEfectorAndTG(idEfector: number, tipoGuardia: string): Observable<Asistencial[]> {
+    return this.httpClient.get<Asistencial[]>(`${this.asistencialesURL}listByEfectorAndTG/${idEfector}/${tipoGuardia}`);
+  }
+
   public getLegajosByAsistencial(id: number): Observable<Legajo[]> {
     return this.httpClient.get<Legajo[]>(this.asistencialesURL + `legajos/${id}`);
 }

@@ -263,6 +263,8 @@ import { SelectorRolesComponent } from './components/login/selector-roles/select
 import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
 import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
+import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
+import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 
 @NgModule({
   declarations: [
@@ -473,6 +475,8 @@ import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/
     SinEfectorComponent,
     PersonalSinEfectorComponent,
     PersonalDhEditComponent,
+    AsistencialFiltradoSelectorComponent,
+    RegistroActividadesEComponent,
     
   ],
 
