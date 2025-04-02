@@ -7,9 +7,9 @@
     <div *ngIf="data.events.length; else noData">
       <ng-container *ngFor="let event of data.events">
         <div>
-          <span [style.color]="event.color.primary">{{ event.title }}</span><br/> 
+          <span [style.color]="event.color.primary">{{ event.title }}</span><mat-icon class="delete-icon" (click)="deleteEvent(event)" matTooltip="Eliminar guardia tentativa">delete</mat-icon><br/> 
           Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
-          <span *ngIf="event.obs"> {{ event.obs }} </span><mat-icon class="delete-icon" (click)="deleteEvent(event)">delete</mat-icon>
+          <span *ngIf="event.obs"> {{ event.obs }} </span>
         </div>
         <mat-divider></mat-divider>
       </ng-container>

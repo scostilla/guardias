@@ -1,25 +1,26 @@
 export class FeriadoDto {
 
+    id?: number;
     fecha: Date;
     motivo: string;
     tipoFeriado: string;
-    descripcion?: string;
     esPatronal: boolean;
-    idEfector?: number;
+    descripcion?: string;
+    idEfector?: number | null;
   
     constructor(
         fecha: Date,
         motivo: string,
         tipoFeriado: string,
-        descripcion: string,
         esPatronal: boolean,
-        idEfector: number,
+        descripcion?: string,
+        idEfector?: number | null,
     ) {
         this.fecha = fecha;
         this.motivo = motivo;
         this.tipoFeriado = tipoFeriado;
-        this.descripcion = descripcion;
         this.esPatronal = esPatronal;
-        this.idEfector = idEfector;
+        this.descripcion = descripcion;
+        this.idEfector = idEfector || null;
     }
 }

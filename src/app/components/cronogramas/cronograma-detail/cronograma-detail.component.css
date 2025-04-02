@@ -1,5 +1,17 @@
 mat-list-item {
-    min-height: 80px; /* Ajusta el valor según lo que necesites */
-    white-space: normal; /* Permite que el texto se ajuste a varias líneas */
-    word-wrap: break-word; /* Permite que las palabras largas se dividan */
+    min-height: 80px;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  .delete-icon {
+    font-size: 17px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 8px;
+    transition: color 0.3s ease;
+  }
+  
+  .delete-icon:hover {
+    color: #9c1d13;
   }

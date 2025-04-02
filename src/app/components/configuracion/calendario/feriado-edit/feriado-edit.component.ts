@@ -31,18 +31,39 @@ export class FeriadoEditComponent implements OnInit {
       tipoFeriado: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       esPatronal: [false],
-      efector: ['']
+      efector: [{ value: '', disabled: true }]
     });
 
     this.listHospital();
 
     if (data) {
-      this.feriadoForm.patchValue(data);
+      this.feriadoForm.patchValue(data);  // Aquí aplicamos patchValue
+  
+      if (data.esPatronal) {
+        this.feriadoForm.get('efector')?.enable();
+        this.feriadoForm.get('efector')?.setValidators([Validators.required]);
+      }
     }
   }
 
   ngOnInit(): void {
     this.initialData = this.feriadoForm.value;
+
+    // Observa el cambio del checkbox 'esPatronal'
+    this.feriadoForm.get('esPatronal')?.valueChanges.subscribe(value => {
+      if (!value) {
+        // Si 'esPatronal' es false, resetea el campo 'efector', quita la validación y deshabilita el select
+        this.feriadoForm.get('efector')?.reset();
+        this.feriadoForm.get('efector')?.clearValidators();
+        this.feriadoForm.get('efector')?.disable();
+      } else {
+        // Si 'esPatronal' es true, hace el campo 'efector' obligatorio y habilita el select
+        this.feriadoForm.get('efector')?.setValidators([Validators.required]);
+        this.feriadoForm.get('efector')?.enable();
+      }
+      // Después de cambiar las validaciones y habilitación/deshabilitación, vuelve a hacer una validación del formulario
+      this.feriadoForm.get('efector')?.updateValueAndValidity();
+    });
   }
 
   listHospital(){
@@ -63,24 +84,37 @@ export class FeriadoEditComponent implements OnInit {
     if (this.feriadoForm.valid) {
       const formValue = this.feriadoForm.value;
   
-      // Usar Moment.js para manejar la fecha y convertirla en un objeto Date
-      const formattedFecha = moment(formValue.fecha).toDate();  // Convertimos a Date
+      let formattedFecha: Date;
   
-      // Crea una instancia del DTO con los datos del formulario
+      if (this.data && this.data.id) {
+        // para edición, fecha sin formatear
+        formattedFecha = formValue.fecha;
+      } else {
+        // para creación, formateo fecha
+        formattedFecha = moment(formValue.fecha).toDate();
+      }
+  
+      // Verifica si el campo 'efector' está habilitado y tiene un valor
+      let efectorValue = null;
+      if (this.feriadoForm.get('efector')?.enabled && formValue.efector) {
+        efectorValue = formValue.efector ? formValue.efector.id : null;
+      }
+  
       const feriadoDto = new FeriadoDto(
-        formattedFecha,  // Aquí enviamos la fecha como objeto Date
+        formattedFecha,
         formValue.motivo,
         formValue.tipoFeriado,
-        formValue.descripcion,
         formValue.esPatronal,
-        formValue.idEfector || null  // idEfector puede ser opcional
+        formValue.descripcion,
+        efectorValue
       );
   
-      // Log para verificar qué datos se están enviando
-      console.log('Datos que se enviarán al backend:', feriadoDto);
+      // Agregar el log para ver qué datos se envían al servidor
+      console.log('Enviando datos al servidor:', feriadoDto);
   
-      // Si estamos editando (tiene un id), utilizamos el método update
       if (this.data && this.data.id) {
+        feriadoDto.id = this.data.id;
+  
         this.feriadoService.update(this.data.id, feriadoDto).subscribe(
           result => {
             this.dialogRef.close(result);
@@ -90,7 +124,6 @@ export class FeriadoEditComponent implements OnInit {
           }
         );
       } else {
-        // Si estamos creando un nuevo feriado, usamos el método save
         this.feriadoService.save(feriadoDto).subscribe(
           result => {
             this.dialogRef.close(result);
@@ -102,7 +135,7 @@ export class FeriadoEditComponent implements OnInit {
       }
     }
   }
-    
+        
   compareHospital(p1: Hospital, p2: Hospital): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }  
