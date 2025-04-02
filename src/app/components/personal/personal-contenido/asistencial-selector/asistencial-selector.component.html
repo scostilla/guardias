@@ -58,6 +58,14 @@
             </mat-cell>
           </ng-container>
 
+          <!-- Columna Apellido -->
+          <ng-container matColumnDef="profesion">
+            <mat-header-cell *matHeaderCellDef class="negrita"> Profesión </mat-header-cell>
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+              {{ persona.idLegajos?.[0]?.profesion?.nombre }}
+            </mat-cell>
+          </ng-container>
+
           <!-- Fila de encabezado -->
           <mat-header-row *matHeaderRowDef="displayedColumns" style="background-color: #f5f5f5;"></mat-header-row>
           <!-- Fila de datos -->

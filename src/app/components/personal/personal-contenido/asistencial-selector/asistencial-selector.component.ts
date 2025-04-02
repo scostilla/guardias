@@ -24,7 +24,7 @@ export class AsistencialSelectorComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   dataSource = new MatTableDataSource<Person>([]);
-  displayedColumns: string[] = ['apellido', 'nombre', 'cuil'];
+  displayedColumns: string[] = ['apellido', 'nombre', 'cuil', 'profesion'];
   selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
   suscription!: Subscription;

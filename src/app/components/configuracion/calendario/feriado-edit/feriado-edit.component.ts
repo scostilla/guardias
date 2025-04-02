@@ -53,13 +53,13 @@ export class FeriadoEditComponent implements OnInit {
     this.feriadoForm.get('esPatronal')?.valueChanges.subscribe(value => {
       if (!value) {
         // Si 'esPatronal' es false, resetea el campo 'efector', quita la validación y deshabilita el select
-        this.feriadoForm.get('efector')?.reset();
-        this.feriadoForm.get('efector')?.clearValidators();
-        this.feriadoForm.get('efector')?.disable();
+        this.feriadoForm.get('efector')?.reset();  // Resetear el valor
+        this.feriadoForm.get('efector')?.clearValidators();  // Limpiar las validaciones
+        this.feriadoForm.get('efector')?.disable();  // Deshabilitar el campo
       } else {
         // Si 'esPatronal' es true, hace el campo 'efector' obligatorio y habilita el select
-        this.feriadoForm.get('efector')?.setValidators([Validators.required]);
-        this.feriadoForm.get('efector')?.enable();
+        this.feriadoForm.get('efector')?.setValidators([Validators.required]);  // Agregar validación
+        this.feriadoForm.get('efector')?.enable();  // Habilitar el campo
       }
       // Después de cambiar las validaciones y habilitación/deshabilitación, vuelve a hacer una validación del formulario
       this.feriadoForm.get('efector')?.updateValueAndValidity();
@@ -96,10 +96,13 @@ export class FeriadoEditComponent implements OnInit {
   
       // Verifica si el campo 'efector' está habilitado y tiene un valor
       let efectorValue = null;
+
       if (this.feriadoForm.get('efector')?.enabled && formValue.efector) {
         efectorValue = formValue.efector ? formValue.efector.id : null;
+      } else if (!this.feriadoForm.get('efector')?.enabled) {
+        efectorValue = null;  // Asegurarse de que se envíe null cuando el campo está deshabilitado
       }
-  
+              
       const feriadoDto = new FeriadoDto(
         formattedFecha,
         formValue.motivo,
