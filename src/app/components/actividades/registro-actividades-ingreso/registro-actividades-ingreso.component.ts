@@ -117,24 +117,6 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     this.listServicios();
   }
 
-  onTipoGuardiaChange(event: any): void {
-    console.log("Tipo de guardia seleccionado:", event.value);
-    const nuevoTipoGuardia = event.value;
-    // Cambiar el tipo de guardia y borrar solo los campos relacionados
-    this.cambiarTipoGuardia(nuevoTipoGuardia);
-  }
-
-  // Método para cambiar el tipo de guardia y borrar solo los campos relacionados
-  cambiarTipoGuardia(nuevoTipoGuardia: any): void {
-    // Borrar solo los campos relacionados con el tipo de guardia
-    this.registroForm.get('idAsistencial')?.reset();
-    this.registroForm.get('idServicio')?.reset();
-
-    // Actualizar el tipo de guardia en el formulario
-    this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
-
-  }
-
   listTiposGuardias(): void {
     this.tipoGuardiaService.list().subscribe(data => {
       console.log('Lista de Tipos de Guardias:', data);
@@ -162,8 +144,22 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     });
   }
 
-  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
+  onTipoGuardiaChange(event: any): void {
+    console.log("Tipo de guardia seleccionado:", event.value);
+    const nuevoTipoGuardia = event.value;
+    // Cambiar el tipo de guardia y borrar solo los campos relacionados
+    this.cambiarTipoGuardia(nuevoTipoGuardia);
+  }
+
+  // Método para cambiar el tipo de guardia y borrar solo los campos relacionados
+  cambiarTipoGuardia(nuevoTipoGuardia: any): void {
+    // Borrar solo los campos relacionados con el tipo de guardia
+    this.registroForm.get('idAsistencial')?.reset();
+    this.registroForm.get('idServicio')?.reset();
+
+    // Actualizar el tipo de guardia en el formulario
+    this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
+
   }
 
   openAsistencialDialog(): void {
@@ -257,6 +253,10 @@ export class RegistroActividadesIngresoComponent implements OnInit {
         );
       }
     }
+  }
+
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
   compareTipoGuardia(p1: TipoGuardia, p2: TipoGuardia): boolean {

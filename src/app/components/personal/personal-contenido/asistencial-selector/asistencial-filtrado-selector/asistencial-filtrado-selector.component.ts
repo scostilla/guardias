@@ -6,6 +6,8 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Subscription } from 'rxjs';
+import { AsistencialMode } from 'src/app/enums/asistencial-mode';
+import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 
 @Component({
   selector: 'app-asistencial-filtrado-selector',
@@ -14,19 +16,19 @@ import { Subscription } from 'rxjs';
 })
 export class AsistencialFiltradoSelectorComponent implements OnInit {
 
-  @ViewChild(MatTable) table!: MatTable<Asistencial>;
+  @ViewChild(MatTable) table!: MatTable<AsistencialSummaryDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dataSource = new MatTableDataSource<Asistencial>([]);
-  displayedColumns: string[] = ['apellido', 'nombre', 'cuil'];
+  dataSource = new MatTableDataSource<AsistencialSummaryDto>([]);
+  displayedColumns: string[] = ['apellido', 'nombre'/* , 'cuil' */];
 
   suscription!: Subscription;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { idEfector: number, tipoGuardia: string },
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private asistencialService: AsistencialService,
     public dialogRef: MatDialogRef<AsistencialFiltradoSelectorComponent>,
     private paginatorIntl: MatPaginatorIntl
@@ -51,7 +53,35 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  loadAsistenciales(): void {
+  loadAsistenciales() {
+    // Desestructura los parámetros del objeto 'data'
+    const { idEfector, tipoGuardia } = this.data;
+
+    switch (this.data.mode) {
+      case AsistencialMode.INGRESO:
+        this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(asistenciales => {
+          // Lógica para ingreso
+        });
+        break;
+
+      case AsistencialMode.SALIDA:
+        console.log("Parámetros enviados al servicio SALIDA:", idEfector, tipoGuardia);
+        this.asistencialService.ConPendientes(idEfector, tipoGuardia).subscribe(asistenciales => {
+          // Lógica para salida
+        });
+        break;
+
+      case AsistencialMode.EDICION:
+        // Lógica futura para edición
+        break;
+
+      default:
+        console.error('Modo no soportado:', this.data.mode);
+    }
+  }
+
+  /* loadAsistenciales(): void {
+    
     // Usamos el nuevo servicio para obtener la lista filtrada
     this.asistencialService.listByEfectorAndTG(this.data.idEfector, this.data.tipoGuardia).subscribe(
       (asistenciales: Asistencial[]) => {
@@ -63,7 +93,7 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
         console.error('Error al cargar los asistenciales:', error);
       }
     );
-  }
+  } */
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value
@@ -71,8 +101,8 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
-      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
+    this.dataSource.filterPredicate = (data: AsistencialSummaryDto, filter: string) => {
+      const normalizedData = (data.nombre + ' ' + data.apellido /* + ' ' + data.cuil */)
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase();
@@ -83,7 +113,7 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
   }
 
    // Selecciona una persona (Asistencial o NoAsistencial)
-    selectAsistencial(asistencial: Asistencial): void {
+    selectAsistencial(asistencial: AsistencialSummaryDto): void {
       // Verifica que el objeto tenga la estructura correcta
       console.log('Selected Persona:', asistencial);
     
