@@ -4,12 +4,10 @@ import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
 import { CronogramaCreateComponent } from '../cronograma-create/cronograma-create.component';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
-import { PruebaFormComponent } from '../../configuracion/territorio/prueba-form/prueba-form.component';
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { Subscription } from 'rxjs';
@@ -69,8 +67,6 @@ export class CronogramaComponent {
   efectorId: number | null = null;
   efectorNombre: string | null = null;
   showMessage: boolean = false;
-
-  private efectorIdSubscription!: Subscription;
 
   constructor(
     private feriadoService: FeriadoService,

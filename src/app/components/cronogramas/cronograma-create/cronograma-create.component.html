@@ -15,47 +15,53 @@
     <div class="form-row">
       <mat-form-field appearance="fill" class="form-field">
         <mat-label>Fecha de Ingreso</mat-label>
-        <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso">
+        <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso" [min]="minFechaIngreso">
         <mat-datepicker-toggle matSuffix [for]="pickerIngreso"></mat-datepicker-toggle>
         <mat-datepicker #pickerIngreso></mat-datepicker>
         <mat-error *ngIf="cronoForm.get('fechaIngreso')!.hasError('required')">
           Fecha de ingreso es requerida.
         </mat-error>
       </mat-form-field>
-
+    
       <mat-form-field appearance="fill" class="form-field">
         <mat-label>Hora de Ingreso</mat-label>
-            <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
-            <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
-            <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
-            <mat-error *ngIf="cronoForm?.get('horaIngreso')?.invalid && cronoForm?.get('horaIngreso')?.touched">
-                El campo es obligatorio (HH:mm).
-            </mat-error>
+        <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
+        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+        <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+        <mat-error *ngIf="cronoForm?.get('horaIngreso')?.invalid && cronoForm?.get('horaIngreso')?.touched">
+          El campo es obligatorio (HH:mm).
+        </mat-error>
       </mat-form-field>
     </div>
-
+    
     <div class="form-row">
       <mat-form-field appearance="fill" class="form-field">
         <mat-label>Fecha de Egreso</mat-label>
-        <input matInput [matDatepicker]="pickerEgreso" formControlName="fechaEgreso">
+        <input matInput [matDatepicker]="pickerEgreso" formControlName="fechaEgreso" [readonly]="!cronoForm.get('fechaIngreso')?.value" [min]="minFechaEgreso">
         <mat-datepicker-toggle matSuffix [for]="pickerEgreso"></mat-datepicker-toggle>
         <mat-datepicker #pickerEgreso></mat-datepicker>
         <mat-error *ngIf="cronoForm.get('fechaEgreso')!.hasError('required')">
           Fecha de egreso es requerida.
         </mat-error>
+        <mat-error *ngIf="cronoForm.get('fechaEgreso')?.errors?.['fechaEgresoInvalida']">
+          No puede ser menor que fecha ingreso.
+        </mat-error>
       </mat-form-field>
-
+    
       <mat-form-field appearance="fill" class="form-field">
-          <mat-label>Hora de Egreso</mat-label>
-              <input matInput formControlName="horaEgreso" [ngxMatTimepicker]="horaPicker2" [format]="24" (click)="horaPicker2.open()" [readonly]="!cronoForm.get('fechaEgreso')?.value">
-              <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
-              <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-              <mat-error *ngIf="cronoForm?.get('horaEgreso')?.invalid && cronoForm?.get('horaEgreso')?.touched">
-                  El campo es obligatorio (HH:mm).
-              </mat-error>
+        <mat-label>Hora de Egreso</mat-label>
+        <input matInput formControlName="horaEgreso" [ngxMatTimepicker]="horaPicker2" [format]="24" (click)="horaPicker2.open()" [readonly]="!cronoForm.get('fechaEgreso')?.value">
+        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+        <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+        <mat-error *ngIf="cronoForm?.get('horaEgreso')?.hasError('required') && !cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
+          El campo es obligatorio (HH:mm).
+        </mat-error>
+        <mat-error *ngIf="cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
+          Debe ser posterior a hora ingreso.
+        </mat-error>
       </mat-form-field>
     </div>
-
+    
     <div class="form-row">
       <mat-form-field appearance="fill">
         <mat-label>Tipo de Guardia</mat-label>

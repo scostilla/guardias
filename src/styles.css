@@ -359,7 +359,20 @@ footer {
   .contenedor-montos {
     width: 90%;
   }
-    
+  
+  .ref {
+    font-size: 60%;
+  }
+
+  .titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
+    letter-spacing: .1em;
+      font-family: "Ubuntu";
+      font-size: 3.6em;
+      padding: 40px 50px 20px 20px;
+      font-weight: bolder;
+      text-align: center;
+  }
+      
 }
 
 /* --botones circulares seccción actividades-- */
@@ -824,16 +837,21 @@ mat-label{
   border-left: 20px solid #243c74;}
   
 /* --referencias-- */
+.ref-contenedor {
+  display: inline-flex; /* Usamos inline-flex para alinear los elementos en línea */
+  align-items: center; /* Esto asegura que el círculo y el texto se alineen verticalmente */
+}
+
 .ref {
   font-weight: bold;
 }
 
 .ref-circulo {
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: inline-block; 
-  vertical-align: middle; 
+  width: 12px;
+  height: 12px;
+  background-color: red; /* Para que el círculo sea visible */
+  margin-right: 1px; /* Espacio entre el círculo y el texto */
 }
 
 .ref-circulo + .ref {

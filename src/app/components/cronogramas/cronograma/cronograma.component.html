@@ -13,30 +13,31 @@
     </div>
   </div>
   <div class="row mt-3 mt-md-0"> 
-    <div class="col-6 d-flex justify-content-start">
+    <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
       <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
       <mat-menu #menug="matMenu">
         <button mat-menu-item routerLink="/cronograma-p">Guardias Pasivas</button>
       </mat-menu>
     </div>
-    <div class="col-6 d-flex justify-content-end">
-      <div class="col-12 col-md-6 m d-flex justify-content-md-end">Efector: <span class="negrita ps-1">{{efectorNombre}}</span>
-      <!--<button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
+    <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+      <div class="col-12 col-md-6 m d-flex justify-content-center justify-content-md-end">
+      <button mat-button [matMenuTriggerFor]="menu">» Todos los servicios</button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item>Hospital San Roque (Centro)</button>
-        <button mat-menu-item>Materno Infantil (Centro)</button>
-      </mat-menu>-->
+        <button mat-menu-item>Clinica</button>
+        <button mat-menu-item>Terapia</button>
+      </mat-menu>
     </div>
   </div>
   <div class="row mb-3"> 
     <div class="col-12 d-flex justify-content-center titulo-calendario">{{ viewDate | date: 'MMMM yyyy' | uppercase }}</div>
+    <div class="col-12 d-flex justify-content-center" style="margin-top: -30px;">Efector: <span class="negrita ps-1">{{efectorNombre}}</span></div>
   </div>
   <div class="row d-float justify-content-center">
     <div class="col-12 d-flex justify-content-center">
-      <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
-      <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
-      <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
-      <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span></div>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span></div>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span></div>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span></div>
     </div>
   </div>
   <div class="row">
