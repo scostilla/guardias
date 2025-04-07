@@ -261,7 +261,7 @@ export class RegistroActividadesComponent {
   }
 
   openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
+    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
       disableClose: true,
       data: {

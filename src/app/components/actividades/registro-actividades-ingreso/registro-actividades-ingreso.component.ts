@@ -18,6 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -163,12 +164,18 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   }
 
   openAsistencialDialog(): void {
+    console.log("Datos enviados al diálogo:", {
+      idEfector: this.efectorId, 
+      tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
+      mode: AsistencialMode.INGRESO
+    });
     const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
       width: '800px',
       disableClose: true,
       data: {
         idEfector: this.efectorId, // Pasar el idEfector desde el sessionStorage
-        tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre // Pasar el tipo de guardia seleccionado
+        tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre, // Pasar el tipo de guardia seleccionado
+        mode: AsistencialMode.INGRESO
       }
     });
 
@@ -277,7 +284,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/home-page']);
+    this.router.navigate(['/registro-diario']);
   }
 }
 

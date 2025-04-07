@@ -60,14 +60,18 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
     switch (this.data.mode) {
       case AsistencialMode.INGRESO:
         this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(asistenciales => {
-          // Lógica para ingreso
+          this.dataSource = new MatTableDataSource(asistenciales);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         });
         break;
 
       case AsistencialMode.SALIDA:
         console.log("Parámetros enviados al servicio SALIDA:", idEfector, tipoGuardia);
         this.asistencialService.ConPendientes(idEfector, tipoGuardia).subscribe(asistenciales => {
-          // Lógica para salida
+          this.dataSource = new MatTableDataSource(asistenciales);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         });
         break;
 

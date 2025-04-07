@@ -158,7 +158,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
   openAsistencialDialog(): void {
     console.log("Datos enviados al diálogo:", {
       idEfector: this.efectorId, 
-      tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.id,
+      tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
       mode: AsistencialMode.SALIDA
     });
     const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
@@ -166,7 +166,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
       disableClose: true,
       data: { 
         idEfector: this.efectorId, 
-        tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.id,
+        tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
         mode: AsistencialMode.SALIDA
       }
     });
@@ -314,7 +314,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/home-page']);
+    this.router.navigate(['/registro-diario']);
   }
 }
 
