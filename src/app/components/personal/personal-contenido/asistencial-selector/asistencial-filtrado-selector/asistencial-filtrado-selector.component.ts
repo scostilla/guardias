@@ -116,14 +116,14 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
-   // Selecciona una persona (Asistencial o NoAsistencial)
-    selectAsistencial(asistencial: AsistencialSummaryDto): void {
-      // Verifica que el objeto tenga la estructura correcta
-      console.log('Selected Persona:', asistencial);
-    
-      // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
-      this.dialogRef.close(asistencial);
-    }
+  // Selecciona una persona (Asistencial o NoAsistencial)
+  selectAsistencial(asistencial: AsistencialSummaryDto): void {
+    // Verifica que el objeto tenga la estructura correcta
+    console.log('Selected Persona:', asistencial);
+
+    // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
+    this.dialogRef.close(asistencial);
+  }
 
   cerrar(): void {
     this.dialogRef.close();
