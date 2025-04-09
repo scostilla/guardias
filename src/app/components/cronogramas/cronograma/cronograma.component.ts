@@ -7,7 +7,8 @@ import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogr
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { Subscription } from 'rxjs';
@@ -66,7 +67,11 @@ export class CronogramaComponent {
 
   efectorId: number | null = null;
   efectorNombre: string | null = null;
+  efectorNivel: number | null = null;
   showMessage: boolean = false;
+
+  servicios: ServicioSummaryDto[] = [];
+  selectedServiceId: number | null = null;
 
   constructor(
     private feriadoService: FeriadoService,
@@ -154,6 +159,8 @@ export class CronogramaComponent {
 
   this.loadCronogramas();
     }
+
+  this.obtenerServicios();
   }
 
   // Roles a usar
@@ -177,9 +184,10 @@ export class CronogramaComponent {
   loadEfectorName(): void {
     if (this.efectorId) {
       this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Efector) => {
+        (efector: Hospital) => {
           // traigo nombre del efector
           this.efectorNombre = efector.nombre;
+          this.efectorNivel = efector.nivelComplejidad;
         },
         (error) => {
           console.error('Error al obtener el efector:', error);
@@ -189,7 +197,13 @@ export class CronogramaComponent {
     }
   }
 
-  // Método separado que carga los cronogramas
+  obtenerServicios(): void {
+    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
+      this.servicios = data;
+    });
+  }
+
+  /*
   loadCronogramas(): void {
     this.cronogramaService.listEfector(this.efectorId!).subscribe((cronogramas) => {
       this.events = cronogramas.map((cronograma) => {
@@ -218,7 +232,7 @@ export class CronogramaComponent {
         return {
           start: fechaHoraIngreso.toDate(),
           end: fechaHoraEgreso.toDate(),
-          title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
+          title: ${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia},
           obs: observacion,
           id: id,
           color: color,
@@ -227,10 +241,68 @@ export class CronogramaComponent {
       });
       this.refreshView(); // Refresca la vista del calendario
     });
+  }*/
+
+  // Método para cargar los cronogramas
+  loadCronogramas(): void {
+    if (this.selectedServiceId) {
+      // Si hay un servicio seleccionado, cargar cronogramas filtrados por servicio
+      this.cronogramaService.listEfectorService(this.efectorId!, this.selectedServiceId!).subscribe((cronogramas) => {
+        this.events = this.mapCronogramas(cronogramas);
+        this.refreshView();
+      });
+    } else {
+      // Si no hay servicio seleccionado, cargar todos los cronogramas
+      this.cronogramaService.listEfector(this.efectorId!).subscribe((cronogramas) => {
+        this.events = this.mapCronogramas(cronogramas);
+        this.refreshView();
+      });
+    }
+  }
+
+  // Mapeo de los cronogramas al formato adecuado
+  mapCronogramas(cronogramas: any[]): any[] {
+    return cronogramas.map((cronograma) => {
+      const tipoGuardia = cronograma.tipoGuardia?.nombre;
+      const observacion = cronograma.observacion;
+      const id = cronograma.id;
+
+      const fechaHoraIngreso = moment(cronograma.fechaIngreso)
+        .set({
+          hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
+          minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
+          second: 0
+        });
+
+      const fechaHoraEgreso = moment(cronograma.fechaEgreso)
+        .set({
+          hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
+          minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
+          second: 0
+        });
+
+      const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
+
+      return {
+        start: fechaHoraIngreso.toDate(),
+        end: fechaHoraEgreso.toDate(),
+        title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
+        obs: observacion,
+        id: id,
+        color: color,
+        meta: cronograma
+      };
+    });
   }
   
   refreshView(): void {
     this.viewDate = new Date(this.viewDate.getTime());
+  }
+
+  // Método que se llama cuando se selecciona un servicio del menú
+  onServicioSelect(serviceId: number | null): void {
+    this.selectedServiceId = serviceId;
+    this.loadCronogramas(); // Vuelve a cargar los cronogramas con el filtro del servicio
   }
   
   getHolidays(): void {

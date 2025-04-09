@@ -6,6 +6,8 @@ import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogr
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
@@ -28,6 +30,7 @@ export class CronogramaCreateComponent {
   tomorrowDate: Date = new Date(this.currentDate);
   minFechaIngreso: string = '';
   minFechaEgreso: string = '';
+  servicios: ServicioSummaryDto[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CronogramaCreateComponent>,
@@ -35,6 +38,7 @@ export class CronogramaCreateComponent {
     private fb: FormBuilder,
     private cronoService: CronogramaTentativoService,
     private efectorService: EfectorService,
+    private hospitalService: HospitalService,
     private tipoGuardiaService: TipoGuardiaService,
     public dialog: MatDialog,
     private toastr: ToastrService,
@@ -51,6 +55,7 @@ export class CronogramaCreateComponent {
       horaEgreso: [{ value: '', disabled: true }, Validators.required],
       tipoGuardia: ['', Validators.required],
       asistencial: ['', Validators.required],
+      idServicio: ['', Validators.required],
       observacion: ['', [Validators.maxLength(250)]],
     });
   }
@@ -89,6 +94,8 @@ export class CronogramaCreateComponent {
       this.validateHoraEgreso(); // Validar cada vez que cambia horaEgreso
       this.cdRef.detectChanges(); // Forzar la detección de cambios
     });
+
+    this.obtenerServicios();
   }
   
 
@@ -166,6 +173,12 @@ validateHoraEgreso(): void {
   }
 }
 
+  obtenerServicios(): void {
+    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
+      this.servicios = data;
+    });
+  }
+
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
@@ -206,6 +219,7 @@ validateHoraEgreso(): void {
         false, // aceptado
         formData.tipoGuardia.id,
         formData.asistencial,
+        formData.idServicio,
         this.efectorId!,
         formData.observacion
       );

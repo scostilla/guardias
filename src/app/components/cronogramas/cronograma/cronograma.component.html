@@ -21,11 +21,17 @@
     </div>
     <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
       <div class="col-12 col-md-6 m d-flex justify-content-center justify-content-md-end">
-      <button mat-button [matMenuTriggerFor]="menu">» Todos los servicios</button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>Clinica</button>
-        <button mat-menu-item>Terapia</button>
-      </mat-menu>
+        <button mat-button [matMenuTriggerFor]="menu">» Todos los servicios</button>
+        <mat-menu #menu="matMenu">
+          <!-- "Todos los servicios" selecciona null para quitar el filtro -->
+          <button mat-menu-item (click)="onServicioSelect(null)">Todos los servicios</button>
+    
+          <!-- Lista de servicios -->
+          <button mat-menu-item *ngFor="let servicio of servicios" (click)="onServicioSelect(servicio.id)">
+            {{ servicio.descripcion }}
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </div>
   <div class="row mb-3"> 

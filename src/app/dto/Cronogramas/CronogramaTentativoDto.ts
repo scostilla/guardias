@@ -8,6 +8,7 @@ export class CronogramaTentativoDto {
     aceptado: boolean;
     idTipoGuardia: number;
     idAsistencial: number;
+    idServicio: number;
     idEfector: number;
     observacion: string | null
 
@@ -20,6 +21,7 @@ export class CronogramaTentativoDto {
         aceptado: boolean,
         idTipoGuardia: number,
         idAsistencial: number,
+        idServicio: number,
         idEfector: number,
         observacion: string | null    
     ) {
@@ -31,6 +33,7 @@ export class CronogramaTentativoDto {
         this.aceptado = aceptado;
         this.idTipoGuardia = idTipoGuardia;
         this.idAsistencial = idAsistencial;
+        this.idServicio = idServicio;
         this.idEfector = idEfector;
         this.observacion = observacion;
       }

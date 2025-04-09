@@ -266,6 +266,7 @@ import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
+import { AutoridadSelectorComponent } from './components/personal/personal-contenido/autoridad-selector/autoridad-selector.component';
 
 @NgModule({
   declarations: [
@@ -478,7 +479,8 @@ import { CronogramaCreateComponent } from './components/cronogramas/cronograma-c
     PersonalDhEditComponent,
     PersonalDhCreateComponent,
     PersonalDhDetailComponent,
-    CronogramaCreateComponent,    
+    CronogramaCreateComponent,
+    AutoridadSelectorComponent,    
   ],
 
   imports: [

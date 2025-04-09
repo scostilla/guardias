@@ -24,7 +24,7 @@ export class CapsService {
       return this.httpClient.get<Caps[]>(this.capsURL + 'list');
   }
 
-  public detail( id:number): Observable<Caps> {
+  public getById( id:number): Observable<Caps> {
     return this.httpClient.get<Caps>(this.capsURL + `detail/${id}`);
 }
 

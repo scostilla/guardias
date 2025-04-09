@@ -78,6 +78,20 @@
 
     <div class="form-row">
       <mat-form-field appearance="fill">
+        <mat-label>Servicio</mat-label>
+        <mat-select formControlName="idServicio">
+          <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
+            {{ servicio.descripcion }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="cronoForm.get('idServicio')!.hasError('required')">
+          El servicio es requerido.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill">
         <mat-label>Observación</mat-label>
         <textarea matInput formControlName="observacion"></textarea>
         <mat-error *ngIf="cronoForm.get('observacion')!.hasError('maxlength')">

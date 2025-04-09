@@ -1,5 +1,5 @@
 <app-spinner></app-spinner>
-<h1 mat-dialog-title>Seleccionar Profesional: {{efectorNombre}}</h1>
+<h1 mat-dialog-title>Seleccionar Profesional: <!--{{efectorNombre}}--></h1>
 
 <div class="container">
 
@@ -58,13 +58,13 @@
             </mat-cell>
           </ng-container>
 
-          <!-- Columna profesion -->
+          <!--  
           <ng-container matColumnDef="profesion">
             <mat-header-cell *matHeaderCellDef class="negrita"> Profesión </mat-header-cell>
             <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
               {{ persona.idLegajos?.[0]?.profesion?.nombre }}
             </mat-cell>
-          </ng-container>
+          </ng-container>-->
 
           <!-- Fila de encabezado -->
           <mat-header-row *matHeaderRowDef="displayedColumns" style="background-color: #f5f5f5;"></mat-header-row>
