@@ -19,6 +19,7 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { RegistrosPendientes } from 'src/app/models/RegistrosPendientes';
 import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
+import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegSalidaDto';
 
 @Component({
   selector: 'app-registro-actividades-egreso',
@@ -46,6 +47,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
 
   registrosPendientes: RegistrosPendientes[] = [];
   registroSeleccionado: RegistroActividad | null = null;
+  idRegistroActividad: number | null = null;
   /* mesActual: number;
   anioActual: number; */
 
@@ -66,19 +68,20 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     //this.mesActual = 4;
     /* this.mesActual = fechaActual.getMonth() + 1; */
     //this.anioActual = fechaActual.getFullYear();
-    
+
     this.currentDate = new Date();
-     // Inicializar formulario
-     this.registroForm = this.fb.group({
+    // Inicializar formulario
+    this.registroForm = this.fb.group({
       idTipoGuardia: ['', Validators.required],
       idAsistencial: ['', Validators.required],
       idEfector: [''],
       fechaIngreso: ['', Validators.required],
       eventStartTime: ['', Validators.required],
-      idRegistroActividad: ['', Validators.required],
+      idRegistroActividad: [''],
       fechaEgreso: [Validators.required],
       //fechaEgreso: [fechaActual, Validators.required],
-      eventEndTime: ['', Validators.required]
+      eventEndTime: ['', Validators.required],
+      idServicio: ['']
     });
   }
 
@@ -157,15 +160,16 @@ export class RegistroActividadesEgresoComponent implements OnInit {
 
   openAsistencialDialog(): void {
     console.log("Datos enviados al diálogo:", {
-      idEfector: this.efectorId, 
+      idEfector: this.efectorId,
       tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
       mode: AsistencialMode.SALIDA
     });
+
     const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
       width: '800px',
       disableClose: true,
-      data: { 
-        idEfector: this.efectorId, 
+      data: {
+        idEfector: this.efectorId,
         tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
         mode: AsistencialMode.SALIDA
       }
@@ -176,6 +180,10 @@ export class RegistroActividadesEgresoComponent implements OnInit {
         // Actualizo el valor legible para mostrarlo y el id para el formulario
         this.inputValue = `${result.apellido} ${result.nombre}`;
         this.registroForm.patchValue({ idAsistencial: result.id });
+
+        // Cargar registros pendientes del profesional seleccionado
+        this.cargarRegistrosPendientes(result.id);
+
       } else {
         this.toastr.info('No se seleccionó un profesional', 'Información', {
           timeOut: 6000,
@@ -193,46 +201,14 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     });
   }
 
- /*  // Modificar el formulario para el registro de salida
-  private crearFormulario() {
-    this.registroForm = this.fb.group({
-      idTipoGuardia: ['', Validators.required],
-      idAsistencial: ['', Validators.required],
-      idRegistroActividad: ['', Validators.required], // Para guardar el ID del registro seleccionado
-      fechaEgreso: [new Date(), Validators.required],
-      eventEndTime: ['', Validators.required]
-    });
-  }
+  cargarRegistrosPendientes(asistencialId: number): void {
 
-  // Modificar el onProfesionalSelected para cargar registros pendientes
-  onProfesionalSelected(): void {
-    const profesionalId = this.registroForm.get('idAsistencial')?.value;
-    if (profesionalId && this.efectorId) {
-      this.cargarRegistrosPendientes(profesionalId);
-    } else {
-      this.registrosPendientes = [];
-      this.registroSeleccionado = null;
-    }
-  }
+    this.registroActividadService.getRegActivPendiente(asistencialId, this.efectorId!).subscribe({
+      next: (registro) => {
+        if (registro != null) {
 
-  cargarRegistrosPendientes(profesionalId: number): void {
-    console.log("efector" , this.efectorId );
-    console.log("mes" , this.mesActual );
-    console.log("anio" , this.anioActual);
-    console.log("profesional" , profesionalId );
-    this.registroPendienteService.detailByEfectorAndFechaAndAsistencial(
-      this.efectorId!,
-      this.mesActual,
-      this.anioActual,
-      profesionalId
-    ).subscribe({
-      next: (registros: RegistrosPendientes[]) => {
-        console.log("Registros recibidos del backend:", registros); // <- Debug
-        this.registrosPendientes = registros;
-        
-        if (registros.length === 1 && registros[0].registrosActividades?.length > 0) {
-          this.seleccionarRegistro(registros[0].registrosActividades[0]);
-        } else if (registros.length === 0) {
+          this.cargarDatosRegistro(registro);
+        } else {
           this.toastr.info('No hay registros pendientes para este profesional');
         }
       },
@@ -243,58 +219,153 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     });
   }
 
-  seleccionarRegistro(registro: RegistroActividad): void {
-    this.registroSeleccionado = registro;
+  cargarDatosRegistro(registro: RegActivRegSalidaDto): void {
+
+    console.log('Datos recibidos del backend:', registro);
+
+    // Guardar el ID del registro para usarlo luego
+    this.idRegistroActividad = registro.id;
+
+    //Formatear hora (HH:mm:ss -> HH:mm)
+    const horaFormateada = registro.horaIngreso.split(':').slice(0, 2).join(':');
+    
+    // Divide solo en 2 partes (HH y mm)
+    const [hours, minutes] = registro.horaIngreso.split(':');
+
+    // Obtener el tipo de guardia seleccionado actualmente
+    //const tipoGuardiaActual = this.registroForm.get('idTipoGuardia')?.value;
+
     this.registroForm.patchValue({
       idRegistroActividad: registro.id,
-      // No necesitamos cargar más datos ya que son solo para referencia visual
+      //horaFormateada,
+      fechaIngreso: registro.fechaIngreso,
+      eventStartTime: `${hours}:${minutes}`, // Formato HH:mm
+      idEfector: registro.idEfector,
+      idServicio: registro.idServicio
     });
+
+    console.log('Formulario después de patch:', this.registroForm.value);
+
+    /*  // Deshabilitar campos de ingreso (ya que son datos históricos)
+     this.registroForm.get('fechaIngreso')?.disable();
+     this.registroForm.get('eventStartTime')?.disable();
+     this.registroForm.get('idTipoGuardia')?.disable();
+     this.registroForm.get('idAsistencial')?.disable(); */
   }
- */
+
+  /*  // Modificar el formulario para el registro de salida
+   private crearFormulario() {
+     this.registroForm = this.fb.group({
+       idTipoGuardia: ['', Validators.required],
+       idAsistencial: ['', Validators.required],
+       idRegistroActividad: ['', Validators.required], // Para guardar el ID del registro seleccionado
+       fechaEgreso: [new Date(), Validators.required],
+       eventEndTime: ['', Validators.required]
+     });
+   }
+ 
+   // Modificar el onProfesionalSelected para cargar registros pendientes
+   onProfesionalSelected(): void {
+     const profesionalId = this.registroForm.get('idAsistencial')?.value;
+     if (profesionalId && this.efectorId) {
+       this.cargarRegistrosPendientes(profesionalId);
+     } else {
+       this.registrosPendientes = [];
+       this.registroSeleccionado = null;
+     }
+   }
+ 
+   cargarRegistrosPendientes(profesionalId: number): void {
+     console.log("efector" , this.efectorId );
+     console.log("mes" , this.mesActual );
+     console.log("anio" , this.anioActual);
+     console.log("profesional" , profesionalId );
+     this.registroPendienteService.detailByEfectorAndFechaAndAsistencial(
+       this.efectorId!,
+       this.mesActual,
+       this.anioActual,
+       profesionalId
+     ).subscribe({
+       next: (registros: RegistrosPendientes[]) => {
+         console.log("Registros recibidos del backend:", registros); // <- Debug
+         this.registrosPendientes = registros;
+         
+         if (registros.length === 1 && registros[0].registrosActividades?.length > 0) {
+           this.seleccionarRegistro(registros[0].registrosActividades[0]);
+         } else if (registros.length === 0) {
+           this.toastr.info('No hay registros pendientes para este profesional');
+         }
+       },
+       error: (err) => {
+         this.toastr.error('Error al cargar registros pendientes');
+         console.error(err);
+       }
+     });
+   }
+ 
+   seleccionarRegistro(registro: RegistroActividad): void {
+     this.registroSeleccionado = registro;
+     this.registroForm.patchValue({
+       idRegistroActividad: registro.id,
+       // No necesitamos cargar más datos ya que son solo para referencia visual
+     });
+   }
+  */
 
   saveRegistro(): void {
-    console.log('Formulario válido:', this.registroForm.valid);
-    console.log('Formulario modificado:', this.isModified());
-    console.log('Valores del formulario:', this.registroForm.value);
-    if (this.registroForm.valid  && this.registroSeleccionado) {
-      const registroData = this.registroForm.value;
-      const registroSalida = new RegistroActividadDto(
-        this.registroSeleccionado.fechaIngreso,
-        registroData.fechaEgreso,
-        this.registroSeleccionado.horaIngreso,
-        registroData.eventEndTime,
-        this.registroSeleccionado.tipoGuardia.id! || 0,
+    console.log('Estado del formulario:', this.registroForm.status);
+    const formValue = this.registroForm.getRawValue(); // Usar getRawValue() para incluir campos disabled
+    console.log('Valores del formulario (raw):', formValue);
+
+    if (this.registroForm.valid && this.idRegistroActividad) {
+      
+      // Verificar que tenemos el tipo de guardia
+      if (!formValue.idTipoGuardia || !formValue.idTipoGuardia.id) {
+        this.toastr.error('Debe seleccionar un tipo de guardia válido');
+        return;
+      }
+      // Divide solo en 2 partes (HH y mm)
+      const horaFormateada = formValue.fechaIngreso.split(':').slice(0, 2).join(':');
+
+      // Crear DTO con los IDs numéricos necesarios
+      const registroSalidaDto = new RegistroActividadDto(
+        //formValue.fechaIngreso,
+        horaFormateada,
+        formValue.fechaEgreso,
+        formValue.eventStartTime,
+        formValue.eventEndTime,
+        formValue.idTipoGuardia.id, // Solo el ID numérico
         true,
-        this.registroSeleccionado.asistencial.id! || 0,
-        //aqui tiene que tomar el id del servicio del registro de actividad encontrado a treves del registro pendiente
-        this.registroSeleccionado.servicio.id! || 0,
-        registroData.idEfector || 0,
-        this.userId! || 0
+        formValue.idAsistencial,
+        formValue.idServicio,
+        formValue.idEfector,
+        this.userId!
       );
 
-      console.log('Registro a enviar:', registroSalida);
+      console.log('Enviando a registrarSalida:', {
+        id: this.idRegistroActividad,
+        dto: registroSalidaDto
+    });
+
 
       this.registroActividadService.registrarSalida(
-        this.registroSeleccionado.id!, registroSalida
-      ).subscribe(
-          result => {
-            this.toastr.success('Salida registrada correctamente', 'EXITO', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-            this.router.navigate(['/registro-diario']);
-          },
-          error => {
-            this.toastr.error('Error al registrar salida', 'Error', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-          }
-        );
-      } 
+        this.idRegistroActividad,
+        registroSalidaDto
+      ).subscribe({
+        next: () => {
+          this.toastr.success('Salida registrada correctamente');
+          this.router.navigate(['/registro-diario']);
+        },
+        error: (err) => {
+          console.error('Error en la petición:', err);
+          this.toastr.error('Error al registrar salida');
+        }
+      });
+    } else {
+      this.toastr.warning('Complete todos los campos obligatorios');
     }
+  }
+
 
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);

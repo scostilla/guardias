@@ -121,6 +121,10 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
     // Verifica que el objeto tenga la estructura correcta
     console.log('Selected Persona:', asistencial);
 
+    //*****FABI     aqui debería buscar el registro de actividad con el idAsistencial e idEfector, luego mandarle de regreso ese regActivRegSalidaDto
+    //***********
+
+
     // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
     this.dialogRef.close(asistencial);
   }

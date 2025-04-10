@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject, BehaviorSubject, tap } from "rxjs";
 import { RegistroActividad } from "../models/RegistroActividad";
 import { RegistroActividadDto } from "../dto/RegistroActividadDto";
+import { RegActivRegSalidaDto } from "../dto/RegistroActividad/RegActivRegSalidaDto";
 
 @Injectable({
   providedIn: 'root'
@@ -57,8 +58,12 @@ export class RegistroActividadService {
       )
   }
 
-  public registrarSalida(id: number, registroActividad: RegistroActividadDto): Observable<any> {
-    return this.httpClient.put<any>(this.registroActividadURL + `registrarSalida/${id}`, registroActividad)
+  public getRegActivPendiente(idAsistencial: number, idEfector: number): Observable<RegActivRegSalidaDto> {
+    return this.httpClient.get<RegActivRegSalidaDto>(this.registroActividadURL + `getRegActivPendiente/${idAsistencial}/${idEfector}`);
+  }
+
+  public registrarSalida(idRegistro: number, registroActividad: RegistroActividadDto): Observable<any> {
+    return this.httpClient.put<any>(this.registroActividadURL + `registrarSalida/${idRegistro}`, registroActividad)
       .pipe(
         tap(() => {
           this._refresh$.next();
