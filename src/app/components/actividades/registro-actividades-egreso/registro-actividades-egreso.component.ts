@@ -20,7 +20,7 @@ import { RegistrosPendientes } from 'src/app/models/RegistrosPendientes';
 import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegSalidaDto';
-
+import * as moment from 'moment';
 @Component({
   selector: 'app-registro-actividades-egreso',
   templateUrl: './registro-actividades-egreso.component.html',
