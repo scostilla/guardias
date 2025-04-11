@@ -81,7 +81,8 @@ export class RegistroActividadesEgresoComponent implements OnInit {
       fechaEgreso: [Validators.required],
       //fechaEgreso: [fechaActual, Validators.required],
       eventEndTime: ['', Validators.required],
-      idServicio: ['']
+      idServicio: [''],
+      idUsuarioIngreso: ['']
     });
   }
 
@@ -225,9 +226,6 @@ export class RegistroActividadesEgresoComponent implements OnInit {
 
     // Guardar el ID del registro para usarlo luego
     this.idRegistroActividad = registro.id;
-
-    //Formatear hora (HH:mm:ss -> HH:mm)
-    const horaFormateada = registro.horaIngreso.split(':').slice(0, 2).join(':');
     
     // Divide solo en 2 partes (HH y mm)
     const [hours, minutes] = registro.horaIngreso.split(':');
@@ -241,7 +239,8 @@ export class RegistroActividadesEgresoComponent implements OnInit {
       fechaIngreso: registro.fechaIngreso,
       eventStartTime: `${hours}:${minutes}`, // Formato HH:mm
       idEfector: registro.idEfector,
-      idServicio: registro.idServicio
+      idServicio: registro.idServicio,
+      idUsuarioIngreso: registro.idUsuarioIngreso
     });
 
     console.log('Formulario después de patch:', this.registroForm.value);
@@ -329,8 +328,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
 
       // Crear DTO con los IDs numéricos necesarios
       const registroSalidaDto = new RegistroActividadDto(
-        //formValue.fechaIngreso,
-        horaFormateada,
+        formValue.fechaIngreso,
         formValue.fechaEgreso,
         formValue.eventStartTime,
         formValue.eventEndTime,
@@ -339,6 +337,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
         formValue.idAsistencial,
         formValue.idServicio,
         formValue.idEfector,
+        formValue.idUsuarioIngreso,
         this.userId!
       );
 

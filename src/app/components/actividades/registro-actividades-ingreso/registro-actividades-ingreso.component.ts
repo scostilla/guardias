@@ -217,7 +217,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
         registroData.idAsistencial,
         registroData.idServicio.id,
         registroData.idEfector,
-        this.userId!
+        this.userId!,
       );
 
       console.log('Registro a enviar:', registroDto);
@@ -230,7 +230,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.router.navigate(['/home-page']);
+            this.router.navigate(['/registro-diario']);
           },
           error => {
             this.toastr.error('Ocurrió un error al crear o editar el registro diario', 'Error', {
@@ -248,7 +248,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.router.navigate(['/home-page']);
+            this.router.navigate(['/registro-diario']);
           },
           error => {
             this.toastr.error('Ocurrió un error al guardar el registro', 'Error', {
