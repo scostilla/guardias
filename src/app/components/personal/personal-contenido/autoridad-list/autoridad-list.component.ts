@@ -31,12 +31,12 @@ import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
-  selector: 'app-sin-efector',
-  templateUrl: './sin-efector.component.html',
-  styleUrls: ['./sin-efector.component.css']
+  selector: 'app-autoridad-list',
+  templateUrl: './autoridad-list.component.html',
+  styleUrls: ['./autoridad-list.component.css']
 })
 
-export class SinEfectorComponent implements OnInit, OnDestroy {
+export class AutoridadListComponent implements OnInit, OnDestroy {
 
   dniVisible: boolean = false;
   domicilioVisible: boolean = false;

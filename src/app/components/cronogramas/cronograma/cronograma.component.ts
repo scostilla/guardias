@@ -265,6 +265,7 @@ export class CronogramaComponent {
     return cronogramas.map((cronograma) => {
       const tipoGuardia = cronograma.tipoGuardia?.nombre;
       const observacion = cronograma.observacion;
+      const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
       const id = cronograma.id;
 
       const fechaHoraIngreso = moment(cronograma.fechaIngreso)
@@ -287,6 +288,7 @@ export class CronogramaComponent {
         start: fechaHoraIngreso.toDate(),
         end: fechaHoraEgreso.toDate(),
         title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
+        servicio: servicio,
         obs: observacion,
         id: id,
         color: color,
@@ -303,6 +305,14 @@ export class CronogramaComponent {
   onServicioSelect(serviceId: number | null): void {
     this.selectedServiceId = serviceId;
     this.loadCronogramas(); // Vuelve a cargar los cronogramas con el filtro del servicio
+  }
+
+  getServicioNombreSeleccionado(): string {
+    if (!this.selectedServiceId) {
+      return 'Todos los servicios';
+    }
+    const selected = this.servicios.find(s => s.id === this.selectedServiceId);
+    return selected ? `Servicio: ${selected.descripcion}` : 'Seleccionar servicio';
   }
   
   getHolidays(): void {
@@ -377,6 +387,7 @@ export class CronogramaComponent {
     const dialogRef = this.dialog.open(CronogramaDetailComponent, {
       width: '600px',
       data: {
+        title:'Lista profesionales',
         events: events.map(event => ({
           ...event,
           color: event.color
@@ -390,7 +401,22 @@ export class CronogramaComponent {
       this.loadCronogramas();  // Refrescamos los cronogramas cuando un evento ha sido eliminado
     });
   }
-      
+  
+  onEventClicked({ event }: { event: any }): void {
+    const dialogRef = this.dialog.open(CronogramaDetailComponent, {
+      width: '600px',
+      data: {
+        title:'Detalle evento',
+        events: [event],  // Solo ese evento
+        holidayName: this.getHolidayName(event.start)
+      }
+    });
+  
+    dialogRef.componentInstance.eventDeleted.subscribe(() => {
+      this.loadCronogramas();  // Refrescar eventos si se eliminó
+    });
+  }
+    
 /*EventDialog(): void {
   const dialogRef = this.dialog.open(PruebaFormComponent, {
     width: '600px',

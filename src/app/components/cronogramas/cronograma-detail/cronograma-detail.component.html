@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Listado profesionales
+<h1 mat-dialog-title>{{ data.title }}
     <h5 *ngIf="data.holidayName">
       <p>Feriado: {{ data.holidayName }}</p>
     </h5>
@@ -9,9 +9,11 @@
         <div>
           <span [style.color]="event.color.primary">{{ event.title }}</span><mat-icon class="delete-icon" (click)="deleteEvent(event)" matTooltip="Eliminar guardia tentativa">delete</mat-icon><br/> 
           Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
+          <span>Servicio: {{ event.servicio }}</span><br/>
           <span *ngIf="event.obs"> {{ event.obs }} </span>
         </div>
         <mat-divider></mat-divider>
+        <br/>
       </ng-container>
     </div>
   </mat-dialog-content>

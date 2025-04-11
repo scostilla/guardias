@@ -248,7 +248,7 @@ export class ExternoComponent implements OnInit, OnDestroy {
       return;
     }
   
-    // Llamo al servicio para obtener las habilitaciones de guardias para el efectorId y filto asistenciales
+    // Llamo al servicio para obtener las habilitaciones de guardias para el efectorId y filtro asistenciales
     this.habilitacionesGuardiasService.listHabilitacionesByEfector(efectorId).subscribe(habilitaciones => {
   
       // Filtro los asistenciales que están asociados a la habilitación del efectorId
