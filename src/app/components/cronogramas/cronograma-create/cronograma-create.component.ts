@@ -207,7 +207,7 @@ validateHoraEgreso(): void {
     });
   }
 
-  saveCronograma(): void { 
+  saveCronograma(): void {
     if (this.cronoForm.valid) {
       const formData = this.cronoForm.value;
       const cronogramaDto = new CronogramaTentativoDto(
@@ -224,32 +224,61 @@ validateHoraEgreso(): void {
         formData.observacion
       );
   
-      // Primero, verifica si el cronograma ya existe
+      // Verificar si ya existe el cronograma
       this.cronoService.existCronograma(cronogramaDto).subscribe(
-        (exists) => {
+        exists => {
           if (exists) {
-            // Si el cronograma ya existe, muestra un mensaje de error y no guarda
-            this.toastr.error('Ya existen guardias asignadas para la fecha seleccionada', 'Error', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
+            this.toastr.error(
+              'Ya existe una guardia asignada para el profesional en la fecha y hora seleccionada.',
+              'Error',
+              {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              }
+            );
           } else {
-            // Si no existe, guarda el cronograma
-            this.cronoService.save(cronogramaDto).subscribe(
-              response => {
-                this.toastr.success('Cronograma tentativo guardado', 'Éxito', {
-                  timeOut: 6000,
-                  positionClass: 'toast-top-center',
-                  progressBar: true
-                });
+            // Si no existe, verificar si hay superposición en otros efectores
+            this.cronoService.efectoresConCronograma(cronogramaDto).subscribe(
+              efectores => {
+                if (efectores && efectores.length > 0) {
+                  const lista = efectores.join(', ');
+                  this.toastr.warning(
+                    `El profesional también está cargado en la misma hora y fecha en los efectores: ${lista}`,
+                    'Superposición detectada',
+                    {
+                      timeOut: 8000,
+                      positionClass: 'toast-top-center',
+                      progressBar: true
+                    }
+                  );
+                }
   
-                this.cronoService.refresh$.next();
-                this.dialogRef.close(true);
+                // Guardar el cronograma
+                this.cronoService.save(cronogramaDto).subscribe(
+                  response => {
+                    this.toastr.success('Cronograma tentativo guardado', 'Éxito', {
+                      timeOut: 6000,
+                      positionClass: 'toast-top-center',
+                      progressBar: true
+                    });
+  
+                    this.cronoService.refresh$.next();
+                    this.dialogRef.close(true);
+                  },
+                  error => {
+                    console.error('Error al guardar el cronograma:', error);
+                    this.toastr.error('Hubo un error al guardar el cronograma', 'Error', {
+                      timeOut: 6000,
+                      positionClass: 'toast-top-center',
+                      progressBar: true
+                    });
+                  }
+                );
               },
               error => {
-                console.error('Error al guardar el cronograma:', error);
-                this.toastr.error('Hubo un error al guardar el cronograma', 'Error', {
+                console.error('Error al verificar efectores con cronograma:', error);
+                this.toastr.error('Hubo un error al verificar superposición con otros efectores', 'Error', {
                   timeOut: 6000,
                   positionClass: 'toast-top-center',
                   progressBar: true
@@ -276,7 +305,7 @@ validateHoraEgreso(): void {
       });
     }
   }
-  
+    
   closeDialog(): void {
     this.dialogRef.close();
   }

@@ -70,7 +70,12 @@ export class CronogramaTentativoService {
     existCronograma(cTentativos: CronogramaTentativoDto): Observable<boolean> {
       return this.httpClient.post<boolean>(`${this.cTentativoURL}existCronograma`, cTentativos);
     }
-  
+
+    // Trae los efectores donde ya existe el cronograma se esta cargando
+    efectoresConCronograma(cTentativos: CronogramaTentativoDto): Observable<number[]> {
+      return this.httpClient.post<number[]>(`${this.cTentativoURL}existCronogramaConEfector`, cTentativos);
     }
+  
+  }
     
     
