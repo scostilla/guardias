@@ -2,7 +2,7 @@
 <div class="container" *ngIf="isLogged">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">Nuevo registro diario</div>
+      <div class="titulos">Nuevo registro diario fa</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/home-page">
@@ -54,19 +54,24 @@
                         </mat-form-field>
 
 
-                    <mat-form-field appearance="fill" class="form-field">
+                    <!-- <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Efector</mat-label>
                             <mat-select formControlName="idEfector" [compareWith]="compareEfector">
                                 <mat-option *ngFor="let efector of efectores" [value]="efector">{{ efector.nombre }}</mat-option>
                             </mat-select>
                             <mat-error *ngIf="registroForm.get('idEfector')?.errors?.['required']">El hospital es requerido.</mat-error>
-                    </mat-form-field>
+                    </mat-form-field> -->
+                    <mat-form-field appearance="fill" class="form-field">
+                        <mat-label>Efector</mat-label>
+                        <input matInput [value]="efectorNombre" readonly>
+                      </mat-form-field>
                 </div>
 
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Ingreso</mat-label>
-                                <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso" [min]="currentDate" [max]="currentDate" [readonly]="true">
+                                <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso" [readonly]="true">
+                                <!-- <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso" [min]="currentDate" [max]="currentDate" [readonly]="true"> -->
                             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                             <mat-datepicker #picker1></mat-datepicker>
                             <mat-hint>MM/DD/YYYY</mat-hint>
@@ -84,7 +89,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="form-row">
+                <!-- <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Egreso</mat-label>
                         <input matInput [matDatepicker]="picker2" formControlName="fechaEgreso" [readonly]="!registroForm.get('fechaIngreso')?.value">
@@ -103,7 +108,7 @@
                                 El campo es obligatorio (HH:mm).
                             </mat-error>
                     </mat-form-field>
-                </div>
+                </div> -->
             </ng-container>
 
         <div mat-dialog-actions class="action mt-4">

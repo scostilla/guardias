@@ -267,6 +267,7 @@ import { PersonalDhCreateComponent } from './components/personal/personal-dh-cre
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { AutoridadSelectorComponent } from './components/personal/personal-contenido/autoridad-selector/autoridad-selector.component';
+import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 
 @NgModule({
   declarations: [
@@ -480,7 +481,8 @@ import { AutoridadSelectorComponent } from './components/personal/personal-conte
     PersonalDhCreateComponent,
     PersonalDhDetailComponent,
     CronogramaCreateComponent,
-    AutoridadSelectorComponent,    
+    AutoridadSelectorComponent,
+    AsistencialFiltradoSelectorComponent,    
   ],
 
   imports: [
