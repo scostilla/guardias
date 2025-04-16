@@ -97,6 +97,24 @@ export class CronogramaCreateComponent {
 
     this.obtenerServicios();
   }
+
+  onTipoGuardiaChange(event: any): void {
+    console.log("Tipo de guardia seleccionado:", event.value);
+    const nuevoTipoGuardia = event.value;
+    // Cambiar el tipo de guardia y borrar solo los campos relacionados
+    this.cambiarTipoGuardia(nuevoTipoGuardia);
+  }
+
+  // Método para cambiar el tipo de guardia y borrar solo los campos relacionados
+  cambiarTipoGuardia(nuevoTipoGuardia: any): void {
+    // Borrar solo los campos relacionados con el tipo de guardia
+    this.cronoForm.get('asistencial')?.reset();
+    this.cronoForm.get('idServicio')?.reset();
+
+    // Actualizar el tipo de guardia en el formulario
+    this.cronoForm.get('tipoGuardia')?.setValue(nuevoTipoGuardia);
+
+  }
   
 
 // Función que actualiza las restricciones de la fecha de egreso
@@ -182,7 +200,11 @@ validateHoraEgreso(): void {
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
-      disableClose: true
+      disableClose: true,
+      data: {
+        idEfector: this.efectorId,
+        tipoGuardia: this.cronoForm.get('tipoGuardia')?.value.nombre,
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {

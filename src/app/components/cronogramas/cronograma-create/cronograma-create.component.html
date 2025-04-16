@@ -3,69 +3,11 @@
 <mat-dialog-content class="mat-typography">
   <form [formGroup]="cronoForm" (ngSubmit)="saveCronograma()">
 
-    <div class="form-row">
-      <mat-form-field appearance="fill">
-        <mat-label>Profesional</mat-label>
-        <input matInput formControlName="asistencial" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
-        <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-        <mat-error *ngIf="cronoForm.get('asistencial')?.errors?.['required']">El profesional es requerido.</mat-error>
-      </mat-form-field>
-    </div>
 
-    <div class="form-row">
-      <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Fecha de Ingreso</mat-label>
-        <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso" [min]="minFechaIngreso">
-        <mat-datepicker-toggle matSuffix [for]="pickerIngreso"></mat-datepicker-toggle>
-        <mat-datepicker #pickerIngreso></mat-datepicker>
-        <mat-error *ngIf="cronoForm.get('fechaIngreso')!.hasError('required')">
-          Fecha de ingreso es requerida.
-        </mat-error>
-      </mat-form-field>
-    
-      <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Hora de Ingreso</mat-label>
-        <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
-        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
-        <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
-        <mat-error *ngIf="cronoForm?.get('horaIngreso')?.invalid && cronoForm?.get('horaIngreso')?.touched">
-          El campo es obligatorio (HH:mm).
-        </mat-error>
-      </mat-form-field>
-    </div>
-    
-    <div class="form-row">
-      <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Fecha de Egreso</mat-label>
-        <input matInput [matDatepicker]="pickerEgreso" formControlName="fechaEgreso" [readonly]="!cronoForm.get('fechaIngreso')?.value" [min]="minFechaEgreso">
-        <mat-datepicker-toggle matSuffix [for]="pickerEgreso"></mat-datepicker-toggle>
-        <mat-datepicker #pickerEgreso></mat-datepicker>
-        <mat-error *ngIf="cronoForm.get('fechaEgreso')!.hasError('required')">
-          Fecha de egreso es requerida.
-        </mat-error>
-        <mat-error *ngIf="cronoForm.get('fechaEgreso')?.errors?.['fechaEgresoInvalida']">
-          No puede ser menor que fecha ingreso.
-        </mat-error>
-      </mat-form-field>
-    
-      <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Hora de Egreso</mat-label>
-        <input matInput formControlName="horaEgreso" [ngxMatTimepicker]="horaPicker2" [format]="24" (click)="horaPicker2.open()" [readonly]="!cronoForm.get('fechaEgreso')?.value">
-        <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
-        <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-        <mat-error *ngIf="cronoForm?.get('horaEgreso')?.hasError('required') && !cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
-          El campo es obligatorio (HH:mm).
-        </mat-error>
-        <mat-error *ngIf="cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
-          Debe ser posterior a hora ingreso.
-        </mat-error>
-      </mat-form-field>
-    </div>
-    
     <div class="form-row">
       <mat-form-field appearance="fill">
         <mat-label>Tipo de Guardia</mat-label>
-        <mat-select formControlName="tipoGuardia">
+        <mat-select formControlName="tipoGuardia" (selectionChange)="onTipoGuardiaChange($event)">
           <mat-option *ngFor="let tipo of tiposGuardia" [value]="tipo">
             {{ tipo.nombre }}
           </mat-option>
@@ -76,29 +18,92 @@
       </mat-form-field>
     </div>
 
-    <div class="form-row">
-      <mat-form-field appearance="fill">
-        <mat-label>Servicio</mat-label>
-        <mat-select formControlName="idServicio">
-          <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
-            {{ servicio.descripcion }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="cronoForm.get('idServicio')!.hasError('required')">
-          El servicio es requerido.
-        </mat-error>
-      </mat-form-field>
-    </div>
+    <ng-container *ngIf="cronoForm.get('tipoGuardia')?.value">
 
-    <div class="form-row">
-      <mat-form-field appearance="fill">
-        <mat-label>Observación</mat-label>
-        <textarea matInput formControlName="observacion"></textarea>
-        <mat-error *ngIf="cronoForm.get('observacion')!.hasError('maxlength')">
-          La observación no puede tener más de 250 caracteres.
-        </mat-error>
-      </mat-form-field>
-    </div>
+      <div class="form-row">
+        <mat-form-field appearance="fill">
+          <mat-label>Profesional</mat-label>
+          <input matInput formControlName="asistencial" [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+          <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+          <mat-error *ngIf="cronoForm.get('asistencial')?.errors?.['required']">El profesional es requerido.</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Fecha de Ingreso</mat-label>
+          <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso" [min]="minFechaIngreso">
+          <mat-datepicker-toggle matSuffix [for]="pickerIngreso"></mat-datepicker-toggle>
+          <mat-datepicker #pickerIngreso></mat-datepicker>
+          <mat-error *ngIf="cronoForm.get('fechaIngreso')!.hasError('required')">
+            Fecha de ingreso es requerida.
+          </mat-error>
+        </mat-form-field>
+      
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Hora de Ingreso</mat-label>
+          <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
+          <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+          <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+          <mat-error *ngIf="cronoForm?.get('horaIngreso')?.invalid && cronoForm?.get('horaIngreso')?.touched">
+            El campo es obligatorio (HH:mm).
+          </mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Fecha de Egreso</mat-label>
+          <input matInput [matDatepicker]="pickerEgreso" formControlName="fechaEgreso" [readonly]="!cronoForm.get('fechaIngreso')?.value" [min]="minFechaEgreso">
+          <mat-datepicker-toggle matSuffix [for]="pickerEgreso"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEgreso></mat-datepicker>
+          <mat-error *ngIf="cronoForm.get('fechaEgreso')!.hasError('required')">
+            Fecha de egreso es requerida.
+          </mat-error>
+          <mat-error *ngIf="cronoForm.get('fechaEgreso')?.errors?.['fechaEgresoInvalida']">
+            No puede ser menor que fecha ingreso.
+          </mat-error>
+        </mat-form-field>
+      
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Hora de Egreso</mat-label>
+          <input matInput formControlName="horaEgreso" [ngxMatTimepicker]="horaPicker2" [format]="24" (click)="horaPicker2.open()" [readonly]="!cronoForm.get('fechaEgreso')?.value">
+          <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+          <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+          <mat-error *ngIf="cronoForm?.get('horaEgreso')?.hasError('required') && !cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
+            El campo es obligatorio (HH:mm).
+          </mat-error>
+          <mat-error *ngIf="cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
+            Debe ser posterior a hora ingreso.
+          </mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div class="form-row">
+        <mat-form-field appearance="fill">
+          <mat-label>Servicio</mat-label>
+          <mat-select formControlName="idServicio">
+            <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
+              {{ servicio.descripcion }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="cronoForm.get('idServicio')!.hasError('required')">
+            El servicio es requerido.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill">
+          <mat-label>Observación</mat-label>
+          <textarea matInput formControlName="observacion"></textarea>
+          <mat-error *ngIf="cronoForm.get('observacion')!.hasError('maxlength')">
+            La observación no puede tener más de 250 caracteres.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </ng-container>
 
   </form>
 </mat-dialog-content>
