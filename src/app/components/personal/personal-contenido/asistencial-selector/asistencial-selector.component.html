@@ -50,21 +50,21 @@
             </mat-cell>
           </ng-container>
 
-          <!-- Columna CUIL 
+          <!-- Columna CUIL -->
           <ng-container matColumnDef="cuil">
             <mat-header-cell *matHeaderCellDef class="negrita"> CUIL </mat-header-cell>
             <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
               {{ persona.cuil }}
             </mat-cell>
-          </ng-container>-->
+          </ng-container>
 
-          <!-- Columna profesion 
+          <!-- Columna profesion -->
           <ng-container matColumnDef="profesion">
             <mat-header-cell *matHeaderCellDef class="negrita"> Profesión </mat-header-cell>
             <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
-              {{ persona.idLegajos?.[0]?.profesion?.nombre }}
+              {{ persona.profesion }}
             </mat-cell>
-          </ng-container>-->
+          </ng-container>
 
           <!-- Fila de encabezado -->
           <mat-header-row *matHeaderRowDef="displayedColumns" style="background-color: #f5f5f5;"></mat-header-row>

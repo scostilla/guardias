@@ -9,6 +9,7 @@ import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/Asi
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { Subscription } from 'rxjs';
 
 
@@ -24,8 +25,7 @@ export class AsistencialSelectorComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   dataSource = new MatTableDataSource<AsistencialSummaryDto>([]);
-  //displayedColumns: string[] = ['apellido', 'nombre', 'cuil', 'profesion'];
-  displayedColumns: string[] = ['apellido', 'nombre'];
+  displayedColumns: string[] = ['apellido', 'nombre', 'cuil', 'profesion'];
   //selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
   suscription!: Subscription;
@@ -38,6 +38,7 @@ export class AsistencialSelectorComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
+    private habilitacionesGuardiasService: HabilitacionesGuardiasService,
     public dialogRef: MatDialogRef<AsistencialSelectorComponent>,
     private efectorService: EfectorService,
     private paginatorIntl: MatPaginatorIntl
@@ -78,7 +79,7 @@ export class AsistencialSelectorComponent implements OnInit {
     this.loadDataByType(this.selectedType);
   }*/
 
-  // Cargar la lista de asistenciales o noAsistenciales según el tipo
+    /*// Cargar la lista de asistenciales o noAsistenciales según el tipo
   loadAsistenciales(): void {
     const { idEfector, tipoGuardia } = this.data;
       this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(data => {
@@ -87,6 +88,31 @@ export class AsistencialSelectorComponent implements OnInit {
         this.dataSource.sort = this.sort;
       });
   }
+  */
+
+  loadAsistenciales(): void {
+  const { idEfector, tipoGuardia } = this.data;
+
+  if (tipoGuardia === 'CONTRAFACTURA' || tipoGuardia === 'EXTRA') {
+    this.habilitacionesGuardiasService.listAsistencialesByEfectorAndTG(idEfector, tipoGuardia).subscribe(data => {
+      this.dataSource.data = data;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }, error => {
+      console.error('Error al cargar asistenciales para CONTRAFACTURA:', error);
+    });
+  } else {
+    this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(data => {
+      this.dataSource.data = data;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }, error => {
+      console.error('Error al cargar asistenciales:', error);
+    });
+  }
+}
+
+
     
   //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
