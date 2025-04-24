@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
 //Services
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 
@@ -18,6 +20,10 @@ import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Caps } from 'src/app/models/Configuracion/Caps';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+
 
 //Componentes
 import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component';
@@ -84,6 +90,8 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     private legajoService: LegajoService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private tokenService: TokenService,
     private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
@@ -192,18 +200,34 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
 
   //Trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Efector) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
-        },
-        (error) => {
-          console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
-        }
-      );
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
     }
+  
+    this.hospitalService.getById(this.efectorId).subscribe({
+      next: (hospital: Hospital) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.getById(this.efectorId!).subscribe({
+          next: (ministerio: Ministerio) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.getById(this.efectorId!).subscribe({
+              next: (cap: Caps) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
   listNoAsistencial(efectorId: number | null = null): void {

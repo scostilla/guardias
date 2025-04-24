@@ -681,6 +681,19 @@ mat-label{
   outline: none;
 }
 
+.select-inicio-super {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 5px 5px 5px 5px;
+  font-size: 16px;
+  appearance: none;
+  width: auto;
+  cursor: pointer;
+  text-align: center;
+}
+
+
 .arrow {
   position: absolute;
   right: 10px;

@@ -313,22 +313,37 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     }
   }
 
-  //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
-    if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Efector) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
-        },
-        (error) => {
-          console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
-        }
-      );
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
     }
-  }
   
+    this.hospitalService.getById(this.efectorId).subscribe({
+      next: (hospital: Hospital) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.getById(this.efectorId!).subscribe({
+          next: (ministerio: Ministerio) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.getById(this.efectorId!).subscribe({
+              next: (cap: Caps) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
   listAsistencial(efectorId: number | null = null): void {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {

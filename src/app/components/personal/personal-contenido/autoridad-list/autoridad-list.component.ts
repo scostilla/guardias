@@ -13,12 +13,20 @@ import { Location } from '@angular/common';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Caps } from 'src/app/models/Configuracion/Caps';
+import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -61,6 +69,8 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
   efectorNombre: string | null = null;
   idContraFactura?: number;
   tipoGuardias: TipoGuardia[] = [];
+  efectorId: number | null = null;
+
 
   //Autenticación
   isLogged = false;
@@ -81,6 +91,10 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
     private tipoGuardiaService: TipoGuardiaService,
+    private efectorService: EfectorService,
+    private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNo: MatDialog,
     private toastr: ToastrService,
@@ -103,6 +117,21 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+        // Verificar si hay un idEfector antes de hacer cualquier otra cosa
+        this.efectorId = this.efectorService.getCurrentEfectorId();
+        this.loadEfectorName();
+      
+        if (this.efectorId === null) {
+          // Si no hay idEfector, redirigir a /home-page con un mensaje
+          this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.router.navigateByUrl('/home-page');
+          return; // Detener ejecución del código
+        }
+    
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
@@ -186,6 +215,37 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
       this.isDph = false;
       this.isSuper = false;
     }
+  }
+
+  loadEfectorName(): void {
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
+    }
+  
+    this.hospitalService.getById(this.efectorId).subscribe({
+      next: (hospital: Hospital) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.getById(this.efectorId!).subscribe({
+          next: (ministerio: Ministerio) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.getById(this.efectorId!).subscribe({
+              next: (cap: Caps) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
+        });
+      }
+    });
   }
   
   listSinEfectors(): void {

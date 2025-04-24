@@ -82,4 +82,8 @@ listAsistencialesByEfectorAndTG(idEfector: number, tipoGuardia: string): Observa
   return this.httpClient.get<AsistencialSummaryDto[]>(`${this.permisosURL}listAsistencialesByEfectorAndTG/${idEfector}/${tipoGuardia}`);
 }
 
+listAsistencialesWithCfAndExtraByEfector(idEfector: number): Observable<AsistencialSummaryDto[]> {
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.permisosURL}listAsistencialesWithCfAndExtraByEfector/${idEfector}`);
+}
+
 }

@@ -185,16 +185,26 @@ export class CronogramaComponent {
     if (this.efectorId) {
       this.hospitalService.getById(this.efectorId).subscribe(
         (efector: Hospital) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
-          this.efectorNivel = efector.nivelComplejidad;
+          if (efector) {
+            this.efectorNombre = efector.nombre;
+            this.efectorNivel = efector.nivelComplejidad;
+          } else {
+            this.handleInvalidEfector();
+          }
         },
         (error) => {
           console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
+          this.handleInvalidEfector();
         }
       );
+    } else {
+      this.handleInvalidEfector();
     }
+  }
+    
+  private handleInvalidEfector(): void {
+    console.error('ID de efector inválido o no encontrado.');
+    this.router.navigateByUrl('/home-page');
   }
 
   obtenerServicios(): void {

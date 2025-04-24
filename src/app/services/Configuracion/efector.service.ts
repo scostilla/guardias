@@ -25,41 +25,6 @@ export class EfectorService {
     return this._refresh$;
   }
 
-  public list(): Observable<Efector[]> {
-      return this.httpClient.get<Efector[]>(this.efectoresURL + 'list');
-  }
-
-  public getById( id:number): Observable<Efector> {
-    return this.httpClient.get<Efector>(this.efectoresURL + `detail/${id}`);
-}
-
-
-  public detailnombre(nombre:string): Observable<Efector> {
-    return this.httpClient.get<Efector>(this.efectoresURL + `detailnombre/${nombre}`);
-}
-
-public save(efectores:Efector): Observable<any> {
-  return this.httpClient.post<any>(this.efectoresURL + 'create', efectores)
-  .pipe(
-    tap(() => {
-     this._refresh$.next();
-    })
-  )
-}
-
-public update(id:number, efectores:Efector): Observable<any> {
-  return this.httpClient.put<any>(this.efectoresURL + `update/${id}`, efectores)
-  .pipe(
-    tap(() => {
-     this._refresh$.next();
-    })
-  )
-}
-
-public delete(id:number): Observable<any> {
-  return this.httpClient.put<any>(this.efectoresURL + `delete/${id}`, {});
-}
-
 // Método para obtener el tipo de efector
 getEfectorTipo(id: number): Observable<any> {
   return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
