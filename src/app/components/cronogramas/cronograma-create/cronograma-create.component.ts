@@ -6,6 +6,11 @@ import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogr
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
+import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
+import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
+import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,6 +45,11 @@ export class CronogramaCreateComponent {
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private tipoGuardiaService: TipoGuardiaService,
+    private distribucionGuardiaService: DistribucionGuardiaService,
+    private distribucionConsultorioService: DistribucionConsultorioService,
+    private distribucionGiraService: DistribucionGiraService,
+    private distribucionOtroService: DistribucionOtroService,
+    private novedadPersonalService: NovedadPersonalService,
     public dialog: MatDialog,
     private toastr: ToastrService,
     private cdRef: ChangeDetectorRef
@@ -229,7 +239,7 @@ validateHoraEgreso(): void {
     });
   }
 
-  saveCronograma(): void {
+  /*saveCronograma(): void {
     if (this.cronoForm.valid) {
       const formData = this.cronoForm.value;
       const cronogramaDto = new CronogramaTentativoDto(
@@ -239,6 +249,7 @@ validateHoraEgreso(): void {
         formData.horaEgreso,
         true, // activo
         false, // aceptado
+        false, // autorizado
         formData.tipoGuardia.id,
         formData.asistencial,
         formData.idServicio,
@@ -326,7 +337,311 @@ validateHoraEgreso(): void {
         progressBar: true
       });
     }
-  }
+  }*/
+
+    saveCronograma(): void {
+      if (this.cronoForm.valid) {
+        const formData = this.cronoForm.value;
+        const tipoGuardiaId = formData.tipoGuardia.id;
+    
+        const cronogramaDto = new CronogramaTentativoDto(
+          formData.fechaIngreso,
+          formData.fechaEgreso,
+          formData.horaIngreso,
+          formData.horaEgreso,
+          true, // activo
+          false, // aceptado (por defecto)
+          false, // autorizado (por defecto)
+          tipoGuardiaId,
+          formData.asistencial,
+          formData.idServicio,
+          this.efectorId!,
+          formData.observacion
+        );
+    
+        this.cronoService.existCronograma(cronogramaDto).subscribe(
+          exists => {
+            if (exists) {
+              this.toastr.error(
+                'Ya existe una guardia tentativa asignada para el profesional en la fecha y hora seleccionada.',
+                'Error',
+                {
+                  timeOut: 6000,
+                  positionClass: 'toast-top-center',
+                  progressBar: true
+                }
+              );
+            } else {
+              this.cronoService.efectoresConCronograma(cronogramaDto).subscribe(
+                efectores => {
+                  if (efectores && efectores.length > 0) {
+                    const lista = efectores.join(', ');
+                    this.toastr.warning(
+                      `El profesional también está cargado en la misma hora y fecha en los efectores: ${lista}. Verifique si efectivamente llevará a cabo la guardia en su establecimiento.`,
+                      'Superposición detectada',
+                      {
+                        timeOut: 9000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                      }
+                    );
+                  }
+    
+                  // Enviar a lógica según tipo de guardia
+                  this.guardarCronogramaConVerificaciones(cronogramaDto);
+                },
+                error => this.handleError('verificar efectores con cronograma', error)
+              );
+            }
+          },
+          error => this.handleError('verificar la existencia del cronograma', error)
+        );
+      } else {
+        console.log('Formulario no válido');
+        this.toastr.error('Por favor complete todos los campos del formulario', 'Formulario inválido', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    }
+    
+    private guardarCronogramaConVerificaciones(cronogramaDto: CronogramaTentativoDto): void {
+      const tipoGuardiaId = cronogramaDto.idTipoGuardia;
+    
+      if (tipoGuardiaId === 1 || tipoGuardiaId === 2) {
+        this.procesarCronogramaCargoOAgrupacion(cronogramaDto);
+      } else if (tipoGuardiaId === 3) {
+        this.procesarCronogramaExtra(cronogramaDto);
+      } else {
+        // Otros tipos (CARGO y PASIVA?): guardar con autorizado en true
+        cronogramaDto.autorizado = true;
+        this.toastr.success('Guardia autorizada', undefined, {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.guardarCronogramaConAutorizacion(cronogramaDto);
+      }
+    }
+    
+    private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto): void {
+      this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaDto).subscribe(
+        existeEnGuardia => {
+          if (existeEnGuardia) {
+            cronogramaDto.autorizado = true;
+            cronogramaDto.aceptado = true;
+
+            this.toastr.success('Guardia autorizada', undefined, {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+          
+            this.guardarCronogramaConAutorizacion(cronogramaDto);
+          } else {
+            this.distribucionConsultorioService.existeTentativoEnDistribucionConsultorio(cronogramaDto).subscribe(
+              existeEnConsultorio => {
+                if (existeEnConsultorio) {
+                  cronogramaDto.autorizado = false;
+
+                  this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  });
+
+                  this.guardarCronogramaConAutorizacion(cronogramaDto);
+                } else {
+                  this.distribucionGiraService.existeTentativoEnDistribucionGira(cronogramaDto).subscribe(
+                    existeEnGira => {
+                      if (existeEnGira) {
+                        cronogramaDto.autorizado = false;
+
+                        this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                          timeOut: 6000,
+                          positionClass: 'toast-top-center',
+                          progressBar: true
+                        });
+
+                        this.guardarCronogramaConAutorizacion(cronogramaDto);
+                      } else {
+                        this.distribucionOtroService.existeTentativoEnDistribucionOtro(cronogramaDto).subscribe(
+                          existeEnOtro => {
+                            cronogramaDto.autorizado = !existeEnOtro;
+
+                            if (existeEnOtro) {
+                              this.toastr.warning(
+                                'El profesional ya posee otra actividad. Guardia pendiente de autorización.',
+                                undefined,
+                                {
+                                  timeOut: 6000,
+                                  positionClass: 'toast-top-center',
+                                  progressBar: true
+                                }
+                              );
+                            } else {
+                              this.toastr.success(
+                                'Guardia autorizada',
+                                undefined,
+                                {
+                                  timeOut: 6000,
+                                  positionClass: 'toast-top-center',
+                                  progressBar: true
+                                }
+                              );
+                            }
+                            
+                            this.guardarCronogramaConAutorizacion(cronogramaDto);
+                          },
+                          error => this.handleError('verificar en distribución Otro', error)
+                        );
+                      }
+                    },
+                    error => this.handleError('verificar en distribución Gira', error)
+                  );
+                }
+              },
+              error => this.handleError('verificar en distribución Consultorio', error)
+            );
+          }
+        },
+        error => this.handleError('verificar en distribución Guardia', error)
+      );
+    }
+    
+    private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
+      this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaDto).subscribe(
+        enGuardia => {
+          if (enGuardia) {
+            this.novedadPersonalService.tieneLicenciaLAO(cronogramaDto.idAsistencial).subscribe(
+              tieneLAO => {
+                if (tieneLAO) {
+                  cronogramaDto.autorizado = true;
+
+                  this.toastr.success('Guardia autorizada', undefined, {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  });
+
+                  this.guardarCronogramaConAutorizacion(cronogramaDto);
+                } else {
+                  this.novedadPersonalService.tieneLicenciaCompensatorio(cronogramaDto.idAsistencial).subscribe(
+                    tieneCompensatorio => {
+                      cronogramaDto.autorizado = tieneCompensatorio;
+
+                      this.toastr.success('Guardia autorizada', undefined, {
+                        timeOut: 6000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                      });
+
+                      this.guardarCronogramaConAutorizacion(cronogramaDto);
+                    },
+                    error => this.handleError('verificar licencia compensatorio', error)
+                  );
+                }
+              },
+              error => this.handleError('verificar licencia LAO', error)
+            );
+          } else {
+            // No en Guardia, revisar los otros 3
+            this.distribucionConsultorioService.existeTentativoEnDistribucionConsultorio(cronogramaDto).subscribe(
+              enConsultorio => {
+                if (enConsultorio) {
+                  cronogramaDto.autorizado = false;
+
+                  this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  });
+
+                  this.guardarCronogramaConAutorizacion(cronogramaDto);
+                } else {
+                  this.distribucionGiraService.existeTentativoEnDistribucionGira(cronogramaDto).subscribe(
+                    enGira => {
+                      if (enGira) {
+                        cronogramaDto.autorizado = false;
+
+                        this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                          timeOut: 6000,
+                          positionClass: 'toast-top-center',
+                          progressBar: true
+                        });
+                        
+                        this.guardarCronogramaConAutorizacion(cronogramaDto);
+                      } else {
+                        this.distribucionOtroService.existeTentativoEnDistribucionOtro(cronogramaDto).subscribe(
+                          enOtro => {
+                            cronogramaDto.autorizado = !enOtro;
+
+                            if (enOtro) {
+                              this.toastr.warning(
+                                'El profesional ya posee otra actividad. Guardia pendiente de autorización.',
+                                undefined,
+                                {
+                                  timeOut: 6000,
+                                  positionClass: 'toast-top-center',
+                                  progressBar: true
+                                }
+                              );
+                            } else {
+                              this.toastr.success(
+                                'Guardia autorizada',
+                                undefined,
+                                {
+                                  timeOut: 6000,
+                                  positionClass: 'toast-top-center',
+                                  progressBar: true
+                                }
+                              );
+                            }
+
+                            this.guardarCronogramaConAutorizacion(cronogramaDto);
+                          },
+                          error => this.handleError('verificar en distribución Otro', error)
+                        );
+                      }
+                    },
+                    error => this.handleError('verificar en distribución Gira', error)
+                  );
+                }
+              },
+              error => this.handleError('verificar en distribución Consultorio', error)
+            );
+          }
+        },
+        error => this.handleError('verificar en distribución Guardia', error)
+      );
+    }
+    
+    private guardarCronogramaConAutorizacion(cronogramaDto: CronogramaTentativoDto): void {
+      this.cronoService.save(cronogramaDto).subscribe(
+        response => {
+          this.toastr.success('Cronograma tentativo guardado', 'Éxito', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+    
+          this.cronoService.refresh$.next();
+          this.dialogRef.close(true);
+        },
+        error => this.handleError('guardar el cronograma', error)
+      );
+    }
+    
+    private handleError(context: string, error: any): void {
+      console.error(`Error al ${context}:`, error);
+      this.toastr.error(`Hubo un error al ${context}`, 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+    }
+    
     
   closeDialog(): void {
     this.dialogRef.close();

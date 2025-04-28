@@ -277,6 +277,7 @@ export class CronogramaComponent {
       const observacion = cronograma.observacion;
       const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
       const id = cronograma.id;
+      const auth = cronograma.autorizado;
 
       const fechaHoraIngreso = moment(cronograma.fechaIngreso)
         .set({
@@ -300,6 +301,7 @@ export class CronogramaComponent {
         title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
         servicio: servicio,
         obs: observacion,
+        auth: auth,
         id: id,
         color: color,
         meta: cronograma

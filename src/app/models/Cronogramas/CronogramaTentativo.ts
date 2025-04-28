@@ -9,6 +9,7 @@ export class CronogramaTentativo {
     id?: number;
     activo: boolean;
     aceptado: boolean;
+    autorizado: boolean;
     fechaIngreso: Date;
     fechaEgreso: Date;
     horaIngreso: string;
@@ -22,6 +23,7 @@ export class CronogramaTentativo {
     constructor(
         activo: boolean,
         aceptado: boolean,
+        autorizado: boolean,
         fechaIngreso: Date,
         fechaEgreso: Date,
         horaIngreso: string,
@@ -34,6 +36,7 @@ export class CronogramaTentativo {
         ) {
         this.activo = activo;
         this.aceptado = aceptado;
+        this.autorizado = autorizado;
         this.fechaIngreso = fechaIngreso;
         this.fechaEgreso = fechaEgreso;
         this.horaIngreso = horaIngreso;

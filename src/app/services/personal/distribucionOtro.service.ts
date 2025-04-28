@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
 import { DistribucionOtro } from "src/app/models/personal/DistribucionOtro";
-
+import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +78,11 @@ public update(id:number, distribucionOtroes:DistribucionOtroDto): Observable<any
 
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.distribucionOtrosURL + `delete/${id}`, {});
+}
+
+// Verificar si un cronograma tentativo existe
+existeTentativoEnDistribucionOtro(cTentativos: CronogramaTentativoDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionOtrosURL}verificarCronogramaEnDistribucion`, cTentativos);
 }
 
 }

@@ -75,6 +75,15 @@ export class CronogramaTentativoService {
     efectoresConCronograma(cTentativos: CronogramaTentativoDto): Observable<number[]> {
       return this.httpClient.post<number[]>(`${this.cTentativoURL}existCronogramaConEfector`, cTentativos);
     }
+
+    autorizar(id:number): Observable<any> {
+      return this.httpClient.put<any>(this.cTentativoURL + `autorizar/${id}`, null)
+      .pipe(
+        tap(() => {
+         this._refresh$.next(); 
+        })
+      )
+    }
   
   }
     
