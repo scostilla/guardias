@@ -39,6 +39,20 @@
           <td mat-cell *matCellDef="let feriado"> {{feriado.tipoFeriado}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="esPatronal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Es Patronal </th>
+          <td mat-cell *matCellDef="let feriado">
+              {{ feriado.esPatronal ? 'Sí' : 'No' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="efector">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Efector Patronal </th>
+          <td mat-cell *matCellDef="let feriado">
+            {{feriado.efector?.nombre}}
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef  class="negrita"> </th>
           <td mat-cell *matCellDef="let feriado" class="cell-actions">

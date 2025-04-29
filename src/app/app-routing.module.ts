@@ -115,7 +115,7 @@ import { PersonalLegajoSelectComponent } from './components/personal/personal-le
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
-import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
+import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 
@@ -132,7 +132,7 @@ import { NoAsistencialDetailComponent } from './components/personal/personal-con
 import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
-import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
+import { AutoridadListComponent } from './components/personal/personal-contenido/autoridad-list/autoridad-list.component';
 import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
@@ -146,6 +146,8 @@ import { LegajoNoAsistencialComponent } from './components/personal/legajo/legaj
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
+import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 
 
 //Sección: Cronograma
@@ -160,6 +162,7 @@ import { CronogramaPHosComponent } from './components/cronogramas/cronograma-p-h
 import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cronograma-p.component';
 import { CronogramaRegComponent } from './components/cronogramas/cronograma-reg/cronograma-reg.component';
 import { CronogramaComponent } from './components/cronogramas/cronograma/cronograma.component';
+import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 
 
 
@@ -357,7 +360,7 @@ const routes: Routes = [
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
-  {path: 'personal-sin-efector', component:PersonalSinEfectorComponent},
+  {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent},
   {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent},
   {path: 'personal-externo', component:PersonalExternoComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
@@ -376,11 +379,13 @@ const routes: Routes = [
   {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
-  {path: 'sin-efector', component:SinEfectorComponent},
+  {path: 'autoridad-list', component:AutoridadListComponent},
   {path: 'externo', component:ExternoComponent},
 
   {path: 'personal-dh', component:PersonalDhComponent},
   {path: 'personal-dh-edit', component:PersonalDhEditComponent},
+  {path: 'personal-dh-detail', component:PersonalDhDetailComponent},
+  {path: 'personal-dh-create', component:PersonalDhCreateComponent},
   {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
@@ -399,6 +404,7 @@ const routes: Routes = [
 
   //Sección: Cronograma
   {path: 'cronograma', component:CronogramaComponent},
+  {path: 'cronograma-create', component:CronogramaCreateComponent},
   {path: 'cronograma-detail', component:CronogramaDetailComponent},
   {path: 'cronograma-def', component:CronogramaDefComponent},
   {path: 'cronograma-def-materno', component:CronogramaDefMaternoComponent},

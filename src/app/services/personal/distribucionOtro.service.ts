@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
 import { DistribucionOtro } from "src/app/models/personal/DistribucionOtro";
-
+import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +31,21 @@ export class DistribucionOtroService {
   // Obtener distribuciones por fecha de inicio
   getDistribucionesByFechaInicio(fechaInicio: string): Observable<DistribucionOtro[]> {
     return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}list/${fechaInicio}`);
+  }
+
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getActivoByPersonaFechaInicio(idPersona: number, fechaInicio: string): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
+  }
+
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
+  // Verifica distribuciones por persona, fecha de inicio y ACTIVO
+  existsByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionOtro[]> {
+    return this.httpClient.get<DistribucionOtro[]>(`${this.distribucionOtrosURL}existsByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
   }
 
   // Obtener distribuciones por ID de Efector
@@ -63,6 +78,11 @@ public update(id:number, distribucionOtroes:DistribucionOtroDto): Observable<any
 
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.distribucionOtrosURL + `delete/${id}`, {});
+}
+
+// Verificar si un cronograma tentativo existe
+existeTentativoEnDistribucionOtro(cTentativos: CronogramaTentativoDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionOtrosURL}verificarCronogramaEnDistribucion`, cTentativos);
 }
 
 }

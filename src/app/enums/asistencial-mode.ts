@@ -3,3 +3,4 @@ export enum AsistencialMode {
   SALIDA = 'SALIDA',
   EDICION = 'EDICION'
 }
+

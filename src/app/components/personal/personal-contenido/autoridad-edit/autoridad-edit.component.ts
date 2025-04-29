@@ -5,7 +5,7 @@ import { AutoridadDto } from 'src/app/dto/Configuracion/AutoridadDto';
 import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
-import { AsistencialSelectorComponent } from '../asistencial-selector/asistencial-selector.component';
+import { AutoridadSelectorComponent } from '../autoridad-selector/autoridad-selector.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Router } from '@angular/router';
@@ -143,7 +143,7 @@ export class AutoridadEditComponent implements OnInit {
   }
 
   openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+    const dialogRef = this.dialog.open(AutoridadSelectorComponent, {
       width: '800px',
       disableClose: true
     });

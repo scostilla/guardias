@@ -1,15 +1,21 @@
-<h1 mat-dialog-title>Listado profesionales
+<h1 mat-dialog-title>{{ data.title }}
     <h5 *ngIf="data.holidayName">
       <p>Feriado: {{ data.holidayName }}</p>
     </h5>
   </h1>
   <mat-dialog-content>
-    <mat-list *ngIf="data.events.length; else noData">
+    <div *ngIf="data.events.length; else noData">
       <ng-container *ngFor="let event of data.events">
-        <mat-list-item><span [style.color]="event.color.primary">{{ event.title }}</span> - Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span></mat-list-item>
+        <div>
+          <span [style.color]="event.color.primary">{{ event.title }}</span><mat-icon class="delete-icon" (click)="deleteEvent(event)" matTooltip="Eliminar guardia tentativa">delete</mat-icon><span>{{event.auth}}</span><br/> 
+          Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
+          <span>Servicio: {{ event.servicio }}</span><br/>
+          <span *ngIf="event.obs"> {{ event.obs }} </span>
+        </div>
         <mat-divider></mat-divider>
+        <br/>
       </ng-container>
-    </mat-list>
+    </div>
   </mat-dialog-content>
   <ng-template #noData><p>No hay profesionales cargados para la fecha seleccionada.</p></ng-template>
   <mat-dialog-actions>

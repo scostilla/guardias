@@ -23,12 +23,12 @@
   <div class="row">
     <div class="row">
       <div class="col-12 col-md-6">Estás viendo:
-        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales 
+        <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Asistenciales
           <mat-icon>expand_more</mat-icon></button>
         <mat-menu #menug="matMenu">
           <button mat-menu-item routerLink="/personal-no-asistencial">Ver <span class="negrita">No asistenciales</span></button>
-          <button mat-menu-item routerLink="/personal-externo">Ver <span class="negrita">Externo</span></button>
-          <button mat-menu-item routerLink="/personal-sin-efector">Ver <span class="negrita">Regionales y contrafactura</span></button>
+          <button mat-menu-item routerLink="/personal-externo">Ver <span class="negrita">Externos (Extra y contrafactura)</span></button>
+          <button mat-menu-item routerLink="/personal-autoridad-list">Ver <span class="negrita">Autoridades</span></button>
           <button mat-menu-item routerLink="/personal-sin-legajo">Ver <span class="negrita">Sin legajo asignado</span></button>
         </mat-menu>
       </div>

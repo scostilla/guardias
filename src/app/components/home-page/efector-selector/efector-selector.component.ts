@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog'; 
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'; 
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
@@ -15,9 +15,10 @@ import { Efector } from 'src/app/models/Configuracion/Efector';
   styleUrls: ['./efector-selector.component.css']
 })
 export class EfectorSelectorComponent {
-  tipoEfector: number | null = null; // Valor inicial del tipo de efector (Ministerio)
-  efectorOptions: any[] = []; // Opciones filtradas para el select de efectores
-  selectedEfector: number | null = null; // Efector seleccionado
+  tipoEfector: number | null = null;
+  efectorOptions: any[] = [];
+  selectedEfector: number | null = null;
+
   ministerios: Ministerio[] = [];
   hospitales: Hospital[] = [];
   caps: Caps[] = [];
@@ -27,10 +28,12 @@ export class EfectorSelectorComponent {
     private hospitalService: HospitalService,
     private ministerioService: MinisterioService,
     private capsService: CapsService,
-    private efectorService: EfectorService // El servicio para manejar el BehaviorSubject
+    private efectorService: EfectorService, // El servicio para manejar el BehaviorSubject
+    @Inject(MAT_DIALOG_DATA) public data: { selectedEfectorId: number }
   ) {
     // Cargar los datos de ministerios, hospitales y CAPS
     this.loadData();
+    this.selectedEfector = data.selectedEfectorId ?? null;
   }
 
   loadData(): void {

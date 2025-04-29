@@ -72,6 +72,28 @@ div.btnMenu span {
 	opacity: 1;
 	right: 0;
   }
+
+  div.btnMenu.disabled {
+	opacity: 0.6;
+	filter: grayscale(85%);
+	cursor: not-allowed;
+  }
+  
+  div .btnMenu.disabled:hover::after {
+	content: 'No disponible para el tipo de efector seleccionado.';
+	position: absolute;
+	bottom: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: #333;
+	color: white;
+	padding: 5px 10px;
+	border-radius: 4px;
+	font-size: 12px;
+	white-space: nowrap;
+	z-index: 100;
+  }
+
 .icon1_btnMenu, .icon2_btnMenu, .icon3_btnMenu, .icon4_btnMenu, .icon5_btnMenu, .icon6_btnMenu {
     -moz-border-radius: 10px 10px 0 0;
     -webkit-border-radius: 10px 10px 0 0;

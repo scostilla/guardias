@@ -127,6 +127,89 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Verificar si hay un idEfector antes de hacer cualquier otra cosa
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+  
+    if (this.efectorId === null) {
+      // Si no hay idEfector, redirigir a /home-page con un mensaje
+      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+      return; // Detener ejecución del código
+    }
+  
+    // Continuar solo si existe un idEfector
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
+      this.roles = this.tokenService.getAuthorities();
+  
+      // BehaviorSubject para obtener el rol seleccionado
+      this.tokenService.currentRole$.subscribe(role => {
+        this.currentRole = role;
+        this.UserRoles();  // Llamar a la función que determina los roles
+  
+        // Si currentRole es false (null o vacío), redirige al login
+        if (!this.currentRole) {
+          this.router.navigateByUrl('');
+        }
+      });
+  
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:', this.userId);
+  
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+  
+          // Log para mostrar el usuario
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+  
+    // Llamar al servicio para obtener los tipos de guardia solo si hay idEfector
+    this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
+      this.tipoGuardias = guardias;
+  
+      // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+      this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
+      this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
+      this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
+      this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
+      this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
+    });
+  
+    // Llamar a listLegajos solo si hay idEfector
+    this.listLegajos();
+  
+    // Llamar a listAsistencial solo si hay idEfector
+    this.listAsistencial(this.efectorId);
+  
+    // Suscripción para refrescar los datos de asistencial
+    this.suscription = this.asistencialService.refresh$.subscribe(() => {
+      this.listAsistencial(this.efectorId); // Usar el efectorId actual
+    });
+  
+    // Actualizar columnas visibles
+    this.actualizarColumnasVisibles();
+  }  
+
+  /*ngOnInit(): void {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
@@ -198,6 +281,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     this.actualizarColumnasVisibles();
   }
+*/
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -229,20 +313,35 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     }
   }
 
-  //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
-    if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Efector) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
-        },
-        (error) => {
-          console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
-        }
-      );
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
     }
+  
+    this.hospitalService.getById(this.efectorId).subscribe({
+      next: (hospital: Hospital) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.getById(this.efectorId!).subscribe({
+          next: (ministerio: Ministerio) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.getById(this.efectorId!).subscribe({
+              next: (cap: Caps) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
   listAsistencial(efectorId: number | null = null): void {
@@ -263,8 +362,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
           legajo.activo === true && // Verifica que el legajo esté activo
           legajo.efectores.some(efector => efector.id === efectorId) && // Verifica que el legajo esté asociado al efector
           // Verifica que el legajo no tenga guardias de tipo Contrafactura o Pasiva
-          !legajo.tipoGuardias.some(tipoGuardia =>
-            tipoGuardia.id === this.idContraFactura || tipoGuardia.id === this.idPasiva
+          !legajo.tipoGuardias.some(tipoGuardia => 
+            tipoGuardia.id === this.idContraFactura
           )
         )
       );
@@ -308,16 +407,16 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     // Verifica si las guardias 'cargo', 'agrupacion' y 'extra' cumplen con la lógica específica
     const tieneGuardiasCombinadas = legajos.some(legajo => {
-      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id); // Suponiendo que 'id' es lo que estamos buscando
-
+      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id);
+  
       // Verifica si tiene guardias de tipo 'cargo' o 'agrupación'
       const tieneCargoOAgrupacion = tiposGuardias.includes(this.idCargo) || tiposGuardias.includes(this.idAgrupacion);
-
-      // Si tiene 'extra' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
-      const tieneExtra = tiposGuardias.includes(this.idExtra);
-      if (tieneExtra && !tieneCargoOAgrupacion) {
-        return true; // No se permite acción si 'extra' está solo
-      }
+  
+    // Si tiene 'extra' o 'pasiva' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
+    const tieneExtraOPasiva = tiposGuardias.includes(this.idExtra) || tiposGuardias.includes(this.idPasiva);
+    if (tieneExtraOPasiva && !tieneCargoOAgrupacion) {
+      return true; // No se permite acción si 'extra' o 'pasiva' está solo
+    }
 
       // Si no tiene ni 'cargo' ni 'agrupación' ni cumple con las combinaciones, no permitir acciones
       return !tieneCargoOAgrupacion;

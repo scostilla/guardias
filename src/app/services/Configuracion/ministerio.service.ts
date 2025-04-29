@@ -23,9 +23,9 @@ export class MinisterioService {
       return this.httpClient.get<Ministerio[]>(this.ministeriosURL + 'list');
   }
 
-  public detail(id:number): Observable<Ministerio> {
-      return this.httpClient.get<Ministerio>(this.ministeriosURL + `detail/${id}`);
-  }
+  public getById( id:number): Observable<Ministerio> {
+    return this.httpClient.get<Ministerio>(this.ministeriosURL + `detail/${id}`);
+}
 
   public detailnombre(nombre:string): Observable<Ministerio> {
     return this.httpClient.get<Ministerio>(this.ministeriosURL + `detailnombre/${nombre}`);

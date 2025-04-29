@@ -51,6 +51,22 @@
           </mat-form-field>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col">
+            <mat-checkbox formControlName="esPatronal">Es Patronal</mat-checkbox>
+        </div>
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Patronal del Hospital:</mat-label>
+        <mat-select formControlName="efector" [compareWith]="compareHospital">
+        <mat-option *ngFor="let hospital of hospitales" [value]="hospital">
+            {{ hospital.nombre }}
+        </mat-option>
+        </mat-select>
+    </mat-form-field>
+
       <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="submit" [disabled]="!feriadoForm.valid || !isModified()">
           {{data ? 'Modificar' : 'Agregar'}}

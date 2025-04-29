@@ -1,12 +1,19 @@
 <app-spinner></app-spinner>
 <div id="container-title-hosp" *ngIf="isLogged">
     <div class="text-title-hosp" *ngIf="isAdministrativo"><mat-icon>business</mat-icon>
-      <div *ngIf="selectedEfector" class="select-inicio-container">
+      <div *ngIf="selectedEfector" class="select-inicio">
         {{ selectedEfector.nombre }}
       </div>
     </div>
 
-    <div class="text-title-hosp" *ngIf="isDph || isSuper">
+    <div class="text-title-hosp" *ngIf="isDph || isSuper" (click)="openEfectorDialog()" style="cursor: pointer;">
+      <mat-icon>business</mat-icon>
+        <div class="select-inicio-super">
+          {{ selectedEfectorDialog || 'Seleccionar efector' }}
+        </div>
+    </div>
+
+  <!--  <div class="text-title-hosp" *ngIf="isDph || isSuper">
       <mat-icon>business</mat-icon>
       <div class="select-inicio-container">
         <select class="select-inicio" [(ngModel)]="selectedListEfectores" (change)="onEfectorChange($event)">
@@ -17,7 +24,7 @@
         </select>
         <span class="arrow">▼</span>
       </div>
-    </div>
+    </div>-->
 
     <div class="text-title-hosp" *ngIf="isAutoridad">
       <mat-icon>business</mat-icon>
@@ -35,7 +42,7 @@
 
 <div class="container" *ngIf="isLogged">
   <section>
-    <div class="container" >
+    <div class="container">
       <!-- Page Features-->
       <div class="row mb-4 ">
         <div class="col-lg" >
@@ -59,7 +66,9 @@
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/cronograma">
+        <!--<div class="col-lg" *ngIf="showHospitalFeatures || showCapsFeatures">-->
+          <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="currentEfectorType === 'ministerio' || currentEfectorType === 'caps'"
+          [routerLink]="currentEfectorType !== 'ministerio' && currentEfectorType !== 'caps' ? '/cronograma' : null">
             <div class="icon3_btnMenu">
               <img class="img-fluid" src="/assets/img/i_cronogramas.png" />
             </div>

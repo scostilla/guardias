@@ -3,7 +3,7 @@
 
 <div class="container">
 
-  <!-- Selector para elegir entre Asistencial o NoAsistencial -->
+  <!-- Selector para elegir entre Asistencial o NoAsistencial 
   <div class="row">
     <div class="col-12 mt-3">
       <mat-form-field>
@@ -14,7 +14,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-  </div>
+  </div>-->
   
   <div class="row">
     <div class="col-11 mt-3">
@@ -55,6 +55,14 @@
             <mat-header-cell *matHeaderCellDef class="negrita"> CUIL </mat-header-cell>
             <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
               {{ persona.cuil }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Columna profesion -->
+          <ng-container matColumnDef="profesion">
+            <mat-header-cell *matHeaderCellDef class="negrita"> Profesión </mat-header-cell>
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+              {{ persona.profesion }}
             </mat-cell>
           </ng-container>
 

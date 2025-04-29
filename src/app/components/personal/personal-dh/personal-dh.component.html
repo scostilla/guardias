@@ -12,7 +12,7 @@
       <button mat-fab color="primary" style="margin-left: 5px;" (click)="crearDistribucion()" matTooltip="Agregar distribución horaria">
         <mat-icon>av_timer</mat-icon>
       </button>
-      <button mat-fab class="button-success" style="margin-left: 5px;" (click)="editarMes()" matTooltip="Editar distribución {{ nombreMes }}">
+      <button mat-fab class="button-success" style="margin-left: 5px;" *ngIf="showTable" (click)="editarMes()" matTooltip="Editar distribución {{ nombreMes }}">
         <mat-icon>edit</mat-icon>
       </button>
       <!--<button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
@@ -28,7 +28,7 @@
     <div class="col-md-1">
       <div class="contenedor-bocadillo">
         <div>{{ nombreMes }}</div>
-        <div>{{ anoSeleccionado  }}</div>
+        <div>{{ anioSeleccionado  }}</div>
       </div>
     </div>
     <div class="col-md-8 d-flex justify-content-start">
@@ -39,7 +39,7 @@
     <div class="col-md-3 d-flex justify-content-start">
       <div class="contenedor-subtitulo-bocadillo">
         <div class="select-inicio-container">
-          <select class="select-inicio" [(ngModel)]="mesSeleccionado" (change)="onMonthChange($event)">
+          <select class="select-inicio" [(ngModel)]="mesYanio" (change)="onMonthChange($event)">
             <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
           </select>
           <span class="arrow">▼</span>
@@ -59,7 +59,11 @@
     
       <ng-container matColumnDef="tipo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Tipo</th>
-        <td mat-cell *matCellDef="let distribucion">{{ distribucion.tipo }}</td>
+        <td mat-cell *matCellDef="let distribucion">{{ distribucion.tipo }}
+          <button mat-icon-button (click)="obtenerDistribucionesYAbrirDialogo(distribucion.tipo)">
+            <mat-icon>search</mat-icon> <!-- Aquí está el ícono de lupa -->
+          </button>
+        </td>
       </ng-container>
     
       <ng-container matColumnDef="clase">
@@ -68,7 +72,7 @@
       </ng-container>
     
       <ng-container matColumnDef="totalHoras">
-        <th mat-header-cell *matHeaderCellDef class="negrita">Total</th>
+        <th mat-header-cell *matHeaderCellDef class="negrita">Total mes</th>
         <td mat-cell *matCellDef="let distribucion">{{ distribucion.totalHoras }} horas</td>
       </ng-container>
     
@@ -125,6 +129,12 @@
       <div class="carga-horaria-display">
         <p>Carga horaria semanal: <strong>{{ cargaHoraria }}</strong> hs</p>
         <p *ngIf="cargaHoraria === undefined">No hay carga horaria disponible para este profesional.</p>
+        <p>Ver datos completos: 
+          <button mat-button color="primary" *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
+          <button mat-button color="primary" *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
+          <button mat-button color="primary" *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
+          <button mat-button color="primary" *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
+        </p>
       </div>
       <!--<div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
         <p>{{ mensajeCargaHoraria }}</p>
@@ -132,319 +142,3 @@
     </div>
   </div>
 </div>
-
-
-<!--<div class="col-md-3 d-flex justify-content-start">
-  <div class="contenedor-subtitulo-bocadillo">
-    <div class="select-inicio-container">
-      <select class="select-inicio" [(ngModel)]="mesSeleccionado" (change)="onMonthChange($event)">
-        <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
-      </select>
-      <span class="arrow">▼</span>
-    </div>
-  </div>
-</div>
-
-<table mat-table [dataSource]="distribuciones" matSort>
-  <ng-container matColumnDef="Tipo" sticky>
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo </th>
-    <td mat-cell *matCellDef="let distribucion"> Guardias </td>
-  </ng-container>
-
-  <ng-container matColumnDef="totalHoras">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita" style="background-color: #bdbdbd;">Total mes</th>
-    <td mat-cell *matCellDef="let distribucion" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
-      {{ calculateTotalHours(distribucion) }} hs
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="weekdaysTotal">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L-V</th>
-    <td mat-cell *matCellDef="let distribucion" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
-      {{ calculateWeekdaysTotal(distribucion) }} hs
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="weekendsTotal">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total S-D</th>
-    <td mat-cell *matCellDef="let distribucion" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
-      {{ calculateWeekendsTotal(distribucion) }} hs
-    </td>
-  </ng-container>
-
-  <ng-container *ngFor="let fechaColumna of displayedColumns.slice(4)" [matColumnDef]="fechaColumna">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header class="linea-vertical-tabla negrita">
-      {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
-    </th>
-    <td mat-cell *matCellDef="let distribucion" class="linea-vertical-tabla negrita">
-      <span matTooltip="{{ getTooltip(distribucion, fechaColumna) }}">
-        {{ calculateHoursForDate(distribucion.registroActividad, fechaColumna) }}
-      </span>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>-->
-
-
-  
-
-<!--<app-spinner></app-spinner>
-<div class="container">
-  <div class="row">
-    <div class="col-12 col-md-7 mb-3">
-      <div class="titulos">DISTRIBUCIÓN HORARIA <span class="titulos-second">SEMANAL</span></div>
-    </div>
-    <div class="col-12 col-md-5 d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal">
-        <mat-icon>keyboard_arrow_left</mat-icon>
-      </button>
-      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
-        <mat-icon>get_app</mat-icon>
-      </button>
-      <button mat-fab class="button-pase" style="margin-left: 5px;" matTooltip="Ver historial" (click)="verDistribucionHistorial()">
-        <mat-icon>calendar_month</mat-icon>
-      </button>
-    </div>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-1">
-      <div class="contenedor-bocadillo">
-        <div>{{ nombreMes }}</div>
-        <div>{{ anoSeleccionado  }}</div>
-      </div>
-    </div>
-    <div class="col-md-8 d-flex justify-content-start">
-      <div class="contenedor-titulo-bocadillo">
-        PROFESIONAL: {{ asistencial?.apellido }}, {{ asistencial?.nombre }}
-      </div>
-    </div>
-    <div class="col-md-3 d-flex justify-content-start">
-        <div class="contenedor-subtitulo-bocadillo">
-          <div class="select-inicio-container">
-            <select class="select-inicio" [(ngModel)]="mesSeleccionado" (change)="onMonthChange($event)">
-                <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
-            </select>
-            <span class="arrow">▼</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-
-
-
-
-
-<div class="row">
-  <div class="table-responsive">
-    <table class="table table-hover table-bordered table-sm caption-top">
-      <thead style="background-color: #bbb9b9;">
-        <tr>
-          <th>Tipo</th>
-          <th>Lu</th>
-          <th>Ma</th>
-          <th>Mi</th>
-          <th>Ju</th>
-          <th>Vi</th>
-          <th>Sa</th>
-          <th>Do</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-        <tr>
-          <td class="negrita">Guardia</td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['lunesGuardia'].horaIngreso }}" *ngIf="horasPorDia['lunesGuardia'].cantidad">
-                {{ horasPorDia['lunesGuardia'].cantidad }} hs
-            </span>
-        </td>
-        <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['martesGuardia'].horaIngreso }}" *ngIf="horasPorDia['martesGuardia'].cantidad">
-              {{ horasPorDia['martesGuardia'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['miercolesGuardia'].horaIngreso }}" *ngIf="horasPorDia['miercolesGuardia'].cantidad">
-              {{ horasPorDia['miercolesGuardia'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['juevesGuardia'].horaIngreso }}" *ngIf="horasPorDia['juevesGuardia'].cantidad">
-              {{ horasPorDia['juevesGuardia'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['viernesGuardia'].horaIngreso }}" *ngIf="horasPorDia['viernesGuardia'].cantidad">
-              {{ horasPorDia['viernesGuardia'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['sabadoGuardia'].horaIngreso }}" *ngIf="horasPorDia['sabadoGuardia'].cantidad">
-              {{ horasPorDia['sabadoGuardia'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['domingoGuardia'].horaIngreso }}" *ngIf="horasPorDia['domingoGuardia'].cantidad">
-              {{ horasPorDia['domingoGuardia'].cantidad }} hs
-            </span>
-          </td>
-          <td>{{ totalHorasGuardia }} hs</td>
-        </tr>
-       
-        <tr>
-          <td class="negrita">Consultorio</td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['lunesConsultorio'].horaIngreso }}" *ngIf="horasPorDia['lunesConsultorio'].cantidad">
-                {{ horasPorDia['lunesConsultorio'].cantidad }} hs
-            </span>
-        </td>
-        <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['martesConsultorio'].horaIngreso }}" *ngIf="horasPorDia['martesConsultorio'].cantidad">
-              {{ horasPorDia['martesConsultorio'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['miercolesConsultorio'].horaIngreso }}" *ngIf="horasPorDia['miercolesConsultorio'].cantidad">
-              {{ horasPorDia['miercolesConsultorio'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['juevesConsultorio'].horaIngreso }}" *ngIf="horasPorDia['juevesConsultorio'].cantidad">
-              {{ horasPorDia['juevesConsultorio'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['viernesConsultorio'].horaIngreso }}" *ngIf="horasPorDia['viernesConsultorio'].cantidad">
-              {{ horasPorDia['viernesConsultorio'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['sabadoConsultorio'].horaIngreso }}" *ngIf="horasPorDia['sabadoConsultorio'].cantidad">
-              {{ horasPorDia['sabadoConsultorio'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['domingoConsultorio'].horaIngreso }}" *ngIf="horasPorDia['domingoConsultorio'].cantidad">
-              {{ horasPorDia['domingoConsultorio'].cantidad }} hs
-            </span>
-          </td>
-          <td>{{ totalHorasConsultorio }} hs</td>
-        </tr>
-
-       
-        <tr>
-          <td class="negrita">Giras médicas</td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['lunesGira'].horaIngreso }}" *ngIf="horasPorDia['lunesGira'].cantidad">
-                {{ horasPorDia['lunesGira'].cantidad }} hs
-            </span>
-        </td>
-        <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['martesGira'].horaIngreso }}" *ngIf="horasPorDia['martesGira'].cantidad">
-              {{ horasPorDia['martesGira'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['miercolesGira'].horaIngreso }}" *ngIf="horasPorDia['miercolesGira'].cantidad">
-              {{ horasPorDia['miercolesGira'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['juevesGira'].horaIngreso }}" *ngIf="horasPorDia['juevesGira'].cantidad">
-              {{ horasPorDia['juevesGira'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['viernesGira'].horaIngreso }}" *ngIf="horasPorDia['viernesGira'].cantidad">
-              {{ horasPorDia['viernesGira'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['sabadoGira'].horaIngreso }}" *ngIf="horasPorDia['sabadoGira'].cantidad">
-              {{ horasPorDia['sabadoGira'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['domingoGira'].horaIngreso }}" *ngIf="horasPorDia['domingoGira'].cantidad">
-              {{ horasPorDia['domingoGira'].cantidad }} hs
-            </span>
-          </td>
-          <td>{{ totalHorasGira }} hs</td>
-        </tr>
-
-        
-        <tr>
-          <td class="negrita">Otras actividades</td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['lunesOtro'].horaIngreso }}" *ngIf="horasPorDia['lunesOtro'].cantidad">
-                {{ horasPorDia['lunesOtro'].cantidad }} hs
-            </span>
-        </td>
-        <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['martesOtro'].horaIngreso }}" *ngIf="horasPorDia['martesOtro'].cantidad">
-              {{ horasPorDia['martesOtro'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['miercolesOtro'].horaIngreso }}" *ngIf="horasPorDia['miercolesOtro'].cantidad">
-              {{ horasPorDia['miercolesOtro'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['juevesOtro'].horaIngreso }}" *ngIf="horasPorDia['juevesOtro'].cantidad">
-              {{ horasPorDia['juevesOtro'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['viernesOtro'].horaIngreso }}" *ngIf="horasPorDia['viernesOtro'].cantidad">
-              {{ horasPorDia['viernesOtro'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['sabadoOtro'].horaIngreso }}" *ngIf="horasPorDia['sabadoOtro'].cantidad">
-              {{ horasPorDia['sabadoOtro'].cantidad }} hs
-            </span>
-          </td>
-          <td>
-            <span matTooltip="Hora ingreso: {{ horasPorDia['domingoOtro'].horaIngreso }}" *ngIf="horasPorDia['domingoOtro'].cantidad">
-              {{ horasPorDia['domingoOtro'].cantidad }} hs
-            </span>
-          </td>
-          <td>{{ totalHorasOtro }} hs</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  </div>
-
-  <div class="row">
-  <div class="container-mensajes">
-    <div *ngIf="cargaHoraria !== undefined" class="carga-horaria-display">
-      <p>Carga Horaria: <strong>{{ cargaHoraria }}</strong> hs</p>
-      <p *ngIf="cargaHoraria === undefined">
-        No hay carga horaria disponible para este profesional.
-      </p>
-    </div>
-
-    <div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
-      <p>{{ mensajeCargaHoraria }}</p>
-    </div>
-  </div>
-  <div *ngIf="novedades && novedades.length > 0; else noNovedades">
-    <div *ngFor="let novedad of novedades">
-      {{ novedad.tipoLicencia!.nombre }}, desde <span class="negrita">{{ novedad.fechaInicio | date:'EEEE dd/MM/yyyy' }}</span> hasta <span class="negrita">{{ novedad.fechaFinal | date:'EEEE dd/MM/yyyy' }}</span>.
-    </div>
-  </div>
-  
-  <ng-template #noNovedades>
-    <p>No hay novedades disponibles para el mes seleccionado.</p>
-  </ng-template>
-  
-  </div> 
-</div>--> 

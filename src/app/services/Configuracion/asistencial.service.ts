@@ -133,4 +133,16 @@ export class AsistencialService {
     return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTipoGuardia/${efectorId}`);
   }
 
+public listByEfectorAndTG(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTG/${idEfector}/${tipoGuardia}`);
+}
+
+public asistencialesConPendientes(idEfector: number, mes: number, anio: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}asistencialesConPendientes/${idEfector}/${mes}/${anio}/${tipoGuardia}`);
+}
+
+public ConPendientes(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}ConPendientes/${idEfector}/${tipoGuardia}`);
+}
+
 }
