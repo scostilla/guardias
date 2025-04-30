@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
 import { Caps } from "src/app/models/Configuracion/Caps";
-
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,15 @@ export class CapsService {
   public list(): Observable<Caps[]> {
       return this.httpClient.get<Caps[]>(this.capsURL + 'list');
   }
+
+  public listAll(): Observable<Caps[]> {
+    return this.httpClient.get<Caps[]>(this.capsURL + 'listAll');
+}
+
+public listSelection(): Observable<EfectorSummaryDto[]> {
+  return this.httpClient.get<EfectorSummaryDto[]>(this.capsURL + 'listSelection');
+}
+
 
   public getById( id:number): Observable<Caps> {
     return this.httpClient.get<Caps>(this.capsURL + `detail/${id}`);

@@ -15,3 +15,31 @@ mat-list-item {
   .delete-icon:hover {
     color: #9c1d13;
   }
+
+  .evento-contenedor {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px; /* espacio entre los elementos */
+  }
+
+  .texto-resaltado {
+    color: #ffffff;
+    padding: 0 6px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: bold;
+    vertical-align: middle;
+    line-height: 1.8;
+  }
+  
+  .auth-pendiente {
+    background-color: #ffcc00; /* amarillo */
+  }
+  
+  .auth-confirmado {
+    background-color: #4caf50; /* verde */
+  }
+  
+  .auth-rechazado {
+    background-color: #f44336; /* rojo */
+  }

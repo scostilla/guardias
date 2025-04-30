@@ -510,6 +510,15 @@ mat-table {
   background-color: #f8f6f6 !important;
 }
 
+.ref-novedad-personal {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  vertical-align: middle;
+  background-color: grey; /* Color por defecto, puede ser sobrescrito */
+}
+
 .novedad-personal-compensatorio {
   background-color: #A8FFFF !important;
 }
@@ -527,6 +536,9 @@ mat-table {
 }
 .novedad-personal-falta-sin-aviso {
   background-color: #D32916 !important;
+}
+.novedad-personal-duelo {
+  background-color: #967565 !important;
 }
 
 .novedad-personal-otros {

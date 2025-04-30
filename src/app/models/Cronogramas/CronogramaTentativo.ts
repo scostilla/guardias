@@ -9,7 +9,7 @@ export class CronogramaTentativo {
     id?: number;
     activo: boolean;
     aceptado: boolean;
-    autorizado: boolean;
+    autorizado: string;
     fechaIngreso: Date;
     fechaEgreso: Date;
     horaIngreso: string;
@@ -23,7 +23,7 @@ export class CronogramaTentativo {
     constructor(
         activo: boolean,
         aceptado: boolean,
-        autorizado: boolean,
+        autorizado: string,
         fechaIngreso: Date,
         fechaEgreso: Date,
         horaIngreso: string,

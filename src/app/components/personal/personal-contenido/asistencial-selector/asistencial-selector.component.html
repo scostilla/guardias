@@ -37,7 +37,7 @@
           <!-- Columna Apellido -->
           <ng-container matColumnDef="apellido">
             <mat-header-cell *matHeaderCellDef class="negrita"> Apellido </mat-header-cell>
-            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
               {{ persona.apellido }}
             </mat-cell>
           </ng-container>
@@ -45,7 +45,7 @@
           <!-- Columna Nombre -->
           <ng-container matColumnDef="nombre">
             <mat-header-cell *matHeaderCellDef class="negrita"> Nombre </mat-header-cell>
-            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
               {{ persona.nombre }}
             </mat-cell>
           </ng-container>
@@ -53,7 +53,7 @@
           <!-- Columna CUIL -->
           <ng-container matColumnDef="cuil">
             <mat-header-cell *matHeaderCellDef class="negrita"> CUIL </mat-header-cell>
-            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
               {{ persona.cuil }}
             </mat-cell>
           </ng-container>
@@ -61,7 +61,7 @@
           <!-- Columna profesion -->
           <ng-container matColumnDef="profesion">
             <mat-header-cell *matHeaderCellDef class="negrita"> Profesión </mat-header-cell>
-            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)">
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
               {{ persona.profesion }}
             </mat-cell>
           </ng-container>

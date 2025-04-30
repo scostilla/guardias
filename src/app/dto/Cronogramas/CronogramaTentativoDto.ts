@@ -6,7 +6,7 @@ export class CronogramaTentativoDto {
     horaEgreso: Date;
     activo: boolean;
     aceptado: boolean;
-    autorizado: boolean;
+    autorizado: string;
     idTipoGuardia: number;
     idAsistencial: number;
     idServicio: number;
@@ -20,7 +20,7 @@ export class CronogramaTentativoDto {
         horaEgreso: Date,
         activo: boolean,
         aceptado: boolean,
-        autorizado: boolean,
+        autorizado: string,
         idTipoGuardia: number,
         idAsistencial: number,
         idServicio: number,

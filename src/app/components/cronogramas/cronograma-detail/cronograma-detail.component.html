@@ -7,7 +7,12 @@
     <div *ngIf="data.events.length; else noData">
       <ng-container *ngFor="let event of data.events">
         <div>
-          <span [style.color]="event.color.primary">{{ event.title }}</span><mat-icon class="delete-icon" (click)="deleteEvent(event)" matTooltip="Eliminar guardia tentativa">delete</mat-icon><span>{{event.auth}}</span><br/> 
+          <span class="evento-contenedor"><span [style.color]="event.color.primary">{{ event.title }}<mat-icon class="delete-icon" (click)="deleteEvent(event)" matTooltip="Eliminar guardia tentativa">delete</mat-icon></span>
+          <span class="texto-resaltado" [ngClass]="{
+            'auth-pendiente': event.auth === 'PENDIENTE',
+            'auth-confirmado': event.auth === 'CONFIRMADO',
+            'auth-rechazado': event.auth === 'RECHAZADO'
+          }">{{event.auth}}</span></span><br/> 
           Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
           <span>Servicio: {{ event.servicio }}</span><br/>
           <span *ngIf="event.obs"> {{ event.obs }} </span>

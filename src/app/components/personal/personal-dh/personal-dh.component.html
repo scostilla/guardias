@@ -118,7 +118,7 @@
 
   <div class="row mt-3" *ngIf="showTable && novedadesPersonales.length > 0">
     <div *ngFor="let novedad of novedadesPersonales">
-      <span class="ref-circulo" [ngClass]="getNovedadClassFromTipo(novedad)">
+      <span class="ref-novedad-personal" [ngClass]="getNovedadClassFromTipo(novedad)">
       </span>
       {{ novedad.tipoLicencia.nombre }}
     </div>

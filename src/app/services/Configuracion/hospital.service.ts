@@ -6,6 +6,7 @@ import { Hospital } from "src/app/models/Configuracion/Hospital";
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
 import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 
 
 @Injectable({
@@ -24,6 +25,14 @@ export class HospitalService {
 
   public list(): Observable<Hospital[]> {
       return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'list');
+  }
+
+  public listAll(): Observable<Hospital[]> {
+    return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'listAll');
+  }
+
+  public listSelection(): Observable<EfectorSummaryDto[]> {
+    return this.httpClient.get<EfectorSummaryDto[]>(this.hospitalesURL + 'listSelection');
   }
 
   // Listar hospitales x pasivas

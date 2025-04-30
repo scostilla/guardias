@@ -152,7 +152,7 @@ export class AsistencialSelectorComponent implements OnInit {
    // Selecciona una persona (Asistencial o NoAsistencial)
   selectPersona(persona: AsistencialSummaryDto): void {
     // Verifica que el objeto tenga la estructura correcta
-    console.log('Selected Persona:', persona);
+    //console.log('Selected Persona:', persona);
   
     // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
     this.dialogRef.close(persona);

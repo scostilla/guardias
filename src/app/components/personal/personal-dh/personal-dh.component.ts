@@ -429,7 +429,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     return novedad ? this.getNovedadClassFromTipo(novedad) : '';
   }
 
-  getNovedadClassFromTipo(novedad: NovedadPersonal): string {
+  getNovedadClassFromTipo(novedad: NovedadPersonal): string {    
     switch (novedad.tipoLicencia.nombre.toLowerCase()) {
       case 'compensatorio': return 'novedad-personal-compensatorio';
       case 'licencia anual ordinaria': return 'novedad-personal-lao';
@@ -437,10 +437,11 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       case 'parte por enfermedad': return 'novedad-personal-parte-enfermo';
       case 'parte por cuidado de familiar enfermo': return 'novedad-personal-familiar-enfermo';
       case 'falta sin aviso': return 'novedad-personal-falta-sin-aviso';
+      case 'duelo': return 'novedad-personal-duelo';
       default: return 'novedad-personal-otros';
     }
   }
-
+  
   // Cargar las novedades personales
   loadNovedades(): void {
     if (this.asistencial) {

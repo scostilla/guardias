@@ -454,7 +454,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   updateAsistencial(asistencial: Asistencial): void {
-    console.log("en asistencial se envia el objeto", asistencial);
+    //console.log("en asistencial se envia el objeto", asistencial);
     this.router.navigate(['/asistencial-edit'], {
       state: { asistencial }
     });
@@ -537,7 +537,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   crearLegajo(asistencial: AsistencialListDto): void {
 
-    console.log("en asistencial se envia el objeto", asistencial);
+    //console.log("en asistencial se envia el objeto", asistencial);
     this.router.navigate(['/legajo-create'], {
       state: { asistencial, fromAsistencial: true }
     });

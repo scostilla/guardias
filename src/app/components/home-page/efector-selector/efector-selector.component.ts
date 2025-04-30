@@ -3,11 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
-import { Caps } from 'src/app/models/Configuracion/Caps';
-import { Efector } from 'src/app/models/Configuracion/Efector';
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 
 @Component({
   selector: 'app-efector-selector',
@@ -19,16 +15,15 @@ export class EfectorSelectorComponent {
   efectorOptions: any[] = [];
   selectedEfector: number | null = null;
 
-  ministerios: Ministerio[] = [];
-  hospitales: Hospital[] = [];
-  caps: Caps[] = [];
+  ministerios: EfectorSummaryDto[] = [];
+  hospitales: EfectorSummaryDto[] = [];
+  caps: EfectorSummaryDto[] = [];
 
   constructor(
     private dialogRef: MatDialogRef<EfectorSelectorComponent>,
     private hospitalService: HospitalService,
     private ministerioService: MinisterioService,
     private capsService: CapsService,
-    private efectorService: EfectorService, // El servicio para manejar el BehaviorSubject
     @Inject(MAT_DIALOG_DATA) public data: { selectedEfectorId: number }
   ) {
     // Cargar los datos de ministerios, hospitales y CAPS
@@ -44,7 +39,7 @@ export class EfectorSelectorComponent {
   }
 
   listMinisterios(): void {
-    this.ministerioService.list().subscribe(data => {
+    this.ministerioService.listSelection().subscribe(data => {
       this.ministerios = data;
     }, error => {
       console.log(error);
@@ -52,7 +47,7 @@ export class EfectorSelectorComponent {
   }
 
   listHospitales(): void {
-    this.hospitalService.list().subscribe(data => {
+    this.hospitalService.listSelection().subscribe(data => {
       this.hospitales = data;
     }, error => {
       console.log(error);
@@ -60,7 +55,7 @@ export class EfectorSelectorComponent {
   }
 
   listCaps(): void {
-    this.capsService.list().subscribe(data => {
+    this.capsService.listSelection().subscribe(data => {
       this.caps = data;
     }, error => {
       console.log(error);
