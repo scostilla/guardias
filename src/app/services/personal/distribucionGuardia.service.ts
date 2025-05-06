@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { DistribucionGuardia } from "src/app/models/personal/DistribucionGuardia";
 import { DistribucionGuardiaDto } from "src/app/dto/personal/DistribucionGuardiaDto";
 import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
+import { DistribucionCheckDto } from "src/app/dto/personal/distribucionGuardia/DistribucionCheckDto";
 
 
 @Injectable({
@@ -100,5 +101,7 @@ existeTentativoEnDistribucionGuardia(cTentativos: CronogramaTentativoDto): Obser
   return this.httpClient.post<boolean>(`${this.distribucionGuardiasURL}verificarCronogramaEnDistribucion`, cTentativos);
 }
 
-
+tieneDistribucionActiva(dto: DistribucionCheckDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionGuardiasURL}tieneDistribucionActiva`, dto);
+}
 }

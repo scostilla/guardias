@@ -29,6 +29,7 @@ import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/Asiste
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
 import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { AsistencialEfectorRegistroActividadDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorRegistroActividadDto';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -60,7 +61,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<AsistencialDetailComponent>;
   displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
-  dataSource!: MatTableDataSource<Asistencial>;
+  dataSource!: MatTableDataSource<AsistencialEfectorRegistroActividadDto>;
   suscription!: Subscription;
   asistencial!: Asistencial;
   legajos: Legajo[] = [];
@@ -182,7 +183,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('');
     }
   
-    // Llamar al servicio para obtener los tipos de guardia solo si hay idEfector
+    /*/ Llamar al servicio para obtener los tipos de guardia solo si hay idEfector
     this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
       this.tipoGuardias = guardias;
   
@@ -192,10 +193,10 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
       this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
       this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
-    });
+    });*/
   
     // Llamar a listLegajos solo si hay idEfector
-    this.listLegajos();
+    //this.listLegajos();
   
     // Llamar a listAsistencial solo si hay idEfector
     this.listAsistencial(this.efectorId);
@@ -287,7 +288,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     const filterValue = (event.target as HTMLInputElement).value;
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+    this.dataSource.filterPredicate = (data: AsistencialEfectorRegistroActividadDto, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       return normalizedData.indexOf(normalizedFilterValue) !== -1;
@@ -345,6 +346,42 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   listAsistencial(efectorId: number | null = null): void {
+    if (efectorId === null) {
+      this.showMessage = true;
+      this.sinAsistencialMessage = false;
+      this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>([]);
+      return;
+    }
+  
+    this.asistencialService.listAsistencialByEfector(efectorId).subscribe({
+      next: (data: AsistencialEfectorRegistroActividadDto[]) => {
+        // Filtro adicional: eliminar asistenciales que tengan guardias de tipo "Contrafactura"
+        const filteredData = data.filter(asistencial =>
+          !asistencial.nombresTiposGuardias.includes('CONTRAFACTURA')
+        );
+  
+        if (filteredData.length === 0) {
+          this.showMessage = false;
+          this.sinAsistencialMessage = true;
+          this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>([]);
+        } else {
+          this.showMessage = false;
+          this.sinAsistencialMessage = false;
+          this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>(filteredData);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        }
+      },
+      error: (err) => {
+        console.error('Error al obtener asistenciales:', err);
+        this.showMessage = true;
+        this.sinAsistencialMessage = false;
+        this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>([]);
+      }
+    });
+  }
+  
+ /* listAsistencial(efectorId: number | null = null): void {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
       this.showMessage = true;
@@ -385,18 +422,18 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       this.showMessage = true;
       this.sinAsistencialMessage = false;
     });
-  }
+  }*/
                 
-  listLegajos(): void {
+/*  listLegajos(): void {
     this.legajoService.list().subscribe((legajos: Legajo[]) => {
       this.legajos = legajos;
       this.isLoadingLegajos = false;
       //   this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
 
     });
-  }
+  }*/
     
-  tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
+  /*tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
     // Verifica si hay al menos un tipo de guardia asignado
     const tieneGuardias = legajos.some(legajo => legajo.tipoGuardias && legajo.tipoGuardias.length > 0);
   
@@ -429,11 +466,16 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   mostrarBotones(asistencial: AsistencialListDto): boolean {
     const legajosAsistencial = this.legajos.filter(legajo => legajo.persona?.id === asistencial.id);
     return !this.tipoGuardiaNoPermiteAcciones(legajosAsistencial);
+  }*/
+
+  mostrarBotones(asistencial: AsistencialEfectorRegistroActividadDto): boolean {
+    return asistencial.nombresTiposGuardias.includes('CARGO') ||
+           asistencial.nombresTiposGuardias.includes('AGRUPACIÓN');
   }
   
   formatCuil(cuil: string): string {
     if (!cuil) return '';
-    // Asegúrate de que el CUIL tenga al menos 11 dígitos
+    // el CUIL debe tener al menos 11 dígitos
     if (cuil.length < 11) return cuil;
   
     return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
@@ -502,27 +544,27 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dist-horaria']);
   }*/
 
-  verNovedad(asistencial: Asistencial): void {
+  verNovedad(asistencial: AsistencialEfectorRegistroActividadDto): void {
     if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.asistencialService.setCurrentAsistencialId(asistencial.id);
       this.router.navigate(['/novedades-person']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }
   }
 
-  verDistribucion(asistencial: Asistencial): void {
+  verDistribucion(asistencial: AsistencialEfectorRegistroActividadDto): void {
     if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.asistencialService.setCurrentAsistencialId(asistencial.id);  // Envía solo el ID
       this.router.navigate(['/personal-dh']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
     }
   }
-
-  hayLegajos(asistencial: AsistencialListDto): boolean {
+  
+  /*hayLegajos(asistencial: AsistencialListDto): boolean {
     return this.legajos.some(legajo => legajo.persona?.id === asistencial.id);
-  }
+  }*/
 
   verLegajo(asistencial: AsistencialListDto): void {
     if (asistencial && asistencial.id) {
@@ -535,7 +577,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     }
   }
 
-  crearLegajo(asistencial: AsistencialListDto): void {
+  /*crearLegajo(asistencial: AsistencialListDto): void {
 
     //console.log("en asistencial se envia el objeto", asistencial);
     this.router.navigate(['/legajo-create'], {
@@ -560,7 +602,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     } else {
       this.crearLegajo(asistencial);
     }
-  }
+  }*/
 
   actualizarColumnasVisibles(): void {
     let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];

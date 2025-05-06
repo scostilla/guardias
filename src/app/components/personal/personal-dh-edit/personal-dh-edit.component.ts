@@ -123,9 +123,7 @@ export class PersonalDhEditComponent {
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       const asistencialId = params['asistencialId'];
-
       const mesSeleccionado = params['mes'];
-      //console.log('Valor de mesSeleccionado:', mesSeleccionado);
   
       if (!mesSeleccionado || !mesSeleccionado.includes('-')) {
         this.toastr.error('El mes y año seleccionado es inválido o está vacío.', 'Error', {
@@ -137,28 +135,36 @@ export class PersonalDhEditComponent {
         return;
       }
   
-      // Asignar el mesSeleccionado a la propiedad del componente
       this.mesSeleccionado = mesSeleccionado;
-
-      this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-        this.asistencial = asistencial;
-        if (!this.asistencial?.id) {
+  
+      this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
+        if (id === null) {
           this.location.back();
-        }else {
-          this.idPersona = this.asistencial.id;
-          this.listServicios();
-          this.filterLegajosAndGetTipoGuardia();
-          this.listCaps();
-          this.generarMeses();
-          this.loadCargaHoraria();
-          this.loadDistribuciones(mesSeleccionado);
-        
+          return;
         }
+  
+        this.asistencialService.detail(id).subscribe({
+          next: (asistencial) => {
+            this.asistencial = asistencial;
+            this.idPersona = asistencial.id!;
+  
+            // Ya con el objeto completo
+            this.listServicios();
+            this.filterLegajosAndGetTipoGuardia();
+            this.listCaps();
+            this.generarMeses();
+            this.loadCargaHoraria();
+            this.loadDistribuciones(mesSeleccionado);
+          },
+          error: (err) => {
+            console.error('Error al obtener el asistencial:', err);
+            this.location.back();
+          }
+        });
       });
     });
-  
   }
-    
+      
   private subscribeToFormChanges(): void {
     this.guardiaForm.valueChanges.subscribe(() => this.updateHorasStatus());
     this.consultorioForm.valueChanges.subscribe(() => this.updateHorasStatus());

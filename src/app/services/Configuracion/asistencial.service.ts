@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
 import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
+import { AsistencialEfectorRegistroActividadDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorRegistroActividadDto';
 import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { Person } from "src/app/models/Configuracion/Person";
 import { forkJoin } from 'rxjs';
@@ -45,6 +46,10 @@ export class AsistencialService {
 
   getByEfector(idEfector: number): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
+  }
+
+  listAsistencialByEfector(idEfector: number): Observable<AsistencialEfectorRegistroActividadDto[]> {
+    return this.httpClient.get<AsistencialEfectorRegistroActividadDto[]>(`${this.asistencialesURL}listAsistencialByEfector/${idEfector}`);
   }
 
   public listByUdoAndTipoGuardia(idUdo: number): Observable<AsistencialDto[]> {
@@ -111,13 +116,20 @@ export class AsistencialService {
       )
   }
 
-  //lo uso para enviar id sin usar la url
+  private currentAsistencialIdSubject = new BehaviorSubject<number | null>(null);
+  currentAsistencialId$ = this.currentAsistencialIdSubject.asObservable();
+
+  setCurrentAsistencialId(id: number): void {
+    this.currentAsistencialIdSubject.next(id);
+  }
+  
+  /*/lo uso para enviar id sin usar la url
   private currentAsistencialSubject = new BehaviorSubject<Asistencial | null>(null);
   currentAsistencial$ = this.currentAsistencialSubject.asObservable();
   
   setCurrentAsistencial(asistencial: Asistencial) {
     this.currentAsistencialSubject.next(asistencial);
-  }
+  }*/
 
   //uso para filtrar por el efector del usuario logueado
 listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto[]> {

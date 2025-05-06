@@ -137,8 +137,7 @@ export class AsistencialSelectorComponent implements OnInit {
       .toLowerCase();
   
     this.dataSource.filterPredicate = (data: AsistencialSummaryDto, filter: string) => {
-      //const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
-      const normalizedData = (data.nombre + ' ' + data.apellido)
+      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
 
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")

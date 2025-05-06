@@ -66,6 +66,7 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   suscription!: Subscription;
   asistencial: Asistencial | null = null;
+  asistencialId!: number;
   distribucionesGuardia: DistribucionGuardiaWithHoras[] = [];
   distribucionesConsultorio: DistribucionConsultorioWithHoras[] = [];
   distribucionesGira: DistribucionGiraWithHoras[] = [];
@@ -124,13 +125,17 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
   ) { }
 
     ngOnInit(): void {
-      this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-        this.asistencial = asistencial;
-        //console.log('Asistencial recibido:', this.asistencial);
-    
-        if (!this.asistencial?.id) {
+      this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
+        if (id === null) {
           this.location.back();
-        } else {
+          return;
+        }
+      
+        // ✅ 2. Usar el ID para buscar el objeto asistencial
+        this.asistencialService.detail(id).subscribe({
+          next: (asistencial) => {
+            this.asistencial = asistencial;
+
           // Inicializar el mes y año actual
           const fechaActual = moment();
           const fechaAnterior = fechaActual.clone().subtract(1, 'months');
@@ -149,8 +154,14 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     
           // Verificar distribuciones después de cargar los datos
           this.verificarDistribuciones();
+        
+        },
+        error: (err) => {
+          console.error('No se pudo obtener el asistencial por ID:', err);
+          this.location.back();
         }
       });
+    });
     }
   
 
@@ -715,14 +726,22 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     }
   }*/
     
-  verDistribucionHistorial(): void {
-    if (this.asistencial && this.asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(this.asistencial);
-      this.router.navigate(['/personal-dh-historial']); 
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
+verDistribucionHistorial(): void {
+  // Primero verificamos que el ID del asistencial esté disponible
+  this.asistencialService.currentAsistencialId$.subscribe(id => {
+    if (id === null) {
+      console.error('El ID del asistencial no está disponible.');
+      this.location.back();
+      return;
     }
-  }  
+
+    // Enviamos el ID al servicio
+    this.asistencialService.setCurrentAsistencialId(id);
+
+    // Navegamos a la página de historial
+    this.router.navigate(['/personal-dh-historial']);
+  });
+}
 
   obtenerDistribucionesYAbrirDialogo(tipo: string): void {
     if (!this.asistencial) {

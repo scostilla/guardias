@@ -24,7 +24,7 @@
             <th scope="row">Necesita reemplazo</th>
             <td>{{novedadPeronal.necesitaReemplazo ? 'Si' : 'No'}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="novedadPeronal?.suplente?.nombre || novedadPeronal?.suplente?.apellido">
             <th scope="row">Reemplazo</th>
             <td>{{ (novedadPeronal.suplente.apellido && novedadPeronal.suplente.nombre) ? 
               (novedadPeronal.suplente.apellido + ', ' + novedadPeronal.suplente.nombre) : 

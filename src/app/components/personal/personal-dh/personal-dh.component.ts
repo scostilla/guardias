@@ -66,6 +66,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   suscription!: Subscription;
   asistencial: Asistencial | null = null;
+  asistencialId!: number;
   distribucionesGuardia: DistribucionGuardiaWithHoras[] = [];
   distribucionesConsultorio: DistribucionConsultorioWithHoras[] = [];
   distribucionesGira: DistribucionGiraWithHoras[] = [];
@@ -123,6 +124,37 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
+      if (id === null) {
+        this.location.back();
+        return;
+      }
+    
+      this.asistencialService.detail(id).subscribe({
+        next: (asistencial) => {
+          this.asistencial = asistencial;
+    
+          const fechaActual = moment();
+          this.mesYanio = `${fechaActual.month() + 1}-${fechaActual.year()}`;
+          this.nombreMes = fechaActual.format('MMMM').toUpperCase();
+          this.anioSeleccionado = fechaActual.year();
+          this.mesSeleccionado = fechaActual.month() + 1;
+    
+          this.generarMesesDisponibles();
+          this.loadDistribuciones();
+          this.loadNovedades();
+          this.loadCargaHoraria();
+          this.verificarDistribuciones();
+        },
+        error: (err) => {
+          console.error('No se pudo obtener el asistencial por ID:', err);
+          this.location.back();
+        }
+      });
+    });
+  }  
+
+  /*ngOnInit(): void {
     this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
       this.asistencial = asistencial;
       //console.log('Asistencial recibido:', this.asistencial);
@@ -148,7 +180,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
         this.verificarDistribuciones();
       }
     });
-  }
+  }*/
 
   // Función para combinar los datos y aplicar la agregación
   getCombinedData() {
@@ -764,14 +796,31 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
   }
     
   verDistribucionHistorial(): void {
-    if (this.asistencial && this.asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(this.asistencial);
-      this.router.navigate(['/personal-dh-historial']); 
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }  
-
+    // Verificar que el ID esté disponible
+    this.asistencialService.currentAsistencialId$.subscribe(id => {
+      if (id === null) {
+        console.error('El ID del asistencial no está disponible.');
+        this.location.back();
+        return;
+      }
+  
+      // Obtener el asistencial utilizando el ID
+      this.asistencialService.detail(id).subscribe({
+        next: (asistencial) => {
+          // Asignamos el objeto asistencial al componente
+          this.asistencial = asistencial;
+  
+          // Redirigir al historial
+          this.router.navigate(['/personal-dh-historial']);
+        },
+        error: (err) => {
+          console.error('No se pudo obtener el asistencial por ID:', err);
+          this.location.back();
+        }
+      });
+    });
+  }
+  
   editarMes(): void {
     this.router.navigate(['/personal-dh-edit'], {
       queryParams: {

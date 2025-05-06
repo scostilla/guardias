@@ -86,9 +86,12 @@
               <mat-icon class="btnRemove">delete</mat-icon>
             </button>
 
-            <button mat-icon-button matTooltip="{{getTooltip(asistencial)}}" (click)="getButtonAction(asistencial)"
-              *ngIf="!isLoadingLegajos">
-              <mat-icon color="primary">{{getIcon(asistencial)}}</mat-icon>
+            <!--<button mat-icon-button matTooltip="{{getTooltip(asistencial)}}" (click)="getButtonAction(asistencial)"
+              *ngIf="!isLoadingLegajos">-->
+
+            <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)">
+
+              <mat-icon color="primary">playlist_play</mat-icon>
             </button>
             <!-- <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(asistencial)" *ngIf="!isLoadingLegajos && hayLegajos(asistencial)">
               <mat-icon color="primary">playlist_play</mat-icon>

@@ -33,6 +33,7 @@ export class PersonalDhCreateComponent {
   inputValue: string = '';
   suscription!: Subscription;
   asistencial: Asistencial | null = null;
+  asistencialId!: number;
   idPersona!: number;
   tipoGuardias: TipoGuardia[] = [];
   guardiaForm!: FormGroup;
@@ -110,25 +111,32 @@ export class PersonalDhCreateComponent {
   }
   
   ngOnInit() {
-    this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-      this.asistencial = asistencial;
-      //console.log('Asistencial recibido:', this.asistencial);
-
-      if (!this.asistencial?.id) {
+    this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
+      if (id === null) {
         this.location.back();
-        } else {
-        this.idPersona = this.asistencial.id;
-
-        this.listServicios();
-        this.filterLegajosAndGetTipoGuardia();
-        this.listCaps();
-        this.verificarMesesDisponibles();
-        this.loadCargaHoraria();
+        return;
       }
-
-  });
+  
+      this.asistencialService.detail(id).subscribe({
+        next: (asistencial) => {
+          this.asistencial = asistencial;
+          this.idPersona = asistencial.id!;
+  
+          // Ahora que tenemos el objeto completo, llamamos a los métodos necesarios
+          this.listServicios();
+          this.filterLegajosAndGetTipoGuardia();
+          this.listCaps();
+          this.verificarMesesDisponibles();
+          this.loadCargaHoraria();
+        },
+        error: (err) => {
+          console.error('Error al cargar asistencial por id:', err);
+          this.location.back();
+        }
+      });
+    });
   }
-
+  
   ngOnDestroy(): void {
     if (this.suscription) {
       this.suscription.unsubscribe();
