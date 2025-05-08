@@ -5,16 +5,18 @@
   <form [formGroup]="novedadPersonalForm" (ngSubmit)="novedadPersonalForm.valid && editNovedadPersonal()">
     <mat-dialog-content>
 
-          <mat-form-field appearance="fill">
+      <div class="form-row">
+        <mat-form-field appearance="fill">
             <mat-label>Tipo de licencia</mat-label>
               <mat-select formControlName="tipoLicencia" [compareWith]="compareFn" placeholder="Seleccione una licencia">
                 <mat-option *ngFor="let licencia of licencias" [value]="licencia" >{{ licencia.nombre }}</mat-option>
               </mat-select>
             <mat-error *ngIf="novedadPersonalForm.get('tipoLicencia')?.errors?.['required']">El campo es requerido.</mat-error>
           </mat-form-field>
+      </div>
           
-
-          <mat-form-field appearance="fill">
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="form-field">
             <mat-label>Fecha Inicio</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="fechaInicio" (dateChange)="onFechaInicioChange()">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -22,13 +24,36 @@
             <mat-error *ngIf="novedadPersonalForm.get('fechaInicio')?.errors?.['required']">La fecha es requerida.</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="fill">
+          <mat-form-field appearance="fill" class="form-field" *ngIf="esCompensatorio">
+            <mat-label>Hora Inicio</mat-label>
+            <input matInput formControlName="horaInicio" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
+            <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+            <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+            <mat-error *ngIf="novedadPersonalForm?.get('horaInicio')?.invalid && novedadPersonalForm?.get('horaInicio')?.touched">
+              El campo es obligatorio (HH:mm).
+            </mat-error>
+          </mat-form-field>
+        </div>  
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="form-field">
             <mat-label>Fecha Finalizacion</mat-label>
             <input matInput [matDatepicker]="picker1" formControlName="fechaFinal" [min]="fechaMinFinal">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
             <mat-error *ngIf="novedadPersonalForm.get('fechaFinal')?.errors?.['required']">La fecha es requerida.</mat-error>
           </mat-form-field>
+
+          <mat-form-field appearance="fill" class="form-field" *ngIf="esCompensatorio">
+            <mat-label>Hora Finalización</mat-label>
+            <input matInput formControlName="horaFinal" [ngxMatTimepicker]="horaPicker1" [format]="24" readonly (click)="horaPicker1.open()">
+            <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker1"></ngx-mat-timepicker-toggle>
+            <ngx-mat-timepicker #horaPicker1></ngx-mat-timepicker>
+            <mat-error *ngIf="novedadPersonalForm?.get('horaFinal')?.invalid && novedadPersonalForm?.get('horaFinal')?.touched">
+              El campo es obligatorio (HH:mm).
+            </mat-error>
+          </mat-form-field>
+        </div>
           
       <!-- <mat-form-field appearance="fill" class="form-field">
         <mat-label>Cobra sueldo?</mat-label>
@@ -46,29 +71,33 @@
         </mat-select>
       </mat-form-field> -->
 
-      <mat-form-field  *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.enabled">
-        <mat-label>Necesita reemplazo?</mat-label>
-        <mat-select formControlName="necesitaReemplazo">
-          <mat-option [value]="true">Si</mat-option>
-          <mat-option [value]="false">No</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="form-row">
+        <mat-form-field  *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.enabled">
+          <mat-label>Necesita reemplazo?</mat-label>
+          <mat-select formControlName="necesitaReemplazo">
+            <mat-option [value]="true">Si</mat-option>
+            <mat-option [value]="false">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-      <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.value" appearance="fill">
-        <mat-label>Reemplazo</mat-label>
-        <input
-          matInput
-          [value]="novedadPersonalForm.get('suplente')?.value?.nombre + ' ' + novedadPersonalForm.get('suplente')?.value?.apellido || ''"
-          (click)="openAsistencialDialog()"
-          readonly
-          required
-        />
-        <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
-        <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['required']">
-          El campo es requerido.
-        </mat-error>
-       
-      </mat-form-field>
+      <div class="form-row">
+        <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.value" appearance="fill">
+          <mat-label>Reemplazo</mat-label>
+          <input
+            matInput
+            [value]="novedadPersonalForm.get('suplente')?.value?.nombre + ' ' + novedadPersonalForm.get('suplente')?.value?.apellido || ''"
+            (click)="openAsistencialDialog()"
+            readonly
+            required
+          />
+          <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+          <mat-error *ngIf="novedadPersonalForm.get('suplente')?.errors?.['required']">
+            El campo es requerido.
+          </mat-error>
+        
+        </mat-form-field>
+      </div>
 
     <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="submit" [disabled]="!novedadPersonalForm.valid">

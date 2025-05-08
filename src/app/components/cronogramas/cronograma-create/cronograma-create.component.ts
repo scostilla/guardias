@@ -355,7 +355,7 @@ validateHoraEgreso(): void {
 
         console.log('DistribucionCheckDto enviado:', checkDto);
     
-        // ✅ PRIMER PASO: Validar distribución activa
+        // PRIMERO: Validar distribución activa
         this.distribucionGuardiaService.tieneDistribucionActiva(checkDto).subscribe(
           tieneDistribucion => {
             if (!tieneDistribucion) {
@@ -368,10 +368,10 @@ validateHoraEgreso(): void {
                   progressBar: true
                 }
               );
-              return; // ⛔ Detener aquí si no hay distribución
+              return; // Finaliza aquí si no hay distribución
             }
     
-            // ✅ CONTINÚA si hay distribución activa
+            // CONTINÚA si hay distribución activa
             const cronogramaDto = new CronogramaTentativoDto(
               formData.fechaIngreso,
               formData.fechaEgreso,

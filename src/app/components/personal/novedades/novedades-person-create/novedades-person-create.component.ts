@@ -23,6 +23,7 @@ export class NovedadesPersonCreateComponent implements OnInit {
     inputValue: string = '';
     selectedAsistencial?: Asistencial;
     fechaMinFinal: Date | null = null;
+    idLicencia?: number;
   
     constructor(
         private fb: FormBuilder,
@@ -36,7 +37,9 @@ export class NovedadesPersonCreateComponent implements OnInit {
         this.novedadPersonalForm = this.fb.group({
           idTipoLicencia: ['', [Validators.required]],
           fechaInicio: ['', Validators.required],
+          horaInicio: [''],
           fechaFinal: [{ value: '', disabled: true }, Validators.required],
+          horaFinal: [''],
           idSuplente: [{ value: '', disabled: true }],
           puedeRealizarGuardia: [''],
           cobraSueldo: [''],
@@ -76,6 +79,16 @@ export class NovedadesPersonCreateComponent implements OnInit {
         
         // Iniciar con el campo necesitaReemplazo oculto
         this.showNecesitaReemplazo(false);
+
+        // Llamo al servicio para obtener los tipos de licencia
+        this.tipoLicenciaService.list().subscribe((licencia: TipoLicencia[]) => {
+          this.licencias = licencia;
+      
+          // Verifico si 'Compensatorio' están en la lista
+          this.idLicencia = this.licencias.find(t => t.nombre === 'Compensatorio')?.id;
+      
+        });
+    
       }
 
       updateFormFields(tipoLicenciaIdOrNombre: string | number | null): void {
@@ -148,6 +161,11 @@ export class NovedadesPersonCreateComponent implements OnInit {
           necesitaReemplazoControl?.setValue(null);
         }
       }
+
+      get esCompensatorio(): boolean {
+        const tipoLicencia = this.novedadPersonalForm.get('idTipoLicencia')?.value;
+        return tipoLicencia === this.idLicencia;
+      }    
 
 toggleSuplenteValidation(necesitaReemplazo: boolean): void {
   const idSuplenteControl = this.novedadPersonalForm.get('idSuplente');
@@ -248,6 +266,8 @@ saveNovedadPersonal(): void {
       const novedadPersonalDto = new NovedadPersonalDto(
         novedadPersonal.fechaInicio,
         novedadPersonal.fechaFinal,
+        novedadPersonal.horaInicio ?? null,
+        novedadPersonal.horaFinal ?? null,
         novedadPersonal.puedeRealizarGuardia,
         novedadPersonal.cobraSueldo,
         novedadPersonal.necesitaReemplazo,

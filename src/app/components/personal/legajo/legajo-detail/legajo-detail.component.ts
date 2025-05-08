@@ -25,6 +25,8 @@ export class LegajoDetailComponent implements OnInit {
   ngOnInit(): void {
     this.legajo = this.data;
     this.revista = this.legajo.revista;
+    console.log('Legajo recibido:', this.legajo);
+  console.log('Revista asociada:', this.revista);
   }
 
   isLast(index: number, array: Efector[] | Especialidad[] | TipoGuardia[]): boolean {

@@ -6,7 +6,7 @@ import { AsistencialSelectorComponent } from 'src/app/components/personal/person
 import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
-import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { TipoLicenciaService } from 'src/app/services/Configuracion/tipoLicencia.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
@@ -46,7 +46,9 @@ export class NovedadesPersonEditComponent implements OnInit {
     this.novedadPersonalForm = this.fb.group({
       tipoLicencia: ['', [Validators.required]],
       fechaInicio: ['', Validators.required],
+      horaInicio: [''],
       fechaFinal: ['', Validators.required],
+      horaFinal: [''],
       suplente: [{ value: '', disabled: true }],
       puedeRealizarGuardia: [''],
       cobraSueldo: [''],
@@ -74,6 +76,26 @@ export class NovedadesPersonEditComponent implements OnInit {
         this.novedadPersonalForm.get('fechaFinal')?.updateValueAndValidity();
         this.isUpdating = false;
       }
+    });
+
+    this.novedadPersonalForm.get('tipoLicencia')?.valueChanges.subscribe(selected => {
+      const horaInicioCtrl = this.novedadPersonalForm.get('horaInicio');
+      const horaFinalCtrl = this.novedadPersonalForm.get('horaFinal');
+    
+      const esCompensatorio = selected?.nombre === 'Compensatorio';
+    
+      if (esCompensatorio) {
+        horaInicioCtrl?.setValidators(Validators.required);
+        horaFinalCtrl?.setValidators(Validators.required);
+      } else {
+        horaInicioCtrl?.clearValidators();
+        horaFinalCtrl?.clearValidators();
+        horaInicioCtrl?.setValue(''); // opcional: limpiar valor si no es necesario
+        horaFinalCtrl?.setValue('');
+      }
+    
+      horaInicioCtrl?.updateValueAndValidity();
+      horaFinalCtrl?.updateValueAndValidity();
     });
     
     // Si el asistencialId está disponible en los datos inyectados
@@ -275,7 +297,10 @@ if (!licencia) {
     });
   }
 
- 
+  get esCompensatorio(): boolean {
+    const tipoLicencia = this.novedadPersonalForm.get('tipoLicencia')?.value;
+    return tipoLicencia?.nombre === 'Compensatorio';
+  }
 
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
@@ -332,6 +357,8 @@ if (!licencia) {
       const novedadPersonalDto = new NovedadPersonalDto(
         formValue.fechaInicio,
         formValue.fechaFinal,
+        formValue.horaInicio,
+        formValue.horaFinal,
         formValue.puedeRealizarGuardia,
         formValue.cobraSueldo,
         formValue.necesitaReemplazo,

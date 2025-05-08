@@ -13,12 +13,20 @@
             <td>{{novedadPeronal.tipoLicencia.nombre}}</td>
           </tr>
           <tr>
-            <th scope="row">Fecha final</th>
-            <td>{{novedadPeronal.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
-          </tr>
-          <tr>
             <th scope="row">Fecha inicio</th>
             <td>{{novedadPeronal.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha finalización</th>
+            <td>{{novedadPeronal.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr *ngIf="novedadPeronal.tipoLicencia.nombre === 'Compensatorio'">
+            <th scope="row">Hora inicio</th>
+            <td>{{novedadPeronal.horaInicio }}</td>
+          </tr>
+          <tr *ngIf="novedadPeronal.tipoLicencia.nombre === 'Compensatorio'">
+            <th scope="row">Hora finalización</th>
+            <td>{{novedadPeronal.horaFinal }}</td>
           </tr>
           <tr>
             <th scope="row">Necesita reemplazo</th>

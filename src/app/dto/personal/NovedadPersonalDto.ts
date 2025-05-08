@@ -2,6 +2,8 @@ export class NovedadPersonalDto {
     id?: number;
     fechaInicio: Date;        // Requerido
     fechaFinal: Date;       // Opcional
+    horaInicio: Date;       // Opcional
+    horaFinal: Date;        // Opcional
     puedeRealizarGuardia?: boolean; // Opcional
     cobraSueldo: boolean;   // Opcional
     necesitaReemplazo: boolean; // Opcional
@@ -14,6 +16,8 @@ export class NovedadPersonalDto {
     constructor(
         fechaInicio: Date,
         fechaFinal: Date,
+        horaInicio: Date,
+        horaFinal: Date,    
         puedeRealizarGuardia: boolean,
         cobraSueldo: boolean,
         necesitaReemplazo: boolean,
@@ -24,6 +28,8 @@ export class NovedadPersonalDto {
       ){
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
+        this.horaInicio = horaInicio;
+        this.horaFinal = horaFinal;
         this.puedeRealizarGuardia = puedeRealizarGuardia;
         this.cobraSueldo = cobraSueldo;
         this.necesitaReemplazo = necesitaReemplazo;
