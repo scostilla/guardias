@@ -8,7 +8,7 @@
     <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
   </mat-radio-group>
 
-  <mat-form-field appearance="fill" style="width: 100%;" *ngIf="efectorOptions.length > 0">
+  <mat-form-field appearance="fill" style="width: 95%;" *ngIf="efectorOptions.length > 0">
     <mat-label>Efector</mat-label>
     <mat-select [(ngModel)]="selectedEfector" (selectionChange)="onEfectorChange()">
       <mat-option *ngFor="let efector of efectorOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>

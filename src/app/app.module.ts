@@ -268,6 +268,10 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { AutoridadSelectorComponent } from './components/personal/personal-contenido/autoridad-selector/autoridad-selector.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
+import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
+import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
+import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
+import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
 
 @NgModule({
   declarations: [
@@ -482,7 +486,11 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
     PersonalDhDetailComponent,
     CronogramaCreateComponent,
     AutoridadSelectorComponent,
-    AsistencialFiltradoSelectorComponent,    
+    AsistencialFiltradoSelectorComponent,
+    CronogramaPendienteComponent,
+    AsistencialSelectorAllComponent,
+    CronogramaPendienteDetailComponent,
+    CronogramaPendienteEditComponent,
   ],
 
   imports: [

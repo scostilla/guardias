@@ -177,42 +177,42 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
   }
   
   listSinLegajos(): void {
-    this.asistencialService.list().subscribe(data => {
-      console.log('Asistenciales:', data); // Verifica los datos recibidos
-      const asistenciales = data.map(asistencial => ({
-        ...asistencial, 
-        tipo: 'Asistencial'
-      }));
-  
-      this.noAsistencialService.list().subscribe(noAsistenciales => {
-        console.log('No Asistenciales:', noAsistenciales); // Verifica los datos de no asistenciales
-        const noAsistencialesConTipo = noAsistenciales.map(noAsistencial => ({
-          ...noAsistencial,
-          tipo: 'No Asistencial'
+    this.asistencialService.listAsistencialSinLegajo().subscribe({
+      next: (asistenciales) => {
+        const asistencialesConTipo = asistenciales.map(item => ({
+          ...item,
+          tipo: 'Asistencial'
         }));
-  
-        const mergedData = [...asistenciales, ...noAsistencialesConTipo];
-        console.log('Datos combinados:', mergedData); // Verifica los datos combinados
-  
-        const filteredData = mergedData.filter(item => 
-          item.legajos.length === 0 || 
-          item.legajos.every(legajo => legajo.activo === false)
-        );
-        console.log('Datos filtrados:', filteredData); // Verifica los datos filtrados
-  
-        if (filteredData.length === 0) {
-          this.sinSinLegajoMessage = true;
-        } else {
-          this.sinSinLegajoMessage = false;
-          this.dataSource = new MatTableDataSource<any>(filteredData);
-        }
-  
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      }, error => {
-        console.error('Error al obtener no asistenciales:', error);
+
+        this.noAsistencialService.listNoAsistencialSinLegajo().subscribe({
+          next: (noAsistenciales) => {
+            const noAsistencialesConTipo = noAsistenciales.map(item => ({
+              ...item,
+              tipo: 'No Asistencial'
+            }));
+
+            const mergedData = [...asistencialesConTipo, ...noAsistencialesConTipo];
+            console.log('Datos combinados sin legajo:', mergedData);
+
+            if (mergedData.length === 0) {
+              this.sinSinLegajoMessage = true;
+            } else {
+              this.sinSinLegajoMessage = false;
+              this.dataSource = new MatTableDataSource<any>(mergedData);
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            }
+          },
+          error: (err) => {
+            console.error('Error al obtener no asistenciales sin legajo:', err);
+            this.sinSinLegajoMessage = false;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener asistenciales sin legajo:', err);
         this.sinSinLegajoMessage = false;
-      });
+      }
     });
   }
               

@@ -5,7 +5,7 @@ import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Usuario } from 'src/app/models/login/Usuario';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { AuthService } from 'src/app/services/login/auth.service';
-import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialSelectorAllComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Cargo } from 'src/app/models/Configuracion/Cargo';
@@ -149,7 +149,7 @@ export class UsuarioEditComponent implements OnInit {
   }
 
   openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+    const dialogRef = this.dialog.open(AsistencialSelectorAllComponent, {
       width: '800px',
       disableClose: true
     });

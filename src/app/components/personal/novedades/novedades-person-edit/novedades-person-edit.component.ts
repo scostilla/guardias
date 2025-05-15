@@ -27,7 +27,7 @@ export class NovedadesPersonEditComponent implements OnInit {
   idAsistencial: number = 0;
 
   licencias: TipoLicencia[] = [];
-  suplentes?: Asistencial | undefined;
+  //suplentes?: Asistencial | undefined;
   inputValue: string = '';
   selectedAsistencial?: Asistencial;
   fechaMinFinal: moment.Moment | null = null;
@@ -49,14 +49,14 @@ export class NovedadesPersonEditComponent implements OnInit {
       horaInicio: [''],
       fechaFinal: ['', Validators.required],
       horaFinal: [''],
-      suplente: [{ value: '', disabled: true }],
+      //suplente: [{ value: '', disabled: true }],
       puedeRealizarGuardia: [''],
       cobraSueldo: [''],
-      necesitaReemplazo:[{ value: '', disabled: true }],
+      //necesitaReemplazo:[{ value: '', disabled: true }],
     });
 
-    this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
-    this.novedadPersonalForm.get('suplente')?.disable();
+    //this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
+    //this.novedadPersonalForm.get('suplente')?.disable();
 
     this.listLicencia();
   }
@@ -126,10 +126,10 @@ export class NovedadesPersonEditComponent implements OnInit {
     
       
   
-      // Ajustar la validación y habilitación del campo idSuplente en función de necesitaReemplazo
+      /*/ Ajustar la validación y habilitación del campo idSuplente en función de necesitaReemplazo
       const necesitaReemplazo = this.novedadPersonalForm.get('necesitaReemplazo')?.value;
       this.toggleSuplenteValidation(necesitaReemplazo);
-      this.toggleSuplenteDisabled(necesitaReemplazo);
+      this.toggleSuplenteDisabled(necesitaReemplazo);*/
       this.novedadPersonalForm.updateValueAndValidity();
     }
 
@@ -148,7 +148,7 @@ export class NovedadesPersonEditComponent implements OnInit {
     this.updateFormFields(value);
   });
 
-  // Suscripción a cambios en 'necesitaReemplazo'
+  /*/ Suscripción a cambios en 'necesitaReemplazo'
   this.novedadPersonalForm.get('necesitaReemplazo')?.valueChanges.subscribe(value => {
     this.toggleSuplenteValidation(value);
     this.toggleSuplenteDisabled(value);
@@ -160,7 +160,7 @@ export class NovedadesPersonEditComponent implements OnInit {
         this.toggleSuplenteValidation(necesitaReemplazo);
         this.toggleSuplenteDisabled(necesitaReemplazo);
           // Iniciar con el campo necesitaReemplazo oculto
-  this.showNecesitaReemplazo(false);
+  this.showNecesitaReemplazo(false);*/
 
   }
 
@@ -186,15 +186,15 @@ if (!licencia) {
   const nombre = licencia.nombre.toLowerCase();
   const cobraSueldo = ['licencia anual ordinaria', 'licencia por maternidad'].includes(nombre);
   const puedeRealizarGuardia = ['licencia anual ordinaria', 'compensatorio'].includes(nombre);
-  const necesitaReemplazo = ['licencia anual ordinaria', 'licencia por maternidad', 'largo tratamiento de salud'].includes(nombre);
+  //const necesitaReemplazo = ['licencia anual ordinaria', 'licencia por maternidad', 'largo tratamiento de salud'].includes(nombre);
 
   this.novedadPersonalForm.patchValue({
     cobraSueldo,
     puedeRealizarGuardia,
-    necesitaReemplazo: necesitaReemplazo ? '' : '',  // Mantener vacío en lugar de false
+    //necesitaReemplazo: necesitaReemplazo ? '' : '',  // Mantener vacío en lugar de false
   });
   
-     // Re-validación y habilitación de campos
+     /*/ Re-validación y habilitación de campos
   if (necesitaReemplazo) {
     this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
     this.novedadPersonalForm.get('necesitaReemplazo')?.setValidators([Validators.required]);
@@ -214,10 +214,10 @@ if (!licencia) {
   
     // Re-validar el campo idSuplente
     this.toggleSuplenteValidation(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
-    this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
+    this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);*/
   }
 
-  showNecesitaReemplazo(shouldShow: boolean): void {
+  /*showNecesitaReemplazo(shouldShow: boolean): void {
     const necesitaReemplazoControl = this.novedadPersonalForm.get('necesitaReemplazo');
     if (shouldShow) {
       // Si debe mostrarse, habilitar el campo
@@ -252,7 +252,7 @@ if (!licencia) {
       idSuplenteControl?.disable();
       idSuplenteControl?.setValue(null);  // Asegurarse de que suplente se establezca a null si se deshabilita
     }
-  }
+  }*/
   
   // actualizar fechaMinFinal cuando cambia la fecha de inicio
   onFechaInicioChange(): void {
@@ -302,7 +302,7 @@ if (!licencia) {
     return tipoLicencia?.nombre === 'Compensatorio';
   }
 
-  openAsistencialDialog(): void {
+  /*openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
       disableClose: true,
@@ -321,9 +321,9 @@ if (!licencia) {
         });
       }
     });
-  }
+  }*/
 
-  validateSuplenteDifferent(): void {
+  /*validateSuplenteDifferent(): void {
     const suplenteControl = this.novedadPersonalForm.get('suplente');
     if (suplenteControl) {
       suplenteControl.valueChanges.subscribe(selectedSuplente => {
@@ -347,7 +347,7 @@ if (!licencia) {
         }
       });
     }
-  }
+  }*/
   
  editNovedadPersonal(): void {
     if (this.novedadPersonalForm.valid) {
@@ -361,10 +361,10 @@ if (!licencia) {
         formValue.horaFinal,
         formValue.puedeRealizarGuardia,
         formValue.cobraSueldo,
-        formValue.necesitaReemplazo,
+        //formValue.necesitaReemplazo,
         true,
         this.data.asistencialId || formValue.idPersona,
-        formValue.suplente ? formValue.suplente.id : null,
+        //formValue.suplente ? formValue.suplente.id : null,
         formValue.tipoLicencia.id,
       );
       console.log('Datos a guardar:', novedadPersonalDto);

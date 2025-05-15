@@ -20,16 +20,14 @@ import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.s
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Caps } from 'src/app/models/Configuracion/Caps';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 
 //Componentes
@@ -239,18 +237,18 @@ export class ExternoComponent implements OnInit, OnDestroy {
       return;
     }
   
-    this.hospitalService.getById(this.efectorId).subscribe({
-      next: (hospital: Hospital) => {
+    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
+      next: (hospital: EfectorHospitalDto) => {
         this.efectorNombre = hospital.nombre;
       },
       error: () => {
-        this.ministerioService.getById(this.efectorId!).subscribe({
-          next: (ministerio: Ministerio) => {
+        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
+          next: (ministerio: EfectorMinisterioDto) => {
             this.efectorNombre = ministerio.nombre;
           },
           error: () => {
-            this.capsService.getById(this.efectorId!).subscribe({
-              next: (cap: Caps) => {
+            this.capsService.detailNombreAll(this.efectorId!).subscribe({
+              next: (cap: EfectorCapsDto) => {
                 this.efectorNombre = cap.nombre;
               },
               error: () => {

@@ -1,8 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Efector } from "src/app/models/Configuracion/Efector";
 import { BehaviorSubject } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 
@@ -25,10 +23,10 @@ export class EfectorService {
     return this._refresh$;
   }
 
-// Método para obtener el tipo de efector
-getEfectorTipo(id: number): Observable<any> {
-  return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
-}
+  // Método para obtener el tipo de efector
+  getEfectorTipo(id: number): Observable<any> {
+    return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
+  }
   
   // Encriptar
   encrypt(text: string): string {
@@ -49,6 +47,9 @@ getEfectorTipo(id: number): Observable<any> {
     } else {
       sessionStorage.removeItem('currentEfectorId');
     }
+
+    // Notifica a los suscriptores
+    this.currentEfectorIdSubject.next(efectorId);
   }
   
   //Obtiene el efector

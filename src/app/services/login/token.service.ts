@@ -97,7 +97,14 @@ export class TokenService {
   public logOut(): void {
     window.sessionStorage.clear();
     this.currentRoleSubject.next(null);
+    this.isLoggedSubject.next(false);
   }
 
+private isLoggedSubject = new BehaviorSubject<boolean>(this.getToken() !== null);
+isLogged$ = this.isLoggedSubject.asObservable();
+
+setLoggedState(state: boolean) {
+  this.isLoggedSubject.next(state);
+}
 
 }

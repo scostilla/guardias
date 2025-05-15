@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import { NoAsistencialDto } from 'src/app/dto/Configuracion/NoAsistencialDto';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
-import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
+import { NoAsistencialListDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialListDto';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -26,6 +26,18 @@ export class NoAsistencialService {
 
   public list(): Observable<NoAsistencial[]> {
     return this.httpClient.get<NoAsistencial[]>(this.noasistencialesURL + 'list');
+  }
+
+  public listNoAsistencialSinLegajo(): Observable<NoAsistencialListDto[]> {
+    return this.httpClient.get<NoAsistencialListDto[]>(this.noasistencialesURL + 'listNoAsistencialSinLegajo')
+  }
+
+  listAutoridadesByEfector(idEfector: number): Observable<NoAsistencialListDto[]> {
+    return this.httpClient.get<NoAsistencialListDto[]>(`${this.noasistencialesURL}listAutoridadesByEfector/${idEfector}`);
+  }
+
+  listAutoridadesRegionalesByEfector(idEfector: number): Observable<NoAsistencialListDto[]> {
+    return this.httpClient.get<NoAsistencialListDto[]>(`${this.noasistencialesURL}listAutoridadesRegionalesByEfector/${idEfector}`);
   }
 
   public getLegajosByNoAsistencial(id: number): Observable<Legajo[]> {

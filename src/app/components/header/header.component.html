@@ -16,7 +16,8 @@
         </a>
       </div>
       <div class="col-3 col-md-4 d-flex justify-content-center mb-3 mb-md-0 justify-content-md-end align-items-center">
-          <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showConfig">
+          <button mat-fab [matMenuTriggerFor]="menu_admin" type="submit" class="icon-material" *ngIf="showConfig" matBadge="{{getTotalBadges()}}" 
+                    matBadgeColor="accent" [matBadgeHidden]="getTotalBadges() === 0">
             <mat-icon>settings</mat-icon>
           </button>
             <mat-menu #menu_admin="matMenu">
@@ -33,8 +34,23 @@
                   <mat-icon>face</mat-icon>
                   <span>Usuarios</span>
                 </button>
+                <button 
+                  mat-menu-item 
+                  routerLink="/cronograma-pendiente" 
+                  *ngIf="isSuper"
+                  [disabled]="pendientesCount === 0"> 
+                  <mat-icon 
+                    matBadge="{{pendientesCount}}" 
+                    matBadgeColor="warn" 
+                    [matBadgeHidden]="pendientesCount === 0">
+                    hourglass_empty
+                  </mat-icon>
+                  <span>
+                    {{ pendientesCount === 0 ? 'Sin pendientes' : 'Cronogramas pendientes' }}
+                  </span>
+                </button>
                 <button mat-menu-item routerLink="/notificacion">
-                  <mat-icon  matBadge="2" matBadgeColor="warn">mail</mat-icon>
+                  <mat-icon matBadge="{{notificacionesCount}}" matBadgeColor="warn">mail</mat-icon>
                   <span>Notificaciones</span>
                 </button>
                 <button mat-menu-item routerLink="/digesto">

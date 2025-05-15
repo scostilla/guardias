@@ -1,0 +1,95 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-7">
+      <div class="titulos_extra">
+        Cronogramas tentativos
+        <span class="titulos-second" style="cursor: pointer;" [matMenuTriggerFor]="menu" matTooltip="Selecciona estado">  <!-- Usamos el matMenuTriggerFor aquí -->
+          {{estadoSeleccionado | titlecase}}s
+          <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
+        </span>
+
+        <!-- Mat Menu -->
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngIf="estadoSeleccionado !== 'PENDIENTE'" (click)="filtrarPorEstado('PENDIENTE')">Pendientes</button>
+          <button mat-menu-item *ngIf="estadoSeleccionado !== 'CONFIRMADO'" (click)="filtrarPorEstado('CONFIRMADO')">Confirmados</button>
+          <button mat-menu-item (click)="filtrarPorEstado('RECHAZADO')">Rechazados</button>
+        </mat-menu>
+      </div>
+    </div>
+    <div class="col-12 col-md-1 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/personal">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por apellido y/o nombre" #input>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="col-12 m d-flex justify-content-end">
+    Efector: <span class="negrita ps-1">{{efectorNombre}}</span>
+  </div>
+  <div class="row">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+
+        <ng-container matColumnDef="asistencial">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Profesional </th> 
+          <td mat-cell *matCellDef="let cronograma" style="white-space: nowrap;"> {{cronograma.asistencial.apellido}}, {{cronograma.asistencial.nombre}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoGuardia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Guardia </th> 
+            <td mat-cell *matCellDef="let cronograma" style="white-space: nowrap;"> {{cronograma.tipoGuardia}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaIngreso">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Fecha solicitada (desde-hasta) </th>
+            <td mat-cell *matCellDef="let cronograma" style="white-space: nowrap;"> {{cronograma.fechaIngreso | date: 'dd/MM/yyyy':'':'es-AR'}} - {{cronograma.fechaEgreso | date: 'dd/MM/yyyy':'':'es-AR'}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef class="negrita"></th>
+            <td mat-cell *matCellDef="let cronograma" class="cell-actions">
+              <!-- Botón para ver detalle -->
+              <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(cronograma)">
+                <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+              </button>
+
+              <!-- Botón para abrir el menú de cambio de estado -->
+              <button mat-icon-button [matMenuTriggerFor]="menuEstado">
+                <mat-icon class="btnEdit">edit</mat-icon>
+              </button>
+
+              <!-- Menú de opciones de estado -->
+              <mat-menu #menuEstado="matMenu">
+                <!-- Opción PENDIENTE -->
+                <ng-container *ngIf="cronograma.autorizado !== 'PENDIENTE'">
+                  <button mat-menu-item (click)="updateEstado(cronograma, 'PENDIENTE')">PENDIENTE</button>
+                </ng-container>
+
+                <!-- Opción CONFIRMADO -->
+                <ng-container *ngIf="cronograma.autorizado !== 'CONFIRMADO'">
+                  <button mat-menu-item (click)="updateEstado(cronograma, 'CONFIRMADO')">CONFIRMADO</button>
+                </ng-container>
+
+                <!-- Opción RECHAZADO -->
+                <ng-container *ngIf="cronograma.autorizado !== 'RECHAZADO'">
+                  <button mat-menu-item (click)="updateEstado(cronograma, 'RECHAZADO')">RECHAZADO</button>
+                </ng-container>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  <div class="row mt-3">
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+</div>

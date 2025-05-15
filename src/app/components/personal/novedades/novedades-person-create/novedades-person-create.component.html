@@ -17,9 +17,9 @@
       </div>
   
       <div class="form-row">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="form-field">
           <mat-label>Fecha Inicio</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="fechaInicio" (dateChange)="onFechaInicioChange()">
+          <input matInput [matDatepicker]="picker" formControlName="fechaInicio" (dateChange)="onFechaInicioChange()" [min]="fechaMinInicio">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <mat-error *ngIf="novedadPersonalForm.get('fechaInicio')?.errors?.['required']">
@@ -39,7 +39,7 @@
       </div>  
 
       <div class="form-row">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="form-field">
           <mat-label>Fecha Finalización</mat-label>
           <input matInput [matDatepicker]="picker1" formControlName="fechaFinal" [min]="fechaMinFinal">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -60,7 +60,7 @@
         </mat-form-field>
       </div>
 
-      <div class="form-row">                 
+      <!--<div class="form-row">                 
         <mat-form-field *ngIf="novedadPersonalForm.get('necesitaReemplazo')?.enabled">
           <mat-label>¿Necesita Reemplazo?</mat-label>
           <mat-select formControlName="necesitaReemplazo">
@@ -83,7 +83,7 @@
             El campo es requerido.
           </mat-error>
         </mat-form-field>
-      </div>
+      </div>-->
   
       <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="submit" [disabled]="!novedadPersonalForm.valid">

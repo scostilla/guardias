@@ -7,6 +7,7 @@ import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
 import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
+import { EfectorHospitalDto } from "src/app/dto/Configuracion/efector/EfectorHospitalDto";
 
 
 @Injectable({
@@ -55,6 +56,10 @@ getActiveServicesByHospital(idHospital: number): Observable<ServicioSummaryDto[]
 
   public detailnombre(nombre:string): Observable<Hospital> {
     return this.httpClient.get<Hospital>(this.hospitalesURL + `detailnombre/${nombre}`);
+}
+
+public detailNombreAll(id:number): Observable<EfectorHospitalDto> {
+  return this.httpClient.get<EfectorHospitalDto>(this.hospitalesURL + `detailNombreAll/${id}`);
 }
 
 public save(hospitales:HospitalDto): Observable<any> {

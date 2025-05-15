@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { Ministerio } from "src/app/models/Configuracion/Ministerio";
 import { MinisterioDto } from "src/app/dto/Configuracion/MinisterioDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
+import { EfectorMinisterioDto } from "src/app/dto/Configuracion/efector/EfectorMinisterioDto";
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,10 @@ export class MinisterioService {
 
   public detailnombre(nombre:string): Observable<Ministerio> {
     return this.httpClient.get<Ministerio>(this.ministeriosURL + `detailnombre/${nombre}`);
+  }
+
+  public detailNombreAll(id:number): Observable<EfectorMinisterioDto> {
+    return this.httpClient.get<EfectorMinisterioDto>(this.ministeriosURL + `detailNombreAll/${id}`);
   }
 
   public save(ministerios:MinisterioDto): Observable<any> {

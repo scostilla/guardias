@@ -122,6 +122,7 @@ import { AsistencialCreateComponent } from './components/personal/personal-conte
 import { AsistencialDetailComponent } from './components/personal/personal-contenido/asistencial-detail/asistencial-detail.component';
 import { AsistencialEditComponent } from './components/personal/personal-contenido/asistencial-edit/asistencial-edit.component';
 import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { AsistencialComponent } from './components/personal/personal-contenido/asistencial/asistencial.component';
 import { CargoDetailComponent } from './components/personal/personal-contenido/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/personal/personal-contenido/cargo-edit/cargo-edit.component';
@@ -162,6 +163,8 @@ import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cron
 import { CronogramaRegComponent } from './components/cronogramas/cronograma-reg/cronograma-reg.component';
 import { CronogramaComponent } from './components/cronogramas/cronograma/cronograma.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
+import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
+import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 
 
 
@@ -367,6 +370,7 @@ const routes: Routes = [
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
 
   {path: 'asistencial-selector', component:AsistencialSelectorComponent},
+    {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
   {path: 'asistencial-create', component:AsistencialCreateComponent},
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
@@ -400,6 +404,8 @@ const routes: Routes = [
 
   //Sección: Cronograma
   {path: 'cronograma', component:CronogramaComponent},
+  {path: 'cronograma-pendiente', component:CronogramaPendienteComponent},
+  {path: 'cronograma-pendiente-detail', component:CronogramaPendienteDetailComponent},
   {path: 'cronograma-create', component:CronogramaCreateComponent},
   {path: 'cronograma-detail', component:CronogramaDetailComponent},
   {path: 'cronograma-def', component:CronogramaDefComponent},

@@ -11,9 +11,9 @@ import { forkJoin } from 'rxjs';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
+import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { BehaviorSubject } from 'rxjs';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -64,8 +64,16 @@ export class AsistencialService {
     return this.httpClient.get<AsistencialSummaryDto[]>(this.asistencialesURL + 'listSummary')
   }
 
-  public listDtos(): Observable<AsistencialListDto[]> {
-    return this.httpClient.get<AsistencialListDto[]>(this.asistencialesURL + 'listDtos')
+  public listAsistencialSinLegajo(): Observable<AsistencialEfectorDto[]> {
+    return this.httpClient.get<AsistencialEfectorDto[]>(this.asistencialesURL + 'listAsistencialSinLegajo')
+  }
+
+  listAutoridadesByEfector(idEfector: number): Observable<AsistencialListDto[]> {
+    return this.httpClient.get<AsistencialListDto[]>(`${this.asistencialesURL}listAutoridadesByEfector/${idEfector}`);
+  }
+
+  listAutoridadesRegionalesByEfector(idEfector: number): Observable<AsistencialListDto[]> {
+    return this.httpClient.get<AsistencialListDto[]>(`${this.asistencialesURL}listAutoridadesRegionalesByEfector/${idEfector}`);
   }
 
   public listForLegajosDtos(): Observable<AsistencialListForLegajosDto[]> {
@@ -76,12 +84,16 @@ export class AsistencialService {
     return this.httpClient.get<Person[]>(this.asistencialesURL + 'listPerson');
   }
 
+  public listDtos(): Observable<AsistencialListDto[]> {
+    return this.httpClient.get<AsistencialListDto[]>(this.asistencialesURL + 'listDtos')
+  }
+
   public detail(id: number): Observable<Asistencial> {
     return this.httpClient.get<Asistencial>(this.asistencialesURL + `detail/${id}`);
   }
 
-  public detailnombre(nombre: string): Observable<Asistencial> {
-    return this.httpClient.get<Asistencial>(this.asistencialesURL + `detailnombre/${nombre}`);
+  public detailAsistencial(id: number): Observable<AsistencialDetailDto> {
+    return this.httpClient.get<AsistencialDetailDto>(this.asistencialesURL + `detailAsistencial/${id}`);
   }
 
   public getByIds(ids: number[]): Observable<Asistencial[]> {
@@ -148,5 +160,10 @@ public asistencialesConPendientes(idEfector: number, mes: number, anio: number, 
 public ConPendientes(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
   return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}ConPendientes/${idEfector}/${tipoGuardia}`);
 }
+
+public esCargoAgrupacion(idAsistencial: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(this.asistencialesURL + `es-cargo-o-agrupacion/${idAsistencial}`);
+}
+
 
 }

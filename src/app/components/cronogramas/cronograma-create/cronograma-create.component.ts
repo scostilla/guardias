@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CronogramaTentativoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoDto';
 import { DistribucionCheckDto } from 'src/app/dto/personal/distribucionGuardia/DistribucionCheckDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
@@ -33,8 +34,6 @@ export class CronogramaCreateComponent {
   asistenciales: any[] = [];
   inputValue: string = '';
   efectorId: number | null = null;
-  currentDate: Date = new Date();
-  tomorrowDate: Date = new Date(this.currentDate);
   minFechaIngreso: string = '';
   minFechaEgreso: string = '';
   servicios: ServicioSummaryDto[] = [];
@@ -44,6 +43,7 @@ export class CronogramaCreateComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private cronoService: CronogramaTentativoService,
+    private asistencialService: AsistencialService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private tipoGuardiaService: TipoGuardiaService,
@@ -56,9 +56,7 @@ export class CronogramaCreateComponent {
     private toastr: ToastrService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.currentDate = new Date();
-    this.tomorrowDate.setDate(this.currentDate.getDate() + 1);
-    this.minFechaIngreso = this.tomorrowDate.toISOString().split('T')[0];
+    this.minFechaIngreso = moment().add(1, 'day').format('YYYY-MM-DD');
 
     this.cronoForm = this.fb.group({
       fechaIngreso: ['', Validators.required],
@@ -341,99 +339,112 @@ validateHoraEgreso(): void {
     }
   }*/
 
-    saveCronograma(): void {
-      if (this.cronoForm.valid) {
-        const formData = this.cronoForm.value;
-        const tipoGuardiaId = formData.tipoGuardia.id;
-    
-        // 🔍 Construir el DTO para validación
-        const checkDto: DistribucionCheckDto = {
-          idPersona: formData.asistencial,
-          idEfector: this.efectorId!,
-          fecha: formatDate(formData.fechaIngreso, 'yyyy-MM-dd', 'en-US')
-        };
+saveCronograma(): void {
+  if (this.cronoForm.valid) {
+    const formData = this.cronoForm.value;
+    const tipoGuardiaId = formData.tipoGuardia.id;
 
-        console.log('DistribucionCheckDto enviado:', checkDto);
-    
-        // PRIMERO: Validar distribución activa
-        this.distribucionGuardiaService.tieneDistribucionActiva(checkDto).subscribe(
-          tieneDistribucion => {
-            if (!tieneDistribucion) {
-              this.toastr.error(
-                'Aún no hay una distribución cargada para el profesional',
-                'Carga no permitida',
+    const checkDto: DistribucionCheckDto = {
+      idPersona: formData.asistencial,
+      fecha: formatDate(formData.fechaIngreso, 'yyyy-MM-dd', 'en-US')
+    };
+
+    console.log('DistribucionCheckDto enviado:', checkDto);
+
+    this.asistencialService.esCargoAgrupacion(formData.asistencial).subscribe(
+      esCargoAgrupacion => {
+        if (esCargoAgrupacion) {
+          // Si es cargo o agrupación, validar distribución activa
+          this.distribucionGuardiaService.tieneDistribucionActiva(checkDto).subscribe(
+            tieneDistribucion => {
+              if (!tieneDistribucion) {
+                this.toastr.error(
+                  'Aún no hay una distribución horaria para el profesional.',
+                  'Carga no permitida',
+                  {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  }
+                );
+                return;
+              }
+
+              // Si tiene distribución, continuar con validaciones normales
+              this.validarExistenciaYSuperposicion(formData, tipoGuardiaId);
+            },
+            error => this.handleError('verificar distribución activa', error)
+          );
+        } else {
+          // Si no es cargo o agrupación, continuar directamente
+          this.validarExistenciaYSuperposicion(formData, tipoGuardiaId);
+        }
+      },
+      error => this.handleError('verificar tipo de asistencial (cargo o agrupación)', error)
+    );
+  } else {
+    this.toastr.error('Por favor complete todos los campos del formulario', 'Formulario inválido', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+  }
+}
+
+private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): void {
+  const cronogramaDto = new CronogramaTentativoDto(
+    formData.fechaIngreso,
+    formData.fechaEgreso,
+    formData.horaIngreso,
+    formData.horaEgreso,
+    true,
+    false,
+    'PENDIENTE',
+    tipoGuardiaId,
+    formData.asistencial,
+    formData.idServicio,
+    this.efectorId!,
+    formData.observacion
+  );
+
+  this.cronoService.existCronograma(cronogramaDto).subscribe(
+    exists => {
+      if (exists) {
+        this.toastr.error(
+          'Ya existe una guardia tentativa asignada para el profesional en la fecha y hora seleccionada.',
+          'Error',
+          {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          }
+        );
+      } else {
+        this.cronoService.efectoresConCronograma(cronogramaDto).subscribe(
+          efectores => {
+            if (efectores && efectores.length > 0) {
+              const lista = efectores.join(', ');
+              this.toastr.warning(
+                `El profesional también está cargado en la misma hora y fecha en los efectores: ${lista}. Verifique si efectivamente llevará a cabo la guardia en su establecimiento.`,
+                'Superposición detectada',
                 {
-                  timeOut: 6000,
+                  timeOut: 9000,
                   positionClass: 'toast-top-center',
                   progressBar: true
                 }
               );
-              return; // Finaliza aquí si no hay distribución
             }
-    
-            // CONTINÚA si hay distribución activa
-            const cronogramaDto = new CronogramaTentativoDto(
-              formData.fechaIngreso,
-              formData.fechaEgreso,
-              formData.horaIngreso,
-              formData.horaEgreso,
-              true, // activo
-              false, // aceptado
-              'PENDIENTE', // autorizado
-              tipoGuardiaId,
-              formData.asistencial,
-              formData.idServicio,
-              this.efectorId!,
-              formData.observacion
-            );
-    
-            this.cronoService.existCronograma(cronogramaDto).subscribe(
-              exists => {
-                if (exists) {
-                  this.toastr.error(
-                    'Ya existe una guardia tentativa asignada para el profesional en la fecha y hora seleccionada.',
-                    'Error',
-                    {
-                      timeOut: 6000,
-                      positionClass: 'toast-top-center',
-                      progressBar: true
-                    }
-                  );
-                } else {
-                  this.cronoService.efectoresConCronograma(cronogramaDto).subscribe(
-                    efectores => {
-                      if (efectores && efectores.length > 0) {
-                        const lista = efectores.join(', ');
-                        this.toastr.warning(
-                          `El profesional también está cargado en la misma hora y fecha en los efectores: ${lista}. Verifique si efectivamente llevará a cabo la guardia en su establecimiento.`,
-                          'Superposición detectada',
-                          {
-                            timeOut: 9000,
-                            positionClass: 'toast-top-center',
-                            progressBar: true
-                          }
-                        );
-                      }
-    
-                      this.guardarCronogramaConVerificaciones(cronogramaDto);
-                    },
-                    error => this.handleError('verificar efectores con cronograma', error)
-                  );
-                }
-              },
-              error => this.handleError('verificar la existencia del cronograma', error)
-            );
+
+            this.guardarCronogramaConVerificaciones(cronogramaDto);
           },
-          error => this.handleError('verificar distribución activa', error)
+          error => this.handleError('verificar efectores con cronograma', error)
         );
-      } else {
-        this.toastr.error('Por favor complete todos los campos del formulario', 'Formulario inválido', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
       }
-    }
+    },
+    error => this.handleError('verificar la existencia del cronograma', error)
+  );
+}
+
 
     private guardarCronogramaConVerificaciones(cronogramaDto: CronogramaTentativoDto): void {
       const tipoGuardiaId = cronogramaDto.idTipoGuardia;

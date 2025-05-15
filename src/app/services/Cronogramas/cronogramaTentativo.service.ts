@@ -4,6 +4,8 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CronogramaTentativo } from "src/app/models/Cronogramas/CronogramaTentativo";
 import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
+import { CronogramaTentativoListAtorizadoDto } from "src/app/dto/Cronogramas/CronogramaTentativoListAtorizadoDto";
+import { AutorizadoUpdateDto } from "src/app/dto/Cronogramas/AutorizadoUpdateDto";
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +33,10 @@ export class CronogramaTentativoService {
         return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + `delailByEfectorAndServicio/${idEfector}/${idServicio}`)
       }
 
+      public listByEfectorAndAutorizado(idEfector: number, autorizado: string): Observable<CronogramaTentativoListAtorizadoDto[]> {
+        return this.httpClient.get<CronogramaTentativoListAtorizadoDto[]>(this.cTentativoURL + `listByEfectorAndAutorizado/${idEfector}/${autorizado}`)
+      }
+
       public listAll(): Observable<CronogramaTentativo[]> {
         return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + 'listAll')
       }  
@@ -50,6 +56,15 @@ export class CronogramaTentativoService {
     
     public update(id:number, cTentativos:CronogramaTentativoDto): Observable<any> {
       return this.httpClient.put<any>(this.cTentativoURL + `update/${id}`, cTentativos)
+      .pipe(
+        tap(() => {
+         this._refresh$.next(); 
+        })
+      )
+    }
+
+    autorizarUpdate(id:number, cTentativos:AutorizadoUpdateDto): Observable<any> {
+      return this.httpClient.put<any>(this.cTentativoURL + `autorizarUpdate/${id}`, cTentativos)
       .pipe(
         tap(() => {
          this._refresh$.next(); 
@@ -83,6 +98,10 @@ export class CronogramaTentativoService {
          this._refresh$.next(); 
         })
       )
+    }
+  
+    countPendientesByEfector(idEfector: number): Observable<number> {
+      return this.httpClient.get<number>(this.cTentativoURL + `countPendientesByEfector/${idEfector}`)
     }
   
   }

@@ -14,22 +14,16 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
-import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Caps } from 'src/app/models/Configuracion/Caps';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
-import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { AsistencialEfectorRegistroActividadDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorRegistroActividadDto';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -65,19 +59,12 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   asistencial!: Asistencial;
   legajos: Legajo[] = [];
-  habilitacionesGuardias: HabilitacionesGuardias[] = [];
   isLoadingLegajos: boolean = true;
 
   showMessage: boolean = false;
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
-
-  idContraFactura?: number;
-  idPasiva?: number;
-  idExtra?: number;
-  idCargo?: number;
-  idAgrupacion?: number;
 
   //Autenticación
   isLogged = false;
@@ -108,9 +95,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     public dialogDistrib: MatDialog,
     private toastr: ToastrService,
     private router: Router,
-    private legajoService: LegajoService,
-    private tipoGuardiaService: TipoGuardiaService,
-    private habilitacionesGuardiasService: HabilitacionesGuardiasService,
     private tokenService: TokenService,
     private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
@@ -182,22 +166,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       console.log('El usuario no está logueado.');
       this.router.navigateByUrl('');
     }
-  
-    /*/ Llamar al servicio para obtener los tipos de guardia solo si hay idEfector
-    this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
-      this.tipoGuardias = guardias;
-  
-      // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
-      this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
-      this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
-      this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
-      this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
-      this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
-    });*/
-  
-    // Llamar a listLegajos solo si hay idEfector
-    //this.listLegajos();
-  
+    
     // Llamar a listAsistencial solo si hay idEfector
     this.listAsistencial(this.efectorId);
   
@@ -209,80 +178,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     // Actualizar columnas visibles
     this.actualizarColumnasVisibles();
   }  
-
-  /*ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-  
-          // Log para mostrar el usuario
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-
-  // Llamamos al servicio para obtener todos los tipos de guardia
-  this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
-    this.tipoGuardias = guardias;
-
-    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
-    this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
-    this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
-    this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
-    this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
-    this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
-
-  });
-  
-    this.listLegajos();
-
-    // Obtener el ID efector del servicio
-    this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
-    
-    // Verificar si el ID efector es válido
-    if (this.efectorId === null) {
-      this.showMessage = true;
-    } else {
-      this.listAsistencial(this.efectorId);
-    }
-
-    this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listAsistencial(this.efectorId); // Usar el efectorId actual
-    });
-    
-    this.actualizarColumnasVisibles();
-  }
-*/
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -320,18 +215,18 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       return;
     }
   
-    this.hospitalService.getById(this.efectorId).subscribe({
-      next: (hospital: Hospital) => {
+    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
+      next: (hospital: EfectorHospitalDto) => {
         this.efectorNombre = hospital.nombre;
       },
       error: () => {
-        this.ministerioService.getById(this.efectorId!).subscribe({
-          next: (ministerio: Ministerio) => {
+        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
+          next: (ministerio: EfectorMinisterioDto) => {
             this.efectorNombre = ministerio.nombre;
           },
           error: () => {
-            this.capsService.getById(this.efectorId!).subscribe({
-              next: (cap: Caps) => {
+            this.capsService.detailNombreAll(this.efectorId!).subscribe({
+              next: (cap: EfectorCapsDto) => {
                 this.efectorNombre = cap.nombre;
               },
               error: () => {
@@ -381,93 +276,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     });
   }
   
- /* listAsistencial(efectorId: number | null = null): void {
-    // Si no hay un ID de efector, muestra el mensaje
-    if (efectorId === null) {
-      this.showMessage = true;
-      this.sinAsistencialMessage = false;
-      this.dataSource = new MatTableDataSource<Asistencial>([]);
-      return;
-    }
-  
-    this.asistencialService.list().subscribe(data => {
-      // Filtra los datos para mostrar solo aquellos que tienen al menos un legajo activo y un efector asociado,
-      // y que no tienen guardias de tipo "Contrafactura" o "Pasiva"
-      const filteredData = data.filter(asistencial =>
-        // Verifica que tenga al menos un legajo activo y que esté asociado a un efector válido
-        asistencial.legajos.some(legajo =>
-          legajo.activo === true && // Verifica que el legajo esté activo
-          legajo.efectores.some(efector => efector.id === efectorId) && // Verifica que el legajo esté asociado al efector
-          // Verifica que el legajo no tenga guardias de tipo Contrafactura o Pasiva
-          !legajo.tipoGuardias.some(tipoGuardia => 
-            tipoGuardia.id === this.idContraFactura
-          )
-        )
-      );
-  
-      // Maneja los mensajes según los resultados
-      if (filteredData.length === 0) {
-        this.showMessage = false;
-        this.sinAsistencialMessage = true;
-      } else {
-        this.showMessage = false;
-        this.sinAsistencialMessage = false;
-        this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
-      }
-  
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }, error => {
-      console.error('Error al obtener asistenciales:', error);
-      this.showMessage = true;
-      this.sinAsistencialMessage = false;
-    });
-  }*/
-                
-/*  listLegajos(): void {
-    this.legajoService.list().subscribe((legajos: Legajo[]) => {
-      this.legajos = legajos;
-      this.isLoadingLegajos = false;
-      //   this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
-
-    });
-  }*/
-    
-  /*tipoGuardiaNoPermiteAcciones(legajos: Legajo[]): boolean {
-    // Verifica si hay al menos un tipo de guardia asignado
-    const tieneGuardias = legajos.some(legajo => legajo.tipoGuardias && legajo.tipoGuardias.length > 0);
-  
-    // Si no tiene ningún tipo de guardia, no se permiten acciones
-    if (!tieneGuardias) {
-      return true;
-    }
-  
-    // Verifica si las guardias 'cargo', 'agrupacion' y 'extra' cumplen con la lógica específica
-    const tieneGuardiasCombinadas = legajos.some(legajo => {
-      const tiposGuardias = legajo.tipoGuardias.map(tipo => tipo.id);
-  
-      // Verifica si tiene guardias de tipo 'cargo' o 'agrupación'
-      const tieneCargoOAgrupacion = tiposGuardias.includes(this.idCargo) || tiposGuardias.includes(this.idAgrupacion);
-  
-    // Si tiene 'extra' o 'pasiva' pero no tiene 'cargo' ni 'agrupacion', no permitir acciones
-    const tieneExtraOPasiva = tiposGuardias.includes(this.idExtra) || tiposGuardias.includes(this.idPasiva);
-    if (tieneExtraOPasiva && !tieneCargoOAgrupacion) {
-      return true; // No se permite acción si 'extra' o 'pasiva' está solo
-    }
-
-      // Si no tiene ni 'cargo' ni 'agrupación' ni cumple con las combinaciones, no permitir acciones
-      return !tieneCargoOAgrupacion;
-    });
-  
-    // Si no tiene guardias combinadas de 'cargo' o 'agrupación', no permitir acciones
-    return tieneGuardiasCombinadas;
-  }
-      
-  mostrarBotones(asistencial: AsistencialListDto): boolean {
-    const legajosAsistencial = this.legajos.filter(legajo => legajo.persona?.id === asistencial.id);
-    return !this.tipoGuardiaNoPermiteAcciones(legajosAsistencial);
-  }*/
-
   mostrarBotones(asistencial: AsistencialEfectorRegistroActividadDto): boolean {
     return asistencial.nombresTiposGuardias.includes('CARGO') ||
            asistencial.nombresTiposGuardias.includes('AGRUPACIÓN');
@@ -496,7 +304,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   updateAsistencial(asistencial: Asistencial): void {
-    //console.log("en asistencial se envia el objeto", asistencial);
     this.router.navigate(['/asistencial-edit'], {
       state: { asistencial }
     });
@@ -533,17 +340,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     });
   }
 
-  /*openNovedades() {
-    this.dialogNov.open(NovedadesFormComponent, {
-      width: '600px',
-      disableClose: true,
-    })
-  }*/
-
-  /*openDistribucion() {
-    this.router.navigate(['/dist-horaria']);
-  }*/
-
   verNovedad(asistencial: AsistencialEfectorRegistroActividadDto): void {
     if (asistencial && asistencial.id) {
       this.asistencialService.setCurrentAsistencialId(asistencial.id);
@@ -562,13 +358,8 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     }
   }
   
-  /*hayLegajos(asistencial: AsistencialListDto): boolean {
-    return this.legajos.some(legajo => legajo.persona?.id === asistencial.id);
-  }*/
-
   verLegajo(asistencial: AsistencialListDto): void {
     if (asistencial && asistencial.id) {
-      //this.router.navigate(['/legajo-person', asistencial.id]);
       this.router.navigate(['/legajo-person'], {
         state: { asistencial , fromAsistencial: true}
       });
@@ -576,33 +367,6 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       console.error('El objeto asistencial no tiene un id.');
     }
   }
-
-  /*crearLegajo(asistencial: AsistencialListDto): void {
-
-    //console.log("en asistencial se envia el objeto", asistencial);
-    this.router.navigate(['/legajo-create'], {
-      state: { asistencial, fromAsistencial: true }
-    });
-  }
-
-  // obtengo el tooltip del botón basado en la existencia de legajos
-  getTooltip(asistencial: AsistencialListDto): string {
-    return this.hayLegajos(asistencial) ? 'Ver Legajo' : 'Agregar Legajo';
-  }
-
-  // Obtener el ícono del botón basado en la existencia de legajos
-  getIcon(asistencial: AsistencialListDto): string {
-    return this.hayLegajos(asistencial) ? 'playlist_play' : 'playlist_add';
-  }
-
-  // Determinar la acción del botón basada en la existencia de legajos
-  getButtonAction(asistencial: AsistencialListDto): void {
-    if (this.hayLegajos(asistencial)) {
-      this.verLegajo(asistencial);
-    } else {
-      this.crearLegajo(asistencial);
-    }
-  }*/
 
   actualizarColumnasVisibles(): void {
     let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];

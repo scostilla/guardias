@@ -7,7 +7,7 @@ import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogr
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
@@ -181,10 +181,12 @@ export class CronogramaComponent {
   }
 
   //trae el nombre del efector esta en sesion que filtra lo mostrado
-  loadEfectorName(): void {
+  loadEfectorName(): void { 
     if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Hospital) => {
+      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
+        (efector: EfectorHospitalDto) => {
+          console.log('Respuesta del servicio hospitalService.detailNombreAll:', efector);
+
           if (efector) {
             this.efectorNombre = efector.nombre;
             this.efectorNivel = efector.nivelComplejidad;
@@ -193,7 +195,7 @@ export class CronogramaComponent {
           }
         },
         (error) => {
-          console.error('Error al obtener el efector:', error);
+          console.error('Error al obtener el efector desde el servicio:', error);
           this.handleInvalidEfector();
         }
       );
@@ -201,7 +203,7 @@ export class CronogramaComponent {
       this.handleInvalidEfector();
     }
   }
-    
+
   private handleInvalidEfector(): void {
     console.error('ID de efector inválido o no encontrado.');
     this.router.navigateByUrl('/home-page');

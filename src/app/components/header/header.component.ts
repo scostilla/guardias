@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
@@ -16,6 +18,10 @@ export class HeaderComponent implements OnDestroy, OnInit {
   showNavBar: boolean = true;
   showConfig: boolean = true;
   showHeader: boolean = true;
+
+  pendientesCount: number = 0;
+  notificacionesCount: number = 1;
+  efectorId: number | null = null;
 
   //Autentificación
   isLogged = false;
@@ -33,6 +39,8 @@ export class HeaderComponent implements OnDestroy, OnInit {
   constructor(
     private router: Router, 
     private toastr: ToastrService,
+    private cronoService: CronogramaTentativoService,
+    private efectorService: EfectorService,
     private tokenService: TokenService,
     private authService: AuthService
   ) {
@@ -45,40 +53,45 @@ export class HeaderComponent implements OnDestroy, OnInit {
     });
   }
 
-  ngOnInit(): void {
-  //Autentificación
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
+ngOnInit(): void {
+  // Suscripción al cambio de efector
+  this.efectorService.currentEfectorId$.subscribe(id => {
+    this.efectorId = id;
 
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-    });
-    
-    // Obtener los detalles del usuario directamente después de un login exitoso
-      this.loadUserDetails();
+    if (this.efectorId != null) {
+      this.cronoService.countPendientesByEfector(this.efectorId)
+        .subscribe(count => {
+          this.pendientesCount = count;
+        });
     } else {
-      this.isLogged = false;
-      this.nombreUsuario = '';
-      this.apellidoUsuario = '';
-      this.roles = [];  // Aseguramos que los roles estén vacíos si no hay token
-      this.isAdministrativo = false;
-      this.isUsuario = false;
-      this.isDph = false;
-      this.isSuper = false;
-    }
-
-  // Suscribimos a los eventos de la ruta para manejar cambios al navegar
-  this.router.events.subscribe(event => {
-    if (event instanceof NavigationEnd) {
-      if (this.tokenService.getToken()) {
-        this.isLogged = true;
-        this.loadUserDetails();
-      }
+      this.pendientesCount = 0;
     }
   });
+
+  this.cronoService.refresh$.subscribe(() => {
+    this.actualizarPendientes();
+  });
+
+  // Resto de lógica de login
+this.tokenService.isLogged$.subscribe(isLogged => {
+  this.isLogged = isLogged;
+
+  if (isLogged) {
+    this.roles = this.tokenService.getAuthorities();
+
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+    });
+
+    this.loadUserDetails();
+  } else {
+    this.nombreUsuario = '';
+    this.apellidoUsuario = '';
+    this.roles = [];
+    this.UserRoles(); // Opcional: para resetear flags de rol
+  }
+});
 }
 
   // Roles a usar
@@ -111,6 +124,22 @@ export class HeaderComponent implements OnDestroy, OnInit {
     );
   }
   
+  private actualizarPendientes(): void {
+    if (this.efectorId != null) {
+      this.cronoService.countPendientesByEfector(this.efectorId).subscribe(count => {
+        this.pendientesCount = count;
+      });
+    } else {
+      this.pendientesCount = 0;
+    }
+  }
+
+  getTotalBadges(): number {
+  const pendientes = this.pendientesCount || 0;
+  const notificaciones = this.notificacionesCount || 0;
+  return pendientes + notificaciones;
+}
+
   ngOnDestroy(): void {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();

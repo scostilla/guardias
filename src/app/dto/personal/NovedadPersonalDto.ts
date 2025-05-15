@@ -6,10 +6,10 @@ export class NovedadPersonalDto {
     horaFinal: Date;        // Opcional
     puedeRealizarGuardia?: boolean; // Opcional
     cobraSueldo: boolean;   // Opcional
-    necesitaReemplazo: boolean; // Opcional
+    //necesitaReemplazo: boolean; // Opcional
     activo: boolean;         // Opcional
     idPersona: number;        // Requerido
-    idSuplente: number;       // opcional
+    //idSuplente: number;       // opcional
     idTipoLicencia: number;       // Requerido
 
 
@@ -20,10 +20,10 @@ export class NovedadPersonalDto {
         horaFinal: Date,    
         puedeRealizarGuardia: boolean,
         cobraSueldo: boolean,
-        necesitaReemplazo: boolean,
+        //necesitaReemplazo: boolean,
         activo: boolean,
         idPersona: number,
-        idSuplente: number,
+        //idSuplente: number,
         idTipoLicencia: number,
       ){
         this.fechaInicio = fechaInicio;
@@ -32,10 +32,10 @@ export class NovedadPersonalDto {
         this.horaFinal = horaFinal;
         this.puedeRealizarGuardia = puedeRealizarGuardia;
         this.cobraSueldo = cobraSueldo;
-        this.necesitaReemplazo = necesitaReemplazo;
+        //this.necesitaReemplazo = necesitaReemplazo;
         this.activo = activo;
         this.idPersona = idPersona;
-        this.idSuplente = idSuplente;
+        //this.idSuplente = idSuplente;
         this.idTipoLicencia = idTipoLicencia;
     }
 }
