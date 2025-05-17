@@ -54,12 +54,13 @@ export class AsistencialCreateComponent implements OnInit {
       asistencialData.dni,
       asistencialData.cuil,
       asistencialData.fechaNacimiento,
+      true, // esAsistencial
+      true, // activo
       asistencialData.email,
-      true,
-      true,
       asistencialData.sexo ?? null,
       asistencialData.telefono ?? null,
-      asistencialData.domicilio ?? null
+      asistencialData.domicilio ?? null,
+      asistencialData.idLegajos ?? [],
     );
 
     console.log("asistencial dto que quiero guardar", asistencialDto);

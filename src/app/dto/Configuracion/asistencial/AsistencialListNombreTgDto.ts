@@ -1,7 +1,8 @@
-import { PersonDto } from "./PersonDto";
+import { PersonDto } from "../PersonDto";
 
-export class AsistencialDto extends PersonDto {
-idLegajos?: number[];
+export class AsistencialListNombreTgDto extends PersonDto {
+    idLegajos?: number[];
+    nombresTiposGuardias: string[];
 
   constructor(
     nombre: string,
@@ -12,6 +13,7 @@ idLegajos?: number[];
     esAsistencial: boolean,
     activo: boolean,
     email: string,
+    nombresTiposGuardias: string[],
     sexo?: string,
     telefono?: string,
     domicilio?: string,
@@ -34,5 +36,6 @@ idLegajos?: number[];
     );
 
     this.idLegajos = idLegajos;
+    this.nombresTiposGuardias = nombresTiposGuardias;
   }
 }

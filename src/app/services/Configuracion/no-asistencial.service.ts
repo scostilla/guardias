@@ -6,6 +6,7 @@ import { NoAsistencialDto } from 'src/app/dto/Configuracion/NoAsistencialDto';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 import { NoAsistencialListDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialListDto';
+import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -95,7 +96,7 @@ export class NoAsistencialService {
     return bytes.toString(CryptoJS.enc.Utf8);
   }
 
-  getByEfector(idEfector: number): Observable<any[]> {
-    return this.httpClient.get<any[]>(`${this.noasistencialesURL}listByEfector/${idEfector}`);
+  listByEfector(idEfector: number): Observable<NoAsistencialSummaryDto[]> {
+    return this.httpClient.get<NoAsistencialSummaryDto[]>(`${this.noasistencialesURL}listByEfector/${idEfector}`);
   }
 }

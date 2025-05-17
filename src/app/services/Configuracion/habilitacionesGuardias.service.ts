@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { HabilitacionesGuardias } from "src/app/models/Configuracion/HabilitacionesGuardias";
 import { HabilitacionesGuardiasDto } from "src/app/dto/Configuracion/HabilitacionesGuardiasDto";
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
 
 
 @Injectable({
@@ -82,8 +83,8 @@ listAsistencialesByEfectorAndTG(idEfector: number, tipoGuardia: string): Observa
   return this.httpClient.get<AsistencialSummaryDto[]>(`${this.permisosURL}listAsistencialesByEfectorAndTG/${idEfector}/${tipoGuardia}`);
 }
 
-listAsistencialesWithCfAndExtraByEfector(idEfector: number): Observable<AsistencialSummaryDto[]> {
-  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.permisosURL}listAsistencialesWithCfAndExtraByEfector/${idEfector}`);
+listAsistencialesWithCfAndExtraByEfector(idEfector: number): Observable<AsistencialListNombreTgDto[]> {
+  return this.httpClient.get<AsistencialListNombreTgDto[]>(`${this.permisosURL}listAsistencialesWithCfAndExtraByEfector/${idEfector}`);
 }
 
 }

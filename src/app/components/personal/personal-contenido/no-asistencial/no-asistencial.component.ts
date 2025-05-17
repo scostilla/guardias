@@ -17,8 +17,7 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 
 //Models y dto
-import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
 import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
 import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
@@ -41,7 +40,7 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 export class NoAsistencialComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table!: MatTable<NoAsistencial>;
+  @ViewChild(MatTable) table!: MatTable<NoAsistencialSummaryDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -54,10 +53,9 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<NoAsistencialDetailComponent>;
   displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
-  dataSource!: MatTableDataSource<NoAsistencial>;
+  dataSource!: MatTableDataSource<NoAsistencialSummaryDto>;
   suscription!: Subscription;
-  noAsistencial!: NoAsistencial;
-  legajos: Legajo[] = [];
+  noAsistencial!: NoAsistencialSummaryDto;
   isLoadingLegajos: boolean = true;
 
   showMessage: boolean = false;
@@ -147,8 +145,6 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('');
     }
 
-    this.listLegajos();
-
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
@@ -171,7 +167,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     const filterValue = (event.target as HTMLInputElement).value;
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-    this.dataSource.filterPredicate = (data: NoAsistencial, filter: string) => {
+    this.dataSource.filterPredicate = (data: NoAsistencialSummaryDto, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       return normalizedData.indexOf(normalizedFilterValue) !== -1;
@@ -229,60 +225,45 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     });
   }
 
-  listNoAsistencial(efectorId: number | null = null): void {
-    // Si no hay un ID de efector, muestra el mensaje
-    if (efectorId === null) {
-      this.showMessage = true;
-      this.sinAsistencialMessage = false;
-      this.dataSource = new MatTableDataSource<NoAsistencial>([]); // Si no hay efector, limpiar los datos
-      return;
-    }
-    
-    this.noasistencialService.list().subscribe(data => {
-      // Filtra los datos para asegurarte de que tengan al menos un legajo activo
-      const filteredData = data.filter(noAsistencial => 
-        noAsistencial.legajos.some(legajo => 
-        legajo.efectores.some(efector => efector.id === efectorId) && legajo.activo // Verifica que el legajo esté asociado al efector y si el legajo esta activo
-        )
-      );
-    
-      // Maneja los mensajes según los resultados
-      if (filteredData.length === 0) {
-        this.showMessage = false;
-        this.sinAsistencialMessage = true; // Muestra el mensaje si no se encuentra ningún legajo activo
-      } else {
-        this.showMessage = false;
-        this.sinAsistencialMessage = false; // No hay mensaje de "sin legajos"
-        this.dataSource = new MatTableDataSource<NoAsistencial>(filteredData); // Establece los datos filtrados
-      }
-    
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }, error => {
-      console.error('Error al obtener no asistenciales:', error);
-      this.showMessage = true;
-      this.sinAsistencialMessage = false; // En caso de error, mostrar el mensaje correspondiente
-    });
+listNoAsistencial(efectorId: number | null = null): void {
+  // Si no hay un ID de efector, muestra el mensaje
+  if (efectorId === null) {
+    this.showMessage = true;
+    this.sinAsistencialMessage = false;
+    this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]); // Limpiar los datos
+    return;
   }
+
+  this.noasistencialService.listByEfector(efectorId).subscribe(data => {
+    if (data.length === 0) {
+      this.showMessage = false;
+      this.sinAsistencialMessage = true; // No se encontraron registros
+      this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]);
+    } else {
+      this.showMessage = false;
+      this.sinAsistencialMessage = false;
+      this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>(data); // Cargar los datos directamente
+    }
+
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }, error => {
+    console.error('Error al obtener no asistenciales:', error);
+    this.showMessage = true;
+    this.sinAsistencialMessage = false;
+    this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]);
+  });
+}
       
   getCurrentEfectorId(): number | null {
     return this.efectorId;
-  }
-
-  listLegajos(): void {
-    this.legajoService.list().subscribe((legajos: Legajo[]) => {
-      this.legajos = legajos;
-      this.isLoadingLegajos = false;
-      //   this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
-
-    });
   }
 
   createNoAsistencial(): void {
     this.router.navigate(['/no-asistencial-create']);
   }
 
-  openDetail(noasistencial: NoAsistencial): void {
+  openDetail(noasistencial: NoAsistencialSummaryDto): void {
     this.dialogRef = this.dialog.open(NoAsistencialDetailComponent, {
       width: '600px',
       data: noasistencial
@@ -292,14 +273,14 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateNoAsistencial(noAsistencial: NoAsistencial): void {
+  updateNoAsistencial(noAsistencial: NoAsistencialSummaryDto): void {
     console.log("en no asistencial se envia el objeto", noAsistencial);
     this.router.navigate(['/no-asistencial-edit'], {
       state: { noAsistencial }
     });
   }
 
-  deleteNoAsistencial(noasistencial: NoAsistencial): void {
+  deleteNoAsistencial(noasistencial: NoAsistencialSummaryDto): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         message: 'Confirma la eliminación de ' + noasistencial.nombre,
@@ -330,12 +311,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     });
   }
 
-  hayLegajos(noAsistencial: NoAsistencial): boolean {
-
-    return this.legajos.some(legajo => legajo.persona?.id === noAsistencial.id);
-  }
-
-  verLegajo(noAsistencial: NoAsistencial): void {
+  verLegajo(noAsistencial: NoAsistencialSummaryDto): void {
     if (noAsistencial && noAsistencial.id) {
       this.router.navigate(['/legajo-person'], {
         state: { noAsistencial, fromNoAsistencial: true  }
@@ -345,31 +321,12 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     }
   }
 
-  crearLegajo(noAsistencial: NoAsistencial): void {
+  crearLegajo(noAsistencial: NoAsistencialSummaryDto): void {
 
     console.log("en noAsistencial se envia el objeto", noAsistencial);
     this.router.navigate(['/legajo-create-noasistencial'], {
       state: { noAsistencial, fromNoAsistencial: true }
     });
-  }
-
-  // obtengo el tooltip del botón basado en la existencia de legajos
-  getTooltip(noAsistencial: NoAsistencial): string {
-    return this.hayLegajos(noAsistencial) ? 'Ver Legajo' : 'Agregar Legajo';
-  }
-
-  // Obtener el ícono del botón basado en la existencia de legajos
-  getIcon(noAsistencial: NoAsistencial): string {
-    return this.hayLegajos(noAsistencial) ? 'playlist_play' : 'playlist_add';
-  }
-
-  // Determinar la acción del botón basada en la existencia de legajos
-  getButtonAction(noAsistencial: NoAsistencial): void {
-    if (this.hayLegajos(noAsistencial)) {
-      this.verLegajo(noAsistencial);
-    } else {
-      this.crearLegajo(noAsistencial);
-    }
   }
 
   actualizarColumnasVisibles(): void {

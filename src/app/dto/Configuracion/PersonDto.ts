@@ -1,5 +1,5 @@
 export class PersonDto {
-    
+  id?: number;
   nombre: string;
   apellido: string;
   dni: number;
@@ -9,34 +9,35 @@ export class PersonDto {
   telefono?: string;
   email: string;
   domicilio?: string;
-  esAsistencial:boolean;
+  esAsistencial: boolean;
   activo: boolean;
-     
+
 
   constructor(
-      nombre: string,
-      apellido: string,
-      dni: number,
-      cuil: string,
-      fechaNacimiento: Date,
-      email: string,
-      esAsistencial:boolean,
-      activo: boolean,
-      sexo?: string,
-      telefono?: string,
-      domicilio?: string,
-      ) {
-      this.nombre = nombre;
-      this.apellido = apellido;
-      this.dni = dni;
-      this.cuil = cuil;
-      this.fechaNacimiento = fechaNacimiento;
-      this.sexo = sexo;
-      this.telefono = telefono;
-      this.email = email;
-      this.domicilio = domicilio;
-      this.esAsistencial=esAsistencial;
-      this.activo = activo;
+    nombre: string,
+    apellido: string,
+    dni: number,
+    cuil: string,
+    fechaNacimiento: Date,
+    esAsistencial: boolean,
+    activo: boolean,
+    email: string,
+    sexo?: string,
+    telefono?: string,
+    domicilio?: string,
+    id?: number,
+  ) {
+    this.id = id;
+    this.nombre = nombre;
+    this.apellido = apellido;
+    this.dni = dni;
+    this.cuil = cuil;
+    this.fechaNacimiento = fechaNacimiento;
+    this.sexo = sexo;
+    this.telefono = telefono;
+    this.email = email;
+    this.domicilio = domicilio;
+    this.esAsistencial = esAsistencial;
+    this.activo = activo;
   }
-
 }

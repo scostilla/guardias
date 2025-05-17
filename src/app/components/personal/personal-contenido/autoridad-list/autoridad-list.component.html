@@ -36,17 +36,16 @@
         </mat-menu>
       </div>
 
-      <div class="col-12 col-md-6 m d-flex justify-content-md-end">
-      </div>
+      <div class="col-12 col-md-6 m d-flex justify-content-md-end">Efector: <span class="negrita ps-1">{{efectorNombre}}</span>
 
     </div>
     
-    <div *ngIf="sinSinEfectorMessage" class="no-selection-message">
-      No se encontraron personas sin legajo asignado, haz 
+    <div *ngIf="sinAutoridadMessage" class="no-selection-message">
+      No se encontraron autoridades asignadas al efector seleccionado, haz 
       <button class="button-primary" (click)="goBack()">clic aquí</button> para regresar atrás.
     </div>
     
-    <div *ngIf="!sinSinEfectorMessage">
+    <div *ngIf="!sinAutoridadMessage">
 
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 

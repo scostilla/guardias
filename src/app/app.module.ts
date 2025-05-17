@@ -272,6 +272,7 @@ import { CronogramaPendienteComponent } from './components/cronogramas/cronogram
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -491,6 +492,7 @@ import { CronogramaPendienteEditComponent } from './components/cronogramas/crono
     AsistencialSelectorAllComponent,
     CronogramaPendienteDetailComponent,
     CronogramaPendienteEditComponent,
+    NotFoundComponent,
   ],
 
   imports: [

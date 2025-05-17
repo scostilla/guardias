@@ -1,4 +1,5 @@
 //COMPONENTES SISTEMA GUARDIAS
+import { RoleGuard } from 'src/app/guards/role.guard';
 
 //Principales
 import { NgModule } from '@angular/core';
@@ -229,7 +230,8 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { CronogramaNewComponent } from './components/cronogramas/cronograma-new/cronograma-new.component';
 
 
-
+//Redirecciona cuando no existe la direccion ingresada
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 
 
@@ -246,13 +248,14 @@ import { AutoridadComponent } from './components/personal/personal-contenido/aut
 const routes: Routes = [
   
   //Principales
-  {path: '', component: LoginComponent },
+  {path: '', redirectTo: 'login', pathMatch: 'full' },
   {path:"selector-roles", component:SelectorRolesComponent},
   {path:"home-page", component:HomePageComponent},
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
+  {path: 'login', component:LoginComponent},
 
   //Configuraciones: Generales
   {path: 'valores-guardias', component:ValoresGuardiasComponent},
@@ -379,7 +382,7 @@ const routes: Routes = [
   {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
-  {path: 'autoridad-list', component:AutoridadListComponent},
+  {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'externo', component:ExternoComponent},
 
   {path: 'personal-dh', component:PersonalDhComponent},
@@ -470,17 +473,19 @@ const routes: Routes = [
   { path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
   { path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
   { path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
- /*  {path:'api', component:ApiComponent} */
- { path:'MonthTableComponent',component:MonthTableComponent},
- { path: 'popup-calendario', component:PopupCalendarioComponent},
- { path: 'digesto', component:DigestoComponent},
- { path: 'novedades', component:NovedadesComponent}, 
- { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
- { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+  /*  {path:'api', component:ApiComponent} */
+  { path:'MonthTableComponent',component:MonthTableComponent},
+  { path: 'popup-calendario', component:PopupCalendarioComponent},
+  { path: 'digesto', component:DigestoComponent},
+  { path: 'novedades', component:NovedadesComponent}, 
+  { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
+  { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 
  { path: 'cronograma-new', component:CronogramaNewComponent},
 
-
+  //Pagina no encontrada
+{ path: 'not-found', component: NotFoundComponent },
+{ path: '**', redirectTo: 'not-found' },
 
 
 

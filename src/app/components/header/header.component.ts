@@ -17,7 +17,6 @@ export class HeaderComponent implements OnDestroy, OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showConfig: boolean = true;
-  showHeader: boolean = true;
 
   pendientesCount: number = 0;
   notificacionesCount: number = 1;
@@ -44,16 +43,17 @@ export class HeaderComponent implements OnDestroy, OnInit {
     private tokenService: TokenService,
     private authService: AuthService
   ) {
-    this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.showNavBar = !(event.url === '/home-page' || event.url === '/home-profesional' || event.url === '/registro-actividades-ingreso' || event.url === '/registro-actividades-egreso');
-        this.showConfig = !(event.url === '/home-profesional');
-        this.showHeader = !(event.url === '/');
-      }
-    });
-  }
+      
+  this.routerSubscription = this.router.events.subscribe((event) => {
+    if (event instanceof NavigationEnd) {
+      this.updateNavBarAndConfigState();  // Actualiza el estado después de la navegación
+    }
+  });
+}
 
 ngOnInit(): void {
+  this.updateNavBarAndConfigState();
+
   // Suscripción al cambio de efector
   this.efectorService.currentEfectorId$.subscribe(id => {
     this.efectorId = id;
@@ -111,6 +111,27 @@ this.tokenService.isLogged$.subscribe(isLogged => {
     }
   }
 
+  updateNavBarAndConfigState(): void {
+    const url = this.router.url;
+
+    // Actualiza el estado de showNavBar y showConfig basándote en la ruta actual
+    this.showNavBar = !(
+      url === '/home-page' ||
+      url === '/home-profesional' ||
+      url === '/registro-actividades-ingreso' ||
+      url === '/registro-actividades-egreso' ||
+      url === '/not-found'
+    );
+
+    this.showConfig = !(
+      url === '/home-profesional' ||
+      url === '/registro-actividades-ingreso' ||
+      url === '/registro-actividades-egreso' ||
+      url === '/not-found'
+    );
+
+  }
+
   private loadUserDetails() {
     // Llamo al servicio para obtener los detalles del usuario
     this.authService.detailPersonBasicPanel().subscribe(
@@ -156,6 +177,6 @@ this.tokenService.isLogged$.subscribe(isLogged => {
     this.isUsuario = false;
     this.isDph = false;
     this.isSuper = false;
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }

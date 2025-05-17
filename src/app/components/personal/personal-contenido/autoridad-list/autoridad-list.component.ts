@@ -66,7 +66,7 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
   asistencial!: Asistencial;
   isLoadingLegajos: boolean = true;
 
-  sinSinEfectorMessage: boolean = false;
+  sinAutoridadMessage: boolean = false;
   efectorNombre: string | null = null;
   idContraFactura?: number;
   tipoGuardias: TipoGuardia[] = [];
@@ -268,9 +268,9 @@ listAutoridades(): void {
           console.log('Autoridades combinadas:', mergedData);
 
           if (mergedData.length === 0) {
-            this.sinSinEfectorMessage = true;
+            this.sinAutoridadMessage = true;
           } else {
-            this.sinSinEfectorMessage = false;
+            this.sinAutoridadMessage = false;
             this.dataSource = new MatTableDataSource<any>(mergedData);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -278,13 +278,13 @@ listAutoridades(): void {
         },
         error: (err) => {
           console.error('Error al obtener autoridades no asistenciales:', err);
-          this.sinSinEfectorMessage = false;
+          this.sinAutoridadMessage = false;
         }
       });
     },
     error: (err) => {
       console.error('Error al obtener autoridades asistenciales:', err);
-      this.sinSinEfectorMessage = false;
+      this.sinAutoridadMessage = false;
     }
   });
 }
