@@ -68,7 +68,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   //Autenticación
   isLogged = false;
-  roles: string[] =[];
+  roles: string[] = [];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
@@ -83,7 +83,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   currentRole: string | null = null;
 
   private efectorIdSubscription!: Subscription;
-  
+
   constructor(
     private asistencialService: AsistencialService,
     private efectorService: EfectorService,
@@ -131,12 +131,12 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
-  
+
       // BehaviorSubject para obtener el rol seleccionado
       this.tokenService.currentRole$.subscribe(role => {
         this.currentRole = role;
         this.UserRoles();  // Llamar a la función que determina los roles
-  
+
         // Si currentRole es false (null o vacío), redirige al login
         if (!this.currentRole) {
           this.router.navigateByUrl('');
@@ -153,7 +153,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
           this.usuarioPersona = response.id;
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
-  
+
           // Log para mostrar el usuario
           console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
         },
@@ -188,7 +188,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       return normalizedData.indexOf(normalizedFilterValue) !== -1;
     };
-  
+
     this.dataSource.filter = normalizedFilterValue;
   }
 
@@ -280,15 +280,15 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     return asistencial.nombresTiposGuardias.includes('CARGO') ||
            asistencial.nombresTiposGuardias.includes('AGRUPACIÓN');
   }
-  
+
   formatCuil(cuil: string): string {
     if (!cuil) return '';
     // el CUIL debe tener al menos 11 dígitos
     if (cuil.length < 11) return cuil;
-  
+
     return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
   }
-  
+
   createAsistencial(): void {
     this.router.navigate(['/asistencial-create']);
   }
@@ -361,7 +361,7 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   verLegajo(asistencial: AsistencialListDto): void {
     if (asistencial && asistencial.id) {
       this.router.navigate(['/legajo-person'], {
-        state: { asistencial , fromAsistencial: true}
+        state: { asistencial, fromAsistencial: true }
       });
     } else {
       console.error('El objeto asistencial no tiene un id.');
@@ -390,5 +390,5 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
     this.efectorIdSubscription?.unsubscribe();
-  }  
+  }
 }

@@ -13,13 +13,13 @@ export class EfectorService {
 
   private currentEfectorIdSubject = new BehaviorSubject<number | null>(this.getCurrentEfectorId());
   currentEfectorId$ = this.currentEfectorIdSubject.asObservable();
-  
+
   efectoresURL = 'http://localhost:8080/efector/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
 
-  get refresh$(){
+  get refresh$() {
     return this._refresh$;
   }
 
@@ -27,18 +27,18 @@ export class EfectorService {
   getEfectorTipo(id: number): Observable<any> {
     return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
   }
-  
+
   // Encriptar
   encrypt(text: string): string {
     return CryptoJS.AES.encrypt(text, this.secretKey).toString();
   }
-  
+
   // Desencriptar
   decrypt(encryptedText: string): string {
     const bytes = CryptoJS.AES.decrypt(encryptedText, this.secretKey);
     return bytes.toString(CryptoJS.enc.Utf8);
   }
-  
+
   //Establece el efector
   setCurrentEfectorId(efectorId: number | null) {
     if (efectorId !== null) {
@@ -51,7 +51,7 @@ export class EfectorService {
     // Notifica a los suscriptores
     this.currentEfectorIdSubject.next(efectorId);
   }
-  
+
   //Obtiene el efector
   getCurrentEfectorId(): number | null {
     const encryptedId = sessionStorage.getItem('currentEfectorId');

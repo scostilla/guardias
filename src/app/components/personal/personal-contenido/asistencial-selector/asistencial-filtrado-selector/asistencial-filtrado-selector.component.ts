@@ -137,4 +137,5 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
     this.suscription?.unsubscribe();
     //this.efectorIdSubscription?.unsubscribe();
   }
+  
 }

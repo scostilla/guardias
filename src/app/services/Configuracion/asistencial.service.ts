@@ -56,9 +56,21 @@ export class AsistencialService {
     return this.httpClient.get<AsistencialDto[]>(`${this.asistencialesURL}listByUdoAndTipoGuardia/${idUdo}`);
   }
 
+  public listByEfectorAndTG(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTG/${idEfector}/${tipoGuardia}`);
+  }
+
+  public asistencialesConPendientes(idEfector: number, mes: number, anio: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}asistencialesConPendientes/${idEfector}/${mes}/${anio}/${tipoGuardia}`);
+  }
+
+  public ConPendientes(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}ConPendientes/${idEfector}/${tipoGuardia}`);
+  }
+
   public getLegajosByAsistencial(id: number): Observable<Legajo[]> {
     return this.httpClient.get<Legajo[]>(this.asistencialesURL + `legajos/${id}`);
-}
+  }
 
   public listSummary(): Observable<AsistencialSummaryDto[]> {
     return this.httpClient.get<AsistencialSummaryDto[]>(this.asistencialesURL + 'listSummary')
@@ -138,16 +150,16 @@ export class AsistencialService {
   /*/lo uso para enviar id sin usar la url
   private currentAsistencialSubject = new BehaviorSubject<Asistencial | null>(null);
   currentAsistencial$ = this.currentAsistencialSubject.asObservable();
-  
+
   setCurrentAsistencial(asistencial: Asistencial) {
     this.currentAsistencialSubject.next(asistencial);
   }*/
 
   //uso para filtrar por el efector del usuario logueado
-listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto[]> {
-  console.log('Listando asistenciales para el ID Efector:', efectorId); // Log del efectorId
-  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTipoGuardia/${efectorId}`);
-}
+  listByEfectorAndTipoGuardia(efectorId: number): Observable<AsistencialSummaryDto[]> {
+    console.log('Listando asistenciales para el ID Efector:', efectorId); // Log del efectorId
+    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTipoGuardia/${efectorId}`);
+  }
 
 public listByEfectorAndTG(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
   return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTG/${idEfector}/${tipoGuardia}`);

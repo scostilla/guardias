@@ -1,17 +1,18 @@
 import { Efector } from "./Configuracion/Efector";
+import { RegistroActividad } from "./RegistroActividad";
 
 export class RegistrosPendientes {
     id?: number;
     fecha: Date;
     activo: boolean;
     efector: Efector;
-    registrosActividades: RegistrationOptions[];
+    registrosActividades: RegistroActividad[];
 
     constructor(
         fecha: Date,
         activo: boolean,
         efector: Efector,
-        registrosActividades: RegistrationOptions[]
+        registrosActividades: RegistroActividad[]
     ) { 
         this.fecha = fecha;
         this.activo = activo;

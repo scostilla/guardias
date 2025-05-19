@@ -99,6 +99,7 @@ import { DistHorariaConsComponent } from './components/actividades/dist-horaria-
 import { DistHorariaGirasComponent } from './components/actividades/dist-horaria-giras/dist-horaria-giras.component';
 import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria-otras/dist-horaria-otras.component';
+import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
@@ -242,6 +243,7 @@ import { PruebaTerritorioComponent } from './components/configuracion/territorio
 import { AutoridadDetailComponent } from './components/personal/personal-contenido/autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from './components/personal/personal-contenido/autoridad-edit/autoridad-edit.component';
 import { AutoridadComponent } from './components/personal/personal-contenido/autoridad/autoridad.component';
+import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 
 
 
@@ -352,7 +354,8 @@ const routes: Routes = [
   {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent},
   {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent},
-  {path:"registro-actividades-egreso/:id", component: RegistroActividadesEgresoComponent },
+  {path:"registro-actividades-egreso", component: RegistroActividadesEgresoComponent },
+  {path:"registro-actividades-e", component: RegistroActividadesEComponent },
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
   {path:'dist-horaria-cons', component:DistHorariaConsComponent},
@@ -370,9 +373,11 @@ const routes: Routes = [
   {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
-
   {path: 'asistencial-selector', component:AsistencialSelectorComponent},
-    {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
+  
+  {path: 'asistencial-filtrado-selector', component:AsistencialFiltradoSelectorComponent},
+  {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
+  
   {path: 'asistencial-create', component:AsistencialCreateComponent},
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},

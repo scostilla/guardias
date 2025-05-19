@@ -10,17 +10,15 @@ import { RegistroActividadService } from 'src/app/services/registroActividad.ser
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { AsistencialSelectorComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/servicio.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
-import * as moment from 'moment';
-
+import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -32,12 +30,12 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   tiposGuardias: TipoGuardia[] = [];
   asistenciales: Asistencial[] = [];
   servicios: Servicio[] = [];
-  efectores: Efector[] = [];
+  efectorId: number | null = null;
+  efectorNombre: string | null = null; // Propiedad para almacenar el nombre del efector
   timeControl: FormControl = new FormControl();
   currentDate: Date = new Date();
   initialData: any;
   inputValue: string = '';
-  asistencialSeleccionado: Asistencial | null = null;
 
   isLogged = false;
   userId: number | null = null;
@@ -47,37 +45,31 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   ultimoRegistro: RegistroActividad | null = null;
   usuarioPersona: number | null = null;
 
-
   constructor(
     private fb: FormBuilder,
     private registroActividadService: RegistroActividadService,
     private tipoGuardiaService: TipoGuardiaService,
     private asistencialService: AsistencialService,
     private servicioService: ServicioService,
-    private hospitalService: HospitalService,
     private toastr: ToastrService,
     private router: Router,
     public dialog: MatDialog,
     private tokenService: TokenService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private efectorService: EfectorService // Inyectar el servicio EfectorService
   ) {
     this.currentDate = new Date();
 
     this.registroForm = this.fb.group({
       idTipoGuardia: ['', Validators.required],
+      idAsistencial: ['', Validators.required],
       idServicio: ['', Validators.required],
-      idEfector: ['', Validators.required],
-      fechaIngreso: [this.currentDate, Validators.required], // Fecha actual
-      eventStartTime: [this.formatCurrentTime(), Validators.required], // Hora actual
-      fechaEgreso: [''],
-      eventEndTime: ['']
+      idEfector: [''],
+      fechaIngreso: ['', Validators.required],
+      eventStartTime: ['', Validators.required],
+      eventEndTime: [{ value: '', disabled: true }, Validators.required]
     });
-
-    this.listTiposGuardias();
-    this.listAsistenciales();
-    this.listServicios();
-    this.listEfectores();
 
     this.route.data.subscribe(data => {
       this.initialData = data['initialData'];
@@ -93,7 +85,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
 
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
+      console.log('ID del usuario logeado:', this.userId);
 
       // Obtener detalles del usuario
       this.authService.detailPersonBasicPanel().subscribe(
@@ -101,33 +93,29 @@ export class RegistroActividadesIngresoComponent implements OnInit {
           this.usuarioPersona = response.id;
           this.nombreUsuario = response.nombre;
           this.apellidoUsuario = response.apellido;
-          this.nombresEfectores = response.efectores; // Asignar efectores
-
-          this.loadAsistencialData();
 
           // Log para mostrar el usuario y los efectores
           console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-          console.log('Efectores asociados:', this.nombresEfectores);
         },
         error => {
           console.error('Error al obtener detalles del usuario:', error);
         }
       );
-  } else {
+    } else {
       this.isLogged = false;
       console.log('El usuario no está logueado.');
       this.router.navigateByUrl('');
     }
-  }
+    // Obtener el ID efector del servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
 
-  private formatCurrentTime(): string {
-    const hours = this.currentDate.getHours().toString().padStart(2, '0');
-    const minutes = this.currentDate.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`; // Formato HH:mm
-  }
+    if (this.efectorId) {
+      this.registroForm.patchValue({ idEfector: this.efectorId });
+    }
 
-  onTipoGuardiaChange(event: any) {
-    console.log("Tipo de guardia seleccionado:", event.value);
+    this.listTiposGuardias();
+    this.listAsistenciales();
+    this.listServicios();
   }
 
   listTiposGuardias(): void {
@@ -157,39 +145,79 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     });
   }
 
-  listEfectores(): void {
-    this.hospitalService.list().subscribe(data => {
-      console.log('Lista de efectores:', data);
-      this.efectores = data;
+  onTipoGuardiaChange(event: any): void {
+    console.log("Tipo de guardia seleccionado:", event.value);
+    const nuevoTipoGuardia = event.value;
+    // Cambiar el tipo de guardia y borrar solo los campos relacionados
+    this.cambiarTipoGuardia(nuevoTipoGuardia);
+  }
+
+  // Método para cambiar el tipo de guardia y borrar solo los campos relacionados
+  cambiarTipoGuardia(nuevoTipoGuardia: any): void {
+    // Borrar solo los campos relacionados con el tipo de guardia
+    this.registroForm.get('idAsistencial')?.reset();
+    this.registroForm.get('idServicio')?.reset();
+
+    // Actualizar el tipo de guardia en el formulario
+    this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
+
+  }
+
+  openAsistencialDialog(): void {
+    console.log("Datos enviados al diálogo:", {
+      idEfector: this.efectorId, 
+      tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
+      mode: AsistencialMode.INGRESO
+    });
+    const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
+      width: '800px',
+      disableClose: true,
+      data: {
+        idEfector: this.efectorId, // Pasar el idEfector desde el sessionStorage
+        tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre, // Pasar el tipo de guardia seleccionado
+        mode: AsistencialMode.INGRESO
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Actualizo el valor legible para mostrarlo y el id para el formulario
+        this.inputValue = `${result.apellido} ${result.nombre}`;
+        this.registroForm.patchValue({ idAsistencial: result.id });
+      } else {
+        this.toastr.info('No se seleccionó un profesional', 'Información', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
     }, error => {
-      console.log(error);
+      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
   }
 
-  isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
-  }
-
-  private loadAsistencialData(): void {
-    this.inputValue = `${this.apellidoUsuario} ${this.nombreUsuario}`;
-  }
-  
   saveRegistro(): void {
+    console.log('Formulario válido:', this.registroForm.valid);
+    console.log('Formulario modificado:', this.isModified());
+    console.log('Valores del formulario:', this.registroForm.value);
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
-      const asistencialId = this.usuarioPersona !== null ? this.usuarioPersona : 0;
-
       const registroDto = new RegistroActividadDto(
-        moment(registroData.fechaIngreso).startOf('day').toDate(), // Asegúrate de que sea un objeto Date
+        registroData.fechaIngreso,
         registroData.fechaEgreso,
         registroData.eventStartTime,
         registroData.eventEndTime,
         registroData.idTipoGuardia.id,
-        true, 
-        asistencialId,
+        true,
+        registroData.idAsistencial,
         registroData.idServicio.id,
-        registroData.idEfector.id,
-        this.userId!
+        registroData.idEfector,
+        this.userId!,
       );
 
       console.log('Registro a enviar:', registroDto);
@@ -202,7 +230,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.router.navigate(['/home-profesional']);
+            this.router.navigate(['/registro-diario']);
           },
           error => {
             this.toastr.error('Ocurrió un error al crear o editar el registro diario', 'Error', {
@@ -220,7 +248,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
               positionClass: 'toast-top-center',
               progressBar: true
             });
-            this.router.navigate(['/home-profesional']);
+            this.router.navigate(['/registro-diario']);
           },
           error => {
             this.toastr.error('Ocurrió un error al guardar el registro', 'Error', {
@@ -232,6 +260,10 @@ export class RegistroActividadesIngresoComponent implements OnInit {
         );
       }
     }
+  }
+
+  isModified(): boolean {
+    return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
   compareTipoGuardia(p1: TipoGuardia, p2: TipoGuardia): boolean {
@@ -246,22 +278,13 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  compareEfector(p1: Efector, p2: Efector): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
-
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/home-profesional']);
+    this.router.navigate(['/registro-diario']);
   }
-
-  onLogOut(): void {
-    this.tokenService.logOut();
-    window.location.reload();
-  }
-
 }
+
