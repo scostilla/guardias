@@ -8,32 +8,32 @@ export class NovedadPersonal {
     cobraSueldo: boolean;
     fechaInicio: Date;
     fechaFinal: Date;
-    necesitaReemplazo: boolean;
+    //necesitaReemplazo: boolean;
     puedeRealizarGuardia: boolean;
     persona: Person;
     tipoLicencia: TipoLicencia;
-    suplente?: Person;
+    //suplente?: Person;
 
     constructor(
         activo: boolean,
         cobraSueldo: boolean,
         fechaInicio: Date,
         fechaFinal: Date,
-        necesitaReemplazo: boolean,
+        //necesitaReemplazo: boolean,
         puedeRealizarGuardia: boolean,
         persona: Person,
         tipoLicencia: TipoLicencia,
-        suplente?: Person,
+        //suplente?: Person,
     ) {
 
         this.activo = activo;
         this.cobraSueldo = cobraSueldo;
         this.fechaFinal = fechaFinal;
         this.fechaInicio = fechaInicio;
-        this.necesitaReemplazo = necesitaReemplazo;
+        //this.necesitaReemplazo = necesitaReemplazo;
         this.puedeRealizarGuardia = puedeRealizarGuardia;
         this.persona = persona;
         this.tipoLicencia = tipoLicencia;
-        this.suplente = suplente;
+        //this.suplente = suplente;
     }
 }

@@ -24,7 +24,7 @@ export class FeriadoComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<FeriadoDetailComponent>;
-  displayedColumns: string[] = ['fecha', 'motivo', 'tipoFeriado', 'acciones'];
+  displayedColumns: string[] = ['fecha', 'motivo', 'tipoFeriado', 'esPatronal', 'efector', 'acciones'];
   dataSource!: MatTableDataSource<Feriado>;
   suscription!: Subscription;
 

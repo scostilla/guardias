@@ -10,6 +10,7 @@ export class AsistencialListDto {
     telefono: string;
     email: string;
     domicilio: string;
+    esAsistencial: boolean;
     nombresTiposGuardias: string[];
 
     constructor(
@@ -23,6 +24,7 @@ export class AsistencialListDto {
         telefono: string,
         email: string,
         domicilio: string,
+        esAsistencial: boolean,
         nombresTiposGuardias:string[]
     ) {
         this.id = id;
@@ -35,6 +37,7 @@ export class AsistencialListDto {
         this.telefono = telefono;
         this.email = email;
         this.domicilio = domicilio;
+        this.esAsistencial = esAsistencial;
         this.nombresTiposGuardias = nombresTiposGuardias;
     }
 

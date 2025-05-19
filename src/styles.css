@@ -156,7 +156,7 @@ footer {
 .contenedor-subtitulo-bocadillo {
   background-color: #73d2f5;
   z-index: 1;
-  font-size: 80%;
+  font-size: 70%;
 }
 
 .menu-fond {
@@ -359,7 +359,20 @@ footer {
   .contenedor-montos {
     width: 90%;
   }
-    
+  
+  .ref {
+    font-size: 60%;
+  }
+
+  .titulo-calendario, .titulo-calendario-def, .titulo-calendario-reg {
+    letter-spacing: .1em;
+      font-family: "Ubuntu";
+      font-size: 3.6em;
+      padding: 40px 50px 20px 20px;
+      font-weight: bolder;
+      text-align: center;
+  }
+      
 }
 
 /* --botones circulares seccción actividades-- */
@@ -497,6 +510,15 @@ mat-table {
   background-color: #f8f6f6 !important;
 }
 
+.ref-novedad-personal {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  vertical-align: middle;
+  background-color: grey; /* Color por defecto, puede ser sobrescrito */
+}
+
 .novedad-personal-compensatorio {
   background-color: #A8FFFF !important;
 }
@@ -514,6 +536,9 @@ mat-table {
 }
 .novedad-personal-falta-sin-aviso {
   background-color: #D32916 !important;
+}
+.novedad-personal-duelo {
+  background-color: #967565 !important;
 }
 
 .novedad-personal-otros {
@@ -667,6 +692,19 @@ mat-label{
 .select-inicio:focus {
   outline: none;
 }
+
+.select-inicio-super {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 5px 5px 5px 5px;
+  font-size: 16px;
+  appearance: none;
+  width: auto;
+  cursor: pointer;
+  text-align: center;
+}
+
 
 .arrow {
   position: absolute;
@@ -824,16 +862,21 @@ mat-label{
   border-left: 20px solid #243c74;}
   
 /* --referencias-- */
+.ref-contenedor {
+  display: inline-flex; /* Usamos inline-flex para alinear los elementos en línea */
+  align-items: center; /* Esto asegura que el círculo y el texto se alineen verticalmente */
+}
+
 .ref {
   font-weight: bold;
 }
 
 .ref-circulo {
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: inline-block; 
-  vertical-align: middle; 
+  width: 12px;
+  height: 12px;
+  background-color: red; /* Para que el círculo sea visible */
+  margin-right: 1px; /* Espacio entre el círculo y el texto */
 }
 
 .ref-circulo + .ref {

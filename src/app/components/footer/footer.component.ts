@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 
 
@@ -11,15 +9,8 @@ import { Subscription } from 'rxjs';
 
 })
 export class FooterComponent {
-  private routerSubscription: Subscription;
-  showFooter: boolean = true;
 
-  constructor(private router: Router) {
-    this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.showFooter = !(event.url === '/');
-      }
-    });
+  constructor() {
   }
 
 

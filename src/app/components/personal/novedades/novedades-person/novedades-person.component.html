@@ -27,7 +27,7 @@
 
           <ng-container matColumnDef="tipoLicencia">
             <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo de licencia </th> 
-            <td mat-cell *matCellDef="let novedad"> {{novedad.tipoLicencia?.nombre}} </td>
+            <td mat-cell *matCellDef="let novedad" style="white-space: nowrap;"> {{novedad.tipoLicencia?.nombre}} </td>
           </ng-container>
 
           <ng-container matColumnDef="fechaInicio">
@@ -43,7 +43,7 @@
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef class="negrita"> </th>
             <td mat-cell *matCellDef="let novedad" class="cell-actions">
-              <button mat-icon-button matTooltip="Ver" (click)="openDetail(novedad)">
+              <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(novedad)">
                 <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
               </button>
               <button mat-icon-button matTooltip="Editar" (click)="openEditForm(novedad)" >

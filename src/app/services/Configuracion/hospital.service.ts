@@ -4,7 +4,10 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Hospital } from "src/app/models/Configuracion/Hospital";
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
+import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
+import { EfectorHospitalDto } from "src/app/dto/Configuracion/efector/EfectorHospitalDto";
 
 
 @Injectable({
@@ -25,6 +28,19 @@ export class HospitalService {
       return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'list');
   }
 
+  public listAll(): Observable<Hospital[]> {
+    return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'listAll');
+  }
+
+  public listSelection(): Observable<EfectorSummaryDto[]> {
+    return this.httpClient.get<EfectorSummaryDto[]>(this.hospitalesURL + 'listSelection');
+  }
+
+  // Listar hospitales x pasivas
+  listPasivas(): Observable<Hospital[]> {
+    return this.httpClient.get<Hospital[]>(this.hospitalesURL + 'listPasivas');
+  }
+
   public getById( id:number): Observable<Hospital> {
     return this.httpClient.get<Hospital>(this.hospitalesURL + `detail/${id}`);
 }
@@ -33,8 +49,17 @@ public listActiveCapsByHospitalId(hospitalId: number): Observable<CapsDto[]> {
   return this.httpClient.get<CapsDto[]>(`${this.hospitalesURL}listCaps/${hospitalId}`);
 }
 
+// Obtener servicios activos de un hospital
+getActiveServicesByHospital(idHospital: number): Observable<ServicioSummaryDto[]> {
+  return this.httpClient.get<ServicioSummaryDto[]>(`${this.hospitalesURL}serviciosActivos/${idHospital}`);
+}
+
   public detailnombre(nombre:string): Observable<Hospital> {
     return this.httpClient.get<Hospital>(this.hospitalesURL + `detailnombre/${nombre}`);
+}
+
+public detailNombreAll(id:number): Observable<EfectorHospitalDto> {
+  return this.httpClient.get<EfectorHospitalDto>(this.hospitalesURL + `detailNombreAll/${id}`);
 }
 
 public save(hospitales:HospitalDto): Observable<any> {

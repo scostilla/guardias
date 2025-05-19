@@ -1,4 +1,4 @@
-<app-spinner *ngIf="isLoading"></app-spinner>
+<app-spinner></app-spinner>
 
 <div class="container">
   <div class="row">
@@ -9,9 +9,9 @@
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal-dh">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
+      <!--<button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
-      </button>
+      </button>-->
     </div>
   </div>
 
@@ -19,7 +19,7 @@
     <div class="col-md-1">
       <div class="contenedor-bocadillo">
         <div>{{ nombreMes }}</div>
-        <div>{{ anoSeleccionado  }}</div>
+        <div>{{ anioSeleccionado  }}</div>
       </div>
     </div>
     <div class="col-md-8 d-flex justify-content-start">
@@ -30,7 +30,7 @@
     <div class="col-md-3 d-flex justify-content-start">
       <div class="contenedor-subtitulo-bocadillo">
         <div class="select-inicio-container">
-          <select class="select-inicio" [(ngModel)]="mesSeleccionado" (change)="onMonthChange($event)">
+          <select class="select-inicio" [(ngModel)]="mesYanio" (change)="onMonthChange($event)">
             <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
           </select>
           <span class="arrow">▼</span>
@@ -97,7 +97,7 @@
     </table>
     
   <!-- Mensaje si no hay registros -->
-  <div *ngIf="!isLoading && !showTable">
+  <div *ngIf="!showTable">
     No hay distribuciones cargadas para el mes y año seleccionado.
   </div>
 
@@ -117,6 +117,12 @@
         <p>Carga horaria semanal: <strong>{{ cargaHoraria }}</strong> hs</p>
         <p *ngIf="cargaHoraria === undefined">No hay carga horaria disponible para este profesional.</p>
       </div>
+      <p>Ver datos completos: 
+        <button mat-button color="primary" *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
+        <button mat-button color="primary" *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
+        <button mat-button color="primary" *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
+        <button mat-button color="primary" *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
+      </p>
       <!--<div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
         <p>{{ mensajeCargaHoraria }}</p>
       </div>-->

@@ -9,6 +9,7 @@ export class NoAsistencialListDto {
     telefono: string;
     email: string;
     domicilio: string;
+    esAsistencial: boolean;
 
     constructor(
         id: number,
@@ -21,6 +22,7 @@ export class NoAsistencialListDto {
         telefono: string,
         email: string,
         domicilio: string,
+        esAsistencial: boolean,
         ) {
         this.id = id;
         this.nombre = nombre;
@@ -32,6 +34,7 @@ export class NoAsistencialListDto {
         this.telefono = telefono;
         this.email = email;
         this.domicilio = domicilio;
+        this.esAsistencial = esAsistencial;
     }
 
 }

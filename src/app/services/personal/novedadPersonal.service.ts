@@ -65,4 +65,14 @@ puedeHacerGuardia(idPersona: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}puedeHacerGuardia/${idPersona}`);
 }
 
+// Verificar si una persona tiene LAO
+tieneLicenciaLAO(idPersona: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaLAO/${idPersona}`);
+}
+
+// Verificar si una persona tiene Compensatorio
+tieneLicenciaCompensatorio(idPersona: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaCompensatorio/${idPersona}`);
+}
+
 }

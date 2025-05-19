@@ -15,7 +15,6 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { Location } from '@angular/common';
 import { MotivoBajaDialogComponent } from '../motivo-baja-dialog/motivo-baja-dialog.component';
 
 @Component({
@@ -34,12 +33,11 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'acciones'];
+  displayedColumns!: string[];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
   personId?: number;
-  //noAsistencialId?: number;
   nombreCompleto: string = '';
   initialData: Asistencial | NoAsistencial | undefined;
 
@@ -51,7 +49,6 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     private toastr: ToastrService,
     private paginatorIntl: MatPaginatorIntl,
     private router: Router,
-    private location: Location,
   ) {
 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -80,6 +77,12 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+
+  if (this.fromAsistencial) {
+    this.displayedColumns = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'acciones'];
+  } else if (this.fromNoAsistencial) {
+    this.displayedColumns = ['esAutoridad', 'profesion', 'udo', 'fechaInicio', 'acciones'];
+  }
 
     // Si recibo un asistencial
     if (this.initialData) {

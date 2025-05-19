@@ -13,12 +13,21 @@ import { Location } from '@angular/common';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+import { NoAsistencialListDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialListDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -31,12 +40,12 @@ import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
-  selector: 'app-sin-efector',
-  templateUrl: './sin-efector.component.html',
-  styleUrls: ['./sin-efector.component.css']
+  selector: 'app-autoridad-list',
+  templateUrl: './autoridad-list.component.html',
+  styleUrls: ['./autoridad-list.component.css']
 })
 
-export class SinEfectorComponent implements OnInit, OnDestroy {
+export class AutoridadListComponent implements OnInit, OnDestroy {
 
   dniVisible: boolean = false;
   domicilioVisible: boolean = false;
@@ -57,10 +66,12 @@ export class SinEfectorComponent implements OnInit, OnDestroy {
   asistencial!: Asistencial;
   isLoadingLegajos: boolean = true;
 
-  sinSinEfectorMessage: boolean = false;
+  sinAutoridadMessage: boolean = false;
   efectorNombre: string | null = null;
   idContraFactura?: number;
   tipoGuardias: TipoGuardia[] = [];
+  efectorId: number | null = null;
+
 
   //Autenticación
   isLogged = false;
@@ -81,6 +92,10 @@ export class SinEfectorComponent implements OnInit, OnDestroy {
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
     private tipoGuardiaService: TipoGuardiaService,
+    private efectorService: EfectorService,
+    private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNo: MatDialog,
     private toastr: ToastrService,
@@ -103,6 +118,21 @@ export class SinEfectorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+        // Verificar si hay un idEfector antes de hacer cualquier otra cosa
+        this.efectorId = this.efectorService.getCurrentEfectorId();
+        this.loadEfectorName();
+      
+        if (this.efectorId === null) {
+          // Si no hay idEfector, redirigir a /home-page con un mensaje
+          this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.router.navigateByUrl('/home-page');
+          return; // Detener ejecución del código
+        }
+    
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.roles = this.tokenService.getAuthorities();
@@ -142,10 +172,10 @@ export class SinEfectorComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('');
     }
   
-    this.listSinEfectors();
+    this.listAutoridades();
 
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listSinEfectors();
+      this.listAutoridades();
     });
 
     // Llamamos al servicio para obtener todos los tipos de guardia
@@ -187,55 +217,77 @@ export class SinEfectorComponent implements OnInit, OnDestroy {
       this.isSuper = false;
     }
   }
+
+  loadEfectorName(): void {
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
+    }
   
-  listSinEfectors(): void {
-    this.asistencialService.list().subscribe(data => {
-      console.log('Asistenciales:', data); // Verifica los datos recibidos
-      const asistenciales = data.map(asistencial => ({
-        ...asistencial, 
-        tipo: 'Asistencial'
-      }));
-  
-      this.noAsistencialService.list().subscribe(noAsistenciales => {
-        console.log('No Asistenciales:', noAsistenciales); // Verifica los datos de no asistenciales
-        const noAsistencialesConTipo = noAsistenciales.map(noAsistencial => ({
-          ...noAsistencial,
-          tipo: 'No Asistencial'
-        }));
-  
-        const mergedData = [...asistenciales, ...noAsistencialesConTipo];
-        console.log('Datos combinados:', mergedData); // Verifica los datos combinados
-  
-        const filteredData = mergedData.filter(item => {
-          // Filtra solo aquellos que tienen al menos un legajo activo
-          const tieneLegajoActivo = item.legajos.some(legajo => legajo.activo === true);
-          
-          // Filtra aquellos legajos activos que cumplen con las condiciones de 'esRegional' o 'tipoGuardias'
-          const cumpleCondiciones = item.legajos.some(legajo => 
-            legajo.activo === true && 
-            (legajo.esRegional === true || legajo.tipoGuardias.some(tipo => tipo.id === this.idContraFactura))
-          );
-          
-          return tieneLegajoActivo && cumpleCondiciones;
+    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
+      next: (hospital: EfectorHospitalDto) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
+          next: (ministerio: EfectorMinisterioDto) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.detailNombreAll(this.efectorId!).subscribe({
+              next: (cap: EfectorCapsDto) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
         });
-  
-        console.log('Datos filtrados:', filteredData); // Verifica los datos filtrados
-  
-        if (filteredData.length === 0) {
-          this.sinSinEfectorMessage = true;
-        } else {
-          this.sinSinEfectorMessage = false;
-          this.dataSource = new MatTableDataSource<any>(filteredData);
-        }
-  
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      }, error => {
-        console.error('Error al obtener no asistenciales:', error);
-        this.sinSinEfectorMessage = false;
-      });
+      }
     });
   }
+  
+listAutoridades(): void {
+  this.asistencialService.listAutoridadesByEfector(this.efectorId!).subscribe({
+    next: (asistenciales) => {
+      const asistencialesConTipo = asistenciales.map(item => ({
+        ...item,
+        tipo: 'Asistencial'
+      }));
+
+      this.noAsistencialService.listAutoridadesByEfector(this.efectorId!).subscribe({
+        next: (noAsistenciales) => {
+          const noAsistencialesConTipo = noAsistenciales.map(item => ({
+            ...item,
+            tipo: 'No Asistencial'
+          }));
+
+          const mergedData = [...asistencialesConTipo, ...noAsistencialesConTipo];
+          console.log('Autoridades combinadas:', mergedData);
+
+          if (mergedData.length === 0) {
+            this.sinAutoridadMessage = true;
+          } else {
+            this.sinAutoridadMessage = false;
+            this.dataSource = new MatTableDataSource<any>(mergedData);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener autoridades no asistenciales:', err);
+          this.sinAutoridadMessage = false;
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al obtener autoridades asistenciales:', err);
+      this.sinAutoridadMessage = false;
+    }
+  });
+}
                 
   formatCuil(cuil: string): string {
     if (!cuil) return '';
@@ -301,7 +353,7 @@ export class SinEfectorComponent implements OnInit, OnDestroy {
   }
     
 
-verLegajo(row: AsistencialListDto | NoAsistencial): void {
+verLegajo(row: AsistencialListDto | NoAsistencialListDto): void {
   if ((row as Asistencial).esAsistencial) {
     // Si el objeto es de tipo Asistencial
     if (row && (row as Asistencial).id) {
@@ -327,7 +379,7 @@ verLegajo(row: AsistencialListDto | NoAsistencial): void {
   deleteAsistencial(row: Asistencial | NoAsistencial): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Confirma la eliminación de ' + row.nombre,
+        message: 'Confirma la eliminación de ' + row.apellido + ', ' + row.nombre,
         title: 'Eliminar',
       },
     });

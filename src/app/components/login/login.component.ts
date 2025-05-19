@@ -69,6 +69,8 @@ export class LoginComponent implements OnInit {
         this.tokenService.setAuthorities(data.authorities);
         this.roles = this.tokenService.getAuthorities();
 
+        this.tokenService.setLoggedState(true);
+
         // Si tiene más de un rol, mostramos el diálogo para seleccionar el rol
         if (this.roles.length > 1) {
           this.openRoleSelectionDialog();
