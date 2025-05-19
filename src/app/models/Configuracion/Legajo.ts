@@ -35,6 +35,7 @@ export class Legajo {
     tipoEfector?: string;
     tipoUdo?: string;
     fechaBajaSistema?: string;
+  
    
     
     constructor(
@@ -63,7 +64,8 @@ export class Legajo {
         fechaResolucion?: string,
         tipoEfector?: string,
         tipoUdo?: string,
-        fechaBajaSistema?: string
+        fechaBajaSistema?: string,
+      
       
         ) {
         
@@ -91,6 +93,7 @@ export class Legajo {
         this.tipoEfector = tipoEfector;
         this.tipoUdo = tipoUdo;
         this.fechaBajaSistema = fechaBajaSistema;
+     
     
     }
 

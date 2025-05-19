@@ -112,29 +112,31 @@ export class LegajoCreateComponent implements OnInit {
   showHabilitacionesGenerales: boolean = false;
 
 
-  //útiles
-  step = 0;
-  maxDate!: Date;
-  minFechaFinal!: Date;
-  isAsistencial: boolean = false;
-  isSituacionRevistaEnabled = false;
-  asignadoAutoridad: boolean = false;
-  noEspecialidadesMessage: string = '';
-  idCargo?: number;
-  idAgrupacion?: number;
-  idContraFactura?: number;
-  idPasiva?: number;
-  idExtra?: number;
-  esAutoridadValor: boolean = false;
-  idDirectorRegional?: number;
-  udoOptions: any[] = [];
-  efectorOptions: any[] = [];
-  efectorCargoOptions: any[] = [];
-  habilitacionesGuardiasOptions: any[] = [];
-  tipoUdo!: string;
-  tipoEfector!: string;
-  tipoHabilitacionesGuardias!: number;
-  tipoEfectorCargo!: number;
+   //útiles
+   step = 0;
+   maxDate!: Date;
+   minFechaFinal!: Date;
+   isAsistencial: boolean = false;
+   isSituacionRevistaEnabled = false;
+   asignadoAutoridad: boolean = false;
+   noEspecialidadesMessage: string = '';
+   idGuardiaCargo?: number;
+   idAgrupacion?: number;
+   idContraFactura?: number;
+   idPasiva?: number;
+   idExtra?: number;
+   esAutoridadValor: boolean = false;
+   idDirectorRegional?: number;
+   udoOptions: any[] = [];
+   efectorOptions: any[] = [];
+   efectorCargoOptions: any[] = [];
+   habilitacionesGuardiasOptions: any[] = [];
+   habilitacionesGeneralesOptions: any[] = [];
+   tipoUdo!: string;
+   tipoEfector!: string;
+   tipoHabilitacionesGuardias!: string;
+   tipoHabilitacionesGenerales!: string;
+   tipoEfectorCargo!: string;
 
 
   /* Form de revista */
@@ -144,7 +146,6 @@ export class LegajoCreateComponent implements OnInit {
     { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
     { value: 'TECNICOS', viewValue: 'Técnicos' },
   ];
-
 
   constructor(
     private fb: FormBuilder,
@@ -204,6 +205,8 @@ export class LegajoCreateComponent implements OnInit {
       tipoHabilitacionesGuardias: [''],
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: [''],
+      tipoHabilitacionesGenerales: [''],
+      hospitalHabilitacionesGenerales: [''],
       habilitacionesGenerales: [[]],
     });
 
@@ -324,13 +327,13 @@ export class LegajoCreateComponent implements OnInit {
   this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
     this.tipoGuardias = guardias;
 
-    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
-    this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
-    this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
-    this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
-    this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
-    this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
-
+     // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+     this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
+     this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
+     this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
+     this.idGuardiaCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
+     this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
+ 
     // Imprimir los ids para depuración
     console.log('ID ContraFactura:', this.idContraFactura);
     console.log('ID Pasiva:', this.idPasiva);
@@ -410,10 +413,10 @@ export class LegajoCreateComponent implements OnInit {
           });
         }
         
-        // Si la persona es autoridad, verificar los legajos activos
-        const legajoConTipoGuardiaCargo = legajosActivos.find(legajo => 
+         // Si la persona es autoridad, verificar los legajos activos
+         const legajoConTipoGuardiaCargo = legajosActivos.find(legajo => 
           !legajo.esAutoridad && 
-          legajo.tipoGuardias.some(tipo => tipo.id === this.idCargo || tipo.id === this.idAgrupacion)
+          legajo.tipoGuardias.some(tipo => tipo.id === this.idGuardiaCargo || tipo.id === this.idAgrupacion)
         );
         
         if (legajoConTipoGuardiaCargo) {
@@ -754,9 +757,9 @@ export class LegajoCreateComponent implements OnInit {
     this.tipoHabilitacionesGuardias = tipoHabilitacionesGuardias;
 
     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoHabilitacionesGuardias === 2) { // Ministerio
+    if (tipoHabilitacionesGuardias === 'HOSPITAL') { // Hospital
       this.habilitacionesGuardiasOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoHabilitacionesGuardias === 3) { // CAPS
+    } else if (tipoHabilitacionesGuardias === 'CAPS') { // CAPS
       this.habilitacionesGuardiasOptions = this.caps;  // Opciones específicas para CAPS
     }
 
@@ -794,18 +797,64 @@ export class LegajoCreateComponent implements OnInit {
       this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
     });
   }
+
+  onTipoHabilitacionesGeneralesChange(event: any): void {
+    const tipoHabilitacionesGenerales = event.value;
+    this.tipoHabilitacionesGenerales = tipoHabilitacionesGenerales;
+
+    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+    if (tipoHabilitacionesGenerales === 'HOSPITAL') { // HOSPITAL
+      this.habilitacionesGeneralesOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
+    } else if (tipoHabilitacionesGenerales === 'CAPS') { // CAPS
+      this.habilitacionesGeneralesOptions = this.caps;  // Opciones específicas para CAPS
+    }
+
+    // Habilitar el select de efector después de haber elegido un tipo de efector
+    const efectorControl = this.legajoForm.get('habilitacionesGenerales');
+    if (efectorControl) {
+      efectorControl.enable(); // Habilitar el select de efector
+    }
+
+    // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
+    this.legajoForm.get('habilitacionesGenerales')?.reset();
+    this.legajoForm.get('hospitalHabilitacionesGenerales')?.reset();
+  }
+  
+  // Método para cargar los CAPS correspondientes al hospital seleccionado
+  onHospitalHabilitacionesGeneralesChange(event: any): void {
+    const hospitalId = event.value;
+    
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.habilitacionesGuardiasOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('habilitacionesGenerales')?.reset(); // Limpiar la selección actual de UDO
+
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
+  }
   
   // Método para cambiar las opciones de la selección de efector
   onTipoEfectorCargoChange(event: any): void {
     const tipoEfectorCargo = event.value;
     this.tipoEfectorCargo = tipoEfectorCargo;
 
-    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-    if (tipoEfectorCargo === 1) { // Ministerio
+     // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+     if (tipoEfectorCargo === 'MINISTERIO') { // Ministerio
       this.efectorCargoOptions = this.ministerios;
-    } else if (tipoEfectorCargo === 2) { // Hospital
+    } else if (tipoEfectorCargo === 'HOSPITAL') { // Hospital
       this.efectorCargoOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-    } else if (tipoEfectorCargo === 3) { // CAPS
+    } else if (tipoEfectorCargo === 'CAPS') { // CAPS
       this.efectorCargoOptions = this.caps;  // Opciones específicas para CAPS
     }
 
@@ -844,8 +893,8 @@ export class LegajoCreateComponent implements OnInit {
     });
   }
 
-  //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
-  onAutoridadChange(esAutoridad: boolean): void {
+   //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
+   onAutoridadChange(esAutoridad: boolean): void {
     const idCargoControl = this.legajoForm.get('idCargo');
     const idNroResolucionControl = this.legajoForm.get('nroResolucion');
     const idNroDecretoControl = this.legajoForm.get('nroDecreto');
@@ -1160,7 +1209,7 @@ export class LegajoCreateComponent implements OnInit {
         
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || []; // Si es null o undefined, asigna un array vacío
-    const tiposGuardiaExcluidos = [this.idContraFactura, this.idPasiva];
+    const tiposGuardiaExcluidos = [this.idContraFactura];
 
     // Verifica si tipoGuardias está vacío o si incluye CONTRAFACTURA o PASIVA
     if (tiposGuardiasSeleccionados.length === 0 || tiposGuardiasSeleccionados.some((id: number) => tiposGuardiaExcluidos.includes(id))) {
@@ -1219,6 +1268,9 @@ export class LegajoCreateComponent implements OnInit {
     }
     
   createLegajoDtoAndSave(legajoData: any, revistaId: number | null): void {
+
+    
+    console.log("Guardando legajo con tipoGuardias:", legajoData.tipoGuardias);
   // Verifica si el campo 'esAutoridad' está habilitado
   let esAutoridad;
 
@@ -1337,7 +1389,8 @@ if (legajoData.tipoGuardias &&
       const habilitacionesGuardiasDto = new HabilitacionesGuardiasDto(
         true, // activo
         legajoData.idPersona,
-        legajoData.habilitacionesGuardias || null
+        legajoData.habilitacionesGuardias || null,
+        legajoData.tipoHabilitacionesGuardias
       );
   
        // Log para verificar el objeto que se enviará
@@ -1359,7 +1412,8 @@ if (legajoData.tipoGuardias &&
       const habilitacionesGeneralesDto = new HabilitacionesGeneralesDto(
         true, // activo
         legajoData.idPersona,
-        legajoData.habilitacionesGenerales || null
+        legajoData.habilitacionesGenerales || null,
+        legajoData.tipoEfectorEx
       );
 
       console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);

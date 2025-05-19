@@ -1,21 +1,20 @@
+import { Location } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { LegajoBajaDto } from 'src/app/dto/Configuracion/LegajoBajaDto';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
-import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { Location } from '@angular/common';
+import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
 import { MotivoBajaDialogComponent } from '../motivo-baja-dialog/motivo-baja-dialog.component';
 
 @Component({
@@ -107,7 +106,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
 // validar el fromAsistencial fromNoAsistencial
   listLegajos(personId: number): void {
 
-    if (this.fromAsistencial) {
+    if (this.fromAsistencial ) {
       this.asistencialService.getLegajosByAsistencial(personId).subscribe({
         next: (data) => {
           this.legajos = data;

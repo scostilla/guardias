@@ -1,32 +1,32 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Router } from '@angular/router';
 
 //Services
-import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 
 //Models y dto
-import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 
 //Componentes
 import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asistencial-detail.component';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
 
 @Component({
   selector: 'app-no-asistencial',
@@ -206,6 +206,7 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     }
   }
 
+  
   listNoAsistencial(efectorId: number | null = null): void {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
@@ -227,20 +228,26 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
       if (filteredData.length === 0) {
         this.showMessage = false;
         this.sinAsistencialMessage = true; // Muestra el mensaje si no se encuentra ningún legajo activo
+        this.dataSource = new MatTableDataSource<NoAsistencial>([]); // Asegura que dataSource no sea undefined
+     
       } else {
         this.showMessage = false;
         this.sinAsistencialMessage = false; // No hay mensaje de "sin legajos"
         this.dataSource = new MatTableDataSource<NoAsistencial>(filteredData); // Establece los datos filtrados
       }
     
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }, error => {
+     
+      if (this.dataSource) {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }}, error => {
       console.error('Error al obtener no asistenciales:', error);
       this.showMessage = true;
       this.sinAsistencialMessage = false; // En caso de error, mostrar el mensaje correspondiente
     });
   }
+
+  
       
   getCurrentEfectorId(): number | null {
     return this.efectorId;

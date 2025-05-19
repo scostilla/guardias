@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
 import { Caps } from "src/app/models/Configuracion/Caps";
+import { Hospital } from "src/app/models/Configuracion/Hospital";
 
 
 @Injectable({
@@ -63,6 +64,10 @@ getCabeceraNameByCapsId(id: number): Observable<string> {
   // Método para verificar si el id corresponde a un CAPS
   isCaps(id: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.capsURL}isCaps/${id}`);
+  }
+
+  hospitalCabecera(id: number): Observable<Hospital> {
+    return this.httpClient.get<Hospital>(`${this.capsURL}hospitalCabecera/${id}`);
   }
 
 }

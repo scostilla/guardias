@@ -12,7 +12,8 @@ import { Servicio } from "./Servicio";
 
 
 export class Caps extends Efector {
-    idCabecera: number;
+  
+    cabecera: Caps | null;
     areaProgramatica: number;
     tipoCaps: string;
     
@@ -34,13 +35,13 @@ export class Caps extends Efector {
       registroMensual: RegistroMensual[],
       ddjjs: Ddjj[],
       registrosPendientes: RegistrosPendientes[],
-      idCabecera: number, 
+    cabecera: Caps | null,
       areaProgramatica: number,
       tipoCaps: string,
       ) {
         super(nombre, domicilio, telefono, estado, observacion, region, localidad, distribucionesHorarias, 
           legajosUdo, legajos, servicios, notificaciones, autoridades, registrosActividades, registroMensual, ddjjs, registrosPendientes);
-        this.idCabecera = idCabecera;
+        this.cabecera = cabecera;
         this.areaProgramatica = areaProgramatica;
         this.tipoCaps = tipoCaps;
       }

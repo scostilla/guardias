@@ -1,38 +1,37 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
-import { Router } from '@angular/router';
 
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 //models y dto
+import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
 
 @Component({
   selector: 'app-externo',
@@ -252,7 +251,7 @@ export class ExternoComponent implements OnInit, OnDestroy {
     this.habilitacionesGuardiasService.listHabilitacionesByEfector(efectorId).subscribe(habilitaciones => {
   
       // Filtro los asistenciales que están asociados a la habilitación del efectorId
-      const asistencialesIds = habilitaciones.map(habilitacion => habilitacion.persona.id);
+      const asistencialesIds = habilitaciones.map(habilitacion => habilitacion.asistencial.id);
   
       // Obtengo todos los asistenciales y filtro los que tienen habilitación para ese efector
       this.asistencialService.list().subscribe(data => {

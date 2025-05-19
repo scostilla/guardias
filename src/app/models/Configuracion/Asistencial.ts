@@ -4,12 +4,15 @@ import { NovedadPersonal } from "../guardias/NovedadPersonal";
 import { Usuario } from "../login/Usuario";
 import { Autoridad } from "./Autoridad";
 import { DistribucionHoraria } from "./DistribucionHoraria";
+import { HabilitacionesGuardias } from "./HabilitacionesGuardias";
 import { Legajo } from "./Legajo";
 import { Person } from "./Person";
 
 export class Asistencial extends Person {
 
   registrosActividades: RegistroActividad[];
+  habilitacionesGuardias: HabilitacionesGuardias[];
+
 
   constructor(
     nombre: string,
@@ -30,10 +33,32 @@ export class Asistencial extends Person {
     autoridades: Autoridad[],
     registrosMensuales: RegistroMensual[],
     usuario: Usuario,
-    registrosActividades: RegistroActividad[]
+    registrosActividades: RegistroActividad[],
+    habilitacionesGuardias: HabilitacionesGuardias[]
+
+
   ) {
-    super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, esAsistencial, activo, legajos, novedadesPersonales, suplentes, distribucionesHorarias, autoridades, registrosMensuales, usuario);
+    super(nombre, 
+      apellido, 
+      dni, 
+      cuil, 
+      fechaNacimiento, 
+      sexo, 
+      telefono, 
+      email, 
+      domicilio, 
+      esAsistencial, 
+      activo, 
+      legajos, 
+      novedadesPersonales, 
+      suplentes, 
+      distribucionesHorarias, 
+      autoridades, 
+      registrosMensuales, 
+      usuario);
     this.registrosActividades = registrosActividades
+    this.habilitacionesGuardias = habilitacionesGuardias
+   
   }
 
 }
