@@ -1,14 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PopupComponent } from '../../popup/popup.component';
-import { ProfessionalDataServiceService } from '../../../services/ProfessionalDataService/professional-data-service.service';
 import { TokenService } from 'src/app/services/login/token.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { Router } from '@angular/router';
-import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 
 
 @Component({
