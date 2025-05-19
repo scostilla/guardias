@@ -264,7 +264,6 @@ import { AutoridadListComponent } from './components/personal/personal-contenido
 import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 
-import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
