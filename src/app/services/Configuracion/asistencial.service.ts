@@ -56,18 +56,6 @@ export class AsistencialService {
     return this.httpClient.get<AsistencialDto[]>(`${this.asistencialesURL}listByUdoAndTipoGuardia/${idUdo}`);
   }
 
-  public listByEfectorAndTG(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
-    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}listByEfectorAndTG/${idEfector}/${tipoGuardia}`);
-  }
-
-  public asistencialesConPendientes(idEfector: number, mes: number, anio: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
-    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}asistencialesConPendientes/${idEfector}/${mes}/${anio}/${tipoGuardia}`);
-  }
-
-  public ConPendientes(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
-    return this.httpClient.get<AsistencialSummaryDto[]>(`${this.asistencialesURL}ConPendientes/${idEfector}/${tipoGuardia}`);
-  }
-
   public getLegajosByAsistencial(id: number): Observable<Legajo[]> {
     return this.httpClient.get<Legajo[]>(this.asistencialesURL + `legajos/${id}`);
   }
