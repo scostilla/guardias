@@ -359,7 +359,6 @@ const routes: Routes = [
   {path:'dist-horaria-giras', component:DistHorariaGirasComponent},
   {path:'dist-horaria-otras', component:DistHorariaOtrasComponent},
 
-
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
