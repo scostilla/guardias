@@ -19,6 +19,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
+import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
+import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -48,6 +51,8 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private registroActividadService: RegistroActividadService,
+    private cronogramaTentativoService: CronogramaTentativoService,
+    private novedadPersonalService: NovedadPersonalService,
     private tipoGuardiaService: TipoGuardiaService,
     private asistencialService: AsistencialService,
     private servicioService: ServicioService,
@@ -165,7 +170,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
 
   openAsistencialDialog(): void {
     console.log("Datos enviados al diálogo:", {
-      idEfector: this.efectorId, 
+      idEfector: this.efectorId,
       tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
       mode: AsistencialMode.INGRESO
     });
@@ -205,61 +210,139 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     console.log('Formulario válido:', this.registroForm.valid);
     console.log('Formulario modificado:', this.isModified());
     console.log('Valores del formulario:', this.registroForm.value);
+    
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
-      
-      const registroDto = new RegistroActividadDto(
-        registroData.fechaIngreso,
-        registroData.fechaEgreso,
-        registroData.eventStartTime,
-        registroData.eventEndTime,
-        registroData.idTipoGuardia.id,
-        true,
-        registroData.idAsistencial,
-        registroData.idServicio.id,
-        registroData.idEfector,
-        this.userId!,
+      const idAsistencial = registroData.idAsistencial; 
+
+      // Primero verificamos si puede hacer guardia
+      this.novedadPersonalService.puedeHacerGuardia(idAsistencial).subscribe(
+        (puedeHacerGuardia: boolean) => {
+          if (!puedeHacerGuardia) {
+            this.toastr.error(
+              'El profesional tiene novedades que impiden realizar guardia',
+              'Error de validación',
+              {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              }
+            );
+            return;
+          }
+
+          // Si puede hacer guardia, verificamos el cronograma tentativo
+          const verificarDto = new RegActivRegIngresoDto(
+            registroData.idAsistencial,
+            registroData.idEfector,
+            registroData.idTipoGuardia.id,
+            registroData.idServicio.id,
+            registroData.fechaIngreso,
+            registroData.eventStartTime
+          );
+
+          this.cronogramaTentativoService.verificarRegistroIngresoEnTentativo(verificarDto).subscribe(
+            (coincide: boolean) => {
+              if (coincide) {
+                // Si pasa ambas validaciones, guardamos
+                this.guardarRegistro(registroData);
+              } else {
+                this.toastr.error(
+                  'Los datos no coinciden con el cronograma tentativo del profesional',
+                  'Error de validación',
+                  {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  }
+                );
+              }
+            },
+            (error) => {
+              this.toastr.error(
+                'Ocurrió un error al verificar el cronograma tentativo',
+                'Error',
+                {
+                  timeOut: 6000,
+                  positionClass: 'toast-top-center',
+                  progressBar: true
+                }
+              );
+              console.error('Error al verificar cronograma tentativo:', error);
+            }
+          );
+        },
+        (error) => {
+          this.toastr.error(
+            'Ocurrió un error al verificar las novedades del profesional',
+            'Error',
+            {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            }
+          );
+          console.error('Error al verificar novedades:', error);
+        }
       );
+    }
+  }
+  
 
-      console.log('Registro a enviar:', registroDto);
+  // Guarda el registro de ingreso
+  private guardarRegistro(registroData: any): void {
 
-      if (this.initialData && this.initialData.id) {
-        this.registroActividadService.update(this.initialData.id, registroDto).subscribe(
-          result => {
-            this.toastr.success('Registro diario creado con éxito', 'EXITO', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-            this.router.navigate(['/registro-diario']);
-          },
-          error => {
-            this.toastr.error('Ocurrió un error al crear o editar el registro diario', 'Error', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-          }
-        );
-      } else {
-        this.registroActividadService.save(registroDto).subscribe(
-          result => {
-            this.toastr.success('Registro guardado con éxito', 'EXITO', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-            this.router.navigate(['/registro-diario']);
-          },
-          error => {
-            this.toastr.error('Ocurrió un error al guardar el registro', 'Error', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-          }
-        );
-      }
+    const registroDto = new RegistroActividadDto(
+      registroData.fechaIngreso,
+      registroData.fechaEgreso,
+      registroData.eventStartTime,
+      registroData.eventEndTime,
+      registroData.idTipoGuardia.id,
+      true,
+      registroData.idAsistencial,
+      registroData.idServicio.id,
+      registroData.idEfector,
+      this.userId!,
+    );
+
+    console.log('Registro a enviar:', registroDto);
+
+    if (this.initialData && this.initialData.id) {
+      this.registroActividadService.update(this.initialData.id, registroDto).subscribe(
+        result => {
+          this.toastr.success('Registro de ingreso creado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.router.navigate(['/registro-diario']);
+        },
+        error => {
+          this.toastr.error('Ocurrió un error al crear o editar el registro de ingreso', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+      );
+    } else {
+      this.registroActividadService.save(registroDto).subscribe(
+        result => {
+          this.toastr.success('Registro de ingreso guardado con éxito', 'EXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+          this.router.navigate(['/registro-diario']);
+        },
+        error => {
+          this.toastr.error('Ocurrió un error al guardar el registro de ingreso', 'Error', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+      );
     }
   }
 
