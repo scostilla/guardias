@@ -207,6 +207,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     console.log('Valores del formulario:', this.registroForm.value);
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
+      
       const registroDto = new RegistroActividadDto(
         registroData.fechaIngreso,
         registroData.fechaEgreso,

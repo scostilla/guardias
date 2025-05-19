@@ -6,6 +6,7 @@ import { CronogramaTentativo } from "src/app/models/Cronogramas/CronogramaTentat
 import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
 import { CronogramaTentativoListAtorizadoDto } from "src/app/dto/Cronogramas/CronogramaTentativoListAtorizadoDto";
 import { AutorizadoUpdateDto } from "src/app/dto/Cronogramas/AutorizadoUpdateDto";
+import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 
 @Injectable({
   providedIn: 'root'
@@ -102,6 +103,11 @@ export class CronogramaTentativoService {
   
     countPendientesByEfector(idEfector: number): Observable<number> {
       return this.httpClient.get<number>(this.cTentativoURL + `countPendientesByEfector/${idEfector}`)
+    }
+
+    // busca cronograma tentativo para comparar con registro de actividad
+    verificarRegistroIngresoEnTentativo(dto: RegActivRegIngresoDto): Observable<boolean> {
+      return this.httpClient.post<boolean>(`${this.cTentativoURL}verificarRegistroIngresoEnTentativo`, dto);
     }
   
   }
