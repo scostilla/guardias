@@ -4,7 +4,6 @@ import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-registro-diario',
   templateUrl: './registro-diario.component.html',
