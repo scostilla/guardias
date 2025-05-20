@@ -13,30 +13,38 @@
             <td>{{novedadPeronal.tipoLicencia.nombre}}</td>
           </tr>
           <tr>
-            <th scope="row">Fecha final</th>
-            <td>{{novedadPeronal.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
-          </tr>
-          <tr>
             <th scope="row">Fecha inicio</th>
             <td>{{novedadPeronal.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>
           <tr>
+            <th scope="row">Fecha finalización</th>
+            <td>{{novedadPeronal.fechaFinal | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
+          </tr>
+          <tr *ngIf="novedadPeronal.tipoLicencia.nombre === 'Compensatorio'">
+            <th scope="row">Hora inicio</th>
+            <td>{{novedadPeronal.horaInicio }}</td>
+          </tr>
+          <tr *ngIf="novedadPeronal.tipoLicencia.nombre === 'Compensatorio'">
+            <th scope="row">Hora finalización</th>
+            <td>{{novedadPeronal.horaFinal }}</td>
+          </tr>
+          <!--<tr>
             <th scope="row">Necesita reemplazo</th>
             <td>{{novedadPeronal.necesitaReemplazo ? 'Si' : 'No'}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="novedadPeronal?.suplente?.nombre || novedadPeronal?.suplente?.apellido">
             <th scope="row">Reemplazo</th>
             <td>{{ (novedadPeronal.suplente.apellido && novedadPeronal.suplente.nombre) ? 
               (novedadPeronal.suplente.apellido + ', ' + novedadPeronal.suplente.nombre) : 
               'no requiere' }}</td>
-          </tr>    
+          </tr> -->   
           <tr>
           <tr>
-            <th scope="row">Cobra sueldo</th>
+            <th scope="row">Cobra sueldo?</th>
             <td>{{novedadPeronal.cobraSueldo ? 'Si' : 'No'}}</td>
           </tr>
           <tr>
-            <th scope="row">Puede realizar guardia</th>
+            <th scope="row">Puede realizar guardia extra?</th>
             <td>{{novedadPeronal.puedeRealizarGuardia ? 'Si' : 'No'}}</td>
           </tr>
         </tbody>

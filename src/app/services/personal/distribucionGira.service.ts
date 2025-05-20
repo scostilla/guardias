@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionGira } from "src/app/models/personal/DistribucionGira";
-
+import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +29,21 @@ export class DistribucionGiraService {
     return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}list/${fechaInicio}`);
   }
 
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getActivoByPersonaFechaInicio(idPersona: number, fechaInicio: string): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
+  }
+
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
+  // Verifica distribuciones por persona, fecha de inicio y ACTIVO
+  existsByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionGira[]> {
+    return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}existsByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
   // Obtener detalle de una distribución por ID
   getDistribucionById(id: number): Observable<DistribucionGira> {
     return this.httpClient.get<DistribucionGira>(`${this.distribucionGirasURL}detail/${id}`);
@@ -40,7 +55,7 @@ export class DistribucionGiraService {
   }
 
   // Obtener distribuciones por ID de Persona
-  getDistribucionesByPersona(idPersona: number): Observable<DistribucionGira[]> {
+  getDistribucionesGiraByPersona(idPersona: number): Observable<DistribucionGira[]> {
     return this.httpClient.get<DistribucionGira[]>(`${this.distribucionGirasURL}detailpersona/${idPersona}`);
   }
 public save(distribucionGiraes:DistribucionGiraDto): Observable<any> {
@@ -63,6 +78,11 @@ public update(id:number, distribucionGiraes:DistribucionGiraDto): Observable<any
 
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.distribucionGirasURL + `delete/${id}`, {});
+}
+
+// Verificar si un cronograma tentativo existe
+existeTentativoEnDistribucionGira(cTentativos: CronogramaTentativoDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionGirasURL}verificarCronogramaEnDistribucion`, cTentativos);
 }
 
 }

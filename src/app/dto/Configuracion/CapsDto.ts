@@ -1,6 +1,7 @@
 import { EfectorDto } from "./EfectorDto";
 
 export class CapsDto extends EfectorDto {
+  id?: number;
   idCabecera: number;
   areaProgramatica: number;
   tipoCaps: string;

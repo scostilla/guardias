@@ -54,23 +54,41 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
       return `${start} - ${end} de ${length}`; };
      }
 
-     ngOnInit(): void {
-      this.asistencialService.currentAsistencial$.subscribe(asistencial => {
-        if (asistencial) {
-          this.asistencialId = asistencial.id;
-          this.listNovedad();
-        } else {
-          console.error('No hay asistencial seleccionado.');
-          this.router.navigate(['personal']);
+  ngOnInit(): void {
+    // Suscripción para obtener el ID del asistencial
+    this.asistencialService.currentAsistencialId$.subscribe(id => {
+      if (id === null) {
+        console.error('No hay ID de asistencial disponible.');
+        this.router.navigate(['personal']);  // Redirigir a la página anterior o deseada
+        return;
+      }
+
+      // Llamar al servicio para obtener el asistencial completo usando el ID
+      this.asistencialService.detail(id).subscribe({
+        next: (asistencial) => {
+          if (asistencial) {
+            this.asistencialId = asistencial.id;  // Asignar el ID del asistencial
+            this.listNovedad();  // Llamar al método listNovedad para obtener las novedades
+          } else {
+            console.error('No se encontró el asistencial con el ID proporcionado.');
+            this.router.navigate(['personal']);  // Redirigir si no se encuentra el asistencial
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener el asistencial:', err);
+          this.router.navigate(['personal']);  // Redirigir en caso de error
         }
       });
-      
-      this.listNovedad();
-  
-      this.suscription = this.novedadPersonalService.refresh$.subscribe(() => {
-        this.listNovedad();
-      });
-    }
+    });
+
+    // Inicialización de novedades, sin esperar a la respuesta inicial
+    this.listNovedad();
+
+    // Suscripción para refrescar los datos de novedades
+    this.suscription = this.novedadPersonalService.refresh$.subscribe(() => {
+      this.listNovedad();  // Volver a cargar novedades cuando se refresque
+    });
+  }
 
   listNovedad(): void {
     if (this.asistencialId === undefined) {

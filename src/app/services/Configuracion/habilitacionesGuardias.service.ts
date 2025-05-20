@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { HabilitacionesGuardiasDto } from "src/app/dto/Configuracion/HabilitacionesGuardiasDto";
-import { HabilitacionesGuardias } from "src/app/models/Configuracion/HabilitacionesGuardias";
+import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
+import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +76,14 @@ listHabilitacionesByEfector(idEfector: number): Observable<HabilitacionesGuardia
 // Verifica si un asistencial tiene permisos asociados a un efector
 tieneHabilitacionesGuardias(idAsistencial: number, idEfector: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.permisosURL}tieneHabilitacionesGuardias/${idAsistencial}/${idEfector}`);
+}
+
+listAsistencialesByEfectorAndTG(idEfector: number, tipoGuardia: string): Observable<AsistencialSummaryDto[]> {
+  return this.httpClient.get<AsistencialSummaryDto[]>(`${this.permisosURL}listAsistencialesByEfectorAndTG/${idEfector}/${tipoGuardia}`);
+}
+
+listAsistencialesWithCfAndExtraByEfector(idEfector: number): Observable<AsistencialListNombreTgDto[]> {
+  return this.httpClient.get<AsistencialListNombreTgDto[]>(`${this.permisosURL}listAsistencialesWithCfAndExtraByEfector/${idEfector}`);
 }
 
 }

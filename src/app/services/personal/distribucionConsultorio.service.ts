@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionConsultorio } from "src/app/models/personal/DistribucionConsultorio";
 import { DistribucionConsultorioDto } from "src/app/dto/personal/DistribucionConsultorioDto";
+import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
 
 
 @Injectable({
@@ -29,6 +30,21 @@ export class DistribucionConsultorioService {
     return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}list/${fechaInicio}`);
   }
 
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getActivoByPersonaFechaInicio(idPersona: number, fechaInicio: string): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
+  }
+  
+  // Obtener distribuciones por persona, fecha de inicio y ACTIVO
+  getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+  
+  // Verifica distribuciones por persona, fecha de inicio y ACTIVO
+  existsByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}existsByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
+  }
+
   // Obtener detalle de una distribución por ID
   getDistribucionById(id: number): Observable<DistribucionConsultorio> {
     return this.httpClient.get<DistribucionConsultorio>(`${this.distribucionConsultoriosURL}detail/${id}`);
@@ -40,7 +56,7 @@ export class DistribucionConsultorioService {
   }
 
   // Obtener distribuciones por ID de Persona
-  getDistribucionesByPersona(idPersona: number): Observable<DistribucionConsultorio[]> {
+  getDistribucionesConsultorioByPersona(idPersona: number): Observable<DistribucionConsultorio[]> {
     return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}detailpersona/${idPersona}`);
   }
 
@@ -64,6 +80,11 @@ public update(id:number, distribucionConsultorioes:DistribucionConsultorioDto): 
 
 public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.distribucionConsultoriosURL + `delete/${id}`, {});
+}
+
+// Verificar si un cronograma tentativo existe
+existeTentativoEnDistribucionConsultorio(cTentativos: CronogramaTentativoDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionConsultoriosURL}verificarCronogramaEnDistribucion`, cTentativos);
 }
 
 }

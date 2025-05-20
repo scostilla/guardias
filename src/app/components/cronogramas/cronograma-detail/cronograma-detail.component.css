@@ -1,0 +1,45 @@
+mat-list-item {
+    min-height: 80px;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  .delete-icon {
+    font-size: 17px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 8px;
+    transition: color 0.3s ease;
+  }
+  
+  .delete-icon:hover {
+    color: #9c1d13;
+  }
+
+  .evento-contenedor {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px; /* espacio entre los elementos */
+  }
+
+  .texto-resaltado {
+    color: #ffffff;
+    padding: 0 6px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: bold;
+    vertical-align: middle;
+    line-height: 1.8;
+  }
+  
+  .auth-pendiente {
+    background-color: #ffcc00; /* amarillo */
+  }
+  
+  .auth-confirmado {
+    background-color: #4caf50; /* verde */
+  }
+  
+  .auth-rechazado {
+    background-color: #f44336; /* rojo */
+  }

@@ -1,4 +1,5 @@
 //COMPONENTES SISTEMA GUARDIAS
+import { RoleGuard } from 'src/app/guards/role.guard';
 
 //Principales
 import { NgModule } from '@angular/core';
@@ -114,7 +115,7 @@ import { PersonalLegajoSelectComponent } from './components/personal/personal-le
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
-import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
+import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 
@@ -122,6 +123,7 @@ import { AsistencialCreateComponent } from './components/personal/personal-conte
 import { AsistencialDetailComponent } from './components/personal/personal-contenido/asistencial-detail/asistencial-detail.component';
 import { AsistencialEditComponent } from './components/personal/personal-contenido/asistencial-edit/asistencial-edit.component';
 import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
+import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { AsistencialComponent } from './components/personal/personal-contenido/asistencial/asistencial.component';
 import { CargoDetailComponent } from './components/personal/personal-contenido/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/personal/personal-contenido/cargo-edit/cargo-edit.component';
@@ -131,7 +133,7 @@ import { NoAsistencialDetailComponent } from './components/personal/personal-con
 import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
 import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
-import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
+import { AutoridadListComponent } from './components/personal/personal-contenido/autoridad-list/autoridad-list.component';
 import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
@@ -144,6 +146,9 @@ import { LegajoNoAsistencialComponent } from './components/personal/legajo/legaj
 
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
+import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
+import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 
 
 //Sección: Cronograma
@@ -158,6 +163,9 @@ import { CronogramaPHosComponent } from './components/cronogramas/cronograma-p-h
 import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cronograma-p.component';
 import { CronogramaRegComponent } from './components/cronogramas/cronograma-reg/cronograma-reg.component';
 import { CronogramaComponent } from './components/cronogramas/cronograma/cronograma.component';
+import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
+import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
+import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 
 
 
@@ -222,7 +230,8 @@ import { ScheduleDistributionComponent } from './components/schedule-distributio
 import { CronogramaNewComponent } from './components/cronogramas/cronograma-new/cronograma-new.component';
 
 
-
+//Redirecciona cuando no existe la direccion ingresada
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 
 
@@ -239,13 +248,14 @@ import { AutoridadComponent } from './components/personal/personal-contenido/aut
 const routes: Routes = [
   
   //Principales
-  {path: '', component: LoginComponent },
+  {path: '', redirectTo: 'login', pathMatch: 'full' },
   {path:"selector-roles", component:SelectorRolesComponent},
   {path:"home-page", component:HomePageComponent},
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
+  {path: 'login', component:LoginComponent},
 
   //Configuraciones: Generales
   {path: 'valores-guardias', component:ValoresGuardiasComponent},
@@ -353,7 +363,7 @@ const routes: Routes = [
   //Sección: Personal
   {path: 'personal', component:PersonalComponent},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
-  {path: 'personal-sin-efector', component:PersonalSinEfectorComponent},
+  {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent},
   {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent},
   {path: 'personal-externo', component:PersonalExternoComponent},
   {path: 'personal-legajo', component:PersonalLegajoComponent},
@@ -363,6 +373,7 @@ const routes: Routes = [
   {path: 'personal-autoridad', component:PersonalAutoridadComponent},
 
   {path: 'asistencial-selector', component:AsistencialSelectorComponent},
+    {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
   {path: 'asistencial-create', component:AsistencialCreateComponent},
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
@@ -371,10 +382,13 @@ const routes: Routes = [
   {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
-  {path: 'sin-efector', component:SinEfectorComponent},
+  {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'externo', component:ExternoComponent},
 
   {path: 'personal-dh', component:PersonalDhComponent},
+  {path: 'personal-dh-edit', component:PersonalDhEditComponent},
+  {path: 'personal-dh-detail', component:PersonalDhDetailComponent},
+  {path: 'personal-dh-create', component:PersonalDhCreateComponent},
   {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
   {path: 'cargo', component:CargoComponent},
   {path: 'cargo-detail/:id', component:CargoDetailComponent},
@@ -393,6 +407,9 @@ const routes: Routes = [
 
   //Sección: Cronograma
   {path: 'cronograma', component:CronogramaComponent},
+  {path: 'cronograma-pendiente', component:CronogramaPendienteComponent},
+  {path: 'cronograma-pendiente-detail', component:CronogramaPendienteDetailComponent},
+  {path: 'cronograma-create', component:CronogramaCreateComponent},
   {path: 'cronograma-detail', component:CronogramaDetailComponent},
   {path: 'cronograma-def', component:CronogramaDefComponent},
   {path: 'cronograma-def-materno', component:CronogramaDefMaternoComponent},
@@ -456,17 +473,19 @@ const routes: Routes = [
   { path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
   { path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
   { path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
- /*  {path:'api', component:ApiComponent} */
- { path:'MonthTableComponent',component:MonthTableComponent},
- { path: 'popup-calendario', component:PopupCalendarioComponent},
- { path: 'digesto', component:DigestoComponent},
- { path: 'novedades', component:NovedadesComponent}, 
- { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
- { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+  /*  {path:'api', component:ApiComponent} */
+  { path:'MonthTableComponent',component:MonthTableComponent},
+  { path: 'popup-calendario', component:PopupCalendarioComponent},
+  { path: 'digesto', component:DigestoComponent},
+  { path: 'novedades', component:NovedadesComponent}, 
+  { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
+  { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
 
  { path: 'cronograma-new', component:CronogramaNewComponent},
 
-
+  //Pagina no encontrada
+{ path: 'not-found', component: NotFoundComponent },
+{ path: '**', redirectTo: 'not-found' },
 
 
 

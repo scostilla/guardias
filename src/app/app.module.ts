@@ -260,8 +260,19 @@ import { UsuarioDetailComponent } from './components/configuracion/usuarios/usua
 import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
-import { SinEfectorComponent } from './components/personal/personal-contenido/sin-efector/sin-efector.component';
-import { PersonalSinEfectorComponent } from './components/personal/personal-sin-efector/personal-sin-efector.component';
+import { AutoridadListComponent } from './components/personal/personal-contenido/autoridad-list/autoridad-list.component';
+import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
+import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
+import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
+import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
+import { AutoridadSelectorComponent } from './components/personal/personal-contenido/autoridad-selector/autoridad-selector.component';
+import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
+import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
+import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
+import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
+import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -469,9 +480,19 @@ import { PersonalSinEfectorComponent } from './components/personal/personal-sin-
     UsuarioEditComponent,
     EfectorSelectorComponent,
     SelectorRolesComponent,
-    SinEfectorComponent,
-    PersonalSinEfectorComponent,
-    
+    AutoridadListComponent,
+    PersonalAutoridadListComponent,
+    PersonalDhEditComponent,
+    PersonalDhCreateComponent,
+    PersonalDhDetailComponent,
+    CronogramaCreateComponent,
+    AutoridadSelectorComponent,
+    AsistencialFiltradoSelectorComponent,
+    CronogramaPendienteComponent,
+    AsistencialSelectorAllComponent,
+    CronogramaPendienteDetailComponent,
+    CronogramaPendienteEditComponent,
+    NotFoundComponent,
   ],
 
   imports: [

@@ -25,8 +25,12 @@ export class ServicioService {
       return this.httpClient.get<Servicio>(this.serviciosURL + `detail/${id}`);
   }
 
-  public detailnombre(nombre:string): Observable<Servicio> {
-    return this.httpClient.get<Servicio>(this.serviciosURL + `detailnombre/${nombre}`);
+  public detaildescripcion(descripcion:string): Observable<Servicio> {
+    return this.httpClient.get<Servicio>(this.serviciosURL + `detaildescripcion/${descripcion}`);
+}
+
+public getServiciosByNivel(nivel:number): Observable<Servicio> {
+  return this.httpClient.get<Servicio>(this.serviciosURL + `detailnivel/${nivel}`);
 }
 
 public save(servicios:Servicio): Observable<any> {

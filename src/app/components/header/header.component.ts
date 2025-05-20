@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
@@ -15,7 +17,10 @@ export class HeaderComponent implements OnDestroy, OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showConfig: boolean = true;
-  showHeader: boolean = true;
+
+  pendientesCount: number = 0;
+  notificacionesCount: number = 1;
+  efectorId: number | null = null;
 
   //Autentificación
   isLogged = false;
@@ -33,52 +38,60 @@ export class HeaderComponent implements OnDestroy, OnInit {
   constructor(
     private router: Router, 
     private toastr: ToastrService,
+    private cronoService: CronogramaTentativoService,
+    private efectorService: EfectorService,
     private tokenService: TokenService,
     private authService: AuthService
   ) {
-    this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.showNavBar = !(event.url === '/home-page' || event.url === '/home-profesional' || event.url === '/registro-actividades-ingreso' || event.url === '/registro-actividades-egreso');
-        this.showConfig = !(event.url === '/home-profesional');
-        this.showHeader = !(event.url === '/');
-      }
-    });
-  }
-
-  ngOnInit(): void {
-  //Autentificación
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-    });
-    
-    // Obtener los detalles del usuario directamente después de un login exitoso
-      this.loadUserDetails();
-    } else {
-      this.isLogged = false;
-      this.nombreUsuario = '';
-      this.apellidoUsuario = '';
-      this.roles = [];  // Aseguramos que los roles estén vacíos si no hay token
-      this.isAdministrativo = false;
-      this.isUsuario = false;
-      this.isDph = false;
-      this.isSuper = false;
-    }
-
-  // Suscribimos a los eventos de la ruta para manejar cambios al navegar
-  this.router.events.subscribe(event => {
+      
+  this.routerSubscription = this.router.events.subscribe((event) => {
     if (event instanceof NavigationEnd) {
-      if (this.tokenService.getToken()) {
-        this.isLogged = true;
-        this.loadUserDetails();
-      }
+      this.updateNavBarAndConfigState();  // Actualiza el estado después de la navegación
     }
   });
+}
+
+ngOnInit(): void {
+  this.updateNavBarAndConfigState();
+
+  // Suscripción al cambio de efector
+  this.efectorService.currentEfectorId$.subscribe(id => {
+    this.efectorId = id;
+
+    if (this.efectorId != null) {
+      this.cronoService.countPendientesByEfector(this.efectorId)
+        .subscribe(count => {
+          this.pendientesCount = count;
+        });
+    } else {
+      this.pendientesCount = 0;
+    }
+  });
+
+  this.cronoService.refresh$.subscribe(() => {
+    this.actualizarPendientes();
+  });
+
+  // Resto de lógica de login
+this.tokenService.isLogged$.subscribe(isLogged => {
+  this.isLogged = isLogged;
+
+  if (isLogged) {
+    this.roles = this.tokenService.getAuthorities();
+
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+    });
+
+    this.loadUserDetails();
+  } else {
+    this.nombreUsuario = '';
+    this.apellidoUsuario = '';
+    this.roles = [];
+    this.UserRoles(); // Opcional: para resetear flags de rol
+  }
+});
 }
 
   // Roles a usar
@@ -98,6 +111,27 @@ export class HeaderComponent implements OnDestroy, OnInit {
     }
   }
 
+  updateNavBarAndConfigState(): void {
+    const url = this.router.url;
+
+    // Actualiza el estado de showNavBar y showConfig basándote en la ruta actual
+    this.showNavBar = !(
+      url === '/home-page' ||
+      url === '/home-profesional' ||
+      url === '/registro-actividades-ingreso' ||
+      url === '/registro-actividades-egreso' ||
+      url === '/not-found'
+    );
+
+    this.showConfig = !(
+      url === '/home-profesional' ||
+      url === '/registro-actividades-ingreso' ||
+      url === '/registro-actividades-egreso' ||
+      url === '/not-found'
+    );
+
+  }
+
   private loadUserDetails() {
     // Llamo al servicio para obtener los detalles del usuario
     this.authService.detailPersonBasicPanel().subscribe(
@@ -111,6 +145,22 @@ export class HeaderComponent implements OnDestroy, OnInit {
     );
   }
   
+  private actualizarPendientes(): void {
+    if (this.efectorId != null) {
+      this.cronoService.countPendientesByEfector(this.efectorId).subscribe(count => {
+        this.pendientesCount = count;
+      });
+    } else {
+      this.pendientesCount = 0;
+    }
+  }
+
+  getTotalBadges(): number {
+  const pendientes = this.pendientesCount || 0;
+  const notificaciones = this.notificacionesCount || 0;
+  return pendientes + notificaciones;
+}
+
   ngOnDestroy(): void {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
@@ -127,6 +177,6 @@ export class HeaderComponent implements OnDestroy, OnInit {
     this.isUsuario = false;
     this.isDph = false;
     this.isSuper = false;
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }

@@ -10,19 +10,21 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 
 //models y dto
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
+import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -48,16 +50,15 @@ export class ExternoComponent implements OnInit, OnDestroy {
   telefonoVisible: boolean = false;
   emailVisible: boolean = false;
 
-  @ViewChild(MatTable) table!: MatTable<Asistencial>;
+  @ViewChild(MatTable) table!: MatTable<AsistencialListNombreTgDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AsistencialDetailComponent>;
-  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'acciones'];
-  dataSource!: MatTableDataSource<Asistencial>;
+  displayedColumns: string[] = ['nombre', 'apellido', 'cuil', 'nombresTiposGuardias', 'acciones'];
+  dataSource!: MatTableDataSource<AsistencialListNombreTgDto>;
   suscription!: Subscription;
   asistencial!: Asistencial;
-  legajos: Legajo[] = [];
   habilitacionesGuardias: HabilitacionesGuardias[] = [];
   isLoadingLegajos: boolean = true;
 
@@ -65,12 +66,6 @@ export class ExternoComponent implements OnInit, OnDestroy {
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
-
-  idContraFactura?: number;
-  idPasiva?: number;
-  idExtra?: number;
-  idCargo?: number;
-  idAgrupacion?: number;
 
   //Autenticación
   isLogged = false;
@@ -85,7 +80,6 @@ export class ExternoComponent implements OnInit, OnDestroy {
   apellidoUsuario: string = '';
   nombresEfectores: EfectorSummaryDto[] = [];
   usuarioPersona: number | null = null;
-  tipoGuardias: TipoGuardia[] = [];
   currentRole: string | null = null;
   
 
@@ -95,13 +89,13 @@ export class ExternoComponent implements OnInit, OnDestroy {
     private asistencialService: AsistencialService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNov: MatDialog,
     public dialogDistrib: MatDialog,
     private toastr: ToastrService,
     private router: Router,
-    private legajoService: LegajoService,
-    private tipoGuardiaService: TipoGuardiaService,
     private habilitacionesGuardiasService: HabilitacionesGuardiasService,
     private tokenService: TokenService,
     private authService: AuthService,
@@ -158,22 +152,7 @@ export class ExternoComponent implements OnInit, OnDestroy {
       console.log('El usuario no está logueado.');
       this.router.navigateByUrl('');
     }
-
-  // Llamamos al servicio para obtener todos los tipos de guardia
-  this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
-    this.tipoGuardias = guardias;
-
-    // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
-    this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
-    this.idPasiva = this.tipoGuardias.find(t => t.nombre === 'PASIVA')?.id;
-    this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
-    this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
-    this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
-
-  });
   
-    this.listLegajos();
-
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
@@ -182,11 +161,11 @@ export class ExternoComponent implements OnInit, OnDestroy {
     if (this.efectorId === null) {
       this.showMessage = true;
     } else {
-      this.listAsistencial(this.efectorId);
+      this.listExterno(this.efectorId);
     }
 
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listAsistencial(this.efectorId); // Usar el efectorId actual
+      this.listExterno(this.efectorId); // Usar el efectorId actual
     });
     
     this.actualizarColumnasVisibles();
@@ -196,7 +175,7 @@ export class ExternoComponent implements OnInit, OnDestroy {
     const filterValue = (event.target as HTMLInputElement).value;
     const normalizedFilterValue = filterValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   
-    this.dataSource.filterPredicate = (data: Asistencial, filter: string) => {
+    this.dataSource.filterPredicate = (data: AsistencialListNombreTgDto, filter: string) => {
       const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       return normalizedData.indexOf(normalizedFilterValue) !== -1;
@@ -224,74 +203,68 @@ export class ExternoComponent implements OnInit, OnDestroy {
 
   //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
-    if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Efector) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
-        },
-        (error) => {
-          console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
-        }
-      );
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
     }
+  
+    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
+      next: (hospital: EfectorHospitalDto) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
+          next: (ministerio: EfectorMinisterioDto) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.detailNombreAll(this.efectorId!).subscribe({
+              next: (cap: EfectorCapsDto) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
+        });
+      }
+    });
   }
   
-  listAsistencial(efectorId: number | null = null): void {
+  listExterno(efectorId: number | null = null): void {
     // Si no hay un ID de efector, muestra el mensaje
     if (efectorId === null) {
       this.showMessage = true;
       this.sinAsistencialMessage = false;
-      this.dataSource = new MatTableDataSource<Asistencial>([]);
+      this.dataSource = new MatTableDataSource<AsistencialListNombreTgDto>([]);
       return;
     }
   
-    // Llamo al servicio para obtener las habilitaciones de guardias para el efectorId y filto asistenciales
-    this.habilitacionesGuardiasService.listHabilitacionesByEfector(efectorId).subscribe(habilitaciones => {
-  
-      // Filtro los asistenciales que están asociados a la habilitación del efectorId
-      const asistencialesIds = habilitaciones.map(habilitacion => habilitacion.asistencial.id);
-  
-      // Obtengo todos los asistenciales y filtro los que tienen habilitación para ese efector
-      this.asistencialService.list().subscribe(data => {
-        const filteredData = data.filter(asistencial =>
-          asistencialesIds.includes(asistencial.id)
-        );
-  
-        // Maneja los mensajes según los resultados
-        if (filteredData.length === 0) {
-          this.showMessage = false;
-          this.sinAsistencialMessage = true;
-        } else {
-          this.showMessage = false;
-          this.sinAsistencialMessage = false;
-          this.dataSource = new MatTableDataSource<Asistencial>(filteredData);
-        }
-  
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+    // Llamo al servicio para obtener directamente los asistenciales con CF y extra habilitados por efectorId
+    this.habilitacionesGuardiasService.listAsistencialesWithCfAndExtraByEfector(efectorId).subscribe(asistenciales => {
+
+      // Maneja los mensajes según los resultados
+      if (asistenciales.length === 0) {
+        this.showMessage = false;
+        this.sinAsistencialMessage = true;
+      } else {
+        this.showMessage = false;
+        this.sinAsistencialMessage = false;
+        this.dataSource = new MatTableDataSource<AsistencialListNombreTgDto>(asistenciales);
+      }
+
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+
       }, error => {
-        console.error('Error al obtener asistenciales:', error);
+        console.error('Error al obtener asistenciales con habilitación:', error);
         this.showMessage = true;
         this.sinAsistencialMessage = false;
-      });
-    }, error => {
-      console.error('Error al obtener habilitaciones de guardias:', error);
-      this.showMessage = true;
-      this.sinAsistencialMessage = false;
-    });
-  }
-                    
-  listLegajos(): void {
-    this.legajoService.list().subscribe((legajos: Legajo[]) => {
-      this.legajos = legajos;
-      this.isLoadingLegajos = false;
-      //   this.dataSource.data = [...this.dataSource.data]; // crea una nueva referencia para el array de datos, lo que hace que la tabla vuelva a renderizarse con los datos actualizados.
-
-    });
-  }
-      
+      });  
+}
+                          
   formatCuil(cuil: string): string {
     if (!cuil) return '';
     // Asegúrate de que el CUIL tenga al menos 11 dígitos
@@ -300,9 +273,9 @@ export class ExternoComponent implements OnInit, OnDestroy {
     return `${cuil.slice(0, 2)}-${cuil.slice(2, 10)}-${cuil.slice(10)}`;
   }
   
-  createAsistencial(): void {
+  /*createAsistencial(): void {
     this.router.navigate(['/asistencial-create']);
-  }
+  }*/
 
   openDetail(asistencial: Asistencial): void {
     this.dialogRef = this.dialog.open(AsistencialDetailComponent, {
@@ -352,10 +325,6 @@ export class ExternoComponent implements OnInit, OnDestroy {
     });
   }
 
-  hayLegajos(asistencial: AsistencialListDto): boolean {
-    return this.legajos.some(legajo => legajo.persona?.id === asistencial.id);
-  }
-
   verLegajo(asistencial: AsistencialListDto): void {
     if (asistencial && asistencial.id) {
       //this.router.navigate(['/legajo-person', asistencial.id]);
@@ -366,65 +335,20 @@ export class ExternoComponent implements OnInit, OnDestroy {
       console.error('El objeto asistencial no tiene un id.');
     }
   }
-/*
-  openDistribucion() {
-    this.router.navigate(['/dist-horaria']);
+
+  getGuardiaFiltrada(guardias: string[]): string {
+  return guardias.find(g => g === 'EXTRA' || g === 'CONTRAFACTURA') || '';
   }
 
-  verNovedad(asistencial: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
-      this.router.navigate(['/novedades-person']);
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }
-
-  verDistribucion(asistencial: Asistencial): void {
-    if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
-      this.router.navigate(['/personal-dh']);
-    } else {
-      console.error('El objeto asistencial no tiene un id.');
-    }
-  }
-
-  crearLegajo(asistencial: AsistencialListDto): void {
-
-    console.log("en asistencial se envia el objeto", asistencial);
-    this.router.navigate(['/legajo-create'], {
-      state: { asistencial, fromAsistencial: true }
-    });
-  }
-
-  // obtengo el tooltip del botón basado en la existencia de legajos
-  getTooltip(asistencial: AsistencialListDto): string {
-    return this.hayLegajos(asistencial) ? 'Ver Legajo' : 'Agregar Legajo';
-  }
-
-  // Obtener el ícono del botón basado en la existencia de legajos
-  getIcon(asistencial: AsistencialListDto): string {
-    return this.hayLegajos(asistencial) ? 'playlist_play' : 'playlist_add';
-  }
-
-  // Determinar la acción del botón basada en la existencia de legajos
-  getButtonAction(asistencial: AsistencialListDto): void {
-    if (this.hayLegajos(asistencial)) {
-      this.verLegajo(asistencial);
-    } else {
-      this.crearLegajo(asistencial);
-    }
-  }
-*/
   actualizarColumnasVisibles(): void {
-    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'nombresTiposGuardias', 'acciones'];
 
     let columnasVisibles: string[] = [];
 
     columnasBase.forEach(columna => {
       columnasVisibles.push(columna);
-      if (columna === 'cuil' && this.domicilioVisible) {
-        columnasVisibles.push('domicilio');
+      if (columna === 'cuil' && this.telefonoVisible) {
+        columnasVisibles.push('telefono');
       }
     });
 

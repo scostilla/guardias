@@ -13,34 +13,42 @@
     </div>
   </div>
   <div class="row mt-3 mt-md-0"> 
-    <div class="col-6 d-flex justify-content-start">
+    <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
       <button mat-button [matMenuTriggerFor]="menug" style="font-weight: bold;">Guardias Activas</button>
       <mat-menu #menug="matMenu">
         <button mat-menu-item routerLink="/cronograma-p">Guardias Pasivas</button>
       </mat-menu>
     </div>
-    <div class="col-6 d-flex justify-content-end">
-      <button mat-button [matMenuTriggerFor]="menu">» Hospital Pablo Soria (Centro)</button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>Hospital San Roque (Centro)</button>
-        <button mat-menu-item>Materno Infantil (Centro)</button>
-      </mat-menu>
+    <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+      <div class="col-12 col-md-6 m d-flex justify-content-center justify-content-md-end">
+        <button mat-button [matMenuTriggerFor]="menu"> » {{ getServicioNombreSeleccionado() }}</button>
+        <mat-menu #menu="matMenu">
+          <!-- "Todos los servicios" selecciona null para quitar el filtro -->
+          <button mat-menu-item (click)="onServicioSelect(null)">Todos los servicios</button>
+    
+          <!-- Lista de servicios -->
+          <button mat-menu-item *ngFor="let servicio of servicios" (click)="onServicioSelect(servicio.id)">
+            {{ servicio.descripcion }}
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </div>
   <div class="row mb-3"> 
     <div class="col-12 d-flex justify-content-center titulo-calendario">{{ viewDate | date: 'MMMM yyyy' | uppercase }}</div>
+    <div class="col-12 d-flex justify-content-center" style="margin-top: -30px;">Efector: <span class="negrita ps-1">{{efectorNombre}}</span></div>
   </div>
   <div class="row d-float justify-content-center">
     <div class="col-12 d-flex justify-content-center">
-      <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
-      <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
-      <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
-      <span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span></div>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span></div>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span></div>
+      <div class="ref-contenedor"><span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span></div>
     </div>
   </div>
   <div class="row">
     <div class="col-6 d-flex justify-content-start">
-      <button mat-icon-button color="primary" (click)="EventDialog()" matTooltip="Añadir Profesional">
+      <button mat-icon-button color="primary" (click)="openCronogramaDialog()" matTooltip="Añadir Profesional">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>
@@ -58,8 +66,11 @@
         <mat-icon>calendar_today</mat-icon>
       </button>
       <button mat-icon-button color="accent" (click)="changeView(CalendarView.Week)" matTooltip="Ver semana">
-        <mat-icon>calendar_view_day</mat-icon>
+        <mat-icon>view_week</mat-icon>
       </button>
+      <!--<button mat-icon-button color="accent" (click)="changeView(CalendarView.Day)" matTooltip="Ver día">
+        <mat-icon>calendar_view_day</mat-icon>
+      </button>-->
     </div>
   </div>
   <div class="row"> 
@@ -76,7 +87,15 @@
       *ngIf="view === CalendarView.Week"
       [viewDate]="viewDate"
       [events]="events"
+      (eventClicked)="onEventClicked($event)"
       (beforeViewRender)="beforeWeekViewRender($event)">
     </mwl-calendar-week-view>
+
+    <!--<mwl-calendar-day-view
+    *ngIf="view === CalendarView.Day"
+    [viewDate]="viewDate"
+    [events]="events"
+    (beforeViewRender)="beforeDayViewRender($event)">
+  </mwl-calendar-day-view>-->
   </div>
 </div>

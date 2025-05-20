@@ -1,0 +1,80 @@
+<app-spinner></app-spinner>
+<h1 mat-dialog-title>Seleccionar Profesional:</h1>
+
+<div class="container">
+
+  Selector para elegir entre Asistencial o NoAsistencial 
+  <div class="row">
+    <div class="col-12 mt-3">
+      <mat-form-field>
+        <mat-label>Tipo de Profesional</mat-label>
+        <mat-select [(ngModel)]="selectedType" (selectionChange)="onTypeChange($event)">
+          <mat-option value="asistencial">Asistencial</mat-option>
+          <mat-option value="noAsistencial">No Asistencial</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-11 mt-3">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput placeholder="Buscar por nombre, apellido o cuil" (input)="applyFilter($event)">
+      </mat-form-field>
+    </div>
+    <div class="col-1 mt-3 d-flex justify-content-end">
+      <button mat-icon-button class="button-primary" (click)="cerrar()" matTooltip="Cerrar selección">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <mat-dialog-content>
+      <div class="table-responsive">
+        <mat-table [dataSource]="dataSource!" matSort>
+          <!-- Columna Apellido -->
+          <ng-container matColumnDef="apellido">
+            <mat-header-cell *matHeaderCellDef class="negrita"> Apellido </mat-header-cell>
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
+              {{ persona.apellido }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Columna Nombre -->
+          <ng-container matColumnDef="nombre">
+            <mat-header-cell *matHeaderCellDef class="negrita"> Nombre </mat-header-cell>
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
+              {{ persona.nombre }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Columna CUIL -->
+          <ng-container matColumnDef="cuil">
+            <mat-header-cell *matHeaderCellDef class="negrita"> CUIL </mat-header-cell>
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
+              {{ persona.cuil }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Columna profesion -->
+          <ng-container matColumnDef="profesion">
+            <mat-header-cell *matHeaderCellDef class="negrita"> Profesión </mat-header-cell>
+            <mat-cell *matCellDef="let persona" (click)="selectPersona(persona)" style="white-space: nowrap;">
+              {{ persona.profesion }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Fila de encabezado -->
+          <mat-header-row *matHeaderRowDef="displayedColumns" style="background-color: #f5f5f5;"></mat-header-row>
+          <!-- Fila de datos -->
+          <mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer;"></mat-row>
+        </mat-table>
+      </div>
+    </mat-dialog-content>
+    <div class="col-12">
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

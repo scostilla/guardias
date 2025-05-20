@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
@@ -33,12 +32,11 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<LegajoDetailComponent>;
-  displayedColumns: string[] = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'acciones'];
+  displayedColumns!: string[];
   dataSource!: MatTableDataSource<Legajo>;
   suscription!: Subscription;
   legajos: Legajo[] = [];
   personId?: number;
-  //noAsistencialId?: number;
   nombreCompleto: string = '';
   initialData: Asistencial | NoAsistencial | undefined;
 
@@ -50,7 +48,6 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     private toastr: ToastrService,
     private paginatorIntl: MatPaginatorIntl,
     private router: Router,
-    private location: Location,
   ) {
 
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -79,6 +76,12 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+
+  if (this.fromAsistencial) {
+    this.displayedColumns = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'acciones'];
+  } else if (this.fromNoAsistencial) {
+    this.displayedColumns = ['esAutoridad', 'profesion', 'udo', 'fechaInicio', 'acciones'];
+  }
 
     // Si recibo un asistencial
     if (this.initialData) {

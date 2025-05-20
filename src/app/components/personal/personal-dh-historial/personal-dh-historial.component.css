@@ -1,0 +1,12 @@
+.hora-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .hora-details {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #707070;
+    line-height: 1;
+  }

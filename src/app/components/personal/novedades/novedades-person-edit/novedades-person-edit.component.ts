@@ -6,10 +6,11 @@ import { AsistencialSelectorComponent } from 'src/app/components/personal/person
 import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
-import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import { NovedadPersonal } from 'src/app/models/personal/NovedadPersonal';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { TipoLicenciaService } from 'src/app/services/Configuracion/tipoLicencia.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import * as moment from 'moment';
 
 
 @Component({
@@ -26,11 +27,10 @@ export class NovedadesPersonEditComponent implements OnInit {
   idAsistencial: number = 0;
 
   licencias: TipoLicencia[] = [];
-  suplentes?: Asistencial | undefined;
+  //suplentes?: Asistencial | undefined;
   inputValue: string = '';
   selectedAsistencial?: Asistencial;
-
-
+  fechaMinFinal: moment.Moment | null = null;
   
   constructor(
     private fb: FormBuilder,
@@ -46,20 +46,29 @@ export class NovedadesPersonEditComponent implements OnInit {
     this.novedadPersonalForm = this.fb.group({
       tipoLicencia: ['', [Validators.required]],
       fechaInicio: ['', Validators.required],
-      fechaFinal: [{ value: '', disabled: true }, Validators.required], 
-      suplente: [{ value: '', disabled: true }],
+      horaInicio: [''],
+      fechaFinal: ['', Validators.required],
+      horaFinal: [''],
+      //suplente: [{ value: '', disabled: true }],
       puedeRealizarGuardia: [''],
       cobraSueldo: [''],
-      necesitaReemplazo:[{ value: '', disabled: true }],
-    }, { validators: this.dateLessThan('fechaInicio', 'fechaFinal') });
+      //necesitaReemplazo:[{ value: '', disabled: true }],
+    });
 
-    this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
-    this.novedadPersonalForm.get('suplente')?.disable();
+    //this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
+    //this.novedadPersonalForm.get('suplente')?.disable();
 
     this.listLicencia();
   }
 
   ngOnInit(): void {
+
+    this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(value => {
+      this.onFechaInicioChange();
+    });
+
+    this.novedadPersonalForm.get('fechaFinal')?.valueChanges.subscribe(value => {
+    });
 
     this.novedadPersonalForm.get('tipoLicencia')?.valueChanges.subscribe(value => {
       if (!this.isUpdating) { // Evita ciclos
@@ -68,25 +77,34 @@ export class NovedadesPersonEditComponent implements OnInit {
         this.isUpdating = false;
       }
     });
-  
 
-  // Esta suscripción asegura que cuando cambie 'fechaInicio', 'fechaFinal' se limpie.
-  this.novedadPersonalForm.get('fechaInicio')?.valueChanges.subscribe(value => {
-    if (value) {
-      this.novedadPersonalForm.get('fechaFinal')?.enable();
-      this.novedadPersonalForm.get('fechaFinal')?.setValue(''); // Limpiar el valor de fechaFinal
-    } else {
-      this.novedadPersonalForm.get('fechaFinal')?.disable();
-    }
-    this.novedadPersonalForm.get('fechaFinal')?.updateValueAndValidity(); // Revalidar
-  });
-  
+    this.novedadPersonalForm.get('tipoLicencia')?.valueChanges.subscribe(selected => {
+      const horaInicioCtrl = this.novedadPersonalForm.get('horaInicio');
+      const horaFinalCtrl = this.novedadPersonalForm.get('horaFinal');
+    
+      const esCompensatorio = selected?.nombre === 'Compensatorio';
+    
+      if (esCompensatorio) {
+        horaInicioCtrl?.setValidators(Validators.required);
+        horaFinalCtrl?.setValidators(Validators.required);
+      } else {
+        horaInicioCtrl?.clearValidators();
+        horaFinalCtrl?.clearValidators();
+        horaInicioCtrl?.setValue(''); // opcional: limpiar valor si no es necesario
+        horaFinalCtrl?.setValue('');
+      }
+    
+      horaInicioCtrl?.updateValueAndValidity();
+      horaFinalCtrl?.updateValueAndValidity();
+    });
+    
     // Si el asistencialId está disponible en los datos inyectados
   if (this.data.asistencialId) {
     this.novedadPersonalForm.patchValue({ idAsistencial: this.data.asistencialId });
   }
     this.initialData = this.novedadPersonalForm.value;
     console.log('Datos iniciales del formulario:', this.initialData);
+    console.log('Fecha de inicio cargada inicialmente:', this.novedadPersonalForm.get('fechaInicio')?.value);
 
     
 
@@ -108,10 +126,10 @@ export class NovedadesPersonEditComponent implements OnInit {
     
       
   
-      // Ajustar la validación y habilitación del campo idSuplente en función de necesitaReemplazo
+      /*/ Ajustar la validación y habilitación del campo idSuplente en función de necesitaReemplazo
       const necesitaReemplazo = this.novedadPersonalForm.get('necesitaReemplazo')?.value;
       this.toggleSuplenteValidation(necesitaReemplazo);
-      this.toggleSuplenteDisabled(necesitaReemplazo);
+      this.toggleSuplenteDisabled(necesitaReemplazo);*/
       this.novedadPersonalForm.updateValueAndValidity();
     }
 
@@ -130,7 +148,7 @@ export class NovedadesPersonEditComponent implements OnInit {
     this.updateFormFields(value);
   });
 
-  // Suscripción a cambios en 'necesitaReemplazo'
+  /*/ Suscripción a cambios en 'necesitaReemplazo'
   this.novedadPersonalForm.get('necesitaReemplazo')?.valueChanges.subscribe(value => {
     this.toggleSuplenteValidation(value);
     this.toggleSuplenteDisabled(value);
@@ -142,7 +160,7 @@ export class NovedadesPersonEditComponent implements OnInit {
         this.toggleSuplenteValidation(necesitaReemplazo);
         this.toggleSuplenteDisabled(necesitaReemplazo);
           // Iniciar con el campo necesitaReemplazo oculto
-  this.showNecesitaReemplazo(false);
+  this.showNecesitaReemplazo(false);*/
 
   }
 
@@ -168,15 +186,15 @@ if (!licencia) {
   const nombre = licencia.nombre.toLowerCase();
   const cobraSueldo = ['licencia anual ordinaria', 'licencia por maternidad'].includes(nombre);
   const puedeRealizarGuardia = ['licencia anual ordinaria', 'compensatorio'].includes(nombre);
-  const necesitaReemplazo = ['licencia anual ordinaria', 'licencia por maternidad', 'largo tratamiento de salud'].includes(nombre);
+  //const necesitaReemplazo = ['licencia anual ordinaria', 'licencia por maternidad', 'largo tratamiento de salud'].includes(nombre);
 
   this.novedadPersonalForm.patchValue({
     cobraSueldo,
     puedeRealizarGuardia,
-    necesitaReemplazo: necesitaReemplazo ? '' : '',  // Mantener vacío en lugar de false
+    //necesitaReemplazo: necesitaReemplazo ? '' : '',  // Mantener vacío en lugar de false
   });
   
-     // Re-validación y habilitación de campos
+     /*/ Re-validación y habilitación de campos
   if (necesitaReemplazo) {
     this.novedadPersonalForm.get('necesitaReemplazo')?.enable();
     this.novedadPersonalForm.get('necesitaReemplazo')?.setValidators([Validators.required]);
@@ -196,10 +214,10 @@ if (!licencia) {
   
     // Re-validar el campo idSuplente
     this.toggleSuplenteValidation(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
-    this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);
+    this.toggleSuplenteDisabled(this.novedadPersonalForm.get('necesitaReemplazo')?.value);*/
   }
 
-  showNecesitaReemplazo(shouldShow: boolean): void {
+  /*showNecesitaReemplazo(shouldShow: boolean): void {
     const necesitaReemplazoControl = this.novedadPersonalForm.get('necesitaReemplazo');
     if (shouldShow) {
       // Si debe mostrarse, habilitar el campo
@@ -232,43 +250,40 @@ if (!licencia) {
       idSuplenteControl?.enable();
     } else {
       idSuplenteControl?.disable();
-      idSuplenteControl?.setValue(null);
+      idSuplenteControl?.setValue(null);  // Asegurarse de que suplente se establezca a null si se deshabilita
     }
+  }*/
+  
+  // actualizar fechaMinFinal cuando cambia la fecha de inicio
+  onFechaInicioChange(): void {
+    const fechaInicio = this.novedadPersonalForm.get('fechaInicio')?.value;
+
+    // Si fechaInicio tiene un valor
+    if (fechaInicio) {
+      // Convertir fechaInicio a Moment.js para manipularla
+      const fechaInicioMoment = moment(fechaInicio);
+      
+      // Actualizar fechaMinFinal, añadiendo un día al valor de fechaInicio
+      this.fechaMinFinal = fechaInicioMoment;
+
+      // Habilitar campo fechaFinal y establecer validador mínimo
+      this.novedadPersonalForm.get('fechaFinal')?.enable();
+      this.novedadPersonalForm.get('fechaFinal')?.setValidators([
+        Validators.min(this.fechaMinFinal.valueOf())  // Establecer fecha mínima de fechaFinal
+      ]);
+
+      // Resetear fechaFinal y actualizar la validez
+      this.novedadPersonalForm.get('fechaFinal')?.setValue('');
+    } else {
+      // Si no se seleccionó fechaInicio, deshabilitar fechaFinal y resetear valor
+      this.novedadPersonalForm.get('fechaFinal')?.disable();
+      this.fechaMinFinal = null;
+    }
+
+    // Asegurarse de que la validación de fechaFinal se actualice
+    this.novedadPersonalForm.get('fechaFinal')?.updateValueAndValidity();
   }
-
-  // Validador personalizado para comprobar que la fechaFinal no sea anterior a fechaInicio
-  // Función de validación personalizada para comprobar que fechaFinal no sea anterior a fechaInicio
-dateLessThan(start: string, end: string) {
-  return (formGroup: AbstractControl) => {
-    const startControl = formGroup.get(start);
-    const endControl = formGroup.get(end);
-
-    if (startControl && endControl) {
-      const startValue = startControl.value;
-      const endValue = endControl.value;
-
-      // Si ambas fechas están definidas
-      if (startValue && endValue && new Date(endValue) < new Date(startValue)) {
-        endControl.setErrors({ dateLessThan: true }); // Establecer error
-        return { dateLessThan: true };
-      } else {
-        const currentErrors = endControl.errors;
-        if (currentErrors) {
-          delete currentErrors['dateLessThan']; // Eliminar el error si ya no aplica
-          if (Object.keys(currentErrors).length === 0) {
-            endControl.setErrors(null); // Limpiar errores si no quedan más
-          } else {
-            endControl.setErrors(currentErrors); // Mantener otros errores
-          }
-        }
-        return null; // Validación exitosa
-      }
-    }
-    return null; // Validación exitosa si no hay fechas
-  };
-}
-
-
+  
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.novedadPersonalForm.value);
   }
@@ -282,9 +297,12 @@ dateLessThan(start: string, end: string) {
     });
   }
 
- 
+  get esCompensatorio(): boolean {
+    const tipoLicencia = this.novedadPersonalForm.get('tipoLicencia')?.value;
+    return tipoLicencia?.nombre === 'Compensatorio';
+  }
 
-  openAsistencialDialog(): void {
+  /*openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
       width: '800px',
       disableClose: true,
@@ -293,7 +311,7 @@ dateLessThan(start: string, end: string) {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedAsistencial = result;
-        this.novedadPersonalForm.patchValue({ suplente: result }); // Asignar el objeto completo
+        this.novedadPersonalForm.patchValue({ suplente: result });
         console.log('Suplente seleccionado:', result);
       } else {
         this.toastr.info('No se seleccionó un profesional', 'Información', {
@@ -303,9 +321,9 @@ dateLessThan(start: string, end: string) {
         });
       }
     });
-  }
+  }*/
 
-  validateSuplenteDifferent(): void {
+  /*validateSuplenteDifferent(): void {
     const suplenteControl = this.novedadPersonalForm.get('suplente');
     if (suplenteControl) {
       suplenteControl.valueChanges.subscribe(selectedSuplente => {
@@ -321,7 +339,7 @@ dateLessThan(start: string, end: string) {
             const currentErrors = suplenteControl.errors;
             delete currentErrors['sameAsAsistencial'];
             if (Object.keys(currentErrors).length === 0) {
-              suplenteControl.setErrors(null); // Limpiar errores si no quedan más
+              suplenteControl.setErrors(null);
             } else {
               suplenteControl.setErrors(currentErrors);
             }
@@ -329,14 +347,8 @@ dateLessThan(start: string, end: string) {
         }
       });
     }
-  }
+  }*/
   
-/*   get suplenteNombre(): string {
-    // Asegúrate de que este getter devuelva solo el nombre del suplente
-    return this.selectedAsistencial ? this.selectedAsistencial.nombre : '';
-  }
- */
-
  editNovedadPersonal(): void {
     if (this.novedadPersonalForm.valid) {
       console.log('Valores del formulario:', this.novedadPersonalForm.value);
@@ -345,12 +357,14 @@ dateLessThan(start: string, end: string) {
       const novedadPersonalDto = new NovedadPersonalDto(
         formValue.fechaInicio,
         formValue.fechaFinal,
+        formValue.horaInicio,
+        formValue.horaFinal,
         formValue.puedeRealizarGuardia,
         formValue.cobraSueldo,
-        formValue.necesitaReemplazo,
+        //formValue.necesitaReemplazo,
         true,
-        this.data.asistencialId || formValue.idPersona, // Asegúrate de asignar un valor válido aquí
-        formValue.suplente.id,
+        this.data.asistencialId || formValue.idPersona,
+        //formValue.suplente ? formValue.suplente.id : null,
         formValue.tipoLicencia.id,
       );
       console.log('Datos a guardar:', novedadPersonalDto);
@@ -380,8 +394,6 @@ dateLessThan(start: string, end: string) {
       }
     }
   }
-
- 
 
   compareFn(o1: any, o2: any): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;

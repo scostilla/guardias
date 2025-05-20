@@ -1,1 +1,46 @@
-<p>usuario-detail works!</p>
+<h1 mat-dialog-title>DETALLE USUARIO:</h1>
+<mat-dialog-content>
+  <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">ID</th>
+          <td>{{usuario.id}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Nombre</th>
+          <td>{{usuario.person.nombre}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Apellido</th>
+          <td>{{usuario.person.apellido}}</td>
+        </tr>
+        <tr>
+          <th scope="row">DNI</th>
+          <td>{{usuario.person.dni}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Cuil</th>
+          <td>{{usuario.person.cuil}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Teléfono</th>
+          <td>{{usuario.person.telefono}}</td>
+        </tr>
+        <tr>
+          <th scope="row">E-mail</th>
+          <td>{{usuario.person.email}}</td>
+        </tr>
+        <tr style="background-color: #f0f1f0;">
+          <th scope="row">Nombre usuario</th>
+          <td>{{usuario.nombreUsuario }}</td>
+        </tr>
+        <tr style="background-color: #f0f1f0;">
+          <th scope="row">Roles</th>
+          <td>{{ rolesString }}</td>
+        </tr>
+      </tbody>
+    </table>
+  <div mat-dialog-actions class="action mt-4">
+      <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>

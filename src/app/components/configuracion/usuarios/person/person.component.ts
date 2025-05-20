@@ -114,7 +114,7 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   verLegajo(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.asistencialService.setCurrentAsistencialId(asistencial.id);
       this.router.navigate(['/legajo-person']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
@@ -123,7 +123,7 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   verNovedad(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.asistencialService.setCurrentAsistencialId(asistencial.id);
       this.router.navigate(['/novedades-person']);
     } else {
       console.error('El objeto asistencial no tiene un id.');
@@ -132,7 +132,7 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   verDistribucion(asistencial: Asistencial): void {
     if (asistencial && asistencial.id) {
-      this.asistencialService.setCurrentAsistencial(asistencial);
+      this.asistencialService.setCurrentAsistencialId(asistencial.id);
       this.router.navigate(['/personal-dh']);
     } else {
       console.error('El objeto asistencial no tiene un id.');

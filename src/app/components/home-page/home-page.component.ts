@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { Caps } from 'src/app/models/Configuracion/Caps';
-import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 import { EfectorSelectorComponent } from './efector-selector/efector-selector.component';
@@ -29,8 +28,6 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 export class HomePageComponent implements OnInit {
 
   efectores: Efector[] = [];
-  hospitales: Hospital[] = [];
-  ministerios: Ministerio[] = [];
 
   //Autenticación
   isLogged = false;
@@ -50,7 +47,13 @@ export class HomePageComponent implements OnInit {
 
   selectedListEfectores: number | null = null;
   selectedEfector: EfectorSummaryDto | null = null;
+  selectedEfectorDialog: string | null = null;
   dropdownOpen: boolean = false;
+
+  currentEfectorType: 'hospital' | 'ministerio' | 'caps' | null = null;
+  showHospitalFeatures: boolean = false;
+  showMinisterioFeatures: boolean = false;
+  showCapsFeatures: boolean = false;
 
   constructor(
     private router: Router,
@@ -60,8 +63,8 @@ export class HomePageComponent implements OnInit {
     private capsService: CapsService,
     private ministerioService: MinisterioService,
     private habilitacionesGeneralesService: HabilitacionesGeneralesService,
-    private asistencialService: AsistencialService,
-    private efectorService: EfectorService
+    private efectorService: EfectorService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -142,44 +145,85 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  // Carga el efector para el rol 'Dph y Super'
-  loadEfectoresForDphOrSuper(): void {
-    // Primero, intentamos recuperar el id previamente seleccionado desde el servicio
-    const previouslySelectedId = this.efectorService.getCurrentEfectorId();
-    if (previouslySelectedId) {
-      this.selectedListEfectores = previouslySelectedId;
-      console.log('Efector previamente seleccionado:', this.selectedListEfectores);
-    } else {
-      this.selectedListEfectores = null; // Si no hay id guardado, inicializamos como null
+// Método unificado que obtiene nombre y tipo
+private getEfectorInfoById(efectorId: number): void {
+  // Reiniciamos valores
+  this.selectedEfectorDialog = null;
+  this.currentEfectorType = null;
+
+  // Intentamos primero con hospitales
+  this.hospitalService.detailNombreAll(efectorId).subscribe({
+    next: (hospital: EfectorHospitalDto) => {
+      this.selectedEfectorDialog = hospital.nombre;
+      this.currentEfectorType = 'hospital';
+      this.updateComponentVisibility();
+    },
+    error: () => {
+      // Si falla, intentamos con ministerios
+      this.ministerioService.detailNombreAll(efectorId).subscribe({
+        next: (ministerio: EfectorMinisterioDto) => {
+          this.selectedEfectorDialog = ministerio.nombre;
+          this.currentEfectorType = 'ministerio';
+          this.updateComponentVisibility();
+        },
+        error: () => {
+          // Si falla, intentamos con CAPS
+          this.capsService.detailNombreAll(efectorId).subscribe({
+            next: (cap: EfectorCapsDto) => {
+              this.selectedEfectorDialog = cap.nombre;
+              this.currentEfectorType = 'caps';
+              this.updateComponentVisibility();
+            },
+            error: () => {
+              this.selectedEfectorDialog = null;
+              this.currentEfectorType = null;
+              this.updateComponentVisibility();
+              console.error('No se encontró el efector con ID:', efectorId);
+            }
+          });
+        }
+      });
     }
+  });
+}
+
+// Actualiza la visibilidad de componentes según el tipo
+private updateComponentVisibility(): void {
+  this.showHospitalFeatures = this.currentEfectorType === 'hospital';
+  this.showMinisterioFeatures = this.currentEfectorType === 'ministerio';
+  this.showCapsFeatures = this.currentEfectorType === 'caps';
   
-    // Luego, obtenemos la lista de efectores
-    this.hospitalService.list().subscribe(
-      (efectores: Efector[]) => {
-        console.log('Lista de efectores obtenida para DPH o Super:', efectores);
-        this.efectores = efectores;
-  
-        // Si no hay un id guardado y la lista no está vacía, aseguramos que el valor de selectedListEfectores sea null
-        if (!previouslySelectedId) {
-          this.selectedListEfectores = null;
-        }
-  
-        // Si la lista de efectores tiene datos y el id es válido, lo podemos guardar en el servicio
-        if (this.efectores.length > 0 && this.selectedListEfectores !== null) {
-          this.efectorService.setCurrentEfectorId(this.selectedListEfectores);
-          console.log('ID del efector seleccionado para DPH o Super:', this.selectedListEfectores);
-        } else {
-          // Si no hay efectores o si selectedListEfectores es null, limpiamos el valor
-          console.warn('No hay efectores disponibles o el id es indefinido');
-          this.selectedListEfectores = null;
-        }
-      },
-      error => {
-        console.error('Error al obtener la lista de efectores:', error);
-        this.selectedListEfectores = null;  // En caso de error, aseguramos que se borre el id
-      }
-    );
+}
+
+// Carga el efector para el rol 'Dph y Super'
+openEfectorDialog(): void {
+  const dialogRef = this.dialog.open(EfectorSelectorComponent, {
+    width: '450px',
+    data: { selectedEfectorId: this.selectedListEfectores }
+  });
+
+  dialogRef.afterClosed().subscribe((selectedEfectorId: number | undefined) => {
+    if (selectedEfectorId) {
+      this.selectedListEfectores = selectedEfectorId;
+      this.efectorService.setCurrentEfectorId(selectedEfectorId);
+      this.getEfectorInfoById(selectedEfectorId); // Usamos el método unificado
+    }
+  });
+}
+
+// Al cargar el componente
+loadEfectoresForDphOrSuper(): void {
+  const currentId = this.efectorService.getCurrentEfectorId();
+  this.selectedListEfectores = currentId;
+
+  if (currentId) {
+    this.getEfectorInfoById(currentId); // Usamos el método unificado
+  } else {
+    this.selectedEfectorDialog = null;
+    this.currentEfectorType = null;
+    this.updateComponentVisibility();
   }
+}
 
   // Carga los efectores para un rol específico utilizando habilitaciones generales para un asistencial
 loadEfectoresForAutoridades(idPersona: number): void {
@@ -243,26 +287,15 @@ loadEfectorForAdministrativo(): void {
   );
 }
 
-// Método para cuando se cambia el efector (DPH o Super)
+  // Método para cuando se cambia el efector (DPH o Super)
   onEfectorChange(event: Event): void {
-    const selectedListEfectores = this.selectedListEfectores;  // Usamos solo el ID del efector
+    const selectedListEfectores = this.selectedListEfectores;  // Uso solo el ID del efector
     if (selectedListEfectores) {
       this.efectorService.setCurrentEfectorId(selectedListEfectores);  // Guardamos el ID en el BehaviorSubject
       console.log('Efector seleccionado para DPH o Super:', selectedListEfectores);
     }
   }
 
-  /*fetchAsistenciales(efectorId: number) {
-    this.asistencialService.listByEfectorAndTipoGuardia(efectorId).subscribe(
-      (asistenciales) => {
-        console.log('Asistenciales filtrados para efector ID:', efectorId, asistenciales);
-      },
-      (error) => {
-        console.error('Error al obtener asistenciales:', error);
-      }
-    );
-  }*/
-  
   goToProfessionalForm() {
     this.router.navigateByUrl('/professional-form');
   }

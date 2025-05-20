@@ -80,12 +80,14 @@ export class NoAsistencialEditComponent implements OnInit {
         noAsistencialData.dni,
         noAsistencialData.cuil,
         noAsistencialData.fechaNacimiento,
+        false, // esAsistencial
+        true, // activo
         noAsistencialData.email,
-        false,
-        true,
         noAsistencialData.sexo ?? null,
         noAsistencialData.telefono ?? null,
-        noAsistencialData.domicilio ?? null
+        noAsistencialData.domicilio ?? null,
+        noAsistencialData.descripcion ?? null,
+        noAsistencialData.idLegajos ?? []
       );
 
       console.log("No asistencial dto que quiero guardar", noAsistencialDto);

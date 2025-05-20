@@ -1,8 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Efector } from "src/app/models/Configuracion/Efector";
 import { BehaviorSubject } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 
@@ -25,45 +23,10 @@ export class EfectorService {
     return this._refresh$;
   }
 
-  public list(): Observable<Efector[]> {
-      return this.httpClient.get<Efector[]>(this.efectoresURL + 'list');
+  // Método para obtener el tipo de efector
+  getEfectorTipo(id: number): Observable<any> {
+    return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
   }
-
-  public getById( id:number): Observable<Efector> {
-    return this.httpClient.get<Efector>(this.efectoresURL + `detail/${id}`);
-}
-
-
-  public detailnombre(nombre:string): Observable<Efector> {
-    return this.httpClient.get<Efector>(this.efectoresURL + `detailnombre/${nombre}`);
-}
-
-public save(efectores:Efector): Observable<any> {
-  return this.httpClient.post<any>(this.efectoresURL + 'create', efectores)
-  .pipe(
-    tap(() => {
-     this._refresh$.next();
-    })
-  )
-}
-
-public update(id:number, efectores:Efector): Observable<any> {
-  return this.httpClient.put<any>(this.efectoresURL + `update/${id}`, efectores)
-  .pipe(
-    tap(() => {
-     this._refresh$.next();
-    })
-  )
-}
-
-public delete(id:number): Observable<any> {
-  return this.httpClient.put<any>(this.efectoresURL + `delete/${id}`, {});
-}
-
-// Método para obtener el tipo de efector
-getEfectorTipo(id: number): Observable<any> {
-  return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
-}
   
   // Encriptar
   encrypt(text: string): string {
@@ -84,6 +47,9 @@ getEfectorTipo(id: number): Observable<any> {
     } else {
       sessionStorage.removeItem('currentEfectorId');
     }
+
+    // Notifica a los suscriptores
+    this.currentEfectorIdSubject.next(efectorId);
   }
   
   //Obtiene el efector

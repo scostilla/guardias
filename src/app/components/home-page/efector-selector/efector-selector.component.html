@@ -1,22 +1,21 @@
 <app-spinner></app-spinner>
 <h1 mat-dialog-title>SELECCIONA UN EFECTOR:
 </h1>
-
 <mat-dialog-content>
-
-<mat-radio-group [(ngModel)]="tipoEfector" (change)="onTipoEfectorChange($event)">
+  <mat-radio-group [(ngModel)]="tipoEfector" (change)="onTipoEfectorChange($event)">
     <mat-radio-button color="primary" [value]="1" style="margin-right: 10px;">Ministerio</mat-radio-button>
     <mat-radio-button [value]="2" style="margin-right: 10px;">Hospital</mat-radio-button>
     <mat-radio-button color="warn" [value]="3">CAPS</mat-radio-button>
   </mat-radio-group>
-  
-  <mat-form-field appearance="fill">
+
+  <mat-form-field appearance="fill" style="width: 95%;" *ngIf="efectorOptions.length > 0">
     <mat-label>Efector</mat-label>
     <mat-select [(ngModel)]="selectedEfector" (selectionChange)="onEfectorChange()">
       <mat-option *ngFor="let efector of efectorOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>
     </mat-select>
   </mat-form-field>
-    
-  <!-- Botón para cerrar el bottom sheet (si se desea) -->
-  <button mat-button (click)="closeDialog()">Cerrar</button>
 </mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Cancelar</button>
+</mat-dialog-actions>
