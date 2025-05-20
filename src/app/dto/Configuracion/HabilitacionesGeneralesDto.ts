@@ -15,8 +15,6 @@ export class HabilitacionesGeneralesDto {
         this.idPersona = idPersona;
         this.idEfectores = idEfectores;
         this.tipoEfectorEx = tipoEfectorEx
-        this.idEfectores = idEfectores;
-        this.tipoEfectorEx = tipoEfectorEx
       }
     }
     

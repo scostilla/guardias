@@ -4,7 +4,6 @@ export class HabilitacionesGuardias {
     id?: number;
     activo: boolean;
     asistencial: Asistencial;
-    asistencial: Asistencial;
     efectores: Efector[];
     tipoEfectorEx?: string;
   
@@ -15,7 +14,6 @@ export class HabilitacionesGuardias {
         tipoEfectorEx?: string,
     ) {
       this.activo = activo;
-      this.asistencial = asistencial;
       this.asistencial = asistencial;
       this.efectores = efectores;
       this.tipoEfectorEx = tipoEfectorEx

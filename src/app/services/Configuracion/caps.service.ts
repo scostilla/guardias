@@ -79,8 +79,4 @@ getCabeceraNameByCapsId(id: number): Observable<string> {
     return this.httpClient.get<boolean>(`${this.capsURL}isCaps/${id}`);
   }
 
-  hospitalCabecera(id: number): Observable<Hospital> {
-    return this.httpClient.get<Hospital>(`${this.capsURL}hospitalCabecera/${id}`);
-  }
-
 }

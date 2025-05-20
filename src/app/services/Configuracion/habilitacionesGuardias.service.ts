@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import { HabilitacionesGuardiasDto } from "src/app/dto/Configuracion/HabilitacionesGuardiasDto";
 import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
-
+import { HabilitacionesGuardias } from "src/app/models/Configuracion/HabilitacionesGuardias";
 
 @Injectable({
   providedIn: 'root'
