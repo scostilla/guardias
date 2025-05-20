@@ -76,6 +76,9 @@
           <mat-error *ngIf="cronoForm.get('horaEgreso')?.hasError('horaEgresoInvalida')">
             Debe ser posterior a hora ingreso.
           </mat-error>
+          <mat-error *ngIf="cronoForm.get('horaEgreso')?.hasError('menosDe4Horas')">
+            Debe llevarse 4 hs con hora ingreso.
+          </mat-error>
         </mat-form-field>
       </div>
       
