@@ -22,6 +22,7 @@ import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/VerificacionTentativoResponseDto';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -207,92 +208,77 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   }
 
   saveRegistro(): void {
-    console.log('Formulario válido:', this.registroForm.valid);
-    console.log('Formulario modificado:', this.isModified());
-    console.log('Valores del formulario:', this.registroForm.value);
-    
     if (this.registroForm.valid) {
       const registroData = this.registroForm.value;
-      const idAsistencial = registroData.idAsistencial; 
+      const idPersona = registroData.idAsistencial;
 
-      // Primero verificamos si puede hacer guardia
-      this.novedadPersonalService.puedeHacerGuardia(idAsistencial).subscribe(
-        (puedeHacerGuardia: boolean) => {
+      // 1. Verificar si puede hacer guardia
+      this.novedadPersonalService.puedeHacerGuardia(idPersona).subscribe({
+        next: (puedeHacerGuardia: boolean) => {
           if (!puedeHacerGuardia) {
-            this.toastr.error(
-              'El profesional tiene novedades que impiden realizar guardia',
-              'Error de validación',
-              {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
-              }
-            );
+            this.mostrarError('El profesional tiene novedades que impiden realizar guardia');
             return;
           }
 
-          // Si puede hacer guardia, verificamos el cronograma tentativo
-          const verificarDto = new RegActivRegIngresoDto(
-            registroData.idAsistencial,
-            registroData.idEfector,
-            registroData.idTipoGuardia.id,
-            registroData.idServicio.id,
-            registroData.fechaIngreso,
-            registroData.eventStartTime
-          );
-
-          this.cronogramaTentativoService.verificarRegistroIngresoEnTentativo(verificarDto).subscribe(
-            (coincide: boolean) => {
-              if (coincide) {
-                // Si pasa ambas validaciones, guardamos
-                this.guardarRegistro(registroData);
-              } else {
-                this.toastr.error(
-                  'Los datos no coinciden con el cronograma tentativo del profesional',
-                  'Error de validación',
-                  {
-                    timeOut: 6000,
-                    positionClass: 'toast-top-center',
-                    progressBar: true
-                  }
-                );
+          // 2. Verificar cronograma tentativo
+          const verificarDto = this.crearVerificacionDto(registroData);
+          this.cronogramaTentativoService.verificarRegistroIngresoEnTentativo(verificarDto).subscribe({
+            next: (response: VerificacionTentativoResponseDto) => {
+              if (!response.existe || !response.id) {
+                this.mostrarError('Los datos no coinciden con el cronograma tentativo del profesional');
+                return;
               }
+
+              // 3. Primero guardar el registro
+              this.guardarRegistro(registroData, response.id);
             },
-            (error) => {
-              this.toastr.error(
-                'Ocurrió un error al verificar el cronograma tentativo',
-                'Error',
-                {
-                  timeOut: 6000,
-                  positionClass: 'toast-top-center',
-                  progressBar: true
-                }
-              );
-              console.error('Error al verificar cronograma tentativo:', error);
-            }
-          );
+            error: (error) => this.mostrarError('Error al verificar cronograma tentativo', error)
+          });
         },
-        (error) => {
-          this.toastr.error(
-            'Ocurrió un error al verificar las novedades del profesional',
-            'Error',
-            {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            }
-          );
-          console.error('Error al verificar novedades:', error);
-        }
-      );
+        error: (error) => this.mostrarError('Error al verificar novedades', error)
+      });
     }
   }
-  
 
-  // Guarda el registro de ingreso
-  private guardarRegistro(registroData: any): void {
+  private guardarRegistro(registroData: any, idCronograma: number): void {
+    const registroDto = this.crearRegistroDto(registroData, idCronograma);
+    const observable = this.initialData?.id 
+      ? this.registroActividadService.update(this.initialData.id, registroDto)
+      : this.registroActividadService.save(registroDto);
 
-    const registroDto = new RegistroActividadDto(
+    observable.subscribe({
+      next: () => {
+        // 4. Solo si el registro se guardó correctamente, marcamos como aceptado
+        this.cronogramaTentativoService.aceptar(idCronograma).subscribe({
+          next: () => {
+            this.mostrarExito('Registro guardado y cronograma aceptado');
+            this.router.navigate(['/registro-diario']);
+          },
+          error: (error) => {
+            this.mostrarExito('Registro guardado, pero no se pudo marcar el cronograma como aceptado');
+            this.router.navigate(['/registro-diario']);
+            console.error('Error al aceptar cronograma:', error);
+          }
+        });
+      },
+      error: (error) => this.mostrarError('Error al guardar el registro', error)
+    });
+  }
+
+  // Métodos auxiliares
+  private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
+    return new RegActivRegIngresoDto(
+      registroData.idAsistencial,
+      registroData.idEfector,
+      registroData.idTipoGuardia.id,
+      registroData.idServicio.id,
+      registroData.fechaIngreso,
+      registroData.eventStartTime
+    );
+  }
+
+  private crearRegistroDto(registroData: any, idCronograma: number): RegistroActividadDto {
+    return new RegistroActividadDto(
       registroData.fechaIngreso,
       registroData.fechaEgreso,
       registroData.eventStartTime,
@@ -303,49 +289,28 @@ export class RegistroActividadesIngresoComponent implements OnInit {
       registroData.idServicio.id,
       registroData.idEfector,
       this.userId!,
+      idCronograma
     );
-
-    console.log('Registro a enviar:', registroDto);
-
-    if (this.initialData && this.initialData.id) {
-      this.registroActividadService.update(this.initialData.id, registroDto).subscribe(
-        result => {
-          this.toastr.success('Registro de ingreso creado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.router.navigate(['/registro-diario']);
-        },
-        error => {
-          this.toastr.error('Ocurrió un error al crear o editar el registro de ingreso', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      );
-    } else {
-      this.registroActividadService.save(registroDto).subscribe(
-        result => {
-          this.toastr.success('Registro de ingreso guardado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.router.navigate(['/registro-diario']);
-        },
-        error => {
-          this.toastr.error('Ocurrió un error al guardar el registro de ingreso', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-        }
-      );
-    }
   }
 
+  private mostrarError(mensaje: string, error?: any): void {
+    if (error) console.error(mensaje, error);
+    this.toastr.error(mensaje, 'Error', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+  }
+
+  private mostrarExito(mensaje: string): void {
+    this.toastr.success(mensaje, 'Éxito', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+  }
+
+  
   isModified(): boolean {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
