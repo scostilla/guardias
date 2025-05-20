@@ -3,12 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Usuario } from 'src/app/models/login/Usuario';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { AsistencialSelectorAllComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { ToastrService } from 'ngx-toastr';
 import { RolService } from 'src/app/services/Configuracion/rol.service';
 import { Rol } from 'src/app/models/Configuracion/Rol';
@@ -290,7 +288,7 @@ export class UsuarioEditComponent implements OnInit {
           }
         );
       } else {
-        // En caso de que se esté actualizando un usuario, simplemente manejamos el cambio de contraseña
+        // En caso de que se esté actualizando un usuario, simplemente maneja el cambio de contraseña
         const nuevoUsuario = new NuevoUsuario(
           usuarioData.nombreUsuario,
           password, // Si el checkbox está marcado, se actualiza a nombre de usuario

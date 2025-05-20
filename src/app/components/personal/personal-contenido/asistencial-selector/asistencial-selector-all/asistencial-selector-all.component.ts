@@ -3,14 +3,11 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Person } from 'src/app/models/Configuracion/Person';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
 import { Subscription } from 'rxjs';
-
 
 @Component({
   selector: 'app-asistencial-selector-all',
@@ -18,12 +15,11 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./asistencial-selector-all.component.css']
 })
 export class AsistencialSelectorAllComponent implements OnInit {
-  /* @ViewChild(MatTable) table!: MatTable<Asistencial>; */
-  @ViewChild(MatTable) table!: MatTable<AsistencialSummaryDto>;
+  @ViewChild(MatTable) table!: MatTable<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  dataSource = new MatTableDataSource<Person>([]);
+  dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['apellido', 'nombre', 'cuil', 'profesion'];
   selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
@@ -54,15 +50,11 @@ export class AsistencialSelectorAllComponent implements OnInit {
     setTimeout(() => {
       this.loadDataByType(this.selectedType);
     });
-    /* this.asistencialService.list().subscribe(data => {
-      this.dataSource.data = data;
-    }); */
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  // Método que se ejecuta al cambiar entre Asistencial y NoAsistencial
   onTypeChange(event: any): void {
     this.selectedType = event.value;
     this.loadDataByType(this.selectedType);
@@ -70,41 +62,39 @@ export class AsistencialSelectorAllComponent implements OnInit {
 
   loadDataByType(type: string): void {
     if (type === 'asistencial') {
-      this.asistencialService.list().subscribe(data => {
+      this.asistencialService.listSummary().subscribe((data: AsistencialSummaryDto[]) => {
         this.dataSource.data = data;
       });
     } else if (type === 'noAsistencial') {
-      this.noAsistencialService.list().subscribe(data => {
+      this.noAsistencialService.listNoAsistencialAll().subscribe((data: NoAsistencialSummaryDto[]) => {
         this.dataSource.data = data;
       });
     }
   }
-
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
-  
-    this.dataSource.filterPredicate = (data: Person, filter: string) => {
-      const normalizedData = (data.nombre + ' ' + data.apellido + ' ' + data.cuil)
 
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const apellido = data.apellido ?? '';
+      const nombre = data.nombre ?? '';
+      const cuil = data.cuil ?? '';
+      
+      const normalizedData = (nombre + ' ' + apellido + ' ' + cuil)
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase();
-      return normalizedData.indexOf(filter) !== -1;
+
+      return normalizedData.includes(filter);
     };
-  
+
     this.dataSource.filter = filterValue;
   }
 
-   // Selecciona una persona (Asistencial o NoAsistencial)
-  selectPersona(persona: Person): void {
-    // Verifica que el objeto tenga la estructura correcta
-    //console.log('Selected Persona:', persona);
-  
-    // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
+  selectPersona(persona: AsistencialSummaryDto | NoAsistencialSummaryDto): void {
     this.dialogRef.close(persona);
   }
 

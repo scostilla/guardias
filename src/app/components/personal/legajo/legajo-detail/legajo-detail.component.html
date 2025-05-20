@@ -40,7 +40,7 @@
             </ng-container>
           </td>
         </tr>
-        <tr *ngIf="legajo.tipoGuardias">
+        <tr *ngIf="legajo?.tipoGuardias?.length">
           <th scope="row">Tipo de guardia</th>
           <td>
             <ng-container *ngFor="let tipoGuardias of legajo.tipoGuardias; let i = index">
@@ -48,11 +48,11 @@
             </ng-container>
           </td>
         </tr>
-          <tr>
+          <tr *ngIf="legajo.udo">
             <th scope="row">U.D.O.</th>
             <td>{{legajo.udo?.nombre}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="legajo?.efectores?.length">
             <th scope="row">Efector</th>
               <td>
                   <ng-container *ngFor="let efector of legajo.efectores; let i = index">

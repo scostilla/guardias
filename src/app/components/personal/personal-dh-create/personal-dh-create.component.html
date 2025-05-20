@@ -46,6 +46,9 @@
         <div [ngClass]="horasMessageClass" class="horas-status-display">
           <p>{{ horasMessage }}</p>
         </div>
+        <div *ngIf="solapamientoMessage" [ngClass]="solapamientoMessageClass" class="horas-status-display">
+        <p>{{ solapamientoMessage }}</p>
+        </div>
       </div>
 
     <mat-dialog-content class="mat-typography">

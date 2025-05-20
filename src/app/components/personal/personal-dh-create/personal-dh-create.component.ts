@@ -24,6 +24,12 @@ import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
+interface HorarioDistribucion {
+  dia: string;
+  horaInicio: string; // en formato HH:mm
+  cantidadHoras: number;
+}
+
 @Component({
   selector: 'app-personal-dh-create',
   templateUrl: './personal-dh-create.component.html',
@@ -55,6 +61,8 @@ export class PersonalDhCreateComponent {
   horasStatus: string = '';
   horasMessage: string = '';
   horasMessageClass: string = '';
+  solapamientoMessage: string = '';
+  solapamientoMessageClass: string = '';
 
   servicios: Servicio[] = [];
   hospitales: Hospital[] = [];
@@ -362,7 +370,81 @@ export class PersonalDhCreateComponent {
       this.horasMessageClass = '';
       this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
     }
+
+    // Verificar solapamiento de horarios
+const horarios: HorarioDistribucion[] = [];
+
+this.guardias.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+this.consultorios.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+this.giras.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+this.otros.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+if (this.haySolapamiento(horarios)) {
+  this.solapamientoMessage = 'Error: hay horarios superpuestos entre las diferentes distribuciones cargadas.';
+  this.solapamientoMessageClass = 'error-message';
+  this.isButtonDisabled = true;
+  return;
+} else {
+  this.solapamientoMessage = '';
+  this.solapamientoMessageClass = '';
+}
   }
+
+  private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
+  const horariosPorDia: { [dia: string]: { inicio: moment.Moment, fin: moment.Moment }[] } = {};
+
+  for (const h of horarios) {
+    if (!h.dia || !h.horaInicio || !h.cantidadHoras) continue;
+
+    const inicio = moment(h.horaInicio, 'HH:mm');
+    const fin = moment(inicio).add(h.cantidadHoras, 'hours');
+
+    if (!horariosPorDia[h.dia]) {
+      horariosPorDia[h.dia] = [];
+    }
+
+    for (const existente of horariosPorDia[h.dia]) {
+      if (
+        inicio.isBefore(existente.fin) &&
+        fin.isAfter(existente.inicio)
+      ) {
+        return true;
+      }
+    }
+
+    horariosPorDia[h.dia].push({ inicio, fin });
+  }
+
+  return false;
+}
+
 
   updateFechas(): void {
     const mesSeleccionado = this.vigenciaForm.get('mesVigencia')?.value;

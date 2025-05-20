@@ -3,12 +3,10 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Person } from 'src/app/models/Configuracion/Person';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -37,7 +35,6 @@ export class AutoridadSelectorComponent implements OnInit {
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
     public dialogRef: MatDialogRef<AutoridadSelectorComponent>,
-    private efectorService: EfectorService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
