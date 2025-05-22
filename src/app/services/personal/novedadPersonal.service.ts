@@ -61,8 +61,8 @@ public delete(id:number): Observable<any> {
 }
 
 // Verificar si una persona puede hacer guardia
-puedeHacerGuardia(idPersona: number): Observable<boolean> {
-  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}puedeHacerGuardia/${idPersona}`);
+puedeHacerGuardia(idPersona: number, fechaConsulta: string): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}puedeHacerGuardia/${idPersona}/${fechaConsulta}`);
 }
 
 // Verificar si una persona tiene LAO
