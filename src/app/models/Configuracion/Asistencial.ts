@@ -12,7 +12,7 @@ import { Person } from "./Person";
 export class Asistencial extends Person {
 
   registrosActividades: RegistroActividad[];
-  habilitacionesGuardias: HabilitacionesGuardias[];
+  habilitacionesGuardias?: HabilitacionesGuardias[];
 
   constructor(
     nombre: string,
@@ -34,7 +34,7 @@ export class Asistencial extends Person {
     registrosMensuales: RegistroMensual[],
     usuario: Usuario,
     registrosActividades: RegistroActividad[],
-    habilitacionesGuardias: HabilitacionesGuardias[],
+    habilitacionesGuardias?: HabilitacionesGuardias[],
     habilitacionesGenerales?: HabilitacionesGenerales[]
     
   ) {

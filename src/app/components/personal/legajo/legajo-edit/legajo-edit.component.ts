@@ -675,7 +675,7 @@ console.log('Efectores filtrados con nombre:', )
 
   console.log('showHabilitacionesGuardias:', this.showHabilitacionesGuardias);
   
-        console.log('tipo habilitaciones Guardias cargado: ', this.asistencial?.habilitacionesGuardias[0].tipoEfectorEx);
+        console.log('tipo habilitaciones Guardias cargado: ', this.asistencial?.habilitacionesGuardias?.[0]?.tipoEfectorEx);
         console.log('tipo habilitaciones Guardias cargado: ', tipoHabilitacionesGuardiasInicial);
         console.log('Valores iniciales de tipoGuardias:', this.initialData.tipoGuardias);
         console.log('Formulario tipoGuardias:', this.legajoForm.get('tipoGuardias')?.value);

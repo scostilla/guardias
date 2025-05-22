@@ -1408,7 +1408,7 @@ if (legajoData.tipoGuardias &&
         true, // activo
         legajoData.idPersona,
         legajoData.habilitacionesGenerales || null,
-        legajoData.tipoEfectorEx
+        legajoData.tipoHabilitacionesGenerales
       );
     
       // Llamar al servicio para guardar los permisos de efectores
