@@ -18,6 +18,7 @@ export class AsistencialListNombreTgDto extends PersonDto {
     telefono?: string,
     domicilio?: string,
     idLegajos?: number[],
+    idHabilitacionesGuardias?: number[],
     id?: number,
   ) {
     super(
@@ -32,6 +33,7 @@ export class AsistencialListNombreTgDto extends PersonDto {
       sexo,
       telefono,
       domicilio,
+      idHabilitacionesGuardias,
       id,
     );
 

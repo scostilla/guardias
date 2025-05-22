@@ -358,10 +358,10 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     }
   }
   
-  verLegajo(asistencial: AsistencialListDto): void {
+  verLegajo(asistencial: AsistencialEfectorRegistroActividadDto): void {
     if (asistencial && asistencial.id) {
       this.router.navigate(['/legajo-person'], {
-        state: { asistencial , fromAsistencial: true}
+        state: { asistencial: asistencial.id, fromAsistencial: true }
       });
     } else {
       console.error('El objeto asistencial no tiene un id.');

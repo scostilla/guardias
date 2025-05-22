@@ -16,6 +16,7 @@ idLegajos?: number[];
     telefono?: string,
     domicilio?: string,
     idLegajos?: number[],
+    idHabilitacionesGuardias?: number[],
     id?: number,
   ) {
     super(
@@ -30,6 +31,7 @@ idLegajos?: number[];
       sexo,
       telefono,
       domicilio,
+      idHabilitacionesGuardias,
       id,
     );
 

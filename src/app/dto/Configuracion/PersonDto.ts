@@ -11,6 +11,7 @@ export class PersonDto {
   domicilio?: string;
   esAsistencial: boolean;
   activo: boolean;
+  idHabilitacionesGuardias?: number[]
 
 
   constructor(
@@ -25,6 +26,7 @@ export class PersonDto {
     sexo?: string,
     telefono?: string,
     domicilio?: string,
+    idHabilitacionesGuardias?: number[],
     id?: number,
   ) {
     this.id = id;
@@ -39,5 +41,6 @@ export class PersonDto {
     this.domicilio = domicilio;
     this.esAsistencial = esAsistencial;
     this.activo = activo;
+    this.idHabilitacionesGuardias = idHabilitacionesGuardias;
   }
 }

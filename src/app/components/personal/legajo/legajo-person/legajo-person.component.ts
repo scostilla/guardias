@@ -62,43 +62,60 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
       return `${start} - ${end} de ${length}`;
     };
 
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-      console.log('Navegación recibida en LegajoPerson:', navigation.extras.state); // Log de la navegación
-      this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
-      this.fromNoAsistencial = !!navigation.extras.state['fromNoAsistencial'];
-  
-      if (this.fromAsistencial) {
-        this.initialData = navigation.extras.state['asistencial'] as Asistencial;
-      } else if (this.fromNoAsistencial) {
-        this.initialData = navigation.extras.state['noAsistencial'] as NoAsistencial;
-      }
+const navigation = this.router.getCurrentNavigation();
+if (navigation?.extras.state) {
+  console.log('📥 Navegación recibida en LegajoPerson:', navigation.extras.state);
+
+  this.fromAsistencial = !!navigation.extras.state['fromAsistencial'];
+  this.fromNoAsistencial = !!navigation.extras.state['fromNoAsistencial'];
+
+  if (this.fromAsistencial) {
+    const asistencialId = navigation.extras.state['asistencial'];
+    if (asistencialId) {
+      this.asistencialService.detail(asistencialId).subscribe({
+        next: (asistencial: Asistencial) => {
+          this.initialData = asistencial;
+
+          // Ahora que tenemos los datos, los usamos aquí
+          this.personId = asistencial.id;
+          this.nombreCompleto = `${asistencial.nombre} ${asistencial.apellido}`;
+          console.log('✅ Asistencial recibido:', asistencial);
+          this.listLegajos(this.personId!);
+        },
+        error: (err) => {
+          console.error('❌ Error al obtener el asistencial:', err);
+        }
+      });
+    } else {
+      console.warn('⚠️ No se recibió un ID de asistencial válido');
     }
+  } else if (this.fromNoAsistencial) {
+    const noAsistencial = navigation.extras.state['noAsistencial'] as NoAsistencial;
+    this.initialData = noAsistencial;
+    this.personId = noAsistencial.id;
+    this.nombreCompleto = `${noAsistencial.nombre} ${noAsistencial.apellido}`;
+    console.log('✅ No Asistencial recibido:', noAsistencial);
+    this.listLegajos(this.personId!);
   }
+}
+}
 
-  ngOnInit(): void {
-
+ngOnInit(): void {
   if (this.fromAsistencial) {
     this.displayedColumns = ['esAutoridad', 'profesion', 'tipoGuardias', 'fechaInicio', 'acciones'];
   } else if (this.fromNoAsistencial) {
     this.displayedColumns = ['esAutoridad', 'profesion', 'udo', 'fechaInicio', 'acciones'];
   }
 
-    // Si recibo un asistencial
-    if (this.initialData) {
-      this.personId = this.initialData.id;
-      this.nombreCompleto = `${this.initialData.nombre} ${this.initialData.apellido}`;
-      this.listLegajos(this.personId!);
+  // Ya no necesitas validar initialData aquí, porque ahora se carga de forma asíncrona
+
+  // Suscribirse al refresh$
+  this.suscription = this.legajoService.refresh$.subscribe(() => {
+    if (this.personId) {
+      this.listLegajos(this.personId);
     }
-
-    // Suscribirse al refresh$
-    this.suscription = this.legajoService.refresh$.subscribe(() => {
-      if (this.personId) {
-        this.listLegajos(this.personId);
-      }
-    })
-  }
-
+  });
+}
   ngAfterViewInit(): void {
     // Inicializa paginador y sort
     if (this.dataSource) {

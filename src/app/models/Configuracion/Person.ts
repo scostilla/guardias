@@ -4,6 +4,7 @@ import { DistribucionHoraria } from "./DistribucionHoraria";
 import { Autoridad } from "./Autoridad";
 import { RegistroMensual } from "../RegistroMensual";
 import { Usuario } from "../login/Usuario";
+import { HabilitacionesGenerales } from "./HabilitacionesGenerales";
 
 export class Person {
   id?: number;
@@ -25,6 +26,7 @@ export class Person {
   autoridades: Autoridad[];
   registrosMensuales: RegistroMensual[];
   usuario: Usuario;
+  habilitacionesGenerales?: HabilitacionesGenerales[];
 
   constructor(
     nombre: string,
@@ -44,7 +46,8 @@ export class Person {
     distribucionesHorarias: DistribucionHoraria[],
     autoridades: Autoridad[],
     registrosMensuales: RegistroMensual[],
-    usuario: Usuario
+    usuario: Usuario,
+    habilitacionesGenerales?: HabilitacionesGenerales[]
 
   ) {
     this.nombre = nombre;
@@ -65,6 +68,7 @@ export class Person {
     this.autoridades = autoridades;
     this.registrosMensuales = registrosMensuales;
     this.usuario = usuario;
+    this.habilitacionesGenerales = habilitacionesGenerales;
   }
 
 }
