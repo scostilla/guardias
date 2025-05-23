@@ -224,7 +224,7 @@ export class LegajoEditComponent implements OnInit {
       nroDecreto: [null],
       fechaResolucion: [null],
       fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
-  fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
+      fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
       tipoGuardias: [[]],
       tipoHabilitacionesGuardias: [null, Validators.required],
       habilitacionesGuardias: [[]],
@@ -233,19 +233,29 @@ export class LegajoEditComponent implements OnInit {
     }, { validator: this.validarFechas });
 
     // recupero el estado del router
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-        this.isAsistencial = !!navigation.extras.state['asistencial'];
-        
-        this.initialData = navigation.extras.state['legajo'];
-        this.fromLegajoPerson = !!navigation.extras.state['fromLegajoPerson'];
-        this.fromLegajo = !!navigation.extras.state['fromLegajo'];
-    
-        // Determina si es asistencial o no asistencial
-        this.asistencial = navigation.extras.state['asistencial'] || undefined;
-        this.noAsistencial = navigation.extras.state['noAsistencial'] || undefined;
-    
-    }
+const navigation = this.router.getCurrentNavigation();
+
+if (navigation?.extras.state) {
+  console.log('📦 Datos recibidos en navigation_EDIT.extras.state:', navigation.extras.state);
+
+  this.isAsistencial = !!navigation.extras.state['asistencial'];
+  this.initialData = navigation.extras.state['legajo'];
+  this.fromLegajoPerson = !!navigation.extras.state['fromLegajoPerson'];
+  this.fromLegajo = !!navigation.extras.state['fromLegajo'];
+
+  this.asistencial = navigation.extras.state['asistencial'] || undefined;
+  this.noAsistencial = navigation.extras.state['noAsistencial'] || undefined;
+
+  // Logs individuales para verificar los valores
+  console.log('✅ isAsistencial:', this.isAsistencial);
+  console.log('📁 initialData (legajo):', this.initialData);
+  console.log('👤 fromLegajoPerson:', this.fromLegajoPerson);
+  console.log('📂 fromLegajo:', this.fromLegajo);
+  console.log('🩺 asistencial:', this.asistencial);
+  console.log('🚫 noAsistencial:', this.noAsistencial);
+} else {
+  console.warn('⚠️ No se recibió navigation.extras.state o es undefined');
+}
   
 
     /*if (navigation?.extras.state) {
@@ -666,8 +676,8 @@ console.log('Efectores filtrados con nombre:', )
 
   console.log('showHabilitacionesGuardias:', this.showHabilitacionesGuardias);
   
-
-        
+        console.log('tipo habilitaciones Guardias cargado: ', this.asistencial?.habilitacionesGuardias?.[0]?.tipoEfectorEx);
+        console.log('tipo habilitaciones Guardias cargado: ', tipoHabilitacionesGuardiasInicial);
         console.log('Valores iniciales de tipoGuardias:', this.initialData.tipoGuardias);
         console.log('Formulario tipoGuardias:', this.legajoForm.get('tipoGuardias')?.value);
         console.log('Lista de tipoGuardias:', this.tipoGuardias);

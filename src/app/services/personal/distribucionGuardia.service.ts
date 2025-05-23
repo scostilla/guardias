@@ -4,8 +4,10 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DistribucionGuardia } from "src/app/models/personal/DistribucionGuardia";
 import { DistribucionGuardiaDto } from "src/app/dto/personal/DistribucionGuardiaDto";
-import { CronogramaTentativoDto } from "src/app/dto/Cronogramas/CronogramaTentativoDto";
+import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/CronogramaTentativoResquestDto";
+import { ValidacionCronogramaResponseDto } from "src/app/dto/Cronogramas/ValidacionCronogramaResponseDto";
 import { DistribucionCheckDto } from "src/app/dto/personal/distribucionGuardia/DistribucionCheckDto";
+
 
 
 @Injectable({
@@ -97,8 +99,8 @@ esGuardia(dia: string, fecha: string, idAsistencial: number, idEfector: number):
 }
 
 // Verificar si un cronograma tentativo existe
-existeTentativoEnDistribucionGuardia(cTentativos: CronogramaTentativoDto): Observable<boolean> {
-  return this.httpClient.post<boolean>(`${this.distribucionGuardiasURL}verificarCronogramaEnDistribucion`, cTentativos);
+existeTentativoEnDistribucionGuardia(cTentativos: CronogramaTentativoResquestDto): Observable<ValidacionCronogramaResponseDto> {
+  return this.httpClient.post<ValidacionCronogramaResponseDto>(`${this.distribucionGuardiasURL}verificarCronogramaEnDistribucion`, cTentativos);
 }
 
 tieneDistribucionActiva(dto: DistribucionCheckDto): Observable<boolean> {

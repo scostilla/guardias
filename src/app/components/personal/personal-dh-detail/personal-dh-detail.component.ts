@@ -18,7 +18,10 @@ export class PersonalDhDetailComponent {
     @Inject(MAT_DIALOG_DATA) public data: { distribuciones: any[], tipo: string, fechaInicio: string }
   ) {
     this.setColumnsBasedOnTipo(data.tipo);
-    this.dataSource = data.distribuciones;
+    this.dataSource = data.distribuciones.map(d => ({
+      ...d,
+      horaIngreso: moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm')
+    }));
 
     this.fechaInicioFormateada = this.formatearFecha(data.fechaInicio);
   }

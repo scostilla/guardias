@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
@@ -16,13 +16,18 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import * as moment from 'moment';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+
+interface HorarioDistribucion {
+  dia: string;
+  horaInicio: string; // en formato HH:mm
+  cantidadHoras: number;
+}
 
 @Component({
   selector: 'app-personal-dh-create',
@@ -55,6 +60,8 @@ export class PersonalDhCreateComponent {
   horasStatus: string = '';
   horasMessage: string = '';
   horasMessageClass: string = '';
+  solapamientoMessage: string = '';
+  solapamientoMessageClass: string = '';
 
   servicios: Servicio[] = [];
   hospitales: Hospital[] = [];
@@ -79,7 +86,6 @@ export class PersonalDhCreateComponent {
     private distribucionOtroService: DistribucionOtroService,
     private servicioService: ServicioService,
     private hospitalService: HospitalService,
-    private capsService: CapsService,
     private asistencialService: AsistencialService,
     private fb: FormBuilder,
     private location: Location
@@ -122,7 +128,6 @@ export class PersonalDhCreateComponent {
           this.asistencial = asistencial;
           this.idPersona = asistencial.id!;
   
-          // Ahora que tenemos el objeto completo, llamamos a los métodos necesarios
           this.listServicios();
           this.filterLegajosAndGetTipoGuardia();
           this.listCaps();
@@ -150,15 +155,30 @@ export class PersonalDhCreateComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
-  createGuardia(): FormGroup {
-    return this.fb.group({
-      dia: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      idServicio: ['', Validators.required],
-      tipoGuardia: ['', Validators.required],
-      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[1-9]\d*$/)]],
-    });
-  }
+createGuardia(): FormGroup {
+  const guardiaForm = this.fb.group({
+    dia: ['', Validators.required],
+    horaIngreso: ['', Validators.required],
+    idServicio: ['', Validators.required],
+    tipoGuardia: ['', Validators.required],
+    cantidadHoras: ['', [Validators.required, Validators.min(4), Validators.pattern(/^[1-9]\d*$/)]],
+  });
+
+  // Suscribirse a cambios en tipoGuardia
+  guardiaForm.get('tipoGuardia')?.valueChanges.subscribe(value => {
+    const cantidadHorasControl = guardiaForm.get('cantidadHoras');
+
+    if (value === 'CARGO') {
+      cantidadHorasControl?.setValue('24');
+      cantidadHorasControl?.disable();
+    } else {
+      cantidadHorasControl?.enable();
+      cantidadHorasControl?.setValue(null);
+    }
+  });
+
+  return guardiaForm;
+}
 
   get guardias() {
     return (this.guardiaForm.get('guardias') as FormArray);
@@ -362,7 +382,83 @@ export class PersonalDhCreateComponent {
       this.horasMessageClass = '';
       this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
     }
+
+    // Verificar solapamiento de horarios
+const horarios: HorarioDistribucion[] = [];
+this.guardias.controls.forEach(form => {
+  const raw = form.getRawValue();
+  horarios.push({
+    dia: raw.dia,
+    horaInicio: raw.horaIngreso,
+    cantidadHoras: +raw.cantidadHoras
+  });
+});
+
+this.consultorios.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+this.giras.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+this.otros.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+if (this.haySolapamiento(horarios)) {
+  this.solapamientoMessage = 'Error: hay horarios superpuestos entre las diferentes distribuciones cargadas.';
+  this.solapamientoMessageClass = 'error-message';
+  this.isButtonDisabled = true;
+  return;
+} else {
+  this.solapamientoMessage = '';
+  this.solapamientoMessageClass = '';
+}
   }
+
+private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
+  // Convertir los días a fechas concretas usando una base arbitraria (ej: la semana actual)
+  const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+  const baseFecha = moment().startOf('week'); // Empieza en domingo
+
+  const rangos: { inicio: moment.Moment, fin: moment.Moment }[] = [];
+
+  for (const h of horarios) {
+    if (!h.dia || !h.horaInicio || !h.cantidadHoras) continue;
+
+    const indexDia = diasSemana.indexOf(h.dia.toLowerCase());
+    if (indexDia === -1) continue;
+
+    const fechaBase = moment(baseFecha).add(indexDia + 1, 'days'); // +1 para empezar en lunes
+    const inicio = moment(`${fechaBase.format('YYYY-MM-DD')} ${h.horaInicio}`, 'YYYY-MM-DD HH:mm');
+    const fin = moment(inicio).add(h.cantidadHoras, 'hours');
+
+    // Comparar con todos los rangos existentes
+    for (const r of rangos) {
+      if (inicio.isBefore(r.fin) && fin.isAfter(r.inicio)) {
+        return true;
+      }
+    }
+
+    rangos.push({ inicio, fin });
+  }
+
+  return false;
+}
+
 
   updateFechas(): void {
     const mesSeleccionado = this.vigenciaForm.get('mesVigencia')?.value;
@@ -561,29 +657,31 @@ export class PersonalDhCreateComponent {
     // Guarda guardias
     if (this.guardiaForm.valid) {
         const guardiaFormArray = this.guardiaForm.get('guardias') as FormArray;
-        guardiaFormArray.controls.forEach((control) => {
-            guardiaMeses.forEach((mes) => {
-                const distribucionGuardiaDto = new DistribucionGuardiaDto(
-                    control.value.dia,
-                    control.value.cantidadHoras,
-                    this.idPersona ?? null,
-                    this.idEfector ?? 0,
-                    mes.fechaInicio, // Fecha de inicio calculada
-                    mes.fechaFinalizacion, // Fecha de finalización calculada
-                    control.value.horaIngreso,
-                    control.value.tipoGuardia,
-                    control.value.idServicio.id
-                );
+          guardiaFormArray.controls.forEach((control) => {
+            const controlValue = control.getRawValue(); // 🔁 aquí traes todos los campos, incluso los deshabilitados
 
-                savePromises.push(
-                    this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                        .catch(() => {
-                            errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
-                        })
-                );
+            guardiaMeses.forEach((mes) => {
+              const distribucionGuardiaDto = new DistribucionGuardiaDto(
+                controlValue.dia,
+                controlValue.cantidadHoras,
+                this.idPersona ?? null,
+                this.idEfector ?? 0,
+                mes.fechaInicio,
+                mes.fechaFinalizacion,
+                controlValue.horaIngreso,
+                controlValue.tipoGuardia,
+                controlValue.idServicio.id
+              );
+
+              savePromises.push(
+                this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
+                  .catch(() => {
+                    errorMessages.push(`Guardia en ${mes.mes}: ${distribucionGuardiaDto.dia}`);
+                  })
+              );
             });
-        });
-    }
+          });    
+        }
 
     // Guarda consultorios
     if (this.consultorioForm.valid) {

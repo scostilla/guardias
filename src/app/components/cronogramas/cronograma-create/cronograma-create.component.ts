@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CronogramaTentativoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoDto';
+import { CronogramaTentativoResquestDto } from 'src/app/dto/Cronogramas/CronogramaTentativoResquestDto';
 import { DistribucionCheckDto } from 'src/app/dto/personal/distribucionGuardia/DistribucionCheckDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
@@ -167,36 +168,36 @@ fechaEgresoValidator(control: any): { [key: string]: boolean } | null {
 
 // Función para validar que horaEgreso sea posterior a horaIngreso si las fechas son iguales
 validateHoraEgreso(): void {
-  // Asegúrate de que `horaIngreso` y `horaEgreso` están bien definidos
-  const fechaIngreso = this.cronoForm.get('fechaIngreso')?.value;
-  const fechaEgreso = this.cronoForm.get('fechaEgreso')?.value;
-  const horaIngreso = this.cronoForm.get('horaIngreso')?.value;
-  const horaEgreso = this.cronoForm.get('horaEgreso')?.value;
+  const fechaIngreso: Date = this.cronoForm.get('fechaIngreso')?.value;
+  const fechaEgreso: Date = this.cronoForm.get('fechaEgreso')?.value;
+  const horaIngreso: string = this.cronoForm.get('horaIngreso')?.value;
+  const horaEgreso: string = this.cronoForm.get('horaEgreso')?.value;
 
-  //console.log('Fecha de Ingreso:', fechaIngreso);
-  //console.log('Fecha de Egreso:', fechaEgreso);
-  //console.log('Hora de Ingreso:', horaIngreso);
-  //console.log('Hora de Egreso:', horaEgreso);
+  if (fechaIngreso && fechaEgreso && horaIngreso && horaEgreso) {
+    // Crear momentos combinando la fecha y la hora
+    const ingresoMoment = moment(fechaIngreso).set({
+      hour: parseInt(horaIngreso.split(':')[0], 10),
+      minute: parseInt(horaIngreso.split(':')[1], 10),
+      second: 0,
+      millisecond: 0,
+    });
 
-  // Asegúrate de que solo se haga la validación si las fechas son iguales
-  if (fechaIngreso && fechaEgreso) {
-    // Si fechaIngreso y fechaEgreso son la misma fecha, validar horaEgreso
-    if (fechaIngreso.isSame(fechaEgreso, 'day')) {  // Comparar las fechas solo por el día
-      // Convertir horaIngreso y horaEgreso a Moment para compararlas
-      const horaIngresoMoment = moment(horaIngreso, 'HH:mm');
-      const horaEgresoMoment = moment(horaEgreso, 'HH:mm');
-      
-      //console.log('Hora de Ingreso como Moment:', horaIngresoMoment);
-      //console.log('Hora de Egreso como Moment:', horaEgresoMoment);
+    const egresoMoment = moment(fechaEgreso).set({
+      hour: parseInt(horaEgreso.split(':')[0], 10),
+      minute: parseInt(horaEgreso.split(':')[1], 10),
+      second: 0,
+      millisecond: 0,
+    });
 
-      // Si horaEgreso es menor o igual a horaIngreso, establecer el error
-      if (horaEgresoMoment.isBefore(horaIngresoMoment) || horaEgresoMoment.isSame(horaIngresoMoment)) {
-        console.log('Hora de egreso no válida');
-        this.cronoForm.get('horaEgreso')?.setErrors({ 'horaEgresoInvalida': true });
-      } else {
-        console.log('Hora de egreso válida');
-        this.cronoForm.get('horaEgreso')?.setErrors(null); // Remover cualquier error
-      }
+    // Validación
+    if (!egresoMoment.isAfter(ingresoMoment)) {
+      console.log('La fecha y hora de egreso no es posterior a la de ingreso');
+      this.cronoForm.get('horaEgreso')?.setErrors({ 'horaEgresoInvalida': true });
+      this.cronoForm.get('fechaEgreso')?.setErrors({ 'fechaEgresoInvalida': true });
+    } else {
+      console.log('Fecha y hora de egreso válidas');
+      this.cronoForm.get('horaEgreso')?.setErrors(null);
+      this.cronoForm.get('fechaEgreso')?.setErrors(null);
     }
   }
 }
@@ -465,7 +466,7 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
       }
     }
     
-    private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto): void {
+    /*private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto): void {
       this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaDto).subscribe(
         existeEnGuardia => {
           if (existeEnGuardia) {
@@ -542,9 +543,109 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
         },
         error => this.handleError('verificar en distribución Guardia', error)
       );
-    }
+    }*/
+   private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto): void {
+  // Adaptar el objeto a CronogramaTentativoResquestDto
+  const cronogramaRequest = new CronogramaTentativoResquestDto(
+    cronogramaDto.idAsistencial,
+    cronogramaDto.idEfector,
+    cronogramaDto.idTipoGuardia,
+    cronogramaDto.fechaIngreso,
+    cronogramaDto.horaIngreso,
+    cronogramaDto.horaEgreso
+  );
+
+  this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaRequest).subscribe(
+    respuesta => {
+      if (respuesta.coincideExactamente) {
+        cronogramaDto.autorizado = 'CONFIRMADO';
+        cronogramaDto.aceptado = true;
+
+        this.toastr.success('Guardia autorizada', undefined, {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        this.guardarCronogramaConAutorizacion(cronogramaDto);
+      } else if (respuesta.existeDistribucionParcial) {
+        cronogramaDto.autorizado = 'PENDIENTE';
+        cronogramaDto.aceptado = true;
+
+        this.toastr.success('Guardia autorizada', undefined, {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        this.guardarCronogramaConAutorizacion(cronogramaDto);
+      } else if (respuesta.sinDistribucion) {
+        this.distribucionConsultorioService.existeTentativoEnDistribucionConsultorio(cronogramaRequest).subscribe(
+          existeEnConsultorio => {
+            if (existeEnConsultorio) {
+              cronogramaDto.autorizado = 'PENDIENTE';
+
+              this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+
+              this.guardarCronogramaConAutorizacion(cronogramaDto);
+            } else {
+              this.distribucionGiraService.existeTentativoEnDistribucionGira(cronogramaRequest).subscribe(
+                existeEnGira => {
+                  if (existeEnGira) {
+                    cronogramaDto.autorizado = 'PENDIENTE';
+
+                    this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                      timeOut: 6000,
+                      positionClass: 'toast-top-center',
+                      progressBar: true
+                    });
+
+                    this.guardarCronogramaConAutorizacion(cronogramaDto);
+                  } else {
+                    this.distribucionOtroService.existeTentativoEnDistribucionOtro(cronogramaRequest).subscribe(
+                      existeEnOtro => {
+                        if (existeEnOtro) {
+                          cronogramaDto.autorizado = 'PENDIENTE';
+
+                          this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                            timeOut: 6000,
+                            positionClass: 'toast-top-center',
+                            progressBar: true
+                          });
+                        } else {
+                          cronogramaDto.autorizado = 'CONFIRMADO';
+
+                          this.toastr.success('Guardia autorizada', undefined, {
+                            timeOut: 6000,
+                            positionClass: 'toast-top-center',
+                            progressBar: true
+                          });
+                        }
+
+                        this.guardarCronogramaConAutorizacion(cronogramaDto);
+                      },
+                      error => this.handleError('verificar en distribución Otro', error)
+                    );
+                  }
+                },
+                error => this.handleError('verificar en distribución Gira', error)
+              );
+            }
+          },
+          error => this.handleError('verificar en distribución Consultorio', error)
+        );
+      }
+    },
+    error => this.handleError('verificar en distribución Guardia', error)
+  );
+}
+
     
-    private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
+    /*private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
       this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaDto).subscribe(
         enGuardia => {
           if (enGuardia) {
@@ -664,7 +765,130 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
         },
         error => this.handleError('verificar en distribución Guardia', error)
       );
-    }
+    }*/
+
+  private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
+  // Adaptar el DTO
+  const cronogramaRequest = new CronogramaTentativoResquestDto(
+    cronogramaDto.idAsistencial,
+    cronogramaDto.idEfector,
+    cronogramaDto.idTipoGuardia,
+    cronogramaDto.fechaIngreso,
+    cronogramaDto.horaIngreso,
+    cronogramaDto.horaEgreso
+  );
+
+  this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaRequest).subscribe(
+    enGuardia => {
+      if (enGuardia) {
+        this.novedadPersonalService.tieneLicenciaLAO(cronogramaDto.idAsistencial).subscribe(
+          tieneLAO => {
+            if (tieneLAO) {
+              cronogramaDto.autorizado = 'CONFIRMADO';
+
+              this.toastr.success('Guardia autorizada', undefined, {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+
+              this.guardarCronogramaConAutorizacion(cronogramaDto);
+            } else {
+              this.novedadPersonalService.tieneLicenciaCompensatorio(cronogramaDto.idAsistencial).subscribe(
+                tieneCompensatorio => {
+                  if (tieneCompensatorio) {
+                    cronogramaDto.autorizado = 'CONFIRMADO';
+
+                    this.toastr.success('Guardia autorizada', undefined, {
+                      timeOut: 6000,
+                      positionClass: 'toast-top-center',
+                      progressBar: true
+                    });
+
+                    this.guardarCronogramaConAutorizacion(cronogramaDto);
+                  } else {
+                    // No se autoriza ni se guarda
+                    this.toastr.error(
+                      'El profesional posee una guardia del CARGO activa, no puede asignar una guardia EXTRA en el horario requerido',
+                      'Asignación no permitida',
+                      {
+                        timeOut: 8000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                      }
+                    );
+                  }
+                },
+                error => this.handleError('verificar licencia compensatorio', error)
+              );
+            }
+          },
+          error => this.handleError('verificar licencia LAO', error)
+        );
+      } else {
+        this.distribucionConsultorioService.existeTentativoEnDistribucionConsultorio(cronogramaRequest).subscribe(
+          enConsultorio => {
+            if (enConsultorio) {
+              cronogramaDto.autorizado = 'PENDIENTE';
+
+              this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                timeOut: 6000,
+                positionClass: 'toast-top-center',
+                progressBar: true
+              });
+
+              this.guardarCronogramaConAutorizacion(cronogramaDto);
+            } else {
+              this.distribucionGiraService.existeTentativoEnDistribucionGira(cronogramaRequest).subscribe(
+                enGira => {
+                  if (enGira) {
+                    cronogramaDto.autorizado = 'PENDIENTE';
+
+                    this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                      timeOut: 6000,
+                      positionClass: 'toast-top-center',
+                      progressBar: true
+                    });
+
+                    this.guardarCronogramaConAutorizacion(cronogramaDto);
+                  } else {
+                    this.distribucionOtroService.existeTentativoEnDistribucionOtro(cronogramaRequest).subscribe(
+                      enOtro => {
+                        if (enOtro) {
+                          cronogramaDto.autorizado = 'PENDIENTE';
+
+                          this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
+                            timeOut: 6000,
+                            positionClass: 'toast-top-center',
+                            progressBar: true
+                          });
+                        } else {
+                          cronogramaDto.autorizado = 'CONFIRMADO';
+
+                          this.toastr.success('Guardia autorizada', undefined, {
+                            timeOut: 6000,
+                            positionClass: 'toast-top-center',
+                            progressBar: true
+                          });
+                        }
+
+                        this.guardarCronogramaConAutorizacion(cronogramaDto);
+                      },
+                      error => this.handleError('verificar en distribución Otro', error)
+                    );
+                  }
+                },
+                error => this.handleError('verificar en distribución Gira', error)
+              );
+            }
+          },
+          error => this.handleError('verificar en distribución Consultorio', error)
+        );
+      }
+    },
+    error => this.handleError('verificar en distribución Guardia', error)
+  );
+}
     
     private guardarCronogramaConAutorizacion(cronogramaDto: CronogramaTentativoDto): void {
       this.cronoService.save(cronogramaDto).subscribe(

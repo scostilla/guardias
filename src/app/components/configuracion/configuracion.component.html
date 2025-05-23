@@ -10,28 +10,28 @@
     <div class="container">
       <div class="row mb-4 ">
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-actividades">
+          <div class="btnMenu card border-0 align-items-center" style="pointer-events: none;" type="button" routerLink="/registro-actividades">
             <div class="icon1_btnMenu">
               <div class="card-body text-center">
-                <h2 class="fs-4 fw-bold"><span>btnMenu 1</span></h2>
+                <h2 class="fs-4 fw-bold"><span>Generales</span></h2>
               </div>
               </div>
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/professional-list">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/valores-guardias">
             <div class="icon2_btnMenu">
               <div class="card-body text-center">
-                <h2 class="fs-4 fw-bold"><span>btnMenu 2</span></h2>
+                <h2 class="fs-4 fw-bold"><span>Valores</span></h2>
               </div>
               </div>
           </div>
         </div>
-        <div class="col-lg">
+        <!--<div class="col-lg">
           <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/cronograma">
             <div class="icon3_btnMenu">
               <div class="card-body text-center">
-                <h2 class="fs-4 fw-bold"><span>btnMenu 3</span></h2>
+                <h2 class="fs-4 fw-bold"><span>Usuarios</span></h2>
               </div>
             </div>
           </div>
@@ -53,27 +53,27 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>-->
       </div>
     </div>
 
     <div class="row justify-content-center mt-4 mb-4">
     <mat-accordion>
       <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
+        <!--<mat-expansion-panel-header>
           <mat-panel-title class="panel-title">
             Opciones generales
           </mat-panel-title>
           <mat-panel-description>
             Configuraciones varias
           </mat-panel-description>
-        </mat-expansion-panel-header>
+          </mat-expansion-panel-header>
           <div class="btnMenu-button-row">
             <button mat-raised-button color="primary" routerLink="/valores-guardias">Valores Guardias</button>
           </div>
-</mat-expansion-panel>
+      </mat-expansion-panel>
       <mat-expansion-panel (opened)="panelOpenState = true"
-                           (closed)="panelOpenState = false">
+                           (closed)="panelOpenState = false">-->
         <mat-expansion-panel-header>
           <mat-panel-title class="panel-title">
             Datos territorio
@@ -113,16 +113,12 @@
             Datos Usuarios
           </mat-panel-title>
           <mat-panel-description>
-            Personas, Usuarios, Autoridades, Legajo, Revista, Cargo.
+            Revista, Cargo.
           </mat-panel-description>
         </mat-expansion-panel-header>
           <div class="btnMenu-button-row">
-              <button mat-raised-button color="primary" routerLink="/asistencial">Personas</button>
-              <button mat-raised-button color="accent" routerLink="/provincia">Usuarios</button>
-              <button mat-raised-button color="warn" routerLink="/autoridad">Autoridades</button>
-              <button mat-raised-button routerLink="/legajo">Legajo</button>
-              <button mat-raised-button routerLink="/revista">Revista</button>
-              <button mat-raised-button routerLink="/cargo">Cargo</button>
+              <button mat-raised-button color="primary" routerLink="/revista">Revista</button>
+              <button mat-raised-button color="accent" routerLink="/cargo">Cargo</button>
           </div>
       </mat-expansion-panel>
       <mat-expansion-panel (opened)="panelOpenState = true"
@@ -149,13 +145,12 @@ Tipo ley, Articulo, Inciso, tipo licencias.
             Datos Profesionales
           </mat-panel-title>
           <mat-panel-description>
-            Profesionales, Profesión, Especialidad.
+            Profesión, Especialidad.
           </mat-panel-description>
         </mat-expansion-panel-header>
           <div class="btnMenu-button-row">
-              <button mat-raised-button color="primary" routerLink="/pais">Profesionales</button>
-              <button mat-raised-button color="accent" routerLink="/profesion">Profesión</button>
-              <button mat-raised-button color="warn" routerLink="/especialidad">Especialidad</button>
+              <button mat-raised-button color="primary" routerLink="/profesion">Profesión</button>
+              <button mat-raised-button color="accent" routerLink="/especialidad">Especialidad</button>
           </div>
       </mat-expansion-panel>
 

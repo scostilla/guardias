@@ -5,6 +5,7 @@ import { Autoridad } from "./Autoridad";
 import { DistribucionHoraria } from "./DistribucionHoraria";
 import { Legajo } from "./Legajo";
 import { Person } from "./Person";
+import { HabilitacionesGenerales } from "./HabilitacionesGenerales";
 
 export class NoAsistencial extends Person {
   
@@ -26,9 +27,10 @@ export class NoAsistencial extends Person {
     distribucionesHorarias: DistribucionHoraria[],
     autoridades: Autoridad[],
     registrosMensuales: RegistroMensual[],
-    usuario: Usuario
+    usuario: Usuario,
+    habilitacionesGenerales?: HabilitacionesGenerales[]
   ) {
-    super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, esAsistencial, activo, legajos, novedadesPersonales, suplentes, distribucionesHorarias, autoridades, registrosMensuales, usuario);
+    super(nombre, apellido, dni, cuil, fechaNacimiento, sexo, telefono, email, domicilio, esAsistencial, activo, legajos, novedadesPersonales, suplentes, distribucionesHorarias, autoridades, registrosMensuales, usuario, habilitacionesGenerales);
     
   }
 

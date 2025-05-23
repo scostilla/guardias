@@ -11,7 +11,6 @@ import { ToastrService } from 'ngx-toastr';
 import { TokenService } from 'src/app/services/login/token.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 //Services
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
@@ -170,37 +169,69 @@ export class AutoridadComponent implements OnInit, OnDestroy {
     this.suscription?.unsubscribe();
   }
 
-  openFormChanges(autoridad?: Autoridad): void {
-    const esEdicion = autoridad != null;
-    const dialogRef = this.dialog.open(AutoridadEditComponent, {
-      width: '600px',
-      data: esEdicion ? autoridad : null
-    });
+openFormChanges(autoridad?: Autoridad): void {
+  const esEdicion = autoridad != null;
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.type === 'save') {
-        this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito. Solicita confirmación con informática.', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
-          this.dataSource.data[index] = result.data;
-        } else {
-          this.dataSource.data.push(result.data);
-        }
-        this.dataSource._updateChangeSubscription();
-      } else if (result && result.type === 'error') {
-        this.toastr.error('Ocurrió un error al asignar o editar la Autoridad', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-      } else if (result && result.type === 'cancel') {
+  if (esEdicion && autoridad.persona?.id) {
+    // Verifica si tiene legajo activo
+    this.autoridadService.hasActiveAutoridadLegajo(autoridad.persona?.id).subscribe(hasActive => {
+      if (hasActive) {
+        // Si hay legajo activo, no se abre el diálogo y se muestra un mensaje
+        this.toastr.warning(
+          'No puedes modificar el estado, hasta dar de baja el legajo de autoridad de la persona',
+          'Advertencia',
+          {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          }
+        );
+      } else {
+        // Si no hay legajo activo, se abre el diálogo
+        this.abrirDialogAutoridad(autoridad, esEdicion);
       }
+    }, error => {
+      this.toastr.error('Error al validar el legajo de la persona', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
     });
+  } else {
+    // No es edición o no se necesita validación
+    this.abrirDialogAutoridad(autoridad, esEdicion);
   }
+}
+
+private abrirDialogAutoridad(autoridad: Autoridad | undefined, esEdicion: boolean): void {
+  const dialogRef = this.dialog.open(AutoridadEditComponent, {
+    width: '600px',
+    data: esEdicion ? autoridad : null
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result && result.type === 'save') {
+      this.toastr.success(esEdicion ? 'Realizaste confirmación' : 'Autoridad asignada con éxito. Solicita confirmación con informática.', 'ÉXITO', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      if (esEdicion) {
+        const index = this.dataSource.data.findIndex(p => p.id === result.data.id);
+        this.dataSource.data[index] = result.data;
+      } else {
+        this.dataSource.data.push(result.data);
+      }
+      this.dataSource._updateChangeSubscription();
+    } else if (result && result.type === 'error') {
+      this.toastr.error('Ocurrió un error al asignar o editar la Autoridad', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+    }
+  });
+}
 
   openDetail(autoridad: Autoridad): void {
     this.dialogRef = this.dialog.open(AutoridadDetailComponent, {

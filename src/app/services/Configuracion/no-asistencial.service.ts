@@ -33,6 +33,10 @@ export class NoAsistencialService {
     return this.httpClient.get<NoAsistencialListDto[]>(this.noasistencialesURL + 'listNoAsistencialSinLegajo')
   }
 
+  public listNoAsistencialAll(): Observable<NoAsistencialSummaryDto[]> {
+    return this.httpClient.get<NoAsistencialSummaryDto[]>(this.noasistencialesURL + 'listNoAsistencialAll')
+  }
+
   listAutoridadesByEfector(idEfector: number): Observable<NoAsistencialListDto[]> {
     return this.httpClient.get<NoAsistencialListDto[]>(`${this.noasistencialesURL}listAutoridadesByEfector/${idEfector}`);
   }
