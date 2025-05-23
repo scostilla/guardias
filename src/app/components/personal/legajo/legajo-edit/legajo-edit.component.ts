@@ -362,9 +362,8 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
   ?.filter(habilitacion => habilitacion.activo)
   ?.at(0)?.tipoEfectorEx ?? null;
 
-    console.log('tipoEfectorEx cargado', this.asistencial?.habilitacionesGuardias[0].tipoEfectorEx);
-    console.log('tipoEfectorEx cargado', tipoHabilitacionesGuardiasInicial);
-
+    console.log('Tipo Habilitaciones Guardias inicial:', tipoHabilitacionesGuardiasInicial);
+    
     if (this.initialData?.fechaInicio) {
       const fechaInicioDate = new Date(this.initialData.fechaInicio);
       fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);
@@ -667,8 +666,8 @@ console.log('Efectores filtrados con nombre:', )
 
   console.log('showHabilitacionesGuardias:', this.showHabilitacionesGuardias);
   
-        console.log('tipo habilitaciones Guardias cargado: ', this.asistencial?.habilitacionesGuardias[0].tipoEfectorEx);
-        console.log('tipo habilitaciones Guardias cargado: ', tipoHabilitacionesGuardiasInicial);
+
+        
         console.log('Valores iniciales de tipoGuardias:', this.initialData.tipoGuardias);
         console.log('Formulario tipoGuardias:', this.legajoForm.get('tipoGuardias')?.value);
         console.log('Lista de tipoGuardias:', this.tipoGuardias);
@@ -682,10 +681,9 @@ console.log('Efectores filtrados con nombre:', )
  this.onTipoUdoChange({ value: this.initialData.tipoUdo });
 }
 
-
         //log para ver los datos cargados 
         console.log('Datos cargados:', this.initialData);
-
+  console.log('habilitacionesGuardias:', this.asistencial?.habilitacionesGuardias);
         console.log('tipo guardias cargadas:', this.initialData.tipoGuardias);
         
               // Si la profesión ya está seleccionada, filtrar las especialidades
@@ -974,8 +972,15 @@ console.log('Tipo Guardias Inicial:', selectedGuardia);
 const capsCabecera = this.capsList.find((caps: Caps) => caps.id === this.initialData?.udo?.id)?.cabecera?.id || null;
 console.log('Caps Cabecera:', capsCabecera);
 
-const capsEfectorCabecera = this.capsList.find((caps: Caps) => caps.id === efectoresFiltrados[0])?.cabecera?.id || null;
-console.log('Caps Efector Cabecera:', capsEfectorCabecera);
+const efectoresSelected = this.initialData?.efectores ? this.initialData.efectores[0].id : 0;
+  console.log('Efectores seleccionados:', efectoresSelected);
+   if (efectoresSelected) {
+    const capsFiltrado = this.capsList.find((caps: Caps) => caps.id === efectoresSelected);
+    const idCabecera = capsFiltrado?.cabecera?.id || null;
+
+    console.log('Caps encontrado:', capsFiltrado);
+    console.log('ID Cabecera encontrado:', idCabecera);
+   
 
 // Verificar si el tipo de guardia inicial o el seleccionado es Contrafactura
 const esContrafactura = selectedGuardia.includes(this.idContraFactura);
@@ -1011,7 +1016,7 @@ console.log('Es Contrafactura:', esContrafactura);
         persona: this.initialData?.persona?.id,
         habilitacionesGuardias: efectoresFiltrados,
         hospitalUdo: capsCabecera ? Number(capsCabecera) : null,
-        hospitalEfectores: capsEfectorCabecera,
+        hospitalEfectores: idCabecera,
         hospitalHabilitacionesGuardias: this.hospitalHabilitacionesGuardias
        
      
@@ -1067,12 +1072,12 @@ console.log('UDO seleccionado:', udoSelected);
       this.onTipoUdoChange({ value: tipoUdoInicial });
       this.onTipoEfectorChange({ value: tipoEfectorInicial });
       this.onTipoHabilitacionesGuardiasChange({ value: tipoHabilitacionesGuardias });
-    },
+    }},
     (error) => {
       console.error('Error al cargar los datos iniciales:', error);
     }
   );
-  
+
 }
 
 
@@ -2731,3 +2736,7 @@ private crearNuevaHabilitacion(legajoData: any): void {
   
 
 }
+
+
+
+

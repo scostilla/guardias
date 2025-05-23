@@ -221,15 +221,15 @@
             </mat-form-field>
 
             <div class="form-row">
-            <mat-form-field appearance="fill" *ngIf="showHabilitacionesGenerales">
-              <mat-label>Asignar efectores (para Extra/Contrafactura/Pasiva)</mat-label>
-              <mat-select formControlName="habilitacionesGenerales" multiple>
-                <mat-option *ngFor="let efector of habilitacionesGeneralesOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            </div>
+              <mat-form-field appearance="fill" *ngIf="showHabilitacionesGenerales">
+                <mat-label>Asignar efectores (para supervisión de autoridad)</mat-label>
+                <mat-select formControlName="habilitacionesGenerales" multiple>
+                  <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>  
 
-             <div class="form-row">
+            <div class="form-row">
             <mat-form-field appearance="fill" class="form-field" *ngIf="showGuardia">
               <mat-label>Tipo guardia</mat-label>
               <mat-select formControlName="tipoGuardias" multiple (selectionChange)="onSelectionChange($event)">
@@ -370,7 +370,7 @@
               <mat-error *ngIf="legajoForm.get('hospitalUdo')?.errors?.['required']">El hospital es requerido para seleccionar un caps.</mat-error>
             </mat-form-field>
 
-             <mat-form-field  appearance="fill" >
+            <mat-form-field  appearance="fill" >
               <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
               <mat-select formControlName="udoSelected">
                 <mat-option *ngFor="let udoIter of udoOptions" [value]="udoIter.id">{{udoIter.nombre }}</mat-option>
@@ -453,6 +453,9 @@
     </mat-dialog-content>
   </div>
 </div>
+
+
+
 
 
 

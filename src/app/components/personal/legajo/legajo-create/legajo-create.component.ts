@@ -1413,7 +1413,7 @@ if (legajoData.tipoGuardias &&
         true, // activo
         legajoData.idPersona,
         legajoData.habilitacionesGenerales || null,
-        legajoData.tipoEfectorEx
+        legajoData.tipoHabilitacionesGenerales
       );
 
       console.log("enviando Dto a /habilitacionesGenerales/create:", habilitacionesGeneralesDto);
