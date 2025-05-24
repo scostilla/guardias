@@ -1,66 +1,56 @@
-import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PopupComponent } from '../../popup/popup.component';
-import { ProfessionalDataServiceService } from '../../../services/ProfessionalDataService/professional-data-service.service';
-
+import { Component, OnInit } from '@angular/core';
+import { TokenService } from 'src/app/services/login/token.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registro-diario',
   templateUrl: './registro-diario.component.html',
   styleUrls: ['./registro-diario.component.css']
 })
-export class RegistroDiarioComponent {
-  selectedService:string='consultorio';
-  selectedGuard: string = '';
-  disableButton: boolean = this.selectedGuard == '';
-  selectedRevista: string = 'servicio';
-  selectedGuardia: string = 'revista';
+export class RegistroDiarioComponent implements OnInit {
 
-  updateButtonState(): void {
-    if (this.selectedGuard == '') {
-      this.disableButton = true;
-      console.log('true option ' + this.disableButton);
-    } else {
-      this.disableButton = false;
-      console.log('false option ' + this.disableButton);
-    }
-  }
+  isLogged = false;
+  userId: number | null = null;
+  usuarioPersona: number | null = null;
+  nombreUsuario: string = '';
+  apellidoUsuario: string = '';
 
   constructor(
-    private dialog: MatDialog,
-    private professionalDataService: ProfessionalDataServiceService,
-    public dialogRef: MatDialogRef<RegistroDiarioComponent>,
-  ) {}
+    private tokenService: TokenService,
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
-  openPopup(componentParameter: any) {
-    const dialogRef = this.dialog.open(PopupComponent, {
-      width: '1000px',
-    });
+  ngOnInit(): void {
+    if (this.tokenService.getToken()) {
+      this.isLogged = true;
 
-    dialogRef.componentInstance.componentParameter = componentParameter;
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      console.log('ID del usuario logeado:', this.userId);
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('popup closed');
-    });
+      // Obtener detalles del usuario
+      this.authService.detailPersonBasicPanel().subscribe(
+        (response: PersonBasicPanelDto) => {
+          this.usuarioPersona = response.id;
+          this.nombreUsuario = response.nombre;
+          this.apellidoUsuario = response.apellido;
+
+          // Log para mostrar el usuario y los efectores
+          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
+        },
+        error => {
+          console.error('Error al obtener detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.isLogged = false;
+      console.log('El usuario no está logueado.');
+      this.router.navigateByUrl('');
+    }
+
   }
-  selectedId: string | undefined;
-  selectedCuil: string | undefined;
-  selectedNombre: string | undefined;
-  selectedApellido: string | undefined;
-  selectedProfesion: string | undefined;
 
-  ngOnInit() {
-
-    this.professionalDataService.dataUpdated.subscribe(() => {
-      this.selectedId = this.professionalDataService.selectedId;
-      this.selectedCuil = this.professionalDataService.selectedCuil;
-      this.selectedNombre = this.professionalDataService.selectedNombre;
-      this.selectedApellido = this.professionalDataService.selectedApellido;
-      this.selectedProfesion = this.professionalDataService.selectedProfesion;
-    });
-  }
-
-  cancel() {
-    this.dialogRef.close();
-  }
 }
