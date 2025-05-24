@@ -2,7 +2,7 @@
 <div class="container" *ngIf="isLogged">
   <div class="row">
     <div class="col-6">
-      <div class="titulos">Registro de Guardias</div>
+      <div class="titulos_extra">Registro de Guardias</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/home-page">
@@ -14,19 +14,25 @@
   <div class="row mt-4">
     <div class="col-md-6 text-center">
       <button 
-        class="btn btn-success btn-lg btn-block" 
-        routerLink="/registro-actividades-ingreso"
-        
-      >
-        <mat-icon>login</mat-icon> Registrar Entrada
+        class="btn buttons btn-lg btn-block" 
+        routerLink="/registro-actividades-ingreso">
+        <mat-icon>login</mat-icon> Entrada
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
       </button>
     </div>
     <div class="col-md-6 text-center">
       <button 
-        class="btn btn-danger btn-lg btn-block" 
+        class="btn buttons btn-lg btn-block" 
         routerLink="/registro-actividades-egreso"
       >
-        <mat-icon>logout</mat-icon> Registrar Salida
+        <mat-icon>logout</mat-icon> Salida
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
       </button>
     </div>
   </div>

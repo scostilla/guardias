@@ -337,4 +337,3 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     this.router.navigate(['/registro-diario']);
   }
 }
-
