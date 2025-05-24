@@ -279,6 +279,7 @@ export class PersonalDhEditComponent {
           horaIngreso: horaIngresoFormateada,
           descripcion: d.descripcion,
           lugar: d.lugar,
+          tipo: d.tipo,
         });
       }
   
