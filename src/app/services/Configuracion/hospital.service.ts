@@ -89,5 +89,9 @@ isHospital(id: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.hospitalesURL}isHospital/${id}`);
 }
 
+// Método para traer lista de servicios de un hospital
+getServiciosActivos(idHospital: number): Observable<ServicioSummaryDto[]> {
+  return this.httpClient.get<ServicioSummaryDto[]>(`${this.hospitalesURL}serviciosActivos/${idHospital}`);
+}
 
 }

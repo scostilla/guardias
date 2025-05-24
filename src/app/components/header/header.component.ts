@@ -73,7 +73,7 @@ ngOnInit(): void {
   });
 
   // Resto de lógica de login
-this.tokenService.isLogged$.subscribe(isLogged => {
+  this.tokenService.isLogged$.subscribe(isLogged => {
   this.isLogged = isLogged;
 
   if (isLogged) {

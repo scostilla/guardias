@@ -3,20 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AutoridadDto } from 'src/app/dto/Configuracion/AutoridadDto';
 import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
-import { Efector } from 'src/app/models/Configuracion/Efector';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
-import { AutoridadSelectorComponent } from '../autoridad-selector/autoridad-selector.component';
+import { AsistencialSelectorAllComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
-
 
 @Component({
   selector: 'app-autoridad-edit',
@@ -51,7 +45,6 @@ export class AutoridadEditComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
   ){
     this.autoridadForm = this.fb.group({
@@ -143,7 +136,7 @@ export class AutoridadEditComponent implements OnInit {
   }
 
   openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AutoridadSelectorComponent, {
+    const dialogRef = this.dialog.open(AsistencialSelectorAllComponent, {
       width: '800px',
       disableClose: true
     });

@@ -1,4 +1,7 @@
 //COMPONENTES SISTEMA GUARDIAS
+
+//Autenticacion
+import { AuthGuard } from 'src/app/guards/auth.guard';
 import { RoleGuard } from 'src/app/guards/role.guard';
 
 //Principales
@@ -10,7 +13,6 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { LoginComponent } from './components/login/login.component';
-import { SelectorRolesComponent } from './components/login/selector-roles/selector-roles.component';
 
 //Configuraciones: Generales
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
@@ -251,10 +253,9 @@ const routes: Routes = [
   
   //Principales
   {path: '', redirectTo: 'login', pathMatch: 'full' },
-  {path:"selector-roles", component:SelectorRolesComponent},
-  {path:"home-page", component:HomePageComponent},
+  {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path:"efector-selector", component:EfectorSelectorComponent},
-  {path:"home-profesional", component:HomeProfesionalComponent},
+  {path:"home-profesional", component:HomeProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent},
   {path: 'login', component:LoginComponent},
@@ -363,21 +364,19 @@ const routes: Routes = [
   {path:'dist-horaria-otras', component:DistHorariaOtrasComponent},
 
   //Sección: Personal
-  {path: 'personal', component:PersonalComponent},
-  {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent},
-  {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent},
+  {path: 'personal', component:PersonalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
+  {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
+  {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent},
-  {path: 'personal-externo', component:PersonalExternoComponent},
-  {path: 'personal-legajo', component:PersonalLegajoComponent},
+  {path: 'personal-externo', component:PersonalExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
+  {path: 'personal-legajo', component:PersonalLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-legajo-no-asistencial', component:PersonalLegajoNoAsistencialComponent},
   {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
   {path: 'asist-profesional', component:AsistProfesionalComponent},
-  {path: 'personal-autoridad', component:PersonalAutoridadComponent},
+  {path: 'personal-autoridad', component:PersonalAutoridadComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'asistencial-selector', component:AsistencialSelectorComponent},
-  
-  {path: 'asistencial-filtrado-selector', component:AsistencialFiltradoSelectorComponent},
   {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
-  
+  {path: 'asistencial-filtrado-selector', component:AsistencialFiltradoSelectorComponent},
   {path: 'asistencial-create', component:AsistencialCreateComponent},
   {path: 'asistencial', component:AsistencialComponent},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
@@ -386,7 +385,7 @@ const routes: Routes = [
   {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
-  {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
+  {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'externo', component:ExternoComponent},
 
   {path: 'personal-dh', component:PersonalDhComponent},
@@ -488,11 +487,8 @@ const routes: Routes = [
  { path: 'cronograma-new', component:CronogramaNewComponent},
 
   //Pagina no encontrada
-{ path: 'not-found', component: NotFoundComponent },
+{ path: 'not-found', component: NotFoundComponent, canActivate: [AuthGuard] },
 { path: '**', redirectTo: 'not-found' },
-
-
-
 
 
 

@@ -60,7 +60,7 @@ public delete(id:number): Observable<any> {
 }
 
 // Verificar si una persona puede hacer guardia
-puedeHacerGuardia(idPersona: number, fechaConsulta: Date): Observable<boolean> {
+puedeHacerGuardia(idPersona: number, fechaConsulta: string): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}puedeHacerGuardia/${idPersona}/${fechaConsulta}`);
 }
 

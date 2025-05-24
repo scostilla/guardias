@@ -8,7 +8,7 @@ export class HabilitacionesGuardiasDto {
         activo: boolean,
         idAsistencial: number,
         idEfectores: number[],
-        tipoEfectorEx: string[]   
+        tipoEfectorEx: string[]
     ){
         this.activo = activo;
         this.idAsistencial = idAsistencial;

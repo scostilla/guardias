@@ -7,7 +7,7 @@ import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/pag
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -16,15 +16,14 @@ import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
 
 
 interface ClasesNovedad {
@@ -65,8 +64,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
-  asistenciales: any[] = [];
-  servicios: Servicio[] = []; 
+  servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<DdjjCargoyagrupDetailComponent>;
 
@@ -76,8 +74,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024, 2025];
 
-  selectedHospitalId: number | null = null;
-  selectedHospitalNombre: string = '';
   botonDph = true;
   revisandoDPH: boolean = false;
   efectorId: number | null = null;
@@ -88,12 +84,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   constructor(
     private registroMensualService: RegistroMensualService,
     private feriadoService: FeriadoService,
-    private servicioService: ServicioService, 
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
-    private route: ActivatedRoute
+    private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
@@ -118,50 +113,70 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       this.feriados = feriados;
     });
 
-    this.obtenerParametroRuta();
     this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
-
+      if (this.efectorId) {
+        this.loadEfectorName(); 
+        this.loadHospitalDetails();
+      } else {
+        this.handleInvalidEfector();
+      }
+      this.selectedServicio = null;
   }
 
-  //trae el nombre del efector esta en sesion que filtra lo mostrado
-  loadEfectorName(): void {
+  //trae el nombre del efector esta en sesion
+  loadEfectorName(): void { 
     if (this.efectorId) {
-      this.efectorService.getEfectorTipo(this.efectorId).subscribe(
-        (efector: Efector) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
+      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
+        (efector: EfectorHospitalDto) => {
+
+          if (efector) {
+            this.efectorNombre = efector.nombre;
+          } else {
+            this.handleInvalidEfector();
+          }
         },
         (error) => {
-          console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
+          console.error('Error al obtener el efector desde el servicio:', error);
+          this.handleInvalidEfector();
         }
       );
+    } else {
+      this.handleInvalidEfector();
     }
   }
 
-  obtenerParametroRuta(){
-    // Obtener el parámetro de la ruta
-    this.route.queryParams.subscribe(params => {
-      this.selectedHospitalId = params['hospital'] ? +params['hospital'] : null;
-      if (this.selectedHospitalId) {
-        this.loadHospitalDetails(this.selectedHospitalId);
+  loadHospitalDetails(): void {
+    if (!this.efectorId) {
+      console.error('No hay efectorId disponible');
+      return;
+    }
+
+    console.log('Llamando a getServiciosActivos con efectorId:', this.efectorId);
+
+    this.hospitalService.getServiciosActivos(this.efectorId).subscribe(
+      (servicios) => {
+        console.log('Servicios recibidos del backend:', servicios);
+
+        this.servicios = servicios.map(s => new ServicioSummaryDto(s.id, s.descripcion));
+
+        console.log('Servicios mapeados:', this.servicios);
+
+        if (this.servicios.length > 0) {
+        }
+
+        this.loadRegistrosMensuales();
+      },
+      (error) => {
+        console.error('Error al obtener servicios activos del hospital:', error);
       }
-    });
+    );
   }
 
-  loadHospitalDetails(hospitalId: number) {
-    this.hospitalService.getById(hospitalId).subscribe(hospital => {
-      this.selectedHospitalNombre = hospital.nombre;
-      this.servicios = hospital.servicios;
-      if (this.servicios.length > 0) {
-        this.selectedServicio = this.servicios[0].id;
-      }
-      this.loadRegistrosMensuales(); // Llama aquí después de obtener los servicios
-    }, error => {
-      console.log(error);
-    });
+  private handleInvalidEfector(): void {
+    console.error('ID de efector inválido o no encontrado.');
+    this.router.navigateByUrl('/home-page');
   }
+
 
   generarDiasDelMes(): void {
     const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
@@ -176,59 +191,45 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateTableDataSource(): void {
+updateTableDataSource(): void {
+  this.dataSource.data = this.registrosMensuales;
+  this.dataSource.paginator = this.paginator;
+  this.dataSource.sort = this.sort;
+}
 
-    if (this.selectedServicio !== null && this.selectedServicio !== undefined) {
-      const servicioIdSeleccionado = Number(this.selectedServicio);
+loadRegistrosMensuales(): void {
+  const anio = this.selectedYear;
+  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+  const idEfector = this.efectorId;
 
-      // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
-      const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
-        registroMensual.registroActividad.some(registroActividad =>
-          registroActividad.servicio.id === servicioIdSeleccionado
-        )
-      );
-      this.dataSource.data = filteredRegistros;
-    } else {
-      this.dataSource.data = this.registrosMensuales;
-    }
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  if (idEfector === null) {
+    console.error("El ID del hospital no puede ser null");
+    return;
   }
 
-  loadRegistrosMensuales(): void {
-    const anio = this.selectedYear;
-    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.efectorId;
-    
-    console.log("id del efector que se usa para cargar reg mensuales"+ idEfector);
-
-    if (idEfector === null) {
-      console.error("El ID del hospital no puede ser null");
-      return; // ver de que manera manejar si sucede que sea null
-    }
-
-    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe(data => {
-      this.registrosMensuales = data;
-      this.updateTableDataSource(); // Filtrar los datos después de cargarlos
-    });
+  if (this.selectedServicio == null) {
+    // Todos los servicios
+    this.registroMensualService
+      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
+      .subscribe(data => {
+        this.registrosMensuales = data;
+        this.updateTableDataSource(); // Mostrar todos
+      });
+  } else {
+    // Servicio específico
+    this.registroMensualService
+      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
+      .subscribe(data => {
+        this.registrosMensuales = data;
+        this.updateTableDataSource(); // Mostrar filtrado
+      });
   }
+}
 
   updateDateAndLoadData(): void {
 
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
-  }
-
-  listServicio(): void {
-    this.servicioService.list().subscribe(data => {
-      this.servicios = data;
-      if (this.servicios.length > 0) {
-        this.selectedServicio = this.servicios[0].id;
-      }
-      this.updateDateAndLoadData();
-    }, error => {
-      console.log(error);
-    });
   }
 
   filterDataByDate(month: number, year: number): RegistroMensual[] {
@@ -254,16 +255,20 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-  openDetail(asistencial: Asistencial, selectedMonth: number, selectedYear: number): void {
-    this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
-      width: '600px',
-      data: {
-        asistencial,
-        month: selectedMonth,
-        year: selectedYear
-      }
-    });
-  }
+openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+  const dataToSend = {
+    asistencial,
+    month: selectedMonth,
+    year: selectedYear
+  };
+
+  console.log('🧾 Datos enviados al dialog:', dataToSend);
+
+  this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
+    width: '600px',
+    data: dataToSend
+  });
+}
 
   openDdjjConfirm(): void {
     const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
@@ -343,21 +348,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return '';
   }
   
-  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string, idNovedad: number } {
-    const dateMoment = moment(date).startOf('day');
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-  
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia : '',
-      idNovedad: novedadFound?.id ?? 0 
-    };
-  }*/
-
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
   
@@ -519,12 +509,12 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 }
 
 //aqui decia actual en vez de activo, revisar si corresponde
-getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
+getLegajoActualId(asistencial: Person): Legajo | undefined {
   const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Asistencial): NovedadPersonal[] {
+getNovedades(asistencial: Person): NovedadPersonal[] {
   return asistencial.novedadesPersonales;
 }
 

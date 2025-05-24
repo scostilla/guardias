@@ -8,8 +8,8 @@ export class NovedadPersonal {
         suplente : Asistencial;
         fechaInicio: Date;
         fechaFinal: Date;
-        horaInicio: moment.Moment;;
-        horaFinal: moment.Moment;;
+        horaInicio: string;
+        horaFinal: string;
         puedeRealizarGuardia: boolean;
         cobraSueldo: boolean;
         necesitaReemplazo: boolean;
@@ -23,8 +23,8 @@ export class NovedadPersonal {
             suplente : Asistencial,
             fechaInicio: Date,
             fechaFinal: Date,
-            horaInicio: moment.Moment,
-            horaFinal: moment.Moment,    
+            horaInicio: string,
+            horaFinal: string,    
             puedeRealizarGuardia: boolean,
             cobraSueldo: boolean,
             necesitaReemplazo: boolean,

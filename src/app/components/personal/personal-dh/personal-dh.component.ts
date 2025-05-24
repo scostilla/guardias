@@ -56,6 +56,10 @@ interface DistribucionOtroWithHoras extends DistribucionOtro {
   clase?: string;
 }
 
+interface Tipos {
+  value: string;
+  viewValue: string;
+}
 @Component({
   selector: 'app-personal-dh',
   templateUrl: './personal-dh.component.html',
@@ -110,6 +114,13 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   'SABADO': 'sábado',
   'DOMINGO': 'domingo'
 };
+
+  tipos: Tipos[] = [
+    { value: 'PASE_DE_SALA', viewValue: 'Pase de sala' },
+    { value: 'ATENEO', viewValue: 'Ateneo' },
+    { value: 'CONSULTORIO_EN_CAPS', viewValue: 'Consultorio en CAPS' },
+    { value: 'OTROS', viewValue: 'Otros' },
+  ];
 
   constructor(
     private asistencialService: AsistencialService,
@@ -688,7 +699,9 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       const horas = distribucion.cantidadHoras;
       const cantidadOcurrencias = ocurrenciasPorDia[dia];
       const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.descripcion}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+      const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
+      const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
+      const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
       totalHorasSinOcurrencias += horas;
   

@@ -1,4 +1,4 @@
-import { Asistencial } from "./Configuracion/Asistencial";
+import { Person } from "./Configuracion/Person";
 import { Efector } from "./Configuracion/Efector";
 import { RegistroActividad } from "./RegistroActividad";
 
@@ -6,7 +6,7 @@ export class RegistroMensual {
     id?: number;
     mes: string;
     anio: number;
-    asistencial: Asistencial;
+    asistencial: Person;
     activo: boolean;
     registroActividad: RegistroActividad[];
     efector: Efector;
@@ -14,7 +14,7 @@ export class RegistroMensual {
     constructor (
         mes: string, 
         anio: number, 
-        asistencial: Asistencial, 
+        asistencial: Person, 
         activo: boolean, 
         registroActividad: RegistroActividad[], 
         efector: Efector

@@ -17,6 +17,7 @@ export class NoAsistencialDto extends PersonDto {
     domicilio?: string,
     descripcion?: string,
     idLegajos?: number[],
+    idHabilitacionesGuardias?: number[],
     id?: number,
   ) {
     super(
@@ -31,6 +32,7 @@ export class NoAsistencialDto extends PersonDto {
       sexo,
       telefono,
       domicilio,
+      idHabilitacionesGuardias,
       id,
     );
 

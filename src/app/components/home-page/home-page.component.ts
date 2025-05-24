@@ -30,25 +30,18 @@ export class HomePageComponent implements OnInit {
   efectores: Efector[] = [];
 
   //Autenticación
-  isLogged = false;
-  roles: string[] =[];
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
   isAutoridad: boolean = false;
   userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
-  idPersona: number = 0;
+  idPersona: number | null = null;
   currentRole: string | null = null;
 
   selectedListEfectores: number | null = null;
   selectedEfector: EfectorSummaryDto | null = null;
   selectedEfectorDialog: string | null = null;
-  dropdownOpen: boolean = false;
 
   currentEfectorType: 'hospital' | 'ministerio' | 'caps' | null = null;
   showHospitalFeatures: boolean = false;
@@ -67,66 +60,31 @@ export class HomePageComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-    console.log('ngOnInit ejecutado');
-  
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
+ngOnInit(): void {
+  // Obtener rol actual
+  this.tokenService.currentRole$.subscribe(role => {
+    this.currentRole = role;
+    this.UserRoles();
 
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-     if (!this.currentRole) {
-      this.router.navigateByUrl('');
+    if (!this.currentRole) {
+      console.warn('No hay un rol seleccionado actualmente.');
     }
-  });  
+  });
 
-      console.log('Usuario logeado, token encontrado');
-  
-      const userId = this.tokenService.getUserIdFromToken();
-      console.log('ID del usuario logeado:', userId);
+  const userId = this.tokenService.getUserIdFromToken();
+  const idPersona = userId !== null ? Number(userId) : null;
 
-          // Obtener detalles del usuario
-    this.authService.detailPersonBasicPanel().subscribe(
-      (response: PersonBasicPanelDto) => {
-        this.usuarioPersona = response.id;
-
-        const idPersona = this.usuarioPersona;
-
-        // Log para mostrar el usuario y los efectores
-        console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        console.log('Efectores asociados:', this.nombresEfectores);
-      },
-      error => {
-        console.error('Error al obtener detalles del usuario:', error);
-      }
-    );
-  
-      // Selección de Efector según el rol
-      if (this.isDph || this.isSuper) {
-        // Carga los efectores para DPH o Super
-        this.loadEfectoresForDphOrSuper();
-      } else if (this.isAdministrativo) {
-        // Carga los efectores para Administrativos
-        this.loadEfectorForAdministrativo();
-      } else if (this.isAutoridad) {
-        // Carga los efectores para Autoridades
-        this.loadEfectoresForAutoridades(this.idPersona);
-        console.warn('El usuario no tiene un rol válido para proceder');
-      }
-
-    } else {
-      this.isLogged = false;
-      console.log('No hay token, el usuario no está logeado');
-      this.router.navigateByUrl('');
-      this.selectedEfector = null;
-      this.selectedListEfectores = null; 
-    }
+  // Cargar efectores según rol
+  if (this.isDph || this.isSuper) {
+    this.loadEfectoresForDphOrSuper();
+  } else if (this.isAdministrativo) {
+    this.loadEfectorForAdministrativo();
+  } else if (this.isAutoridad) {
+    this.loadEfectoresForAutoridades(idPersona!);
+  } else {
+    console.warn('El usuario no tiene un rol válido para proceder');
   }
+}
 
   // Roles a usar
   UserRoles(): void {
@@ -145,13 +103,12 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-// Método unificado que obtiene nombre y tipo
+// Obtener nombre del efector
 private getEfectorInfoById(efectorId: number): void {
-  // Reiniciamos valores
+  // Reiniciam valores
   this.selectedEfectorDialog = null;
   this.currentEfectorType = null;
 
-  // Intentamos primero con hospitales
   this.hospitalService.detailNombreAll(efectorId).subscribe({
     next: (hospital: EfectorHospitalDto) => {
       this.selectedEfectorDialog = hospital.nombre;
@@ -159,7 +116,6 @@ private getEfectorInfoById(efectorId: number): void {
       this.updateComponentVisibility();
     },
     error: () => {
-      // Si falla, intentamos con ministerios
       this.ministerioService.detailNombreAll(efectorId).subscribe({
         next: (ministerio: EfectorMinisterioDto) => {
           this.selectedEfectorDialog = ministerio.nombre;
@@ -167,7 +123,6 @@ private getEfectorInfoById(efectorId: number): void {
           this.updateComponentVisibility();
         },
         error: () => {
-          // Si falla, intentamos con CAPS
           this.capsService.detailNombreAll(efectorId).subscribe({
             next: (cap: EfectorCapsDto) => {
               this.selectedEfectorDialog = cap.nombre;
@@ -270,14 +225,11 @@ loadEfectoresForAutoridades(idPersona: number): void {
 loadEfectorForAdministrativo(): void {
   this.authService.detailPersonBasicPanel().subscribe(
     (response: PersonBasicPanelDto) => {
-      console.log('Respuesta de detailPersonBasicPanel:', response);
       if (response.efectores && response.efectores.length > 0) {
         this.selectedEfector = response.efectores[0];  // Solo tomamos el primer efector
         this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
-        console.log('Efector administrativo seleccionado:', this.selectedEfector);
-        /*this.fetchAsistenciales(this.selectedEfector.id);*/
       } else {
-        console.warn('No hay efectores disponibles para Administrativo');
+        console.warn('No hay efectores disponibles para el Administrativo');
         this.selectedEfector = null;
       }
     },
@@ -294,10 +246,6 @@ loadEfectorForAdministrativo(): void {
       this.efectorService.setCurrentEfectorId(selectedListEfectores);  // Guardamos el ID en el BehaviorSubject
       console.log('Efector seleccionado para DPH o Super:', selectedListEfectores);
     }
-  }
-
-  goToProfessionalForm() {
-    this.router.navigateByUrl('/professional-form');
   }
 
   onLogOut(): void {

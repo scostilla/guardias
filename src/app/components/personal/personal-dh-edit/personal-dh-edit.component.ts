@@ -29,6 +29,10 @@ import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionCon
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
+interface Tipos {
+  value: string;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-personal-dh-edit',
@@ -76,6 +80,12 @@ export class PersonalDhEditComponent {
 
   options: any[] | undefined;
   
+  tipos: Tipos[] = [
+    { value: 'PASE_DE_SALA', viewValue: 'Pase de sala' },
+    { value: 'ATENEO', viewValue: 'Ateneo' },
+    { value: 'CONSULTORIO_EN_CAPS', viewValue: 'Consultorio en CAPS' },
+    { value: 'OTROS', viewValue: 'Otros' },
+  ];
 
   constructor(
     public dialog: MatDialog,
@@ -368,13 +378,32 @@ export class PersonalDhEditComponent {
   }
 
   createOtro(): FormGroup {
-    return this.fb.group({
+    const grupo = this.fb.group({
       dia: ['', Validators.required],
-      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
+      cantidadHoras: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern(/^\d+(\.\d{1})?$/)
+      ]],
       horaIngreso: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      lugar: ['', Validators.required]
+      descripcion: [''], // inicialmente sin validadores
+      lugar: ['', Validators.required],
+      tipo: ['', Validators.required]
     });
+
+    // Reacciona al cambio del campo 'tipo' de esta instancia
+    grupo.get('tipo')?.valueChanges.subscribe((valor) => {
+      const descripcionControl = grupo.get('descripcion');
+      if (valor === 'OTROS') {
+        descripcionControl?.setValidators(Validators.required);
+      } else {
+        descripcionControl?.clearValidators();
+        descripcionControl?.setValue('');
+      }
+      descripcionControl?.updateValueAndValidity();
+    });
+
+    return grupo;
   }
 
   get otros() {
@@ -734,8 +763,9 @@ export class PersonalDhEditComponent {
                   fechaInicio,
                   fechaFinalizacion,
                   control.value.horaIngreso,
-                  control.value.descripcion,
-                  control.value.lugar
+                    control.value.descripcion ?? null,
+                    control.value.lugar,
+                    control.value.tipo,
               );
 
               savePromises.push(

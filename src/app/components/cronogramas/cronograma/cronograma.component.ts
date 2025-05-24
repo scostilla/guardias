@@ -180,7 +180,7 @@ export class CronogramaComponent {
     }
   }
 
-  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  //trae el nombre del efector esta en sesion
   loadEfectorName(): void { 
     if (this.efectorId) {
       this.hospitalService.detailNombreAll(this.efectorId).subscribe(

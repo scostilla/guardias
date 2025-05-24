@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row">
       <div class="col-10">
-        <div class="titulos" *ngIf="asistencial">Distribución horaria: <span class="titulos-second">{{asistencial.apellido}}, {{asistencial.nombre}}</span></div>
+        <div class="titulos" *ngIf="asistencial">Modificar distribución horaria: <span class="titulos-second">{{asistencial.apellido}}, {{asistencial.nombre}}</span></div>
       </div>
       <div class="col-2 m mt-3 d-flex justify-content-end">
         <button mat-fab class="button-primary" matTooltip="Volver atrás" (click)="cancel()">
@@ -319,20 +319,28 @@
                 <ngx-mat-timepicker #horaPicker4></ngx-mat-timepicker>
                 <mat-error *ngIf="otro?.get('horaIngreso')?.invalid && otroForm?.get('horaIngreso')?.touched">El campo es obligatorio (HH:mm).</mat-error>
               </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Tipo actividad</mat-label>
+                <mat-select formControlName="tipo">
+                  <mat-option *ngFor="let tipo of tipos" [value]="tipo.value">{{ tipo.viewValue }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="otro.get('tipo')?.hasError('required')">El campo es obligatorio.</mat-error>
+              </mat-form-field>
         
-              <mat-form-field>
+              <mat-form-field appearance="fill" *ngIf="otro.get('tipo')?.value === 'OTROS'">
                 <mat-label>Descripción</mat-label>
                 <input matInput formControlName="descripcion" />
                 <mat-error *ngIf="otro.get('descripcion')?.hasError('required')">El campo es obligatorio.</mat-error>
               </mat-form-field>
         
-              <mat-form-field>
+              <mat-form-field appearance="fill">
                 <mat-label>Lugar</mat-label>
                 <input matInput formControlName="lugar" />
                 <mat-error *ngIf="otro.get('lugar')?.hasError('required')">El campo es obligatorio.</mat-error>
               </mat-form-field>
         
-              <mat-form-field>
+              <mat-form-field appearance="fill">
                 <mat-label>Cantidad de horas</mat-label>
                 <input matInput formControlName="cantidadHoras" type="number" />
                 <mat-error *ngIf="otro.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>

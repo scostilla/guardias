@@ -57,4 +57,9 @@ import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
     validateForCreation(idPersona: number): Observable<boolean> {
       return this.httpClient.get<boolean>(`${this.autoridadURL}validar/${idPersona}`);
     }
+
+    // Validar si existe un legajo autoridad  activo para una persona
+    hasActiveAutoridadLegajo(idPersona: number): Observable<boolean> {
+      return this.httpClient.get<boolean>(`${this.autoridadURL}hasActiveAutoridadLegajo/${idPersona}`);
+    }
   }

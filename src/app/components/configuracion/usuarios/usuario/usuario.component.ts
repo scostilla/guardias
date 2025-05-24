@@ -11,7 +11,6 @@ import { ToastrService } from 'ngx-toastr';
 import { TokenService } from 'src/app/services/login/token.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 //Services
 
@@ -21,7 +20,6 @@ import { Usuario } from 'src/app/models/login/Usuario';
 //Componentes
 import { UsuarioDetailComponent } from '../usuario-detail/usuario-detail.component';
 import { UsuarioEditComponent } from '../usuario-edit/usuario-edit.component';
-import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-usuario',

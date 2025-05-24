@@ -269,7 +269,6 @@ import { RegistroActividadesEComponent } from './components/actividades/registro
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
-import { AutoridadSelectorComponent } from './components/personal/personal-contenido/autoridad-selector/autoridad-selector.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
@@ -493,7 +492,6 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     PersonalDhCreateComponent,
     PersonalDhDetailComponent,
     CronogramaCreateComponent,
-    AutoridadSelectorComponent,
     AsistencialFiltradoSelectorComponent,
     CronogramaPendienteComponent,
     AsistencialSelectorAllComponent,
