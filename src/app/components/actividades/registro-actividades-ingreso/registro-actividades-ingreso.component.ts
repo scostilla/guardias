@@ -213,7 +213,8 @@ export class RegistroActividadesIngresoComponent implements OnInit {
       const idPersona = registroData.idAsistencial;
 
       // 1. Verificar si puede hacer guardia
-      this.novedadPersonalService.puedeHacerGuardia(idPersona).subscribe({
+      const fechaConsulta = registroData.fechaIngreso.format('YYYY-MM-DD');
+      this.novedadPersonalService.puedeHacerGuardia(idPersona, fechaConsulta).subscribe({
         next: (puedeHacerGuardia: boolean) => {
           if (!puedeHacerGuardia) {
             this.mostrarError('El profesional tiene novedades que impiden realizar guardia');
