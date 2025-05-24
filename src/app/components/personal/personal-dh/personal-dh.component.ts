@@ -60,6 +60,7 @@ interface Tipos {
   value: string;
   viewValue: string;
 }
+
 @Component({
   selector: 'app-personal-dh',
   templateUrl: './personal-dh.component.html',
