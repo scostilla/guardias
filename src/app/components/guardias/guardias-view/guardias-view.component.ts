@@ -12,6 +12,7 @@ import * as moment from 'moment';
   templateUrl: './guardias-view.component.html',
   styleUrls: ['./guardias-view.component.css']
 })
+
 export class GuardiasViewComponent {
   hospitales: Hospital[]=[];
   fechaActual?: string;
