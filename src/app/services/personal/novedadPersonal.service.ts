@@ -5,7 +5,6 @@ import { tap } from 'rxjs/operators';
 import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { NovedadPersonal } from "src/app/models/personal/NovedadPersonal";
 
-
 @Injectable({
   providedIn: 'root'
 })
