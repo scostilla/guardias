@@ -351,11 +351,11 @@ const routes: Routes = [
 
 
   //Sección: Actividades
-  {path:"registro-diario",component: RegistroDiarioComponent},
+  {path:"registro-diario",component: RegistroDiarioComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent},
-  {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent},
-  {path:"registro-actividades-egreso", component: RegistroActividadesEgresoComponent },
+  {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
+  {path:"registro-actividades-egreso", component: RegistroActividadesEgresoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path:"registro-actividades-e", component: RegistroActividadesEComponent },
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
@@ -378,7 +378,7 @@ const routes: Routes = [
   {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
   {path: 'asistencial-filtrado-selector', component:AsistencialFiltradoSelectorComponent},
   {path: 'asistencial-create', component:AsistencialCreateComponent},
-  {path: 'asistencial', component:AsistencialComponent},
+  {path: 'asistencial', component:AsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
   {path: 'asistencial-edit', component:AsistencialEditComponent},
   {path: 'no-asistencial', component:NoAsistencialComponent},

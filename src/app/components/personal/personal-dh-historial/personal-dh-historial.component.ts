@@ -153,7 +153,7 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
           const fechaAnterior = fechaActual.clone().subtract(1, 'months');
           
           this.mesYanio = `${fechaAnterior.month() + 1}-${fechaAnterior.year()}`;  // Formato MM-YYYY
-          this.nombreMes = fechaActual.format('MMMM').toUpperCase();  // Nombre del mes
+          this.nombreMes = fechaAnterior.format('MMMM').toUpperCase();  // Nombre del mes
           this.anioSeleccionado = fechaAnterior.year();  // Año actual
           this.mesSeleccionado = fechaAnterior.month() + 1;  // Mes actual (1-12)
     

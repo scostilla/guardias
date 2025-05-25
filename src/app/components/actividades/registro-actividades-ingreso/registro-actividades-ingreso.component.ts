@@ -1,28 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { RegistroActividad } from 'src/app/models/RegistroActividad'; // Puedes eliminar esto si no lo necesitas
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+//import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+//import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/servicio.service';
+//import { ServicioService } from 'src/app/services/servicio.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
-import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/VerificacionTentativoResponseDto';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -32,8 +30,8 @@ import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/Verifi
 export class RegistroActividadesIngresoComponent implements OnInit {
   registroForm: FormGroup;
   tiposGuardias: TipoGuardia[] = [];
-  asistenciales: Asistencial[] = [];
-  servicios: Servicio[] = [];
+  //asistenciales: AsistencialSummaryDto[] = [];
+  servicios: ServicioSummaryDto[] = [];
   efectorId: number | null = null;
   efectorNombre: string | null = null; // Propiedad para almacenar el nombre del efector
   timeControl: FormControl = new FormControl();
@@ -41,13 +39,16 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   initialData: any;
   inputValue: string = '';
 
-  isLogged = false;
+  //Autenticación
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  isAutoridad: boolean = false;
   userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  ultimoRegistro: RegistroActividad | null = null;
-  usuarioPersona: number | null = null;
+  idPersona: number | null = null;
+  currentRole: string | null = null;
+
 
   constructor(
     private fb: FormBuilder,
@@ -55,15 +56,14 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     private cronogramaTentativoService: CronogramaTentativoService,
     private novedadPersonalService: NovedadPersonalService,
     private tipoGuardiaService: TipoGuardiaService,
-    private asistencialService: AsistencialService,
-    private servicioService: ServicioService,
+    //private asistencialService: AsistencialService,
+    private hospitalService: HospitalService,
+    private efectorService: EfectorService,
     private toastr: ToastrService,
     private router: Router,
     public dialog: MatDialog,
     private tokenService: TokenService,
-    private authService: AuthService,
     private route: ActivatedRoute,
-    private efectorService: EfectorService // Inyectar el servicio EfectorService
   ) {
     this.currentDate = new Date();
 
@@ -86,41 +86,27 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
+  // Obtener rol actual
+  this.tokenService.currentRole$.subscribe(role => {
+    this.currentRole = role;
+    this.UserRoles();
 
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:', this.userId);
-
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
+    if (!this.currentRole) {
+      console.warn('No hay un rol seleccionado actualmente.');
     }
-    // Obtener el ID efector del servicio
-    this.efectorId = this.efectorService.getCurrentEfectorId();
+  });
+
+  const userIdFromToken = this.tokenService.getUserIdFromToken();
+  this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+
+  this.efectorId = this.efectorService.getCurrentEfectorId();
 
     if (this.efectorId) {
       this.registroForm.patchValue({ idEfector: this.efectorId });
     }
 
     this.listTiposGuardias();
-    this.listAsistenciales();
+    /*this.listAsistenciales();*/
     this.listServicios();
   }
 
@@ -133,21 +119,35 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     });
   }
 
-  listAsistenciales(): void {
-    this.asistencialService.list().subscribe(data => {
+  /*listAsistenciales(): void {
+    this.asistencialService.listSummary().subscribe(data => {
       console.log('Lista de asistenciales de cargo:', data);
       this.asistenciales = data;
     }, error => {
       console.log(error);
     });
+  }*/
+
+    // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
   listServicios(): void {
-    this.servicioService.list().subscribe(data => {
-      console.log('Lista de servicios:', data);
+    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
-    }, error => {
-      console.log(error);
     });
   }
 
@@ -243,6 +243,11 @@ export class RegistroActividadesIngresoComponent implements OnInit {
 
   private guardarRegistro(registroData: any, idCronograma: number): void {
     const registroDto = this.crearRegistroDto(registroData, idCronograma);
+      console.log('📦 DTO enviado a guardar:', {
+    idCronograma,
+    registroDto,
+    modo: this.initialData?.id ? 'Actualización' : 'Creación'
+  });
     const observable = this.initialData?.id 
       ? this.registroActividadService.update(this.initialData.id, registroDto)
       : this.registroActividadService.save(registroDto);
@@ -320,9 +325,9 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  compareAsistencial(p1: Asistencial, p2: Asistencial): boolean {
+  /*compareAsistencial(p1: AsistencialSummaryDto, p2: AsistencialSummaryDto): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
+  }*/
 
   compareServicio(p1: Servicio, p2: Servicio): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;

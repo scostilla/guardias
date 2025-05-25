@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registro-diario',
@@ -11,46 +8,47 @@ import { Router } from '@angular/router';
 })
 export class RegistroDiarioComponent implements OnInit {
 
-  isLogged = false;
+  //Autenticación
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  isAutoridad: boolean = false;
   userId: number | null = null;
-  usuarioPersona: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
+  currentRole: string | null = null;
 
   constructor(
     private tokenService: TokenService,
-    private authService: AuthService,
-    private router: Router
   ) { }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
+  // Obtener rol actual
+  this.tokenService.currentRole$.subscribe(role => {
+    this.currentRole = role;
+    this.UserRoles();
 
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:', this.userId);
-
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
+    if (!this.currentRole) {
+      console.warn('No hay un rol seleccionado actualmente.');
     }
+  });
 
+  }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
 }

@@ -18,7 +18,6 @@ import { MinisterioService } from 'src/app/services/Configuracion/ministerio.ser
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { AsistencialEfectorRegistroActividadDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorRegistroActividadDto';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
@@ -31,7 +30,6 @@ import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-de
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
 import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
@@ -127,45 +125,15 @@ export class AsistencialComponent implements OnInit, OnDestroy {
       return; // Detener ejecución del código
     }
   
-    // Continuar solo si existe un idEfector
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
+  // Obtener rol actual
+  this.tokenService.currentRole$.subscribe(role => {
+    this.currentRole = role;
+    this.UserRoles();
 
-      // BehaviorSubject para obtener el rol seleccionado
-      this.tokenService.currentRole$.subscribe(role => {
-        this.currentRole = role;
-        this.UserRoles();  // Llamar a la función que determina los roles
-
-        // Si currentRole es false (null o vacío), redirige al login
-        if (!this.currentRole) {
-          this.router.navigateByUrl('');
-        }
-      });
-  
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:', this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-
-          // Log para mostrar el usuario
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
+    if (!this.currentRole) {
+      console.warn('No hay un rol seleccionado actualmente.');
     }
+  });
     
     // Llamar a listAsistencial solo si hay idEfector
     this.listAsistencial(this.efectorId);

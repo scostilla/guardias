@@ -302,19 +302,33 @@ openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): vo
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
-    const dateMoment = moment(date).startOf('day');
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-  
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
-    };
+isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
+  const dateMoment = moment(date).startOf('day');
+  console.log(`📅 Evaluando fecha: ${dateMoment.format('YYYY-MM-DD')}`);
+  console.log(`🧾 Novedades recibidas:`, novedades);
+
+  const novedadFound = novedades.find(novedad => {
+    const inicioMoment = moment(novedad.fechaInicio).startOf('day');
+    const finMoment = moment(novedad.fechaFinal).startOf('day');
+    
+    const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
+    
+    console.log(`🔍 Comparando con novedad: ${inicioMoment.format('YYYY-MM-DD')} a ${finMoment.format('YYYY-MM-DD')} → ${isBetween ? '✅ Dentro del rango' : '❌ Fuera del rango'}`);
+    
+    return isBetween;
+  });
+
+  if (novedadFound) {
+    console.log(`✅ Novedad encontrada: ${novedadFound.tipoLicencia.nombre}`);
+  } else {
+    console.log(`❌ No se encontró novedad para la fecha`);
   }
+
+  return {
+    isNovedad: !!novedadFound,
+    tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
+  };
+}
   
   getNovedadCssClass(tipoLicencia: string): string {
     return clases[tipoLicencia] || '';

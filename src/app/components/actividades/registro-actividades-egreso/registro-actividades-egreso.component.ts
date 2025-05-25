@@ -1,31 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RegistroActividad } from 'src/app/models/RegistroActividad'; // Puedes eliminar esto si no lo necesitas
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { RegistrosPendientes } from 'src/app/models/RegistrosPendientes';
-import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegSalidaDto';
-import * as moment from 'moment';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 @Component({
   selector: 'app-registro-actividades-egreso',
   templateUrl: './registro-actividades-egreso.component.html',
   styleUrls: ['./registro-actividades-egreso.component.css']
 })
+
 export class RegistroActividadesEgresoComponent implements OnInit {
   registroForm: FormGroup;
   tiposGuardias: TipoGuardia[] = [];
@@ -37,13 +34,16 @@ export class RegistroActividadesEgresoComponent implements OnInit {
   initialData: any;
   inputValue: string = '';
 
-  isLogged = false;
+
+  //Autenticación
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  isAutoridad: boolean = false;
   userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  ultimoRegistro: RegistroActividad | null = null;
-  usuarioPersona: number | null = null;
+  idPersona: number | null = null;
+  currentRole: string | null = null;
 
   registrosPendientes: RegistrosPendientes[] = [];
   registroSeleccionado: RegistroActividad | null = null;
@@ -55,14 +55,11 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     private fb: FormBuilder,
     private registroActividadService: RegistroActividadService,
     private tipoGuardiaService: TipoGuardiaService,
-    private asistencialService: AsistencialService,
     private toastr: ToastrService,
     private router: Router,
     public dialog: MatDialog,
     private tokenService: TokenService,
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    private efectorService: EfectorService
+    private efectorService: EfectorService,
   ) {
     //const fechaActual = new Date();
     //this.mesActual = 4;
@@ -82,47 +79,79 @@ export class RegistroActividadesEgresoComponent implements OnInit {
       //fechaEgreso: [fechaActual, Validators.required],
       eventEndTime: ['', Validators.required],
       idServicio: [''],
-      idUsuarioIngreso: ['']
-    });
+      idUsuarioIngreso: [''],},
+      { validators: this.validarFechaEgresoMayorOIgual() });
+    
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
+  // Obtener rol actual
+  this.tokenService.currentRole$.subscribe(role => {
+    this.currentRole = role;
+    this.UserRoles();
 
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:', this.userId);
-
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
+    if (!this.currentRole) {
+      console.warn('No hay un rol seleccionado actualmente.');
     }
-    // Obtener el ID efector del servicio
-    this.efectorId = this.efectorService.getCurrentEfectorId();
+  });
 
-    /* if (this.efectorId) {
+  const userIdFromToken = this.tokenService.getUserIdFromToken();
+  this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+
+  this.efectorId = this.efectorService.getCurrentEfectorId();
+
+   /* if (this.efectorId) {
       this.registroForm.patchValue({ idEfector: this.efectorId });
-    } */
+    }*/
 
     this.listTiposGuardias();
-    this.listAsistenciales();
+    //this.listAsistenciales();
   }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
+  }
+
+validarFechaEgresoMayorOIgual() {
+  return (formGroup: AbstractControl): { [key: string]: any } | null => {
+    const ingreso = formGroup.get('fechaIngreso')?.value;
+    const egreso = formGroup.get('fechaEgreso')?.value;
+
+    if (!ingreso || !egreso) return null;
+
+    const ingresoDate = new Date(ingreso);
+    const egresoDate = new Date(egreso);
+
+    if (egresoDate < ingresoDate) {
+      formGroup.get('fechaEgreso')?.setErrors({ fechaEgresoInvalida: true });
+      return { fechaEgresoInvalida: true };
+    } else {
+      const errors = formGroup.get('fechaEgreso')?.errors;
+      if (errors) {
+        delete errors['fechaEgresoInvalida'];
+        if (Object.keys(errors).length === 0) {
+          formGroup.get('fechaEgreso')?.setErrors(null);
+        } else {
+          formGroup.get('fechaEgreso')?.setErrors(errors);
+        }
+      }
+      return null;
+    }
+  };
+}
 
   listTiposGuardias(): void {
     this.tipoGuardiaService.list().subscribe(data => {
@@ -133,14 +162,14 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     });
   }
 
-  listAsistenciales(): void {
+  /*listAsistenciales(): void {
     this.asistencialService.list().subscribe(data => {
       console.log('Lista de asistenciales de cargo:', data);
       this.asistenciales = data;
     }, error => {
       console.log(error);
     });
-  }
+  }*/
 
   onTipoGuardiaChange(event: any): void {
     console.log("Tipo de guardia seleccionado:", event.value);
@@ -352,7 +381,11 @@ export class RegistroActividadesEgresoComponent implements OnInit {
         registroSalidaDto
       ).subscribe({
         next: () => {
-          this.toastr.success('Salida registrada correctamente');
+          this.toastr.success('Salida registrada correctamente', 'Éxito', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+        });
           this.router.navigate(['/registro-diario']);
         },
         error: (err) => {
@@ -374,9 +407,9 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  compareAsistencial(p1: Asistencial, p2: Asistencial): boolean {
+  /*compareAsistencial(p1: Asistencial, p2: Asistencial): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
+  }*/
 
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
