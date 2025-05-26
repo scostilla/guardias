@@ -1,16 +1,16 @@
 export class ConsultaLicenciaCompensatorioDto {
     idPersona: number;
-    fechaInicioConsulta: Date;
-    horaInicioConsulta: Date;
-    fechaFinConsulta: Date;
-    horaFinConsulta: Date;
+    fechaInicioConsulta: string;
+    horaInicioConsulta: string;
+    fechaFinConsulta: string;
+    horaFinConsulta: string;
 
     constructor(
         idPersona: number,
-        fechaInicioConsulta: Date,
-        horaInicioConsulta: Date,
-        fechaFinConsulta: Date,
-        horaFinConsulta: Date,
+        fechaInicioConsulta: string,
+        horaInicioConsulta: string,
+        fechaFinConsulta: string,
+        horaFinConsulta: string,
             ){
         this.idPersona = idPersona;
         this.fechaInicioConsulta = fechaInicioConsulta;

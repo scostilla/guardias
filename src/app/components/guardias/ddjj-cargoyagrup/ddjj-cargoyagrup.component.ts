@@ -27,22 +27,17 @@ import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHos
 
 
 interface ClasesNovedad {
-  Compensatorio: string;
-  'Licencia anual ordinaria': string;
-  Maternidad: string;
-  'Parte de enfermo': string;
-  'Familiar enfermo': string;
-  'Falta sin aviso': string;
   [key: string]: string;
 }
 
 const clases: ClasesNovedad = {
-  Compensatorio: 'novedad-personal-compensatorio',
-  'Licencia anual ordinaria': 'novedad-personal-lao',
-  Maternidad: 'novedad-personal-maternidad',
-  'Parte de enfermo': 'novedad-personal-parte-enfermo',
-  'Familiar enfermo': 'novedad-personal-familiar-enfermo',
-  'Falta sin aviso': 'novedad-personal-falta-sin-aviso'
+  'compensatorio': 'novedad-personal-compensatorio',
+  'licencia anual ordinaria': 'novedad-personal-lao',
+  'licencia por maternidad': 'novedad-personal-maternidad',
+  'parte por enfermedad': 'novedad-personal-parte-enfermo',
+  'parte por cuidado de familiar enfermo': 'novedad-personal-familiar-enfermo',
+  'falta sin aviso': 'novedad-personal-falta-sin-aviso',
+  'duelo': 'novedad-personal-duelo'
 };
 
 @Component({
@@ -304,25 +299,15 @@ openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): vo
 
 isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
   const dateMoment = moment(date).startOf('day');
-  console.log(`📅 Evaluando fecha: ${dateMoment.format('YYYY-MM-DD')}`);
-  console.log(`🧾 Novedades recibidas:`, novedades);
 
   const novedadFound = novedades.find(novedad => {
     const inicioMoment = moment(novedad.fechaInicio).startOf('day');
     const finMoment = moment(novedad.fechaFinal).startOf('day');
     
     const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    
-    console.log(`🔍 Comparando con novedad: ${inicioMoment.format('YYYY-MM-DD')} a ${finMoment.format('YYYY-MM-DD')} → ${isBetween ? '✅ Dentro del rango' : '❌ Fuera del rango'}`);
-    
+        
     return isBetween;
   });
-
-  if (novedadFound) {
-    console.log(`✅ Novedad encontrada: ${novedadFound.tipoLicencia.nombre}`);
-  } else {
-    console.log(`❌ No se encontró novedad para la fecha`);
-  }
 
   return {
     isNovedad: !!novedadFound,
@@ -331,21 +316,25 @@ isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoL
 }
   
   getNovedadCssClass(tipoLicencia: string): string {
-    return clases[tipoLicencia] || '';
+    const tipo = tipoLicencia.toLowerCase();
+    return clases[tipo] || 'novedad-personal-otros';
   }
 
   isNovedadClass(date: Date, registro: any): string {
-    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-    if (novedad.isNovedad) {
-      return this.getNovedadCssClass(novedad.tipoLicencia);
-    } else {
-      const holiday = this.isHoliday(date);
-      if (holiday.isHoliday) {
-        return 'holiday';
-      } else if (this.isWeekend(date)) {
-        return 'weekend';
-      }
+    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+
+    if (isNovedad) {
+      return this.getNovedadCssClass(tipoLicencia);
     }
+
+    if (this.isHoliday(date).isHoliday) {
+      return 'holiday';
+    }
+
+    if (this.isWeekend(date)) {
+      return 'weekend';
+    }
+
     return '';
   }
 
