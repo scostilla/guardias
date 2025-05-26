@@ -358,7 +358,7 @@ verLegajo(row: AsistencialListDto | NoAsistencialListDto): void {
     // Si el objeto es de tipo Asistencial
     if (row && (row as Asistencial).id) {
       this.router.navigate(['/legajo-person'], {
-        state: { asistencial: row, fromAsistencial: true }
+        state: { asistencial: row.id, fromAsistencial: true }
       });
     } else {
       console.error('El objeto asistencial no tiene un id.');
@@ -367,7 +367,7 @@ verLegajo(row: AsistencialListDto | NoAsistencialListDto): void {
     // Si el objeto es de tipo NoAsistencial
     if (row && (row as NoAsistencial).id) {
       this.router.navigate(['/legajo-person'], {
-        state: { noAsistencial: row, fromNoAsistencial: true }
+        state: { noAsistencial: row.id, fromNoAsistencial: true }
       });
     } else {
       console.error('El objeto no asistencial no tiene un id.');

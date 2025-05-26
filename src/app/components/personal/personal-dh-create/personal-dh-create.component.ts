@@ -865,6 +865,10 @@ calcularMeses(mesesSeleccionados: Array<{ nombre: string, fecha: moment.Moment }
     this.step = index;
   }
 
+  goToStep(numeroPaso: number): void {
+  this.step = numeroPaso;
+}
+
 get isMesVigenciaSelected(): boolean {
   return !!this.vigenciaForm.get('mesVigencia')?.value;
 }

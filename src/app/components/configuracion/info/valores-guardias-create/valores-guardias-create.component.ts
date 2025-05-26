@@ -88,6 +88,8 @@ export class ValoresGuardiasCreateComponent implements OnInit {
             documentoLegal: this.form?.get('documentoLegal')?.value
           };
 
+          console.log('Datos enviados para guardar ValorGmi:', valorGmi);
+
           this.valorGmiService.save(valorGmi).subscribe(
             response => {
               console.log('ValorGmi guardado exitosamente', response);
