@@ -26,10 +26,10 @@
                   <mat-icon>build</mat-icon>
                   <span>Configuraciones</span>
                 </button>
-                <button mat-menu-item routerLink="/home-profesional" *ngIf="isSuper">
+                <!--<button mat-menu-item routerLink="/home-profesional" *ngIf="isSuper">
                   <mat-icon>face</mat-icon>
                   <span>Home Profesional</span>
-                </button>
+                </button>-->
                 <button mat-menu-item routerLink="/usuario" *ngIf="isSuper">
                   <mat-icon>face</mat-icon>
                   <span>Usuarios</span>
@@ -49,10 +49,10 @@
                     {{ pendientesCount === 0 ? 'Sin pendientes' : 'Cronogramas pendientes' }}
                   </span>
                 </button>
-                <button mat-menu-item routerLink="/notificacion">
+                <!--<button mat-menu-item routerLink="/notificacion">
                   <mat-icon matBadge="{{notificacionesCount}}" matBadgeColor="warn">mail</mat-icon>
                   <span>Notificaciones</span>
-                </button>
+                </button>-->
                 <button mat-menu-item routerLink="/digesto">
                   <mat-icon>picture_as_pdf</mat-icon>
                   <span>Digesto</span>
