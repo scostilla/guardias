@@ -19,7 +19,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   showConfig: boolean = true;
 
   pendientesCount: number = 0;
-  notificacionesCount: number = 1;
+  notificacionesCount: number = 0;
   efectorId: number | null = null;
 
   //Autentificación

@@ -122,7 +122,7 @@ export class LoginComponent implements OnInit {
 
   // Redirigir al home según el rol
   redirectUserBasedOnRole(role: string): void {
-    if (role === 'ROLE_ADMIN' || role === 'ROLE_DPH' || role === 'ROLE_SUPERUSER') {
+    if (role === 'ROLE_ADMIN' || role === 'ROLE_DPH' || role === 'ROLE_SUPERUSER' || role === 'ROLE_AUTORIDAD') {
       this.router.navigate(['/home-page']);
     } else if (role === 'ROLE_USER') {
       this.router.navigate(['/home-profesional']);
