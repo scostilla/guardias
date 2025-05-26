@@ -625,8 +625,9 @@ const cronogramaCompensatorio = new ConsultaLicenciaCompensatorioDto(
 });
 console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronogramaRequest);
   this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaRequest).subscribe(
-    enGuardia => {
-      if (enGuardia) {
+    respuesta => {
+      console.log('Respuesta de existeTentativoEnDistribucionGuardia:', respuesta);
+      if (respuesta.coincideExactamente || respuesta.existeDistribucionParcial) {
                 const fechaIngreso = new Date(cronogramaDto.fechaIngreso);
                 const fechaConsulta = fechaIngreso.toISOString().split('T')[0];
                 
@@ -689,7 +690,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
           },
           error => this.handleError('verificar licencia LAO', error)
         );
-      } else {
+       } else if (respuesta.sinDistribucion) {
         this.distribucionConsultorioService.existeTentativoEnDistribucionConsultorio(cronogramaRequest).subscribe(
           enConsultorio => {
             if (enConsultorio) {
