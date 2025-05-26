@@ -7,7 +7,7 @@ import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/pag
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -17,7 +17,6 @@ import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
-import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -28,22 +27,17 @@ import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHos
 
 
 interface ClasesNovedad {
-  Compensatorio: string;
-  'Licencia anual ordinaria': string;
-  Maternidad: string;
-  'Parte de enfermo': string;
-  'Familiar enfermo': string;
-  'Falta sin aviso': string;
   [key: string]: string;
 }
 
 const clases: ClasesNovedad = {
-  Compensatorio: 'novedad-personal-compensatorio',
-  'Licencia anual ordinaria': 'novedad-personal-lao',
-  Maternidad: 'novedad-personal-maternidad',
-  'Parte de enfermo': 'novedad-personal-parte-enfermo',
-  'Familiar enfermo': 'novedad-personal-familiar-enfermo',
-  'Falta sin aviso': 'novedad-personal-falta-sin-aviso'
+  'compensatorio': 'novedad-personal-compensatorio',
+  'licencia anual ordinaria': 'novedad-personal-lao',
+  'licencia por maternidad': 'novedad-personal-maternidad',
+  'parte por enfermedad': 'novedad-personal-parte-enfermo',
+  'parte por cuidado de familiar enfermo': 'novedad-personal-familiar-enfermo',
+  'falta sin aviso': 'novedad-personal-falta-sin-aviso',
+  'duelo': 'novedad-personal-duelo'
 };
 
 @Component({
@@ -65,7 +59,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
-  asistenciales: any[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<DdjjCargoyagrupDetailComponent>;
@@ -122,6 +115,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       } else {
         this.handleInvalidEfector();
       }
+      this.selectedServicio = null;
   }
 
   //trae el nombre del efector esta en sesion
@@ -193,41 +187,39 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
 updateTableDataSource(): void {
-  if (this.selectedServicio != null) {
-    const servicioIdSeleccionado = this.selectedServicio;
-
-    // 🔍 Filtro por servicio específico
-    this.dataSource.data = this.registrosMensuales.filter(registroMensual =>
-      registroMensual.registroActividad.some(registroActividad =>
-        registroActividad.servicio.id === servicioIdSeleccionado
-      )
-    );
-  } else {
-    // ✅ Mostrar todos los registros si se selecciona "Todos"
-    this.dataSource.data = this.registrosMensuales;
-  }
-
+  this.dataSource.data = this.registrosMensuales;
   this.dataSource.paginator = this.paginator;
   this.dataSource.sort = this.sort;
 }
 
-  loadRegistrosMensuales(): void {
-    const anio = this.selectedYear;
-    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.efectorId;
-    
-    console.log("id del efector que se usa para cargar reg mensuales"+ idEfector);
+loadRegistrosMensuales(): void {
+  const anio = this.selectedYear;
+  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+  const idEfector = this.efectorId;
 
-    if (idEfector === null) {
-      console.error("El ID del hospital no puede ser null");
-      return; // ver de que manera manejar si sucede que sea null
-    }
-
-    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector).subscribe(data => {
-      this.registrosMensuales = data;
-      this.updateTableDataSource(); // Filtrar los datos después de cargarlos
-    });
+  if (idEfector === null) {
+    console.error("El ID del hospital no puede ser null");
+    return;
   }
+
+  if (this.selectedServicio == null) {
+    // Todos los servicios
+    this.registroMensualService
+      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
+      .subscribe(data => {
+        this.registrosMensuales = data;
+        this.updateTableDataSource(); // Mostrar todos
+      });
+  } else {
+    // Servicio específico
+    this.registroMensualService
+      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
+      .subscribe(data => {
+        this.registrosMensuales = data;
+        this.updateTableDataSource(); // Mostrar filtrado
+      });
+  }
+}
 
   updateDateAndLoadData(): void {
 
@@ -258,16 +250,20 @@ updateTableDataSource(): void {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-  openDetail(asistencial: Asistencial, selectedMonth: number, selectedYear: number): void {
-    this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
-      width: '600px',
-      data: {
-        asistencial,
-        month: selectedMonth,
-        year: selectedYear
-      }
-    });
-  }
+openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+  const dataToSend = {
+    asistencial,
+    month: selectedMonth,
+    year: selectedYear
+  };
+
+  console.log('🧾 Datos enviados al dialog:', dataToSend);
+
+  this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
+    width: '600px',
+    data: dataToSend
+  });
+}
 
   openDdjjConfirm(): void {
     const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
@@ -301,36 +297,44 @@ updateTableDataSource(): void {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
-    const dateMoment = moment(date).startOf('day');
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-  
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
-    };
-  }
+isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
+  const dateMoment = moment(date).startOf('day');
+
+  const novedadFound = novedades.find(novedad => {
+    const inicioMoment = moment(novedad.fechaInicio).startOf('day');
+    const finMoment = moment(novedad.fechaFinal).startOf('day');
+    
+    const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
+        
+    return isBetween;
+  });
+
+  return {
+    isNovedad: !!novedadFound,
+    tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
+  };
+}
   
   getNovedadCssClass(tipoLicencia: string): string {
-    return clases[tipoLicencia] || '';
+    const tipo = tipoLicencia.toLowerCase();
+    return clases[tipo] || 'novedad-personal-otros';
   }
 
   isNovedadClass(date: Date, registro: any): string {
-    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-    if (novedad.isNovedad) {
-      return this.getNovedadCssClass(novedad.tipoLicencia);
-    } else {
-      const holiday = this.isHoliday(date);
-      if (holiday.isHoliday) {
-        return 'holiday';
-      } else if (this.isWeekend(date)) {
-        return 'weekend';
-      }
+    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+
+    if (isNovedad) {
+      return this.getNovedadCssClass(tipoLicencia);
     }
+
+    if (this.isHoliday(date).isHoliday) {
+      return 'holiday';
+    }
+
+    if (this.isWeekend(date)) {
+      return 'weekend';
+    }
+
     return '';
   }
 
@@ -347,21 +351,6 @@ updateTableDataSource(): void {
     return '';
   }
   
-  /*isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string, idNovedad: number } {
-    const dateMoment = moment(date).startOf('day');
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-  
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia : '',
-      idNovedad: novedadFound?.id ?? 0 
-    };
-  }*/
-
   calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
     let output = '';
   
@@ -523,12 +512,12 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 }
 
 //aqui decia actual en vez de activo, revisar si corresponde
-getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
+getLegajoActualId(asistencial: Person): Legajo | undefined {
   const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Asistencial): NovedadPersonal[] {
+getNovedades(asistencial: Person): NovedadPersonal[] {
   return asistencial.novedadesPersonales;
 }
 

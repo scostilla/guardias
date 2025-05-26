@@ -263,6 +263,9 @@ import { SelectorRolesComponent } from './components/login/selector-roles/select
 import { AutoridadListComponent } from './components/personal/personal-contenido/autoridad-list/autoridad-list.component';
 import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
+
+import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
+
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
@@ -482,6 +485,10 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     AutoridadListComponent,
     PersonalAutoridadListComponent,
     PersonalDhEditComponent,
+
+    AsistencialFiltradoSelectorComponent,
+    RegistroActividadesEComponent,
+    
     PersonalDhCreateComponent,
     PersonalDhDetailComponent,
     CronogramaCreateComponent,

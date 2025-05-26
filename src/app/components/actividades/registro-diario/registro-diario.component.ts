@@ -1,66 +1,54 @@
-import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PopupComponent } from '../../popup/popup.component';
-import { ProfessionalDataServiceService } from '../../../services/ProfessionalDataService/professional-data-service.service';
-
+import { Component, OnInit } from '@angular/core';
+import { TokenService } from 'src/app/services/login/token.service';
 
 @Component({
   selector: 'app-registro-diario',
   templateUrl: './registro-diario.component.html',
   styleUrls: ['./registro-diario.component.css']
 })
-export class RegistroDiarioComponent {
-  selectedService:string='consultorio';
-  selectedGuard: string = '';
-  disableButton: boolean = this.selectedGuard == '';
-  selectedRevista: string = 'servicio';
-  selectedGuardia: string = 'revista';
+export class RegistroDiarioComponent implements OnInit {
 
-  updateButtonState(): void {
-    if (this.selectedGuard == '') {
-      this.disableButton = true;
-      console.log('true option ' + this.disableButton);
+  //Autenticación
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  isAutoridad: boolean = false;
+  userId: number | null = null;
+  currentRole: string | null = null;
+
+  constructor(
+    private tokenService: TokenService,
+  ) { }
+
+  ngOnInit(): void {
+  // Obtener rol actual
+  this.tokenService.currentRole$.subscribe(role => {
+    this.currentRole = role;
+    this.UserRoles();
+
+    if (!this.currentRole) {
+      console.warn('No hay un rol seleccionado actualmente.');
+    }
+  });
+
+  }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
     } else {
-      this.disableButton = false;
-      console.log('false option ' + this.disableButton);
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
   }
 
-  constructor(
-    private dialog: MatDialog,
-    private professionalDataService: ProfessionalDataServiceService,
-    public dialogRef: MatDialogRef<RegistroDiarioComponent>,
-  ) {}
-
-  openPopup(componentParameter: any) {
-    const dialogRef = this.dialog.open(PopupComponent, {
-      width: '1000px',
-    });
-
-    dialogRef.componentInstance.componentParameter = componentParameter;
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('popup closed');
-    });
-  }
-  selectedId: string | undefined;
-  selectedCuil: string | undefined;
-  selectedNombre: string | undefined;
-  selectedApellido: string | undefined;
-  selectedProfesion: string | undefined;
-
-  ngOnInit() {
-
-    this.professionalDataService.dataUpdated.subscribe(() => {
-      this.selectedId = this.professionalDataService.selectedId;
-      this.selectedCuil = this.professionalDataService.selectedCuil;
-      this.selectedNombre = this.professionalDataService.selectedNombre;
-      this.selectedApellido = this.professionalDataService.selectedApellido;
-      this.selectedProfesion = this.professionalDataService.selectedProfesion;
-    });
-  }
-
-  cancel() {
-    this.dialogRef.close();
-  }
 }

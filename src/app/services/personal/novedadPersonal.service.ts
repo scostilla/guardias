@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { NovedadPersonal } from "src/app/models/personal/NovedadPersonal";
+import { ConsultaLicenciaCompensatorioDto } from 'src/app/dto/personal/ConsultaLicenciaCompensatorioDto';
 
 
 @Injectable({
@@ -66,13 +67,13 @@ puedeHacerGuardia(idPersona: number, fechaConsulta: string): Observable<boolean>
 }
 
 // Verificar si una persona tiene LAO
-tieneLicenciaLAO(idPersona: number): Observable<boolean> {
-  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaLAO/${idPersona}`);
+tieneLicenciaLAO(idPersona: number, fechaConsulta: string): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaLAO/${idPersona}/${fechaConsulta}`);
 }
 
 // Verificar si una persona tiene Compensatorio
-tieneLicenciaCompensatorio(idPersona: number): Observable<boolean> {
-  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaCompensatorio/${idPersona}`);
+tieneLicenciaCompensatorio(dto: ConsultaLicenciaCompensatorioDto): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaCompensatorio`);
 }
 
 }

@@ -1,7 +1,7 @@
 export class CronogramaTentativoResquestDto {
     idAsistencial: number;
     idEfector: number;
-    tipoGuardia: number;
+    tipoGuardia: string;
     fechaIngreso: Date;
     horaIngreso: Date;
     horaEgreso: Date;
@@ -9,7 +9,7 @@ export class CronogramaTentativoResquestDto {
     constructor(
         idAsistencial: number,
         idEfector: number,
-        tipoGuardia: number,
+        tipoGuardia: string,
         fechaIngreso: Date,
         horaIngreso: Date,
         horaEgreso: Date,

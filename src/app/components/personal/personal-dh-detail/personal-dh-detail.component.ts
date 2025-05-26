@@ -2,16 +2,29 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as moment from 'moment';
 
+interface Tipos {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-personal-dh-detail',
   templateUrl: './personal-dh-detail.component.html',
   styleUrls: ['./personal-dh-detail.component.css']
 })
+
 export class PersonalDhDetailComponent {
 
   displayedColumns: string[] = [];
   dataSource: any[] = [];
   fechaInicioFormateada!: string;
+
+  tipos: Tipos[] = [
+    { value: 'PASE_DE_SALA', viewValue: 'Pase de sala' },
+    { value: 'ATENEO', viewValue: 'Ateneo' },
+    { value: 'CONSULTORIO_EN_CAPS', viewValue: 'Consultorio en CAPS' },
+    { value: 'OTROS', viewValue: 'Otros' },
+  ];
 
   constructor(
     public dialogRef: MatDialogRef<PersonalDhDetailComponent>,
@@ -48,11 +61,15 @@ formatearFecha(fechaInicio: string): string {
         this.displayedColumns = ['dia', 'horaIngreso', 'puestoSalud', 'cantidadHoras'];
         break;
       case 'otro':
-        this.displayedColumns = ['dia', 'horaIngreso', 'descripcion', 'lugar', 'cantidadHoras'];
+        this.displayedColumns = ['dia', 'horaIngreso', 'tipo', 'descripcion', 'lugar', 'cantidadHoras'];
         break;
       default:
         this.displayedColumns = ['dia', 'horaIngreso', 'cantidadHoras'];  // En caso de un tipo no reconocido
     }
+  }
+
+  getTipoViewValue(value: string): string {
+  return this.tipos.find(t => t.value === value)?.viewValue || value;
   }
 
   cerrar(): void {

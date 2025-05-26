@@ -26,8 +26,21 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
     this.year = data.year;
   }
 
-  ngOnInit(): void {
-  }
+ngOnInit(): void {
+  console.log('📌 Datos recibidos en el dialog:', this.data);
+  console.log('🧑‍⚕️ Asistencial:', this.asistencial);
+  console.log('📅 Mes seleccionado:', this.month);
+  console.log('📅 Año seleccionado:', this.year);
+
+  const legajo = this.getLegajoActualId(this.asistencial);
+  console.log('🆔 Legajo actual:', legajo);
+
+  const novedades = this.getNovedades(this.asistencial);
+  console.log('🗒️ Todas las novedades personales:', novedades);
+
+  const novedadesActivas = this.getNovedadesActivas(this.asistencial);
+  console.log('✅ Novedades activas en el mes/año seleccionado:', novedadesActivas);
+}
   
   //aqui decia actual en vez de activo, luego revisar este metodo y su uso
   getLegajoActualId(asistencial: Asistencial): Legajo | undefined {

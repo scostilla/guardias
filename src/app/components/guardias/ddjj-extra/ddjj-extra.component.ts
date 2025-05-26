@@ -7,7 +7,7 @@ import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/pag
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -15,34 +15,28 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { Efector } from 'src/app/models/Configuracion/Efector';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+
 
 interface ClasesNovedad {
-  Compensatorio: string;
-  'Licencia anual ordinaria': string;
-  Maternidad: string;
-  'Parte de enfermo': string;
-  'Familiar enfermo': string;
-  'Falta sin aviso': string;
   [key: string]: string;
 }
 
 const clases: ClasesNovedad = {
-  Compensatorio: 'novedad-personal-compensatorio',
-  'Licencia anual ordinaria': 'novedad-personal-lao',
-  Maternidad: 'novedad-personal-maternidad',
-  'Parte de enfermo': 'novedad-personal-parte-enfermo',
-  'Familiar enfermo': 'novedad-personal-familiar-enfermo',
-  'Falta sin aviso': 'novedad-personal-falta-sin-aviso'
+  'compensatorio': 'novedad-personal-compensatorio',
+  'licencia anual ordinaria': 'novedad-personal-lao',
+  'licencia por maternidad': 'novedad-personal-maternidad',
+  'parte por enfermedad': 'novedad-personal-parte-enfermo',
+  'parte por cuidado de familiar enfermo': 'novedad-personal-familiar-enfermo',
+  'falta sin aviso': 'novedad-personal-falta-sin-aviso',
+  'duelo': 'novedad-personal-duelo'
 };
 
 @Component({
@@ -64,8 +58,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
-  asistenciales: any[] = [];
-  servicios: Servicio[] = []; 
+  servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<DdjjExtraDetailComponent>;
 
@@ -75,8 +68,6 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024, 2025];
 
-  selectedHospitalId: number | null = null;
-  selectedHospitalNombre: string = '';
   botonDph = true;
   revisandoDPH: boolean = false;
   efectorId: number | null = null;
@@ -87,12 +78,10 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   constructor(
     private registroMensualService: RegistroMensualService,
     private feriadoService: FeriadoService,
-    private servicioService: ServicioService, 
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
-    private route: ActivatedRoute,
     private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -118,87 +107,70 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       this.feriados = feriados;
     });
 
-    this.obtenerParametroRuta();
     this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
+      if (this.efectorId) {
+        this.loadEfectorName(); 
+        this.loadHospitalDetails();
+      } else {
+        this.handleInvalidEfector();
+      }
+      this.selectedServicio = null;
   }
 
-  //trae el nombre del efector esta en sesion que filtra lo mostrado
-  loadEfectorName(): void {
+  //trae el nombre del efector esta en sesion
+  loadEfectorName(): void { 
     if (this.efectorId) {
-      this.hospitalService.getById(this.efectorId).subscribe(
-        (efector: Efector) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
+      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
+        (efector: EfectorHospitalDto) => {
+
+          if (efector) {
+            this.efectorNombre = efector.nombre;
+          } else {
+            this.handleInvalidEfector();
+          }
         },
         (error) => {
-          console.error('Error al obtener el efector:', error);
-          this.efectorNombre = null;
+          console.error('Error al obtener el efector desde el servicio:', error);
+          this.handleInvalidEfector();
         }
       );
+    } else {
+      this.handleInvalidEfector();
     }
   }
 
-  obtenerParametroRuta(){
-    // Obtener el parámetro de la ruta
-    this.route.queryParams.subscribe(params => {
-      this.selectedHospitalId = params['hospital'] ? +params['hospital'] : null;
-      if (this.selectedHospitalId) {
-        this.loadHospitalDetails(this.selectedHospitalId);
-      }
-    });
-  }
-
-  loadHospitalDetails(hospitalId: number) {
-    this.hospitalService.getById(hospitalId).subscribe(hospital => {
-      this.selectedHospitalNombre = hospital.nombre;
-      this.servicios = hospital.servicios;
-      if (this.servicios.length > 0) {
-        this.selectedServicio = this.servicios[0].id;
-      }
-      this.loadRegistrosMensuales(); // Llama aquí después de obtener los servicios
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  loadRegistrosMensuales(): void {
-    const anio = this.selectedYear;
-    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.efectorId;
-  
-    if (idEfector === null) {
-      console.error("El ID del hospital no puede ser null");
+  loadHospitalDetails(): void {
+    if (!this.efectorId) {
+      console.error('No hay efectorId disponible');
       return;
     }
-  
-    this.registroMensualService.listByYearMonthEfectorAndTipoGuardiaExtra(anio, mes, idEfector).subscribe(data => {
-      this.registrosMensuales = data.filter(registro => 
-        registro.registroActividad.some(registroActividad => 
-          registroActividad.tipoGuardia.id === 3
-        )
-      );
-      this.updateTableDataSource(); // Llama aquí después de obtener los registros
-    });
+
+    console.log('Llamando a getServiciosActivos con efectorId:', this.efectorId);
+
+    this.hospitalService.getServiciosActivos(this.efectorId).subscribe(
+      (servicios) => {
+        console.log('Servicios recibidos del backend:', servicios);
+
+        this.servicios = servicios.map(s => new ServicioSummaryDto(s.id, s.descripcion));
+
+        console.log('Servicios mapeados:', this.servicios);
+
+        if (this.servicios.length > 0) {
+        }
+
+        this.loadRegistrosMensuales();
+      },
+      (error) => {
+        console.error('Error al obtener servicios activos del hospital:', error);
+      }
+    );
   }
 
-  updateTableDataSource(): void {
-    if (this.selectedServicio !== null && this.selectedServicio !== undefined) {
-      const servicioIdSeleccionado = Number(this.selectedServicio);
-
-      // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
-      const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
-        registroMensual.registroActividad.some(registroActividad =>
-          registroActividad.servicio.id === servicioIdSeleccionado
-        )
-      );
-      this.dataSource.data = filteredRegistros;
-    } else {
-      this.dataSource.data = this.registrosMensuales;
-    }
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  private handleInvalidEfector(): void {
+    console.error('ID de efector inválido o no encontrado.');
+    this.router.navigateByUrl('/home-page');
   }
+
 
   generarDiasDelMes(): void {
     const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
@@ -212,23 +184,46 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       day.add(1, 'day');
     }
   }
-  
+
+updateTableDataSource(): void {
+  this.dataSource.data = this.registrosMensuales;
+  this.dataSource.paginator = this.paginator;
+  this.dataSource.sort = this.sort;
+}
+
+loadRegistrosMensuales(): void {
+  const anio = this.selectedYear;
+  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+  const idEfector = this.efectorId;
+
+  if (idEfector === null) {
+    console.error("El ID del hospital no puede ser null");
+    return;
+  }
+
+  if (this.selectedServicio == null) {
+    // Todos los servicios
+    this.registroMensualService
+      .listByYearMonthEfectorAndTipoGuardiaExtra(anio, mes, idEfector)
+      .subscribe(data => {
+        this.registrosMensuales = data;
+        this.updateTableDataSource(); // Mostrar todos
+      });
+  } else {
+    // Servicio específico
+    this.registroMensualService
+      .listByYearMonthEfectorAndTipoGuardiaExtraService(anio, mes, idEfector, this.selectedServicio)
+      .subscribe(data => {
+        this.registrosMensuales = data;
+        this.updateTableDataSource(); // Mostrar filtrado
+      });
+  }
+}
+
   updateDateAndLoadData(): void {
 
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
-  }
-
-  listServicio(): void {
-    this.servicioService.list().subscribe(data => {
-      this.servicios = data;
-      if (this.servicios.length > 0) {
-        this.selectedServicio = this.servicios[0].id;
-      }
-      this.updateDateAndLoadData();
-    }, error => {
-      console.log(error);
-    });
   }
 
   filterDataByDate(month: number, year: number): RegistroMensual[] {
@@ -254,16 +249,20 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-  openDetail(asistencial: Asistencial, selectedMonth: number, selectedYear: number): void {
-    this.dialogRef = this.dialog.open(DdjjExtraDetailComponent, {
-      width: '600px',
-      data: {
-        asistencial,
-        month: selectedMonth,
-        year: selectedYear
-      }
-    });
-  }
+openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+  const dataToSend = {
+    asistencial,
+    month: selectedMonth,
+    year: selectedYear
+  };
+
+  console.log('🧾 Datos enviados al dialog:', dataToSend);
+
+  this.dialogRef = this.dialog.open(DdjjExtraDetailComponent, {
+    width: '600px',
+    data: dataToSend
+  });
+}
 
   openDdjjConfirm(): void {
     const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
@@ -277,6 +276,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
     const dateMoment = moment(date).startOf('day');
@@ -296,36 +296,44 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
-    const dateMoment = moment(date).startOf('day');
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-  
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
-    };
-  }
+isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
+  const dateMoment = moment(date).startOf('day');
+
+  const novedadFound = novedades.find(novedad => {
+    const inicioMoment = moment(novedad.fechaInicio).startOf('day');
+    const finMoment = moment(novedad.fechaFinal).startOf('day');
+    
+    const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
+        
+    return isBetween;
+  });
+
+  return {
+    isNovedad: !!novedadFound,
+    tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
+  };
+}
   
   getNovedadCssClass(tipoLicencia: string): string {
-    return clases[tipoLicencia] || '';
+    const tipo = tipoLicencia.toLowerCase();
+    return clases[tipo] || 'novedad-personal-otros';
   }
 
   isNovedadClass(date: Date, registro: any): string {
-    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-    if (novedad.isNovedad) {
-      return this.getNovedadCssClass(novedad.tipoLicencia);
-    } else {
-      const holiday = this.isHoliday(date);
-      if (holiday.isHoliday) {
-        return 'holiday';
-      } else if (this.isWeekend(date)) {
-        return 'weekend';
-      }
+    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+
+    if (isNovedad) {
+      return this.getNovedadCssClass(tipoLicencia);
     }
+
+    if (this.isHoliday(date).isHoliday) {
+      return 'holiday';
+    }
+
+    if (this.isWeekend(date)) {
+      return 'weekend';
+    }
+
     return '';
   }
 
@@ -341,10 +349,10 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     }
     return '';
   }
-
-  calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-    let output = '';
   
+  calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string { 
+    let output = '';
+
     const registro = registroActividades.find((actividad) => {
       const ingresoDate = moment(actividad.fechaIngreso);
       return ingresoDate.isSame(date, 'day');
@@ -357,7 +365,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         return 'sin egreso';
       }
     }
-    // Si hay fechas de ingreso y egreso, calcular las horas
+
     if (registro.fechaIngreso && registro.fechaEgreso) {
       const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
       const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
@@ -366,11 +374,9 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         const diffHours = hoursOut.diff(hoursIn, 'hours', true);
 
         if (diffHours > 0) {
-          // Obtener el color de la fuente según el tipoGuardia
-          const color = this.getColor(registro.tipoGuardia);
-          // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
+          // Color fijo para todos los tipos de guardia
+          const color = '#fcc932';
           output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`;
-          //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
         } else {
           output = '0';
         }
@@ -378,18 +384,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         output = 'Datos inválidos';
       }
     }
-    return output;
-  }
 
-  getColor(tipoGuardia: TipoGuardia): string {
-    if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 1) {
-        return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.id === 2) {
-        return '#F4AF88'; // Color para REAGRUPACION DE HS
-      }
-    }
-    return ''; // Color por defecto
+    return output;
   }
   
   calculateHoursColor(registroActividad: RegistroActividad[], date: Date): string {
@@ -398,19 +394,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       return ingresoDate.isSame(date, 'day');
     });
 
-    if (!registro) {
-      return '';
-    }
-
-    const tipoGuardia = registro.tipoGuardia;
-    if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 3) {
-        return '#fcc932'; // Color para CARGO
-      } else if (tipoGuardia.id === 2) {
-        return '#F4AF88'; // Color para REAGRUPACION DE HS
-      }
-    }
-    return ''; // Color por defecto
+    // Si hay un registro en la fecha, usar el color fijo
+    return registro ? '#fcc932' : '';
   }
 
   calculateTotalHoursForRow(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
@@ -502,13 +487,13 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
   return output;
 }
 
-//verificar, aqui decia actual en vez de activo
-getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
+//aqui decia actual en vez de activo, revisar si corresponde
+getLegajoActualId(asistencial: Person): Legajo | undefined {
   const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Asistencial): NovedadPersonal[] {
+getNovedades(asistencial: Person): NovedadPersonal[] {
   return asistencial.novedadesPersonales;
 }
 
@@ -563,7 +548,6 @@ exportarAExcel() {
 
     exportData['Novedades'] = novedadesString || '-';
 
-    // Calcular los totales y agregarlos al objeto exportData
     const totalMes = this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear);
     const totalLV = this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
     const totalSD = this.calculateWeekendsTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
@@ -579,7 +563,7 @@ exportarAExcel() {
     worksheet.addRow(Object.values(exportData));
   });
 
-  const fileName = `ddjj-extra_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+  const fileName = `ddjj-Extra_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
 
   worksheet.eachRow((row, rowNumber) => {
     row.eachCell((cell, colNumber) => {

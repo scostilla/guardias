@@ -8,6 +8,7 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 import { Subscription } from 'rxjs';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 
 @Component({
   selector: 'app-asistencial-filtrado-selector',
@@ -30,6 +31,7 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private asistencialService: AsistencialService,
+    private habilitacionesGuardiaService: HabilitacionesGuardiasService,
     public dialogRef: MatDialogRef<AsistencialFiltradoSelectorComponent>,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -54,16 +56,26 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
   }
 
   loadAsistenciales() {
-    // Desestructura los parámetros del objeto 'data'
     const { idEfector, tipoGuardia } = this.data;
+
+    // Verifico el tipo de guardia para traer lista de asistenciales desde habilitaciones guardia
+    const esTipoAlternativo = ['EXTRA', 'CONTRAFACTURA'].includes(tipoGuardia);
 
     switch (this.data.mode) {
       case AsistencialMode.INGRESO:
-        this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(asistenciales => {
-          this.dataSource = new MatTableDataSource(asistenciales);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
+        if (esTipoAlternativo) {
+          this.habilitacionesGuardiaService.listAsistencialesByEfectorAndTG(idEfector, tipoGuardia).subscribe(asistenciales => {
+            this.dataSource = new MatTableDataSource(asistenciales);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          });
+        } else {
+          this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(asistenciales => {
+            this.dataSource = new MatTableDataSource(asistenciales);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          });
+        }
         break;
 
       case AsistencialMode.SALIDA:
@@ -137,4 +149,5 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
     this.suscription?.unsubscribe();
     //this.efectorIdSubscription?.unsubscribe();
   }
+  
 }

@@ -46,7 +46,7 @@
       <!-- Page Features-->
       <div class="row mb-4 ">
         <div class="col-lg" >
-          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-actividades">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-diario">
             <div class="icon1_btnMenu">
               <img class="img-fluid" src="/assets/img/i_actividades.png" />
             </div>
@@ -90,17 +90,20 @@
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/disponibilidad">
+          <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="true">
+          <!--<div class="btnMenu card border-0 align-items-center" type="button" routerLink="/disponibilidad">-->
             <div class="icon5_btnMenu">
               <img class="img-fluid" src="/assets/img/i_disponibilidad.png" />
             </div>
             <div class="card-body text-center">
-              <h2 class="fs-4 fw-bold" routerLink="/disponibilidad"><span>RRHH DISPONIBLE</span></h2>
+              <h2 class="fs-4 fw-bold"><span>RRHH DISPONIBLE</span></h2>
+              <!--app-no-asistencial class="fs-4 fw-bold" routerLink="/disponibilidad"><span>RRHH DISPONIBLE</span></h2>-->
             </div>
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button"  routerLink="/historial">
+          <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="true">
+          <!--<div class="btnMenu card border-0 align-items-center" type="button"  routerLink="/historial">-->
             <div class="icon6_btnMenu">
               <img class="img-fluid" src="/assets/img/i_historial.png" />
             </div>

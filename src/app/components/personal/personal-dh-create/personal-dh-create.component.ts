@@ -29,6 +29,11 @@ interface HorarioDistribucion {
   cantidadHoras: number;
 }
 
+interface Tipos {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-personal-dh-create',
   templateUrl: './personal-dh-create.component.html',
@@ -73,7 +78,13 @@ export class PersonalDhCreateComponent {
   isPanelsEnabled: boolean = true;
 
   options: any[] | undefined;
-  
+
+  tipos: Tipos[] = [
+    { value: 'PASE_DE_SALA', viewValue: 'Pase de sala' },
+    { value: 'ATENEO', viewValue: 'Ateneo' },
+    { value: 'CONSULTORIO_EN_CAPS', viewValue: 'Consultorio en CAPS' },
+    { value: 'OTROS', viewValue: 'Otros' },
+  ];
 
   constructor(
     public dialog: MatDialog,
@@ -262,13 +273,32 @@ createGuardia(): FormGroup {
   }
 
   createOtro(): FormGroup {
-    return this.fb.group({
+    const grupo = this.fb.group({
       dia: ['', Validators.required],
-      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
+      cantidadHoras: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern(/^\d+(\.\d{1})?$/)
+      ]],
       horaIngreso: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      lugar: ['', Validators.required]
+      descripcion: [''], // inicialmente sin validadores
+      lugar: ['', Validators.required],
+      tipo: ['', Validators.required]
     });
+
+    // Reacciona al cambio del campo 'tipo' de esta instancia
+    grupo.get('tipo')?.valueChanges.subscribe((valor) => {
+      const descripcionControl = grupo.get('descripcion');
+      if (valor === 'OTROS') {
+        descripcionControl?.setValidators(Validators.required);
+      } else {
+        descripcionControl?.clearValidators();
+        descripcionControl?.setValue('');
+      }
+      descripcionControl?.updateValueAndValidity();
+    });
+
+    return grupo;
   }
 
   get otros() {
@@ -751,8 +781,9 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
                     mes.fechaInicio,
                     mes.fechaFinalizacion,
                     control.value.horaIngreso,
-                    control.value.descripcion,
-                    control.value.lugar
+                    control.value.descripcion ?? null,
+                    control.value.lugar,
+                    control.value.tipo,
                 );
 
                 savePromises.push(

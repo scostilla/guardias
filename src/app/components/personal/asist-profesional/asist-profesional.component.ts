@@ -5,7 +5,7 @@ import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/pag
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
@@ -463,12 +463,12 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 }
 
 //verificar, aqui decia actual en vez de activo
-getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
+getLegajoActualId(asistencial: Person): Legajo | undefined {
   const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Asistencial): NovedadPersonal[] {
+getNovedades(asistencial: Person): NovedadPersonal[] {
   return asistencial.novedadesPersonales;
 }
 

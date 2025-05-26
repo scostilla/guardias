@@ -26,10 +26,26 @@ import { RegistroMensualDto } from "../dto/RegistroMensualDto";
         return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEcargoyagrup/${anio}/${mes}/${idEfector}`);
     }
 
+    public listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService( anio:number, mes:string, idEfector:number, idServicio:number): Observable<RegistroMensual[]> {
+        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEcargoyagrupAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+    }
+
     public listByYearMonthEfectorAndTipoGuardiaExtra( anio:number, mes:string,idEfector:number): Observable<RegistroMensual[]> {
         return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEextra/${anio}/${mes}/${idEfector}`);
     }
+
+    public listByYearMonthEfectorAndTipoGuardiaExtraService( anio:number, mes:string, idEfector:number, idServicio:number): Observable<RegistroMensual[]> {
+        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEextraAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+    }
   
+    public listByYearMonthEfectorAndTipoGuardiaCF( anio:number, mes:string,idEfector:number): Observable<RegistroMensual[]> {
+        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEcf/${anio}/${mes}/${idEfector}`);
+    }
+
+    public listByYearMonthEfectorAndTipoGuardiaCFService( anio:number, mes:string, idEfector:number, idServicio:number): Observable<RegistroMensual[]> {
+        return this.httpClient.get<RegistroMensual[]>(this.registroMensualURL + `listAMEcfAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+    }
+
     public detail(id:number): Observable<RegistroMensual> {
         return this.httpClient.get<RegistroMensual>(this.registroMensualURL + `detail/${id}`);
     }

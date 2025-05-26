@@ -32,6 +32,8 @@ import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Region } from 'src/app/models/Configuracion/Region';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
 import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+
 
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
@@ -59,7 +61,7 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
   efectores: Efector[] = [];
   hospitales: Hospital[] = [];
   ministerios: Ministerio[] = [];
-  caps: Caps[] = [];
+  caps: CapsDto[] = [];
   cargos: Cargo[] = [];
   regiones: Region[] = [];
 
@@ -99,6 +101,9 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
   idDirectorRegional?: number;
   udoOptions: any[] = [];
   efectorOptions: any[] = [];
+  tipoUdo!: string;
+  tipoEfector!: string;
+
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -137,6 +142,9 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
       esAutoridad: [false, Validators.required],
       idCargo: [null],
       idRegion: [null],
+      nroResolucion: [null],
+      nroDecreto: [null],
+      fechaResolucion: [null],
       fechaInicio: ['', [Validators.required, this.dateLimitePresente]],
       fechaFinal: [{ value: '', disabled: true }],
     });
@@ -318,8 +326,8 @@ if (this.initialData) {
     this.listUdos();
     this.listMinisterios();
     this.listHospitales();
-    this.listCaps();
-    /*this.listCategorias();
+    /*this.listCaps();
+    this.listCategorias();
     this.listAdicionales();
     this.listCargaHoraria();
     this.listTipoRevista();
@@ -392,13 +400,13 @@ if (this.initialData) {
     });
   }
 
-  listCaps(): void {
+  /*listCaps(): void {
     this.capsService.list().subscribe(data => {
       this.caps = data;
     }, error => {
       console.log(error);
     });
-  }
+  }*/
 
 /*  listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
@@ -510,51 +518,101 @@ if (this.initialData) {
     return this.efectores;
   }
 
-    // Método para cambiar las opciones de la seleccion de udo
-    onTipoUdoChange(event: any): void {
-      const tipoUdo = event.value;
-  
-      // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-      if (tipoUdo === 1) { // Ministerio
-        this.udoOptions = this.ministerios;
-      } else if (tipoUdo === 2) { // Hospital
-        this.udoOptions = this.hospitales;
-      } else if (tipoUdo === 3) { // CAPS
-        this.udoOptions = this.caps;  // Opciones específicas para CAPS
-      }
-  
-      // Habilitar el select de UDO después de haber elegido un tipo de efector
-      const udoControl = this.legajoForm.get('udo');
-      if (udoControl) {
-        udoControl.enable(); // Habilitar el select de UDO
-      }
-  
-      // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
-      this.legajoForm.get('udo')?.reset();
+  // Método para cambiar las opciones de la selección de UDO
+  onTipoUdoChange(event: any): void {
+    const tipoUdo = event.value;
+    this.tipoUdo = tipoUdo;
+
+    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+    if (tipoUdo === 'MINISTERIO') { // Ministerio
+      this.udoOptions = this.ministerios;
+    } else if (tipoUdo === 'HOSPITAL') { // Hospital
+      this.udoOptions = this.hospitales;
+    } else if (tipoUdo === 'CAPS') { // CAPS
+      this.udoOptions = this.caps;
     }
-  
-    // Método para cambiar las opciones de la seleccion de efector
-    onTipoEfectorChange(event: any): void {
-      const tipoEfector = event.value;
-  
-      // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
-      if (tipoEfector === 1) { // Ministerio
-        this.efectorOptions = this.ministerios;
-      } else if (tipoEfector === 2) { // Hospital
-        this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
-      } else if (tipoEfector === 3) { // CAPS
-        this.efectorOptions = this.caps;  // Opciones específicas para CAPS
-      }
-  
-      // Habilitar el select de efector después de haber elegido un tipo de efector
-      const efectorControl = this.legajoForm.get('efectores');
-      if (efectorControl) {
-        efectorControl.enable(); // Habilitar el select de efector
-      }
-  
-      // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
-      this.legajoForm.get('efectores')?.reset();
+
+    // Habilitar el select de UDO después de haber elegido un tipo de efector
+    const udoControl = this.legajoForm.get('udo');
+    if (udoControl) {
+      udoControl.enable(); // Habilitar el select de UDO
     }
+
+    // Restablecer el valor de 'udo' para evitar errores si la selección actual no es válida
+    this.legajoForm.get('hospitalUdo')?.reset();
+    this.legajoForm.get('udo')?.reset();
+  }
+
+  // Cargar CAPS correspondientes al hospital seleccionado
+  onHospitalUdoChange(event: any): void {
+    const hospitalId = event.value;
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.udoOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('udo')?.reset(); // Limpiar la selección actual de UDO
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
+  }
+
+  // Método para cambiar las opciones de la seleccion de efector
+  onTipoEfectorChange(event: any): void {
+    const tipoEfector = event.value;
+    this.tipoEfector = tipoEfector;
+
+    // Dependiendo del valor seleccionado, asignamos los datos adecuados al segundo select
+    if (tipoEfector === 'MINISTERIO') { // Ministerio
+      this.efectorOptions = this.ministerios;
+    } else if (tipoEfector === 'HOSPITAL') { // Hospital
+      this.efectorOptions = this.getEfectoresFiltrados(); // Usamos el filtrado para obtener solo los efectores disponibles
+    } else if (tipoEfector === 'CAPS') { // CAPS
+      this.efectorOptions = this.caps;  // Opciones específicas para CAPS
+    }
+
+    // Habilitar el select de efector después de haber elegido un tipo de efector
+    const efectorControl = this.legajoForm.get('efectores');
+    if (efectorControl) {
+      efectorControl.enable(); // Habilitar el select de efector
+    }
+
+    // Restablecer el valor de 'efector' para evitar errores si la selección actual no es válida
+    this.legajoForm.get('hospitalEfectores')?.reset();
+    this.legajoForm.get('efectores')?.reset();
+  }
+
+  // Método para cargar los CAPS correspondientes al hospital seleccionado
+  onHospitalEfectorChange(event: any): void {
+    const hospitalId = event.value;
+    
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
+      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
+      this.efectorOptions = this.caps; // Asignamos los CAPS al select de UDO
+      this.legajoForm.get('efectores')?.reset(); // Limpiar la selección actual de UDO
+
+      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
+      if (this.caps.length === 0) {
+        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+
+    }, error => {
+      console.log(error);
+      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
+    });
+  }
   
 
 
@@ -917,18 +975,23 @@ if (this.initialData) {
         legajoData.idPersona,
         legajoData.fechaFinal,
         esRegional,
-        null, //matricula nacional
-        null, //matricula provincial                          
+        legajoData.matriculaNacional ?? null,
+        legajoData.matriculaProvincial ?? null,                            
         null, // idSuspencion
         null, //motivoBaja
         null, //id revista
         legajoData.udo?.id ?? null,
         efectoresData ?? null,
-        null, //especialidad
+        legajoData.especialidades?.length ? legajoData.especialidades : null,
         null, //profesion
-        null, //tipo guardia
+        legajoData.tipoGuardias?.length ? legajoData.tipoGuardias : null,
         legajoData.idCargo ?? null,
         legajoData.idRegion ?? null,
+        legajoData.nroResolucion ?? null,
+        legajoData.nroDecreto ?? null,
+        legajoData.fechaResolucion ?? null,
+        legajoData.tipoEfector ?? null,
+        legajoData.tipoUdo ?? null
       );
 
       console.log("DTO creado para guardar legajo:", legajoDto);
