@@ -364,7 +364,7 @@ saveCronograma(): void {
                   'Aún no hay una distribución horaria para el profesional.',
                   'Carga no permitida',
                   {
-                    timeOut: 6000,
+                    timeOut: 9000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                   }
@@ -386,7 +386,7 @@ saveCronograma(): void {
     );
   } else {
     this.toastr.error('Por favor complete todos los campos del formulario', 'Formulario inválido', {
-      timeOut: 6000,
+      timeOut: 9000,
       positionClass: 'toast-top-center',
       progressBar: true
     });
@@ -416,7 +416,7 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
           'Ya existe una guardia tentativa asignada para el profesional en la fecha y hora seleccionada.',
           'Error',
           {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           }
@@ -519,7 +519,7 @@ private mapearTipoGuardia(id: number): string {
         cronogramaDto.aceptado = true;
 
         this.toastr.warning('La guardia ingresada no coincide con la cargada en Distribución Horaria. Guardia pendiente de autorización.', undefined, {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -532,7 +532,7 @@ private mapearTipoGuardia(id: number): string {
               cronogramaDto.autorizado = 'PENDIENTE';
 
               this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                timeOut: 6000,
+                timeOut: 9000,
                 positionClass: 'toast-top-center',
                 progressBar: true
               });
@@ -545,7 +545,7 @@ private mapearTipoGuardia(id: number): string {
                     cronogramaDto.autorizado = 'PENDIENTE';
 
                     this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                      timeOut: 6000,
+                      timeOut: 9000,
                       positionClass: 'toast-top-center',
                       progressBar: true
                     });
@@ -558,7 +558,7 @@ private mapearTipoGuardia(id: number): string {
                           cronogramaDto.autorizado = 'PENDIENTE';
 
                           this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                            timeOut: 6000,
+                            timeOut: 9000,
                             positionClass: 'toast-top-center',
                             progressBar: true
                           });
@@ -677,7 +677,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
                       'El profesional posee una guardia del CARGO activa, no puede asignar una guardia EXTRA en el horario requerido',
                       'Asignación no permitida',
                       {
-                        timeOut: 8000,
+                        timeOut: 9000,
                         positionClass: 'toast-top-center',
                         progressBar: true
                       }
@@ -697,7 +697,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
               cronogramaDto.autorizado = 'PENDIENTE';
 
               this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                timeOut: 6000,
+                timeOut: 9000,
                 positionClass: 'toast-top-center',
                 progressBar: true
               });
@@ -710,7 +710,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
                     cronogramaDto.autorizado = 'PENDIENTE';
 
                     this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                      timeOut: 6000,
+                      timeOut: 9000,
                       positionClass: 'toast-top-center',
                       progressBar: true
                     });
@@ -723,7 +723,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
                           cronogramaDto.autorizado = 'PENDIENTE';
 
                           this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                            timeOut: 6000,
+                            timeOut: 9000,
                             positionClass: 'toast-top-center',
                             progressBar: true
                           });

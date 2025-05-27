@@ -253,7 +253,7 @@ export class LegajoCreateComponent implements OnInit {
       // Si no se recibe Asistencial, redirige atrás con un mensaje
       if (!this.initialData) {
         this.toastr.error('No se recibió ningún Asistencial. Consulta con soporte.', 'Error', {
-          timeOut: 5000,
+          timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -264,7 +264,7 @@ export class LegajoCreateComponent implements OnInit {
     } else {
       // Si no se pasó el estado, redirige atrás con un mensaje
       this.toastr.error('No se recibió ningún Asistencial. Consulta con soporte.', 'Error', {
-        timeOut: 5000,
+        timeOut: 6000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
@@ -373,7 +373,7 @@ export class LegajoCreateComponent implements OnInit {
         // Si la persona es autoridad, verifica si tiene 2 legajos activos
         if (legajosActivos.length >= 2) {
           this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga.', 'Limite de legajos alcanzado', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -398,7 +398,7 @@ export class LegajoCreateComponent implements OnInit {
           this.legajoForm.get('esAutoridad')?.disable();  // Deshabilitar campo porque ya tiene un legajo activo
               
           this.toastr.info('La persona posee un legajo activo. Podrás cargar un tipo de legajo no existente.', 'Información', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -408,7 +408,7 @@ export class LegajoCreateComponent implements OnInit {
           this.legajoForm.get('esAutoridad')?.setValue(true);  // Establecer por defecto como true
           this.legajoForm.get('esAutoridad')?.enable();
           this.toastr.info('La persona está registrada como autoridad.', 'Información', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -422,7 +422,7 @@ export class LegajoCreateComponent implements OnInit {
         
         if (legajoConTipoGuardiaCargo) {
           this.toastr.warning('Para poder cargar un legajo de autoridad, debes dar de baja el legajo existente con tipo guardia de cargo y agrupacion.', 'Acción Requerida', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -433,7 +433,7 @@ export class LegajoCreateComponent implements OnInit {
         if (legajosActivos.length >= 1) {
           // Si ya tiene un legajo activo, mostramos un mensaje y redirigimos
           this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga', 'Limite de legajos alcanzado', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -443,7 +443,7 @@ export class LegajoCreateComponent implements OnInit {
           this.legajoForm.get('idPersona')?.setValidators([Validators.required]); // Vuelve a establecer la validación si es necesario
           this.legajoForm.get('idPersona')?.updateValueAndValidity(); // Asegúrate de que la validación sea evaluada
           this.toastr.info('La persona no está registrada como autoridad, solo puedes cargar un legajo general.', 'Información', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -691,7 +691,7 @@ export class LegajoCreateComponent implements OnInit {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -740,7 +740,7 @@ export class LegajoCreateComponent implements OnInit {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -787,7 +787,7 @@ export class LegajoCreateComponent implements OnInit {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -833,7 +833,7 @@ export class LegajoCreateComponent implements OnInit {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -882,7 +882,7 @@ export class LegajoCreateComponent implements OnInit {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
