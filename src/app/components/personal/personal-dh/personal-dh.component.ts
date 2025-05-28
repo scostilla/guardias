@@ -94,8 +94,8 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
   mesYanio: string = ''; // MM-YYYY
   mesesDisponibles: { value: string, label: string }[] = [];
   nombreMes: string = '';
-  anioSeleccionado: number = 0;
-  mesSeleccionado: number = 0;
+  anioSeleccionado!: number;
+  mesSeleccionado!: number;
 
   showDetails: boolean = false;
   showTable = false;
@@ -973,4 +973,9 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
       }
     );
   }
+
+  isColSombreada(index: number): boolean {
+  // Alternar columnas: sombrear las impares (índice base 0 = 0, 2, 4...)
+  return index % 2 === 0;
+}
 }

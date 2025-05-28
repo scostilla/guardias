@@ -36,7 +36,7 @@ export class CronogramaCreateComponent {
   asistenciales: any[] = [];
   inputValue: string = '';
   efectorId: number | null = null;
-  minFechaIngreso: string = '';
+  minFechaIngreso: string = moment().format('YYYY-MM-DD');
   minFechaEgreso: string = '';
   servicios: ServicioSummaryDto[] = [];
 
@@ -58,8 +58,6 @@ export class CronogramaCreateComponent {
     private toastr: ToastrService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.minFechaIngreso = moment().add(1, 'day').format('YYYY-MM-DD');
-
     this.cronoForm = this.fb.group({
       fechaIngreso: ['', Validators.required],
       fechaEgreso: [{ value: '', disabled: true }, Validators.required],
@@ -69,6 +67,14 @@ export class CronogramaCreateComponent {
       asistencial: ['', Validators.required],
       idServicio: ['', Validators.required],
       observacion: ['', [Validators.maxLength(250)]],
+    });
+
+    this.cronoForm.get('tipoGuardia')?.valueChanges.subscribe(tipo => {
+      if (tipo?.nombre === 'CARGO' || tipo?.nombre === 'AGRUPACION') {
+        this.minFechaIngreso = moment().add(1, 'day').format('YYYY-MM-DD'); // mañana
+      } else {
+        this.minFechaIngreso = moment().format('YYYY-MM-DD'); // hoy
+      }
     });
   }
 

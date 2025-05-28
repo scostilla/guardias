@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 import { Subscription } from 'rxjs';
 import * as moment from 'moment';
 
@@ -29,6 +33,8 @@ export class GuardiasViewComponent {
 
   constructor(
     private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private router: Router,
     private efectorService: EfectorService,
   ) {
@@ -44,30 +50,35 @@ export class GuardiasViewComponent {
   }
 
   //trae el nombre del efector esta en sesion
-  loadEfectorName(): void { 
-    if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
-        (efector: EfectorHospitalDto) => {
-
-          if (efector) {
-            this.efectorNombre = efector.nombre;
-          } else {
-            this.handleInvalidEfector();
-          }
-        },
-        (error) => {
-          console.error('Error al obtener el efector desde el servicio:', error);
-          this.handleInvalidEfector();
-        }
-      );
-    } else {
-      this.handleInvalidEfector();
+  loadEfectorName(): void {
+    if (!this.efectorId) {
+      this.efectorNombre = null;
+      return;
     }
-  }
-
-  private handleInvalidEfector(): void {
-    console.error('ID de efector inválido o no encontrado.');
-    this.router.navigateByUrl('/home-page');
+  
+    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
+      next: (hospital: EfectorHospitalDto) => {
+        this.efectorNombre = hospital.nombre;
+      },
+      error: () => {
+        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
+          next: (ministerio: EfectorMinisterioDto) => {
+            this.efectorNombre = ministerio.nombre;
+          },
+          error: () => {
+            this.capsService.detailNombreAll(this.efectorId!).subscribe({
+              next: (cap: EfectorCapsDto) => {
+                this.efectorNombre = cap.nombre;
+              },
+              error: () => {
+                console.error('No se encontró el efector con ID:', this.efectorId);
+                this.efectorNombre = null;
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
   navigateToCargoyAgrup() {

@@ -10,18 +10,19 @@ import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardia
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
 import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/servicio.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import * as moment from 'moment';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import * as moment from 'moment';
 
 interface HorarioDistribucion {
   dia: string;
@@ -52,6 +53,7 @@ export class PersonalDhCreateComponent {
   otroForm!: FormGroup;
   vigenciaForm!: FormGroup;
   nombreProfesion: string = '';
+  tipoGuardia: string = '';
   
   step = -1;
   cantidadHoras: number = 0;
@@ -69,9 +71,10 @@ export class PersonalDhCreateComponent {
   solapamientoMessage: string = '';
   solapamientoMessageClass: string = '';
 
-  servicios: Servicio[] = [];
+  servicios: ServicioSummaryDto[] = [];
   hospitales: Hospital[] = [];
   capss: CapsDto[] = [];
+  efectorId: number | null = null;
 
 
   isButtonDisabled: boolean = true;
@@ -96,7 +99,7 @@ export class PersonalDhCreateComponent {
     private distribucionConsultorioService: DistribucionConsultorioService,
     private distribucionGiraService: DistribucionGiraService,
     private distribucionOtroService: DistribucionOtroService,
-    private servicioService: ServicioService,
+    private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private asistencialService: AsistencialService,
     private fb: FormBuilder,
@@ -140,7 +143,11 @@ export class PersonalDhCreateComponent {
           this.asistencial = asistencial;
           this.idPersona = asistencial.id!;
           const legajoActivo = asistencial.legajos.find(l => l.activo);
-          this.nombreProfesion = legajoActivo?.profesion?.nombre?.trim() || 'Sin profesión';
+          console.log('Todos los legajos:', asistencial.legajos);
+console.log('Legajo activo encontrado:', legajoActivo);
+          this.nombreProfesion = legajoActivo?.profesion?.nombre || 'Sin profesión';
+          console.log('Nombre de la profesión final:', this.nombreProfesion);
+
   
           this.listServicios();
           this.filterLegajosAndGetTipoGuardia();
@@ -154,6 +161,8 @@ export class PersonalDhCreateComponent {
         }
       });
     });
+
+    this.efectorId = this.efectorService.getCurrentEfectorId();
   }
   
   ngOnDestroy(): void {
@@ -169,32 +178,50 @@ export class PersonalDhCreateComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
+mostrarOpcion(horas: number): boolean {
+  if (this.tipoGuardia !== 'CARGO') {
+    return false;
+  }
+
+  if (this.nombreProfesion === 'Medico') {
+    return horas === 12 || horas === 24;
+  }
+
+  if (this.nombreProfesion === 'Bioquimico') {
+    return horas === 8 || horas === 12 || horas === 24;
+  }
+
+  // Por defecto, no mostrar nada
+  return false;
+}
+
 createGuardia(): FormGroup {
   const guardiaForm = this.fb.group({
     dia: ['', Validators.required],
     horaIngreso: ['', Validators.required],
     idServicio: ['', Validators.required],
     tipoGuardia: ['', Validators.required],
-    cantidadHoras: ['', [Validators.required, Validators.min(4), Validators.pattern(/^[1-9]\d*$/)]],
+    cantidadHoras: [
+      null,
+      [Validators.required, Validators.min(4), Validators.pattern(/^[1-9]\d*$/)]
+    ],
   });
 
-  // Suscribirse a cambios en tipoGuardia
   guardiaForm.get('tipoGuardia')?.valueChanges.subscribe(value => {
+    this.tipoGuardia = value || '';
+
     const cantidadHorasControl = guardiaForm.get('cantidadHoras');
 
-    if (value === 'CARGO') {
-      cantidadHorasControl?.setValue('24');
-      cantidadHorasControl?.disable();
-    } else {
-      cantidadHorasControl?.enable();
-      cantidadHorasControl?.setValue(null);
-    }
+    // Resetear el campo siempre que cambia tipoGuardia
+    cantidadHorasControl?.setValue(null);
+
+    // Si estás usando validadores distintos según el tipo, podrías actualizar validadores aquí también si hace falta
   });
 
   return guardiaForm;
 }
 
-  get guardias() {
+get guardias() {
     return (this.guardiaForm.get('guardias') as FormArray);
   }
 
@@ -512,11 +539,8 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
 }
   
   listServicios(): void {
-    this.servicioService.list().subscribe(data => {
-      //console.log('Lista de servicios:', data);
+    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
-    }, error => {
-      console.log(error);
     });
   }
 

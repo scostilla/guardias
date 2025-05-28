@@ -8,30 +8,37 @@
             <th scope="row">Apellido y nombre</th>
             <td>{{legajo.persona?.apellido}}, {{legajo.persona?.nombre}}</td>
           </tr>    
+
           <tr>
             <th scope="row">Tipo de legajo</th>
             <td>{{legajo.esAutoridad ? 'Autoridad' : 'General'}}</td>
           </tr>
+
           <tr>
             <th scope="row">Fecha inicio</th>
             <td>{{legajo.fechaInicio | date: 'dd/MM/yyyy':'':'es-AR' }}</td>
           </tr>
+
           <tr>
             <th scope="row">Fecha final</th>
             <td>{{ legajo.fechaFinal ? (legajo.fechaFinal | date: 'dd/MM/yyyy') : 'Aún en vigencia.' }}</td>
           </tr>
+
           <tr *ngIf="legajo.matriculaNacional">
             <th scope="row">Matricula Nacional</th>
             <td>{{legajo.matriculaNacional || 'No posee'}}</td>
           </tr>
+
           <tr *ngIf="legajo.matriculaProvincial">
             <th scope="row">Matricula Provincial</th>
             <td>{{legajo.matriculaProvincial}}</td>
           </tr>
+
           <tr *ngIf="legajo.profesion?.nombre">
             <th scope="row">Profesión</th>
             <td>{{legajo.profesion?.nombre || 'No posee'}}</td>
           </tr>
+
           <tr *ngIf="legajo.especialidades && legajo.especialidades.length > 0">
           <th scope="row">Especialidades</th>
           <td>
@@ -40,6 +47,7 @@
             </ng-container>
           </td>
         </tr>
+
         <tr *ngIf="legajo?.tipoGuardias?.length">
           <th scope="row">Tipo de guardia</th>
           <td>
@@ -48,26 +56,44 @@
             </ng-container>
           </td>
         </tr>
-          <tr *ngIf="legajo.udo">
-            <th scope="row">U.D.O.</th>
-            <td>{{legajo.udo.nombre}}</td>
-          </tr>
-          <tr *ngIf="legajo?.efectores?.length">
-            <th scope="row">Efector</th>
-              <td>
-                  <ng-container *ngFor="let efector of legajo.efectores; let i = index">
-                      {{ efector.nombre }}<span *ngIf="!isLast(i, legajo.efectores)">, </span>
-                  </ng-container>
-              </td>
-          </tr>
-          <tr *ngIf="revista">
-            <th scope="row">Revista</th>
+
+        <tr *ngIf="legajo.esAutoridad">
+          <th scope="row">Cargo</th>
+          <td>{{legajo.cargo?.nombre || 'No posee'}}</td>
+        </tr>
+
+        <tr *ngIf="legajo?.efectores?.length && legajo.esAutoridad">
+          <th scope="row">Efector cargo</th>
             <td>
-              {{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }}<span *ngIf="revista.adicional"> - </span>{{ revista.adicional?.nombre }})
-              <br/> Carga horaria: {{ revista.cargaHoraria.cantidad }} Hs
-              <br/>{{ revista.agrupacion }}
+                <ng-container *ngFor="let efector of legajo.efectores; let i = index">
+                    {{ efector.nombre }}<span *ngIf="!isLast(i, legajo.efectores)">, </span>
+                </ng-container>
             </td>
-          </tr>
+        </tr>
+
+        <tr *ngIf="legajo.udo">
+          <th scope="row">U.D.O.</th>
+          <td>{{legajo.udo.nombre}}</td>
+        </tr>
+        
+        <tr *ngIf="legajo?.efectores?.length && !legajo.esAutoridad">
+          <th scope="row">Efector</th>
+            <td>
+                <ng-container *ngFor="let efector of legajo.efectores; let i = index">
+                    {{ efector.nombre }}<span *ngIf="!isLast(i, legajo.efectores)">, </span>
+                </ng-container>
+            </td>
+        </tr>
+
+        <tr *ngIf="revista">
+          <th scope="row">Revista</th>
+          <td>
+            {{ revista.tipoRevista.nombre }} ({{ revista.categoria.nombre }}<span *ngIf="revista.adicional"> - </span>{{ revista.adicional?.nombre }})
+            <br/> Carga horaria: {{ revista.cargaHoraria.cantidad }} Hs
+            <br/>{{ revista.agrupacion }}
+          </td>
+        </tr>
+
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">

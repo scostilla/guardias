@@ -75,6 +75,7 @@ export class LegajoCreateComponent implements OnInit {
 
   //Listas
   profesiones: Profesion[] = [];
+  profesionesFiltradas: Profesion[] = [];
   efectores: Efector[] = [];
   hospitales: Hospital[] = [];
   ministerios: Ministerio[] = [];
@@ -546,13 +547,16 @@ export class LegajoCreateComponent implements OnInit {
   }
 
 
-  listProfesiones(): void {
-    this.profesionService.list().subscribe(data => {
-      this.profesiones = data;
-    }, error => {
-      console.log(error);
-    });
-  }
+listProfesiones(): void {
+  this.profesionService.list().subscribe(data => {
+    this.profesiones = data;
+    this.profesionesFiltradas = this.profesiones.filter(p =>
+      p.nombre === 'Medico' || p.nombre === 'Bioquimico'
+    );
+  }, error => {
+    console.log(error);
+  });
+}
 
   listTipoGuardia(): void {
     this.tipoGuardiaService.list().subscribe(data => {

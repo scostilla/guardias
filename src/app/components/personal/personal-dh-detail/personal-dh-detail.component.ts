@@ -55,7 +55,7 @@ formatearFecha(fechaInicio: string): string {
         this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoGuardia', 'cantidadHoras'];
         break;
       case 'consultorio':
-        this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoConsultorio', 'lugar', 'cantidadHoras'];
+        this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoConsultorio', 'cantidadHoras'];
         break;
       case 'gira':
         this.displayedColumns = ['dia', 'horaIngreso', 'puestoSalud', 'cantidadHoras'];
