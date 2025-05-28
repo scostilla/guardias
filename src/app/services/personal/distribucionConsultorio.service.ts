@@ -34,6 +34,10 @@ export class DistribucionConsultorioService {
   getActivoByPersonaFechaInicio(idPersona: number, fechaInicio: string): Observable<DistribucionConsultorio[]> {
     return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
   }
+
+  listByActivoByPersonAndFechaInicioAndFechaFin(idPersona: number, fechaInicio: string, fechaFinalizacion: string): Observable<DistribucionConsultorio[]> {
+    return this.httpClient.get<DistribucionConsultorio[]>(`${this.distribucionConsultoriosURL}listByActivoByPersonAndFechaInicioAndFechaFin/${idPersona}/${fechaInicio}/${fechaFinalizacion}`);
+  }
   
   // Obtener distribuciones por persona, fecha de inicio y ACTIVO
   getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionConsultorio[]> {

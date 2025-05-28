@@ -346,35 +346,115 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     
   // Cargar distribuciones por tipo y aplicar filtro
   loadDistribucionGuardia(): void {
-    this.distribucionGuardiaService.getDistribucionesGuardiaByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGuardia[]) => {
-      this.distribucionesGuardia = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionGuardiaService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionGuardia[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesGuardia = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de guardia:', error);
+        this.distribucionesGuardia = [];
+        this.checkLoadingState();
+      });
   }
   
   loadDistribucionConsultorio(): void {
-    this.distribucionConsultorioService.getDistribucionesConsultorioByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionConsultorio[]) => {
-      this.distribucionesConsultorio = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionConsultorioService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionConsultorio[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesConsultorio = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de consultorio:', error);
+        this.distribucionesConsultorio = [];
+        this.checkLoadingState();
+      });
   }
   
   loadDistribucionGira(): void {
-    this.distribucionGiraService.getDistribucionesGiraByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGira[]) => {
-      this.distribucionesGira = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionGiraService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionGira[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesGira = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de gira:', error);
+        this.distribucionesGira = [];
+        this.checkLoadingState();
+      });
   }
   
   loadDistribucionOtro(): void {
-    this.distribucionOtroService.getDistribucionesOtroByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionOtro[]) => {
-      this.distribucionesOtro = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionOtroService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionOtro[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesOtro = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de otro:', error);
+        this.distribucionesOtro = [];
+        this.checkLoadingState();
+      });
   }
 
     // Método para verificar el estado de carga
@@ -389,7 +469,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
       this.noHayDistribuciones = !hayDatos;
     }
     
-    // Filtrar distribuciones por mes
+    /*/ Filtrar distribuciones por mes
     filterDistribucionesPorMes(distribuciones: any[]): any[] {
       // Convertir el mes y año seleccionados en números
       const mesYanio = parseInt(this.mesYanio.split('-')[0], 10) - 1; // Restar 1 porque los meses en moment.js son 0-based
@@ -402,7 +482,7 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
         // Filtrar las distribuciones por el mes y año seleccionados
         return fechaInicio.month() === mesYanio && fechaInicio.year() === anioSeleccionado;
       });
-    }
+    }*/
     
   // Función para configurar las columnas dinámicas
 setupColumns(): void {
@@ -899,7 +979,7 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
     this.router.navigate(['/personal-dh-edit'], {
       queryParams: {
         asistencialId: this.asistencial?.id,
-        mes: this.mesYanio,
+        fechaInicio: this.mesYanio,
       }
     });
   }

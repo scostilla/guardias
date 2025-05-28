@@ -73,6 +73,10 @@ getActivoByPersonaFechaInicio(idPersona: number, fechaInicio: string): Observabl
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}listByActivoByPersonAndFechaInicio/${idPersona}/${fechaInicio}`);
 }
 
+listByActivoByPersonAndFechaInicioAndFechaFin(idPersona: number, fechaInicio: string, fechaFinalizacion: string): Observable<DistribucionGuardia[]> {
+  return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}listByActivoByPersonAndFechaInicioAndFechaFin/${idPersona}/${fechaInicio}/${fechaFinalizacion}`);
+}
+
 // Obtener distribuciones por persona, fecha de inicio y ACTIVO
 getDistribucionesByActivoPersonaAndFechaInicio(idPersona: number, mes: number, anio: number): Observable<DistribucionGuardia[]> {
   return this.httpClient.get<DistribucionGuardia[]>(`${this.distribucionGuardiasURL}detailByActivoByPersonaAndFechaInicio/${idPersona}/${mes}/${anio}`);
