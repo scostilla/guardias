@@ -26,10 +26,10 @@ export class FeriadoEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Feriado
   ) {
     this.feriadoForm = this.fb.group({
-      motivo: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
+      motivo: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9áéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ. ]{1,90}$')]],
       fecha: ['', Validators.required],
       tipoFeriado: ['', Validators.required],
-      descripcion: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
+      descripcion: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9áéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ. ]{1,90}$')]],
       esPatronal: [false],
       efector: [{ value: '', disabled: true }]
     });

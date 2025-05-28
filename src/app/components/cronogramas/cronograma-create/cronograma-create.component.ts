@@ -36,7 +36,7 @@ export class CronogramaCreateComponent {
   asistenciales: any[] = [];
   inputValue: string = '';
   efectorId: number | null = null;
-  minFechaIngreso: string = '';
+  minFechaIngreso: string = moment().format('YYYY-MM-DD');
   minFechaEgreso: string = '';
   servicios: ServicioSummaryDto[] = [];
 
@@ -58,8 +58,6 @@ export class CronogramaCreateComponent {
     private toastr: ToastrService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.minFechaIngreso = moment().add(1, 'day').format('YYYY-MM-DD');
-
     this.cronoForm = this.fb.group({
       fechaIngreso: ['', Validators.required],
       fechaEgreso: [{ value: '', disabled: true }, Validators.required],
@@ -69,6 +67,14 @@ export class CronogramaCreateComponent {
       asistencial: ['', Validators.required],
       idServicio: ['', Validators.required],
       observacion: ['', [Validators.maxLength(250)]],
+    });
+
+    this.cronoForm.get('tipoGuardia')?.valueChanges.subscribe(tipo => {
+      if (tipo?.nombre === 'CARGO' || tipo?.nombre === 'AGRUPACION') {
+        this.minFechaIngreso = moment().add(1, 'day').format('YYYY-MM-DD'); // mañana
+      } else {
+        this.minFechaIngreso = moment().format('YYYY-MM-DD'); // hoy
+      }
     });
   }
 
@@ -364,7 +370,7 @@ saveCronograma(): void {
                   'Aún no hay una distribución horaria para el profesional.',
                   'Carga no permitida',
                   {
-                    timeOut: 6000,
+                    timeOut: 9000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                   }
@@ -386,7 +392,7 @@ saveCronograma(): void {
     );
   } else {
     this.toastr.error('Por favor complete todos los campos del formulario', 'Formulario inválido', {
-      timeOut: 6000,
+      timeOut: 9000,
       positionClass: 'toast-top-center',
       progressBar: true
     });
@@ -416,7 +422,7 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
           'Ya existe una guardia tentativa asignada para el profesional en la fecha y hora seleccionada.',
           'Error',
           {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           }
@@ -519,7 +525,7 @@ private mapearTipoGuardia(id: number): string {
         cronogramaDto.aceptado = true;
 
         this.toastr.warning('La guardia ingresada no coincide con la cargada en Distribución Horaria. Guardia pendiente de autorización.', undefined, {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -532,7 +538,7 @@ private mapearTipoGuardia(id: number): string {
               cronogramaDto.autorizado = 'PENDIENTE';
 
               this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                timeOut: 6000,
+                timeOut: 9000,
                 positionClass: 'toast-top-center',
                 progressBar: true
               });
@@ -545,7 +551,7 @@ private mapearTipoGuardia(id: number): string {
                     cronogramaDto.autorizado = 'PENDIENTE';
 
                     this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                      timeOut: 6000,
+                      timeOut: 9000,
                       positionClass: 'toast-top-center',
                       progressBar: true
                     });
@@ -558,7 +564,7 @@ private mapearTipoGuardia(id: number): string {
                           cronogramaDto.autorizado = 'PENDIENTE';
 
                           this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                            timeOut: 6000,
+                            timeOut: 9000,
                             positionClass: 'toast-top-center',
                             progressBar: true
                           });
@@ -677,7 +683,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
                       'El profesional posee una guardia del CARGO activa, no puede asignar una guardia EXTRA en el horario requerido',
                       'Asignación no permitida',
                       {
-                        timeOut: 8000,
+                        timeOut: 9000,
                         positionClass: 'toast-top-center',
                         progressBar: true
                       }
@@ -697,7 +703,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
               cronogramaDto.autorizado = 'PENDIENTE';
 
               this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                timeOut: 6000,
+                timeOut: 9000,
                 positionClass: 'toast-top-center',
                 progressBar: true
               });
@@ -710,7 +716,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
                     cronogramaDto.autorizado = 'PENDIENTE';
 
                     this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                      timeOut: 6000,
+                      timeOut: 9000,
                       positionClass: 'toast-top-center',
                       progressBar: true
                     });
@@ -723,7 +729,7 @@ console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronograma
                           cronogramaDto.autorizado = 'PENDIENTE';
 
                           this.toastr.warning('El profesional ya posee otra actividad. Guardia pendiente de autorización.', undefined, {
-                            timeOut: 6000,
+                            timeOut: 9000,
                             positionClass: 'toast-top-center',
                             progressBar: true
                           });

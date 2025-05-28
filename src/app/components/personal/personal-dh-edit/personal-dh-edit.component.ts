@@ -187,49 +187,52 @@ export class PersonalDhEditComponent {
     return moment(`${anio}-${mes}`, 'YYYY-MM').format('MMMM YYYY');
   }
 
-  loadDistribuciones(mesSeleccionado: string): void {
-    // Extraer mes y año del formato MM-YYYY
-    const [mes, anio] = mesSeleccionado.split('-');
-    
-    // Crear la fecha de inicio usando el mes y año extraídos
-    const fechaInicio = `${anio}-${mes.padStart(2, '0')}-01`;
-  
-    // Filtrar las distribuciones por asistencial.id y fecha de inicio
-    const idAsistencial = this.asistencial?.id;
-  
-    if (!idAsistencial) {
-      this.toastr.error('Asistencial no encontrado.');
-      return;
-    }
+loadDistribuciones(mesSeleccionado: string): void {
+  const [mes, anio] = mesSeleccionado.split('-');
+  const fechaInicioMes = moment(`${anio}-${mes}-01`, 'YYYY-MM-DD').startOf('month');
+  const fechaFinMes = fechaInicioMes.clone().endOf('month');
+  const idAsistencial = this.asistencial?.id;
 
-    // Obtener distribuciones de Consultorio filtradas
-    this.distribucionConsultorioService.getActivoByPersonaFechaInicio(idAsistencial, fechaInicio)
-      .subscribe(distribucionesConsultorio => {
-        this.updateForm(distribucionesConsultorio, this.consultorioForm);
-        this.distribucionesConsultorioIds = distribucionesConsultorio.map(d => d.id).filter((id): id is number => id !== undefined);  // Guardamos los IDs
-    });  
+  if (!idAsistencial) {
+    this.toastr.error('Asistencial no encontrado.');
+    return;
+  }
 
-    // Obtener distribuciones de Guardia filtradas
-    this.distribucionGuardiaService.getActivoByPersonaFechaInicio(idAsistencial, fechaInicio)
-      .subscribe(distribucionesGuardia => {
-        this.updateForm(distribucionesGuardia, this.guardiaForm);
-        this.distribucionesGuardiaIds = distribucionesGuardia.map(d => d.id).filter((id): id is number => id !== undefined);  // Guardamos los IDs
+  const fechaInicioStr = fechaInicioMes.format('YYYY-MM-DD');
+  const fechaFinStr = fechaFinMes.format('YYYY-MM-DD');
+
+  // Consultorio
+  this.distribucionConsultorioService
+    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribuciones => {
+      this.updateForm(distribuciones, this.consultorioForm);
+      this.distribucionesConsultorioIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
     });
-    
-    // Obtener distribuciones de Gira filtradas
-    this.distribucionGiraService.getActivoByPersonaFechaInicio(idAsistencial, fechaInicio)
-      .subscribe(distribucionesGira => {
-        this.updateForm(distribucionesGira, this.giraForm);
-        this.distribucionesGiraIds = distribucionesGira.map(d => d.id).filter((id): id is number => id !== undefined);  // Guardamos los IDs
-    });  
 
-    // Obtener distribuciones de Otros filtradas
-    this.distribucionOtroService.getActivoByPersonaFechaInicio(idAsistencial, fechaInicio)
-      .subscribe(distribucionesOtro => {
-        this.updateForm(distribucionesOtro, this.otroForm);
-        this.distribucionesOtroIds = distribucionesOtro.map(d => d.id).filter((id): id is number => id !== undefined);  // Guardamos los IDs
-    });  
-  }    
+  // Guardia
+  this.distribucionGuardiaService
+    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribuciones => {
+      this.updateForm(distribuciones, this.guardiaForm);
+      this.distribucionesGuardiaIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+    });
+
+  // Gira
+  this.distribucionGiraService
+    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribuciones => {
+      this.updateForm(distribuciones, this.giraForm);
+      this.distribucionesGiraIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+    });
+
+  // Otro
+  this.distribucionOtroService
+    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribuciones => {
+      this.updateForm(distribuciones, this.otroForm);
+      this.distribucionesOtroIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+    });
+}
 
   private updateForm(distribuciones: any[], formGroup: FormGroup): void {
     // Resetear el FormArray antes de agregar los nuevos registros

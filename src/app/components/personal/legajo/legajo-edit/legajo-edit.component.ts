@@ -609,7 +609,7 @@ console.log('¿Incluye WENCESLAO GALLARDO?', this.udoOptions.some(udo => udo.nom
         // Verifica si el ID de la persona es undefined
         if (this.initialData.persona?.id === undefined) {
           this.toastr.warning('ID de la persona no encontrado. Regresando a página de legajos.', 'Error', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -1379,7 +1379,7 @@ listMinisterios(): void {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -1455,7 +1455,7 @@ listMinisterios(): void {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -1537,7 +1537,7 @@ listMinisterios(): void {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -1583,7 +1583,7 @@ listMinisterios(): void {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -1632,7 +1632,7 @@ listMinisterios(): void {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });

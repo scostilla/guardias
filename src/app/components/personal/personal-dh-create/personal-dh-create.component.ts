@@ -10,18 +10,19 @@ import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardia
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
 import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/servicio.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import * as moment from 'moment';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import * as moment from 'moment';
 
 interface HorarioDistribucion {
   dia: string;
@@ -51,6 +52,8 @@ export class PersonalDhCreateComponent {
   giraForm!: FormGroup;
   otroForm!: FormGroup;
   vigenciaForm!: FormGroup;
+  nombreProfesion: string = '';
+  tipoGuardia: string = '';
   
   step = -1;
   cantidadHoras: number = 0;
@@ -68,9 +71,10 @@ export class PersonalDhCreateComponent {
   solapamientoMessage: string = '';
   solapamientoMessageClass: string = '';
 
-  servicios: Servicio[] = [];
+  servicios: ServicioSummaryDto[] = [];
   hospitales: Hospital[] = [];
   capss: CapsDto[] = [];
+  efectorId: number | null = null;
 
 
   isButtonDisabled: boolean = true;
@@ -95,7 +99,7 @@ export class PersonalDhCreateComponent {
     private distribucionConsultorioService: DistribucionConsultorioService,
     private distribucionGiraService: DistribucionGiraService,
     private distribucionOtroService: DistribucionOtroService,
-    private servicioService: ServicioService,
+    private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private asistencialService: AsistencialService,
     private fb: FormBuilder,
@@ -138,6 +142,12 @@ export class PersonalDhCreateComponent {
         next: (asistencial) => {
           this.asistencial = asistencial;
           this.idPersona = asistencial.id!;
+          const legajoActivo = asistencial.legajos.find(l => l.activo);
+          console.log('Todos los legajos:', asistencial.legajos);
+console.log('Legajo activo encontrado:', legajoActivo);
+          this.nombreProfesion = legajoActivo?.profesion?.nombre || 'Sin profesión';
+          console.log('Nombre de la profesión final:', this.nombreProfesion);
+
   
           this.listServicios();
           this.filterLegajosAndGetTipoGuardia();
@@ -151,6 +161,8 @@ export class PersonalDhCreateComponent {
         }
       });
     });
+
+    this.efectorId = this.efectorService.getCurrentEfectorId();
   }
   
   ngOnDestroy(): void {
@@ -166,32 +178,50 @@ export class PersonalDhCreateComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
+mostrarOpcion(horas: number): boolean {
+  if (this.tipoGuardia !== 'CARGO') {
+    return false;
+  }
+
+  if (this.nombreProfesion === 'Medico') {
+    return horas === 12 || horas === 24;
+  }
+
+  if (this.nombreProfesion === 'Bioquimico') {
+    return horas === 8 || horas === 12 || horas === 24;
+  }
+
+  // Por defecto, no mostrar nada
+  return false;
+}
+
 createGuardia(): FormGroup {
   const guardiaForm = this.fb.group({
     dia: ['', Validators.required],
     horaIngreso: ['', Validators.required],
     idServicio: ['', Validators.required],
     tipoGuardia: ['', Validators.required],
-    cantidadHoras: ['', [Validators.required, Validators.min(4), Validators.pattern(/^[1-9]\d*$/)]],
+    cantidadHoras: [
+      null,
+      [Validators.required, Validators.min(4), Validators.pattern(/^[1-9]\d*$/)]
+    ],
   });
 
-  // Suscribirse a cambios en tipoGuardia
   guardiaForm.get('tipoGuardia')?.valueChanges.subscribe(value => {
+    this.tipoGuardia = value || '';
+
     const cantidadHorasControl = guardiaForm.get('cantidadHoras');
 
-    if (value === 'CARGO') {
-      cantidadHorasControl?.setValue('24');
-      cantidadHorasControl?.disable();
-    } else {
-      cantidadHorasControl?.enable();
-      cantidadHorasControl?.setValue(null);
-    }
+    // Resetear el campo siempre que cambia tipoGuardia
+    cantidadHorasControl?.setValue(null);
+
+    // Si estás usando validadores distintos según el tipo, podrías actualizar validadores aquí también si hace falta
   });
 
   return guardiaForm;
 }
 
-  get guardias() {
+get guardias() {
     return (this.guardiaForm.get('guardias') as FormArray);
   }
 
@@ -509,11 +539,8 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
 }
   
   listServicios(): void {
-    this.servicioService.list().subscribe(data => {
-      //console.log('Lista de servicios:', data);
+    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
-    }, error => {
-      console.log(error);
     });
   }
 
@@ -549,72 +576,61 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
     return !(guardia || consultorio || gira || otro);
   }
   
-  private async verificarMesesDisponibles(): Promise<void> {
-    const hoy = new Date();
-    const mesesVerificar: { nombre: string; fecha: moment.Moment }[] = [];
-    const mesesOcupados: string[] = []; // Array para almacenar los meses ocupados
-  
-    // Limpiar meses antes de agregar nuevos
-    this.meses = [];
-  
-    // Generamos los meses para verificar su disponibilidad
-    const mesesVerificaciones = [];
-  
-    for (let i = 1; i <= 6; i++) {
-      const mes = moment(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
-      const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
-      const fechaFinalizacion = mes.endOf('month');
-      
-      // Añadir la verificación de cada mes a un array de promesas
-      const mesVerificacion = this.verificarMesDisponible(mes.month() + 1, mes.year()).then(isAvailable => {
-        if (isAvailable) {
-          //console.log(`Mes ${mesNombreCapitalizado} (${mes.format('YYYY-MM')}) está disponible y se agrega al select.`);
-          mesesVerificar.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
-        } else {
-          //console.log(`Mes ${mesNombreCapitalizado} (${mes.format('YYYY-MM')}) NO está disponible y no se agrega al select.`);
-          mesesOcupados.push(mesNombreCapitalizado); // Agregar mes ocupado a la lista
-        }
-      });
-  
-      mesesVerificaciones.push(mesVerificacion);
-    }
-  
-    // Esperamos a que todas las verificaciones terminen
-    await Promise.all(mesesVerificaciones);
-  
-    // Asignamos los meses disponibles a la propiedad meses
-    this.meses = mesesVerificar;
-  
-    // Si todos los meses están ocupados
-    if (mesesOcupados.length === 6) {
-      this.toastr.warning('Los próximos 6 meses ya poseen una distribución cargada.', 'Aviso', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-        });
-  
-      // Redirigir si no hay un asistencial id
-      if (this.asistencial && this.asistencial.id) {
-        this.router.navigate(['/personal-dh']);
+private async verificarMesesDisponibles(): Promise<void> {
+  const hoy = moment(); // Usamos moment directamente
+  const mesesVerificar: { nombre: string; fecha: moment.Moment }[] = [];
+  const mesesOcupados: string[] = [];
+  this.meses = [];
+
+  const mesesVerificaciones = [];
+
+  // Itera desde el mes actual hasta los próximos 6 (total 7)
+  for (let i = 0; i < 7; i++) {
+    const mes = moment(hoy).add(i, 'months').startOf('month');
+    const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
+    const fechaFinalizacion = mes.endOf('month');
+
+    const mesVerificacion = this.verificarMesDisponible(mes.month() + 1, mes.year()).then(isAvailable => {
+      if (isAvailable) {
+        mesesVerificar.push({ nombre: mesNombreCapitalizado, fecha: fechaFinalizacion });
       } else {
-        console.error('El objeto asistencial no tiene un id.');
+        mesesOcupados.push(mesNombreCapitalizado);
       }
-    } 
-    // Si hay al menos un mes ocupado
-    else if (mesesOcupados.length > 0) {
-      const mesesOcupadosStr = mesesOcupados.join(" / ");
-      this.toastr.warning(`Ya existe una distribución cargada para ${mesesOcupadosStr}`, 'Aviso', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
     });
-    }
-  
-    // Log de todos los meses disponibles
-    //console.log("Meses disponibles para el select:", this.meses.map(m => m.nombre).join(", "));
+
+    mesesVerificaciones.push(mesVerificacion);
   }
 
-  // Verifica los campos en cada form para colocar su estado (en proceso o finalizado)
+  await Promise.all(mesesVerificaciones);
+  this.meses = mesesVerificar;
+
+  // Mensajes Toastr
+  if (mesesOcupados.length === 7) {
+    this.toastr.warning('Los próximos 6 meses ya poseen una distribución cargada.', 'Aviso', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+
+    if (this.asistencial?.id) {
+      this.router.navigate(['/personal-dh']);
+    } else {
+      console.error('El objeto asistencial no tiene un id.');
+    }
+
+  } else if (mesesOcupados.length > 0) {
+    const mesesOcupadosStr = mesesOcupados.join(" / ");
+    this.toastr.warning(`Ya existe una distribución cargada para ${mesesOcupadosStr}`, 'Aviso', {
+      timeOut: 9000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+  }
+
+  // console.log("Meses disponibles:", this.meses.map(m => m.nombre).join(", "));
+}
+
+// Verifica los campos en cada form para colocar su estado (en proceso o finalizado)
   isFormStarted(form: FormGroup): boolean {
     return form.dirty;
   }
@@ -638,7 +654,7 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
 
     if (this.idEfector === undefined) {
         this.toastr.error('El profesional no esta definido o no posee un legajo.', 'Error', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
         });
@@ -663,7 +679,7 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
     for (const { form, name } of formChecks) {
         if (form.dirty && !form.valid) {
             this.toastr.warning(`Faltan datos obligatorios para el panel ${name}.`, 'Advertencia', {
-                timeOut: 6000,
+                timeOut: 9000,
                 positionClass: 'toast-top-center',
                 progressBar: true
             });
@@ -807,7 +823,7 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
 
             if (errorMessages.length > 0) {
                 this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
-                    timeOut: 6000,
+                    timeOut: 9000,
                     positionClass: 'toast-top-center',
                     progressBar: true
                 });
@@ -832,22 +848,28 @@ private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
 }
 
 // Modificada la función para aceptar meses verificados como parámetro
-calcularMeses(mesesSeleccionados: Array<{ nombre: string, fecha: moment.Moment }>): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
+calcularMeses(
+  mesesSeleccionados: Array<{ nombre: string, fecha: moment.Moment }>
+): Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> {
   const meses: Array<{ mes: string, fechaInicio: Date, fechaFinalizacion: Date }> = [];
+  const hoy = moment(); // Fecha actual para comparación
 
-  // Iterar sobre los meses seleccionados
   mesesSeleccionados.forEach((mesSeleccionado) => {
-      const mesNombreCapitalizado = mesSeleccionado.nombre;
-      
-      // Asegurarse de que la fecha de finalización sea el último día del mes
-      const fechaFinalizacion = mesSeleccionado.fecha.endOf('month').startOf('day').toDate();
+    const mesNombreCapitalizado = mesSeleccionado.nombre;
 
-      // Agregar el mes al arreglo resultante
-      meses.push({
-          mes: mesNombreCapitalizado,
-          fechaInicio: mesSeleccionado.fecha.startOf('month').toDate(),
-          fechaFinalizacion: fechaFinalizacion,
-      });
+    // Si es el mes actual, usar hoy como inicio; si no, usar inicio del mes
+    const esMesActual = mesSeleccionado.fecha.isSame(hoy, 'month');
+    const fechaInicio = esMesActual
+      ? hoy.startOf('day').toDate()
+      : mesSeleccionado.fecha.startOf('month').toDate();
+
+    const fechaFinalizacion = mesSeleccionado.fecha.endOf('month').startOf('day').toDate();
+
+    meses.push({
+      mes: mesNombreCapitalizado,
+      fechaInicio: fechaInicio,
+      fechaFinalizacion: fechaFinalizacion,
+    });
   });
 
   return meses;
@@ -931,6 +953,7 @@ get isPanel3Expanded(): boolean {
       positionClass: 'toast-top-center',
       progressBar: true
     });
+
     if (this.asistencial && this.asistencial.id) {
       this.router.navigate(['/personal-dh']);
     

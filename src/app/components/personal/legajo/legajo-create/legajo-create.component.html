@@ -44,7 +44,7 @@
             <mat-form-field appearance="fill">
               <mat-label>Profesión</mat-label>
               <mat-select formControlName="profesion">
-                <mat-option *ngFor="let profesion of profesiones" [value]="profesion.id">{{ profesion.nombre }}</mat-option>
+                <mat-option *ngFor="let profesion of profesionesFiltradas" [value]="profesion.id">{{ profesion.nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('profesion')?.errors?.['required']">La profesión es requerida.</mat-error>
             </mat-form-field>

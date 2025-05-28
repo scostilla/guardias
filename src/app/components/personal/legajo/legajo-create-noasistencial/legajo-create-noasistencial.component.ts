@@ -190,7 +190,7 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
       // Si no se recibe NoAsistencial, redirige atrás con un mensaje
       if (!this.initialData) {
         this.toastr.error('No se recibió ningún NoAsistencial. Consulta con soporte.', 'Error', {
-          timeOut: 5000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -201,7 +201,7 @@ export class LegajoCreateNoasistencialComponent implements OnInit {
     } else {
       // Si no se pasó el estado, redirige atrás con un mensaje
       this.toastr.error('No se recibió ningún NoAsistencial. Consulta con soporte.', 'Error', {
-        timeOut: 5000,
+        timeOut: 9000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
@@ -283,7 +283,7 @@ if (this.initialData) {
         // Verificar si ya existe un legajo activo
         if (legajosActivos.length > 0) {
           this.toastr.warning('Debe finalizar un legajo existente para poder realizar una nueva carga', 'Limite de legajos alcanzado', {
-            timeOut: 6000,
+            timeOut: 9000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
@@ -293,7 +293,7 @@ if (this.initialData) {
           if (this.asignadoAutoridad) {
             // Si es autoridad, solo se permite cargar un legajo con esAutoridad = true
             this.toastr.info('La persona es una autoridad, se cargará un legajo autoridad.', 'Información', {
-              timeOut: 6000,
+              timeOut: 9000,
               positionClass: 'toast-top-center',
               progressBar: true
             });
@@ -302,7 +302,7 @@ if (this.initialData) {
           } else {
             // Si no es autoridad, solo se permite cargar un legajo con esAutoridad = false
             this.toastr.info('La persona no es una autoridad, se cargará un legajo general.', 'Información', {
-              timeOut: 6000,
+              timeOut: 9000,
               positionClass: 'toast-top-center',
               progressBar: true
             });
@@ -553,7 +553,7 @@ if (this.initialData) {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -602,7 +602,7 @@ if (this.initialData) {
       // Si no se encuentran CAPS, mostrar un mensaje de Toastr
       if (this.caps.length === 0) {
         this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 6000,
+          timeOut: 9000,
           positionClass: 'toast-top-center',
           progressBar: true
         });
@@ -869,7 +869,7 @@ if (this.initialData) {
   //Uso tanto para cancelar form como para volver atrás
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
-      timeOut: 6000,
+      timeOut: 9000,
       positionClass: 'toast-top-center',
       progressBar: true
     });

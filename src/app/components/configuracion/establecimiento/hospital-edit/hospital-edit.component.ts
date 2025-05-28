@@ -59,13 +59,16 @@ export class HospitalEditComponent implements OnInit {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.hospitalForm.value);
   }
 
-  listLocalidad(): void {
-    this.localidadService.list().subscribe(data => {
-      this.localidades = data;
-    }, error => {
+listLocalidad(): void {
+  this.localidadService.list().subscribe(
+    data => {
+      this.localidades = data.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    },
+    error => {
       console.log(error);
-    });
-  }
+    }
+  );
+}
 
   listRegion(): void {
     this.regionService.list().subscribe(data => {

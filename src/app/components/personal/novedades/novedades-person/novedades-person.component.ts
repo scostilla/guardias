@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.c
 import { NovedadesPersonCreateComponent } from '../novedades-person-create/novedades-person-create.component';
 import { NovedadesPersonDetailComponent } from '../novedades-person-detail/novedades-person-detail.component';
 import { NovedadesPersonEditComponent } from '../novedades-person-edit/novedades-person-edit.component';
+import * as moment from 'moment';
 @Component({
   selector: 'app-novedades-person',
   templateUrl: './novedades-person.component.html',
@@ -88,6 +89,7 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
     this.suscription = this.novedadPersonalService.refresh$.subscribe(() => {
       this.listNovedad();  // Volver a cargar novedades cuando se refresque
     });
+    
   }
 
   listNovedad(): void {
@@ -120,35 +122,35 @@ export class NovedadesPersonComponent implements OnInit, OnDestroy {
       this.suscription?.unsubscribe();
   }
 
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
-      }
-    }
-    return output;
-  }
+applyFilter(event: Event): void {
+  const input = (event.target as HTMLInputElement).value;
+  const normalizedFilterValue = this.normalize(input);
 
-applyFilter(event: Event) {
-  const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-  this.dataSource.filter = filterValue;
-  this.dataSource.filterPredicate = (data: NovedadPersonal, filter: string) => {
-    const tipoLicencia = data.tipoLicencia.toString();
-    const fechaInicioString = data.fechaInicio.toISOString().toLowerCase();
-    const fechaFinalString = data.fechaFinal.toISOString().toLowerCase();
+  this.dataSource.filterPredicate = (data: NovedadPersonal, filter: string): boolean => {
+    const tipoLicencia = data.tipoLicencia?.nombre ?? '';
 
+    const fechaInicioStr = moment(data.fechaInicio).isValid()
+      ? moment(data.fechaInicio).format('DD/MM/YYYY')
+      : '';
+    const fechaFinalStr = moment(data.fechaFinal).isValid()
+      ? moment(data.fechaFinal).format('DD/MM/YYYY')
+      : '';
 
-    // Aplicar el filtro a los valores convertidos
-    return this.accentFilter(data.tipoLicencia.nombre).includes(this.accentFilter(filter)) || 
-           this.accentFilter(fechaInicioString).includes(this.accentFilter(filter)) || 
-           this.accentFilter(fechaFinalString).includes(this.accentFilter(filter));
+    const content = `${tipoLicencia} ${fechaInicioStr} ${fechaFinalStr}`;
+    const normalizedContent = this.normalize(content);
+
+    return normalizedContent.includes(filter);
   };
+
+  this.dataSource.filter = normalizedFilterValue;
+}
+
+normalize(value: string): string {
+  return value
+    .normalize('NFD')                      // descompone letras con tilde
+    .replace(/[\u0300-\u036f]/g, '')       // remueve los acentos
+    .toLowerCase()
+    .trim();
 }
 
 openFormCreate(novedadPersonal?: NovedadPersonal): void {

@@ -10,7 +10,7 @@
             <mat-label>Motivo</mat-label>
               <input matInput formControlName="motivo">
               <mat-error *ngIf="feriadoForm.get('motivo')?.errors?.['required']">El motivo es requerido.</mat-error>
-              <mat-error *ngIf="feriadoForm.get('motivo')?.errors?.['pattern']">El motivo debe tener solo letras (entre 1 y 60 caracteres).</mat-error>
+              <mat-error *ngIf="feriadoForm.get('motivo')?.errors?.['pattern']">El motivo puede tener letras y numeros (entre 1 y 90 caracteres).</mat-error>
             </mat-form-field>
         </div>
       </div>
