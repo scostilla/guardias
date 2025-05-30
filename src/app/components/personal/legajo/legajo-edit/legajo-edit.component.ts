@@ -229,6 +229,8 @@ export class LegajoEditComponent implements OnInit {
       tipoHabilitacionesGuardias: [null, Validators.required],
       habilitacionesGuardias: [[]],
       hospitalHabilitacionesGuardias: ['', Validators.required],
+      tipoHabilitacionesGenerales: [''],
+      hospitalHabilitacionesGenerales: [''],
       habilitacionesGenerales: [[]],
     }, { validator: this.validarFechas });
 
@@ -2587,30 +2589,6 @@ if (debeGuardarHabilitacion) {
                     .then(() => {
                         console.log("Todas las habilitaciones previas han sido desactivadas.");
                         this.crearNuevaHabilitacion(legajoData);
-                        /* if (efectoresNuevos.length > 0) {
-
-              // Crear nueva habilitación con los nuevos datos
-              const nuevaHabilitacion = new HabilitacionesGuardiasDto(
-                true, // Activo
-                legajoData.idPersona,
-                efectoresNuevos, 
-                legajoData.tipoHabilitacionesGuardias
-              );
-    
-              console.log("Dto de habilitación a crear:", nuevaHabilitacion);
-
-              this.habilitacionesGuardiasService.save(nuevaHabilitacion).subscribe(
-                  (response) => {
-                      console.log("Nueva habilitación creada correctamente", response);
-                  },
-                  (error) => {
-                      console.error("Error al crear la nueva habilitación", error);
-                  }
-              );
-          }
-          else {
-            console.log("No se encontraron nuevos efectores, no se creará una nueva habilitación.");
-          } */
         })
           .catch((error) => {
               console.error("Error al desactivar las habilitaciones previas", error);
@@ -2654,7 +2632,107 @@ private crearNuevaHabilitacion(legajoData: any): void {
   );
 }
 
-    saveHabilitacionesGenerales(legajoData: any): void {
+saveHabilitacionesGenerales(legajoData: any, forzarActualizacion: boolean = false): void {
+    this.habilitacionesGeneralesService.getPermisoByPersona(legajoData.idPersona).subscribe(
+        (habilitacionExistente) => {
+            if (!habilitacionExistente) {
+                console.log("No se encontró una habilitación existente, creando nueva.");
+                this.crearNuevaHabilitacionGeneral(legajoData);
+                return;
+            }
+
+            console.log("Habilitación existente encontrada:", habilitacionExistente);
+
+            // Extraer los IDs de efectores de la habilitación existente y la nueva
+            const efectoresExistentes = habilitacionExistente.efectores.map((efector: any) => efector.id).sort();
+            const efectoresNuevos = (legajoData.habilitacionesGenerales || []).sort();
+
+            // Comparar efectores y tipo de efector
+            const mismosEfectores = JSON.stringify(efectoresExistentes) === JSON.stringify(efectoresNuevos);
+            const mismoTipoEfector = habilitacionExistente.tipoEfectorEx === legajoData.tipoEfectorEx;
+
+            if (mismosEfectores && mismoTipoEfector && !forzarActualizacion) {
+                console.log("La habilitación existente es igual a la nueva, no se realizan cambios.");
+                return;
+            }
+
+            console.log("Se detectaron cambios en la habilitación general, actualizando...");
+
+            // Obtener habilitaciones activas
+            const habilitacionesActivas = Array.isArray(habilitacionExistente) 
+                ? habilitacionExistente.filter(hab => hab.activo) 
+                : (habilitacionExistente.activo ? [habilitacionExistente] : []);
+
+            if (habilitacionesActivas.length === 0) {
+                console.log("No hay habilitaciones activas, creando nueva habilitación.");
+                this.crearNuevaHabilitacionGeneral(legajoData);
+                return;
+            }
+
+            console.log("Habilitaciones activas encontradas:", habilitacionesActivas);
+
+            // Desactivar habilitaciones activas
+            const desactivaciones = habilitacionesActivas.map((habilitacion) => {
+                const habilitacionDesactivada = new HabilitacionesGeneralesDto(
+                    false, // Desactivar
+                    legajoData.idPersona,
+                    efectoresExistentes,
+                    legajoData.tipoHabilitacionesGenerales?.tipoEfectorEx
+                );
+
+                console.log("Dto de habilitación general a desactivar:", habilitacionDesactivada);
+
+                return this.habilitacionesGeneralesService.update(habilitacion.id!, habilitacionDesactivada).toPromise();
+            });
+
+            Promise.all(desactivaciones)
+                .then(() => {
+                    console.log("Todas las habilitaciones generales previas han sido desactivadas.");
+                    this.crearNuevaHabilitacionGeneral(legajoData);
+                })
+                .catch((error) => {
+                    console.error("Error al desactivar las habilitaciones generales previas", error);
+                });
+        },
+        (error) => {
+            if (error.status === 404) {
+                console.log("No se encontró ninguna habilitación general, creando nueva.");
+                this.crearNuevaHabilitacionGeneral(legajoData);
+            } else {
+                console.error("Error al verificar habilitación general existente", error);
+            }
+        }
+    );
+}
+
+private crearNuevaHabilitacionGeneral(legajoData: any): void {
+    const efectoresNuevos = legajoData.habilitacionesGenerales || [];
+
+    if (efectoresNuevos.length === 0) {
+        console.log("No se encontraron nuevos efectores, no se creará una nueva habilitación general.");
+        return;
+    }
+
+    const nuevaHabilitacionGeneral = new HabilitacionesGeneralesDto(
+        true, // Activo
+        legajoData.idPersona,
+        efectoresNuevos,
+        legajoData.tipoHabilitacionesGenerales
+    );
+
+    console.log("Dto de habilitación general a crear:", nuevaHabilitacionGeneral);
+
+    this.habilitacionesGeneralesService.save(nuevaHabilitacionGeneral).subscribe(
+        (response) => {
+            console.log("Nueva habilitación general creada correctamente", response);
+        },
+        (error) => {
+            console.error("Error al crear la nueva habilitación general", error);
+        }
+    );
+}
+
+    /* saveHabilitacionesGenerales(legajoData: any): void {
       this.habilitacionesGeneralesService.getPermisoByPersona(legajoData.idPersona).subscribe(
         (habilitacionExistente) => {
           // Si ya existe una habilitación, simplemente la usamos y no hacemos nada
@@ -2687,7 +2765,7 @@ private crearNuevaHabilitacion(legajoData: any): void {
           }
         }
       );
-    }
+    } */
 
   //-----Manejo de paneles-----
 
