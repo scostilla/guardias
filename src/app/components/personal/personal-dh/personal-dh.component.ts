@@ -21,16 +21,30 @@ import * as moment from 'moment';
 
 // Interfaz temporal para agrupar las horas por día y calcular totales
 interface DistribucionGuardiaWithHoras extends DistribucionGuardia {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
-  totalHorasFinDeSemana: number;  // Total horas sábado y domingo
-  totalHorasLunesAViernes: number;  // Total horas lunes a viernes
-  totalHoras: number;  // Total de todas las horas
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
+  totalHorasFinDeSemana: number;
+  totalHorasLunesAViernes: number;
+  totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
 }
 
 interface DistribucionConsultorioWithHoras extends DistribucionConsultorio {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
   totalHorasFinDeSemana: number;
   totalHorasLunesAViernes: number;
   totalHoras: number;
@@ -39,7 +53,14 @@ interface DistribucionConsultorioWithHoras extends DistribucionConsultorio {
 }
 
 interface DistribucionGiraWithHoras extends DistribucionGira {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
   totalHorasFinDeSemana: number;
   totalHorasLunesAViernes: number;
   totalHoras: number;
@@ -48,7 +69,14 @@ interface DistribucionGiraWithHoras extends DistribucionGira {
 }
 
 interface DistribucionOtroWithHoras extends DistribucionOtro {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
   totalHorasFinDeSemana: number;
   totalHorasLunesAViernes: number;
   totalHoras: number;
@@ -486,7 +514,6 @@ export class PersonalDhComponent implements OnInit, OnDestroy {
     
   // Función para configurar las columnas dinámicas
 setupColumns(): void {
-  // Juntar todas las distribuciones
   const todasLasDistribuciones = [
     ...this.distribucionesGuardia,
     ...this.distribucionesConsultorio,
@@ -496,20 +523,30 @@ setupColumns(): void {
 
   if (todasLasDistribuciones.length === 0) return;
 
-  // Obtener la fecha más temprana y más tardía
+  // Obtener el rango completo de fechas
   const fechasInicio = todasLasDistribuciones.map(d => moment(d.fechaInicio));
-  const fechasFin = todasLasDistribuciones.map(d => moment(d.fechaFinalizacion ?? d.fechaInicio)); // por si no tiene fechaFinal
+  const fechasFin = todasLasDistribuciones.map(d => moment(d.fechaFinalizacion ?? d.fechaInicio));
 
-  const minFecha = moment.min(fechasInicio);
-  const maxFecha = moment.max(fechasFin);
+  const minFecha = moment.min(fechasInicio).startOf('day');
+  const maxFecha = moment.max(fechasFin).endOf('day');
 
-  const daysRange = maxFecha.diff(minFecha, 'days') + 1;
+  // Asegurarse de que el rango cubre todo el mes seleccionado
+  const mes = this.mesYanio ? parseInt(this.mesYanio.split('-')[0], 10) : moment().month() + 1;
+  const anio = this.anioSeleccionado || moment().year();
+  
+  const inicioMes = moment(`${anio}-${mes}-01`, 'YYYY-M-DD');
+  const finMes = moment(inicioMes).endOf('month');
+
+  // Usar el rango más amplio (entre el mes completo y las fechas de las distribuciones)
+  const fechaInicioMostrar = moment.min(inicioMes, minFecha);
+  const fechaFinMostrar = moment.max(finMes, maxFecha);
+
+  const daysRange = fechaFinMostrar.diff(fechaInicioMostrar, 'days') + 1;
 
   const columns: string[] = ['clase', 'totalHoras', 'totalHorasFinDeSemana', 'totalHorasLunesAViernes'];
 
-  // Generar columnas por cada día en el rango
   for (let i = 0; i < daysRange; i++) {
-    columns.push(minFecha.clone().add(i, 'days').format('YYYY_MM_DD'));
+    columns.push(fechaInicioMostrar.clone().add(i, 'days').format('YYYY_MM_DD'));
   }
 
   this.displayedColumns = columns;
@@ -520,21 +557,30 @@ getFechaFromColumnId(columnId: string): string {
     return fecha ? fecha.toISOString().split('T')[0] : '';
  }
 
-getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsultorioWithHoras | DistribucionGiraWithHoras | DistribucionOtroWithHoras, fechaColumna: string): { horas: string, tooltip: string, showDetails: boolean }[] {
-  const diaColumn = moment(fechaColumna, 'YYYY_MM_DD').format('dddd').toLowerCase();
-  const horasPorDia = distribucion.horasPorDia;
-  if (horasPorDia[diaColumn]) {
-    // Si ya existe un arreglo de horas para el día, devolver todas las entradas
-    return horasPorDia[diaColumn].map(entry => ({
-      ...entry,
-      showDetails: this.showDetails // El valor de `showDetails` controla si se muestran los detalles
-    }));
-  } else {
-    return []; // Si no hay horas para ese día, devolver un arreglo vacío
+getHorasForDate(
+  distribucion: DistribucionGuardiaWithHoras, 
+  fechaColumna: string
+): { horas: string, tooltip: string, showDetails: boolean }[] {
+  const fechaMoment = moment(fechaColumna, 'YYYY_MM_DD');
+  const diaColumn = fechaMoment.format('dddd').toLowerCase();
+  
+  if (distribucion.horasPorDia[diaColumn]) {
+    return distribucion.horasPorDia[diaColumn]
+      .filter(entry => {
+        const entryInicio = moment(entry.fechaInicio);
+        const entryFin = moment(entry.fechaFin);
+        return fechaMoment.isBetween(entryInicio, entryFin, 'day', '[]');
+      })
+      .map(entry => ({
+        horas: entry.horas,
+        tooltip: entry.tooltip,
+        showDetails: this.showDetails
+      }));
   }
+  return [];
 }
 
-  // Función que alterna la visibilidad de los detalles globalmente
+// Función que alterna la visibilidad de los detalles globalmente
   toggleAllDetails(): void {
     this.showDetails = !this.showDetails; // Alterna la visibilidad de los detalles
   }
@@ -580,282 +626,313 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       });
     }
   }
+
+convertirDecimalAHorasYMinutos(decimal: number): string {
+  const horas = Math.floor(decimal);
+  const minutos = Math.round((decimal - horas) * 60);
+
+  if (minutos === 0) {
+    return `${horas}`; // Solo horas si minutos es 0
+  } else {
+    return `${horas}:${minutos.toString().padStart(2, '0')}`;
+  }
+}
   
 aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): DistribucionGuardiaWithHoras {
   if (!distribuciones.length) return {} as DistribucionGuardiaWithHoras;
 
-  const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+  const horasPorDia: { 
+    [key: string]: { 
+      horas: string, 
+      tooltip: string, 
+      fechaInicio: Date, 
+      fechaFin: Date 
+    }[] 
+  } = {};
+
   let totalHorasFinDeSemana = 0;
   let totalHorasLunesAViernes = 0;
   let totalHoras = 0;
   let totalHorasSinOcurrencias = 0;
 
-  // Agrupar por mes-año usando fechaInicio
-  const distribucionesPorMes: { [mes: string]: DistribucionGuardia[] } = {};
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día inválido: ${distribucion.dia}`);
+      return;
+    }
 
-  distribuciones.forEach(d => {
-    const mesClave = moment(d.fechaInicio).format('YYYY-MM');
-    if (!distribucionesPorMes[mesClave]) distribucionesPorMes[mesClave] = [];
-    distribucionesPorMes[mesClave].push(d);
+    // Calcular cuántas veces ocurre este día específico en el rango
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    // Guardar con información de rango
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    // Calcular totales
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
   });
 
-  // Procesar cada grupo mensual
-  for (const mesClave of Object.keys(distribucionesPorMes)) {
-    const distribucionesDelMes = distribucionesPorMes[mesClave];
-
-    // Tomamos la fechaInicio y fechaFinalizacion del primer item del mes
-    const fechaInicioMes = moment(distribucionesDelMes[0].fechaInicio);
-    const fechaFinMes = moment(distribucionesDelMes[0].fechaFinalizacion);
-
-    const ocurrenciasPorDia = this.contarOcurrenciasEnRango(fechaInicioMes, fechaFinMes);
-
-    distribucionesDelMes.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];
-      if (!dia) {
-        console.error(`Día inválido: ${distribucion.dia}`);
-        return;
-      }
-
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia] || 0;
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-
-      totalHorasSinOcurrencias += horas;
-
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${horas} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${horas} hs`, tooltip }];
-      }
-
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-
-      totalHoras += horasTotalesPorDia;
-    });
-  }
-
-  // Usamos la primera distribución como base para devolver el objeto final
-  const aggregatedDistribucion = { ...distribuciones[0] } as DistribucionGuardiaWithHoras;
-  aggregatedDistribucion.clase = 'Guardias';
-  aggregatedDistribucion.horasPorDia = horasPorDia;
-  aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-  aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-  aggregatedDistribucion.totalHoras = totalHoras;
-  aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+  // Crear objeto resultante
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Guardias'
+  } as DistribucionGuardiaWithHoras;
 
   return aggregatedDistribucion;
 }
-      
+
 aggregateDistribucionesConsultorio(distribuciones: DistribucionConsultorio[]): DistribucionConsultorioWithHoras {
   if (!distribuciones.length) return {} as DistribucionConsultorioWithHoras;
 
-  const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+  const horasPorDia: { [key: string]: { horas: string, tooltip: string, fechaInicio: Date, fechaFin: Date }[] } = {};
   let totalHorasFinDeSemana = 0;
   let totalHorasLunesAViernes = 0;
   let totalHoras = 0;
   let totalHorasSinOcurrencias = 0;
 
-  // Agrupar por mes-año usando fechaInicio
-  const distribucionesPorMes: { [mes: string]: DistribucionConsultorio[] } = {};
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día inválido: ${distribucion.dia}`);
+      return;
+    }
 
-  distribuciones.forEach(d => {
-    const mesClave = moment(d.fechaInicio).format('YYYY-MM');
-    if (!distribucionesPorMes[mesClave]) distribucionesPorMes[mesClave] = [];
-    distribucionesPorMes[mesClave].push(d);
+    // Calcular ocurrencias para este rango específico
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const horasFormato = this.convertirDecimalAHorasYMinutos(horas);
+    const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horasFormato} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horasFormato} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
   });
 
-  // Procesar cada grupo mensual
-  for (const mesClave of Object.keys(distribucionesPorMes)) {
-    const distribucionesDelMes = distribucionesPorMes[mesClave];
-
-    const fechaInicioMes = moment(distribucionesDelMes[0].fechaInicio);
-    const fechaFinMes = moment(distribucionesDelMes[0].fechaFinalizacion);
-
-    const ocurrenciasPorDia = this.contarOcurrenciasEnRango(fechaInicioMes, fechaFinMes);
-
-    distribucionesDelMes.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];
-      if (!dia) {
-        console.error(`Día inválido: ${distribucion.dia}`);
-        return;
-      }
-
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia] || 0;
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-
-      totalHorasSinOcurrencias += horas;
-
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${horas} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${horas} hs`, tooltip }];
-      }
-
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-
-      totalHoras += horasTotalesPorDia;
-    });
-  }
-
-  // Usamos la primera distribución como base
-  const aggregatedDistribucion = { ...distribuciones[0] } as DistribucionConsultorioWithHoras;
-  aggregatedDistribucion.clase = 'Consultorio';
-  aggregatedDistribucion.horasPorDia = horasPorDia;
-  aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-  aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-  aggregatedDistribucion.totalHoras = totalHoras;
-  aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Consultorio'
+  } as DistribucionConsultorioWithHoras;
 
   return aggregatedDistribucion;
 }
-    
+
 aggregateDistribucionesGira(distribuciones: DistribucionGira[]): DistribucionGiraWithHoras {
   if (!distribuciones.length) return {} as DistribucionGiraWithHoras;
 
-  const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+  const horasPorDia: { [key: string]: { horas: string, tooltip: string, fechaInicio: Date, fechaFin: Date }[] } = {};
   let totalHorasFinDeSemana = 0;
   let totalHorasLunesAViernes = 0;
   let totalHoras = 0;
   let totalHorasSinOcurrencias = 0;
 
-  // Agrupar por mes y año basado en fechaInicio
-  const distribucionesPorMes: { [mes: string]: DistribucionGira[] } = {};
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día inválido: ${distribucion.dia}`);
+      return;
+    }
 
-  distribuciones.forEach(d => {
-    const mesClave = moment(d.fechaInicio).format('YYYY-MM');
-    if (!distribucionesPorMes[mesClave]) distribucionesPorMes[mesClave] = [];
-    distribucionesPorMes[mesClave].push(d);
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const tooltip = `${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
   });
 
-  for (const mesClave of Object.keys(distribucionesPorMes)) {
-    const distribucionesDelMes = distribucionesPorMes[mesClave];
-    const fechaInicioMes = moment(distribucionesDelMes[0].fechaInicio);
-    const fechaFinMes = moment(distribucionesDelMes[0].fechaFinalizacion);
-
-    const ocurrenciasPorDia = this.contarOcurrenciasEnRango(fechaInicioMes, fechaFinMes);
-
-    distribucionesDelMes.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];
-      if (!dia) {
-        console.error(`Día inválido: ${distribucion.dia}`);
-        return;
-      }
-
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia] || 0;
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-
-      const tooltip = `${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-
-      totalHorasSinOcurrencias += horas;
-
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${horas} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${horas} hs`, tooltip }];
-      }
-
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-
-      totalHoras += horasTotalesPorDia;
-    });
-  }
-
-  const aggregatedDistribucion = { ...distribuciones[0] } as DistribucionGiraWithHoras;
-  aggregatedDistribucion.clase = 'Giras';
-  aggregatedDistribucion.horasPorDia = horasPorDia;
-  aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-  aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-  aggregatedDistribucion.totalHoras = totalHoras;
-  aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Giras'
+  } as DistribucionGiraWithHoras;
 
   return aggregatedDistribucion;
 }
-    
+
 aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtroWithHoras {
   if (!distribuciones.length) return {} as DistribucionOtroWithHoras;
 
-  const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
+  const horasPorDia: { [key: string]: { horas: string, tooltip: string, fechaInicio: Date, fechaFin: Date }[] } = {};
   let totalHorasFinDeSemana = 0;
   let totalHorasLunesAViernes = 0;
   let totalHoras = 0;
   let totalHorasSinOcurrencias = 0;
 
-  // Agrupar distribuciones por mes basado en fechaInicio
-  const distribucionesPorMes: { [mes: string]: DistribucionOtro[] } = {};
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día no reconocido: ${distribucion.dia}`);
+      return;
+    }
 
-  distribuciones.forEach(d => {
-    const mesClave = moment(d.fechaInicio).format('YYYY-MM');
-    if (!distribucionesPorMes[mesClave]) distribucionesPorMes[mesClave] = [];
-    distribucionesPorMes[mesClave].push(d);
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
+    const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
+    const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
   });
 
-  for (const mesClave of Object.keys(distribucionesPorMes)) {
-    const distribucionesDelMes = distribucionesPorMes[mesClave];
-    const fechaInicioMes = moment(distribucionesDelMes[0].fechaInicio);
-    const fechaFinMes = moment(distribucionesDelMes[0].fechaFinalizacion);
-
-    const ocurrenciasPorDia = this.contarOcurrenciasEnRango(fechaInicioMes, fechaFinMes);
-
-    distribucionesDelMes.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];
-      if (!dia) {
-        console.error(`Día no reconocido: ${distribucion.dia}`);
-        return;
-      }
-
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia] || 0;
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-
-      const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
-      const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
-      const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-
-      totalHorasSinOcurrencias += horas;
-
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${horas} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${horas} hs`, tooltip }];
-      }
-
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-
-      totalHoras += horasTotalesPorDia;
-    });
-  }
-
-  const aggregatedDistribucion = { ...distribuciones[0] } as DistribucionOtroWithHoras;
-  aggregatedDistribucion.clase = 'Otros';
-  aggregatedDistribucion.horasPorDia = horasPorDia;
-  aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-  aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-  aggregatedDistribucion.totalHoras = totalHoras;
-  aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Otros'
+  } as DistribucionOtroWithHoras;
 
   return aggregatedDistribucion;
-}
-        
+}        
       
   /*/ Contar las ocurrencias de cada día en el mes
   contarOcurrenciasDeDiasEnMes(): { [key: string]: number } {
@@ -975,14 +1052,47 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
     });
   }
   
-  editarMes(): void {
+editarMes(): void {
+  if (!this.asistencial) return;
+
+  // Obtener todas las distribuciones combinadas
+  const todasLasDistribuciones = [
+    ...this.distribucionesGuardia,
+    ...this.distribucionesConsultorio,
+    ...this.distribucionesGira,
+    ...this.distribucionesOtro
+  ];
+
+  // Si no hay distribuciones, usar el mes actual como fallback
+  if (todasLasDistribuciones.length === 0) {
     this.router.navigate(['/personal-dh-edit'], {
       queryParams: {
-        asistencialId: this.asistencial?.id,
+        asistencialId: this.asistencial.id,
         fechaInicio: this.mesYanio,
       }
     });
+    return;
   }
+
+  // Inicializar con la primera fecha disponible (asegurando que es un moment.Moment)
+  let ultimaFecha: moment.Moment = moment(todasLasDistribuciones[0].fechaInicio);
+  
+  // Encontrar la fecha más reciente
+  todasLasDistribuciones.forEach(dist => {
+    const fechaDist = moment(dist.fechaInicio);
+    if (fechaDist.isAfter(ultimaFecha)) {
+      ultimaFecha = fechaDist;
+    }
+  });
+
+  // Navegar con la fecha formateada
+  this.router.navigate(['/personal-dh-edit'], {
+    queryParams: {
+      asistencialId: this.asistencial.id,
+      fechaInicio: ultimaFecha.format('YYYY-MM-DD')
+    }
+  });
+}
 
   obtenerDistribucionesYAbrirDialogo(tipo: string): void {
     if (!this.asistencial) {

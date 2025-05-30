@@ -1,33 +1,34 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
-import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionGuardiaDto } from 'src/app/dto/personal/DistribucionGuardiaDto';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
 import { DistribucionConsultorioDto } from 'src/app/dto/personal/DistribucionConsultorioDto';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
-import { ServicioService } from 'src/app/services/servicio.service';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import * as moment from 'moment';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
-import { DistribucionGira } from 'src/app/models/personal/DistribucionGira';
-import { DistribucionOtro } from 'src/app/models/personal/DistribucionOtro';
-import { DistribucionConsultorio } from 'src/app/models/personal/DistribucionConsultorio';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import * as moment from 'moment';
+
+interface HorarioDistribucion {
+  dia: string;
+  horaInicio: string; // en formato HH:mm
+  cantidadHoras: number;
+}
 
 interface Tipos {
   value: string;
@@ -45,13 +46,15 @@ export class PersonalDhEditComponent {
   suscription!: Subscription;
   asistencial: Asistencial | null = null;
   idPersona!: number;
-  mesSeleccionado!: string;
+  fechaSeleccionada!: string;
   tipoGuardias: TipoGuardia[] = [];
   guardiaForm!: FormGroup;
   consultorioForm!: FormGroup;
   giraForm!: FormGroup;
   otroForm!: FormGroup;
   vigenciaForm!: FormGroup;
+  nombreProfesion: string = '';
+  tipoGuardia: string = '';
   
   step = -1;
   cantidadHoras: number = 0;
@@ -65,10 +68,18 @@ export class PersonalDhEditComponent {
   horasStatus: string = '';
   horasMessage: string = '';
   horasMessageClass: string = '';
+  solapamientoMessage: string = '';
+  solapamientoMessageClass: string = '';
 
-  servicios: Servicio[] = [];
+  servicios: ServicioSummaryDto[] = [];
   hospitales: Hospital[] = [];
   capss: CapsDto[] = [];
+  efectorId: number | null = null;
+
+  guardiasOriginales: any[] = [];
+  consultoriosOriginales: any[] = [];
+  girasOriginales: any[] = [];
+  otrosOriginales: any[] = [];
 
   public distribucionesGuardiaIds: number[] = [];
   public distribucionesConsultorioIds: number[] = [];
@@ -97,9 +108,8 @@ export class PersonalDhEditComponent {
     private distribucionConsultorioService: DistribucionConsultorioService,
     private distribucionGiraService: DistribucionGiraService,
     private distribucionOtroService: DistribucionOtroService,
-    private servicioService: ServicioService,
+    private efectorService: EfectorService,
     private hospitalService: HospitalService,
-    private capsService: CapsService,
     private asistencialService: AsistencialService,
     private fb: FormBuilder,
     private location: Location
@@ -133,19 +143,19 @@ export class PersonalDhEditComponent {
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       const asistencialId = params['asistencialId'];
-      const mesSeleccionado = params['mes'];
-  
-      if (!mesSeleccionado || !mesSeleccionado.includes('-')) {
-        this.toastr.error('El mes y año seleccionado es inválido o está vacío.', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        this.isButtonDisabled = false;
-        return;
-      }
-  
-      this.mesSeleccionado = mesSeleccionado;
+      const fechaInicioParam = params['fechaInicio'];
+
+if (!fechaInicioParam || !moment(fechaInicioParam, 'YYYY-MM-DD', true).isValid()) {
+  this.toastr.error('La fecha de inicio proporcionada no es válida.', 'Error', {
+    timeOut: 6000,
+    positionClass: 'toast-top-center',
+    progressBar: true
+  });
+  this.isButtonDisabled = false;
+  return;
+}
+
+this.fechaSeleccionada = fechaInicioParam;
   
       this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
         if (id === null) {
@@ -157,6 +167,8 @@ export class PersonalDhEditComponent {
           next: (asistencial) => {
             this.asistencial = asistencial;
             this.idPersona = asistencial.id!;
+            const legajoActivo = asistencial.legajos.find(l => l.activo);
+            this.nombreProfesion = legajoActivo?.profesion?.nombre || 'Sin profesión';
   
             // Ya con el objeto completo
             this.listServicios();
@@ -164,7 +176,7 @@ export class PersonalDhEditComponent {
             this.listCaps();
             this.generarMeses();
             this.loadCargaHoraria();
-            this.loadDistribuciones(mesSeleccionado);
+            this.loadDistribuciones(fechaInicioParam);
           },
           error: (err) => {
             console.error('Error al obtener el asistencial:', err);
@@ -173,6 +185,8 @@ export class PersonalDhEditComponent {
         });
       });
     });
+
+    this.efectorId = this.efectorService.getCurrentEfectorId();
   }
       
   private subscribeToFormChanges(): void {
@@ -181,16 +195,31 @@ export class PersonalDhEditComponent {
     this.giraForm.valueChanges.subscribe(() => this.updateHorasStatus());
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
-  
-  getMesFormateado(): string {
-    const [mes, anio] = this.mesSeleccionado.split('-');
-    return moment(`${anio}-${mes}`, 'YYYY-MM').format('MMMM YYYY');
+
+mostrarOpcion(horas: number, tipoGuardia: string): boolean {
+  if (tipoGuardia !== 'CARGO') {
+    return false;
   }
 
-loadDistribuciones(mesSeleccionado: string): void {
-  const [mes, anio] = mesSeleccionado.split('-');
-  const fechaInicioMes = moment(`${anio}-${mes}-01`, 'YYYY-MM-DD').startOf('month');
-  const fechaFinMes = fechaInicioMes.clone().endOf('month');
+  if (this.nombreProfesion === 'Medico') {
+    return horas === 12 || horas === 24;
+  }
+
+  if (this.nombreProfesion === 'Bioquimico') {
+    return horas === 8 || horas === 12 || horas === 24;
+  }
+
+  return false;
+}
+
+  
+getFechaFormateada(): string {
+  return moment(this.fechaSeleccionada, 'YYYY-MM-DD').format('MMMM YYYY');
+}
+
+loadDistribuciones(fechaInicio: string): void {
+  const fechaInicioMoment = moment(fechaInicio, 'YYYY-MM-DD');
+  const fechaFinMoment = fechaInicioMoment.clone().endOf('month');
   const idAsistencial = this.asistencial?.id;
 
   if (!idAsistencial) {
@@ -198,39 +227,35 @@ loadDistribuciones(mesSeleccionado: string): void {
     return;
   }
 
-  const fechaInicioStr = fechaInicioMes.format('YYYY-MM-DD');
-  const fechaFinStr = fechaFinMes.format('YYYY-MM-DD');
+  const fechaInicioStr = fechaInicioMoment.format('YYYY-MM-DD');
+  const fechaFinStr = fechaFinMoment.format('YYYY-MM-DD');
 
-  // Consultorio
-  this.distribucionConsultorioService
-    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
-    .subscribe(distribuciones => {
-      this.updateForm(distribuciones, this.consultorioForm);
-      this.distribucionesConsultorioIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+  // Guardias
+  this.distribucionGuardiaService.listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribucionesGuardia => {
+      this.updateForm(distribucionesGuardia, this.guardiaForm);
+      this.distribucionesGuardiaIds = distribucionesGuardia.map(d => d.id).filter((id): id is number => id !== undefined);
     });
 
-  // Guardia
-  this.distribucionGuardiaService
-    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
-    .subscribe(distribuciones => {
-      this.updateForm(distribuciones, this.guardiaForm);
-      this.distribucionesGuardiaIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+  // Consultorios
+  this.distribucionConsultorioService.listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribucionesConsultorio => {
+      this.updateForm(distribucionesConsultorio, this.consultorioForm);
+      this.distribucionesConsultorioIds = distribucionesConsultorio.map(d => d.id).filter((id): id is number => id !== undefined);
     });
 
-  // Gira
-  this.distribucionGiraService
-    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
-    .subscribe(distribuciones => {
-      this.updateForm(distribuciones, this.giraForm);
-      this.distribucionesGiraIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+  // Giras
+  this.distribucionGiraService.listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribucionesGira => {
+      this.updateForm(distribucionesGira, this.giraForm);
+      this.distribucionesGiraIds = distribucionesGira.map(d => d.id).filter((id): id is number => id !== undefined);
     });
 
-  // Otro
-  this.distribucionOtroService
-    .listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
-    .subscribe(distribuciones => {
-      this.updateForm(distribuciones, this.otroForm);
-      this.distribucionesOtroIds = distribuciones.map(d => d.id).filter((id): id is number => id !== undefined);
+  // Otros
+  this.distribucionOtroService.listByActivoByPersonAndFechaInicioAndFechaFin(idAsistencial, fechaInicioStr, fechaFinStr)
+    .subscribe(distribucionesOtro => {
+      this.updateForm(distribucionesOtro, this.otroForm);
+      this.distribucionesOtroIds = distribucionesOtro.map(d => d.id).filter((id): id is number => id !== undefined);
     });
 }
 
@@ -238,7 +263,18 @@ loadDistribuciones(mesSeleccionado: string): void {
     // Resetear el FormArray antes de agregar los nuevos registros
     const formArray = (formGroup.get('consultorios') || formGroup.get('guardias') || formGroup.get('giras') || formGroup.get('otros')) as FormArray;
     formArray.clear();
-  
+
+    //Guardo datos originales para usar en cierres del save
+    if (formGroup === this.guardiaForm) {
+      this.guardiasOriginales = distribuciones;
+    } else if (formGroup === this.consultorioForm) {
+      this.consultoriosOriginales = distribuciones;
+    } else if (formGroup === this.giraForm) {
+      this.girasOriginales = distribuciones;
+    } else if (formGroup === this.otroForm) {
+      this.otrosOriginales = distribuciones;
+    }
+
     // Añadir los registros obtenidos a la forma
     distribuciones.forEach(d => {
       let form;
@@ -246,16 +282,15 @@ loadDistribuciones(mesSeleccionado: string): void {
       // Asegurarse de que horaIngreso esté en el formato adecuado
       const horaIngresoFormateada = moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm');
   
-      if (formGroup === this.consultorioForm) {
-        form = this.createConsultorio();
-        form.patchValue({
-          dia: d.dia,
-          cantidadHoras: d.cantidadHoras,
-          horaIngreso: horaIngresoFormateada,
-          idServicio: d.servicio,
-        });
-      } else if (formGroup === this.guardiaForm) {
+      if (formGroup === this.guardiaForm) {
         form = this.createGuardia();
+          console.log('🟡 Patch Guardia - Valores recibidos:', {
+              dia: d.dia,
+              horaIngreso: horaIngresoFormateada,
+              idServicio: d.servicio,
+              tipoGuardia: d.tipoGuardia,
+              cantidadHoras: d.cantidadHoras
+            });
         form.patchValue({
           dia: d.dia,
           horaIngreso: horaIngresoFormateada,
@@ -263,7 +298,18 @@ loadDistribuciones(mesSeleccionado: string): void {
           tipoGuardia: d.tipoGuardia,
           cantidadHoras: d.cantidadHoras,
         });
-        //console.log('Después de patchValue (Guardia):', form.value);
+      } else if (formGroup === this.consultorioForm) {
+        form = this.createConsultorio();
+          const horas = Math.floor(d.cantidadHoras);
+          const minutos = Math.round((d.cantidadHoras - horas) * 60);
+
+        form.patchValue({
+          dia: d.dia,
+          horas: horas,
+          minutos: minutos,
+          horaIngreso: horaIngresoFormateada,
+          idServicio: d.servicio,
+        });
       } else if (formGroup === this.giraForm) {
         form = this.createGira();
         form.patchValue({
@@ -290,15 +336,47 @@ loadDistribuciones(mesSeleccionado: string): void {
     });
   }
     
-  createGuardia(): FormGroup {
-    return this.fb.group({
-      dia: ['', Validators.required],
-      horaIngreso: ['', Validators.required],
-      idServicio: ['', Validators.required],
-      tipoGuardia: ['', Validators.required],
-      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[1-9]\d*$/)]],
-    });
-  }
+createGuardia(): FormGroup {
+  const guardiaForm = this.fb.group({
+    dia: ['', Validators.required],
+    horaIngreso: ['', Validators.required],
+    idServicio: ['', Validators.required],
+    tipoGuardia: ['', Validators.required],
+    cantidadHoras: [null, Validators.required], // Validador genérico inicial
+  });
+
+  guardiaForm.get('tipoGuardia')?.valueChanges.subscribe(value => {
+    const cantidadHorasControl = guardiaForm.get('cantidadHoras');
+
+    // Resetear valor para evitar valores inválidos previos
+    cantidadHorasControl?.setValue(null);
+
+    if (value === 'CARGO') {
+      // Valida que sea uno de los valores permitidos (8, 12, 24)
+      cantidadHorasControl?.setValidators([
+        Validators.required,
+        control => {
+          const val = control.value;
+          return [8,12,24].includes(val) ? null : { invalidOption: true };
+        }
+      ]);
+    } else if (value === 'AGRUPACION') {
+      // Validadores para número entero >= 4
+      cantidadHorasControl?.setValidators([
+        Validators.required,
+        Validators.min(4),
+        Validators.pattern(/^[1-9]\d*$/)
+      ]);
+    } else {
+      // Por defecto solo required
+      cantidadHorasControl?.setValidators([Validators.required]);
+    }
+
+    cantidadHorasControl?.updateValueAndValidity();
+  });
+
+  return guardiaForm;
+}
 
   get guardias() {
     return (this.guardiaForm.get('guardias') as FormArray);
@@ -324,7 +402,8 @@ loadDistribuciones(mesSeleccionado: string): void {
     return this.fb.group({
       //tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
-      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
+      horas: [0, [Validators.required, Validators.min(1)]],
+      minutos: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -419,7 +498,7 @@ loadDistribuciones(mesSeleccionado: string): void {
   }
 
   removeOtro(index: number): void {
-    this.guardias.removeAt(index);
+    this.otros.removeAt(index);
   }
 
   areAllFormsOtroValid(): boolean {
@@ -485,8 +564,12 @@ loadDistribuciones(mesSeleccionado: string): void {
       return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
     }, 0);
 
-    const consultorioHoras = (this.consultorioForm.get('consultorios') as FormArray).controls.reduce((sum, formGroup) => {
-      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    const consultorioHoras = (this.consultorioForm.get('consultorios') as FormArray).controls.reduce((sum, formGroup, i) => {
+      const horas = Number(formGroup.get('horas')?.value) || 0;
+      const minutos = Number(formGroup.get('minutos')?.value) || 0;
+      const cantidadDecimal = horas + minutos / 60;
+      console.log(`Consultorio ${i}: ${horas}h ${minutos}min = ${cantidadDecimal}`);
+      return sum + cantidadDecimal;
     }, 0);
 
     const giraHoras = (this.giraForm.get('giras') as FormArray).controls.reduce((sum, formGroup) => {
@@ -499,36 +582,117 @@ loadDistribuciones(mesSeleccionado: string): void {
 
     const totalHoras = guardiaHoras + consultorioHoras + giraHoras + otroHoras;
 
-    if (this.cargaHoraria !== undefined) {
-      if (totalHoras > this.cargaHoraria) {
-        this.horasMessage = 'Has superado el total de horas posibles';
-        this.horasMessageClass = 'error-message';
-        this.isButtonDisabled = true;
-        this.addButtonDisabled = true;
-      } else if (totalHoras < this.cargaHoraria) {
-        this.horasMessage = `Total de horas cargadas: ${totalHoras}. Debes alcanzar ${this.cargaHoraria} hs entre todos los formularios.`;
-        this.horasMessageClass = 'pending-message';
-        this.isButtonDisabled = true;
-        this.addButtonDisabled = false;
-      } else {
-        this.horasMessage = `Has cargado un total de ${totalHoras} hs`;
-        this.horasMessageClass = 'success-message';
-        this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
-        this.addButtonDisabled = true;
-      }
-    } else {
-      this.horasMessage = '';
-      this.horasMessageClass = '';
-      this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
-    }
+if (this.cargaHoraria !== undefined) {
+  if (totalHoras > this.cargaHoraria) {
+    this.horasMessage = 'Has superado el total de horas posibles';
+    this.horasMessageClass = 'error-message';
+    this.isButtonDisabled = true;
+    this.addButtonDisabled = true;
+  } else if (totalHoras < this.cargaHoraria) {
+    this.horasMessage = `Total de horas cargadas: ${this.formatHorasDecimal(totalHoras)}. Debes alcanzar ${this.cargaHoraria} entre todos los formularios.`;
+    this.horasMessageClass = 'pending-message';
+    this.isButtonDisabled = true;
+    this.addButtonDisabled = false;
+  } else {
+    this.horasMessage = `Has cargado un total de ${totalHoras}`;
+    this.horasMessageClass = 'success-message';
+    this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
+    this.addButtonDisabled = true;
   }
+} else {
+  this.horasMessage = '';
+  this.horasMessageClass = '';
+  this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
+}
+// Verificar solapamiento de horarios
+const horarios: HorarioDistribucion[] = [];
+this.guardias.controls.forEach(form => {
+  const raw = form.getRawValue();
+  horarios.push({
+    dia: raw.dia,
+    horaInicio: raw.horaIngreso,
+    cantidadHoras: +raw.cantidadHoras
+  });
+});
+
+this.consultorios.controls.forEach(form => {
+  const horas = Number(form.get('horas')?.value) || 0;
+  const minutos = Number(form.get('minutos')?.value) || 0;
+  const cantidadDecimal = horas + minutos / 60;
+
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: cantidadDecimal
+  });
+});
+
+this.giras.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+this.otros.controls.forEach(form => {
+  horarios.push({
+    dia: form.value.dia,
+    horaInicio: form.value.horaIngreso,
+    cantidadHoras: +form.value.cantidadHoras
+  });
+});
+
+if (this.haySolapamiento(horarios)) {
+  this.solapamientoMessage = 'Error: hay horarios superpuestos entre las diferentes distribuciones cargadas.';
+  this.solapamientoMessageClass = 'error-message';
+  this.isButtonDisabled = true;
+  return;
+} else {
+  this.solapamientoMessage = '';
+  this.solapamientoMessageClass = '';
+}
+  }
+
+  private formatHorasDecimal(decimal: number): string {
+  const horas = Math.floor(decimal);
+  const minutos = Math.round((decimal - horas) * 60);
+  return `${horas}:${minutos.toString().padStart(2, '0')} hs`;
+}
+
+private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
+  // Convertir los días a fechas concretas usando una base arbitraria (ej: la semana actual)
+  const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+  const baseFecha = moment().startOf('week'); // Empieza en domingo
+
+  const rangos: { inicio: moment.Moment, fin: moment.Moment }[] = [];
+
+  for (const h of horarios) {
+    if (!h.dia || !h.horaInicio || !h.cantidadHoras) continue;
+
+    const indexDia = diasSemana.indexOf(h.dia.toLowerCase());
+    if (indexDia === -1) continue;
+
+    const fechaBase = moment(baseFecha).add(indexDia + 1, 'days'); // +1 para empezar en lunes
+    const inicio = moment(`${fechaBase.format('YYYY-MM-DD')} ${h.horaInicio}`, 'YYYY-MM-DD HH:mm');
+    const fin = moment(inicio).add(h.cantidadHoras, 'hours');
+
+    // Comparar con todos los rangos existentes
+    for (const r of rangos) {
+      if (inicio.isBefore(r.fin) && fin.isAfter(r.inicio)) {
+        return true;
+      }
+    }
+
+    rangos.push({ inicio, fin });
+  }
+
+  return false;
+}
             
   listServicios(): void {
-    this.servicioService.list().subscribe(data => {
-      //console.log('Lista de servicios:', data);
+    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
-    }, error => {
-      console.log(error);
     });
   }
 
@@ -585,249 +749,296 @@ loadDistribuciones(mesSeleccionado: string): void {
     this.step = -1;
   }
 
-  saveDistribuciones() {
-    this.isButtonDisabled = true;
+saveDistribuciones() {
+  this.isButtonDisabled = true;
 
-    if (this.idEfector === undefined) {
-        this.toastr.error('El profesional no esta definido o no posee un legajo.', 'Error', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-        });
-        this.isButtonDisabled = false;
-        return;
+  if (this.idEfector === undefined) {
+    this.toastr.error('El profesional no está definido o no posee un legajo.', 'Error', {
+      timeOut: 6000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+    this.isButtonDisabled = false;
+    return;
+  }
+
+  const formChecks = [
+    { form: this.guardiaForm, name: 'Guardias' },
+    { form: this.consultorioForm, name: 'Consultorio' },
+    { form: this.giraForm, name: 'Giras médicas' },
+    { form: this.otroForm, name: 'Otras actividades' }
+  ];
+
+  for (const { form, name } of formChecks) {
+    if (form.dirty && !form.valid) {
+      this.toastr.warning(`Faltan datos obligatorios para el panel ${name}.`, 'Advertencia', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.isButtonDisabled = false;
+      return;
     }
+  }
 
-    /*console.log('Datos a guardar:', {
-        guardia: this.guardiaForm.value,
-        consultorio: this.consultorioForm.value,
-        gira: this.giraForm.value,
-        otro: this.otroForm.value,
-    });*/
+  const fechaSeleccionada = moment(this.fechaSeleccionada);
+  const esMesActual = moment().isSame(fechaSeleccionada, 'month');
 
-    const formChecks = [
-        { form: this.guardiaForm, name: 'Guardias' },
-        { form: this.consultorioForm, name: 'Consultorio' },
-        { form: this.giraForm, name: 'Giras médicas' },
-        { form: this.otroForm, name: 'Otras actividades' }
-    ];
+  const fechaInicio = esMesActual
+    ? moment().add(1, 'day').startOf('day').toDate()
+    : fechaSeleccionada.clone().startOf('month').toDate();
 
-    // Validación de formularios
-    for (const { form, name } of formChecks) {
-        if (form.dirty && !form.valid) {
-            this.toastr.warning(`Faltan datos obligatorios para el panel ${name}.`, 'Advertencia', {
+  const fechaFinalizacion = moment(fechaInicio).endOf('month').startOf('day').toDate();
+  const fechaFinalizacionCierre = moment().startOf('day').toDate();
+
+  const savePromises: Promise<any>[] = [];
+  const deletePromises: Promise<any>[] = [];
+  const errorMessages: string[] = [];
+
+  // 🛑 Paso 1: Guardar cierres si es el mes actual
+  if (esMesActual) {
+    const cerrarDistribuciones = (
+      originales: any[],
+      tipo: string,
+      service: any,
+      dtoClass: any
+    ) => {
+      originales.forEach((original: any) => {
+        let cierreDto: any;
+
+        if (dtoClass === DistribucionGuardiaDto) {
+          const idServicio =
+            original.idServicio?.id ??
+            original.idServicio ??
+            original.servicio?.id ??
+            null;
+
+          cierreDto = new DistribucionGuardiaDto(
+            original.dia,
+            original.cantidadHoras,
+            original.idPersona ?? this.idPersona,
+            original.idEfector ?? this.idEfector,
+            moment(original.fechaInicio).toDate(),
+            fechaFinalizacionCierre,
+            original.horaIngreso,
+            original.tipoGuardia,
+            idServicio
+          );
+        } else if (dtoClass === DistribucionConsultorioDto) {
+          const idServicio =
+            original.idServicio?.id ??
+            original.idServicio ??
+            original.servicio?.id ??
+            null;
+
+          cierreDto = new DistribucionConsultorioDto(
+            original.dia,
+            original.cantidadHoras,
+            original.idPersona ?? this.idPersona,
+            original.idEfector ?? this.idEfector,
+            moment(original.fechaInicio).toDate(),
+            fechaFinalizacionCierre,
+            original.horaIngreso,
+            idServicio,
+            'EXTERNO'
+          );
+        } else if (dtoClass === DistribucionGiraDto) {
+          cierreDto = new DistribucionGiraDto(
+            original.dia,
+            original.cantidadHoras,
+            original.idPersona ?? this.idPersona,
+            original.idEfector ?? this.idEfector,
+            moment(original.fechaInicio).toDate(),
+            fechaFinalizacionCierre,
+            original.horaIngreso,
+            original.puestoSalud
+          );
+        } else if (dtoClass === DistribucionOtroDto) {
+          cierreDto = new DistribucionOtroDto(
+            original.dia,
+            original.cantidadHoras,
+            original.idPersona ?? this.idPersona,
+            original.idEfector ?? this.idEfector,
+            moment(original.fechaInicio).toDate(),
+            fechaFinalizacionCierre,
+            original.horaIngreso,
+            original.descripcion,
+            original.lugar,
+            original.tipo
+          );
+        }
+
+        console.log(`[CIERRE][${tipo}] DTO enviado:`, cierreDto);
+        savePromises.push(
+          service.save(cierreDto).toPromise().catch(() =>
+            errorMessages.push(`${tipo} cierre: ${original.dia}`)
+          )
+        );
+      });
+    };
+
+    cerrarDistribuciones(this.guardiasOriginales, 'Guardia', this.distribucionGuardiaService, DistribucionGuardiaDto);
+    cerrarDistribuciones(this.consultoriosOriginales, 'Consultorio', this.distribucionConsultorioService, DistribucionConsultorioDto);
+    cerrarDistribuciones(this.girasOriginales, 'Gira', this.distribucionGiraService, DistribucionGiraDto);
+    cerrarDistribuciones(this.otrosOriginales, 'Otro', this.distribucionOtroService, DistribucionOtroDto);
+  }
+
+  // Paso 2: Eliminar distribuciones anteriores (soft delete)
+  const eliminarDistribuciones = (ids: number[], service: any) => {
+    ids.forEach((id: number) => {
+      if (typeof id === 'number' && id >= 0) {
+        deletePromises.push(service.delete(id).toPromise());
+      }
+    });
+  };
+
+  Promise.all(savePromises).then(() => {
+    eliminarDistribuciones(this.distribucionesGuardiaIds, this.distribucionGuardiaService);
+    eliminarDistribuciones(this.distribucionesConsultorioIds, this.distribucionConsultorioService);
+    eliminarDistribuciones(this.distribucionesGiraIds, this.distribucionGiraService);
+    eliminarDistribuciones(this.distribucionesOtroIds, this.distribucionOtroService);
+
+    Promise.all(deletePromises)
+      .then(() => {
+        // ✅ Paso 3: Guardar nuevas distribuciones
+        const guardarNuevasDistribuciones = (
+          formArray: FormArray,
+          tipo: string,
+          service: any,
+          dtoClass: any
+        ) => {
+          formArray.controls.forEach((control) => {
+            const data = control.getRawValue();
+            let cantidadHoras: number;
+
+            if (tipo === 'Consultorio') {
+              const horas = Number(data.horas) || 0;
+              const minutos = Number(data.minutos) || 0;
+              cantidadHoras = horas + minutos / 60;
+            } else {
+              cantidadHoras = Number(data.cantidadHoras);
+            }
+
+            let nuevoDto: any;
+
+            if (dtoClass === DistribucionGuardiaDto) {
+              nuevoDto = new DistribucionGuardiaDto(
+                data.dia,
+                cantidadHoras,
+                this.idPersona,
+                this.idEfector ?? 0,
+                fechaInicio,
+                fechaFinalizacion,
+                data.horaIngreso,
+                data.tipoGuardia,
+                data.idServicio?.id
+              );
+            } else if (dtoClass === DistribucionConsultorioDto) {
+              nuevoDto = new DistribucionConsultorioDto(
+                data.dia,
+                cantidadHoras,
+                this.idPersona,
+                this.idEfector ?? 0,
+                fechaInicio,
+                fechaFinalizacion,
+                data.horaIngreso,
+                data.idServicio?.id,
+                'EXTERNO'
+              );
+            } else if (dtoClass === DistribucionGiraDto) {
+              nuevoDto = new DistribucionGiraDto(
+                data.dia,
+                cantidadHoras,
+                this.idPersona,
+                this.idEfector ?? 0,
+                fechaInicio,
+                fechaFinalizacion,
+                data.horaIngreso,
+                data.puestoSalud.id
+              );
+            } else if (dtoClass === DistribucionOtroDto) {
+              nuevoDto = new DistribucionOtroDto(
+                data.dia,
+                cantidadHoras,
+                this.idPersona,
+                this.idEfector ?? 0,
+                fechaInicio,
+                fechaFinalizacion,
+                data.horaIngreso,
+                data.descripcion,
+                data.lugar,
+                data.tipo
+              );
+            }
+
+console.log(`[NUEVO][${tipo}] DTO enviado:`, nuevoDto);
+            savePromises.push(
+              service.save(nuevoDto).toPromise().catch(() =>
+                errorMessages.push(`${tipo} nuevo: ${data.dia}`)
+              )
+            );
+          });
+        };
+
+        if (this.guardiaForm.valid) {
+          guardarNuevasDistribuciones(this.guardiaForm.get('guardias') as FormArray, 'Guardia', this.distribucionGuardiaService, DistribucionGuardiaDto);
+        }
+
+        if (this.consultorioForm.valid) {
+          guardarNuevasDistribuciones(this.consultorioForm.get('consultorios') as FormArray, 'Consultorio', this.distribucionConsultorioService, DistribucionConsultorioDto);
+        }
+
+        if (this.giraForm.valid) {
+          guardarNuevasDistribuciones(this.giraForm.get('giras') as FormArray, 'Gira', this.distribucionGiraService, DistribucionGiraDto);
+        }
+
+        if (this.otroForm.valid) {
+          guardarNuevasDistribuciones(this.otroForm.get('otros') as FormArray, 'Otro', this.distribucionOtroService, DistribucionOtroDto);
+        }
+
+        Promise.all(savePromises)
+          .then(() => {
+            this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+
+            if (errorMessages.length > 0) {
+              this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
-            });
-            this.isButtonDisabled = false;
-            return;
-        }
-    }
-
-    // Extraer mes y año de mesSeleccionado (formato MM-YYYY)
-    const [mes, anio] = this.mesSeleccionado.split('-');
-
-    // Crear la fecha de inicio y fecha de finalización usando Moment.js
-    const fechaInicio = moment([parseInt(anio), parseInt(mes) - 1]).startOf('month').toDate();
-    const fechaFinalizacion = moment([parseInt(anio), parseInt(mes) - 1]).endOf('month').startOf('day').toDate();
-
-    // Log para ver las fechas de inicio y finalización
-    //console.log('Fecha de inicio:', fechaInicio);
-    //console.log('Fecha de finalización:', fechaFinalizacion);
-
-    // Convertir fechaInicio a formato string 'yyyy-MM-dd' para usar con el servicio
-    const fechaInicioString = moment(fechaInicio).format('YYYY-MM-DD');
-
-    // Log para ver el string de fecha en formato 'yyyy-MM-dd'
-    //console.log('Fecha de inicio (string):', fechaInicioString);
-    
-    // Paso 1: Eliminar distribuciones existentes
-    const deletePromises: Promise<any>[] = [];
-
-    // Eliminar distribuciones de Guardia
-    this.distribucionesGuardiaIds.forEach((id: number) => {
-        if (id) {
-            deletePromises.push(this.distribucionGuardiaService.delete(id).toPromise());
-        }
-    });
-
-    // Eliminar distribuciones de Consultorio
-    this.distribucionesConsultorioIds.forEach((id: number) => {
-        if (id) {
-            deletePromises.push(this.distribucionConsultorioService.delete(id).toPromise());
-        }
-    });
-
-    // Eliminar distribuciones de Gira
-    this.distribucionesGiraIds.forEach((id: number) => {
-        if (id) {
-            deletePromises.push(this.distribucionGiraService.delete(id).toPromise());
-        }
-    });
-
-    // Eliminar distribuciones de Otro
-    this.distribucionesOtroIds.forEach((id: number) => {
-        if (id) {
-            deletePromises.push(this.distribucionOtroService.delete(id).toPromise());
-        }
-    });
-
-    // Paso 2: Esperar a que todas las eliminaciones terminen
-    Promise.all(deletePromises)
-        .then(() => {
-          const savePromises: Promise<any>[] = [];
-          const errorMessages: string[] = [];
-
-        // Guardar guardias
-        if (this.guardiaForm.valid) {
-          const guardiaFormArray = this.guardiaForm.get('guardias') as FormArray;
-          guardiaFormArray.controls.forEach((control) => {
-              const distribucionGuardiaDto = new DistribucionGuardiaDto(
-                  control.value.dia,
-                  control.value.cantidadHoras,
-                  this.idPersona ?? null,
-                  this.idEfector ?? 0,
-                  fechaInicio,
-                  fechaFinalizacion,
-                  control.value.horaIngreso,
-                  control.value.tipoGuardia,
-                  control.value.idServicio.id
-              );
-
-              savePromises.push(
-                  this.distribucionGuardiaService.save(distribucionGuardiaDto).toPromise()
-                      .catch(() => {
-                          errorMessages.push(`Guardia en ${fechaInicio}: ${distribucionGuardiaDto.dia}`);
-                      })
-              );
-          });
-      }
-
-      // Guardar consultorios
-      if (this.consultorioForm.valid) {
-          const consultorioFormArray = this.consultorioForm.get('consultorios') as FormArray;
-          consultorioFormArray.controls.forEach((control) => {
-              const distribucionConsultorioDto = new DistribucionConsultorioDto(
-                  control.value.dia,
-                  control.value.cantidadHoras,
-                  this.idPersona ?? null,
-                  this.idEfector ?? 0,
-                  fechaInicio,
-                  fechaFinalizacion,
-                  control.value.horaIngreso,
-                  control.value.idServicio.id,
-                  "EXTERNO"
-              );
-
-              savePromises.push(
-                  this.distribucionConsultorioService.save(distribucionConsultorioDto).toPromise()
-                      .catch(() => {
-                          errorMessages.push(`Consultorio en ${fechaInicio}: ${distribucionConsultorioDto.dia}`);
-                      })
-              );
-          });
-      }
-
-      // Guardar giras médicas
-      if (this.giraForm.valid) {
-          const giraFormArray = this.giraForm.get('giras') as FormArray;
-          giraFormArray.controls.forEach((control) => {
-              const distribucionGiraDto = new DistribucionGiraDto(
-                  control.value.dia,
-                  control.value.cantidadHoras,
-                  this.idPersona ?? null,
-                  this.idEfector ?? 0,
-                  fechaInicio,
-                  fechaFinalizacion,
-                  control.value.horaIngreso,
-                  control.value.puestoSalud,
-                  //control.value.descripcion,
-                  //control.value.destino
-              );
-
-              savePromises.push(
-                  this.distribucionGiraService.save(distribucionGiraDto).toPromise()
-                      .catch(() => {
-                          errorMessages.push(`Gira en ${fechaInicio}: ${distribucionGiraDto.dia}`);
-                      })
-              );
-          });
-      }
-
-      // Guardar otras actividades
-      if (this.otroForm.valid) {
-          const otroFormArray = this.otroForm.get('otros') as FormArray;
-          otroFormArray.controls.forEach((control) => {
-              const distribucionOtroDto = new DistribucionOtroDto(
-                  control.value.dia,
-                  control.value.cantidadHoras,
-                  this.idPersona ?? null,
-                  this.idEfector ?? 0,
-                  fechaInicio,
-                  fechaFinalizacion,
-                  control.value.horaIngreso,
-                    control.value.descripcion ?? null,
-                    control.value.lugar,
-                    control.value.tipo,
-              );
-
-              savePromises.push(
-                  this.distribucionOtroService.save(distribucionOtroDto).toPromise()
-                      .catch(() => {
-                          errorMessages.push(`Otro en ${fechaInicio}: ${distribucionOtroDto.dia}`);
-                      })
-              );
-          });
-      }
-
-      // Enviar las nuevas distribuciones para guardar
-      Promise.all(savePromises)
-          .then(() => {
-              // Mostrar mensaje de éxito
-              this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
-                  timeOut: 6000,
-                  positionClass: 'toast-top-center',
-                  progressBar: true
               });
+            }
 
-              // Si hubo errores, mostrar detalle
-              if (errorMessages.length > 0) {
-                  this.toastr.error(`No se pudo guardar las siguientes distribuciones: ${errorMessages.join(', ')}`, 'Error', {
-                      timeOut: 6000,
-                      positionClass: 'toast-top-center',
-                      progressBar: true
-                  });
-              }
-
-              if (this.asistencial && this.asistencial.id) {
-                this.router.navigate(['/personal-dh']);
-              } else {
-                console.error('El objeto asistencial no tiene un id.');
-              }        
-  
+            if (this.asistencial?.id) {
+              this.router.navigate(['/personal-dh']);
+            } else {
+              console.error('El objeto asistencial no tiene un id.');
+            }
           })
           .catch(() => {
-              this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
-                  timeOut: 6000,
-                  positionClass: 'toast-top-center',
-                  progressBar: true
-              });
+            this.toastr.error('Ocurrió un error al guardar uno o más formularios.', 'Error', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
           })
           .finally(() => {
-              this.isButtonDisabled = false;
+            this.isButtonDisabled = false;
           });
-
-  }).catch(() => {
-      this.toastr.error('Error al eliminar distribuciones antiguas.', 'Error', {
+      })
+      .catch(() => {
+        this.toastr.error('Error al eliminar distribuciones antiguas.', 'Error', {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
+        });
+        this.isButtonDisabled = false;
       });
-      this.isButtonDisabled = false;
   });
 }
-
 
   nextStep(): void {
     this.step = (this.step + 1) % 4;

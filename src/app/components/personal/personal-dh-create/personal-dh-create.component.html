@@ -86,7 +86,7 @@
           
                 <mat-form-field appearance="fill" class="form-field">
                   <mat-label>Hora de Ingreso</mat-label>
-                  <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly (click)="horaPicker.open()">
+                  <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24" readonly>
                   <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
                   <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
                   <mat-error *ngIf="guardia.get('horaIngreso')?.invalid && guardiaForm?.get('horaIngreso')?.touched">El campo es obligatorio (HH:mm).</mat-error>
@@ -119,6 +119,7 @@
                   <mat-error *ngIf="guardia.get('cantidadHoras')?.hasError('required')">
                     El campo es obligatorio.
                   </mat-error>
+                  <br/>
                 </div>
 
                 <!-- INPUT LIBRE -->
@@ -185,7 +186,7 @@
       
             <mat-form-field appearance="fill" class="form-field">
               <mat-label>Hora de Ingreso</mat-label>
-              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly (click)="horaPicker2.open()">
+              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker2" [format]="24" readonly>
               <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
               <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
               <mat-error *ngIf="consultorio?.get('horaIngreso')?.invalid && consultorioForm?.get('horaIngreso')?.touched">El campo es obligatorio (HH:mm).</mat-error>
@@ -199,13 +200,31 @@
               <mat-error *ngIf="consultorio.get('idServicio')?.errors?.['required']">El servicio es requerido.</mat-error>
             </mat-form-field>
             
-            <mat-form-field>
               <mat-label>Cantidad de horas</mat-label>
-              <input matInput formControlName="cantidadHoras" type="number" placeholder="Número entero o decimal (1.5 = 1:30 hs)" />
-              <mat-error *ngIf="consultorio.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>
-              <mat-error *ngIf="consultorio.get('cantidadHoras')?.hasError('min')">La cantidad de horas debe ser mayor a cero.</mat-error>
-              <mat-error *ngIf="consultorio.get('cantidadHoras')?.hasError('pattern')">Solo puedes ingresar números enteros o decimal (1.5 = 1:30 hs).</mat-error>
-            </mat-form-field>
+
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <mat-form-field appearance="fill" style="width: 180px;">
+                  <mat-label>Horas</mat-label>
+                  <input matInput type="number" min="1" max="24" formControlName="horas" />
+                </mat-form-field>
+
+                <span>:</span>
+
+                <mat-form-field appearance="fill" style="width: 180px;">
+                  <mat-label>Minutos</mat-label>
+                  <mat-select formControlName="minutos">
+                    <mat-option [value]="0">00</mat-option>
+                    <mat-option [value]="30">30</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="consultorio.get('minutos')?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+
+                <span>hs</span>
+
+              <mat-error *ngIf="consultorio.get('horas')?.hasError('required') || consultorio.get('minutos')?.hasError('required')">
+                Debes ingresar horas y minutos.
+              </mat-error>
+            </div>
 
             <button mat-button color="warn" class="mt-3" (click)="removeConsultorio(i)">Eliminar consultorio</button>
             <mat-divider></mat-divider>
@@ -257,7 +276,7 @@
       
             <mat-form-field appearance="fill" class="form-field">
               <mat-label>Hora de Ingreso</mat-label>
-              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker3" [format]="24" readonly (click)="horaPicker3.open()">
+              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker3" [format]="24" readonly>
               <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker3"></ngx-mat-timepicker-toggle>
               <ngx-mat-timepicker #horaPicker3></ngx-mat-timepicker>
               <mat-error *ngIf="gira?.get('horaIngreso')?.invalid && giraForm?.get('horaIngreso')?.touched">El campo es obligatorio (HH:mm).</mat-error>
@@ -342,7 +361,7 @@
       
             <mat-form-field appearance="fill" class="form-field">
               <mat-label>Hora de Ingreso</mat-label>
-              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker4" [format]="24" readonly (click)="horaPicker4.open()">
+              <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker4" [format]="24" readonly>
               <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker4"></ngx-mat-timepicker-toggle>
               <ngx-mat-timepicker #horaPicker4></ngx-mat-timepicker>
               <mat-error *ngIf="otro?.get('horaIngreso')?.invalid && otroForm?.get('horaIngreso')?.touched">El campo es obligatorio (HH:mm).</mat-error>

@@ -143,10 +143,7 @@ export class PersonalDhCreateComponent {
           this.asistencial = asistencial;
           this.idPersona = asistencial.id!;
           const legajoActivo = asistencial.legajos.find(l => l.activo);
-          console.log('Todos los legajos:', asistencial.legajos);
-console.log('Legajo activo encontrado:', legajoActivo);
           this.nombreProfesion = legajoActivo?.profesion?.nombre || 'Sin profesión';
-          console.log('Nombre de la profesión final:', this.nombreProfesion);
 
   
           this.listServicios();
@@ -245,7 +242,8 @@ get guardias() {
     return this.fb.group({
       //tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
-      cantidadHoras: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+(\.\d{1})?$/)]],
+      horas: [0, [Validators.required, Validators.min(1)]],
+      minutos: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -406,8 +404,12 @@ get guardias() {
       return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
     }, 0);
 
-    const consultorioHoras = (this.consultorioForm.get('consultorios') as FormArray).controls.reduce((sum, formGroup) => {
-      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    const consultorioHoras = (this.consultorioForm.get('consultorios') as FormArray).controls.reduce((sum, formGroup, i) => {
+      const horas = Number(formGroup.get('horas')?.value) || 0;
+      const minutos = Number(formGroup.get('minutos')?.value) || 0;
+      const cantidadDecimal = horas + minutos / 60;
+      console.log(`Consultorio ${i}: ${horas}h ${minutos}min = ${cantidadDecimal}`);
+      return sum + cantidadDecimal;
     }, 0);
 
     const giraHoras = (this.giraForm.get('giras') as FormArray).controls.reduce((sum, formGroup) => {
@@ -420,30 +422,30 @@ get guardias() {
 
     const totalHoras = guardiaHoras + consultorioHoras + giraHoras + otroHoras;
 
-    if (this.cargaHoraria !== undefined) {
-      if (totalHoras > this.cargaHoraria) {
-        this.horasMessage = 'Has superado el total de horas posibles';
-        this.horasMessageClass = 'error-message';
-        this.isButtonDisabled = true;
-        this.addButtonDisabled = true;
-      } else if (totalHoras < this.cargaHoraria) {
-        this.horasMessage = `Total de horas cargadas: ${totalHoras}. Debes alcanzar ${this.cargaHoraria} hs entre todos los formularios.`;
-        this.horasMessageClass = 'pending-message';
-        this.isButtonDisabled = true;
-        this.addButtonDisabled = false;
-      } else {
-        this.horasMessage = `Has cargado un total de ${totalHoras} hs`;
-        this.horasMessageClass = 'success-message';
-        this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
-        this.addButtonDisabled = true;
-      }
-    } else {
-      this.horasMessage = '';
-      this.horasMessageClass = '';
-      this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
-    }
+if (this.cargaHoraria !== undefined) {
+  if (totalHoras > this.cargaHoraria) {
+    this.horasMessage = 'Has superado el total de horas posibles';
+    this.horasMessageClass = 'error-message';
+    this.isButtonDisabled = true;
+    this.addButtonDisabled = true;
+  } else if (totalHoras < this.cargaHoraria) {
+    this.horasMessage = `Total de horas cargadas: ${this.formatHorasDecimal(totalHoras)}. Debes alcanzar ${this.cargaHoraria} entre todos los formularios.`;
+    this.horasMessageClass = 'pending-message';
+    this.isButtonDisabled = true;
+    this.addButtonDisabled = false;
+  } else {
+    this.horasMessage = `Has cargado un total de ${totalHoras}`;
+    this.horasMessageClass = 'success-message';
+    this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
+    this.addButtonDisabled = true;
+  }
+} else {
+  this.horasMessage = '';
+  this.horasMessageClass = '';
+  this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
+}
 
-    // Verificar solapamiento de horarios
+// Verificar solapamiento de horarios
 const horarios: HorarioDistribucion[] = [];
 this.guardias.controls.forEach(form => {
   const raw = form.getRawValue();
@@ -455,10 +457,14 @@ this.guardias.controls.forEach(form => {
 });
 
 this.consultorios.controls.forEach(form => {
+  const horas = Number(form.get('horas')?.value) || 0;
+  const minutos = Number(form.get('minutos')?.value) || 0;
+  const cantidadDecimal = horas + minutos / 60;
+
   horarios.push({
     dia: form.value.dia,
     horaInicio: form.value.horaIngreso,
-    cantidadHoras: +form.value.cantidadHoras
+    cantidadHoras: cantidadDecimal
   });
 });
 
@@ -488,6 +494,13 @@ if (this.haySolapamiento(horarios)) {
   this.solapamientoMessageClass = '';
 }
   }
+
+private formatHorasDecimal(decimal: number): string {
+  const horas = Math.floor(decimal);
+  const minutos = Math.round((decimal - horas) * 60);
+  return `${horas}:${minutos.toString().padStart(2, '0')} hs`;
+}
+
 
 private haySolapamiento(horarios: HorarioDistribucion[]): boolean {
   // Convertir los días a fechas concretas usando una base arbitraria (ej: la semana actual)
@@ -662,13 +675,6 @@ private async verificarMesesDisponibles(): Promise<void> {
         return;
     }
 
-    /*console.log('Datos a guardar:', {
-        guardia: this.guardiaForm.value,
-        consultorio: this.consultorioForm.value,
-        gira: this.giraForm.value,
-        otro: this.otroForm.value,
-    });*/
-
     const formChecks = [
         { form: this.guardiaForm, name: 'Guardias' },
         { form: this.consultorioForm, name: 'Consultorio' },
@@ -732,11 +738,15 @@ private async verificarMesesDisponibles(): Promise<void> {
     // Guarda consultorios
     if (this.consultorioForm.valid) {
         const consultorioFormArray = this.consultorioForm.get('consultorios') as FormArray;
+
         consultorioFormArray.controls.forEach((control) => {
+            const cantidadHorasDecimal =
+                (Number(control.value.horas) || 0) + (Number(control.value.minutos) || 0) / 60;
+
             consultorioMeses.forEach((mes) => {
                 const distribucionConsultorioDto = new DistribucionConsultorioDto(
                     control.value.dia,
-                    control.value.cantidadHoras,
+                    cantidadHorasDecimal,
                     this.idPersona ?? null,
                     this.idEfector ?? 0,
                     mes.fechaInicio,

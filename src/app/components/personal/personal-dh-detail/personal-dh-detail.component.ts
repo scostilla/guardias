@@ -31,10 +31,15 @@ export class PersonalDhDetailComponent {
     @Inject(MAT_DIALOG_DATA) public data: { distribuciones: any[], tipo: string, fechaInicio: string }
   ) {
     this.setColumnsBasedOnTipo(data.tipo);
-    this.dataSource = data.distribuciones.map(d => ({
-      ...d,
-      horaIngreso: moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm')
-    }));
+this.dataSource = data.distribuciones.map(d => ({
+  ...d,
+  horaIngreso: moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm'),
+  fechaInicio: moment(d.fechaInicio).toDate(),
+  fechaFinalizacion: moment(d.fechaFinalizacion).toDate(),
+  cantidadHoras: data.tipo === 'consultorio'
+    ? this.convertirDecimalAHorasYMinutos(d.cantidadHoras)
+    : d.cantidadHoras
+}));
 
     this.fechaInicioFormateada = this.formatearFecha(data.fechaInicio);
   }
@@ -48,23 +53,32 @@ formatearFecha(fechaInicio: string): string {
   return moment(`${anio}-${mes}`, 'YYYY-MM').format('MMMM YYYY'); // Formatea a "Enero 2024"
 }
 
+private convertirDecimalAHorasYMinutos(decimal: number): string {
+  const horas = Math.floor(decimal);
+  const minutos = Math.round((decimal - horas) * 60);
+
+  return minutos === 0
+    ? `${horas}`
+    : `${horas}:${minutos.toString().padStart(2, '0')}`;
+}
+
   // Establece las columnas a mostrar según el tipo de distribución
   setColumnsBasedOnTipo(tipo: string): void {
     switch (tipo) {
       case 'guardia':
-        this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoGuardia', 'cantidadHoras'];
+        this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoGuardia', 'cantidadHoras', 'fechas'];
         break;
       case 'consultorio':
-        this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoConsultorio', 'cantidadHoras'];
+        this.displayedColumns = ['dia', 'horaIngreso', 'servicio', 'tipoConsultorio', 'cantidadHoras', 'fechas'];
         break;
       case 'gira':
-        this.displayedColumns = ['dia', 'horaIngreso', 'puestoSalud', 'cantidadHoras'];
+        this.displayedColumns = ['dia', 'horaIngreso', 'puestoSalud', 'cantidadHoras', 'fechas'];
         break;
       case 'otro':
-        this.displayedColumns = ['dia', 'horaIngreso', 'tipo', 'descripcion', 'lugar', 'cantidadHoras'];
+        this.displayedColumns = ['dia', 'horaIngreso', 'tipo', 'descripcion', 'lugar', 'cantidadHoras', 'fechas'];
         break;
       default:
-        this.displayedColumns = ['dia', 'horaIngreso', 'cantidadHoras'];  // En caso de un tipo no reconocido
+        this.displayedColumns = ['dia', 'horaIngreso', 'cantidadHoras', 'fechas'];  // En caso de un tipo no reconocido
     }
   }
 
