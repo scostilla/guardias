@@ -32,6 +32,9 @@
           <div [ngClass]="horasMessageClass" class="horas-status-display">
             <p>{{ horasMessage }}</p>
           </div>
+            <div *ngIf="solapamientoMessage" [ngClass]="solapamientoMessageClass" class="horas-status-display">
+              <p>{{ solapamientoMessage }}</p>
+          </div>
         </div>
 
       <p>Estás modificando: {{getFechaFormateada()}}</p>
