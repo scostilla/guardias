@@ -36,7 +36,7 @@ this.dataSource = data.distribuciones.map(d => ({
   horaIngreso: moment(d.horaIngreso, 'HH:mm:ss').format('HH:mm'),
   fechaInicio: moment(d.fechaInicio).toDate(),
   fechaFinalizacion: moment(d.fechaFinalizacion).toDate(),
-  cantidadHoras: data.tipo === 'consultorio'
+  cantidadHoras: data.tipo === 'consultorio' || 'otro'
     ? this.convertirDecimalAHorasYMinutos(d.cantidadHoras)
     : d.cantidadHoras
 }));

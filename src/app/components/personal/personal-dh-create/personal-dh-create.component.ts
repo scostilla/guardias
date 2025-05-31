@@ -192,6 +192,27 @@ mostrarOpcion(horas: number): boolean {
   return false;
 }
 
+hasDatos(form: FormGroup): boolean {
+  return Object.values(form.controls).some(control => {
+    const value = control.value;
+    return value !== null && value !== '' && value !== undefined;
+  });
+}
+
+isFormArrayWithDataValid(array: FormArray): boolean {
+  const formsWithData = array.controls.filter(control => this.hasDatos(control as FormGroup));
+  return formsWithData.length === 0 || formsWithData.every(control => control.valid);
+}
+
+allFormsWithDataAreValid(): boolean {
+  return (
+    this.isFormArrayWithDataValid(this.guardias) &&
+    this.isFormArrayWithDataValid(this.consultorios) &&
+    this.isFormArrayWithDataValid(this.giras) &&
+    this.isFormArrayWithDataValid(this.otros)
+  );
+}
+
 createGuardia(): FormGroup {
   const guardiaForm = this.fb.group({
     dia: ['', Validators.required],
@@ -230,6 +251,10 @@ get guardias() {
     this.guardias.removeAt(index);
   }
 
+  limpiarGuardia() {
+    this.guardiaForm.reset();
+  }
+
   areAllFormsGuardiaValid(): boolean {
     return this.guardias.controls.every(form => form.valid);
   }
@@ -242,8 +267,8 @@ get guardias() {
     return this.fb.group({
       //tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
-      horas: [0, [Validators.required, Validators.min(1)]],
-      minutos: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
+      horas: [null, [Validators.required, Validators.min(1)]],
+      minutos: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -259,6 +284,10 @@ get guardias() {
 
   removeConsultorio(index: number): void {
     this.consultorios.removeAt(index);
+  }
+
+  limpiarConsultorio() {
+    this.consultorioForm.reset();
   }
 
   areAllFormsConsultorioValid(): boolean {
@@ -292,6 +321,10 @@ get guardias() {
     this.giras.removeAt(index);
   }
 
+  limpiarGira() {
+    this.giraForm.reset();
+  }
+
   areAllFormsGiraValid(): boolean {
     return this.giras.controls.every(form => form.valid); // Verifica que todos los formularios sean válidos
   }
@@ -303,11 +336,8 @@ get guardias() {
   createOtro(): FormGroup {
     const grupo = this.fb.group({
       dia: ['', Validators.required],
-      cantidadHoras: ['', [
-        Validators.required,
-        Validators.min(1),
-        Validators.pattern(/^\d+(\.\d{1})?$/)
-      ]],
+      horas: [null, [Validators.required, Validators.min(1)]],
+      minutos: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
       descripcion: [''], // inicialmente sin validadores
       lugar: ['', Validators.required],
@@ -339,6 +369,10 @@ get guardias() {
 
   removeOtro(index: number): void {
     this.otros.removeAt(index);
+  }
+
+  limpiarOtro() {
+    this.otroForm.reset();
   }
 
   areAllFormsOtroValid(): boolean {
@@ -416,8 +450,12 @@ get guardias() {
       return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
     }, 0);
 
-    const otroHoras = (this.otroForm.get('otros') as FormArray).controls.reduce((sum, formGroup) => {
-      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    const otroHoras = (this.otroForm.get('otros') as FormArray).controls.reduce((sum, formGroup, i) => {
+      const horas = Number(formGroup.get('horas')?.value) || 0;
+      const minutos = Number(formGroup.get('minutos')?.value) || 0;
+      const cantidadDecimal = horas + minutos / 60;
+      console.log(`otros ${i}: ${horas}h ${minutos}min = ${cantidadDecimal}`);
+      return sum + cantidadDecimal;
     }, 0);
 
     const totalHoras = guardiaHoras + consultorioHoras + giraHoras + otroHoras;
@@ -436,13 +474,13 @@ if (this.cargaHoraria !== undefined) {
   } else {
     this.horasMessage = `Has cargado un total de ${totalHoras}`;
     this.horasMessageClass = 'success-message';
-    this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
+    this.isButtonDisabled = !this.allFormsWithDataAreValid();
     this.addButtonDisabled = true;
   }
 } else {
   this.horasMessage = '';
   this.horasMessageClass = '';
-  this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
+  this.isButtonDisabled = !this.allFormsWithDataAreValid();
 }
 
 // Verificar solapamiento de horarios
@@ -477,10 +515,14 @@ this.giras.controls.forEach(form => {
 });
 
 this.otros.controls.forEach(form => {
+  const horas = Number(form.get('horas')?.value) || 0;
+  const minutos = Number(form.get('minutos')?.value) || 0;
+  const cantidadDecimal = horas + minutos / 60;
+
   horarios.push({
     dia: form.value.dia,
     horaInicio: form.value.horaIngreso,
-    cantidadHoras: +form.value.cantidadHoras
+    cantidadHoras: cantidadDecimal
   });
 });
 
@@ -798,10 +840,13 @@ private async verificarMesesDisponibles(): Promise<void> {
     if (this.otroForm.valid) {
         const otroFormArray = this.otroForm.get('otros') as FormArray;
         otroFormArray.controls.forEach((control) => {
+            const cantidadHorasDecimal =
+              (Number(control.value.horas) || 0) + (Number(control.value.minutos) || 0) / 60;
+
             otroMeses.forEach((mes) => {
                 const distribucionOtroDto = new DistribucionOtroDto(
                     control.value.dia,
-                    control.value.cantidadHoras,
+                    cantidadHorasDecimal,
                     this.idPersona ?? null,
                     this.idEfector ?? 0,
                     mes.fechaInicio,
@@ -939,22 +984,6 @@ get isPanel3Expanded(): boolean {
 
   compareCaps(c1: CapsDto, c2: CapsDto): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
-  }
-
-  limpiarGuardia() {
-    this.guardiaForm.reset();
-  }
-
-  limpiarConsultorio() {
-    this.consultorioForm.reset();
-  }
-
-  limpiarGira() {
-    this.giraForm.reset();
-  }
-
-  limpiarOtro() {
-    this.otroForm.reset();
   }
 
   cancel(): void {

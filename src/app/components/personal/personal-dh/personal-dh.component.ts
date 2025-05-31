@@ -34,6 +34,9 @@ interface DistribucionGuardiaWithHoras extends DistribucionGuardia {
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface DistribucionConsultorioWithHoras extends DistribucionConsultorio {
@@ -50,6 +53,9 @@ interface DistribucionConsultorioWithHoras extends DistribucionConsultorio {
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface DistribucionGiraWithHoras extends DistribucionGira {
@@ -66,6 +72,9 @@ interface DistribucionGiraWithHoras extends DistribucionGira {
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface DistribucionOtroWithHoras extends DistribucionOtro {
@@ -82,6 +91,9 @@ interface DistribucionOtroWithHoras extends DistribucionOtro {
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface Tipos {
@@ -717,6 +729,10 @@ aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): Distribuc
     clase: 'Guardias'
   } as DistribucionGuardiaWithHoras;
 
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+  
   return aggregatedDistribucion;
 }
 
@@ -789,6 +805,10 @@ aggregateDistribucionesConsultorio(distribuciones: DistribucionConsultorio[]): D
     clase: 'Consultorio'
   } as DistribucionConsultorioWithHoras;
 
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+
   return aggregatedDistribucion;
 }
 
@@ -859,6 +879,10 @@ aggregateDistribucionesGira(distribuciones: DistribucionGira[]): DistribucionGir
     clase: 'Giras'
   } as DistribucionGiraWithHoras;
 
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+
   return aggregatedDistribucion;
 }
 
@@ -890,6 +914,7 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
 
     const horas = distribucion.cantidadHoras;
     const horasTotalesPorDia = horas * ocurrencias;
+    const horasFormato = this.convertirDecimalAHorasYMinutos(horas);
     const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
     const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
     const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
@@ -898,14 +923,14 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
 
     if (horasPorDia[dia]) {
       horasPorDia[dia].push({ 
-        horas: `${horas} hs`, 
+        horas: `${horasFormato} hs`, 
         tooltip,
         fechaInicio: fechaInicio.toDate(),
         fechaFin: fechaFin.toDate()
       });
     } else {
       horasPorDia[dia] = [{ 
-        horas: `${horas} hs`, 
+        horas: `${horasFormato} hs`, 
         tooltip,
         fechaInicio: fechaInicio.toDate(),
         fechaFin: fechaFin.toDate()
@@ -930,6 +955,10 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
     totalHorasSinOcurrencias,
     clase: 'Otros'
   } as DistribucionOtroWithHoras;
+
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
 
   return aggregatedDistribucion;
 }        

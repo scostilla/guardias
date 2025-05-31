@@ -209,6 +209,7 @@
                 <mat-form-field appearance="fill" style="width: 180px;">
                   <mat-label>Minutos</mat-label>
                   <mat-select formControlName="minutos">
+                    <mat-option [value]="null" disabled>Seleccionar</mat-option>
                     <mat-option [value]="0">00</mat-option>
                     <mat-option [value]="30">30</mat-option>
                   </mat-select>
@@ -384,13 +385,32 @@
                 <mat-error *ngIf="otro.get('lugar')?.hasError('required')">El campo es obligatorio.</mat-error>
               </mat-form-field>
         
-              <mat-form-field appearance="fill">
-                <mat-label>Cantidad de horas</mat-label>
-                <input matInput formControlName="cantidadHoras" type="number" />
-                <mat-error *ngIf="otro.get('cantidadHoras')?.hasError('required')">El campo es obligatorio.</mat-error>
-                <mat-error *ngIf="otro.get('cantidadHoras')?.hasError('min')">La cantidad de horas debe ser mayor a cero.</mat-error>
-                <mat-error *ngIf="otro.get('cantidadHoras')?.hasError('pattern')">Solo puedes ingresar números enteros o decimal (1.5 = 1:30 hs).</mat-error>  
-              </mat-form-field>
+              <mat-label>Cantidad de horas</mat-label>
+
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <mat-form-field appearance="fill" style="width: 180px;">
+                  <mat-label>Horas</mat-label>
+                  <input matInput type="number" min="1" max="24" formControlName="horas" />
+                </mat-form-field>
+
+                <span>:</span>
+
+                <mat-form-field appearance="fill" style="width: 180px;">
+                  <mat-label>Minutos</mat-label>
+                  <mat-select formControlName="minutos">
+                    <mat-option [value]="null" disabled>Seleccionar</mat-option>
+                    <mat-option [value]="0">00</mat-option>
+                    <mat-option [value]="30">30</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="otro.get('minutos')?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+
+                <span>hs</span>
+
+                <mat-error *ngIf="otro.get('horas')?.hasError('required') || otro.get('minutos')?.hasError('required')">
+                  Debes ingresar horas y minutos.
+                </mat-error>
+              </div>
   
               <button mat-button color="warn" class="mt-3" (click)="removeOtro(i)">Eliminar otra actividad</button>
               <mat-divider></mat-divider>

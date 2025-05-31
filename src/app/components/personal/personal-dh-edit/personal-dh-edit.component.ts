@@ -322,9 +322,13 @@ loadDistribuciones(fechaInicio: string): void {
         });
       } else if (formGroup === this.otroForm) {
         form = this.createOtro();
+          const horas = Math.floor(d.cantidadHoras);
+          const minutos = Math.round((d.cantidadHoras - horas) * 60);
+
         form.patchValue({
           dia: d.dia,
-          cantidadHoras: d.cantidadHoras,
+          horas: horas,
+          minutos: minutos,
           horaIngreso: horaIngresoFormateada,
           descripcion: d.descripcion,
           lugar: d.lugar,
@@ -336,6 +340,27 @@ loadDistribuciones(fechaInicio: string): void {
     });
   }
     
+hasDatos(form: FormGroup): boolean {
+  return Object.values(form.controls).some(control => {
+    const value = control.value;
+    return value !== null && value !== '' && value !== undefined;
+  });
+}
+
+isFormArrayWithDataValid(array: FormArray): boolean {
+  const formsWithData = array.controls.filter(control => this.hasDatos(control as FormGroup));
+  return formsWithData.length === 0 || formsWithData.every(control => control.valid);
+}
+
+allFormsWithDataAreValid(): boolean {
+  return (
+    this.isFormArrayWithDataValid(this.guardias) &&
+    this.isFormArrayWithDataValid(this.consultorios) &&
+    this.isFormArrayWithDataValid(this.giras) &&
+    this.isFormArrayWithDataValid(this.otros)
+  );
+}
+
 createGuardia(): FormGroup {
   const guardiaForm = this.fb.group({
     dia: ['', Validators.required],
@@ -402,8 +427,8 @@ createGuardia(): FormGroup {
     return this.fb.group({
       //tipoConsultorio: ['', Validators.required],
       dia: ['', Validators.required],
-      horas: [0, [Validators.required, Validators.min(1)]],
-      minutos: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
+      horas: [null, [Validators.required, Validators.min(1)]],
+      minutos: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
       idServicio: ['', Validators.required]
     });
@@ -463,11 +488,8 @@ createGuardia(): FormGroup {
   createOtro(): FormGroup {
     const grupo = this.fb.group({
       dia: ['', Validators.required],
-      cantidadHoras: ['', [
-        Validators.required,
-        Validators.min(1),
-        Validators.pattern(/^\d+(\.\d{1})?$/)
-      ]],
+      horas: [null, [Validators.required, Validators.min(1)]],
+      minutos: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
       descripcion: [''], // inicialmente sin validadores
       lugar: ['', Validators.required],
@@ -576,8 +598,12 @@ createGuardia(): FormGroup {
       return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
     }, 0);
 
-    const otroHoras = (this.otroForm.get('otros') as FormArray).controls.reduce((sum, formGroup) => {
-      return sum + (Number(formGroup.get('cantidadHoras')?.value) || 0);
+    const otroHoras = (this.otroForm.get('otros') as FormArray).controls.reduce((sum, formGroup, i) => {
+      const horas = Number(formGroup.get('horas')?.value) || 0;
+      const minutos = Number(formGroup.get('minutos')?.value) || 0;
+      const cantidadDecimal = horas + minutos / 60;
+      console.log(`otros ${i}: ${horas}h ${minutos}min = ${cantidadDecimal}`);
+      return sum + cantidadDecimal;
     }, 0);
 
     const totalHoras = guardiaHoras + consultorioHoras + giraHoras + otroHoras;
@@ -596,13 +622,13 @@ if (this.cargaHoraria !== undefined) {
   } else {
     this.horasMessage = `Has cargado un total de ${totalHoras}`;
     this.horasMessageClass = 'success-message';
-    this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid && !this.giraForm.valid && !this.otroForm.valid;
+    this.isButtonDisabled = !this.allFormsWithDataAreValid();
     this.addButtonDisabled = true;
   }
 } else {
   this.horasMessage = '';
   this.horasMessageClass = '';
-  this.isButtonDisabled = !this.guardiaForm.valid && !this.consultorioForm.valid  && !this.giraForm.valid && !this.otroForm.valid;
+    this.isButtonDisabled = !this.allFormsWithDataAreValid();
 }
 // Verificar solapamiento de horarios
 const horarios: HorarioDistribucion[] = [];
@@ -636,10 +662,14 @@ this.giras.controls.forEach(form => {
 });
 
 this.otros.controls.forEach(form => {
+  const horas = Number(form.get('horas')?.value) || 0;
+  const minutos = Number(form.get('minutos')?.value) || 0;
+  const cantidadDecimal = horas + minutos / 60;
+
   horarios.push({
     dia: form.value.dia,
     horaInicio: form.value.horaIngreso,
-    cantidadHoras: +form.value.cantidadHoras
+    cantidadHoras: cantidadDecimal
   });
 });
 
@@ -934,9 +964,12 @@ saveDistribuciones() {
                 data.idServicio?.id
               );
             } else if (dtoClass === DistribucionConsultorioDto) {
+                const cantidadHorasDecimal =
+                (Number(data.horas) || 0) + (Number(data.minutos) || 0) / 60;
+
               nuevoDto = new DistribucionConsultorioDto(
                 data.dia,
-                cantidadHoras,
+                cantidadHorasDecimal,
                 this.idPersona,
                 this.idEfector ?? 0,
                 fechaInicio,
@@ -957,9 +990,12 @@ saveDistribuciones() {
                 data.puestoSalud.id
               );
             } else if (dtoClass === DistribucionOtroDto) {
+                const cantidadHorasDecimal =
+                (Number(data.horas) || 0) + (Number(data.minutos) || 0) / 60;
+
               nuevoDto = new DistribucionOtroDto(
                 data.dia,
-                cantidadHoras,
+                cantidadHorasDecimal,
                 this.idPersona,
                 this.idEfector ?? 0,
                 fechaInicio,
