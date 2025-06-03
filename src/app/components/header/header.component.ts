@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
@@ -19,6 +20,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   showConfig: boolean = true;
 
   pendientesCount: number = 0;
+  autoridadesCount: number = 0;
   notificacionesCount: number = 0;
   efectorId: number | null = null;
 
@@ -40,6 +42,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
     private toastr: ToastrService,
     private cronoService: CronogramaTentativoService,
     private efectorService: EfectorService,
+    private autoridadService: AutoridadService,
     private tokenService: TokenService,
     private authService: AuthService
   ) {
@@ -54,44 +57,42 @@ export class HeaderComponent implements OnDestroy, OnInit {
 ngOnInit(): void {
   this.updateNavBarAndConfigState();
 
-  // Suscripción al cambio de efector
   this.efectorService.currentEfectorId$.subscribe(id => {
     this.efectorId = id;
-
-    if (this.efectorId != null) {
-      this.cronoService.countPendientesByEfector(this.efectorId)
-        .subscribe(count => {
-          this.pendientesCount = count;
-        });
-    } else {
-      this.pendientesCount = 0;
-    }
+    this.actualizarPendientes();
   });
 
   this.cronoService.refresh$.subscribe(() => {
     this.actualizarPendientes();
   });
 
-  // Resto de lógica de login
+  this.autoridadService.refresh$.subscribe(() => {
+    this.actualizarAutoridadesPendientes();
+  });
+
   this.tokenService.isLogged$.subscribe(isLogged => {
-  this.isLogged = isLogged;
+    this.isLogged = isLogged;
 
-  if (isLogged) {
-    this.roles = this.tokenService.getAuthorities();
+    if (isLogged) {
+      this.roles = this.tokenService.getAuthorities();
 
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
+      this.tokenService.currentRole$.subscribe(role => {
+        this.currentRole = role;
+        this.UserRoles();
+
+        if (this.isSuper) {
+          this.actualizarAutoridadesPendientes();
+        }
+      });
+
+      this.loadUserDetails();
+    } else {
+      this.nombreUsuario = '';
+      this.apellidoUsuario = '';
+      this.roles = [];
       this.UserRoles();
-    });
-
-    this.loadUserDetails();
-  } else {
-    this.nombreUsuario = '';
-    this.apellidoUsuario = '';
-    this.roles = [];
-    this.UserRoles(); // Opcional: para resetear flags de rol
-  }
-});
+    }
+  });
 }
 
   // Roles a usar
@@ -105,6 +106,7 @@ ngOnInit(): void {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
@@ -146,7 +148,9 @@ ngOnInit(): void {
   }
   
   private actualizarPendientes(): void {
-    if (this.efectorId != null) {
+    const isAutoridadOsuper = this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSUARIO';
+
+  if (this.efectorId != null && isAutoridadOsuper) {
       this.cronoService.countPendientesByEfector(this.efectorId).subscribe(count => {
         this.pendientesCount = count;
       });
@@ -155,10 +159,21 @@ ngOnInit(): void {
     }
   }
 
+  private actualizarAutoridadesPendientes(): void {
+    if (this.currentRole === 'ROLE_SUPERUSER') {
+      this.autoridadService.countPendientes().subscribe(count => {
+        this.autoridadesCount = count;
+      });
+    } else {
+      this.autoridadesCount = 0;
+    }
+  }
+
   getTotalBadges(): number {
   const pendientes = this.pendientesCount || 0;
+  const autoridades = this.autoridadesCount || 0;
   const notificaciones = this.notificacionesCount || 0;
-  return pendientes + notificaciones;
+  return pendientes + autoridades + notificaciones;
 }
 
   ngOnDestroy(): void {
@@ -174,6 +189,7 @@ ngOnInit(): void {
     this.apellidoUsuario = '';
     this.roles = [];
     this.isAdministrativo = false;
+    this.isAutoridad = false;
     this.isUsuario = false;
     this.isDph = false;
     this.isSuper = false;

@@ -62,4 +62,9 @@ import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
     hasActiveAutoridadLegajo(idPersona: number): Observable<boolean> {
       return this.httpClient.get<boolean>(`${this.autoridadURL}hasActiveAutoridadLegajo/${idPersona}`);
     }
+  
+    countPendientes(): Observable<number> {
+      return this.httpClient.get<number>(this.autoridadURL + `countPendientes`)
+    }
+
   }

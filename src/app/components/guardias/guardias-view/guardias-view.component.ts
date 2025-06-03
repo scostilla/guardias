@@ -55,23 +55,21 @@ export class GuardiasViewComponent {
       this.efectorNombre = null;
       return;
     }
-  
-    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
-      next: (hospital: EfectorHospitalDto) => {
+
+    this.hospitalService.detailNombreAll(this.efectorId).subscribe((hospital: EfectorHospitalDto | null) => {
+      if (hospital) {
         this.efectorNombre = hospital.nombre;
-      },
-      error: () => {
-        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
-          next: (ministerio: EfectorMinisterioDto) => {
+      } else {
+        this.ministerioService.detailNombreAll(this.efectorId!).subscribe((ministerio: EfectorMinisterioDto | null) => {
+          if (ministerio) {
             this.efectorNombre = ministerio.nombre;
-          },
-          error: () => {
-            this.capsService.detailNombreAll(this.efectorId!).subscribe({
-              next: (cap: EfectorCapsDto) => {
+          } else {
+            this.capsService.detailNombreAll(this.efectorId!).subscribe((cap: EfectorCapsDto | null) => {
+              if (cap) {
                 this.efectorNombre = cap.nombre;
-              },
-              error: () => {
-                console.error('No se encontró el efector con ID:', this.efectorId);
+              } else {
+                console.warn('No se encontró el efector con ID:', this.efectorId);
+                this.router.navigateByUrl('/home-page');
                 this.efectorNombre = null;
               }
             });

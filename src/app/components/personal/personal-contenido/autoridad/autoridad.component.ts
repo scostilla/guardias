@@ -35,7 +35,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   dialogRef!: MatDialogRef<AutoridadDetailComponent>;
-  displayedColumns: string[] = ['persona', 'confirmado', 'acciones'];
+  displayedColumns: string[] = ['persona', 'confirmado', 'motivo', 'acciones'];
   dataSource!: MatTableDataSource<Autoridad>;
   suscription!: Subscription;
 

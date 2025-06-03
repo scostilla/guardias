@@ -687,7 +687,7 @@ aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): Distribuc
 
     const horas = distribucion.cantidadHoras;
     const horasTotalesPorDia = horas * ocurrencias;
-    const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+    const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
     totalHorasSinOcurrencias += horas;
 
@@ -766,7 +766,7 @@ aggregateDistribucionesConsultorio(distribuciones: DistribucionConsultorio[]): D
     const horas = distribucion.cantidadHoras;
     const horasTotalesPorDia = horas * ocurrencias;
     const horasFormato = this.convertirDecimalAHorasYMinutos(horas);
-    const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+    const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
     totalHorasSinOcurrencias += horas;
 
@@ -840,7 +840,7 @@ aggregateDistribucionesGira(distribuciones: DistribucionGira[]): DistribucionGir
 
     const horas = distribucion.cantidadHoras;
     const horasTotalesPorDia = horas * ocurrencias;
-    const tooltip = `${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+    const tooltip = ` inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
     totalHorasSinOcurrencias += horas;
 
@@ -917,7 +917,7 @@ aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtr
     const horasFormato = this.convertirDecimalAHorasYMinutos(horas);
     const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
     const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
-    const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+    const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
     totalHorasSinOcurrencias += horas;
 

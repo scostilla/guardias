@@ -239,19 +239,19 @@
                 <span class="spacer"></span>
                 <button mat-button color="primary" type="button" [disabled]="(!areAllFormsConsultorioValid() && !hasNoConsultorio()) || addButtonDisabled" (click)="addConsultorio()">Agregar consultorio</button>
                 <button mat-button color="warn" type="button" (click)="prevStep()">Anterior</button>
-                <button mat-button color="primary" type="button" (click)="nextStep()">Siguiente</button>
+                <button mat-button color="primary" type="button" (click)="goToStep(3)">Siguiente</button>
               </mat-action-row>
             </form>
           </mat-expansion-panel>
         
           <!-- Panel 3 -->
-          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle [disabled]="true">
             <mat-expansion-panel-header class="custom-header">
               <mat-panel-title>
                 <div class="book-marker">
                   <span class="marker-number">3</span>
                 </div>
-                <span class="negrita">Giras médicas</span>
+                <span class="negrita">Giras médicas - Solo para regiones Quebrada y Puna</span>
                 <mat-icon *ngIf="isFormComplete(giraForm)" class="icon-success" matTooltip="Formulario completo">check_circle</mat-icon>
                 <mat-icon *ngIf="hasIncompleteFields(giraForm)" class="icon-pending" matTooltip="Faltan completar campos obligatorios">error</mat-icon>
               </mat-panel-title>

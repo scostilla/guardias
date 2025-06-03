@@ -105,36 +105,31 @@ ngOnInit(): void {
 
 // Obtener nombre del efector
 private getEfectorInfoById(efectorId: number): void {
-  // Reiniciam valores
   this.selectedEfectorDialog = null;
   this.currentEfectorType = null;
 
-  this.hospitalService.detailNombreAll(efectorId).subscribe({
-    next: (hospital: EfectorHospitalDto) => {
+  this.hospitalService.detailNombreAll(efectorId).subscribe((hospital: EfectorHospitalDto | null) => {
+    if (hospital) {
       this.selectedEfectorDialog = hospital.nombre;
       this.currentEfectorType = 'hospital';
       this.updateComponentVisibility();
-    },
-    error: () => {
-      this.ministerioService.detailNombreAll(efectorId).subscribe({
-        next: (ministerio: EfectorMinisterioDto) => {
+    } else {
+      this.ministerioService.detailNombreAll(efectorId).subscribe((ministerio: EfectorMinisterioDto | null) => {
+        if (ministerio) {
           this.selectedEfectorDialog = ministerio.nombre;
           this.currentEfectorType = 'ministerio';
           this.updateComponentVisibility();
-        },
-        error: () => {
-          this.capsService.detailNombreAll(efectorId).subscribe({
-            next: (cap: EfectorCapsDto) => {
+        } else {
+          this.capsService.detailNombreAll(efectorId).subscribe((cap: EfectorCapsDto | null) => {
+            if (cap) {
               this.selectedEfectorDialog = cap.nombre;
               this.currentEfectorType = 'caps';
-              this.updateComponentVisibility();
-            },
-            error: () => {
+            } else {
+              console.warn(`No se encontró el efector con ID: ${efectorId}`);
               this.selectedEfectorDialog = null;
               this.currentEfectorType = null;
-              this.updateComponentVisibility();
-              console.error('No se encontró el efector con ID:', efectorId);
             }
+            this.updateComponentVisibility();
           });
         }
       });

@@ -9,8 +9,17 @@
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/personal-dh">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <!--<button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
+      <!--<button mat-fab color="primary" style="margin-left: 5px;" (click)="crearDistribucion()" matTooltip="Agregar distribución horaria">
+        <mat-icon>av_timer</mat-icon>
+      </button>
+      <button mat-fab class="button-success" style="margin-left: 5px;" *ngIf="showTable" (click)="editarMes()" matTooltip="Editar distribución {{ nombreMes }}">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-fab matTooltip="Descargar excel" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
+      </button>
+      <button mat-fab class="button-pase" style="margin-left: 5px;" matTooltip="Ver historial" (click)="verDistribucionHistorial()">
+        <mat-icon>calendar_month</mat-icon>
       </button>-->
     </div>
   </div>
@@ -50,7 +59,11 @@
     
       <ng-container matColumnDef="tipo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Tipo</th>
-        <td mat-cell *matCellDef="let distribucion">{{ distribucion.tipo }}</td>
+        <td mat-cell *matCellDef="let distribucion">{{ distribucion.tipo }}
+          <button mat-icon-button (click)="obtenerDistribucionesYAbrirDialogo(distribucion.tipo)">
+            <mat-icon>search</mat-icon> <!-- Aquí está el ícono de lupa -->
+          </button>
+        </td>
       </ng-container>
     
       <ng-container matColumnDef="clase">
@@ -59,36 +72,39 @@
       </ng-container>
     
       <ng-container matColumnDef="totalHoras">
-        <th mat-header-cell *matHeaderCellDef class="negrita">Total</th>
-        <td mat-cell *matCellDef="let distribucion">{{ distribucion.totalHoras }} horas</td>
+        <th mat-header-cell *matHeaderCellDef class="negrita bordeTotal" style="background-color: #f5f5f5;">Total mes</th>
+        <td mat-cell *matCellDef="let distribucion" class="bordeTotal">{{ distribucion.totalHorasTexto }}</td>
       </ng-container>
     
       <ng-container matColumnDef="totalHorasFinDeSemana">
-        <th mat-header-cell *matHeaderCellDef class="negrita">Total S-D</th>
-        <td mat-cell *matCellDef="let distribucion">{{ distribucion.totalHorasFinDeSemana }} horas</td>
+        <th mat-header-cell *matHeaderCellDef class="negrita bordeTotal" style="background-color: #f5f5f5;">Total S-D</th>
+        <td mat-cell *matCellDef="let distribucion" class="bordeTotal">{{ distribucion.totalHorasFinDeSemanaTexto }}</td>
       </ng-container>
     
       <ng-container matColumnDef="totalHorasLunesAViernes">
-        <th mat-header-cell *matHeaderCellDef class="negrita">Total L-V</th>
-        <td mat-cell *matCellDef="let distribucion">{{ distribucion.totalHorasLunesAViernes }} horas</td>
+        <th mat-header-cell *matHeaderCellDef class="negrita" class="negrita bordeTotal" style="background-color: #f5f5f5;">Total L-V</th>
+        <td mat-cell *matCellDef="let distribucion" class="bordeTotal">{{ distribucion.totalHorasLunesAViernesTexto }}</td>
       </ng-container>
 
       <ng-container *ngFor="let fechaColumna of displayedColumns.slice(4)" [matColumnDef]="fechaColumna">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita columna-con-borde">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
-        <td mat-cell *matCellDef="let distribucion" 
+
+        <td mat-cell *matCellDef="let distribucion" style="white-space: nowrap;" 
+            class="columna-con-borde"
             [ngClass]="getNovedadClass(getFechaFromColumnId(fechaColumna) || '')"
             [matTooltip]="getNovedadTooltip(getFechaFromColumnId(fechaColumna) || '')">
-          <ng-container *ngFor="let entry of getHorasForDate(distribucion, fechaColumna); let i = index">
+            
+          <ng-container *ngFor="let entry of getHorasForDate(distribucion, fechaColumna)">
             <div class="hora-container">
               <span>{{ entry.horas }}</span>
               <div *ngIf="entry.showDetails" class="hora-details">
                 <p>{{ entry.tooltip }}</p>
               </div>
             </div>
-            <!--<span *ngIf="i < getHorasForDate(distribucion, fechaColumna).length - 1">; </span>  Agregar punto y coma si no es el último -->
           </ng-container>
+
         </td>
       </ng-container>
         
@@ -97,7 +113,7 @@
     </table>
     
   <!-- Mensaje si no hay registros -->
-  <div *ngIf="!showTable">
+  <div *ngIf="noHayDistribuciones">
     No hay distribuciones cargadas para el mes y año seleccionado.
   </div>
 
@@ -105,7 +121,7 @@
 
   <div class="row mt-3" *ngIf="showTable && novedadesPersonales.length > 0">
     <div *ngFor="let novedad of novedadesPersonales">
-      <span class="ref-circulo" [ngClass]="getNovedadClassFromTipo(novedad)">
+      <span class="ref-novedad-personal" [ngClass]="getNovedadClassFromTipo(novedad)">
       </span>
       {{ novedad.tipoLicencia.nombre }}
     </div>
@@ -116,18 +132,16 @@
       <div class="carga-horaria-display">
         <p>Carga horaria semanal: <strong>{{ cargaHoraria }}</strong> hs</p>
         <p *ngIf="cargaHoraria === undefined">No hay carga horaria disponible para este profesional.</p>
+        <p>Ver datos completos: 
+          <button mat-button color="primary" *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
+          <button mat-button color="primary" *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
+          <button mat-button color="primary" *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
+          <button mat-button color="primary" *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
+        </p>
       </div>
-      <p>Ver datos completos: 
-        <button mat-button color="primary" *ngIf="hasGuardiaDistributions" (click)="obtenerDistribucionesYAbrirDialogo('guardia')">Guardia</button>
-        <button mat-button color="primary" *ngIf="hasConsultorioDistributions" (click)="obtenerDistribucionesYAbrirDialogo('consultorio')">Consultorio</button>
-        <button mat-button color="primary" *ngIf="hasGiraDistributions" (click)="obtenerDistribucionesYAbrirDialogo('gira')">Gira</button>
-        <button mat-button color="primary" *ngIf="hasOtroDistributions" (click)="obtenerDistribucionesYAbrirDialogo('otro')">Otro</button>
-      </p>
       <!--<div *ngIf="mensajeCargaHoraria" [ngClass]="['horas-status-display', tipoMensajeCargaHoraria]">
         <p>{{ mensajeCargaHoraria }}</p>
       </div>-->
     </div>
   </div>
-  
-
 </div>

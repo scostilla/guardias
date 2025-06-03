@@ -1088,7 +1088,9 @@ console.log(`[NUEVO][${tipo}] DTO enviado:`, nuevoDto);
     this.step = index;
   }
 
-
+  goToStep(numeroPaso: number): void {
+  this.step = numeroPaso;
+  }
 
 get isPanel0Expanded(): boolean {
   return this.step === 0;

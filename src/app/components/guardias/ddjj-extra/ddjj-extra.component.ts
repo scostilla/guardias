@@ -21,8 +21,12 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
+import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 
 interface ClasesNovedad {
@@ -81,6 +85,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
+    private capsService: CapsService,
+    private ministerioService: MinisterioService,
     private efectorService: EfectorService,
     private router: Router
   ) {
@@ -120,22 +126,18 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   //trae el nombre del efector esta en sesion
   loadEfectorName(): void { 
     if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
-        (efector: EfectorHospitalDto) => {
+      this.hospitalService.detailNombreAll(this.efectorId).subscribe((efector: EfectorHospitalDto | null) => {
 
-          if (efector) {
-            this.efectorNombre = efector.nombre;
-          } else {
-            this.handleInvalidEfector();
-          }
-        },
-        (error) => {
-          console.error('Error al obtener el efector desde el servicio:', error);
-          this.handleInvalidEfector();
+        if (efector) {
+          this.efectorNombre = efector.nombre;
+        } else {
+            console.error('ID de efector inválido o no encontrado.');
+            this.router.navigateByUrl('/home-page');
         }
-      );
+      });
     } else {
-      this.handleInvalidEfector();
+        console.error('ID de efector inválido o no encontrado.');
+        this.router.navigateByUrl('/home-page');
     }
   }
 

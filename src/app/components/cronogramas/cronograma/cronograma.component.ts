@@ -183,22 +183,16 @@ export class CronogramaComponent {
   //trae el nombre del efector esta en sesion
   loadEfectorName(): void { 
     if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
-        (efector: EfectorHospitalDto) => {
-          console.log('Respuesta del servicio hospitalService.detailNombreAll:', efector);
+      this.hospitalService.detailNombreAll(this.efectorId).subscribe((efector: EfectorHospitalDto | null) => {
+        console.log('Respuesta del servicio hospitalService.detailNombreAll:', efector);
 
-          if (efector) {
-            this.efectorNombre = efector.nombre;
-            this.efectorNivel = efector.nivelComplejidad;
-          } else {
-            this.handleInvalidEfector();
-          }
-        },
-        (error) => {
-          console.error('Error al obtener el efector desde el servicio:', error);
+        if (efector) {
+          this.efectorNombre = efector.nombre;
+          this.efectorNivel = efector.nivelComplejidad;
+        } else {
           this.handleInvalidEfector();
         }
-      );
+      });
     } else {
       this.handleInvalidEfector();
     }

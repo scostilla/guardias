@@ -339,7 +339,7 @@ get guardias() {
       horas: [null, [Validators.required, Validators.min(1)]],
       minutos: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
       horaIngreso: ['', Validators.required],
-      descripcion: [''], // inicialmente sin validadores
+      descripcion: [''],
       lugar: ['', Validators.required],
       tipo: ['', Validators.required]
     });

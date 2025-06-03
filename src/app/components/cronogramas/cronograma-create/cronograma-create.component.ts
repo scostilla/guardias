@@ -598,16 +598,26 @@ private mapearTipoGuardia(id: number): string {
 
 private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
   
-    const tipoGuardiaString = this.mapearTipoGuardia(cronogramaDto.idTipoGuardia);
-  // Adaptar el DTO
-    const cronogramaRequest = new CronogramaTentativoResquestDto(
-      cronogramaDto.idAsistencial,
-      cronogramaDto.idEfector,
-      tipoGuardiaString,
-      cronogramaDto.fechaIngreso,
-      cronogramaDto.horaIngreso,
-      cronogramaDto.horaEgreso
-    );
+  const tipoGuardiaString = this.mapearTipoGuardia(cronogramaDto.idTipoGuardia);
+
+  console.log('Datos recibidos en procesarCronogramaEXTRA:', {
+    idAsistencial: cronogramaDto.idAsistencial,
+    idEfector: cronogramaDto.idEfector,
+    tipoGuardiaString,
+    fechaIngreso: cronogramaDto.fechaIngreso,
+    horaIngreso: cronogramaDto.horaIngreso,
+    horaEgreso: cronogramaDto.horaEgreso
+  });
+  
+    // Adaptar el objeto a CronogramaTentativoResquestDto
+  const cronogramaRequest = new CronogramaTentativoResquestDto(
+    cronogramaDto.idAsistencial,
+    cronogramaDto.idEfector,
+    tipoGuardiaString,
+    cronogramaDto.fechaIngreso,
+    cronogramaDto.horaIngreso,
+    cronogramaDto.horaEgreso
+  );
 
 const fechaIngresoStr = moment(cronogramaDto.fechaIngreso).format('YYYY-MM-DD');
 const horaIngresoStr = moment(cronogramaDto.horaIngreso, 'HH:mm').format('HH:mm:ss');
@@ -623,7 +633,7 @@ const cronogramaCompensatorio = new ConsultaLicenciaCompensatorioDto(
 );
     console.log('Consulta a licencia compensatorio (payload):', {
   idPersona: cronogramaDto.idAsistencial,
-    fechaIngresoStr,
+  fechaIngresoStr,
   horaIngresoStr,
   fechaEgresoStr,
   horaEgresoStr
@@ -632,7 +642,7 @@ const cronogramaCompensatorio = new ConsultaLicenciaCompensatorioDto(
 console.log('Datos enviados a existeTentativoEnDistribucionGuardia:', cronogramaRequest);
   this.distribucionGuardiaService.existeTentativoEnDistribucionGuardia(cronogramaRequest).subscribe(
     respuesta => {
-      console.log('Respuesta de existeTentativoEnDistribucionGuardia:', respuesta);
+      console.log('Respuesta de existeTentativoEnDistribucionGuardiaEXTRA:', respuesta);
       if (respuesta.coincideExactamente || respuesta.existeDistribucionParcial) {
                 const fechaIngreso = new Date(cronogramaDto.fechaIngreso);
                 const fechaConsulta = fechaIngreso.toISOString().split('T')[0];
