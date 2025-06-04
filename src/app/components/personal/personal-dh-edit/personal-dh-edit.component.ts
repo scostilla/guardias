@@ -20,6 +20,8 @@ import { DistribucionOtroService } from 'src/app/services/personal/distribucionO
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionOtroDto } from 'src/app/dto/personal/DistribucionOtroDto';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import * as moment from 'moment';
@@ -111,6 +113,7 @@ export class PersonalDhEditComponent {
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private asistencialService: AsistencialService,
+    private cronoService: CronogramaTentativoService,
     private fb: FormBuilder,
     private location: Location
   ) {
@@ -821,11 +824,41 @@ saveDistribuciones() {
   const fechaFinalizacion = moment(fechaInicio).endOf('month').startOf('day').toDate();
   const fechaFinalizacionCierre = moment().startOf('day').toDate();
 
+  this.cronoService.existenCronogramasDesdeFecha(
+    moment(fechaInicio).format('YYYY-MM-DD'),
+    this.idPersona,
+    this.idEfector
+  ).subscribe((existen: boolean) => {
+    if (existen) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: 'Existen cronogramas tentativos, relacionados a la fecha deseas modificar.<br/>Si prosigues, los tentativos serán anulados y deberás crear nuevos tentativos.<br/><span class="negrita">¿Quieres proseguir?</span>',
+          title: 'Existen tentativos',
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === true) {
+          this.continuarSaveDistribuciones(esMesActual, fechaInicio);
+        } else {
+          this.isButtonDisabled = false;
+        }
+      });
+    } else {
+      this.continuarSaveDistribuciones(esMesActual, fechaInicio);
+    }
+  });
+}
+
+continuarSaveDistribuciones(esMesActual: boolean, fechaInicio: Date) {
+  const fechaFinalizacion = moment(fechaInicio).endOf('month').startOf('day').toDate();
+  const fechaFinalizacionCierre = moment().startOf('day').toDate();
+
   const savePromises: Promise<any>[] = [];
   const deletePromises: Promise<any>[] = [];
   const errorMessages: string[] = [];
 
-  // 🛑 Paso 1: Guardar cierres si es el mes actual
+  // Paso 1: Guardar cierres si es el mes actual
   if (esMesActual) {
     const cerrarDistribuciones = (
       originales: any[],
@@ -914,15 +947,20 @@ saveDistribuciones() {
   }
 
   // Paso 2: Eliminar distribuciones anteriores (soft delete)
-  const eliminarDistribuciones = (ids: number[], service: any) => {
-    ids.forEach((id: number) => {
-      if (typeof id === 'number' && id >= 0) {
-        deletePromises.push(service.delete(id).toPromise());
-      }
-    });
-  };
+  this.cronoService.updateCronogramasDesdeFecha(
+    moment(fechaInicio).format('YYYY-MM-DD'),
+    this.idPersona,
+    this.idEfector!
+  ).subscribe(() => {
+    // luego eliminar
+    const eliminarDistribuciones = (ids: number[], service: any) => {
+      ids.forEach((id: number) => {
+        if (typeof id === 'number' && id >= 0) {
+          deletePromises.push(service.delete(id).toPromise());
+        }
+      });
+    };
 
-  Promise.all(savePromises).then(() => {
     eliminarDistribuciones(this.distribucionesGuardiaIds, this.distribucionGuardiaService);
     eliminarDistribuciones(this.distribucionesConsultorioIds, this.distribucionConsultorioService);
     eliminarDistribuciones(this.distribucionesGiraIds, this.distribucionGiraService);
@@ -930,7 +968,7 @@ saveDistribuciones() {
 
     Promise.all(deletePromises)
       .then(() => {
-        // ✅ Paso 3: Guardar nuevas distribuciones
+        // Paso 3: Guardar nuevas distribuciones
         const guardarNuevasDistribuciones = (
           formArray: FormArray,
           tipo: string,
@@ -1034,7 +1072,7 @@ console.log(`[NUEVO][${tipo}] DTO enviado:`, nuevoDto);
 
         Promise.all(savePromises)
           .then(() => {
-            this.toastr.success('Se ha guardado exitosamente la distribución horaria.', 'Éxito', {
+            this.toastr.success('Se ha guardado exitosamente la nueva distribución horaria.', 'Éxito', {
               timeOut: 6000,
               positionClass: 'toast-top-center',
               progressBar: true

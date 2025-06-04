@@ -106,6 +106,15 @@ export class CronogramaTentativoService {
       return this.httpClient.get<number>(this.cTentativoURL + `countPendientesByEfector/${idEfector}`)
     }
 
+    existenCronogramasDesdeFecha(fechaInicio: string, idAsistencial: number, idEfector: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(this.cTentativoURL + `existenCronogramasDesdeFecha/${fechaInicio}/${idAsistencial}/${idEfector}`);
+    }
+  
+    updateCronogramasDesdeFecha(fechaInicio: string, idAsistencial: number, idEfector: number): Observable<any> {
+      const url = `${this.cTentativoURL}updateCronogramasDesdeFecha/${fechaInicio}/${idAsistencial}/${idEfector}`;
+      return this.httpClient.post<any>(url, null);
+    }
+
     // busca cronograma tentativo para comparar con registro de actividad
     verificarRegistroIngresoEnTentativo(dto: RegActivRegIngresoDto): Observable<VerificacionTentativoResponseDto> {
       return this.httpClient.post<VerificacionTentativoResponseDto>(`${this.cTentativoURL}verificarRegistroIngresoEnTentativo`, dto);

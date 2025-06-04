@@ -28,6 +28,11 @@ export class EfectorService {
     return this.httpClient.get(`${this.efectoresURL}tipo/${id}`);
   }
 
+  // Método para obtener el tipo y nombre del efector usando dto
+  getEfectorNombre(id: number): Observable<any> {
+    return this.httpClient.get(`${this.efectoresURL}tipoEfector/${id}`);
+  }
+
   // Encriptar
   encrypt(text: string): string {
     return CryptoJS.AES.encrypt(text, this.secretKey).toString();

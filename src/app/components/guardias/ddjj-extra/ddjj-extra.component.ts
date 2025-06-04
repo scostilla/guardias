@@ -21,12 +21,12 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
-import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
+import { ToastrService } from 'ngx-toastr';
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 
 interface ClasesNovedad {
@@ -77,7 +77,14 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
-  private efectorIdSubscription!: Subscription;
+  //Autenticación
+  roles: string[] = [];
+  currentRole: string | null = null;
+  isAutoridad: boolean = false;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -85,9 +92,9 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
-    private capsService: CapsService,
-    private ministerioService: MinisterioService,
     private efectorService: EfectorService,
+    private toastr: ToastrService,
+    private tokenService: TokenService,
     private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -103,41 +110,71 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    moment.locale('es');
-
-    this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-    
-    this.generarDiasDelMes();
-    
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.feriados = feriados;
-    });
-
+    // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
       if (this.efectorId) {
-        this.loadEfectorName(); 
-        this.loadHospitalDetails();
+        this.loadEfectorName();
+          moment.locale('es');
+          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.generarDiasDelMes();
+          this.loadHospitalDetails();
+    
+        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+          this.feriados = feriados;
+    });
+
       } else {
-        this.handleInvalidEfector();
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+    }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
       }
+    });
       this.selectedServicio = null;
   }
 
   //trae el nombre del efector esta en sesion
-  loadEfectorName(): void { 
+  //trae el nombre del efector esta en sesion
+  loadEfectorName(): void {
     if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe((efector: EfectorHospitalDto | null) => {
-
-        if (efector) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
           this.efectorNombre = efector.nombre;
-        } else {
-            console.error('ID de efector inválido o no encontrado.');
-            this.router.navigateByUrl('/home-page');
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
         }
-      });
+      );
+    }
+  }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
     } else {
-        console.error('ID de efector inválido o no encontrado.');
-        this.router.navigateByUrl('/home-page');
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isAutoridad = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
   }
 
@@ -613,7 +650,6 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-    this.efectorIdSubscription?.unsubscribe();
   }
 
 }

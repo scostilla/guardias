@@ -11,9 +11,6 @@ import { Router } from '@angular/router';
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 
 //models y dto
@@ -21,9 +18,6 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
-import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 
 //Componentes
@@ -31,8 +25,6 @@ import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-de
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
@@ -44,9 +36,6 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 export class ExternoComponent implements OnInit, OnDestroy {
 
   dniVisible: boolean = false;
-  domicilioVisible: boolean = false;
-  estadoVisible: boolean = false;
-  fechaNacimientoVisible: boolean = false;
   telefonoVisible: boolean = false;
   emailVisible: boolean = false;
 
@@ -60,26 +49,18 @@ export class ExternoComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   asistencial!: Asistencial;
   habilitacionesGuardias: HabilitacionesGuardias[] = [];
-  isLoadingLegajos: boolean = true;
 
-  showMessage: boolean = false;
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
   //Autenticación
-  isLogged = false;
   roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
   
 
@@ -88,9 +69,6 @@ export class ExternoComponent implements OnInit, OnDestroy {
   constructor(
     private asistencialService: AsistencialService,
     private efectorService: EfectorService,
-    private hospitalService: HospitalService,
-    private capsService: CapsService,
-    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNov: MatDialog,
     public dialogDistrib: MatDialog,
@@ -98,7 +76,6 @@ export class ExternoComponent implements OnInit, OnDestroy {
     private router: Router,
     private habilitacionesGuardiasService: HabilitacionesGuardiasService,
     private tokenService: TokenService,
-    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -114,58 +91,32 @@ export class ExternoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-  
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-  
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
-    
-    // Verificar si el ID efector es válido
-    if (this.efectorId === null) {
-      this.showMessage = true;
-    } else {
-      this.listExterno(this.efectorId);
+      if (this.efectorId) {
+        this.loadEfectorName();
+        this.listExterno(this.efectorId);
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
     }
 
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
+  
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listExterno(this.efectorId); // Usar el efectorId actual
+      this.listExterno(this.efectorId!); // Usar el efectorId actual
     });
     
     this.actualizarColumnasVisibles();
@@ -195,60 +146,37 @@ export class ExternoComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
     }
   }
 
-  //trae el nombre del efector esta en sesion que filtra lo mostrado
+  //trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    if (!this.efectorId) {
-      this.efectorNombre = null;
-      return;
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
-
-    this.hospitalService.detailNombreAll(this.efectorId).subscribe((hospital: EfectorHospitalDto | null) => {
-      if (hospital) {
-        this.efectorNombre = hospital.nombre;
-      } else {
-        this.ministerioService.detailNombreAll(this.efectorId!).subscribe((ministerio: EfectorMinisterioDto | null) => {
-          if (ministerio) {
-            this.efectorNombre = ministerio.nombre;
-          } else {
-            this.capsService.detailNombreAll(this.efectorId!).subscribe((cap: EfectorCapsDto | null) => {
-              if (cap) {
-                this.efectorNombre = cap.nombre;
-              } else {
-                console.warn('No se encontró el efector con ID:', this.efectorId);
-                this.router.navigateByUrl('/home-page');
-                this.efectorNombre = null;
-              }
-            });
-          }
-        });
-      }
-    });
   }
   
-  listExterno(efectorId: number | null = null): void {
-    // Si no hay un ID de efector, muestra el mensaje
-    if (efectorId === null) {
-      this.showMessage = true;
-      this.sinAsistencialMessage = false;
-      this.dataSource = new MatTableDataSource<AsistencialListNombreTgDto>([]);
-      return;
-    }
-  
+  listExterno(efectorId: number): void {
     // Llamo al servicio para obtener directamente los asistenciales con CF y extra habilitados por efectorId
     this.habilitacionesGuardiasService.listAsistencialesWithCfAndExtraByEfector(efectorId).subscribe(asistenciales => {
 
       // Maneja los mensajes según los resultados
       if (asistenciales.length === 0) {
-        this.showMessage = false;
         this.sinAsistencialMessage = true;
       } else {
-        this.showMessage = false;
         this.sinAsistencialMessage = false;
         this.dataSource = new MatTableDataSource<AsistencialListNombreTgDto>(asistenciales);
       }
@@ -258,8 +186,7 @@ export class ExternoComponent implements OnInit, OnDestroy {
 
       }, error => {
         console.error('Error al obtener asistenciales con habilitación:', error);
-        this.showMessage = true;
-        this.sinAsistencialMessage = false;
+        this.sinAsistencialMessage = true;
       });  
 }
                           
@@ -345,8 +272,14 @@ export class ExternoComponent implements OnInit, OnDestroy {
 
     columnasBase.forEach(columna => {
       columnasVisibles.push(columna);
-      if (columna === 'cuil' && this.telefonoVisible) {
+      if (columna === 'apellido' && this.dniVisible) {
+        columnasVisibles.push('dni');
+      }
+      if (columna === 'nombresTiposGuardias' && this.telefonoVisible) {
         columnasVisibles.push('telefono');
+      }
+      if (columna === 'nombresTiposGuardias' && this.emailVisible) {
+        columnasVisibles.push('email');
       }
     });
 

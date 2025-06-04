@@ -36,7 +36,7 @@
         </mat-menu>
       </div>
 
-      <div class="col-12 col-md-6 m d-flex justify-content-md-end">Efector: <span class="negrita ps-1">{{efectorNombre}}</span>
+      <div class="col-12 col-md-6 m d-flex justify-content-md-end">Efector: <span class="negrita ps-1">{{efectorNombre}}</span></div>
 
     </div>
     
@@ -45,59 +45,99 @@
       <button class="button-primary" (click)="goBack()">clic aquí</button> para regresar atrás.
     </div>
     
-    <div *ngIf="!sinAutoridadMessage">
+      <div *ngIf="!sinAutoridadMessage">
 
-    <div class="table-responsive">
-      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
 
-        <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>
-          <td mat-cell *matCellDef="let row">{{ row.nombre }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="apellido">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido </th>
-          <td mat-cell *matCellDef="let row">{{ row.apellido }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="cuil">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
-          <td mat-cell *matCellDef="let row" style="white-space: nowrap;">{{ formatCuil(row.cuil) }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="tipo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo </th>
-          <td mat-cell *matCellDef="let row">{{ row.tipo }}</td>
-        </ng-container>
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>
+              <td mat-cell *matCellDef="let row">{{ row.nombre }}</td>
+            </ng-container>
+          
+            <ng-container matColumnDef="apellido">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido </th>
+              <td mat-cell *matCellDef="let row">{{ row.apellido }}</td>
+            </ng-container>
 
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef class="negrita"></th>
-          <td mat-cell *matCellDef="let row" class="cell-actions">
-            <button mat-icon-button matTooltip="Ver {{row.nombre}}" (click)="openDetail(row)">
-              <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
-            </button>
-            <button mat-icon-button matTooltip="Editar {{row.nombre}}" (click)="updateAsistencial(row)">
-              <mat-icon class="btnEdit">edit</mat-icon>
-            </button>
-            <button mat-icon-button matTooltip="Eliminar {{row.nombre}}" (click)="deleteAsistencial(row)">
-              <mat-icon class="btnRemove">delete</mat-icon>
-            </button>
-            <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(row)">
-                <mat-icon color="primary">playlist_play</mat-icon>
-              </button>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="dni">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> DNI </th> 
+              <td mat-cell *matCellDef="let asistencial"> {{asistencial.dni}} </td>
+            </ng-container>
+          
+            <ng-container matColumnDef="cuil">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> CUIL </th>
+              <td mat-cell *matCellDef="let row" style="white-space: nowrap;">{{ formatCuil(row.cuil) }}</td>
+            </ng-container>
+          
+            <ng-container matColumnDef="tipo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Tipo </th>
+              <td mat-cell *matCellDef="let row">{{ row.tipo }}</td>
+            </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
+            <ng-container matColumnDef="telefono">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Teléfono </th> 
+              <td mat-cell *matCellDef="let asistencial"> {{asistencial.telefono}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Correo electrónico </th> 
+              <td mat-cell *matCellDef="let asistencial"> {{asistencial.email}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef class="negrita"></th>
+              <td mat-cell *matCellDef="let row" class="cell-actions">
+                <button mat-icon-button matTooltip="Ver {{row.nombre}}" (click)="openDetail(row)">
+                  <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Editar {{row.nombre}}" (click)="updateAsistencial(row)">
+                  <mat-icon class="btnEdit">edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar {{row.nombre}}" (click)="deleteAsistencial(row)">
+                  <mat-icon class="btnRemove">delete</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Ver Legajo" (click)="verLegajo(row)">
+                    <mat-icon color="primary">playlist_play</mat-icon>
+                  </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-3">    
+            <mat-accordion>
+                <mat-expansion-panel #miPanel hideToggle>
+                  <mat-expansion-panel-header style="pointer-events: none;">
+                    <mat-panel-title>
+                      <button mat-icon-button color="primary" aria-label="Agregar columnas" matTooltip="Agregar columnas" (click)="miPanel.toggle(); $event.stopPropagation()" style="pointer-events: auto;">
+                        <mat-icon>menu</mat-icon>
+                      </button>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <ul>
+                    <li>
+                      <input type="checkbox" [(ngModel)]="dniVisible" (change)="actualizarColumnasVisibles()"> DNI
+                    </li>
+                    <li>
+                      <input type="checkbox" [(ngModel)]="telefonoVisible" (change)="actualizarColumnasVisibles()"> Teléfono
+                    </li>
+                    <li>
+                      <input type="checkbox" [(ngModel)]="emailVisible" (change)="actualizarColumnasVisibles()"> E-mail
+                    </li>
+                  </ul>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+            <div class="col-lg-9">        
+              <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+            </div>
+        </div>
+      </div>
+
   </div>
-
-  <div class="row mt-3">
-    <div class="col-lg-9">        
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
-    </div>
-  </div>
-
 </div>

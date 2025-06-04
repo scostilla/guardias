@@ -10,17 +10,10 @@ import { Router } from '@angular/router';
 
 //Services
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 
 //Models y dto
 import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
-import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 
 //Componentes
@@ -28,8 +21,6 @@ import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asiste
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
@@ -56,26 +47,18 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<NoAsistencialSummaryDto>;
   suscription!: Subscription;
   noAsistencial!: NoAsistencialSummaryDto;
-  isLoadingLegajos: boolean = true;
 
-  showMessage: boolean = false;
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
   //Autenticación
-  isLogged = false;
   roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
   
 
@@ -84,13 +67,8 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastr: ToastrService,
     private router: Router,
-    private legajoService: LegajoService,
     private efectorService: EfectorService,
-    private hospitalService: HospitalService,
-    private capsService: CapsService,
-    private ministerioService: MinisterioService,
     private tokenService: TokenService,
-    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -106,58 +84,32 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-  
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
-    
-    // Verificar si el ID efector es válido
-    if (this.efectorId === null) {
-      this.showMessage = true;
-    } else {
-      this.listNoAsistencial(this.efectorId);
+      if (this.efectorId) {
+        this.loadEfectorName();
+        this.listNoAsistencial(this.efectorId);
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
     }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
 
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
+    
     this.suscription = this.noasistencialService.refresh$.subscribe(() => {
-      this.listNoAsistencial(this.efectorId); // Usar el efectorId actual
+      this.listNoAsistencial(this.efectorId!); 
     });
 
     this.actualizarColumnasVisibles();
@@ -187,76 +139,49 @@ export class NoAsistencialComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
     }
   }
 
-  //Trae el nombre del efector esta en sesion
+  //trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    if (!this.efectorId) {
-      this.efectorNombre = null;
-      return;
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
+  }
 
-    this.hospitalService.detailNombreAll(this.efectorId).subscribe((hospital: EfectorHospitalDto | null) => {
-      if (hospital) {
-        this.efectorNombre = hospital.nombre;
+
+  listNoAsistencial(efectorId: number): void {
+    this.noasistencialService.listByEfector(efectorId).subscribe(data => {
+      if (data.length === 0) {
+        this.sinAsistencialMessage = true; // No se encontraron registros
+        this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]);
       } else {
-        this.ministerioService.detailNombreAll(this.efectorId!).subscribe((ministerio: EfectorMinisterioDto | null) => {
-          if (ministerio) {
-            this.efectorNombre = ministerio.nombre;
-          } else {
-            this.capsService.detailNombreAll(this.efectorId!).subscribe((cap: EfectorCapsDto | null) => {
-              if (cap) {
-                this.efectorNombre = cap.nombre;
-              } else {
-                console.warn('No se encontró el efector con ID:', this.efectorId);
-                this.router.navigateByUrl('/home-page');
-                this.efectorNombre = null;
-              }
-            });
-          }
-        });
+        this.sinAsistencialMessage = false;
+        this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>(data); // Cargar los datos directamente
       }
+
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }, error => {
+      console.error('Error al obtener no asistenciales:', error);
+      this.sinAsistencialMessage = true;
+      this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]);
     });
   }
-
-listNoAsistencial(efectorId: number | null = null): void {
-  // Si no hay un ID de efector, muestra el mensaje
-  if (efectorId === null) {
-    this.showMessage = true;
-    this.sinAsistencialMessage = false;
-    this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]); // Limpiar los datos
-    return;
-  }
-
-  this.noasistencialService.listByEfector(efectorId).subscribe(data => {
-    if (data.length === 0) {
-      this.showMessage = false;
-      this.sinAsistencialMessage = true; // No se encontraron registros
-      this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]);
-    } else {
-      this.showMessage = false;
-      this.sinAsistencialMessage = false;
-      this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>(data); // Cargar los datos directamente
-    }
-
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }, error => {
-    console.error('Error al obtener no asistenciales:', error);
-    this.showMessage = true;
-    this.sinAsistencialMessage = false;
-    this.dataSource = new MatTableDataSource<NoAsistencialSummaryDto>([]);
-  });
-}
-      
-  getCurrentEfectorId(): number | null {
-    return this.efectorId;
-  }
-
+        
   createNoAsistencial(): void {
     this.router.navigate(['/no-asistencial-create']);
   }
@@ -334,11 +259,14 @@ listNoAsistencial(efectorId: number | null = null): void {
 
     columnasBase.forEach(columna => {
       columnasVisibles.push(columna);
-      if (columna === 'cuil' && this.dniVisible) {
+      if (columna === 'apellido' && this.dniVisible) {
         columnasVisibles.push('dni');
       }
       if (columna === 'cuil' && this.telefonoVisible) {
         columnasVisibles.push('telefono');
+      }
+      if (columna === 'cuil' && this.emailVisible) {
+        columnasVisibles.push('email');
       }
     });
 

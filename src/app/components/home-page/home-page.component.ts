@@ -103,7 +103,7 @@ ngOnInit(): void {
     }
   }
 
-// Obtener nombre del efector
+// Obtener nombre del efector y enviar tipo a html
 private getEfectorInfoById(efectorId: number): void {
   this.selectedEfectorDialog = null;
   this.currentEfectorType = null;

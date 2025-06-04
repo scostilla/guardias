@@ -23,11 +23,11 @@ import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
-import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
+import { ToastrService } from 'ngx-toastr';
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 
 interface ClasesNovedad {
@@ -78,7 +78,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
-  private efectorIdSubscription!: Subscription;
+  //Autenticación
+  roles: string[] = [];
+  currentRole: string | null = null;
+  isAutoridad: boolean = false;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -86,9 +93,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
-    private capsService: CapsService,
-    private ministerioService: MinisterioService,
     private efectorService: EfectorService,
+    private toastr: ToastrService,
+    private tokenService: TokenService,
     private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -104,54 +111,72 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    moment.locale('es');
-
-    this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-    
-    this.generarDiasDelMes();
-    
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.feriados = feriados;
-    });
-
+    // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
       if (this.efectorId) {
-        this.loadEfectorName(); 
-        this.loadHospitalDetails();
+        this.loadEfectorName();
+          moment.locale('es');
+          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.generarDiasDelMes();
+          this.loadHospitalDetails();
+    
+        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+          this.feriados = feriados;
+    });
+
       } else {
-        this.handleInvalidEfector();
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+    }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
       }
+    });
+
       this.selectedServicio = null;
   }
 
   //trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    if (!this.efectorId) {
-      this.efectorNombre = null;
-      return;
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
+  }
 
-    this.hospitalService.detailNombreAll(this.efectorId).subscribe((hospital: EfectorHospitalDto | null) => {
-      if (hospital) {
-        this.efectorNombre = hospital.nombre;
-      } else {
-        this.ministerioService.detailNombreAll(this.efectorId!).subscribe((ministerio: EfectorMinisterioDto | null) => {
-          if (ministerio) {
-            this.efectorNombre = ministerio.nombre;
-          } else {
-            this.capsService.detailNombreAll(this.efectorId!).subscribe((cap: EfectorCapsDto | null) => {
-              if (cap) {
-                this.efectorNombre = cap.nombre;
-              } else {
-                console.warn('No se encontró el efector con ID:', this.efectorId);
-                this.router.navigateByUrl('/home-page');
-                this.efectorNombre = null;
-              }
-            });
-          }
-        });
-      }
-    });
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isAutoridad = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
   }
 
   loadHospitalDetails(): void {
@@ -164,12 +189,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     this.hospitalService.getServiciosActivos(this.efectorId).subscribe(
       (servicios) => {
-        console.log('Servicios recibidos del backend:', servicios);
-
         this.servicios = servicios.map(s => new ServicioSummaryDto(s.id, s.descripcion));
-
-        console.log('Servicios mapeados:', this.servicios);
-
         if (this.servicios.length > 0) {
         }
 
@@ -180,12 +200,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       }
     );
   }
-
-  private handleInvalidEfector(): void {
-    console.error('ID de efector inválido o no encontrado.');
-    this.router.navigateByUrl('/home-page');
-  }
-
 
   generarDiasDelMes(): void {
     const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
@@ -200,40 +214,40 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
-updateTableDataSource(): void {
-  this.dataSource.data = this.registrosMensuales;
-  this.dataSource.paginator = this.paginator;
-  this.dataSource.sort = this.sort;
-}
-
-loadRegistrosMensuales(): void {
-  const anio = this.selectedYear;
-  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-  const idEfector = this.efectorId;
-
-  if (idEfector === null) {
-    console.error("El ID del hospital no puede ser null");
-    return;
+  updateTableDataSource(): void {
+    this.dataSource.data = this.registrosMensuales;
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  if (this.selectedServicio == null) {
-    // Todos los servicios
-    this.registroMensualService
-      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
-      .subscribe(data => {
-        this.registrosMensuales = data;
-        this.updateTableDataSource(); // Mostrar todos
-      });
-  } else {
-    // Servicio específico
-    this.registroMensualService
-      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
-      .subscribe(data => {
-        this.registrosMensuales = data;
-        this.updateTableDataSource(); // Mostrar filtrado
-      });
+  loadRegistrosMensuales(): void {
+    const anio = this.selectedYear;
+    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+    const idEfector = this.efectorId;
+
+    if (idEfector === null) {
+      console.error("El ID del hospital no puede ser null");
+      return;
+    }
+
+    if (this.selectedServicio == null) {
+      // Todos los servicios
+      this.registroMensualService
+        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
+        .subscribe(data => {
+          this.registrosMensuales = data;
+          this.updateTableDataSource(); // Mostrar todos
+        });
+    } else {
+      // Servicio específico
+      this.registroMensualService
+        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
+        .subscribe(data => {
+          this.registrosMensuales = data;
+          this.updateTableDataSource(); // Mostrar filtrado
+        });
+    }
   }
-}
 
   updateDateAndLoadData(): void {
 
@@ -264,20 +278,18 @@ loadRegistrosMensuales(): void {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
-  const dataToSend = {
-    asistencial,
-    month: selectedMonth,
-    year: selectedYear
-  };
+  openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+    const dataToSend = {
+      asistencial,
+      month: selectedMonth,
+      year: selectedYear
+    };
 
-  console.log('🧾 Datos enviados al dialog:', dataToSend);
-
-  this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
-    width: '600px',
-    data: dataToSend
-  });
-}
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
+      width: '600px',
+      data: dataToSend
+    });
+  }
 
   openDdjjConfirm(): void {
     const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
@@ -649,7 +661,6 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-    this.efectorIdSubscription?.unsubscribe();
   }
 
 }
