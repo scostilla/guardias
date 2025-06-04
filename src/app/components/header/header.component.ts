@@ -59,7 +59,15 @@ ngOnInit(): void {
 
   this.efectorService.currentEfectorId$.subscribe(id => {
     this.efectorId = id;
-    this.actualizarPendientes();
+
+    if (this.efectorId != null) {
+      this.cronoService.countPendientesByEfector(this.efectorId)
+        .subscribe(count => {
+          this.pendientesCount = count;
+        });
+    } else {
+      this.pendientesCount = 0;
+    }
   });
 
   this.cronoService.refresh$.subscribe(() => {
@@ -80,7 +88,7 @@ ngOnInit(): void {
         this.currentRole = role;
         this.UserRoles();
 
-        if (this.isSuper) {
+        if (this.currentRole === 'ROLE_SUPERUSER') {
           this.actualizarAutoridadesPendientes();
         }
       });
@@ -184,6 +192,7 @@ ngOnInit(): void {
 
   onLogOut(): void {
     this.tokenService.logOut();
+    this.efectorService.setCurrentEfectorId(null);
     this.isLogged = false;
     this.nombreUsuario = '';
     this.apellidoUsuario = '';

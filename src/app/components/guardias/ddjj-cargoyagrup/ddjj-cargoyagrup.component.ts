@@ -611,6 +611,23 @@ exportarAExcel() {
     });
 
     worksheet.addRow(Object.values(exportData));
+    const row = worksheet.lastRow!;
+
+      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+        const date = this.getFechaFromColumnId(fechaColumna);
+        const isHoliday = this.isHoliday(date).isHoliday;
+
+        if (isHoliday) {
+          const cellIndex = dataColumnHeaders.length + index + 1;
+          const cell = row.getCell(cellIndex);
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'd4c2cd' }
+          };
+          cell.font = { color: { argb: '000000' } };
+        }
+      });
   });
 
   const fileName = `ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;

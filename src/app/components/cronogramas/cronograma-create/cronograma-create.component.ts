@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CronogramaTentativoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoDto';
 import { CronogramaTentativoResquestDto } from 'src/app/dto/Cronogramas/CronogramaTentativoResquestDto';
 import { ConsultaLicenciaCompensatorioDto } from 'src/app/dto/personal/ConsultaLicenciaCompensatorioDto';
@@ -15,6 +15,8 @@ import { DistribucionConsultorioService } from 'src/app/services/personal/distri
 import { DistribucionGiraService } from 'src/app/services/personal/distribucionGira.service';
 import { DistribucionOtroService } from 'src/app/services/personal/distribucionOtro.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
+import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { MatDialog } from '@angular/material/dialog';
@@ -37,84 +39,113 @@ export class CronogramaCreateComponent {
   inputValue: string = '';
   efectorId: number | null = null;
   minFechaIngreso: string = moment().format('YYYY-MM-DD');
+  minHoraIngreso: string = '00:00';
   minFechaEgreso: string = '';
   servicios: ServicioSummaryDto[] = [];
+  feriados: Feriado[] = [];
 
-  constructor(
-    public dialogRef: MatDialogRef<CronogramaCreateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder,
-    private cronoService: CronogramaTentativoService,
-    private asistencialService: AsistencialService,
-    private efectorService: EfectorService,
-    private hospitalService: HospitalService,
-    private tipoGuardiaService: TipoGuardiaService,
-    private distribucionGuardiaService: DistribucionGuardiaService,
-    private distribucionConsultorioService: DistribucionConsultorioService,
-    private distribucionGiraService: DistribucionGiraService,
-    private distribucionOtroService: DistribucionOtroService,
-    private novedadPersonalService: NovedadPersonalService,
-    public dialog: MatDialog,
-    private toastr: ToastrService,
-    private cdRef: ChangeDetectorRef
-  ) {
-    this.cronoForm = this.fb.group({
-      fechaIngreso: ['', Validators.required],
-      fechaEgreso: [{ value: '', disabled: true }, Validators.required],
-      horaIngreso: ['', Validators.required],
-      horaEgreso: [{ value: '', disabled: true }, Validators.required],
-      tipoGuardia: ['', Validators.required],
-      asistencial: ['', Validators.required],
-      idServicio: ['', Validators.required],
-      observacion: ['', [Validators.maxLength(250)]],
-    });
+constructor(
+  public dialogRef: MatDialogRef<CronogramaCreateComponent>,
+  @Inject(MAT_DIALOG_DATA) public data: any,
+  private fb: FormBuilder,
+  private cronoService: CronogramaTentativoService,
+  private asistencialService: AsistencialService,
+  private efectorService: EfectorService,
+  private hospitalService: HospitalService,
+  private tipoGuardiaService: TipoGuardiaService,
+  private distribucionGuardiaService: DistribucionGuardiaService,
+  private distribucionConsultorioService: DistribucionConsultorioService,
+  private distribucionGiraService: DistribucionGiraService,
+  private distribucionOtroService: DistribucionOtroService,
+  private novedadPersonalService: NovedadPersonalService,
+  private feriadoService: FeriadoService,
+  public dialog: MatDialog,
+  private toastr: ToastrService,
+  private cdRef: ChangeDetectorRef
+) {
+  this.cronoForm = this.fb.group({
+    fechaIngreso: ['', Validators.required],
+    fechaEgreso: [{ value: '', disabled: true }, Validators.required],
+    horaIngreso: ['', Validators.required],
+    horaEgreso: [{ value: '', disabled: true }, Validators.required],
+    tipoGuardia: ['', Validators.required],
+    asistencial: ['', Validators.required],
+    idServicio: ['', Validators.required],
+    observacion: ['', [Validators.maxLength(250)]],
+  });
+}
 
-    this.cronoForm.get('tipoGuardia')?.valueChanges.subscribe(tipo => {
-      if (tipo?.nombre === 'CARGO' || tipo?.nombre === 'AGRUPACION') {
-        this.minFechaIngreso = moment().add(1, 'day').format('YYYY-MM-DD'); // mañana
+ngOnInit(): void {
+  this.obtenerFeriados(); // Esto también ejecuta actualizarMinFechaIngreso()
+
+  this.tipoGuardiaService.list().subscribe(data => {
+    this.tiposGuardia = data;
+    this.cdRef.detectChanges();
+  });
+
+  this.efectorId = this.efectorService.getCurrentEfectorId();
+  console.log('Efector seleccionado:', this.efectorId);
+
+  this.cronoForm.get('fechaIngreso')?.valueChanges.subscribe(fecha => {
+    const tipo = this.cronoForm.get('tipoGuardia')?.value;
+
+    if (this.esGuardiaComun(tipo)) {
+      if (fecha && moment(fecha).isSame(moment(), 'day')) {
+        this.minHoraIngreso = moment().format('HH:mm');
       } else {
-        this.minFechaIngreso = moment().format('YYYY-MM-DD'); // hoy
+        this.minHoraIngreso = '00:00';
       }
-    });
-  }
 
-  ngOnInit(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      this.tiposGuardia = data;
-      this.cdRef.detectChanges(); // Forzar la detección de cambios
-    });
-  
-    this.efectorId = this.efectorService.getCurrentEfectorId();
-    console.log('Efector seleccionado:', this.efectorId);
-  
-    // Suscripción a los cambios de fechaIngreso
-    this.cronoForm.get('fechaIngreso')?.valueChanges.subscribe(fechaIngreso => {
-      this.updateFechaEgresoRestrictions(fechaIngreso);
-      this.validateHoraEgreso(); // Validar cada vez que cambia la fechaIngreso
-      this.cdRef.detectChanges(); // Forzar la detección de cambios
-    });
-  
-    // Suscripción a los cambios de fechaEgreso
-    this.cronoForm.get('fechaEgreso')?.valueChanges.subscribe(fechaEgreso => {
-      this.updateHoraEgresoRestrictions(fechaEgreso);
-      this.validateHoraEgreso(); // Validar cada vez que cambia la fechaEgreso
-      this.cdRef.detectChanges(); // Forzar la detección de cambios
-    });
-  
-    // Suscripción a los cambios de horaIngreso
-    this.cronoForm.get('horaIngreso')?.valueChanges.subscribe(() => {
-      this.validateHoraEgreso(); // Validar cada vez que cambia horaIngreso
-      this.cdRef.detectChanges(); // Forzar la detección de cambios
-    });
-  
-    // Suscripción a los cambios de horaEgreso
-    this.cronoForm.get('horaEgreso')?.valueChanges.subscribe(() => {
-      this.validateHoraEgreso(); // Validar cada vez que cambia horaEgreso
-      this.cdRef.detectChanges(); // Forzar la detección de cambios
-    });
+      const horaControl = this.cronoForm.get('horaIngreso');
+      horaControl?.setValidators([
+        Validators.required,
+        this.validateHoraIngreso(this.minHoraIngreso)
+      ]);
+      horaControl?.updateValueAndValidity();
+    }
 
-    this.obtenerServicios();
-  }
+    this.updateFechaEgresoRestrictions(fecha);
+    this.validateHoraEgreso();
+    this.cdRef.detectChanges();
+  });
+
+  this.cronoForm.get('tipoGuardia')?.valueChanges.subscribe(() => {
+    this.actualizarMinFechaIngreso();
+    const fecha = this.cronoForm.get('fechaIngreso')?.value;
+
+    const tipo = this.cronoForm.get('tipoGuardia')?.value;
+    if (this.esGuardiaComun(tipo) && fecha && moment(fecha).isSame(moment(), 'day')) {
+      this.minHoraIngreso = moment().format('HH:mm');
+    } else {
+      this.minHoraIngreso = '00:00';
+    }
+
+    const horaControl = this.cronoForm.get('horaIngreso');
+    horaControl?.setValidators([
+      Validators.required,
+      this.validateHoraIngreso(this.minHoraIngreso)
+    ]);
+    horaControl?.updateValueAndValidity();
+  });
+
+  this.cronoForm.get('fechaEgreso')?.valueChanges.subscribe(fechaEgreso => {
+    this.updateHoraEgresoRestrictions(fechaEgreso);
+    this.validateHoraEgreso();
+    this.cdRef.detectChanges();
+  });
+
+  this.cronoForm.get('horaIngreso')?.valueChanges.subscribe(() => {
+    this.validateHoraEgreso();
+    this.cdRef.detectChanges();
+  });
+
+  this.cronoForm.get('horaEgreso')?.valueChanges.subscribe(() => {
+    this.validateHoraEgreso();
+    this.cdRef.detectChanges();
+  });
+
+  this.obtenerServicios();
+}
 
   onTipoGuardiaChange(event: any): void {
     console.log("Tipo de guardia seleccionado:", event.value);
@@ -128,6 +159,10 @@ export class CronogramaCreateComponent {
     // Borrar solo los campos relacionados con el tipo de guardia
     this.cronoForm.get('asistencial')?.reset();
     this.cronoForm.get('idServicio')?.reset();
+    this.cronoForm.get('fechaIngreso')?.reset();
+    this.cronoForm.get('horaIngreso')?.reset();
+    this.cronoForm.get('fechaEgreso')?.reset();
+    this.cronoForm.get('horaEgreso')?.reset();
 
     // Actualizar el tipo de guardia en el formulario
     this.cronoForm.get('tipoGuardia')?.setValue(nuevoTipoGuardia);
@@ -151,6 +186,22 @@ updateFechaEgresoRestrictions(fechaIngreso: string | null): void {
     this.cronoForm.get('fechaEgreso')?.reset();
     this.minFechaEgreso = '';
   }
+}
+
+private validateHoraIngreso(minHora: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const horaIngreso = control.value;
+    if (!horaIngreso || !minHora) return null;
+
+    const ingreso = moment(horaIngreso, 'HH:mm');
+    const minimo = moment(minHora, 'HH:mm');
+
+    return ingreso.isBefore(minimo) ? { horaMenorQueMinima: true } : null;
+  };
+}
+
+private esGuardiaComun(tipo: any): boolean {
+  return tipo?.nombre !== 'CARGO' && tipo?.nombre !== 'AGRUPACION';
 }
 
 updateHoraEgresoRestrictions(fechaEgreso: string | null): void {
@@ -207,6 +258,51 @@ validateHoraEgreso(): void {
       this.cronoForm.get('fechaEgreso')?.setErrors(null);
     }
   }
+}
+
+private actualizarMinFechaIngreso(): void {
+  const today = moment();
+  const tipo = this.cronoForm.get('tipoGuardia')?.value;
+
+  let diasARestar = 0;
+
+  // Partimos desde ayer
+  let fechaIterar = today.clone().subtract(1, 'day');
+
+  while (true) {
+    const esFeriado = this.feriados.some(f => moment(f.fecha).isSame(fechaIterar, 'day'));
+    const esFinDeSemana = [6, 7].includes(fechaIterar.isoWeekday()); // Sábado (6), Domingo (7)
+
+    if (esFeriado || esFinDeSemana) {
+      diasARestar++;
+      fechaIterar = fechaIterar.subtract(1, 'day');
+    } else {
+      break; // Se encontró un día hábil → se corta la racha
+    }
+  }
+
+  // Regla básica según tipo de guardia
+  let baseFecha: moment.Moment;
+  if (!this.esGuardiaComun(tipo)) {
+    baseFecha = today.isoWeekday() === 1
+      ? today.clone().subtract(1, 'day')  // Lunes: permite cargar desde el domingo
+      : today.clone().add(1, 'day');      // Otro día: desde mañana
+  } else {
+    baseFecha = today.isoWeekday() === 1
+      ? today.clone().subtract(2, 'days') // Lunes: permite cargar desde el sábado
+      : today.clone();                    // Otro día: desde hoy
+  }
+
+  // Aplicar días extra por feriados/fines consecutivos
+  const nuevaFechaMinima = baseFecha.clone().subtract(diasARestar, 'days');
+  this.minFechaIngreso = nuevaFechaMinima.format('YYYY-MM-DD');
+}
+
+private obtenerFeriados(): void {
+  this.feriadoService.list().subscribe((data: Feriado[]) => {
+    this.feriados = data; // Guardás los objetos completos
+    this.actualizarMinFechaIngreso(); // Recalcular una vez obtenidos
+  });
 }
 
   obtenerServicios(): void {

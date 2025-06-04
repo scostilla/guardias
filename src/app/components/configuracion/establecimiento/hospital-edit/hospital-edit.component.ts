@@ -32,7 +32,7 @@ export class HospitalEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Hospital
   ) {
     this.hospitalForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{2,60}$')]],
+      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ.() ]{2,60}$')]],
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
       localidad: ['', Validators.required],
       region: ['', Validators.required],
