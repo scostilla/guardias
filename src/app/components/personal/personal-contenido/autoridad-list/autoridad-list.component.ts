@@ -29,8 +29,6 @@ import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asiste
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
@@ -86,7 +84,6 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     private location: Location,
     private paginatorIntl: MatPaginatorIntl
   ) {

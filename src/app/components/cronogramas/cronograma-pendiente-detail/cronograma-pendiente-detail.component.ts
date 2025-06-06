@@ -1,6 +1,59 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CronogramaTentativoListAtorizadoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoListAtorizadoDto';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-cronograma-pendiente-detail',
+  templateUrl: './cronograma-pendiente-detail.component.html',
+  styleUrls: ['./cronograma-pendiente-detail.component.css']
+})
+export class CronogramaPendienteDetailComponent implements OnInit {
+
+  cronograma!: CronogramaTentativoListAtorizadoDto;
+  nombreEfector: string = '';
+
+  constructor(
+    private dialogRef: MatDialogRef<CronogramaPendienteDetailComponent>,
+    private hospitalService: HospitalService,
+    private asistencialService: AsistencialService,
+    private router: Router,
+    @Inject(MAT_DIALOG_DATA) private data: CronogramaTentativoListAtorizadoDto 
+  ) { }
+
+ngOnInit(): void {
+  this.cronograma = this.data;
+
+  // Llamada al servicio para obtener el nombre del efector
+  this.hospitalService.detailNombreAll(this.cronograma.idEfector).subscribe({
+    next: (nombre: EfectorHospitalDto) => {
+      this.nombreEfector = nombre.nombre;
+    },
+    error: (err) => {
+      console.error('Error obteniendo el nombre del efector', err);
+      this.nombreEfector = 'Nombre no disponible';
+    }
+  });
+}
+
+verDistribucion(): void {
+  this.asistencialService.setCurrentAsistencialId(this.cronograma.asistencial.id);
+  this.router.navigate(['/personal-dh']);
+  this.dialogRef.close();
+}
+
+  cerrar(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+/*import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CronogramaTentativoListAtorizadoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoListAtorizadoDto';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
@@ -64,3 +117,4 @@ calcularHoraEgreso(horaIngreso: Date, cantidadHoras: number): string {
   }
 
 }
+*/

@@ -39,6 +39,7 @@ export class CronogramaCreateComponent {
   inputValue: string = '';
   efectorId: number | null = null;
   minFechaIngreso: string = moment().format('YYYY-MM-DD');
+  maxFechaIngreso: string = moment().format('YYYY-MM-DD');;
   minHoraIngreso: string = '00:00';
   minFechaEgreso: string = '';
   servicios: ServicioSummaryDto[] = [];
@@ -265,37 +266,49 @@ private actualizarMinFechaIngreso(): void {
   const tipo = this.cronoForm.get('tipoGuardia')?.value;
 
   let diasARestar = 0;
-
-  // Partimos desde ayer
   let fechaIterar = today.clone().subtract(1, 'day');
 
   while (true) {
     const esFeriado = this.feriados.some(f => moment(f.fecha).isSame(fechaIterar, 'day'));
-    const esFinDeSemana = [6, 7].includes(fechaIterar.isoWeekday()); // Sábado (6), Domingo (7)
+    const esFinDeSemana = [6, 7].includes(fechaIterar.isoWeekday());
 
     if (esFeriado || esFinDeSemana) {
       diasARestar++;
       fechaIterar = fechaIterar.subtract(1, 'day');
     } else {
-      break; // Se encontró un día hábil → se corta la racha
+      break;
     }
   }
 
-  // Regla básica según tipo de guardia
   let baseFecha: moment.Moment;
   if (!this.esGuardiaComun(tipo)) {
     baseFecha = today.isoWeekday() === 1
-      ? today.clone().subtract(1, 'day')  // Lunes: permite cargar desde el domingo
-      : today.clone().add(1, 'day');      // Otro día: desde mañana
+      ? today.clone().subtract(1, 'day')
+      : today.clone().add(1, 'day');
   } else {
     baseFecha = today.isoWeekday() === 1
-      ? today.clone().subtract(2, 'days') // Lunes: permite cargar desde el sábado
-      : today.clone();                    // Otro día: desde hoy
+      ? today.clone().subtract(2, 'days')
+      : today.clone();
   }
 
-  // Aplicar días extra por feriados/fines consecutivos
   const nuevaFechaMinima = baseFecha.clone().subtract(diasARestar, 'days');
   this.minFechaIngreso = nuevaFechaMinima.format('YYYY-MM-DD');
+
+  // Cálculo del máximo mes permitido
+  const finMesActual = today.clone().endOf('month');
+  const diasHabilesRestantes = this.contarDiasHabiles(today.clone(), finMesActual);
+
+  let maxFecha: moment.Moment;
+
+  if (diasHabilesRestantes <= 5) {
+    // Si ya se cumplen los 5 días hábiles → permitir hasta el final del mes siguiente
+    maxFecha = today.clone().add(1, 'month').endOf('month');
+  } else {
+    // Todavía no se puede cargar el mes siguiente
+    maxFecha = today.clone().endOf('month');
+  }
+
+  this.maxFechaIngreso = maxFecha.format('YYYY-MM-DD');
 }
 
 private obtenerFeriados(): void {
@@ -309,6 +322,24 @@ private obtenerFeriados(): void {
     this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
     });
+  }
+
+  private contarDiasHabiles(desde: moment.Moment, hasta: moment.Moment): number {
+    let count = 0;
+    let cursor = desde.clone();
+
+    while (cursor.isSameOrBefore(hasta, 'day')) {
+      const esFeriado = this.feriados.some(f => moment(f.fecha).isSame(cursor, 'day'));
+      const esFinDeSemana = [6, 7].includes(cursor.isoWeekday());
+
+      if (!esFeriado && !esFinDeSemana) {
+        count++;
+      }
+
+      cursor.add(1, 'day');
+    }
+
+    return count;
   }
 
   openAsistencialDialog(): void {

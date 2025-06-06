@@ -21,6 +21,7 @@ import { NovedadPersonalService } from 'src/app/services/personal/novedadPersona
 import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/VerificacionTentativoResponseDto';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -86,28 +87,33 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  // Obtener rol actual
-  this.tokenService.currentRole$.subscribe(role => {
-    this.currentRole = role;
-    this.UserRoles();
-
-    if (!this.currentRole) {
-      console.warn('No hay un rol seleccionado actualmente.');
+    // Obtener el ID efector del servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+      if (this.efectorId) {
+        this.registroForm.patchValue({ idEfector: this.efectorId });
+        this.loadEfectorName();
+        this.listTiposGuardias();
+        /*this.listAsistenciales();*/
+        this.listServicios();
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
     }
-  });
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
 
-  const userIdFromToken = this.tokenService.getUserIdFromToken();
-  this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
 
-  this.efectorId = this.efectorService.getCurrentEfectorId();
-
-    if (this.efectorId) {
-      this.registroForm.patchValue({ idEfector: this.efectorId });
-    }
-
-    this.listTiposGuardias();
-    /*this.listAsistenciales();*/
-    this.listServicios();
   }
 
   listTiposGuardias(): void {
@@ -128,7 +134,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     });
   }*/
 
-    // Roles a usar
+  // Roles a usar
   UserRoles(): void {
     if (this.currentRole) {
       this.isUsuario = this.currentRole === 'ROLE_USER';
@@ -139,9 +145,26 @@ export class RegistroActividadesIngresoComponent implements OnInit {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
+    }
+  }
+
+  //trae el nombre del efector esta en sesion
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
   }
 

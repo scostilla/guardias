@@ -32,7 +32,7 @@
       <div class="form-row">
         <mat-form-field appearance="fill" class="form-field">
           <mat-label>Fecha de Ingreso</mat-label>
-          <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso" [min]="minFechaIngreso">
+          <input matInput [matDatepicker]="pickerIngreso" formControlName="fechaIngreso" [min]="minFechaIngreso"  [max]="maxFechaIngreso">
           <mat-datepicker-toggle matSuffix [for]="pickerIngreso"></mat-datepicker-toggle>
           <mat-datepicker #pickerIngreso></mat-datepicker>
           <mat-error *ngIf="cronoForm.get('fechaIngreso')!.hasError('required')">

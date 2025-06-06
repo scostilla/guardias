@@ -12,6 +12,7 @@ export class IdleTimeout {
   private warningShown = false;
   private timeoutId: any;
   private warningId: any;
+  private eventsRegistered = false;
 
   constructor(
     private tokenService: TokenService,
@@ -24,36 +25,41 @@ export class IdleTimeout {
     this.listenToUserEvents();
   }
 
-  private listenToUserEvents(): void {
-    ['mousemove', 'keydown', 'click'].forEach(event =>
-      window.addEventListener(event, () => this.resetTimer())
-    );
-  }
+private listenToUserEvents(): void {
+  if (this.eventsRegistered) return;
 
-  private resetTimer(): void {
-    clearTimeout(this.timeoutId);
-    clearTimeout(this.warningId);
-    this.warningShown = false;
+  ['mousemove', 'keydown', 'click'].forEach(event =>
+    window.addEventListener(event, () => {
+      this.ngZone.run(() => this.resetTimer());
+    })
+  );
 
-    this.warningId = setTimeout(() => {
-      this.showWarning(); // Aquí podrías usar un modal o toast
-    }, this.warningTime);
+  this.eventsRegistered = true;
+}
 
-    this.timeoutId = setTimeout(() => {
-      this.logOut();
-    }, this.timeoutInMs);
-  }
+private resetTimer(): void {
+  clearTimeout(this.timeoutId);
+  clearTimeout(this.warningId);
+  this.warningShown = false;
 
-  private showWarning(): void {
-    if (!this.warningShown) {
-      this.warningShown = true;
-      alert('Tu sesión expirará en 1 minuto por inactividad.');
-    }
-  }
+  this.warningId = setTimeout(() => {
+    this.showWarning();
+  }, this.warningTime);
 
-  private logOut(): void {
-    this.tokenService.logOut();
-    this.router.navigate(['/login']);
-    alert('Sesión cerrada por inactividad.');
+  this.timeoutId = setTimeout(() => {
+    this.logOut();
+  }, this.timeoutInMs);
+}
+
+private showWarning(): void {
+  if (!this.warningShown) {
+    this.warningShown = true;
+    alert('Tu sesión expirará en 1 minuto por inactividad.');
   }
 }
+
+private logOut(): void {
+  this.tokenService.logOut();
+  this.router.navigate(['/login']);
+  alert('Sesión cerrada por inactividad.');
+}}
