@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+/*import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
@@ -664,9 +664,9 @@ exportarAExcel() {
     this.suscription?.unsubscribe();
   }
 
-}
+}*/
 
-/*import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
@@ -828,7 +828,7 @@ export class DdjjContrafacturaComponent {
     }
   
     generarDiasDelMes(): void {
-      /*const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
+      const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
       const endOfMonth = startOfMonth.clone().endOf('month');
       let day = startOfMonth;
   
@@ -1229,6 +1229,6 @@ export class DdjjContrafacturaComponent {
       disableClose: true,
     }) 
 }
+*/
 
-
-}*/
+}

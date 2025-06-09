@@ -70,14 +70,6 @@ ngOnInit(): void {
     }
   });
 
-  this.cronoService.refresh$.subscribe(() => {
-    this.actualizarPendientes();
-  });
-
-  this.autoridadService.refresh$.subscribe(() => {
-    this.actualizarAutoridadesPendientes();
-  });
-
   this.tokenService.isLogged$.subscribe(isLogged => {
     this.isLogged = isLogged;
 
@@ -100,6 +92,14 @@ ngOnInit(): void {
       this.roles = [];
       this.UserRoles();
     }
+  });
+
+  this.cronoService.refresh$.subscribe(() => {
+    this.actualizarPendientes();
+  });
+
+  this.autoridadService.refresh$.subscribe(() => {
+    this.actualizarAutoridadesPendientes();
   });
 }
 
@@ -128,15 +128,15 @@ ngOnInit(): void {
     this.showNavBar = !(
       url === '/home-page' ||
       url === '/home-profesional' ||
-      url === '/registro-actividades-ingreso' ||
-      url === '/registro-actividades-egreso' ||
+      url === '/registro-actividades-ingreso-profesional' ||
+      url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
     );
 
     this.showConfig = !(
       url === '/home-profesional' ||
-      url === '/registro-actividades-ingreso' ||
-      url === '/registro-actividades-egreso' ||
+      url === '/registro-actividades-ingreso-profesional' ||
+      url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
     );
 
@@ -156,7 +156,7 @@ ngOnInit(): void {
   }
   
   private actualizarPendientes(): void {
-    const isAutoridadOsuper = this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSUARIO';
+    const isAutoridadOsuper = this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSER';
 
   if (this.efectorId != null && isAutoridadOsuper) {
       this.cronoService.countPendientesByEfector(this.efectorId).subscribe(count => {

@@ -816,9 +816,9 @@ saveDistribuciones() {
 
   const fechaSeleccionada = moment(this.fechaSeleccionada);
   const esMesActual = moment().isSame(fechaSeleccionada, 'month');
-
+  
   const fechaInicio = esMesActual
-    ? moment().add(1, 'day').startOf('day').toDate()
+    ? moment().add(1, 'week').startOf('isoWeek').toDate()
     : fechaSeleccionada.clone().startOf('month').toDate();
 
   const fechaFinalizacion = moment(fechaInicio).endOf('month').startOf('day').toDate();

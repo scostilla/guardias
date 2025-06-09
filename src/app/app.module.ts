@@ -275,6 +275,8 @@ import { AsistencialSelectorAllComponent } from './components/personal/personal-
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
+import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 
 @NgModule({
   declarations: [
@@ -498,6 +500,8 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     CronogramaPendienteDetailComponent,
     CronogramaPendienteEditComponent,
     NotFoundComponent,
+    RegistroActividadesIngresoProfesionalComponent,
+    RegistroActividadesEgresoProfesionalComponent,
   ],
 
   imports: [
