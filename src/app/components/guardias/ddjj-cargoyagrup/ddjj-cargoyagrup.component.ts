@@ -24,6 +24,9 @@ import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { ToastrService } from 'ngx-toastr';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = (pdfFonts as any).vfs;
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
@@ -647,6 +650,92 @@ exportarAExcel() {
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, fileName);
   });
+}
+
+exportarAPDF() {
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+
+  const headers = [
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D',
+    ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+  ];
+
+  const body: any[] = [headers];
+
+  this.dataSource.data.forEach((registro: RegistroMensual) => {
+    const row = [];
+
+    row.push(registro.asistencial.apellido);
+    row.push(registro.asistencial.nombre);
+    row.push(registro.asistencial.cuil);
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '');
+
+    const novedades = this.getNovedades(registro.asistencial);
+    const novedadesString = novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ');
+    row.push(novedadesString || '-');
+
+    row.push(this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear));
+    row.push(this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear));
+    row.push(this.calculateWeekendsTotal(registro.registroActividad, this.selectedMonth, this.selectedYear));
+
+ this.displayedColumns.slice(6).forEach(fechaColumna => {
+    const fecha = this.getFechaFromColumnId(fechaColumna);
+    const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
+
+    const { isHoliday } = this.isHoliday(fecha);
+
+    if (isHoliday) {
+      row.push({
+        text: horas,
+        fillColor: '#F9CACA',  // Fondo rosado para feriado
+        color: 'red',          // Texto rojo
+        bold: true,
+        alignment: 'center'
+      });
+    } else {
+      row.push(horas);
+    }
+  });
+
+  body.push(row);
+});
+    
+  const docDefinition: any = {
+    pageSize: 'A3', //Más grande que A4
+    pageOrientation: 'landscape',
+    pageMargins: [10, 10, 10, 10], //Márgenes reducidos
+    content: [
+      { text: `Declaración Jurada - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+      {
+        table: {
+          headerRows: 1,
+           widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
+          body
+        },
+        layout: {
+          hLineWidth: () => 0.5,
+          vLineWidth: () => 0.5,
+          hLineColor: () => '#000000',
+          vLineColor: () => '#000000'
+        }
+      }
+    ],
+    styles: {
+      header: {
+        fontSize: 14,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 10]
+      }
+    },
+    defaultStyle: {
+      fontSize: 7
+    }
+  };
+
+  pdfMake.createPdf(docDefinition).download(`ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
 }
 
   accentFilter(input: string): string {

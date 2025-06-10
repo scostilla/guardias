@@ -1,110 +1,91 @@
-.buttons{
-    width:200px;
-    height:70px;
-    background: linear-gradient(to left top, #37BBED 50%, #21afe2 50%);
-    border-style: none;
-    color:#fff;
-    font-size: 23px;
-    letter-spacing: 3px;
-    font-weight: 600;
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    padding: 0px;
-    overflow: hidden;
-    transition: all .5s;
-    box-shadow: 0px 1px 2px rgba(0,0,0,.2);
-}
-.buttons span{
-    position: absolute;
-    display: block;
-}
-.buttons span:nth-child(1){
-    height: 3px;
-    width:200px;
-    top:0px;
-    left:-200px;
-    background: linear-gradient(to right, rgba(0,0,0,0), #243c74);
-    border-top-right-radius: 1px;
-    border-bottom-right-radius: 1px;
-    animation: span1 2s linear infinite;
-    animation-delay: 1s;
+.animated-button {
+  display: block;
+  position: relative;
+  width: 300px;
+  height: 100px;
+  line-height: 100px;
+  margin: auto;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
 }
 
-@keyframes span1{
-    0%{
-        left:-200px
-    }
-    100%{
-        left:200px;
-    }
-}
-.buttons span:nth-child(2){ 
-    height: 70px;
-    width: 3px;
-    top:-70px;
-    right:0px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0), #243c74);
-    border-bottom-left-radius: 1px;
-    border-bottom-right-radius: 1px;
-    animation: span2 2s linear infinite;
-    animation-delay: 2s;
-}
-@keyframes span2{
-    0%{
-        top:-70px;
-    }
-    100%{
-        top:70px;
-    }
-}
-.buttons span:nth-child(3){
-    height:3px;
-    width:200px;
-    right:-200px;
-    bottom: 0px;
-    background: linear-gradient(to left, rgba(0,0,0,0), #243c74);
-    border-top-left-radius: 1px;
-    border-bottom-left-radius: 1px;
-    animation: span3 2s linear infinite;
-    animation-delay: 3s;
-}
-@keyframes span3{
-    0%{
-        right:-200px;
-    }
-    100%{
-        right: 200px;
-    }
+.animated-button .label,
+.animated-button .icon {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.buttons span:nth-child(4){
-    height:70px;
-    width:3px;
-    bottom:-70px;
-    left:0px;
-    background: linear-gradient(to top, rgba(0,0,0,0), #243c74);
-    border-top-right-radius: 1px;
-    border-top-left-radius: 1px;
-    animation: span4 2s linear infinite;
-    animation-delay: 4s;
-}
-@keyframes span4{
-    0%{
-        bottom: -70px;
-    }
-    100%{
-        bottom:70px;
-    }
+.animated-button .label {
+  left: 0;
+  width: 72%;
+  font-size: 22px;
+  text-transform: uppercase;
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
 }
 
-.buttons:hover{
-    transition: all .5s;
-    transform: rotate(-3deg) scale(1.1);
-    box-shadow: 0px 3px 5px rgba(0,0,0,.4);
-}
-.buttons:hover span{
-    animation-play-state: paused;
+.animated-button .label::after {
+  content: '';
+  width: 2px;
+  height: 70%;
+  position: absolute;
+  top: 15%;
+  right: -1px;
 }
 
+/* Icono */
+.animated-button .icon {
+  right: 0;
+  width: 28%;
+  font-size: 30px;
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+}
 
+/* Hover genérico */
+.animated-button:hover .label {
+  left: -72%;
+  opacity: 0;
+}
+
+.animated-button:hover .icon {
+  width: 100%;
+  font-size: 45px;
+}
+
+/* ====================
+   ESTILOS POR TIPO
+   ==================== */
+
+/* SALIDA - rojo */
+.animated-button.salida {
+  background-color: #c0392b;
+}
+
+.animated-button.salida .label::after {
+  background-color: #a53125;
+}
+
+.animated-button.salida:hover {
+  background-color: #a93226;
+}
+
+/* ENTRADA - verde */
+.animated-button.entrada {
+  background-color: #27ae60;
+}
+
+.animated-button.entrada .label::after {
+  background-color: #1e8449;
+}
+
+.animated-button.entrada:hover {
+  background-color: #229954;
+}
