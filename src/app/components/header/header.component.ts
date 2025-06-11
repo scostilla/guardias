@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
@@ -57,34 +57,28 @@ export class HeaderComponent implements OnDestroy, OnInit {
 ngOnInit(): void {
   this.updateNavBarAndConfigState();
 
-  this.efectorService.currentEfectorId$.subscribe(id => {
-    this.efectorId = id;
+  // Escuchar ambos valores juntos: efectorId y currentRole
+  combineLatest([
+    this.efectorService.currentEfectorId$,
+    this.tokenService.currentRole$
+  ]).subscribe(([efectorId, currentRole]) => {
+    this.efectorId = efectorId;
+    this.currentRole = currentRole;
+    this.UserRoles();
 
-    if (this.efectorId != null) {
-      this.cronoService.countPendientesByEfector(this.efectorId)
-        .subscribe(count => {
-          this.pendientesCount = count;
-        });
-    } else {
-      this.pendientesCount = 0;
+    if (this.efectorId != null && (this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSER')) {
+      this.actualizarPendientes();
+    }
+
+    if (this.currentRole === 'ROLE_SUPERUSER') {
+      this.actualizarAutoridadesPendientes();
     }
   });
 
   this.tokenService.isLogged$.subscribe(isLogged => {
     this.isLogged = isLogged;
-
     if (isLogged) {
       this.roles = this.tokenService.getAuthorities();
-
-      this.tokenService.currentRole$.subscribe(role => {
-        this.currentRole = role;
-        this.UserRoles();
-
-        if (this.currentRole === 'ROLE_SUPERUSER') {
-          this.actualizarAutoridadesPendientes();
-        }
-      });
-
       this.loadUserDetails();
     } else {
       this.nombreUsuario = '';
@@ -158,8 +152,8 @@ ngOnInit(): void {
   private actualizarPendientes(): void {
     const isAutoridadOsuper = this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSER';
 
-  if (this.efectorId != null && isAutoridadOsuper) {
-      this.cronoService.countPendientesByEfector(this.efectorId).subscribe(count => {
+  if (isAutoridadOsuper) {
+      this.cronoService.countPendientesByEfector(this.efectorId!).subscribe(count => {
         this.pendientesCount = count;
       });
     } else {

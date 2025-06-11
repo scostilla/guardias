@@ -13,8 +13,6 @@ import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
-import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
@@ -61,7 +59,6 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
     private cronogramaTentativoService: CronogramaTentativoService,
     private novedadPersonalService: NovedadPersonalService,
     private tipoGuardiaService: TipoGuardiaService,
-    //private asistencialService: AsistencialService,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
     private toastr: ToastrService,
@@ -131,6 +128,9 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       this.inputValue = `${this.apellidoPersona} ${this.nombrePersona}`;
       this.registroForm.patchValue({ idAsistencial: this.inputValue });
     });
+
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
 
   }
 
@@ -324,8 +324,8 @@ private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
       this.idPersona!,
       registroData.idServicio.id,
       registroData.idEfector,
-      this.userId!,
-      idCronograma
+      this.userId!, //idUsuarioIngreso
+      registroData.idUsuarioEgreso ?? null,
     );
   }
 

@@ -12,7 +12,7 @@ import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 import { EfectorSelectorComponent } from './efector-selector/efector-selector.component';
-
+import { combineLatest } from 'rxjs';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
@@ -60,31 +60,28 @@ export class HomePageComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-ngOnInit(): void {
-  // Obtener rol actual
-  this.tokenService.currentRole$.subscribe(role => {
-    this.currentRole = role;
-    this.UserRoles();
+  ngOnInit(): void {
+    // Suscribirse a ambos: rol actual y datos de la persona
+    combineLatest([
+      this.tokenService.currentRole$,
+      this.authService.detailPersonBasicPanel()
+    ]).subscribe(([role, personDto]) => {
+      this.currentRole = role;
+      this.idPersona = personDto.id;
+      this.UserRoles();
 
-    if (!this.currentRole) {
-      console.warn('No hay un rol seleccionado actualmente.');
-    }
-  });
-
-  const userId = this.tokenService.getUserIdFromToken();
-  const idPersona = userId !== null ? Number(userId) : null;
-
-  // Cargar efectores según rol
-  if (this.isDph || this.isSuper) {
-    this.loadEfectoresForDphOrSuper();
-  } else if (this.isAdministrativo) {
-    this.loadEfectorForAdministrativo();
-  } else if (this.isAutoridad) {
-    this.loadEfectoresForAutoridades(idPersona!);
-  } else {
-    console.warn('El usuario no tiene un rol válido para proceder');
+      // Cargar efectores según rol ya definido
+      if (this.isDph || this.isSuper) {
+        this.loadEfectoresForDphOrSuper();
+      } else if (this.isAdministrativo) {
+        this.loadEfectorForAdministrativo();
+      } else if (this.isAutoridad) {
+        this.loadEfectoresForAutoridades(this.idPersona!);
+      } else {
+        console.warn('El usuario no tiene un rol válido para proceder');
+      }
+    });
   }
-}
 
   // Roles a usar
   UserRoles(): void {
