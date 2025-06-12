@@ -37,6 +37,7 @@ export class CronogramaCreateComponent {
   tiposGuardia: any[] = [];
   asistenciales: any[] = [];
   inputValue: string = '';
+  efectorAsistencial!: number;
   efectorId: number | null = null;
   minFechaIngreso: string = moment().format('YYYY-MM-DD');
   maxFechaIngreso: string = moment().format('YYYY-MM-DD');;
@@ -356,6 +357,7 @@ private obtenerFeriados(): void {
       if (result) {
         // Actualizo el valor legible para mostrarlo y el id para el formulario
         this.inputValue = `${result.apellido} ${result.nombre}`;
+        this.efectorAsistencial = result.idEfector;
         this.cronoForm.patchValue({ asistencial: result.id });
       } else {
         this.toastr.info('No se seleccionó un profesional', 'Información', {
@@ -558,19 +560,57 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
         this.cronoService.efectoresConCronograma(cronogramaDto).subscribe(
           efectores => {
             if (efectores && efectores.length > 0) {
-              const lista = efectores.join(', ');
-              this.toastr.warning(
-                `El profesional también está cargado en la misma hora y fecha en los efectores: ${lista}. Verifique si efectivamente llevará a cabo la guardia en su establecimiento.`,
-                'Superposición detectada',
-                {
-                  timeOut: 9000,
-                  positionClass: 'toast-top-center',
-                  progressBar: true
-                }
-              );
-            }
+              const nombres: string[] = [];
+              let completadas = 0;
 
-            this.guardarCronogramaConVerificaciones(cronogramaDto);
+              efectores.forEach(id => {
+                this.efectorService.getEfectorNombre(id).subscribe(
+                  (efector: any) => {
+                    nombres.push(efector.nombre);
+                    completadas++;
+
+                    if (completadas === efectores.length) {
+                      const lista = nombres.join(', ');
+                      this.toastr.warning(
+                        `El profesional también está cargado en la misma hora y fecha en los efectores: ${lista}. Verifique si efectivamente llevará a cabo la guardia en su establecimiento.`,
+                        'Superposición detectada',
+                        {
+                          timeOut: 9000,
+                          positionClass: 'toast-top-center',
+                          progressBar: true
+                        }
+                      );
+
+                      // Continuar después de mostrar el warning
+                      this.guardarCronogramaConVerificaciones(cronogramaDto);
+                    }
+                  },
+                  error => {
+                    console.error(`Error al obtener el nombre del efector ${id}:`, error);
+                    completadas++;
+
+                    // Continuar incluso si falla alguna llamada
+                    if (completadas === efectores.length) {
+                      const lista = nombres.join(', ') || efectores.join(', ');
+                      this.toastr.warning(
+                        `El profesional también está cargado en otros efectores: ${lista}. Verifique si efectivamente llevará a cabo la guardia en su establecimiento.`,
+                        'Superposición detectada',
+                        {
+                          timeOut: 9000,
+                          positionClass: 'toast-top-center',
+                          progressBar: true
+                        }
+                      );
+
+                      this.guardarCronogramaConVerificaciones(cronogramaDto);
+                    }
+                  }
+                );
+              });
+            } else {
+              // Si no hay superposición, continuar directamente
+              this.guardarCronogramaConVerificaciones(cronogramaDto);
+            }
           },
           error => this.handleError('verificar efectores con cronograma', error)
         );
@@ -579,7 +619,6 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
     error => this.handleError('verificar la existencia del cronograma', error)
   );
 }
-
 
 private guardarCronogramaConVerificaciones(cronogramaDto: CronogramaTentativoDto): void {
   const tipoGuardiaId = cronogramaDto.idTipoGuardia;
@@ -746,10 +785,11 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
 
 private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void { 
   const tipoGuardiaString = this.mapearTipoGuardia(cronogramaDto.idTipoGuardia);
+  const idEfectorAsistencial = this.efectorAsistencial;
 
   console.log('Datos recibidos en procesarCronogramaEXTRA:', {
     idAsistencial: cronogramaDto.idAsistencial,
-    idEfector: cronogramaDto.idEfector,
+    idEfector: idEfectorAsistencial,
     tipoGuardiaString,
     fechaIngreso: cronogramaDto.fechaIngreso,
     horaIngreso: cronogramaDto.horaIngreso,
@@ -758,7 +798,7 @@ private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
 
   const cronogramaRequest = new CronogramaTentativoResquestDto(
     cronogramaDto.idAsistencial,
-    cronogramaDto.idEfector,
+    idEfectorAsistencial,
     tipoGuardiaString,
     cronogramaDto.fechaIngreso,
     cronogramaDto.horaIngreso,

@@ -43,3 +43,7 @@ mat-list-item {
   .auth-rechazado {
     background-color: #f44336; /* rojo */
   }
+
+  .auth-anulado {
+    background-color: #747272; /* rojo */
+  }

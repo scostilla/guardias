@@ -11,7 +11,8 @@
           <span class="texto-resaltado" [ngClass]="{
             'auth-pendiente': event.auth === 'PENDIENTE',
             'auth-confirmado': event.auth === 'CONFIRMADO',
-            'auth-rechazado': event.auth === 'RECHAZADO'
+            'auth-rechazado': event.auth === 'RECHAZADO',
+            'auth-anulado': event.auth === 'ANULADO'
           }">{{event.auth}}</span></span><br/> 
           Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
           <span>Servicio: {{ event.servicio }}</span><br/>

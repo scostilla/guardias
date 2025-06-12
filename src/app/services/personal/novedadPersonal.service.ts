@@ -73,7 +73,7 @@ tieneLicenciaLAO(idPersona: number, fechaConsulta: string): Observable<boolean> 
 
 // Verificar si una persona tiene Compensatorio
 tieneLicenciaCompensatorio(dto: ConsultaLicenciaCompensatorioDto): Observable<boolean> {
-  return this.httpClient.get<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaCompensatorio`);
+  return this.httpClient.post<boolean>(`${this.novedadesPersonalesURL}tieneLicenciaCompensatorio`, dto);
 }
 
 }
