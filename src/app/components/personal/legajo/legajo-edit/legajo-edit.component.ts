@@ -1016,7 +1016,7 @@ console.log('Es Contrafactura:', esContrafactura);
        
      
       });
-
+console.log('hospital udo:', this.legajoForm.get('hospitalUdo')?.value);
       console.log("hospitalhabilitacionesguardia", this.hospitalHabilitacionesGuardias);
      
       console.log('Valor inicial de hospitalUdo en el formulario:', this.legajoForm.get('hospitalUdo')?.value);
@@ -1431,6 +1431,7 @@ listMinisterios(): void {
   // Método para cargar los CAPS correspondientes al hospital seleccionado
   onHospitalEfectorChange(event: any): void {
     const hospitalId = event.value;
+    console.log('Hospital seleccionado para cargar CAPS:', hospitalId);
     
     this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
       this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
