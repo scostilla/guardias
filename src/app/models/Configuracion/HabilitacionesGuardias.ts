@@ -5,18 +5,18 @@ export class HabilitacionesGuardias {
     activo: boolean;
     asistencial: Asistencial;
     efectores: Efector[];
-    tipoEfectorEx?: string;
+   /*  tipoEfectorEx?: string; */
   
     constructor(
         activo: boolean,
         asistencial: Asistencial,
         efectores: Efector[],
-        tipoEfectorEx?: string,
+   /*      tipoEfectorEx?: string, */
     ) {
       this.activo = activo;
       this.asistencial = asistencial;
       this.efectores = efectores;
-      this.tipoEfectorEx = tipoEfectorEx
+     /*  this.tipoEfectorEx = tipoEfectorEx */
     }
   }
   

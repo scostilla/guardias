@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Hospital } from "src/app/models/Configuracion/Hospital";
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+import { EfectorHospitalDto } from "src/app/dto/Configuracion/efector/EfectorHospitalDto";
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
 import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
-import { EfectorHospitalDto } from "src/app/dto/Configuracion/efector/EfectorHospitalDto";
+import { Hospital } from "src/app/models/Configuracion/Hospital";
 
 
 @Injectable({

@@ -52,4 +52,5 @@ public delete(id:number): Observable<any> {
   return this.httpClient.put<any>(this.notificacionesURL + `delete/${id}`, {});
 }
 
+
 }

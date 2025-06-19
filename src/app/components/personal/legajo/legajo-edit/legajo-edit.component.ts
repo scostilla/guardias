@@ -100,6 +100,11 @@ export class LegajoEditComponent implements OnInit {
   cargos: Cargo[] = [];
   regiones: Region[] = [];
   capsList: Caps[] = [];
+   selectedHospitals: number[] = [];
+   selectedHospitalsCaps: number[] = [];
+  selectedCaps: number[] = [];
+  hospitalesList: Hospital[] = [];
+
  
 
 
@@ -146,6 +151,7 @@ export class LegajoEditComponent implements OnInit {
   efectorOptions: any[] = [];
   efectorCargoOptions: any[] = [];
   habilitacionesGuardiasOptions: any[] = [];
+  habilitacionesGuardiasCaps: any[] = [];
   habilitacionesGeneralesOptions: any[] = [];
   tipoUdo!: string;
   tipoEfector!: string;
@@ -158,6 +164,7 @@ export class LegajoEditComponent implements OnInit {
   previousHospitalEfector: any = null;
   previousCapsUdo: any = null;
   previousMinisterioUdo: any = null;
+  initialHabilitacionesGuardias: any[] = [];
 
   /* Form de revista */
   agrupaciones: Agrup[] = [
@@ -228,7 +235,9 @@ export class LegajoEditComponent implements OnInit {
       tipoGuardias: [[]],
       tipoHabilitacionesGuardias: [null, Validators.required],
       habilitacionesGuardias: [[]],
-      hospitalHabilitacionesGuardias: ['', Validators.required],
+      habilitacionesGuardiasHospital: [[]],
+      habilitacionesGuardiasCaps: [[], Validators.required],
+      hospitalHabilitacionesGuardias: [[]],
       tipoHabilitacionesGenerales: [''],
       hospitalHabilitacionesGenerales: [''],
       habilitacionesGenerales: [[]],
@@ -314,15 +323,49 @@ if (navigation?.extras.state) {
   ngOnInit(): void {
 
 
-    this.loadCaps(); // Cargar los CAPS al iniciar
+    this.loadCaps(); 
+  
 
+  
     const efectoresFiltrados = this.asistencial?.habilitacionesGuardias
     ?.filter((habilitacion: HabilitacionesGuardias) => habilitacion.activo) // Filtra solo las habilitaciones activas
     ?.flatMap((habilitacion: HabilitacionesGuardias) => habilitacion.efectores.map((efector: Efector) => efector.id)) || []; // Extraer efectores completos
 
     console.log('Efectores filtrados:', efectoresFiltrados);
 
-    
+    const idsHospitalesParaSeleccionar: number[] = [];
+const idsCapsParaSeleccionar: number[] = [];
+
+efectoresFiltrados.forEach((idEfector: number | undefined) => {
+    if (typeof idEfector !== 'number') {
+        return;
+    }
+    // Verificar si este ID corresponde a un Hospital
+    // Usamos .some() para ver si alguno de los hospitales cargados tiene ese ID
+    const esHospital = this.hospitales.some(h => h.id === idEfector);
+
+    // Verificar si este ID corresponde a un CAPS
+    const esCaps = this.capsList.some(c => c.id === idEfector);
+
+    if (esHospital) {
+        idsHospitalesParaSeleccionar.push(idEfector);
+    } else if (esCaps) {
+        idsCapsParaSeleccionar.push(idEfector);
+    }
+    // Si un ID no se encuentra ni en 'hospitales' ni en 'capsList',
+    // significa que quizás ese efector no está en tus listas maestras actuales,
+    // y no se incluirá en la selección inicial de los mat-select.
+});
+
+// 4. Asignar los IDs separados a las propiedades que controlan los mat-select
+// Esto hará que los mat-select muestren las opciones pre-seleccionadas.
+this.selectedHospitals = idsHospitalesParaSeleccionar;
+this.selectedHospitalsCaps = idsHospitalesParaSeleccionar; // Asignar a la misma lista para ambos selectores
+this.selectedCaps = idsCapsParaSeleccionar;
+console.log('IDs de hospitales seleccionados:', this.selectedHospitals);
+console.log('IDs de CAPS seleccionados:', this.selectedCaps);
+console.log('IDs de hospitales seleccionados para CAPS:', this.selectedHospitalsCaps);
+
 
     this.idContraFactura =4 // O el valor real que debe tener
   this.idExtra = 3;
@@ -370,10 +413,10 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
       
     }
 
-    const tipoHabilitacionesGuardiasInicial = this.asistencial?.habilitacionesGuardias
+ /*    const tipoHabilitacionesGuardiasInicial = this.asistencial?.habilitacionesGuardias
   ?.filter(habilitacion => habilitacion.activo)
   ?.at(0)?.tipoEfectorEx ?? null;
-
+ */
 
     if (this.initialData?.fechaInicio) {
       const fechaInicioDate = new Date(this.initialData.fechaInicio);
@@ -480,14 +523,16 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
       fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
   fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
       tipoGuardias: [[]], 
-      tipoHabilitacionesGuardias: [tipoHabilitacionesGuardiasInicial, Validators.required],
-      habilitacionesGuardias: [[]],
+     /*  tipoHabilitacionesGuardias: [tipoHabilitacionesGuardiasInicial, Validators.required],*/
+      habilitacionesGuardias: [[]], 
+      habilitacionesGuardiasHospital:[[]],
+      habilitacionesGuardiasCaps: [[], Validators.required],
       hospitalHabilitacionesGuardias: [''],
       habilitacionesGenerales: [[]],
       tipoEfectorEx: [null],
     }, { validator: this.validarFechas });
 
-    console.log('Tipo Habilitaciones Guardias inicial:', tipoHabilitacionesGuardiasInicial);
+    /* console.log('Tipo Habilitaciones Guardias inicial:', tipoHabilitacionesGuardiasInicial);
 
     if (tipoHabilitacionesGuardiasInicial) {
       if (tipoHabilitacionesGuardiasInicial === 'MINISTERIO') {
@@ -498,7 +543,7 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
         this.habilitacionesGuardiasOptions = this.caps;
       }
     }
-  
+   */
     console.log('Opciones iniciales de Habilitaciones Guardias:', this.habilitacionesGuardiasOptions);
   console.log('hospital udo:', );
 
@@ -509,18 +554,18 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
  this.udoOptions = [];
  this.efectorOptions = [];
  this.loadInitialData(); // Inicialización básica para evitar errores
-
+ 
 
 // Si hay datos iniciales, configurar udoOptions
 if (this.initialData) {
-  const tipoHabilitacionesGuardiasInicial = this.asistencial?.habilitacionesGuardias
+  /* const tipoHabilitacionesGuardiasInicial = this.asistencial?.habilitacionesGuardias
   ?.filter(habilitacion => habilitacion.activo)
-  ?.at(0)?.tipoEfectorEx ?? null;
+  ?.at(0)?.tipoEfectorEx ?? null; */
   const tipoUdoInicial = this.initialData.tipoUdo ??'';
   const tipoEfectorInicial = this.initialData.tipoEfector ?? '';
   console.log('Tipo UDO inicial:', tipoUdoInicial);
   console.log('Tipo Efector inicial:', tipoEfectorInicial);
-  console.log('Tipo Habilitaciones Guardias inicial:', tipoHabilitacionesGuardiasInicial);
+  /* console.log('Tipo Habilitaciones Guardias inicial:', tipoHabilitacionesGuardiasInicial); */
 
   if (tipoUdoInicial === 'MINISTERIO') {
     this.udoOptions = this.ministerios;
@@ -538,13 +583,13 @@ if (this.initialData) {
     this.efectorOptions = this.caps;
   }
 
-  if (tipoHabilitacionesGuardiasInicial === 'MINISTERIO') {
+/*   if (tipoHabilitacionesGuardiasInicial === 'MINISTERIO') {
     this.habilitacionesGuardiasOptions = this.ministerios;
   } else if (tipoHabilitacionesGuardiasInicial === 'HOSPITAL') {
     this.habilitacionesGuardiasOptions = this.hospitales;
   } else if (tipoHabilitacionesGuardiasInicial === 'CAPS') {
     this.habilitacionesGuardiasOptions = this.caps;
-  }
+  } */
 
   console.log('opciones iniciales de habilitaciones Guartias', this.habilitacionesGuardiasOptions);
   console.log('Opciones iniciales de UDO:', this.udoOptions);
@@ -652,12 +697,13 @@ console.log('Efectores asignados:', efectoresAsignados);
           tipoEfector: this.initialData.tipoEfector,
           udoSelected: this.initialData.udo?.id,
           persona: this.initialData.persona?.id,
-         tipoHabilitacionesGuardias: tipoHabilitacionesGuardiasInicial,
+       /*   tipoHabilitacionesGuardias: tipoHabilitacionesGuardiasInicial, */
          habilitacionesGuardias: efectoresFiltrados,
           fechaInicio: this.initialData.fechaInicio ? new Date(this.initialData.fechaInicio + 'T00:00:00') : null,
           fechaFinal: this.initialData.fechaFinal ? new Date(this.initialData.fechaFinal + 'T00:00:00' ) : null,
        
         }); 
+      
 
         this.habilitacionesGuardiasOptions = this.asistencial?.habilitacionesGuardias
   ?.filter((habilitacion: any) => habilitacion.activo) // Filtra solo habilitaciones activas
@@ -666,8 +712,7 @@ console.log('Efectores asignados:', efectoresAsignados);
 console.log("Opciones de habilitaciones guardias:", this.habilitacionesGuardiasOptions=efectoresFiltrados,);
 
         this.habilitacionesGuardiasOptions = efectoresFiltrados; // Guarda los efectores completos para mostrarlos en el select
-
-console.log('Efectores filtrados con nombre:', )
+  
 
         // Habilitar opciones si ya tiene guardia EXTRA o si hay habilitaciones guardias previas
   this.showHabilitacionesGuardias = selectedGuardias.includes(this.idExtra!) || tieneHabilitaciones;
@@ -677,8 +722,8 @@ console.log('Efectores filtrados con nombre:', )
 
   console.log('showHabilitacionesGuardias:', this.showHabilitacionesGuardias);
   
-        console.log('tipo habilitaciones Guardias cargado: ', this.asistencial?.habilitacionesGuardias?.[0]?.tipoEfectorEx);
-        console.log('tipo habilitaciones Guardias cargado: ', tipoHabilitacionesGuardiasInicial);
+       /*  console.log('tipo habilitaciones Guardias cargado: ', this.asistencial?.habilitacionesGuardias?.[0]?.tipoEfectorEx);
+        console.log('tipo habilitaciones Guardias cargado: ', tipoHabilitacionesGuardiasInicial); */
         console.log('Valores iniciales de tipoGuardias:', this.initialData.tipoGuardias);
         console.log('Formulario tipoGuardias:', this.legajoForm.get('tipoGuardias')?.value);
         console.log('Lista de tipoGuardias:', this.tipoGuardias);
@@ -838,31 +883,99 @@ console.log('Efectores filtrados con nombre:', )
   // Inicializar el estado de los campos al cargar la página
   this.onAutoridadChange(this.legajoForm.get('esAutoridad')?.value);
 
- 
+this.initialHabilitacionesGuardias = efectoresFiltrados;
+console.log('Efectores filtrados al inicio:', this.initialHabilitacionesGuardias);
 
 }
 
 
-loadCaps(): void {
-  this.capsService.list().subscribe({
-    next: (caps: Caps[]) => {
-      this.capsList = caps;
-      console.log('Lista de CAPS cargada:', this.capsList);
-      this.filterCaps();
-      this.filterCapsHabilitaciones();
-    },
-    error: (error) => {
-      console.error('Error al cargar los CAPS:', error);
-    }
+loadCaps(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.capsService.list().subscribe({
+      next: (caps: Caps[]) => {
+        this.capsList = caps;
+        console.log('Lista de CAPS cargada:', this.capsList);
+        resolve();
+      },
+      error: (error) => {
+        console.error('Error al cargar los CAPS:', error);
+        reject(error);
+      },
+    });
   });
 }
 
+/* loadHospitales(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.hospitalService.list().subscribe({
+      next: (hospitales: Hospital[]) => {
+        this.hospitalesList = hospitales;
+        console.log('Lista de hospitales cargada:', this.hospitalesList);
+        resolve();
+      },
+      error: (error) => {
+        console.error('Error al cargar los hospitales:', error);
+        reject(error);
+      },
+    });
+  });
+  } */
+
+
 filterCaps(): void {
+  const efectoresFiltrados = this.asistencial?.habilitacionesGuardias
+    ?.filter((habilitacion: HabilitacionesGuardias) => habilitacion.activo) // Filtra solo las habilitaciones activas
+    ?.flatMap((habilitacion: HabilitacionesGuardias) => habilitacion.efectores.map((efector: Efector) => efector.id)) || []; // Extraer efectores completos
+
   const udoSelected = this.initialData?.udo?.id || null;
   const efectoresSelected = this.initialData?.efectores ? this.initialData.efectores[0].id : 0;
   console.log('Efectores seleccionados:', efectoresSelected);
   console.log('UDO seleccionado:', udoSelected);
+  console.log('Efectores filtrados:', efectoresFiltrados);
 
+  if (efectoresFiltrados.length > 0) {
+    const capsFiltrados = this.capsList.filter((caps: Caps) => efectoresFiltrados.includes(caps.id));
+    const idsCabecera = [...new Set(capsFiltrados.map((caps: Caps) => caps.cabecera?.id).filter((id) => id !== null))]; // Filtrar null y eliminar duplicados
+    console.log('Caps filtrados por efectores:', capsFiltrados);
+    console.log('IDs Cabecera Hospital encontrados (sin duplicados):', idsCabecera);
+    
+
+     this.legajoForm.patchValue({
+   hospitalHabilitacionesGuardias: idsCabecera,
+
+  });
+
+const hospitalIds = idsCabecera; // Lista de IDs de hospitales
+console.log('IDs de hospitales:', hospitalIds);
+
+if (hospitalIds && hospitalIds.length > 0) {
+  hospitalIds.forEach((hospitalId) => {
+    if (hospitalId !== undefined) {
+      this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(
+  (data) => {
+    const uniqueCaps = data.filter((cap) => !this.caps.some((existingCap) => existingCap.id === cap.id));
+    this.caps = [...this.caps, ...uniqueCaps];
+    this.habilitacionesGuardiasOptions = this.caps;
+    this.habilitacionesGuardiasCaps = this.caps;
+    console.log('CAPS cargados para el hospital con ID:', this.habilitacionesGuardiasOptions);
+    console.log('CAPS cargados para el hospital con ID:', this.habilitacionesGuardiasCaps);
+  },
+  (error) => {
+    console.error(error);
+    this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');
+  }
+);
+    }
+  });
+} else {
+  console.log('No se encontraron IDs de cabecera para procesar.');
+}
+
+    this.efectorOptions = idsCabecera;
+  } else {
+    console.log('Efectores seleccionados no válidos.');
+  }
+  
   if (efectoresSelected) {
     const capsFiltrado = this.capsList.find((caps: Caps) => caps.id === efectoresSelected);
     const idCabecera = capsFiltrado?.cabecera?.id || null;
@@ -885,40 +998,77 @@ filterCaps(): void {
     console.log('Caps encontrado:', capsFiltrado);
     console.log('ID Cabecera encontrado:', idCabecera);
 
-    // Actualizar las opciones según los IDs encontrados
-    if (idCabecera !== null) {
-      this.habilitacionesGuardiasOptions = [idCabecera];
-    }
+
   } else {
     console.log('UDO seleccionado no válido.');
   }
+
+  
+
 }
+
 
 filterCapsHabilitaciones(): void {
+  if (!this.capsList || this.capsList.length === 0) {
+    console.error('La lista de CAPS no está cargada.');
+    return;
+  }
+
+  // Obtener los IDs de los efectores filtrados
   const efectoresFiltrados = this.asistencial?.habilitacionesGuardias
-    ?.filter((habilitacion: HabilitacionesGuardias) => habilitacion.activo) // Filtra solo las habilitaciones activas
-    ?.flatMap((habilitacion: HabilitacionesGuardias) => habilitacion.efectores.map((efector: Efector) => efector.id)) || []; // Extraer efectores completos
+    ?.filter((habilitacion: HabilitacionesGuardias) => habilitacion.activo)
+    ?.flatMap((habilitacion: HabilitacionesGuardias) => habilitacion.efectores.map((efector: Efector) => efector.id)) || [];
+
   console.log('Efectores filtrados:', efectoresFiltrados);
 
-  if (efectoresFiltrados) {
-    const capsFiltrado = this.capsList.find((caps: Caps) => caps.id === efectoresFiltrados[0]);
-    const idCabecera = capsFiltrado?.cabecera?.id || null;
+  // Obtener solo los IDs de los CAPS filtrados
+  const capsFiltradosIds = this.capsList
+    .filter((caps: Caps) => efectoresFiltrados.includes(caps.id))
+    .map((caps: Caps) => caps.id);
 
-    console.log('Caps encontrado:', capsFiltrado);
-    console.log('ID Cabecera encontrado:', idCabecera);
-
-    // Actualizar las opciones según los IDs encontrados
-    if (idCabecera !== null) {
-      this.habilitacionesGuardiasOptions = [idCabecera];
-    }
-
-    // Asignar hospitalHabilitacionesGuardias aquí
-    this.hospitalHabilitacionesGuardias = idCabecera;
-
-  } else {
-    console.log('No se encontraron CAPS para los efectores seleccionados.');
+  if (capsFiltradosIds.length === 0) {
+    console.warn('No se encontraron CAPS coincidentes con los efectores filtrados.');
+    return;
   }
+
+  console.log('IDs de CAPS filtrados:', capsFiltradosIds);
+
+  // Asignar los IDs de los CAPS filtrados al formulario
+  this.legajoForm.patchValue({
+    habilitacionesGuardiasCaps: capsFiltradosIds, // Asignar solo los IDs
+  });
+
+  // Actualizar otras propiedades si es necesario
+  this.hospitalHabilitacionesGuardias = capsFiltradosIds[0] ?? null; // Asigna el primer ID o null si no hay elementos
 }
+
+filterHospitalHabilitaciones(): void {
+  if (!this.hospitales || this.hospitales.length === 0) {
+    console.error('La lista de hospitales no está cargada.');
+    return;
+  }
+  // Obtener los IDs de los efectores filtrados
+  const efectoresFiltrados = this.asistencial?.habilitacionesGuardias
+    ?.filter((habilitacion: HabilitacionesGuardias) => habilitacion.activo)
+    ?.flatMap((habilitacion: HabilitacionesGuardias) => habilitacion.efectores.map((efector: Efector) => efector.id)) || [];
+  console.log('Efectores filtrados:', efectoresFiltrados);
+  // Obtener solo los IDs de los hospitales filtrados
+  const hospitalesFiltradosIds = this.hospitales
+    .filter((hospital: Hospital) => efectoresFiltrados.includes(hospital.id))
+    .map((hospital: Hospital) => hospital.id);
+  if (hospitalesFiltradosIds.length === 0) {
+    console.warn('No se encontraron hospitales coincidentes con los efectores filtrados.');
+    return;
+  }
+  console.log('IDs de hospitales filtrados:', hospitalesFiltradosIds);
+  // Asignar los IDs de los hospitales filtrados al formulario
+  this.legajoForm.patchValue({
+    habilitacionesGuardiasHospital: hospitalesFiltradosIds, // Asignar solo los IDs
+  });
+  // Actualizar otras propiedades si es necesario
+  this.hospitalHabilitacionesGuardias = hospitalesFiltradosIds[0] ?? null; // Asigna el primer ID o null si no hay elementos
+}
+
 // Cargar datos iniciales
 private loadInitialData(): void {
   this.listMinisterios();
@@ -958,6 +1108,7 @@ private loadInitialData(): void {
 
       this.filterCaps();
       this.filterCapsHabilitaciones();
+      this.filterHospitalHabilitaciones();
 
       const efectoresFiltrados = this.asistencial?.habilitacionesGuardias
     ?.filter((habilitacion: HabilitacionesGuardias) => habilitacion.activo) // Filtra solo las habilitaciones activas
@@ -1025,9 +1176,11 @@ console.log('Es Contrafactura:', esContrafactura);
         udoSelected: this.initialData?.udo?.id || null,
         persona: this.initialData?.persona?.id,
         habilitacionesGuardias: efectoresFiltrados,
+      /*   habilitacionesGuardiasHospital: efectoresFiltrados,
+        habilitacionesGuardiasCaps: capsFiltrado, */
         hospitalUdo: capsCabecera ? Number(capsCabecera) : null,
         hospitalEfectores: idCabecera,
-        hospitalHabilitacionesGuardias: this.hospitalHabilitacionesGuardias
+     
        
      
       });
@@ -1073,15 +1226,15 @@ console.log('UDO seleccionado:', udoSelected);
       console.log('udo cargado:', this.initialData?.udo?.id);
 
       // Configuración adicional basada en tipoUdo y tipoEfector
-      const tipoHabilitacionesGuardias = this.asistencial?.habilitacionesGuardias
+    /*   const tipoHabilitacionesGuardias = this.asistencial?.habilitacionesGuardias
   ?.filter(habilitacion => habilitacion.activo)
-  ?.at(0)?.tipoEfectorEx ?? null;
+  ?.at(0)?.tipoEfectorEx ?? null; */
 
       const tipoUdoInicial = this.initialData?.tipoUdo || '';
       const tipoEfectorInicial = this.initialData?.tipoEfector || '';
       this.onTipoUdoChange({ value: tipoUdoInicial });
       this.onTipoEfectorChange({ value: tipoEfectorInicial });
-      this.onTipoHabilitacionesGuardiasChange({ value: tipoHabilitacionesGuardias });
+      /* this.onTipoHabilitacionesGuardiasChange({ value: tipoHabilitacionesGuardias }); */
     }},
     (error) => {
       console.error('Error al cargar los datos iniciales:', error);
@@ -1108,6 +1261,7 @@ listMinisterios(): void {
     }, error => {
       console.log(error);
     });
+    console.log('Hospitales cargados:', this.hospitales);
     
   }
   
@@ -1301,6 +1455,129 @@ listMinisterios(): void {
     });
   }
 
+    onHospitalesChange(event: any): void {
+     this.selectedHospitals = event.value;
+    this.updateCombinedValues(); 
+  }
+
+  onHospitalsCapsChange(event: any): void {
+  this.selectedHospitalsCaps = event.value;
+  console.log('Hospitales seleccionados:', this.selectedHospitalsCaps);
+
+  // Actualizar la lista de CAPS según los hospitales seleccionados
+  this.updateCapsBySelectedHospitals();
+  this.updateCombinedValues();
+}
+
+private updateCapsBySelectedHospitals(): void {
+  // Reiniciar la lista de CAPS al cambiar los hospitales seleccionados
+  this.caps = [];
+
+  if (this.selectedHospitalsCaps && this.selectedHospitalsCaps.length > 0) {
+    this.selectedHospitalsCaps.forEach((hospitalId: number) => {
+      if (hospitalId !== undefined) {
+        this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(
+          (data) => {
+            // Filtrar CAPS únicos para evitar duplicados
+            const nuevosCaps = data.filter(
+              (cap) => !this.caps.some((existingCap) => existingCap.id === cap.id)
+            );
+            this.caps = [...this.caps, ...nuevosCaps];
+
+            // Actualizar la lista de CAPS seleccionados si ya no están disponibles
+            this.selectedCaps = this.selectedCaps.filter((cap) =>
+              this.caps.some((existingCap) => existingCap.id === cap)
+            );
+
+            console.log('CAPS actualizados:', this.caps);
+            console.log('CAPS seleccionados después del filtrado:', this.selectedCaps);
+
+            // Notificar si un hospital no tiene CAPS
+            if (data.length === 0) {
+              this.toastr.warning(
+                `El hospital con ID ${hospitalId} no posee CAPS registrados.`,
+                'Sin datos'
+              );
+            }
+
+            // Actualizar el formulario reactivo con la nueva lista de CAPS seleccionados
+            this.legajoForm.patchValue({
+              habilitacionesGuardiasCaps: this.selectedCaps,
+            });
+          },
+          (error) => {
+            console.error(error);
+            this.toastr.error(
+              `Error al cargar los CAPS del hospital con ID ${hospitalId}.`,
+              'Error'
+            );
+          }
+        );
+      }
+    });
+  }
+}
+
+  onCapsChange(event: any): void {
+  // Actualiza la selección de CAPS en el formulario
+  this.selectedCaps = event.value;
+
+  // Eliminar CAPS que no estén disponibles en la lista actual de CAPS
+  this.selectedCaps = this.selectedCaps.filter((cap) =>
+    this.caps.some((existingCap) => existingCap.id === cap)
+  );
+
+  this.updateCombinedValues();
+}
+
+private updateCombinedValues(): void {
+  // Crear un conjunto para almacenar los valores combinados actualizados
+  const updatedCombinedValues = new Set();
+
+  // Agregar hospitales seleccionados al conjunto
+  this.selectedHospitals = this.legajoForm.get('habilitacionesGuardiasHospital')?.value || [];
+  this.selectedHospitals.forEach((hospital: any) => updatedCombinedValues.add(hospital));
+
+  // Agregar CAPS seleccionados al conjunto
+  this.selectedCaps = this.legajoForm.get('habilitacionesGuardiasCaps')?.value || [];
+  this.selectedCaps.forEach((cap: any) => updatedCombinedValues.add(cap));
+  console.log('CAPS seleccionados:', this.selectedCaps);
+
+  // Agregar valores iniciales (solo si están seleccionados en hospitales o CAPS)
+  this.initialHabilitacionesGuardias.forEach((efector: any) => {
+    if (
+      this.selectedHospitals.includes(efector) ||
+      this.selectedCaps.includes(efector)
+    ) {
+      updatedCombinedValues.add(efector);
+    }
+  });
+
+  // Eliminar valores actuales que no están en hospitales, CAPS o iniciales
+  const currentValues = this.legajoForm.get('habilitacionesGuardias')?.value || [];
+  currentValues.forEach((efector: any) => {
+    if (
+      !this.selectedHospitals.includes(efector) &&
+      !this.selectedCaps.includes(efector) &&
+      !this.initialHabilitacionesGuardias.includes(efector)
+    ) {
+      updatedCombinedValues.delete(efector);
+    }
+  });
+
+  // Establecer el nuevo valor combinado en el formulario
+  this.legajoForm.patchValue({
+    habilitacionesGuardias: Array.from(updatedCombinedValues),
+  });
+
+  console.log('Valores combinados actualizados:', Array.from(updatedCombinedValues));
+}
+private isHospital(id: number): boolean {
+  // Verifica si el ID pertenece a un hospital basado en los efectores filtrados
+  return this.getEfectoresFiltrados().some((hospital: any) => hospital.id === id);
+}
+
+
   // Manejar cambios en tipoUdo
  onTipoUdoChange(event: any): void {
   const tipoUdo = event.value;
@@ -1467,8 +1744,8 @@ listMinisterios(): void {
     });
   }
 
-  // Método para cambiar las opciones de la seleccion de efector
-  onTipoHabilitacionesGuardiasChange(event: any): void {
+  /* // Método para cambiar las opciones de la seleccion de efector
+   onTipoHabilitacionesGuardiasChange(event: any): void {
   const tipoHabilitacionesGuardias = event.value;
   this.tipoHabilitacionesGuardias = tipoHabilitacionesGuardias;
 
@@ -1523,32 +1800,48 @@ listMinisterios(): void {
   }
 
   console.log('Opciones de habilitaciones de guardias:', this.habilitacionesGuardiasOptions);
-}
+}  */
 
   // Método para cargar los CAPS correspondientes al hospital seleccionado
-  onHospitalHabilitacionesGuardiasChange(event: any): void {
-    const hospitalId = event.value;
-    
-    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(data => {
-      this.caps = data; // Guardamos la lista de CAPS para mostrar en el select de UDO
-      this.habilitacionesGuardiasOptions = this.caps; // Asignamos los CAPS al select de UDO
-      this.legajoForm.get('habilitacionesGuardias')?.reset(); // Limpiar la selección actual de UDO
-
-      // Si no se encuentran CAPS, mostrar un mensaje de Toastr
-      if (this.caps.length === 0) {
-        this.toastr.error('El hospital seleccionado no posee ningún CAPS registrado.', 'Sin datos', {
-          timeOut: 9000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-      }
-
-    }, error => {
-      console.log(error);
-      this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');  // Mostrar mensaje de error en caso de fallo
-    });
-  }
+ onHospitalHabilitacionesGuardiasChange(event: any): void {
   
+  const selectedHospitalIds = event.value || []; // Asegurar que sea un array
+  console.log('Hospitales seleccionados:', selectedHospitalIds);
+  this.legajoForm.patchValue({ hospitalHabilitacionesGuardias: selectedHospitalIds });
+
+  
+  if (selectedHospitalIds.length === 0) {
+    this.caps = [];
+   
+    this.toastr.warning('Debe seleccionar al menos un hospital para listar CAPS.', 'Advertencia');
+  } else {
+
+  // Llamar al servicio para cargar CAPS para cada hospital seleccionado
+  this.caps = [];
+  selectedHospitalIds.forEach((hospitalId: number) => {
+    this.hospitalService.listActiveCapsByHospitalId(hospitalId).subscribe(
+      (data) => {
+        this.caps = [...this.caps, ...data]; // Agregar los CAPS de cada hospital seleccionado
+        this.habilitacionesGuardiasOptions = this.caps;
+        this.habilitacionesGuardiasCaps = this.caps;
+        if (data.length === 0) {
+          this.toastr.warning(
+            `El hospital con ID ${hospitalId} no posee CAPS registrados.`,
+            'Sin datos'
+          );
+        }
+      },
+      (error) => {
+        console.error(error);
+        this.toastr.error('Ocurrió un error al cargar los CAPS.', 'Error');
+      }
+    );
+  });
+  // Limpiar la selección actual de CAPS si es necesario
+
+}
+ }
+
   onTipoHabilitacionesGeneralesChange(event: any): void {
     const tipoHabilitacionesGenerales = event.value;
     this.tipoHabilitacionesGenerales = tipoHabilitacionesGenerales;
@@ -2110,9 +2403,9 @@ if (sinCambios) {
         const efectoresNuevos = (legajoNuevo.habilitacionesGuardias || []).sort();
     
         const mismosEfectores = JSON.stringify(efectoresExistentes) === JSON.stringify(efectoresNuevos);
-        const mismoTipoEfector = habilitacionExistente.tipoEfectorEx === legajoNuevo.tipoHabilitacionesGuardias;
+        /* const mismoTipoEfector = habilitacionExistente.tipoEfectorEx === legajoNuevo.tipoHabilitacionesGuardias; */
     
-        if (!mismosEfectores || !mismoTipoEfector || legajoCambio) {
+        if (!mismosEfectores /* || !mismoTipoEfector */ || legajoCambio) {
           console.log("🔄 Cambios detectados en habilitaciones (efectores/tipo o legajo cambió).");
           return true;
         }
@@ -2453,6 +2746,7 @@ if (legajoData.tipoGuardias &&
         legajoData.tipoEfector ?? null,
         legajoData.tipoUdo ?? null,
       );
+      console.log("DTO de legajo a crear:", legajoNuevo);
 
       let debeGuardarHabilitacion = false;
 
@@ -2543,10 +2837,10 @@ if (debeGuardarHabilitacion) {
     
           // Comparar efectores y tipo de efector
           const mismosEfectores = JSON.stringify(efectoresExistentes) === JSON.stringify(efectoresNuevos);
-          const mismoTipoEfector = habilitacionExistente.tipoEfectorEx === legajoData.tipoHabilitacionesGuardias;
+          /* const mismoTipoEfector = habilitacionExistente.tipoEfectorEx === legajoData.tipoHabilitacionesGuardias; */
     
           // Si la habilitación existente y la nueva son iguales, no hacer nada
-          if (mismosEfectores && mismoTipoEfector && !forzarActualizacion) {
+          if (mismosEfectores /* && mismoTipoEfector */ && !forzarActualizacion) {
             console.log("La habilitación existente es igual a la nueva, no se realizan cambios.");
             return;
           }
@@ -2574,7 +2868,7 @@ if (debeGuardarHabilitacion) {
             false, // Desactivar
             legajoData.idPersona,
             efectoresExistentes, 
-            legajoData.tipoHabilitacionesGuardias?.tipoEfectorEx
+           /*  legajoData.tipoHabilitacionesGuardias?.tipoEfectorEx */
           );
 
           console.log("habilitacionExistente",  legajoData.tipoHabilitacionesGuardias?.tipoEfectorEx);
@@ -2617,7 +2911,7 @@ private crearNuevaHabilitacion(legajoData: any): void {
       true, // Activo
       legajoData.idPersona,
       efectoresNuevos, 
-      legajoData.tipoHabilitacionesGuardias
+ /*      legajoData.tipoHabilitacionesGuardias */
   );
 
   console.log("Dto de habilitación a crear:", nuevaHabilitacion);
