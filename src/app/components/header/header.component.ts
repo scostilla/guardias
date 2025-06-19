@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
@@ -19,6 +20,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   showConfig: boolean = true;
 
   pendientesCount: number = 0;
+  autoridadesCount: number = 0;
   notificacionesCount: number = 0;
   efectorId: number | null = null;
 
@@ -40,6 +42,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
     private toastr: ToastrService,
     private cronoService: CronogramaTentativoService,
     private efectorService: EfectorService,
+    private autoridadService: AutoridadService,
     private tokenService: TokenService,
     private authService: AuthService
   ) {
@@ -54,17 +57,34 @@ export class HeaderComponent implements OnDestroy, OnInit {
 ngOnInit(): void {
   this.updateNavBarAndConfigState();
 
-  // Suscripción al cambio de efector
-  this.efectorService.currentEfectorId$.subscribe(id => {
-    this.efectorId = id;
+  // Escuchar ambos valores juntos: efectorId y currentRole
+  combineLatest([
+    this.efectorService.currentEfectorId$,
+    this.tokenService.currentRole$
+  ]).subscribe(([efectorId, currentRole]) => {
+    this.efectorId = efectorId;
+    this.currentRole = currentRole;
+    this.UserRoles();
 
-    if (this.efectorId != null) {
-      this.cronoService.countPendientesByEfector(this.efectorId)
-        .subscribe(count => {
-          this.pendientesCount = count;
-        });
+    if (this.efectorId != null && (this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSER')) {
+      this.actualizarPendientes();
+    }
+
+    if (this.currentRole === 'ROLE_SUPERUSER') {
+      this.actualizarAutoridadesPendientes();
+    }
+  });
+
+  this.tokenService.isLogged$.subscribe(isLogged => {
+    this.isLogged = isLogged;
+    if (isLogged) {
+      this.roles = this.tokenService.getAuthorities();
+      this.loadUserDetails();
     } else {
-      this.pendientesCount = 0;
+      this.nombreUsuario = '';
+      this.apellidoUsuario = '';
+      this.roles = [];
+      this.UserRoles();
     }
   });
 
@@ -72,26 +92,9 @@ ngOnInit(): void {
     this.actualizarPendientes();
   });
 
-  // Resto de lógica de login
-  this.tokenService.isLogged$.subscribe(isLogged => {
-  this.isLogged = isLogged;
-
-  if (isLogged) {
-    this.roles = this.tokenService.getAuthorities();
-
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();
-    });
-
-    this.loadUserDetails();
-  } else {
-    this.nombreUsuario = '';
-    this.apellidoUsuario = '';
-    this.roles = [];
-    this.UserRoles(); // Opcional: para resetear flags de rol
-  }
-});
+  this.autoridadService.refresh$.subscribe(() => {
+    this.actualizarAutoridadesPendientes();
+  });
 }
 
   // Roles a usar
@@ -105,6 +108,7 @@ ngOnInit(): void {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
@@ -118,15 +122,15 @@ ngOnInit(): void {
     this.showNavBar = !(
       url === '/home-page' ||
       url === '/home-profesional' ||
-      url === '/registro-actividades-ingreso' ||
-      url === '/registro-actividades-egreso' ||
+      url === '/registro-actividades-ingreso-profesional' ||
+      url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
     );
 
     this.showConfig = !(
       url === '/home-profesional' ||
-      url === '/registro-actividades-ingreso' ||
-      url === '/registro-actividades-egreso' ||
+      url === '/registro-actividades-ingreso-profesional' ||
+      url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
     );
 
@@ -146,8 +150,10 @@ ngOnInit(): void {
   }
   
   private actualizarPendientes(): void {
-    if (this.efectorId != null) {
-      this.cronoService.countPendientesByEfector(this.efectorId).subscribe(count => {
+    const isAutoridadOsuper = this.currentRole === 'ROLE_AUTORIDAD' || this.currentRole === 'ROLE_SUPERUSER';
+
+  if (isAutoridadOsuper) {
+      this.cronoService.countPendientesByEfector(this.efectorId!).subscribe(count => {
         this.pendientesCount = count;
       });
     } else {
@@ -155,10 +161,21 @@ ngOnInit(): void {
     }
   }
 
+  private actualizarAutoridadesPendientes(): void {
+    if (this.currentRole === 'ROLE_SUPERUSER') {
+      this.autoridadService.countPendientes().subscribe(count => {
+        this.autoridadesCount = count;
+      });
+    } else {
+      this.autoridadesCount = 0;
+    }
+  }
+
   getTotalBadges(): number {
   const pendientes = this.pendientesCount || 0;
+  const autoridades = this.autoridadesCount || 0;
   const notificaciones = this.notificacionesCount || 0;
-  return pendientes + notificaciones;
+  return pendientes + autoridades + notificaciones;
 }
 
   ngOnDestroy(): void {
@@ -169,11 +186,13 @@ ngOnInit(): void {
 
   onLogOut(): void {
     this.tokenService.logOut();
+    this.efectorService.setCurrentEfectorId(null);
     this.isLogged = false;
     this.nombreUsuario = '';
     this.apellidoUsuario = '';
     this.roles = [];
     this.isAdministrativo = false;
+    this.isAutoridad = false;
     this.isUsuario = false;
     this.isDph = false;
     this.isSuper = false;

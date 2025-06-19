@@ -14,9 +14,6 @@ import { AsistencialService } from 'src/app/services/Configuracion/asistencial.s
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 
 
 //models y dto
@@ -25,9 +22,6 @@ import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { NoAsistencialListDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialListDto';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
-import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
@@ -35,8 +29,6 @@ import { NoAsistencialDetailComponent } from '../no-asistencial-detail/no-asiste
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
@@ -74,18 +66,12 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
 
 
   //Autenticación
-  isLogged = false;
   roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
     
   constructor(
@@ -93,15 +79,11 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
     private noAsistencialService: NoAsistencialService,
     private tipoGuardiaService: TipoGuardiaService,
     private efectorService: EfectorService,
-    private hospitalService: HospitalService,
-    private capsService: CapsService,
-    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNo: MatDialog,
     private toastr: ToastrService,
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     private location: Location,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -118,71 +100,39 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-        // Verificar si hay un idEfector antes de hacer cualquier otra cosa
-        this.efectorId = this.efectorService.getCurrentEfectorId();
+    // Obtener el ID efector del servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+      if (this.efectorId) {
         this.loadEfectorName();
-      
-        if (this.efectorId === null) {
-          // Si no hay idEfector, redirigir a /home-page con un mensaje
-          this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
-            timeOut: 5000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.router.navigateByUrl('/home-page');
-          return; // Detener ejecución del código
-        }
-    
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-  
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
+        this.listAutoridades();
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
     }
   
-    this.listAutoridades();
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
 
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
+    
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
       this.listAutoridades();
     });
 
-    // Llamamos al servicio para obtener todos los tipos de guardia
+    // Llamo al servicio para obtener todos los tipos de guardia
     this.tipoGuardiaService.list().subscribe((guardias: TipoGuardia[]) => {
       this.tipoGuardias = guardias;
   
-      // Verificamos si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
+      // Verifico si los tipos 'CONTRAFACTURA' y 'PASIVA' están en la lista
       this.idContraFactura = this.tipoGuardias.find(t => t.nombre === 'CONTRAFACTURA')?.id;
     });
     
@@ -212,41 +162,32 @@ export class AutoridadListComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
     }
   }
 
+  private handleInvalidEfector(): void {
+    console.error('ID de efector inválido o no encontrado.');
+    this.router.navigateByUrl('/home-page');
+  }
+
+  //trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    if (!this.efectorId) {
-      this.efectorNombre = null;
-      return;
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
-  
-    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
-      next: (hospital: EfectorHospitalDto) => {
-        this.efectorNombre = hospital.nombre;
-      },
-      error: () => {
-        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
-          next: (ministerio: EfectorMinisterioDto) => {
-            this.efectorNombre = ministerio.nombre;
-          },
-          error: () => {
-            this.capsService.detailNombreAll(this.efectorId!).subscribe({
-              next: (cap: EfectorCapsDto) => {
-                this.efectorNombre = cap.nombre;
-              },
-              error: () => {
-                console.error('No se encontró el efector con ID:', this.efectorId);
-                this.efectorNombre = null;
-              }
-            });
-          }
-        });
-      }
-    });
   }
   
 listAutoridades(): void {
@@ -407,6 +348,30 @@ verLegajo(row: AsistencialListDto | NoAsistencialListDto): void {
     });
   }
 
+  actualizarColumnasVisibles(): void {
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
+
+    let columnasVisibles: string[] = [];
+
+    columnasBase.forEach(columna => {
+      columnasVisibles.push(columna);
+      if (columna === 'apellido' && this.dniVisible) {
+        columnasVisibles.push('dni');
+      }
+      if (columna === 'cuil' && this.telefonoVisible) {
+        columnasVisibles.push('telefono');
+      }
+      if (columna === 'cuil' && this.emailVisible) {
+        columnasVisibles.push('email');
+      }
+    });
+
+    this.displayedColumns = columnasVisibles;
+
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }
 
   goBack(): void {
     this.location.back();

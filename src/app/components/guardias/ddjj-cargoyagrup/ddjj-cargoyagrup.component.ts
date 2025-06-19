@@ -21,9 +21,16 @@ import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ToastrService } from 'ngx-toastr';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = (pdfFonts as any).vfs;
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 
 interface ClasesNovedad {
@@ -74,7 +81,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
-  private efectorIdSubscription!: Subscription;
+  //Autenticación
+  roles: string[] = [];
+  currentRole: string | null = null;
+  isAutoridad: boolean = false;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -83,6 +97,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
+    private toastr: ToastrService,
+    private tokenService: TokenService,
     private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -98,45 +114,71 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    moment.locale('es');
-
-    this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-    
-    this.generarDiasDelMes();
-    
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.feriados = feriados;
-    });
-
+    // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
       if (this.efectorId) {
-        this.loadEfectorName(); 
-        this.loadHospitalDetails();
+        this.loadEfectorName();
+          moment.locale('es');
+          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.generarDiasDelMes();
+          this.loadHospitalDetails();
+    
+        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+          this.feriados = feriados;
+    });
+
       } else {
-        this.handleInvalidEfector();
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+    }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
       }
+    });
+
       this.selectedServicio = null;
   }
 
   //trae el nombre del efector esta en sesion
-  loadEfectorName(): void { 
+  loadEfectorName(): void {
     if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
-        (efector: EfectorHospitalDto) => {
-
-          if (efector) {
-            this.efectorNombre = efector.nombre;
-          } else {
-            this.handleInvalidEfector();
-          }
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          this.efectorNombre = efector.nombre;
         },
         (error) => {
-          console.error('Error al obtener el efector desde el servicio:', error);
-          this.handleInvalidEfector();
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
         }
       );
+    }
+  }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
     } else {
-      this.handleInvalidEfector();
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isAutoridad = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
   }
 
@@ -150,12 +192,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
     this.hospitalService.getServiciosActivos(this.efectorId).subscribe(
       (servicios) => {
-        console.log('Servicios recibidos del backend:', servicios);
-
         this.servicios = servicios.map(s => new ServicioSummaryDto(s.id, s.descripcion));
-
-        console.log('Servicios mapeados:', this.servicios);
-
         if (this.servicios.length > 0) {
         }
 
@@ -166,12 +203,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       }
     );
   }
-
-  private handleInvalidEfector(): void {
-    console.error('ID de efector inválido o no encontrado.');
-    this.router.navigateByUrl('/home-page');
-  }
-
 
   generarDiasDelMes(): void {
     const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
@@ -186,40 +217,40 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
-updateTableDataSource(): void {
-  this.dataSource.data = this.registrosMensuales;
-  this.dataSource.paginator = this.paginator;
-  this.dataSource.sort = this.sort;
-}
-
-loadRegistrosMensuales(): void {
-  const anio = this.selectedYear;
-  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-  const idEfector = this.efectorId;
-
-  if (idEfector === null) {
-    console.error("El ID del hospital no puede ser null");
-    return;
+  updateTableDataSource(): void {
+    this.dataSource.data = this.registrosMensuales;
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  if (this.selectedServicio == null) {
-    // Todos los servicios
-    this.registroMensualService
-      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
-      .subscribe(data => {
-        this.registrosMensuales = data;
-        this.updateTableDataSource(); // Mostrar todos
-      });
-  } else {
-    // Servicio específico
-    this.registroMensualService
-      .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
-      .subscribe(data => {
-        this.registrosMensuales = data;
-        this.updateTableDataSource(); // Mostrar filtrado
-      });
+  loadRegistrosMensuales(): void {
+    const anio = this.selectedYear;
+    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+    const idEfector = this.efectorId;
+
+    if (idEfector === null) {
+      console.error("El ID del hospital no puede ser null");
+      return;
+    }
+
+    if (this.selectedServicio == null) {
+      // Todos los servicios
+      this.registroMensualService
+        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
+        .subscribe(data => {
+          this.registrosMensuales = data;
+          this.updateTableDataSource(); // Mostrar todos
+        });
+    } else {
+      // Servicio específico
+      this.registroMensualService
+        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
+        .subscribe(data => {
+          this.registrosMensuales = data;
+          this.updateTableDataSource(); // Mostrar filtrado
+        });
+    }
   }
-}
 
   updateDateAndLoadData(): void {
 
@@ -250,20 +281,18 @@ loadRegistrosMensuales(): void {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
-  const dataToSend = {
-    asistencial,
-    month: selectedMonth,
-    year: selectedYear
-  };
+  openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+    const dataToSend = {
+      asistencial,
+      month: selectedMonth,
+      year: selectedYear
+    };
 
-  console.log('🧾 Datos enviados al dialog:', dataToSend);
-
-  this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
-    width: '600px',
-    data: dataToSend
-  });
-}
+    this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
+      width: '600px',
+      data: dataToSend
+    });
+  }
 
   openDdjjConfirm(): void {
     const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
@@ -585,6 +614,23 @@ exportarAExcel() {
     });
 
     worksheet.addRow(Object.values(exportData));
+    const row = worksheet.lastRow!;
+
+      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+        const date = this.getFechaFromColumnId(fechaColumna);
+        const isHoliday = this.isHoliday(date).isHoliday;
+
+        if (isHoliday) {
+          const cellIndex = dataColumnHeaders.length + index + 1;
+          const cell = row.getCell(cellIndex);
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'd4c2cd' }
+          };
+          cell.font = { color: { argb: '000000' } };
+        }
+      });
   });
 
   const fileName = `ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
@@ -604,6 +650,92 @@ exportarAExcel() {
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, fileName);
   });
+}
+
+exportarAPDF() {
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+
+  const headers = [
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D',
+    ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+  ];
+
+  const body: any[] = [headers];
+
+  this.dataSource.data.forEach((registro: RegistroMensual) => {
+    const row = [];
+
+    row.push(registro.asistencial.apellido);
+    row.push(registro.asistencial.nombre);
+    row.push(registro.asistencial.cuil);
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '');
+
+    const novedades = this.getNovedades(registro.asistencial);
+    const novedadesString = novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ');
+    row.push(novedadesString || '-');
+
+    row.push(this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear));
+    row.push(this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear));
+    row.push(this.calculateWeekendsTotal(registro.registroActividad, this.selectedMonth, this.selectedYear));
+
+ this.displayedColumns.slice(6).forEach(fechaColumna => {
+    const fecha = this.getFechaFromColumnId(fechaColumna);
+    const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
+
+    const { isHoliday } = this.isHoliday(fecha);
+
+    if (isHoliday) {
+      row.push({
+        text: horas,
+        fillColor: '#F9CACA',  // Fondo rosado para feriado
+        color: 'red',          // Texto rojo
+        bold: true,
+        alignment: 'center'
+      });
+    } else {
+      row.push(horas);
+    }
+  });
+
+  body.push(row);
+});
+    
+  const docDefinition: any = {
+    pageSize: 'A3', //Más grande que A4
+    pageOrientation: 'landscape',
+    pageMargins: [10, 10, 10, 10], //Márgenes reducidos
+    content: [
+      { text: `Declaración Jurada - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+      {
+        table: {
+          headerRows: 1,
+           widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
+          body
+        },
+        layout: {
+          hLineWidth: () => 0.5,
+          vLineWidth: () => 0.5,
+          hLineColor: () => '#000000',
+          vLineColor: () => '#000000'
+        }
+      }
+    ],
+    styles: {
+      header: {
+        fontSize: 14,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 10]
+      }
+    },
+    defaultStyle: {
+      fontSize: 7
+    }
+  };
+
+  pdfMake.createPdf(docDefinition).download(`ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
 }
 
   accentFilter(input: string): string {
@@ -635,7 +767,6 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-    this.efectorIdSubscription?.unsubscribe();
   }
 
 }

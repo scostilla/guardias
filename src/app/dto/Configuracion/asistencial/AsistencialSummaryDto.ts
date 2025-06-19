@@ -6,6 +6,7 @@ export class AsistencialSummaryDto {
     cuil: string;
     profesion: string;
     nombresTiposGuardias: string[];
+    idEfector: number;
 
     constructor(
         id: number,
@@ -13,7 +14,8 @@ export class AsistencialSummaryDto {
         apellido: string,
         cuil: string,
         profesion: string,    
-        nombresTiposGuardias: string[]=[]
+        nombresTiposGuardias: string[]=[],
+        idEfector: number
     ) {
         this.id = id;
         this.nombre = nombre;
@@ -21,6 +23,7 @@ export class AsistencialSummaryDto {
         this.cuil = cuil;
         this.profesion = profesion;
         this.nombresTiposGuardias = nombresTiposGuardias;
+        this.idEfector = idEfector;
     }
 
 }

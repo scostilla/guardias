@@ -102,9 +102,14 @@ esGuardia(dia: string, fecha: string, idAsistencial: number, idEfector: number):
   return this.httpClient.get<boolean>(`${this.distribucionGuardiasURL}esGuardia/${dia}/${fecha}/${idAsistencial}/${idEfector}`);
 }
 
-// Verificar si un cronograma tentativo existe
+// Verificar si un cronograma tentativo existe dando 3 respuestas
 existeTentativoEnDistribucionGuardia(cTentativos: CronogramaTentativoResquestDto): Observable<ValidacionCronogramaResponseDto> {
   return this.httpClient.post<ValidacionCronogramaResponseDto>(`${this.distribucionGuardiasURL}verificarCronogramaEnDistribucion`, cTentativos);
+}
+
+// Verificar si un cronograma tentativo existe solo con superposicion y booleano
+validarDistribucionSemanal(cTentativos: CronogramaTentativoResquestDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionGuardiasURL}validarDistribucionSemanal`, cTentativos);
 }
 
 tieneDistribucionActiva(dto: DistribucionCheckDto): Observable<boolean> {

@@ -10,31 +10,29 @@
       </button>
     </div>
   </div>
+  <div class="row">
+  <div class="col-12 m mb-5 d-flex justify-content-md-start">Efector: <span class="negrita ps-1">{{efectorNombre}}</span></div>
+  </div>
 
   <div class="row mt-4">
-    <div class="col-md-6 text-center">
-      <button 
-        class="btn buttons btn-lg btn-block" 
-        routerLink="/registro-actividades-ingreso">
-        <mat-icon>login</mat-icon> Entrada
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-      </button>
+    <div class="col-md-6 mt-5 text-center">
+      <a class="animated-button entrada" routerLink="/registro-actividades-ingreso" role="button">
+        <span class="label">Ingreso</span>
+        <div class="icon">
+          <mat-icon>login</mat-icon>
+        </div>
+      </a>
     </div>
-    <div class="col-md-6 text-center">
-      <button 
-        class="btn buttons btn-lg btn-block" 
-        routerLink="/registro-actividades-egreso"
-      >
-        <mat-icon>logout</mat-icon> Salida
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-      </button>
+    <div class="col-md-6 mt-5 text-center">
+      <a class="animated-button salida" routerLink="/registro-actividades-egreso" role="button">
+        <span class="label">Egreso</span>
+        <div class="icon">
+          <mat-icon>logout</mat-icon>
+        </div>
+      </a>
     </div>
   </div>
+  
+
 
 </div>

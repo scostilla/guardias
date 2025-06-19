@@ -12,7 +12,7 @@ import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/h
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { EfectorSelectorComponent } from './efector-selector/efector-selector.component';
-
+import { combineLatest } from 'rxjs';
 
 //Autenticación
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
@@ -60,31 +60,28 @@ export class HomePageComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-ngOnInit(): void {
-  // Obtener rol actual
-  this.tokenService.currentRole$.subscribe(role => {
-    this.currentRole = role;
-    this.UserRoles();
+  ngOnInit(): void {
+    // Suscribirse a ambos: rol actual y datos de la persona
+    combineLatest([
+      this.tokenService.currentRole$,
+      this.authService.detailPersonBasicPanel()
+    ]).subscribe(([role, personDto]) => {
+      this.currentRole = role;
+      this.idPersona = personDto.id;
+      this.UserRoles();
 
-    if (!this.currentRole) {
-      console.warn('No hay un rol seleccionado actualmente.');
-    }
-  });
-
-  const userId = this.tokenService.getUserIdFromToken();
-  const idPersona = userId !== null ? Number(userId) : null;
-
-  // Cargar efectores según rol
-  if (this.isDph || this.isSuper) {
-    this.loadEfectoresForDphOrSuper();
-  } else if (this.isAdministrativo) {
-    this.loadEfectorForAdministrativo();
-  } else if (this.isAutoridad) {
-    this.loadEfectoresForAutoridades(idPersona!);
-  } else {
-    console.warn('El usuario no tiene un rol válido para proceder');
+      // Cargar efectores según rol ya definido
+      if (this.isDph || this.isSuper) {
+        this.loadEfectoresForDphOrSuper();
+      } else if (this.isAdministrativo) {
+        this.loadEfectorForAdministrativo();
+      } else if (this.isAutoridad) {
+        this.loadEfectoresForAutoridades(this.idPersona!);
+      } else {
+        console.warn('El usuario no tiene un rol válido para proceder');
+      }
+    });
   }
-}
 
   // Roles a usar
   UserRoles(): void {
@@ -103,38 +100,33 @@ ngOnInit(): void {
     }
   }
 
-// Obtener nombre del efector
+// Obtener nombre del efector y enviar tipo a html
 private getEfectorInfoById(efectorId: number): void {
-  // Reiniciam valores
   this.selectedEfectorDialog = null;
   this.currentEfectorType = null;
 
-  this.hospitalService.detailNombreAll(efectorId).subscribe({
-    next: (hospital: EfectorHospitalDto) => {
+  this.hospitalService.detailNombreAll(efectorId).subscribe((hospital: EfectorHospitalDto | null) => {
+    if (hospital) {
       this.selectedEfectorDialog = hospital.nombre;
       this.currentEfectorType = 'hospital';
       this.updateComponentVisibility();
-    },
-    error: () => {
-      this.ministerioService.detailNombreAll(efectorId).subscribe({
-        next: (ministerio: EfectorMinisterioDto) => {
+    } else {
+      this.ministerioService.detailNombreAll(efectorId).subscribe((ministerio: EfectorMinisterioDto | null) => {
+        if (ministerio) {
           this.selectedEfectorDialog = ministerio.nombre;
           this.currentEfectorType = 'ministerio';
           this.updateComponentVisibility();
-        },
-        error: () => {
-          this.capsService.detailNombreAll(efectorId).subscribe({
-            next: (cap: EfectorCapsDto) => {
+        } else {
+          this.capsService.detailNombreAll(efectorId).subscribe((cap: EfectorCapsDto | null) => {
+            if (cap) {
               this.selectedEfectorDialog = cap.nombre;
               this.currentEfectorType = 'caps';
-              this.updateComponentVisibility();
-            },
-            error: () => {
+            } else {
+              console.warn(`No se encontró el efector con ID: ${efectorId}`);
               this.selectedEfectorDialog = null;
               this.currentEfectorType = null;
-              this.updateComponentVisibility();
-              console.error('No se encontró el efector con ID:', efectorId);
             }
+            this.updateComponentVisibility();
           });
         }
       });

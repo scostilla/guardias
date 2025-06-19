@@ -99,44 +99,15 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
+    // Obtener rol actual
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
+      this.UserRoles();
+
       if (!this.currentRole) {
-        this.router.navigateByUrl('');
+        console.warn('No hay un rol seleccionado actualmente.');
       }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-  
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
+    });
   
     this.listSinLegajos();
 
@@ -170,6 +141,7 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
@@ -279,20 +251,20 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
     this.router.navigate(['/no-asistencial-create']);
   }
     
-// Función para crear un legajo según el tipo (Asistencial o No Asistencial)
-crearLegajo(row: AsistencialListDto | NoAsistencial): void {
-  if ((row as Asistencial).esAsistencial) {
-    // Si el objeto es de tipo Asistencial
-    this.router.navigate(['/legajo-create'], {
-      state: { asistencial: row, fromAsistencial: true }
-    });
-  } else {
-    // Si el objeto es de tipo NoAsistencial
-    this.router.navigate(['/legajo-create-noasistencial'], {
-      state: { noAsistencial: row, fromNoAsistencial: true }
-    });
+  // Función para crear un legajo según el tipo (Asistencial o No Asistencial)
+  crearLegajo(row: AsistencialListDto | NoAsistencial): void {
+    if ((row as Asistencial).esAsistencial) {
+      // Si el objeto es de tipo Asistencial
+      this.router.navigate(['/legajo-create'], {
+        state: { asistencial: row, fromAsistencial: true }
+      });
+    } else {
+      // Si el objeto es de tipo NoAsistencial
+      this.router.navigate(['/legajo-create-noasistencial'], {
+        state: { noAsistencial: row, fromNoAsistencial: true }
+      });
+    }
   }
-}
   
   deleteAsistencial(row: Asistencial | NoAsistencial): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -325,6 +297,30 @@ crearLegajo(row: AsistencialListDto | NoAsistencial): void {
     });
   }
 
+  actualizarColumnasVisibles(): void {
+    let columnasBase = ['nombre', 'apellido', 'cuil', 'acciones'];
+
+    let columnasVisibles: string[] = [];
+
+    columnasBase.forEach(columna => {
+      columnasVisibles.push(columna);
+      if (columna === 'apellido' && this.dniVisible) {
+        columnasVisibles.push('dni');
+      }
+      if (columna === 'cuil' && this.telefonoVisible) {
+        columnasVisibles.push('telefono');
+      }
+      if (columna === 'cuil' && this.emailVisible) {
+        columnasVisibles.push('email');
+      }
+    });
+
+    this.displayedColumns = columnasVisibles;
+
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }
 
   goBack(): void {
     this.location.back();

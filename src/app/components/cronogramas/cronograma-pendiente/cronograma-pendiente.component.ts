@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { Location } from '@angular/common';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
@@ -68,6 +69,7 @@ export class CronogramaPendienteComponent implements OnInit, OnDestroy {
     private cronogramaTentativoService: CronogramaTentativoService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
+    private location: Location,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -245,6 +247,10 @@ loadEfectorName(): void {
           });
       }
     });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnDestroy(): void {

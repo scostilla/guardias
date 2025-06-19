@@ -22,6 +22,7 @@ export class RegistroActividadDto{
         this.idAsistencial = idAsistencial;
         this.idServicio = idServicio;
         this.idEfector = idEfector;
+        
         this.idUsuarioIngreso = idUsuarioIngreso;
         this.idUsuarioEgreso = idUsuarioEgreso ?? null;
     }

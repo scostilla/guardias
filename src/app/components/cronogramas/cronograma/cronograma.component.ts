@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent, CalendarDayViewBeforeRenderEvent } from 'angular-calendar';
 import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +7,6 @@ import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogr
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
@@ -18,8 +17,6 @@ import * as moment from 'moment';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 enum TipoGuardia {
@@ -51,24 +48,17 @@ export class CronogramaComponent {
   holidays: Feriado[] = [];
 
   //Autenticación
-  isLogged = false;
   roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
 
   efectorId: number | null = null;
   efectorNombre: string | null = null;
   efectorNivel: number | null = null;
-  showMessage: boolean = false;
 
   servicios: ServicioSummaryDto[] = [];
   selectedServiceId: number | null = null;
@@ -79,7 +69,6 @@ export class CronogramaComponent {
     public dialog: MatDialog,
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private toastr: ToastrService,
@@ -95,72 +84,38 @@ export class CronogramaComponent {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-  
-          // Log para mostrar el usuario
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
-    
-  // Verificar si el ID efector es válido
-  if (this.efectorId === null) {
-    this.showMessage = true;
-    this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
-      timeOut: 5000,
-      positionClass: 'toast-top-center',
-      progressBar: true
-    });
-    this.router.navigateByUrl('/home-page');
-  } else {
-  // Cargar los feriados
-  this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-    this.holidays = feriados.map(feriado => ({
-      ...feriado,
-      fecha: moment(feriado.fecha).toDate()
-    }));
-    this.refreshView();
-  });
+      if (this.efectorId) {
+        this.loadEfectorName();
+          this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+          this.holidays = feriados.map(feriado => ({
+            ...feriado,
+            fecha: moment(feriado.fecha).toDate()
+          }));
+          this.refreshView();
+        });
 
-  this.loadCronogramas();
+        this.loadCronogramas();
+        this.obtenerServicios(); 
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
     }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
 
-  this.obtenerServicios();
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
   }
 
   // Roles a usar
@@ -174,6 +129,7 @@ export class CronogramaComponent {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
@@ -181,32 +137,18 @@ export class CronogramaComponent {
   }
 
   //trae el nombre del efector esta en sesion
-  loadEfectorName(): void { 
+  loadEfectorName(): void {
     if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
-        (efector: EfectorHospitalDto) => {
-          console.log('Respuesta del servicio hospitalService.detailNombreAll:', efector);
-
-          if (efector) {
-            this.efectorNombre = efector.nombre;
-            this.efectorNivel = efector.nivelComplejidad;
-          } else {
-            this.handleInvalidEfector();
-          }
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          this.efectorNombre = efector.nombre;
         },
         (error) => {
-          console.error('Error al obtener el efector desde el servicio:', error);
-          this.handleInvalidEfector();
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
         }
       );
-    } else {
-      this.handleInvalidEfector();
     }
-  }
-
-  private handleInvalidEfector(): void {
-    console.error('ID de efector inválido o no encontrado.');
-    this.router.navigateByUrl('/home-page');
   }
 
   obtenerServicios(): void {
@@ -214,46 +156,6 @@ export class CronogramaComponent {
       this.servicios = data;
     });
   }
-
-  /*
-  loadCronogramas(): void {
-    this.cronogramaService.listEfector(this.efectorId!).subscribe((cronogramas) => {
-      this.events = cronogramas.map((cronograma) => {
-        const tipoGuardia = cronograma.tipoGuardia?.nombre;
-        const observacion = cronograma.observacion;
-        const id = cronograma.id;
-
-        const fechaHoraIngreso = moment(cronograma.fechaIngreso)
-          .set({
-            hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
-            minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
-            second: 0
-          });
-
-        const fechaHoraEgreso = moment(cronograma.fechaEgreso)
-          .set({
-            hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
-            minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
-            second: 0
-          });
-
-        const color = (Object.values(TipoGuardia).includes(tipoGuardia as TipoGuardia))
-          ? colorMapping[tipoGuardia as TipoGuardia]
-          : { primary: '#cccccc', secondary: '#e0e0e0' };
-
-        return {
-          start: fechaHoraIngreso.toDate(),
-          end: fechaHoraEgreso.toDate(),
-          title: ${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia},
-          obs: observacion,
-          id: id,
-          color: color,
-          meta: cronograma
-        };
-      });
-      this.refreshView(); // Refresca la vista del calendario
-    });
-  }*/
 
   // Método para cargar los cronogramas
   loadCronogramas(): void {

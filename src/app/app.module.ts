@@ -267,6 +267,8 @@ import { interceptorProvider } from './interceptors/interceptor.service';
 
 import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 
+import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
+import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
@@ -499,6 +501,8 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     CronogramaPendienteDetailComponent,
     CronogramaPendienteEditComponent,
     NotFoundComponent,
+    RegistroActividadesIngresoProfesionalComponent,
+    RegistroActividadesEgresoProfesionalComponent,
   ],
 
   imports: [

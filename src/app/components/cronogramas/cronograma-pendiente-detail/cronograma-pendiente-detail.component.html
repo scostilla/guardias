@@ -30,7 +30,78 @@
         </tr>
       </tbody>
     </table>
+    <div>
+      <p>El cronograma se superpone con otras actividades o ya posee una guardia cargada en una fecha diferente. Antes de confirmar o rechazar el cronograma puedes revisar la distribución horaria.</p>
+    </div>
   <div mat-dialog-actions class="action mt-4">
       <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+      <button mat-raised-button color="warn" type="button" mat-button (click)="verDistribucion()">Revisar distribución horaria</button>
   </div>
 </mat-dialog-content>
+
+<!--<h1 mat-dialog-title>DETALLE CRONOGRAMA: 
+  <h5>PENDIENTE</h5>
+</h1>
+<mat-dialog-content>
+  <h2>Comparación Cronograma tentativo / Distribución horaria</h2>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Campo</th>
+        <th>Cronograma pendiente</th>
+        <th>Distribución actual</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Profesional</th>
+        <td>{{ cronograma.asistencial.apellido }}, {{ cronograma.asistencial.nombre }}</td>
+        <td *ngIf="distribuciones.length > 0; else sinDist">{{ distribuciones[0].persona.apellido }}, {{ distribuciones[0].persona.nombre }}</td>
+      </tr>
+
+      <tr>
+        <th>Efector</th>
+        <td>{{ nombreEfector }}</td>
+        <td *ngIf="distribuciones.length > 0">{{ distribuciones[0].efector.nombre }}</td>
+      </tr>
+
+      <tr>
+        <th>Tipo Guardia</th>
+        <td>{{ cronograma.tipoGuardia }}</td>
+        <td *ngIf="distribuciones.length > 0">{{ distribuciones[0].tipoGuardia }}</td>
+      </tr>
+
+      <tr>
+        <th>Servicio</th>
+        <td>No disponible en cronograma</td>
+        <td *ngIf="distribuciones.length > 0">{{ distribuciones[0].servicio.descripcion || '-' }}</td>
+      </tr>
+
+      <tr>
+        <th>Ingreso</th>
+        <td>{{ cronograma.fechaIngreso | date: 'dd/MM/yyyy' }}, {{ cronograma.horaIngreso }} hs</td>
+        <td *ngIf="distribuciones.length > 0">
+          {{ distribuciones[0].fechaInicio | date: 'dd/MM/yyyy' }}, {{ distribuciones[0].horaIngreso }} hs
+        </td>
+      </tr>
+
+      <tr>
+        <th>Egreso</th>
+        <td>{{ cronograma.fechaEgreso | date: 'dd/MM/yyyy' }}, {{ cronograma.horaEgreso }} hs</td>
+        <td *ngIf="distribuciones.length > 0">
+          {{ distribuciones[0].fechaFinalizacion | date: 'dd/MM/yyyy' }}, 
+          {{ calcularHoraEgreso(distribuciones[0].horaIngreso, distribuciones[0].cantidadHoras) }} hs
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #sinDist>
+    <td colspan="2" class="text-center text-muted">No hay distribuciones disponibles</td>
+  </ng-template>
+
+  <div mat-dialog-actions class="action mt-4">
+    <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>-->

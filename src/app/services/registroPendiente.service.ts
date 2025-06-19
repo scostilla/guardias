@@ -33,8 +33,8 @@ import { RegistrosPendientes } from "../models/RegistrosPendientes";
         return this.httpClient.get<RegistrosPendientes[]>(this.registroPendienteURL + `detailByEfectorAndFecha/${idEfector}/${mes}/${anio}`);
       }
 
-      public detailByEfectorAndFechaAndAsistencial(idEfector: number, mes: number, anio: number, idAsistencial: number): Observable<RegistrosPendientes> {
-        return this.httpClient.get<RegistrosPendientes>(this.registroPendienteURL + `detailByEfectorAndFechaAndAsistencial/${idEfector}/${mes}/${anio}/${idAsistencial}`);
+      public tieneRegistroPendiente(idEfector: number, mes: number, anio: number, idAsistencial: number): Observable<RegistrosPendientes> {
+        return this.httpClient.get<RegistrosPendientes>(this.registroPendienteURL + `tieneRegistroPendiente/${idEfector}/${mes}/${anio}/${idAsistencial}`);
       }
     
       public create(registroPendiente: RegistrosPendientes): Observable<any> {

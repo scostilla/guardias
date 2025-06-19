@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+/*import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
@@ -20,9 +20,13 @@ import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ToastrService } from 'ngx-toastr';
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 
 interface ClasesNovedad {
@@ -73,7 +77,14 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
-  private efectorIdSubscription!: Subscription;
+  //Autenticación
+  roles: string[] = [];
+  currentRole: string | null = null;
+  isAutoridad: boolean = false;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
 
   constructor(
     private registroMensualService: RegistroMensualService,
@@ -82,6 +93,8 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
+    private toastr: ToastrService,
+    private tokenService: TokenService,
     private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -97,45 +110,71 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    moment.locale('es');
-
-    this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-    
-    this.generarDiasDelMes();
-    
-    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-      this.feriados = feriados;
-    });
-
+    // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
       if (this.efectorId) {
-        this.loadEfectorName(); 
-        this.loadHospitalDetails();
+        this.loadEfectorName();
+          moment.locale('es');
+          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.generarDiasDelMes();
+          this.loadHospitalDetails();
+    
+        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+          this.feriados = feriados;
+    });
+
       } else {
-        this.handleInvalidEfector();
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+    }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
       }
+    });
       this.selectedServicio = null;
   }
 
   //trae el nombre del efector esta en sesion
-  loadEfectorName(): void { 
+  //trae el nombre del efector esta en sesion
+  loadEfectorName(): void {
     if (this.efectorId) {
-      this.hospitalService.detailNombreAll(this.efectorId).subscribe(
-        (efector: EfectorHospitalDto) => {
-
-          if (efector) {
-            this.efectorNombre = efector.nombre;
-          } else {
-            this.handleInvalidEfector();
-          }
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          this.efectorNombre = efector.nombre;
         },
         (error) => {
-          console.error('Error al obtener el efector desde el servicio:', error);
-          this.handleInvalidEfector();
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
         }
       );
+    }
+  }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
     } else {
-      this.handleInvalidEfector();
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isAutoridad = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
     }
   }
 
@@ -149,15 +188,9 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
     this.hospitalService.getServiciosActivos(this.efectorId).subscribe(
       (servicios) => {
-        console.log('Servicios recibidos del backend:', servicios);
-
         this.servicios = servicios.map(s => new ServicioSummaryDto(s.id, s.descripcion));
-
-        console.log('Servicios mapeados:', this.servicios);
-
         if (this.servicios.length > 0) {
         }
-
         this.loadRegistrosMensuales();
       },
       (error) => {
@@ -561,6 +594,24 @@ exportarAExcel() {
     });
 
     worksheet.addRow(Object.values(exportData));
+        const row = worksheet.lastRow!;
+
+      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+        const date = this.getFechaFromColumnId(fechaColumna);
+        const isHoliday = this.isHoliday(date).isHoliday;
+
+        if (isHoliday) {
+          const cellIndex = dataColumnHeaders.length + index + 1;
+          const cell = row.getCell(cellIndex);
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'd4c2cd' }
+          };
+          cell.font = { color: { argb: '000000' } };
+        }
+      });
+
   });
 
   const fileName = `ddjj-CONTRAFACTURA_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
@@ -611,12 +662,11 @@ exportarAExcel() {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-    this.efectorIdSubscription?.unsubscribe();
   }
 
-}
+}*/
 
-/*import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
@@ -778,7 +828,7 @@ export class DdjjContrafacturaComponent {
     }
   
     generarDiasDelMes(): void {
-      /*const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
+      const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
       const endOfMonth = startOfMonth.clone().endOf('month');
       let day = startOfMonth;
   
@@ -1179,6 +1229,6 @@ export class DdjjContrafacturaComponent {
       disableClose: true,
     }) 
 }
+*/
 
-
-}*/
+}

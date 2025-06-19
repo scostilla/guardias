@@ -24,7 +24,14 @@
                 Debe confirmar o rechazar la asignación de autoridad.
             </mat-error>
         </mat-form-field> 
-        
+
+        <mat-form-field appearance="fill" *ngIf="autoridadForm.get('confirmado')?.value === false">
+            <mat-label>Motivo del rechazo</mat-label>
+            <input matInput formControlName="motivo" />
+            <mat-error *ngIf="autoridadForm.get('motivo')?.hasError('required')">El campo es obligatorio.</mat-error>
+            <mat-error *ngIf="autoridadForm.get('motivo')?.hasError('maxlength')">Máximo 50 caracteres permitidos.</mat-error>
+        </mat-form-field>
+      
         <div mat-dialog-actions class="action mt-4">
             <button mat-raised-button color="primary" type="submit" [disabled]="!autoridadForm.valid || !isModified()">
                 {{data ? 'Modificar' : 'Asignar como autoridad'}}

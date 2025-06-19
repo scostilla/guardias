@@ -3,14 +3,11 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
 import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 
 //Services
 
@@ -38,18 +35,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   usuarios: Usuario[] = [];
 
-  //Autenticación
-  isLogged = false;
-  roles: string[] =[];
-  isAutoridad: boolean = false;
-  isAdministrativo: boolean = false;
-  isUsuario: boolean = false;
-  isDph: boolean = false;
-  isSuper: boolean = false;
-  userId: number | null = null;
-  usuarioPersona: number | null = null;
-  currentRole: string | null = null;
-
   nombresRoles: { [key: string]: string } = {
     'ROLE_ADMIN': 'Administrativo',
     'ROLE_USER': 'Usuario',
@@ -61,8 +46,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private router: Router,
-    private tokenService: TokenService,
     private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -78,59 +61,11 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     };
   }
 
-  ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
-  
-    // BehaviorSubject para obtener el rol seleccionado
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();  // Llamar a la función que determina los roles
-    });
-  
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-  
-          // Log para mostrar el usuario y los efectores
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-  
+  ngOnInit(): void {  
     this.listUsuarios();
     this.suscription = this.authService.refresh$.subscribe(() => {
       this.listUsuarios();
     })
-  }
-
-  // Roles a usar
-  UserRoles(): void {
-    if (this.currentRole) {
-      this.isUsuario = this.currentRole === 'ROLE_USER';
-      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
-      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
-      this.isDph = this.currentRole === 'ROLE_DPH';
-      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
-    } else {
-      // Si no hay rol seleccionado, todos como false
-      this.isAdministrativo = false;
-      this.isUsuario = false;
-      this.isDph = false;
-      this.isSuper = false;
-    }
   }
 
   accentFilter(input: string): string {

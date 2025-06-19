@@ -3,13 +3,12 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
-import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 
@@ -19,14 +18,12 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./asistencial-selector.component.css']
 })
 export class AsistencialSelectorComponent implements OnInit {
-  /* @ViewChild(MatTable) table!: MatTable<Asistencial>; */
   @ViewChild(MatTable) table!: MatTable<AsistencialSummaryDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dataSource = new MatTableDataSource<AsistencialSummaryDto>([]);
   displayedColumns: string[] = ['apellido', 'nombre', 'cuil', 'profesion'];
-  //selectedType: string = 'asistencial'; // Asistencial es seleccionado por defecto
 
   suscription!: Subscription;
   efectorId: number | null = null;
@@ -37,9 +34,9 @@ export class AsistencialSelectorComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private asistencialService: AsistencialService,
-    private noAsistencialService: NoAsistencialService,
     private habilitacionesGuardiasService: HabilitacionesGuardiasService,
     public dialogRef: MatDialogRef<AsistencialSelectorComponent>,
+    private router: Router,
     private efectorService: EfectorService,
     private paginatorIntl: MatPaginatorIntl
   ) {
@@ -57,13 +54,6 @@ export class AsistencialSelectorComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // Cargar la lista según el tipo seleccionado
-    /*setTimeout(() => {
-      this.loadDataByType(this.selectedType);
-    });*/
-    /* this.asistencialService.list().subscribe(data => {
-      this.dataSource.data = data;
-    }); */
     this.loadAsistenciales();
 
     this.efectorId = this.efectorService.getCurrentEfectorId();
@@ -73,22 +63,6 @@ export class AsistencialSelectorComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  /*/ Método que se ejecuta al cambiar entre Asistencial y NoAsistencial
-  onTypeChange(event: any): void {
-    this.selectedType = event.value;
-    this.loadDataByType(this.selectedType);
-  }*/
-
-    /*// Cargar la lista de asistenciales o noAsistenciales según el tipo
-  loadAsistenciales(): void {
-    const { idEfector, tipoGuardia } = this.data;
-      this.asistencialService.listByEfectorAndTG(idEfector, tipoGuardia).subscribe(data => {
-        this.dataSource.data = data;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      });
-  }
-  */
 
   loadAsistenciales(): void {
   const { idEfector, tipoGuardia } = this.data;
@@ -111,9 +85,7 @@ export class AsistencialSelectorComponent implements OnInit {
     });
   }
 }
-
-
-    
+   
   //trae el nombre del efector esta en sesion que filtra lo mostrado
   loadEfectorName(): void {
     if (this.efectorId) {
@@ -125,6 +97,7 @@ export class AsistencialSelectorComponent implements OnInit {
         (error) => {
           console.error('Error al obtener el efector:', error);
           this.efectorNombre = null;
+          this.router.navigateByUrl('/home-page');
         }
       );
     }
@@ -150,10 +123,6 @@ export class AsistencialSelectorComponent implements OnInit {
 
    // Selecciona una persona (Asistencial o NoAsistencial)
   selectPersona(persona: AsistencialSummaryDto): void {
-    // Verifica que el objeto tenga la estructura correcta
-    //console.log('Selected Persona:', persona);
-  
-    // Cierra el diálogo y pasa el objeto `asistencial` al componente padre
     this.dialogRef.close(persona);
   }
 

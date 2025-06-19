@@ -106,6 +106,8 @@ import { RegistroActividadesEgresoComponent } from './components/actividades/reg
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
+import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
+import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 
@@ -257,7 +259,7 @@ const routes: Routes = [
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"home-autoridad", component:HomeAutoridadComponent},
-  {path: 'configuracion', component:ConfiguracionComponent},
+  {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'login', component:LoginComponent},
 
   //Configuraciones: Generales
@@ -312,7 +314,7 @@ const routes: Routes = [
   {path: 'person-edit', component: PersonEditComponent },
   {path: 'revista', component: RevistaComponent},
   {path: 'revista-edit/:id', component: RegionEditComponent},
-  {path: 'usuario', component:UsuarioComponent},
+  {path: 'usuario', component:UsuarioComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'usuario-detail/:id', component:UsuarioDetailComponent},
   {path: 'usuario-edit/:id', component:UsuarioEditComponent},
   
@@ -352,10 +354,14 @@ const routes: Routes = [
 
   //Sección: Actividades
   {path:"registro-diario",component: RegistroDiarioComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent},
   {path:"registro-actividades",component: RegistroActividadesComponent},
   {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path:"registro-actividades-egreso", component: RegistroActividadesEgresoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
+
+  {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+
   {path:"registro-actividades-e", component: RegistroActividadesEComponent },
   {path:'dist-horaria', component:DistHorariaComponent},
   {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
@@ -367,7 +373,7 @@ const routes: Routes = [
   {path: 'personal', component:PersonalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent},
+  {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-externo', component:PersonalExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-legajo', component:PersonalLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'personal-legajo-no-asistencial', component:PersonalLegajoNoAsistencialComponent},
@@ -381,12 +387,12 @@ const routes: Routes = [
   {path: 'asistencial', component:AsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
   {path: 'asistencial-edit', component:AsistencialEditComponent},
-  {path: 'no-asistencial', component:NoAsistencialComponent},
+  {path: 'no-asistencial', component:NoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
   {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
   {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
   {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
-  {path: 'externo', component:ExternoComponent},
+  {path: 'externo', component:ExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
 
   {path: 'personal-dh', component:PersonalDhComponent},
   {path: 'personal-dh-edit', component:PersonalDhEditComponent},
@@ -409,7 +415,7 @@ const routes: Routes = [
 
 
   //Sección: Cronograma
-  {path: 'cronograma', component:CronogramaComponent},
+  {path: 'cronograma', component:CronogramaComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path: 'cronograma-pendiente', component:CronogramaPendienteComponent},
   {path: 'cronograma-pendiente-detail', component:CronogramaPendienteDetailComponent},
   {path: 'cronograma-create', component:CronogramaCreateComponent},
@@ -427,14 +433,14 @@ const routes: Routes = [
 
 
   //Sección: Guardias
-  {path:'guardias-view', component: GuardiasViewComponent},
+  {path:'guardias-view', component: GuardiasViewComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path:'guardias-view-p', component: GuardiasViewPComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
-  {path:'ddjj-extra',component:DdjjExtraComponent},
+  {path:'ddjj-extra',component:DdjjExtraComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path:'ddjj-extra-detail',component:DdjjExtraDetailComponent},
-  {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent},
-  {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent},
+  {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
+  {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path:'ddjj-cargoyagrup-detail',component:DdjjCargoyagrupDetailComponent},
   {path:'ddjj-extra-tot',component:DdjjExtraTotComponent},
   {path:'ddjj-extra-tot-rec',component:DdjjExtraTotRecComponent},

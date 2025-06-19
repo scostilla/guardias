@@ -17,14 +17,16 @@ import { RegistrosPendientes } from 'src/app/models/RegistrosPendientes';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegSalidaDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 
 @Component({
-  selector: 'app-registro-actividades-egreso',
-  templateUrl: './registro-actividades-egreso.component.html',
-  styleUrls: ['./registro-actividades-egreso.component.css']
+  selector: 'app-registro-actividades-egreso-profesional',
+  templateUrl: './registro-actividades-egreso-profesional.component.html',
+  styleUrls: ['./registro-actividades-egreso-profesional.component.css']
 })
 
-export class RegistroActividadesEgresoComponent implements OnInit {
+export class RegistroActividadesEgresoProfesionalComponent implements OnInit {
   registroForm: FormGroup;
   tiposGuardias: TipoGuardia[] = [];
   asistenciales: Asistencial[] = [];
@@ -44,6 +46,8 @@ export class RegistroActividadesEgresoComponent implements OnInit {
   isAutoridad: boolean = false;
   userId: number | null = null;
   idPersona: number | null = null;
+  nombrePersona: string | null = null;
+  apellidoPersona: string | null = null;
   currentRole: string | null = null;
 
   registrosPendientes: RegistrosPendientes[] = [];
@@ -60,6 +64,7 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog,
     private tokenService: TokenService,
+    private authService: AuthService,
     private efectorService: EfectorService,
   ) {
     //const fechaActual = new Date();
@@ -68,17 +73,23 @@ export class RegistroActividadesEgresoComponent implements OnInit {
     //this.anioActual = fechaActual.getFullYear();
 
     this.currentDate = new Date();
-    // Inicializar formulario
+      const now = new Date();
+      const fechaFormateada = now.toLocaleDateString('es-AR'); // esto da DD/MM/AAAA
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const horaFormateada = `${hours}:${minutes}`;
+
+      // Inicializar formulario
     this.registroForm = this.fb.group({
       idTipoGuardia: ['', Validators.required],
-      idAsistencial: ['', Validators.required],
+      idAsistencial: [null, Validators.required],
       idEfector: [''],
       fechaIngreso: ['', Validators.required],
       eventStartTime: ['', Validators.required],
       idRegistroActividad: [''],
-      fechaEgreso: [Validators.required],
+      fechaEgreso: [fechaFormateada, Validators.required],
       //fechaEgreso: [fechaActual, Validators.required],
-      eventEndTime: ['', Validators.required],
+      eventEndTime: [horaFormateada, Validators.required],
       idServicio: [''],
       idUsuarioIngreso: [''],},
       { validators: this.validarFechaEgresoMayorOIgual() });
@@ -86,32 +97,48 @@ export class RegistroActividadesEgresoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Obtener el ID efector del servicio
+    // Obtener el ID del efector actual
     this.efectorId = this.efectorService.getCurrentEfectorId();
-      if (this.efectorId) {
-        this.registroForm.patchValue({ idEfector: this.efectorId });
-        this.loadEfectorName();
-        this.listTiposGuardias();
-        /*this.listAsistenciales();*/
-      } else {
-        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+    if (this.efectorId) {
+      this.registroForm.patchValue({ idEfector: this.efectorId });
+      this.loadEfectorName();
+      this.listTiposGuardias();
+    } else {
+      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
         timeOut: 5000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
       this.router.navigateByUrl('/home-page');
+      return; // detener ejecución
     }
-  
-    // Obtener rol actual
+
+    // Obtener el rol actual y establecer flags
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();
-
-      if (!this.currentRole) {
-        console.warn('No hay un rol seleccionado actualmente.');
-      }
     });
 
+    // Obtener los datos de la persona
+this.authService.detailPersonBasicPanel().subscribe((personDto: PersonBasicPanelDto) => {
+  this.idPersona = personDto.id;
+  this.nombrePersona = personDto.nombre;
+  this.apellidoPersona = personDto.apellido;
+
+  // Mostrar en el input readonly
+  this.inputValue = `${this.apellidoPersona} ${this.nombrePersona}`;
+
+  // Guardar el ID en el formulario
+  this.registroForm.patchValue({
+    idAsistencial: this.idPersona
+  });
+
+      // Si querés cargar registros pendientes, hacelo después de tener el ID
+      this.cargarRegistrosPendientes(this.idPersona!);
+    });
+
+    const userIdFromToken = this.tokenService.getUserIdFromToken();
+    this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
   }
 
   // Roles a usar
@@ -194,7 +221,7 @@ validarFechaEgresoMayorOIgual() {
     });
   }*/
 
-  onTipoGuardiaChange(event: any): void {
+  /*onTipoGuardiaChange(event: any): void {
     console.log("Tipo de guardia seleccionado:", event.value);
     const nuevoTipoGuardia = event.value;
     // Cambiar el tipo de guardia y borrar solo los campos relacionados
@@ -209,9 +236,9 @@ validarFechaEgresoMayorOIgual() {
     // Actualizar el tipo de guardia en el formulario
     this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
 
-  }
+  }*/
 
-  openAsistencialDialog(): void {
+  /*openAsistencialDialog(): void {
     console.log("Datos enviados al diálogo:", {
       idEfector: this.efectorId,
       tipoGuardia: this.registroForm.get('idTipoGuardia')?.value.nombre,
@@ -252,11 +279,11 @@ validarFechaEgresoMayorOIgual() {
       });
       console.error('Error al abrir el diálogo de carga de profesional:', error);
     });
-  }
+  }*/
 
-  cargarRegistrosPendientes(asistencialId: number): void {
+  cargarRegistrosPendientes(idPersona: number): void {
 
-    this.registroActividadService.getRegActivPendiente(asistencialId, this.efectorId!).subscribe({
+    this.registroActividadService.getRegActivPendiente(idPersona, this.efectorId!).subscribe({
       next: (registro) => {
         if (registro != null) {
 
@@ -278,23 +305,24 @@ validarFechaEgresoMayorOIgual() {
 
     // Guardar el ID del registro para usarlo luego
     this.idRegistroActividad = registro.id;
+
+    const fechaIngreso = new Date(registro.fechaIngreso);
+    const fechaFormateada = fechaIngreso.toLocaleDateString('es-AR'); // Devuelve DD/MM/AAAA
     
-    // Divide solo en 2 partes (HH y mm)
-    const [hours, minutes] = registro.horaIngreso.split(':');
 
     // Obtener el tipo de guardia seleccionado actualmente
     //const tipoGuardiaActual = this.registroForm.get('idTipoGuardia')?.value;
 
-    this.registroForm.patchValue({
-      idRegistroActividad: registro.id,
-      //horaFormateada,
-      fechaIngreso: registro.fechaIngreso,
-      eventStartTime: `${hours}:${minutes}`, // Formato HH:mm
-      idEfector: registro.idEfector,
-      idServicio: registro.idServicio,
-      idUsuarioIngreso: registro.idUsuarioIngreso
-    });
-
+      this.registroForm.patchValue({
+        idRegistroActividad: registro.id,
+        fechaIngreso: fechaFormateada,
+        eventStartTime: registro.horaIngreso,
+        idEfector: registro.idEfector,
+        idServicio: registro.idServicio,
+        idUsuarioIngreso: registro.idUsuarioIngreso,
+        idTipoGuardia: registro.idTipoGuardia,
+        idAsistencial: registro.idAsistencial,
+      });
     console.log('Formulario después de patch:', this.registroForm.value);
 
     /*  // Deshabilitar campos de ingreso (ya que son datos históricos)
@@ -363,63 +391,73 @@ validarFechaEgresoMayorOIgual() {
    }
   */
 
-  saveRegistro(): void {
-    console.log('Estado del formulario:', this.registroForm.status);
-    const formValue = this.registroForm.getRawValue(); // Usar getRawValue() para incluir campos disabled
-    console.log('Valores del formulario (raw):', formValue);
+  getNombreTipoGuardia(): string {
+    const idTipoGuardia = this.registroForm.get('idTipoGuardia')?.value;
+    const tipo = this.tiposGuardias.find(t => t.id === idTipoGuardia);
+    return tipo ? tipo.nombre : '';
+  }
 
-    if (this.registroForm.valid && this.idRegistroActividad) {
-      
-      // Verificar que tenemos el tipo de guardia
-      if (!formValue.idTipoGuardia || !formValue.idTipoGuardia.id) {
-        this.toastr.error('Debe seleccionar un tipo de guardia válido');
-        return;
-      }
-      // Divide solo en 2 partes (HH y mm)
-      const horaFormateada = formValue.fechaIngreso.split(':').slice(0, 2).join(':');
+saveRegistro(): void {
+  console.log('Estado del formulario:', this.registroForm.status);
+  const formValue = this.registroForm.getRawValue(); // Incluye campos deshabilitados
+  console.log('Valores del formulario (raw):', formValue);
 
-      // Crear DTO con los IDs numéricos necesarios
-      const registroSalidaDto = new RegistroActividadDto(
-        formValue.fechaIngreso,
-        formValue.fechaEgreso,
-        formValue.eventStartTime,
-        formValue.eventEndTime,
-        formValue.idTipoGuardia.id, // Solo el ID numérico
-        true,
-        formValue.idAsistencial,
-        formValue.idServicio,
-        formValue.idEfector,
-        formValue.idUsuarioIngreso,
-        this.userId!
-      );
+  if (this.registroForm.valid && this.idRegistroActividad) {
 
-      console.log('Enviando a registrarSalida:', {
-        id: this.idRegistroActividad,
-        dto: registroSalidaDto
+    // Validación extra de tipo de guardia
+    if (!formValue.idTipoGuardia) {
+      this.toastr.error('Debe seleccionar un tipo de guardia válido');
+      return;
+    }
+    // 🟢 Convertir fechaIngreso (DD/MM/AAAA) a ISO (YYYY-MM-DD)
+    const [dia, mes, anio] = formValue.fechaIngreso.split('/');
+    const fechaIngresoDate = new Date(+anio, +mes - 1, +dia);
+
+    const [diaEg, mesEg, anioEg] = formValue.fechaEgreso.split('/');
+    const fechaEgresoDate = new Date(+anioEg, +mesEg - 1, +diaEg);
+
+    // Crear DTO
+    const registroSalidaDto = new RegistroActividadDto(
+      fechaIngresoDate,
+      fechaEgresoDate,
+      formValue.eventStartTime,
+      formValue.eventEndTime,
+      formValue.idTipoGuardia,
+      true,
+      formValue.idAsistencial,
+      formValue.idServicio,
+      formValue.idEfector,
+      formValue.idUsuarioIngreso,
+      this.userId!
+    );
+
+    console.log('Enviando a registrarSalida:', {
+      id: this.idRegistroActividad,
+      dto: registroSalidaDto
     });
 
-
-      this.registroActividadService.registrarSalida(
-        this.idRegistroActividad,
-        registroSalidaDto
-      ).subscribe({
-        next: () => {
-          this.toastr.success('Salida registrada correctamente', 'Éxito', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
+    this.registroActividadService.registrarSalida(
+      this.idRegistroActividad,
+      registroSalidaDto
+    ).subscribe({
+      next: () => {
+        this.toastr.success('Salida registrada correctamente', 'Éxito', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
         });
-          this.router.navigate(['/registro-diario']);
-        },
-        error: (err) => {
-          console.error('Error en la petición:', err);
-          this.toastr.error('Error al registrar salida');
-        }
-      });
-    } else {
-      this.toastr.warning('Complete todos los campos obligatorios');
-    }
+        this.router.navigate(['/registro-diario']);
+      },
+      error: (err) => {
+        console.error('Error en la petición:', err);
+        this.toastr.error('Error al registrar salida');
+      }
+    });
+
+  } else {
+    this.toastr.warning('Complete todos los campos obligatorios');
   }
+}
 
 
   isModified(): boolean {

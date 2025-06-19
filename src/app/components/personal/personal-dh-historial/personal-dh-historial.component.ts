@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { Subscription, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';  // Si tienes este servicio
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { DistribucionGuardiaService } from 'src/app/services/personal/distribucionGuardia.service';
 import { DistribucionGuardia } from 'src/app/models/personal/DistribucionGuardia';
 import { DistribucionConsultorioService } from 'src/app/services/personal/distribucionConsultorio.service';
@@ -21,39 +21,79 @@ import * as moment from 'moment';
 
 // Interfaz temporal para agrupar las horas por día y calcular totales
 interface DistribucionGuardiaWithHoras extends DistribucionGuardia {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
-  totalHorasFinDeSemana: number;  // Total horas sábado y domingo
-  totalHorasLunesAViernes: number;  // Total horas lunes a viernes
-  totalHoras: number;  // Total de todas las horas
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
+  totalHorasFinDeSemana: number;
+  totalHorasLunesAViernes: number;
+  totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface DistribucionConsultorioWithHoras extends DistribucionConsultorio {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
   totalHorasFinDeSemana: number;
   totalHorasLunesAViernes: number;
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface DistribucionGiraWithHoras extends DistribucionGira {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
   totalHorasFinDeSemana: number;
   totalHorasLunesAViernes: number;
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface DistribucionOtroWithHoras extends DistribucionOtro {
-  horasPorDia: { [key: string]: { horas: string; tooltip: string }[] };
+  horasPorDia: { 
+    [key: string]: { 
+      horas: string; 
+      tooltip: string;
+      fechaInicio: Date;
+      fechaFin: Date;
+    }[] 
+  };
   totalHorasFinDeSemana: number;
   totalHorasLunesAViernes: number;
   totalHoras: number;
   totalHorasSinOcurrencias: number;
   clase?: string;
+  totalHorasLunesAViernesTexto?: string;
+  totalHorasFinDeSemanaTexto?: string;
+  totalHorasTexto?: string;
 }
 
 interface Tipos {
@@ -90,17 +130,16 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
   hasGiraDistributions: boolean = false;
   hasOtroDistributions: boolean = false;
 
-
   // Variables para el selector de mes y año
   mesYanio: string = ''; // MM-YYYY
   mesesDisponibles: { value: string, label: string }[] = [];
   nombreMes: string = '';
-  anioSeleccionado: number = 0;
-  mesSeleccionado: number = 0;
-
+  anioSeleccionado!: number;
+  mesSeleccionado!: number;
 
   showDetails: boolean = false;
   showTable = false;
+  noHayDistribuciones: boolean = false;
 
   cargaHoraria: number | undefined;
   mensajeCargaHoraria: string | null = null;
@@ -115,7 +154,7 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
   'VIERNES': 'viernes',
   'SABADO': 'sábado',
   'DOMINGO': 'domingo'
-  };
+};
 
   tipos: Tipos[] = [
     { value: 'PASE_DE_SALA', viewValue: 'Pase de sala' },
@@ -136,19 +175,17 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     private novedadPersonalService: NovedadPersonalService
   ) { }
 
-    ngOnInit(): void {
-      this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
-        if (id === null) {
-          this.location.back();
-          return;
-        }
-      
-        // ✅ 2. Usar el ID para buscar el objeto asistencial
-        this.asistencialService.detail(id).subscribe({
-          next: (asistencial) => {
-            this.asistencial = asistencial;
-
-          // Inicializar el mes y año actual
+  ngOnInit(): void {
+    this.suscription = this.asistencialService.currentAsistencialId$.subscribe(id => {
+      if (id === null) {
+        this.location.back();
+        return;
+      }
+    
+      this.asistencialService.detail(id).subscribe({
+        next: (asistencial) => {
+          this.asistencial = asistencial;
+    
           const fechaActual = moment();
           const fechaAnterior = fechaActual.clone().subtract(1, 'months');
           
@@ -156,17 +193,13 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
           this.nombreMes = fechaAnterior.format('MMMM').toUpperCase();  // Nombre del mes
           this.anioSeleccionado = fechaAnterior.year();  // Año actual
           this.mesSeleccionado = fechaAnterior.month() + 1;  // Mes actual (1-12)
+
     
-          this.generarMesesDisponibles();  // Generar meses disponibles
-    
-          // Cargar distribuciones y novedades
+          this.generarMesesDisponibles();
           this.loadDistribuciones();
           this.loadNovedades();
           this.loadCargaHoraria();
-    
-          // Verificar distribuciones después de cargar los datos
           this.verificarDistribuciones();
-        
         },
         error: (err) => {
           console.error('No se pudo obtener el asistencial por ID:', err);
@@ -174,9 +207,35 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
         }
       });
     });
-    }
-  
+  }  
 
+  /*ngOnInit(): void {
+    this.suscription = this.asistencialService.currentAsistencial$.subscribe(asistencial => {
+      this.asistencial = asistencial;
+      //console.log('Asistencial recibido:', this.asistencial);
+  
+      if (!this.asistencial?.id) {
+        this.location.back();
+      } else {
+        // Inicializar el mes y año actual
+        const fechaActual = moment();
+        this.mesYanio = `${fechaActual.month() + 1}-${fechaActual.year()}`;  // Formato MM-YYYY
+        this.nombreMes = fechaActual.format('MMMM').toUpperCase();  // Nombre del mes
+        this.anioSeleccionado = fechaActual.year();  // Año actual
+        this.mesSeleccionado = fechaActual.month() + 1;  // Mes actual (1-12)
+  
+        this.generarMesesDisponibles();  // Generar meses disponibles
+  
+        // Cargar distribuciones y novedades
+        this.loadDistribuciones();
+        this.loadNovedades();
+        this.loadCargaHoraria();
+  
+        // Verificar distribuciones después de cargar los datos
+        this.verificarDistribuciones();
+      }
+    });
+  }*/
 
   // Función para combinar los datos y aplicar la agregación
   getCombinedData() {
@@ -192,7 +251,7 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
       ...combinedDataOtro
     ];
   
-    console.log('Combined Data:', combinedData);  // Verifica la estructura de los datos combinados
+    //console.log('Combined Data:', combinedData);  // Verifica la estructura de los datos combinados
   
     return combinedData; // Si está vacío, no se mostrará la tabla
   }
@@ -203,8 +262,8 @@ export class PersonalDhHistorialComponent implements OnInit, OnDestroy {
     }
   }
 
-// Función para generar los meses disponibles (6 meses hacia atrás, comenzando desde el mes anterior)
-generarMesesDisponibles(): void {
+  // Función para generar los meses disponibles (6 meses hacia atrás)
+  generarMesesDisponibles(): void {
   const fechaActual = moment();
   const mesesAnteriores = [];
 
@@ -218,8 +277,8 @@ generarMesesDisponibles(): void {
   }
 
   this.mesesDisponibles = mesesAnteriores; // Mostramos los meses desde el pasado hasta el mes anterior
-  console.log('Meses disponibles:', this.mesesDisponibles);
 }
+
 
   resetData(): void {
     this.distribucionesGuardia = [];
@@ -268,88 +327,192 @@ generarMesesDisponibles(): void {
     // Verificar distribuciones para cada tipo
     this.distribucionGuardiaService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasGuardiaDistributions = distribuciones.length > 0;
+        this.hasGuardiaDistributions = (distribuciones && distribuciones.length > 0) || false;
+      },
+      (error) => {
+        // Manejo de error
+        console.error('Error al obtener distribuciones de Guardia:', error);
+        this.hasGuardiaDistributions = false;
       }
     );
   
     this.distribucionConsultorioService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasConsultorioDistributions = distribuciones.length > 0;
+        this.hasConsultorioDistributions = (distribuciones && distribuciones.length > 0) || false;
+      },
+      (error) => {
+        // Manejo de error
+        console.error('Error al obtener distribuciones de Consultorio:', error);
+        this.hasConsultorioDistributions = false;
       }
     );
   
     this.distribucionGiraService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasGiraDistributions = distribuciones.length > 0;
+        this.hasGiraDistributions = (distribuciones && distribuciones.length > 0) || false;
+      },
+      (error) => {
+        // Manejo de error
+        console.error('Error al obtener distribuciones de Gira:', error);
+        this.hasGiraDistributions = false;
       }
     );
   
     this.distribucionOtroService.getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio).subscribe(
       (distribuciones) => {
-        this.hasOtroDistributions = distribuciones.length > 0;
+        this.hasOtroDistributions = (distribuciones && distribuciones.length > 0) || false;
+      },
+      (error) => {
+        // Manejo de error
+        console.error('Error al obtener distribuciones de Otro:', error);
+        this.hasOtroDistributions = false;
       }
     );
   }
-
+  
   loadDistribuciones(): void {
     if (!this.asistencial) return;
     
-    this.showTable = false
-
-    this.loadDistribucionGuardia();
-    this.loadDistribucionConsultorio();
-    this.loadDistribucionGira();
-    this.loadDistribucionOtro();
+    // Usar promesas para esperar que todas las distribuciones se hayan cargado
+    Promise.all([
+      this.loadDistribucionGuardia(),
+      this.loadDistribucionConsultorio(),
+      this.loadDistribucionGira(),
+      this.loadDistribucionOtro()
+    ]).then(() => {
+      this.getCombinedData(); // Llamamos a la agregación después de cargar todos los datos
+      this.checkLoadingState(); // Verificamos si los datos están completos
+    }).catch(error => {
+      console.error("Error al cargar distribuciones", error);
+    });
   }
-  
+    
   // Cargar distribuciones por tipo y aplicar filtro
   loadDistribucionGuardia(): void {
-    this.distribucionGuardiaService.getDistribucionesGuardiaByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGuardia[]) => {
-      this.distribucionesGuardia = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionGuardiaService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionGuardia[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesGuardia = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de guardia:', error);
+        this.distribucionesGuardia = [];
+        this.checkLoadingState();
+      });
   }
   
   loadDistribucionConsultorio(): void {
-    this.distribucionConsultorioService.getDistribucionesConsultorioByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionConsultorio[]) => {
-      this.distribucionesConsultorio = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionConsultorioService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionConsultorio[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesConsultorio = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de consultorio:', error);
+        this.distribucionesConsultorio = [];
+        this.checkLoadingState();
+      });
   }
   
   loadDistribucionGira(): void {
-    this.distribucionGiraService.getDistribucionesGiraByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionGira[]) => {
-      this.distribucionesGira = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionGiraService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionGira[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesGira = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de gira:', error);
+        this.distribucionesGira = [];
+        this.checkLoadingState();
+      });
   }
   
   loadDistribucionOtro(): void {
-    this.distribucionOtroService.getDistribucionesOtroByPersona(this.asistencial!.id!).subscribe((distribuciones: DistribucionOtro[]) => {
-      this.distribucionesOtro = this.filterDistribucionesPorMes(distribuciones);
-      this.checkLoadingState();
-      this.setupColumns();
-    });
+    if (!this.asistencial || !this.mesYanio || !this.anioSeleccionado) return;
+
+    const mes = parseInt(this.mesYanio.split('-')[0], 10);
+    const anio = parseInt(this.anioSeleccionado.toString(), 10);
+
+    this.distribucionOtroService
+      .getDistribucionesByActivoPersonaAndFechaInicio(this.asistencial.id!, mes, anio)
+      .subscribe((distribuciones: DistribucionOtro[]) => {
+        const data = distribuciones ?? [];
+        this.distribucionesOtro = data.map(d => ({
+          ...d,
+          horasPorDia: {},
+          totalHoras: 0,
+          totalHorasFinDeSemana: 0,
+          totalHorasLunesAViernes: 0,
+          totalHorasSinOcurrencias: 0,
+          clase: ''
+        }));
+        this.checkLoadingState();
+        this.setupColumns();
+      }, error => {
+        console.error('Error al cargar distribuciones de otro:', error);
+        this.distribucionesOtro = [];
+        this.checkLoadingState();
+      });
   }
 
     // Método para verificar el estado de carga
     checkLoadingState() {
-      if (
-        !this.distribucionesGuardia.length &&
-        !this.distribucionesConsultorio.length &&
-        !this.distribucionesGira.length &&
-        !this.distribucionesOtro.length
-      ) {
-        this.showTable = false; // No mostrar la tabla si no hay datos
-      } else {
-        this.showTable = true; // Mostrar la tabla si hay datos
-      }
+      // Verificar si alguna de las distribuciones tiene elementos
+      const hayDatos = this.distribucionesGuardia.length > 0 || 
+                       this.distribucionesConsultorio.length > 0 || 
+                       this.distribucionesGira.length > 0 || 
+                       this.distribucionesOtro.length > 0;
+    
+      this.showTable = hayDatos;
+      this.noHayDistribuciones = !hayDatos;
     }
-
-    // Filtrar distribuciones por mes
+    
+    /*/ Filtrar distribuciones por mes
     filterDistribucionesPorMes(distribuciones: any[]): any[] {
       // Convertir el mes y año seleccionados en números
       const mesYanio = parseInt(this.mesYanio.split('-')[0], 10) - 1; // Restar 1 porque los meses en moment.js son 0-based
@@ -362,42 +525,77 @@ generarMesesDisponibles(): void {
         // Filtrar las distribuciones por el mes y año seleccionados
         return fechaInicio.month() === mesYanio && fechaInicio.year() === anioSeleccionado;
       });
-    }
+    }*/
     
   // Función para configurar las columnas dinámicas
-  setupColumns(): void {
-    if (!this.distribucionesGuardia.length) return;
-    const fechaInicio = this.distribucionesGuardia[0].fechaInicio;
-    const startOfMonth = moment(fechaInicio).startOf('month');
-    const endOfMonth = moment(fechaInicio).endOf('month');
-    const daysInMonth = endOfMonth.diff(startOfMonth, 'days') + 1;
-    const columns: string[] = ['clase', 'totalHoras', 'totalHorasFinDeSemana', 'totalHorasLunesAViernes'];
-    for (let i = 0; i < daysInMonth; i++) {
-      columns.push(startOfMonth.clone().add(i, 'days').format('YYYY_MM_DD'));
-    }
-    this.displayedColumns = columns;
+setupColumns(): void {
+  const todasLasDistribuciones = [
+    ...this.distribucionesGuardia,
+    ...this.distribucionesConsultorio,
+    ...this.distribucionesGira,
+    ...this.distribucionesOtro
+  ];
+
+  if (todasLasDistribuciones.length === 0) return;
+
+  // Obtener el rango completo de fechas
+  const fechasInicio = todasLasDistribuciones.map(d => moment(d.fechaInicio));
+  const fechasFin = todasLasDistribuciones.map(d => moment(d.fechaFinalizacion ?? d.fechaInicio));
+
+  const minFecha = moment.min(fechasInicio).startOf('day');
+  const maxFecha = moment.max(fechasFin).endOf('day');
+
+  // Asegurarse de que el rango cubre todo el mes seleccionado
+  const mes = this.mesYanio ? parseInt(this.mesYanio.split('-')[0], 10) : moment().month() + 1;
+  const anio = this.anioSeleccionado || moment().year();
+  
+  const inicioMes = moment(`${anio}-${mes}-01`, 'YYYY-M-DD');
+  const finMes = moment(inicioMes).endOf('month');
+
+  // Usar el rango más amplio (entre el mes completo y las fechas de las distribuciones)
+  const fechaInicioMostrar = moment.min(inicioMes, minFecha);
+  const fechaFinMostrar = moment.max(finMes, maxFecha);
+
+  const daysRange = fechaFinMostrar.diff(fechaInicioMostrar, 'days') + 1;
+
+  const columns: string[] = ['clase', 'totalHoras', 'totalHorasFinDeSemana', 'totalHorasLunesAViernes'];
+
+  for (let i = 0; i < daysRange; i++) {
+    columns.push(fechaInicioMostrar.clone().add(i, 'days').format('YYYY_MM_DD'));
   }
 
-  getFechaFromColumnId(columnId: string): string {
-    const fecha = moment(columnId, 'YYYY_MM_DD').toDate();
+  this.displayedColumns = columns;
+}
+  
+getFechaFromColumnId(columnId: string): string {
+  const fecha = moment(columnId, 'YYYY_MM_DD').toDate();
     return fecha ? fecha.toISOString().split('T')[0] : '';
-  }
+ }
 
-getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsultorioWithHoras | DistribucionGiraWithHoras | DistribucionOtroWithHoras, fechaColumna: string): { horas: string, tooltip: string, showDetails: boolean }[] {
-  const diaColumn = moment(fechaColumna, 'YYYY_MM_DD').format('dddd').toLowerCase();
-  const horasPorDia = distribucion.horasPorDia;
-  if (horasPorDia[diaColumn]) {
-    // Si ya existe un arreglo de horas para el día, devolver todas las entradas
-    return horasPorDia[diaColumn].map(entry => ({
-      ...entry,
-      showDetails: this.showDetails // El valor de `showDetails` controla si se muestran los detalles
-    }));
-  } else {
-    return []; // Si no hay horas para ese día, devolver un arreglo vacío
+getHorasForDate(
+  distribucion: DistribucionGuardiaWithHoras, 
+  fechaColumna: string
+): { horas: string, tooltip: string, showDetails: boolean }[] {
+  const fechaMoment = moment(fechaColumna, 'YYYY_MM_DD');
+  const diaColumn = fechaMoment.format('dddd').toLowerCase();
+  
+  if (distribucion.horasPorDia[diaColumn]) {
+    return distribucion.horasPorDia[diaColumn]
+      .filter(entry => {
+        const entryInicio = moment(entry.fechaInicio);
+        const entryFin = moment(entry.fechaFin);
+        return fechaMoment.isBetween(entryInicio, entryFin, 'day', '[]');
+      })
+      .map(entry => ({
+        horas: entry.horas,
+        tooltip: entry.tooltip,
+        showDetails: this.showDetails
+      }));
   }
+  return [];
 }
 
-  // Función que alterna la visibilidad de los detalles globalmente
+// Función que alterna la visibilidad de los detalles globalmente
   toggleAllDetails(): void {
     this.showDetails = !this.showDetails; // Alterna la visibilidad de los detalles
   }
@@ -412,7 +610,7 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     return novedad ? this.getNovedadClassFromTipo(novedad) : '';
   }
 
-  getNovedadClassFromTipo(novedad: NovedadPersonal): string {
+  getNovedadClassFromTipo(novedad: NovedadPersonal): string {    
     switch (novedad.tipoLicencia.nombre.toLowerCase()) {
       case 'compensatorio': return 'novedad-personal-compensatorio';
       case 'licencia anual ordinaria': return 'novedad-personal-lao';
@@ -420,10 +618,11 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       case 'parte por enfermedad': return 'novedad-personal-parte-enfermo';
       case 'parte por cuidado de familiar enfermo': return 'novedad-personal-familiar-enfermo';
       case 'falta sin aviso': return 'novedad-personal-falta-sin-aviso';
+      case 'duelo': return 'novedad-personal-duelo';
       default: return 'novedad-personal-otros';
     }
   }
-
+  
   // Cargar las novedades personales
   loadNovedades(): void {
     if (this.asistencial) {
@@ -442,232 +641,332 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       });
     }
   }
-  
-  aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): DistribucionGuardiaWithHoras {
-    // Filtrar distribuciones por mes y año
-    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
-    console.log('Distribuciones filtradas para Guardias:', distribucionesFiltradas);
-    
-    if (distribucionesFiltradas.length === 0) {
-      console.log('No hay distribuciones disponibles.');
-      return {} as DistribucionGuardiaWithHoras;
-    }
-  
-    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionGuardiaWithHoras;
-    aggregatedDistribucion.clase = 'Guardias';
-    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
-    let totalHorasFinDeSemana = 0;
-    let totalHorasLunesAViernes = 0;
-    let totalHoras = 0;
-    let totalHorasSinOcurrencias = 0;
-    
-    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
-  
-    distribucionesFiltradas.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
-      if (!dia) {
-        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
-        return;
-      }
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia];
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
 
-      totalHorasSinOcurrencias += horas;
+convertirDecimalAHorasYMinutos(decimal: number): string {
+  const horas = Math.floor(decimal);
+  const minutos = Math.round((decimal - horas) * 60);
 
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
-      }
-  
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-  
-      totalHoras += horasTotalesPorDia;
-    });
-  
-    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
-    aggregatedDistribucion.horasPorDia = horasPorDia;
-    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-    aggregatedDistribucion.totalHoras = totalHoras;
-  
-    console.log('Distribución agregada:', aggregatedDistribucion);
-  
-    return aggregatedDistribucion;
+  if (minutos === 0) {
+    return `${horas}`; // Solo horas si minutos es 0
+  } else {
+    return `${horas}:${minutos.toString().padStart(2, '0')}`;
   }
+}
+  
+aggregateDistribucionesGuardia(distribuciones: DistribucionGuardia[]): DistribucionGuardiaWithHoras {
+  if (!distribuciones.length) return {} as DistribucionGuardiaWithHoras;
+
+  const horasPorDia: { 
+    [key: string]: { 
+      horas: string, 
+      tooltip: string, 
+      fechaInicio: Date, 
+      fechaFin: Date 
+    }[] 
+  } = {};
+
+  let totalHorasFinDeSemana = 0;
+  let totalHorasLunesAViernes = 0;
+  let totalHoras = 0;
+  let totalHorasSinOcurrencias = 0;
+
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día inválido: ${distribucion.dia}`);
+      return;
+    }
+
+    // Calcular cuántas veces ocurre este día específico en el rango
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const tooltip = `${distribucion.tipoGuardia}, ${distribucion.servicio.descripcion}, inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    // Guardar con información de rango
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    // Calcular totales
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
+  });
+
+  // Crear objeto resultante
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Guardias'
+  } as DistribucionGuardiaWithHoras;
+
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+  
+  return aggregatedDistribucion;
+}
+
+aggregateDistribucionesConsultorio(distribuciones: DistribucionConsultorio[]): DistribucionConsultorioWithHoras {
+  if (!distribuciones.length) return {} as DistribucionConsultorioWithHoras;
+
+  const horasPorDia: { [key: string]: { horas: string, tooltip: string, fechaInicio: Date, fechaFin: Date }[] } = {};
+  let totalHorasFinDeSemana = 0;
+  let totalHorasLunesAViernes = 0;
+  let totalHoras = 0;
+  let totalHorasSinOcurrencias = 0;
+
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día inválido: ${distribucion.dia}`);
+      return;
+    }
+
+    // Calcular ocurrencias para este rango específico
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const horasFormato = this.convertirDecimalAHorasYMinutos(horas);
+    const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horasFormato} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horasFormato} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
+  });
+
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Consultorio'
+  } as DistribucionConsultorioWithHoras;
+
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+
+  return aggregatedDistribucion;
+}
+
+aggregateDistribucionesGira(distribuciones: DistribucionGira[]): DistribucionGiraWithHoras {
+  if (!distribuciones.length) return {} as DistribucionGiraWithHoras;
+
+  const horasPorDia: { [key: string]: { horas: string, tooltip: string, fechaInicio: Date, fechaFin: Date }[] } = {};
+  let totalHorasFinDeSemana = 0;
+  let totalHorasLunesAViernes = 0;
+  let totalHoras = 0;
+  let totalHorasSinOcurrencias = 0;
+
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día inválido: ${distribucion.dia}`);
+      return;
+    }
+
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const tooltip = ` inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horas} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
+  });
+
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Giras'
+  } as DistribucionGiraWithHoras;
+
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+
+  return aggregatedDistribucion;
+}
+
+aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtroWithHoras {
+  if (!distribuciones.length) return {} as DistribucionOtroWithHoras;
+
+  const horasPorDia: { [key: string]: { horas: string, tooltip: string, fechaInicio: Date, fechaFin: Date }[] } = {};
+  let totalHorasFinDeSemana = 0;
+  let totalHorasLunesAViernes = 0;
+  let totalHoras = 0;
+  let totalHorasSinOcurrencias = 0;
+
+  distribuciones.forEach(distribucion => {
+    const fechaInicio = moment(distribucion.fechaInicio);
+    const fechaFin = moment(distribucion.fechaFinalizacion ?? distribucion.fechaInicio);
+    const dia = this.mapaDias[distribucion.dia];
+    
+    if (!dia) {
+      console.error(`Día no reconocido: ${distribucion.dia}`);
+      return;
+    }
+
+    let ocurrencias = 0;
+    for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+      if (m.format('dddd').toLowerCase() === dia.toLowerCase()) {
+        ocurrencias++;
+      }
+    }
+
+    const horas = distribucion.cantidadHoras;
+    const horasTotalesPorDia = horas * ocurrencias;
+    const horasFormato = this.convertirDecimalAHorasYMinutos(horas);
+    const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
+    const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
+    const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, inicia: ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
+
+    totalHorasSinOcurrencias += horas;
+
+    if (horasPorDia[dia]) {
+      horasPorDia[dia].push({ 
+        horas: `${horasFormato} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      });
+    } else {
+      horasPorDia[dia] = [{ 
+        horas: `${horasFormato} hs`, 
+        tooltip,
+        fechaInicio: fechaInicio.toDate(),
+        fechaFin: fechaFin.toDate()
+      }];
+    }
+
+    if (dia === 'sábado' || dia === 'domingo') {
+      totalHorasFinDeSemana += horasTotalesPorDia;
+    } else {
+      totalHorasLunesAViernes += horasTotalesPorDia;
+    }
+
+    totalHoras += horasTotalesPorDia;
+  });
+
+  const aggregatedDistribucion = { 
+    ...distribuciones[0],
+    horasPorDia,
+    totalHorasFinDeSemana,
+    totalHorasLunesAViernes,
+    totalHoras,
+    totalHorasSinOcurrencias,
+    clase: 'Otros'
+  } as DistribucionOtroWithHoras;
+
+  aggregatedDistribucion.totalHorasLunesAViernesTexto = this.convertirDecimalAHorasYMinutos(totalHorasLunesAViernes) + ' horas';
+  aggregatedDistribucion.totalHorasFinDeSemanaTexto = this.convertirDecimalAHorasYMinutos(totalHorasFinDeSemana) + ' horas';
+  aggregatedDistribucion.totalHorasTexto = this.convertirDecimalAHorasYMinutos(totalHoras) + ' horas';
+
+  return aggregatedDistribucion;
+}        
       
-  aggregateDistribucionesConsultorio(distribuciones: DistribucionConsultorio[]): DistribucionConsultorioWithHoras {
-    // Filtrar distribuciones por mes y año
-    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
-  
-    if (distribucionesFiltradas.length === 0) {
-      return {} as DistribucionConsultorioWithHoras;
-    }
-  
-    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionConsultorioWithHoras;
-    aggregatedDistribucion.clase = 'Consultorio';
-    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
-    let totalHorasFinDeSemana = 0;
-    let totalHorasLunesAViernes = 0;
-    let totalHoras = 0;
-    let totalHorasSinOcurrencias = 0;
-
-    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
-  
-    distribucionesFiltradas.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
-      if (!dia) {
-        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
-        return;
-      }
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia];
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.tipoConsultorio}, ${distribucion.servicio.descripcion}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-
-      totalHorasSinOcurrencias += horas;
-  
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
-      }
-  
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-      totalHoras += horasTotalesPorDia;
-    });
-  
-    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
-    aggregatedDistribucion.horasPorDia = horasPorDia;
-    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-    aggregatedDistribucion.totalHoras = totalHoras;
-  
-    return aggregatedDistribucion;
-  }
-    
-  aggregateDistribucionesGira(distribuciones: DistribucionGira[]): DistribucionGiraWithHoras {
-    // Filtrar distribuciones por mes y año
-    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
-  
-    if (distribucionesFiltradas.length === 0) {
-      return {} as DistribucionGiraWithHoras;
-    }
-  
-    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionGiraWithHoras;
-    aggregatedDistribucion.clase = 'Giras';
-    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
-    let totalHorasFinDeSemana = 0;
-    let totalHorasLunesAViernes = 0;
-    let totalHoras = 0;
-    let totalHorasSinOcurrencias = 0;
-
-    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
-  
-    distribucionesFiltradas.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
-      if (!dia) {
-        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
-        return;
-      }
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia];
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tooltip = `${distribucion.puestoSalud}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-      
-      totalHorasSinOcurrencias += horas;
-  
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
-      }
-  
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-      totalHoras += horasTotalesPorDia;
-    });
-  
-    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
-    aggregatedDistribucion.horasPorDia = horasPorDia;
-    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-    aggregatedDistribucion.totalHoras = totalHoras;
-  
-    return aggregatedDistribucion;
-  }
-    
-  aggregateDistribucionesOtro(distribuciones: DistribucionOtro[]): DistribucionOtroWithHoras {
-    // Filtrar distribuciones por mes y año
-    const distribucionesFiltradas = this.filterDistribucionesPorMes(distribuciones);
-  
-    if (distribucionesFiltradas.length === 0) {
-      return {} as DistribucionOtroWithHoras;
-    }
-  
-    const aggregatedDistribucion = { ...distribucionesFiltradas[0] } as DistribucionOtroWithHoras;
-    aggregatedDistribucion.clase = 'Otros';
-    const horasPorDia: { [key: string]: { horas: string, tooltip: string }[] } = {};
-    let totalHorasFinDeSemana = 0;
-    let totalHorasLunesAViernes = 0;
-    let totalHoras = 0;
-    let totalHorasSinOcurrencias = 0;
-
-    const ocurrenciasPorDia: { [key: string]: number } = this.contarOcurrenciasDeDiasEnMes();
-  
-    distribucionesFiltradas.forEach(distribucion => {
-      const dia = this.mapaDias[distribucion.dia];  // Usamos la propiedad directamente
-      if (!dia) {
-        console.error(`Error: Día no reconocido en la base de datos: ${distribucion.dia}`);
-        return;
-      }
-      const horas = distribucion.cantidadHoras;
-      const cantidadOcurrencias = ocurrenciasPorDia[dia];
-      const horasTotalesPorDia = horas * cantidadOcurrencias;
-      const tipoView = this.tipos.find(t => t.value === distribucion.tipo)?.viewValue || distribucion.tipo;
-      const descripcionPart = distribucion.descripcion ? `, ${distribucion.descripcion}` : '';
-      const tooltip = `${tipoView}${descripcionPart}, ${distribucion.lugar}, ${moment(distribucion.horaIngreso, 'HH:mm').format('HH:mm')} hs`;
-
-      totalHorasSinOcurrencias += horas;
-  
-      if (horasPorDia[dia]) {
-        horasPorDia[dia].push({ horas: `${distribucion.cantidadHoras} hs`, tooltip });
-      } else {
-        horasPorDia[dia] = [{ horas: `${distribucion.cantidadHoras} hs`, tooltip }];
-      }
-  
-      if (dia === 'sábado' || dia === 'domingo') {
-        totalHorasFinDeSemana += horasTotalesPorDia;
-      } else {
-        totalHorasLunesAViernes += horasTotalesPorDia;
-      }
-      totalHoras += horasTotalesPorDia;
-    });
-  
-    aggregatedDistribucion.totalHorasSinOcurrencias = totalHorasSinOcurrencias;
-    aggregatedDistribucion.horasPorDia = horasPorDia;
-    aggregatedDistribucion.totalHorasFinDeSemana = totalHorasFinDeSemana;
-    aggregatedDistribucion.totalHorasLunesAViernes = totalHorasLunesAViernes;
-    aggregatedDistribucion.totalHoras = totalHoras;
-  
-    return aggregatedDistribucion;
-  }
-        
-      
-  // Contar las ocurrencias de cada día en el mes
+  /*/ Contar las ocurrencias de cada día en el mes
   contarOcurrenciasDeDiasEnMes(): { [key: string]: number } {
     const startOfMonth = moment().startOf('month');
     const endOfMonth = moment().endOf('month');
@@ -683,7 +982,20 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
     }
 
     return ocurrenciasPorDia;
+  }*/
+
+  contarOcurrenciasEnRango(fechaInicio: moment.Moment, fechaFin: moment.Moment): { [key: string]: number } {
+  const ocurrencias: { [key: string]: number } = {};
+
+  for (let m = fechaInicio.clone(); m.isSameOrBefore(fechaFin, 'day'); m.add(1, 'days')) {
+    const dia = m.format('dddd').toLowerCase();
+    if (!ocurrencias[dia]) ocurrencias[dia] = 0;
+    ocurrencias[dia]++;
   }
+
+  return ocurrencias;
+}
+
         
   getNovedadTooltip(fecha: string): string {
     const novedad = this.novedadesPersonales.find(novedad => {
@@ -739,21 +1051,78 @@ getHorasForDate(distribucion: DistribucionGuardiaWithHoras | DistribucionConsult
       }
     }
   }*/
+
+  crearDistribucion(): void {
+    this.router.navigate(['/personal-dh-create'], {
+      state: { asistencial: this.asistencial }
+    });
+  }
     
-verDistribucionHistorial(): void {
-  // Primero verificamos que el ID del asistencial esté disponible
-  this.asistencialService.currentAsistencialId$.subscribe(id => {
-    if (id === null) {
-      console.error('El ID del asistencial no está disponible.');
-      this.location.back();
-      return;
+  verDistribucionHistorial(): void {
+    // Verificar que el ID esté disponible
+    this.asistencialService.currentAsistencialId$.subscribe(id => {
+      if (id === null) {
+        console.error('El ID del asistencial no está disponible.');
+        this.location.back();
+        return;
+      }
+  
+      // Obtener el asistencial utilizando el ID
+      this.asistencialService.detail(id).subscribe({
+        next: (asistencial) => {
+          // Asignamos el objeto asistencial al componente
+          this.asistencial = asistencial;
+  
+          // Redirigir al historial
+          this.router.navigate(['/personal-dh-historial']);
+        },
+        error: (err) => {
+          console.error('No se pudo obtener el asistencial por ID:', err);
+          this.location.back();
+        }
+      });
+    });
+  }
+  
+editarMes(): void {
+  if (!this.asistencial) return;
+
+  // Obtener todas las distribuciones combinadas
+  const todasLasDistribuciones = [
+    ...this.distribucionesGuardia,
+    ...this.distribucionesConsultorio,
+    ...this.distribucionesGira,
+    ...this.distribucionesOtro
+  ];
+
+  // Si no hay distribuciones, usar el mes actual como fallback
+  if (todasLasDistribuciones.length === 0) {
+    this.router.navigate(['/personal-dh-edit'], {
+      queryParams: {
+        asistencialId: this.asistencial.id,
+        fechaInicio: this.mesYanio,
+      }
+    });
+    return;
+  }
+
+  // Inicializar con la primera fecha disponible (asegurando que es un moment.Moment)
+  let ultimaFecha: moment.Moment = moment(todasLasDistribuciones[0].fechaInicio);
+  
+  // Encontrar la fecha más reciente
+  todasLasDistribuciones.forEach(dist => {
+    const fechaDist = moment(dist.fechaInicio);
+    if (fechaDist.isAfter(ultimaFecha)) {
+      ultimaFecha = fechaDist;
     }
+  });
 
-    // Enviamos el ID al servicio
-    this.asistencialService.setCurrentAsistencialId(id);
-
-    // Navegamos a la página de historial
-    this.router.navigate(['/personal-dh-historial']);
+  // Navegar con la fecha formateada
+  this.router.navigate(['/personal-dh-edit'], {
+    queryParams: {
+      asistencialId: this.asistencial.id,
+      fechaInicio: ultimaFecha.format('YYYY-MM-DD')
+    }
   });
 }
 
@@ -827,4 +1196,8 @@ verDistribucionHistorial(): void {
     );
   }
 
+  isColSombreada(index: number): boolean {
+  // Alternar columnas: sombrear las impares (índice base 0 = 0, 2, 4...)
+  return index % 2 === 0;
+}
 }

@@ -37,7 +37,7 @@
                 <button 
                   mat-menu-item 
                   routerLink="/cronograma-pendiente" 
-                  *ngIf="isSuper"
+                  *ngIf="isSuper || isAutoridad"
                   [disabled]="pendientesCount === 0"> 
                   <mat-icon 
                     matBadge="{{pendientesCount}}" 
@@ -46,7 +46,22 @@
                     hourglass_empty
                   </mat-icon>
                   <span>
-                    {{ pendientesCount === 0 ? 'Sin pendientes' : 'Cronogramas pendientes' }}
+                    {{ pendientesCount === 0 ? 'Sin cronogramas pendientes' : 'Cronogramas pendientes' }}
+                  </span>
+                </button>
+                <button 
+                  mat-menu-item 
+                  routerLink="/personal-autoridad" 
+                  *ngIf="isSuper"
+                  [disabled]="autoridadesCount === 0"> 
+                  <mat-icon 
+                    matBadge="{{autoridadesCount}}" 
+                    matBadgeColor="warn" 
+                    [matBadgeHidden]="autoridadesCount === 0">
+                    account_balance
+                  </mat-icon>
+                  <span>
+                    {{ autoridadesCount === 0 ? 'Sin autoridades pendientes' : 'Autoridades pendientes' }}
                   </span>
                 </button>
                 <button mat-menu-item routerLink="/notificacion">

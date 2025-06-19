@@ -80,7 +80,8 @@
       </div>
       <div class="row">
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/guardias-view">
+          <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="currentEfectorType === 'ministerio' || currentEfectorType === 'caps'"
+          [routerLink]="currentEfectorType !== 'ministerio' && currentEfectorType !== 'caps' ? '/guardias-view' : null">
             <div class="icon4_btnMenu">
               <img class="img-fluid" src="/assets/img/i_guardias.png" />
             </div>

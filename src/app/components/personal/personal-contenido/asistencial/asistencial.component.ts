@@ -11,25 +11,16 @@ import { Router } from '@angular/router';
 //Services
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 
 //models y dto
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { AsistencialEfectorRegistroActividadDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorRegistroActividadDto';
-import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { EfectorMinisterioDto } from 'src/app/dto/Configuracion/efector/EfectorMinisterioDto';
-import { EfectorCapsDto } from 'src/app/dto/Configuracion/efector/EfectorCapsDto';
 
 //Componentes
 import { AsistencialDetailComponent } from '../asistencial-detail/asistencial-detail.component';
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
@@ -41,9 +32,6 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 export class AsistencialComponent implements OnInit, OnDestroy {
 
   dniVisible: boolean = false;
-  domicilioVisible: boolean = false;
-  estadoVisible: boolean = false;
-  fechaNacimientoVisible: boolean = false;
   telefonoVisible: boolean = false;
   emailVisible: boolean = false;
 
@@ -56,45 +44,29 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<AsistencialEfectorRegistroActividadDto>;
   suscription!: Subscription;
   asistencial!: Asistencial;
-  legajos: Legajo[] = [];
-  isLoadingLegajos: boolean = true;
 
-  showMessage: boolean = false;
   sinAsistencialMessage: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
   //Autenticación
-  isLogged = false;
   roles: string[] = [];
+  currentRole: string | null = null;
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
-  nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
-  tipoGuardias: TipoGuardia[] = [];
-  currentRole: string | null = null;
-
-  private efectorIdSubscription!: Subscription;
 
   constructor(
     private asistencialService: AsistencialService,
     private efectorService: EfectorService,
-    private hospitalService: HospitalService,
-    private capsService: CapsService,
-    private ministerioService: MinisterioService,
     private dialog: MatDialog,
     public dialogNov: MatDialog,
     public dialogDistrib: MatDialog,
     private toastr: ToastrService,
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -110,37 +82,33 @@ export class AsistencialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Verificar si hay un idEfector antes de hacer cualquier otra cosa
+    // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
-    this.loadEfectorName();
-  
-    if (this.efectorId === null) {
-      // Si no hay idEfector, redirigir a /home-page con un mensaje
-      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+      if (this.efectorId) {
+        this.loadEfectorName();
+        this.listAsistencial(this.efectorId);
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
         timeOut: 5000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
       this.router.navigateByUrl('/home-page');
-      return; // Detener ejecución del código
     }
   
-  // Obtener rol actual
-  this.tokenService.currentRole$.subscribe(role => {
-    this.currentRole = role;
-    this.UserRoles();
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
 
-    if (!this.currentRole) {
-      console.warn('No hay un rol seleccionado actualmente.');
-    }
-  });
-    
-    // Llamar a listAsistencial solo si hay idEfector
-    this.listAsistencial(this.efectorId);
-  
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
+      
     // Suscripción para refrescar los datos de asistencial
     this.suscription = this.asistencialService.refresh$.subscribe(() => {
-      this.listAsistencial(this.efectorId); // Usar el efectorId actual
+      this.listAsistencial(this.efectorId!); // Usar el efectorId actual
     });
   
     // Actualizar columnas visibles
@@ -171,74 +139,45 @@ export class AsistencialComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
     }
   }
 
+  //trae el nombre del efector esta en sesion
   loadEfectorName(): void {
-    if (!this.efectorId) {
-      this.efectorNombre = null;
-      return;
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          // traigo nombre del efector
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
     }
-  
-    this.hospitalService.detailNombreAll(this.efectorId).subscribe({
-      next: (hospital: EfectorHospitalDto) => {
-        this.efectorNombre = hospital.nombre;
-      },
-      error: () => {
-        this.ministerioService.detailNombreAll(this.efectorId!).subscribe({
-          next: (ministerio: EfectorMinisterioDto) => {
-            this.efectorNombre = ministerio.nombre;
-          },
-          error: () => {
-            this.capsService.detailNombreAll(this.efectorId!).subscribe({
-              next: (cap: EfectorCapsDto) => {
-                this.efectorNombre = cap.nombre;
-              },
-              error: () => {
-                console.error('No se encontró el efector con ID:', this.efectorId);
-                this.efectorNombre = null;
-              }
-            });
-          }
-        });
-      }
-    });
   }
 
-  listAsistencial(efectorId: number | null = null): void {
-    if (efectorId === null) {
-      this.showMessage = true;
-      this.sinAsistencialMessage = false;
-      this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>([]);
-      return;
-    }
-  
+  listAsistencial(efectorId: number): void {
     this.asistencialService.listAsistencialByEfector(efectorId).subscribe({
       next: (data: AsistencialEfectorRegistroActividadDto[]) => {
-        // Filtro adicional: eliminar asistenciales que tengan guardias de tipo "Contrafactura"
-        const filteredData = data.filter(asistencial =>
-          !asistencial.nombresTiposGuardias.includes('CONTRAFACTURA')
-        );
-  
-        if (filteredData.length === 0) {
-          this.showMessage = false;
+        if (data.length === 0) {
           this.sinAsistencialMessage = true;
           this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>([]);
         } else {
-          this.showMessage = false;
           this.sinAsistencialMessage = false;
-          this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>(filteredData);
+          this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>(data);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         }
       },
       error: (err) => {
         console.error('Error al obtener asistenciales:', err);
-        this.showMessage = true;
-        this.sinAsistencialMessage = false;
+        this.sinAsistencialMessage = true;
         this.dataSource = new MatTableDataSource<AsistencialEfectorRegistroActividadDto>([]);
       }
     });
@@ -343,8 +282,14 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
     columnasBase.forEach(columna => {
       columnasVisibles.push(columna);
-      if (columna === 'cuil' && this.domicilioVisible) {
-        columnasVisibles.push('domicilio');
+      if (columna === 'apellido' && this.dniVisible) {
+        columnasVisibles.push('dni');
+      }
+      if (columna === 'cuil' && this.telefonoVisible) {
+        columnasVisibles.push('telefono');
+      }
+      if (columna === 'cuil' && this.emailVisible) {
+        columnasVisibles.push('email');
       }
     });
 
@@ -357,6 +302,5 @@ export class AsistencialComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();
-    this.efectorIdSubscription?.unsubscribe();
   }
 }

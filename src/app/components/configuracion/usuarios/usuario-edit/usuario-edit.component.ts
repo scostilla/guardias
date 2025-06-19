@@ -17,6 +17,7 @@ import { Rol } from 'src/app/models/Configuracion/Rol';
   templateUrl: './usuario-edit.component.html',
   styleUrls: ['./usuario-edit.component.css']
 })
+
 export class UsuarioEditComponent implements OnInit {
 
   usuarioForm: FormGroup;
@@ -28,6 +29,13 @@ export class UsuarioEditComponent implements OnInit {
   nombreUsuarioError: string | null = null;
   private nombreUsuarioInicial: string | null = null;
 
+  nombresRoles: { [key: string]: string } = {
+    'ROLE_ADMIN': 'Administrativo',
+    'ROLE_USER': 'Usuario',
+    'ROLE_DPH': 'DPH',
+    'ROLE_SUPERUSER': 'Super usuario',
+    'ROLE_AUTORIDAD': 'Autoridad'
+  };
 
   constructor(
     private fb: FormBuilder,

@@ -50,7 +50,20 @@ export class AutoridadEditComponent implements OnInit {
     this.autoridadForm = this.fb.group({
       confirmado: [null, Validators.required],
       idPersona: ['', Validators.required],
+      motivo: ['', [Validators.maxLength(50)]],
     });
+
+    // Reacciona al cambio del campo 'confirmado'
+    this.autoridadForm.get('confirmado')?.valueChanges.subscribe((valor) => {
+      const motivoControl = this.autoridadForm.get('motivo');
+      if (valor === false) {
+        motivoControl?.setValidators(Validators.required);
+      } else {
+        motivoControl?.clearValidators();
+        motivoControl?.setValue(null);      }
+        motivoControl?.updateValueAndValidity();
+    });
+
 
     this.loadAutoridades();
 
@@ -59,6 +72,7 @@ export class AutoridadEditComponent implements OnInit {
       this.autoridadForm.patchValue({
           idPersona: data.persona!.id,
           confirmado: data.confirmado,
+          motivo: data.motivo,
       });
   }
 
@@ -197,6 +211,7 @@ export class AutoridadEditComponent implements OnInit {
                   true,
                   autoridadData.confirmado ?? null,
                   autoridadData.idPersona,
+                  autoridadData.motivo,
                 );
   
                 console.log('Datos a enviar:', autoridadDto);
@@ -246,6 +261,7 @@ export class AutoridadEditComponent implements OnInit {
           true,
           autoridadData.confirmado ?? null,
           autoridadData.idPersona,
+          autoridadData.motivo,
         );
   
         console.log('Datos a enviar:', autoridadDto);
