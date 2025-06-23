@@ -3,12 +3,12 @@ import { TokenService } from 'src/app/services/login/token.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
-import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 //import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 //import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 //import { ServicioService } from 'src/app/services/servicio.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -22,6 +22,7 @@ import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistencial/AsistencialTiposGuardiasDto';
 
 @Component({
   selector: 'app-registro-actividades-ingreso-profesional',
@@ -30,7 +31,7 @@ import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 })
 export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
   registroForm: FormGroup;
-  tiposGuardias: TipoGuardia[] = [];
+  tiposGuardias: AsistencialTiposGuardiasDto[] = [];
   //asistenciales: AsistencialSummaryDto[] = [];
   servicios: ServicioSummaryDto[] = [];
   efectorId: number | null = null;
@@ -58,7 +59,7 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
     private registroActividadService: RegistroActividadService,
     private cronogramaTentativoService: CronogramaTentativoService,
     private novedadPersonalService: NovedadPersonalService,
-    private tipoGuardiaService: TipoGuardiaService,
+    private asistencialService: AsistencialService,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
     private toastr: ToastrService,
@@ -99,7 +100,6 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       if (this.efectorId) {
         this.registroForm.patchValue({ idEfector: this.efectorId });
         this.loadEfectorName();
-        this.listTiposGuardias();
         /*this.listAsistenciales();*/
         this.listServicios();
       } else {
@@ -127,6 +127,8 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       this.apellidoPersona = personDto.apellido;
       this.inputValue = `${this.apellidoPersona} ${this.nombrePersona}`;
       this.registroForm.patchValue({ idAsistencial: this.inputValue });
+
+      this.listTiposGuardias();
     });
 
       const userIdFromToken = this.tokenService.getUserIdFromToken();
@@ -135,11 +137,16 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
   }
 
   listTiposGuardias(): void {
-    this.tipoGuardiaService.list().subscribe(data => {
-      console.log('Lista de Tipos de Guardias:', data);
-      this.tiposGuardias = data;
-    }, error => {
-      console.log(error);
+    const idAsistencial = this.idPersona!;
+
+    this.asistencialService.getTiposGuardias(idAsistencial).subscribe({
+      next: (data) => {
+        console.log('Tipos de Guardia para asistencial:', data);
+        this.tiposGuardias = data;
+      },
+      error: (err) => {
+        console.error('Error al obtener tipos de guardia por asistencial:', err);
+      }
     });
   }
 
@@ -351,8 +358,8 @@ private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
     return JSON.stringify(this.initialData) !== JSON.stringify(this.registroForm.value);
   }
 
-  compareTipoGuardia(p1: TipoGuardia, p2: TipoGuardia): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  compareTipoGuardia(p1: AsistencialTiposGuardiasDto, p2: AsistencialTiposGuardiasDto): boolean {
+    return p1 && p2 ? p1.idTipoGuardia  === p2.idTipoGuardia  : p1 === p2;
   }
 
   /*compareAsistencial(p1: AsistencialSummaryDto, p2: AsistencialSummaryDto): boolean {

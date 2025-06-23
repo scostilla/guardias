@@ -114,6 +114,9 @@ export class RegistroActividadesIngresoComponent implements OnInit {
       }
     });
 
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
+
   }
 
   listTiposGuardias(): void {
@@ -317,8 +320,8 @@ export class RegistroActividadesIngresoComponent implements OnInit {
       registroData.idAsistencial,
       registroData.idServicio.id,
       registroData.idEfector,
-      this.userId!,
-      idCronograma
+      this.userId!, //idUsuarioIngreso
+      null, //idUsuarioEgreso
     );
   }
 

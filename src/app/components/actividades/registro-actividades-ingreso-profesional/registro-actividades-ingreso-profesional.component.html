@@ -43,7 +43,7 @@
                     <mat-label>Tipo de Guardia</mat-label>
                     <mat-select formControlName="idTipoGuardia" [compareWith]="compareTipoGuardia">
                         <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia">{{
-                            tipoGuardia.nombre
+                            tipoGuardia.nombreTipoGuardia
                             }}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="registroForm.get('idTipoGuardia')?.errors?.['required']">El tipo de guardia es

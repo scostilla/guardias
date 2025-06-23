@@ -7,6 +7,8 @@ import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { TipoLicencia } from "src/app/models/Configuracion/TipoLicencia";
 import { TipoLicenciaService } from "src/app/services/Configuracion/tipoLicencia.service";
 import { NovedadPersonalService } from "src/app/services/personal/novedadPersonal.service";
+import { ConsultaLicenciaCompensatorioDto } from "src/app/dto/novedades/ConsultaLicenciaCompensatorioDto";
+import { DistribucionGuardiaService } from "src/app/services/personal/distribucionGuardia.service";
 import * as moment from 'moment';
 
 @Component({
@@ -31,6 +33,7 @@ export class NovedadesPersonCreateComponent implements OnInit {
         public dialogRef: MatDialogRef<NovedadesPersonCreateComponent>,
         private novedadPersonalService: NovedadPersonalService,
         private tipoLicenciaService: TipoLicenciaService,
+        private distribucionGuardiaService: DistribucionGuardiaService,
         private toastr: ToastrService,
         @Inject(MAT_DIALOG_DATA) public data: { asistencialId: number; novedadPersonal?: NovedadPersonalDto }
       ) {
@@ -197,38 +200,79 @@ export class NovedadesPersonCreateComponent implements OnInit {
       };
     }
 
-    saveNovedadPersonal(): void {
-        if (this.novedadPersonalForm.valid) {
+  saveNovedadPersonal(): void {
+    if (this.novedadPersonalForm.invalid) return;
 
-          const novedadPersonal = this.novedadPersonalForm.getRawValue();
+    const novedadPersonal = this.novedadPersonalForm.getRawValue();
 
-          const novedadPersonalDto = new NovedadPersonalDto(
-            novedadPersonal.fechaInicio,
-            novedadPersonal.fechaFinal,
-            novedadPersonal.horaInicio ?? null,
-            novedadPersonal.horaFinal ?? null,
-            novedadPersonal.puedeRealizarGuardia,
-            novedadPersonal.cobraSueldo,
-            //novedadPersonal.necesitaReemplazo,
-            true,
-            this.data.novedadPersonal ? this.data.novedadPersonal.idPersona : this.data.asistencialId,
-            //novedadPersonal.idSuplente ?? null,
-            novedadPersonal.idTipoLicencia,
-          );
-          console.log('Datos a guardar:', novedadPersonalDto);
-          this.novedadPersonalService.save(novedadPersonalDto).subscribe(
-            result => {
-              console.log('Novedad creada:', result);
-              this.dialogRef.close({ type: 'save', data: result });
-            },
-            error => {
-              console.error('Error al crear la novedad:', error);
-              this.dialogRef.close({ type: 'error', data: error });
-            }
-          );
+    console.log('Tipo de Licencia recibido:', novedadPersonal.idTipoLicencia);
+
+    const idPersona = this.data.novedadPersonal 
+      ? this.data.novedadPersonal.idPersona 
+      : this.data.asistencialId;
+
+    const dto: ConsultaLicenciaCompensatorioDto = {
+      idPersona: idPersona,
+      fechaInicioConsulta: novedadPersonal.fechaInicio,
+      fechaFinConsulta: novedadPersonal.fechaFinal,
+      horaInicioConsulta: novedadPersonal.horaInicio ?? null,
+      horaFinConsulta: novedadPersonal.horaFinal ?? null,
+    };
+
+    console.log('DTO enviado a verificación de superposición:', dto);
+
+    // el ID del tipo de licencia compensatorio en la bd es 1
+    const ID_COMPENSATORIO = 1;
+
+    if (novedadPersonal.idTipoLicencia === ID_COMPENSATORIO) {
+      this.distribucionGuardiaService.verificarSuperposicionConCargo(dto).subscribe({
+        next: (haySuperposicion) => {
+          if (haySuperposicion) {
+            this.toastr.warning(
+              'No es posible guardar la novedad. El profesional posee una guardia del Cargo para el rango de fecha ingresado.',
+              'Advertencia'
+            );
+          } else {
+            this.guardarNovedad(novedadPersonal, idPersona);
+          }
+        },
+        error: (error) => {
+          console.error('Error al verificar superposición:', error);
+          this.toastr.error('Ocurrió un error al verificar superposición con cargo.');
         }
-          
+      });
+    } else {
+      // Para otros tipos de licencia, guarda directamente
+      this.guardarNovedad(novedadPersonal, idPersona);
     }
+  }
+
+  private guardarNovedad(novedadPersonal: any, idPersona: number): void {
+    const novedadPersonalDto = new NovedadPersonalDto(
+      novedadPersonal.fechaInicio,
+      novedadPersonal.fechaFinal,
+      novedadPersonal.horaInicio ?? null,
+      novedadPersonal.horaFinal ?? null,
+      novedadPersonal.puedeRealizarGuardia,
+      novedadPersonal.cobraSueldo,
+      true,
+      idPersona,
+      novedadPersonal.idTipoLicencia,
+    );
+
+    console.log('Datos a guardar:', novedadPersonalDto);
+
+    this.novedadPersonalService.save(novedadPersonalDto).subscribe({
+      next: (result) => {
+        console.log('Novedad creada:', result);
+        this.dialogRef.close({ type: 'save', data: result });
+      },
+      error: (error) => {
+        console.error('Error al crear la novedad:', error);
+        this.dialogRef.close({ type: 'error', data: error });
+      }
+    });
+  }
 
   cancel(): void {
       this.dialogRef.close();
