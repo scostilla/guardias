@@ -22,6 +22,7 @@ import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/Verifi
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-registro-actividades-ingreso',
@@ -39,6 +40,10 @@ export class RegistroActividadesIngresoComponent implements OnInit {
   currentDate: Date = new Date();
   initialData: any;
   inputValue: string = '';
+
+  minFechaIngreso: string = moment().format('YYYY-MM-DD');
+  maxFechaIngreso: string = moment().format('YYYY-MM-DD');;
+  maxHoraIngreso: string = '00:00';
 
   //Autenticación
   isAdministrativo: boolean = false;
@@ -117,7 +122,26 @@ export class RegistroActividadesIngresoComponent implements OnInit {
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
 
-  }
+  const hoy = moment();
+  this.maxFechaIngreso = hoy.format('YYYY-MM-DD');
+  this.minFechaIngreso = hoy.clone().subtract(14, 'days').format('YYYY-MM-DD');
+  this.registroForm.get('fechaIngreso')?.valueChanges.subscribe((fechaSeleccionada: string | Date) => {
+    const fecha = moment(fechaSeleccionada);
+    const hoy = moment();
+    const esHoy = fecha.isSame(hoy, 'day');
+
+    // Actualizo el máximo para el picker de hora
+    this.maxHoraIngreso = esHoy ? hoy.format('HH:mm') : '23:59';
+
+    // Reseteo la hora de inicio cuando cambia la fecha
+    this.registroForm.get('eventStartTime')?.setValue(null);
+
+    // Si querés mantener el required, lo podés setear aquí
+    const horaControl = this.registroForm.get('eventStartTime');
+    horaControl?.setValidators([Validators.required]);
+    horaControl?.updateValueAndValidity();
+  });
+}
 
   listTiposGuardias(): void {
     this.tipoGuardiaService.list().subscribe(data => {

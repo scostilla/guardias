@@ -8,6 +8,7 @@ import { CronogramaTentativoListAtorizadoDto } from "src/app/dto/Cronogramas/Cro
 import { AutorizadoUpdateDto } from "src/app/dto/Cronogramas/AutorizadoUpdateDto";
 import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/VerificacionTentativoResponseDto';
+import { CronogramaTentativoServicioDto } from 'src/app/dto/Cronogramas/CronogramaTentativoServicioDto';
 
 @Injectable({
   providedIn: 'root'
@@ -128,7 +129,10 @@ export class CronogramaTentativoService {
         })
       )
     }
-  
+
+    getServicioByIdTentativo(idTentativo: number): Observable<CronogramaTentativoServicioDto> {
+      return this.httpClient.get<CronogramaTentativoServicioDto>(`${this.cTentativoURL}getServicio/${idTentativo}`);
+    }  
   }
     
     

@@ -23,6 +23,7 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistencial/AsistencialTiposGuardiasDto';
+import { CronogramaTentativoServicioDto } from 'src/app/dto/Cronogramas/CronogramaTentativoServicioDto';
 
 @Component({
   selector: 'app-registro-actividades-ingreso-profesional',
@@ -79,7 +80,7 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
     this.registroForm = this.fb.group({
       idTipoGuardia: ['', Validators.required],
       idAsistencial: [{ value: '', disabled: true }],
-      idServicio: ['', Validators.required],
+      //idServicio: ['', Validators.required],
       idEfector: [''],
       fechaIngreso: [fechaFormateada, Validators.required],
       eventStartTime: [horaFormateada, Validators.required],
@@ -101,7 +102,7 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
         this.registroForm.patchValue({ idEfector: this.efectorId });
         this.loadEfectorName();
         /*this.listAsistenciales();*/
-        this.listServicios();
+        //this.listServicios();
       } else {
         this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
         timeOut: 5000,
@@ -193,11 +194,11 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
     }
   }
 
-  listServicios(): void {
-    this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
+  /*listServicios(): void {
+    this.hospitalService.getServicio(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
     });
-  }
+  }*/
 
   /*onTipoGuardiaChange(event: any): void {
     console.log("Tipo de guardia seleccionado:", event.value);
@@ -268,34 +269,48 @@ saveRegistro(): void {
 }
 
 private guardarRegistro(registroData: any, idCronograma: number): void {
-    const registroDto = this.crearRegistroDto(registroData, idCronograma);
-      console.log('📦 DTO enviado a guardar:', {
-    idCronograma,
-    registroDto,
-    modo: this.initialData?.id ? 'Actualización' : 'Creación'
-  });
-    const observable = this.initialData?.id 
-      ? this.registroActividadService.update(this.initialData.id, registroDto)
-      : this.registroActividadService.save(registroDto);
+  this.cronogramaTentativoService.getServicioByIdTentativo(idCronograma).subscribe({
+    next: (servicio: CronogramaTentativoServicioDto) => {
+      console.log('🧾 Servicio obtenido por tentativo:', servicio);
 
-    observable.subscribe({
-      next: () => {
-        // 4. Solo si el registro se guardó correctamente, marcamos como aceptado
-        this.cronogramaTentativoService.aceptar(idCronograma).subscribe({
-          next: () => {
-            this.mostrarExito('Registro guardado y cronograma aceptado');
-            this.router.navigate(['/registro-diario']);
-          },
-          error: (error) => {
-            this.mostrarExito('Registro guardado, pero no se pudo marcar el cronograma como aceptado');
-            this.router.navigate(['/registro-diario']);
-            console.error('Error al aceptar cronograma:', error);
-          }
-        });
-      },
-      error: (error) => this.mostrarError('Error al guardar el registro', error)
-    });
-  }
+      // Sobrescribir el idServicio en el registroData antes de crear el DTO
+      registroData.idServicio = { id: servicio.idServicio };
+
+      const registroDto = this.crearRegistroDto(registroData, idCronograma);
+
+      console.log('📦 DTO enviado a guardar:', {
+        idCronograma,
+        registroDto,
+        modo: this.initialData?.id ? 'Actualización' : 'Creación'
+      });
+
+      const observable = this.initialData?.id
+        ? this.registroActividadService.update(this.initialData.id, registroDto)
+        : this.registroActividadService.save(registroDto);
+
+      observable.subscribe({
+        next: () => {
+          this.cronogramaTentativoService.aceptar(idCronograma).subscribe({
+            next: () => {
+              this.mostrarExito('Registro guardado y cronograma aceptado');
+              this.router.navigate(['/registro-diario']);
+            },
+            error: (error) => {
+              this.mostrarExito('Registro guardado, pero no se pudo marcar el cronograma como aceptado');
+              this.router.navigate(['/registro-diario']);
+              console.error('Error al aceptar cronograma:', error);
+            }
+          });
+        },
+        error: (error) => this.mostrarError('Error al guardar el registro', error)
+      });
+    },
+    error: (err) => {
+      console.error('❌ Error al obtener servicio por tentativo:', err);
+      this.mostrarError('No se pudo obtener el servicio del cronograma tentativo', err);
+    }
+  });
+}
 
   // Métodos auxiliares
 private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {

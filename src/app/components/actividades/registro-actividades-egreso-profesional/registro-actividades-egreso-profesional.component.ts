@@ -19,6 +19,7 @@ import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegS
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-registro-actividades-egreso-profesional',
@@ -307,7 +308,7 @@ validarFechaEgresoMayorOIgual() {
     this.idRegistroActividad = registro.id;
 
     const fechaIngreso = new Date(registro.fechaIngreso);
-    const fechaFormateada = fechaIngreso.toLocaleDateString('es-AR'); // Devuelve DD/MM/AAAA
+    const fechaFormateada = moment.utc(fechaIngreso).startOf('day').format('DD/MM/YYYY');
     
 
     // Obtener el tipo de guardia seleccionado actualmente

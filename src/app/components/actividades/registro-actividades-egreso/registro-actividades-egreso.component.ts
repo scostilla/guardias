@@ -17,6 +17,7 @@ import { RegistrosPendientes } from 'src/app/models/RegistrosPendientes';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegSalidaDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-registro-actividades-egreso',
@@ -35,6 +36,9 @@ export class RegistroActividadesEgresoComponent implements OnInit {
   initialData: any;
   inputValue: string = '';
 
+  minFechaIngreso: string = moment().format('YYYY-MM-DD');
+  maxFechaIngreso: string = moment().format('YYYY-MM-DD');;
+  maxHoraIngreso: string = '00:00';
 
   //Autenticación
   isAdministrativo: boolean = false;
@@ -111,7 +115,26 @@ export class RegistroActividadesEgresoComponent implements OnInit {
         console.warn('No hay un rol seleccionado actualmente.');
       }
     });
+    
+    const hoy = moment();
+    this.maxFechaIngreso = hoy.format('YYYY-MM-DD');
+    this.minFechaIngreso = hoy.clone().subtract(14, 'days').format('YYYY-MM-DD');
+    this.registroForm.get('fechaIngreso')?.valueChanges.subscribe((fechaSeleccionada: string | Date) => {
+      const fecha = moment(fechaSeleccionada);
+      const hoy = moment();
+      const esHoy = fecha.isSame(hoy, 'day');
 
+      // Actualizo el máximo para el picker de hora
+      this.maxHoraIngreso = esHoy ? hoy.format('HH:mm') : '23:59';
+
+      // Reseteo la hora de inicio cuando cambia la fecha
+      this.registroForm.get('eventStartTime')?.setValue(null);
+
+      // Si querés mantener el required, lo podés setear aquí
+      const horaControl = this.registroForm.get('eventStartTime');
+      horaControl?.setValidators([Validators.required]);
+      horaControl?.updateValueAndValidity();
+    });
   }
 
   // Roles a usar
