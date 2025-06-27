@@ -115,6 +115,9 @@ export class RegistroActividadesEgresoComponent implements OnInit {
         console.warn('No hay un rol seleccionado actualmente.');
       }
     });
+
+    const userIdFromToken = this.tokenService.getUserIdFromToken();
+    this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
     
     const hoy = moment();
     this.maxFechaIngreso = hoy.format('YYYY-MM-DD');
