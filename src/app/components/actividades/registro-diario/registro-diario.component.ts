@@ -1,10 +1,15 @@
+// registro-diario.component.ts
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-
+import { RegistroActividadService } from 'src/app/services/registroActividad.service';
+import { RegActivNombresDto } from 'src/app/dto/RegistroActividad/RegActivNombresDto';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-registro-diario',
@@ -15,6 +20,13 @@ export class RegistroDiarioComponent implements OnInit {
 
   efectorId: number | null = null;
   efectorNombre: string | null = null;
+  registrosPendientes: RegActivNombresDto[] = [];
+
+  displayedColumns: string[] = ['asistencial', 'fechaIngreso', 'horaIngreso', 'servicio', 'tipoGuardia'];
+  dataSource = new MatTableDataSource<RegActivNombresDto>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   //Autenticación
   isAdministrativo: boolean = false;
@@ -30,65 +42,59 @@ export class RegistroDiarioComponent implements OnInit {
     private efectorService: EfectorService,
     private toastr: ToastrService,
     private router: Router,
+    private registroActividadService: RegistroActividadService
   ) { }
 
   ngOnInit(): void {
-    // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
-      if (this.efectorId) {
-        this.loadEfectorName();
-      } else {
-        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+    if (this.efectorId) {
+      this.loadEfectorName();
+      this.cargarRegistrosPendientesPorEfector(this.efectorId);
+    } else {
+      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
         timeOut: 5000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
       this.router.navigateByUrl('/home-page');
     }
-  
-    // Obtener rol actual
+
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();
-
-      if (!this.currentRole) {
-        console.warn('No hay un rol seleccionado actualmente.');
-      }
     });
   }
 
-  // Roles a usar
   UserRoles(): void {
-    if (this.currentRole) {
-      this.isUsuario = this.currentRole === 'ROLE_USER';
-      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
-      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
-      this.isDph = this.currentRole === 'ROLE_DPH';
-      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
-    } else {
-      // Si no hay rol seleccionado, todos como false
-      this.isAdministrativo = false;
-      this.isAutoridad = false;
-      this.isUsuario = false;
-      this.isDph = false;
-      this.isSuper = false;
-    }
+    this.isUsuario = this.currentRole === 'ROLE_USER';
+    this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+    this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+    this.isDph = this.currentRole === 'ROLE_DPH';
+    this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
   }
 
-  //trae el nombre del efector esta en sesion
   loadEfectorName(): void {
     if (this.efectorId) {
-      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
-        (efector: EfectorSummaryDto) => {
-          // traigo nombre del efector
-          this.efectorNombre = efector.nombre;
-        },
-        (error) => {
-          console.error('Error al obtener el efector:', error);
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe({
+        next: (efector) => this.efectorNombre = efector.nombre,
+        error: (err) => {
+          console.error('Error al obtener el efector:', err);
           this.efectorNombre = null;
         }
-      );
+      });
     }
   }
 
+ cargarRegistrosPendientesPorEfector(idEfector: number): void {
+    this.registroActividadService.listRegActivPendienteByEfector(idEfector).subscribe({
+      next: (registros) => {
+        this.dataSource.data = registros;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      },
+      error: () => {
+        this.toastr.error('Error al cargar registros pendientes');
+      }
+    });
+  }
 }

@@ -25,7 +25,7 @@ import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/Asis
 
 //Componentes
 import { CronogramaPendienteDetailComponent } from '../cronograma-pendiente-detail/cronograma-pendiente-detail.component';
-import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { CronogramaPendienteEditComponent } from '../cronograma-pendiente-edit/cronograma-pendiente-edit.component';
 
 @Component({
   selector: 'app-cronograma-pendiente',
@@ -138,6 +138,7 @@ export class CronogramaPendienteComponent implements OnInit, OnDestroy {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
       this.isUsuario = false;
+      this.isAutoridad = false;
       this.isDph = false;
       this.isSuper = false;
     }
@@ -216,39 +217,6 @@ loadEfectorName(): void {
       });
   }
 
-  updateEstado(cronograma: CronogramaTentativoListAtorizadoDto, nuevoEstado: string): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Autorización',
-        message: `¿Confirma el cambio de estado a "${nuevoEstado}" para el cronograma "${cronograma.asistencial.apellido}", "${cronograma.asistencial.nombre}"?`
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.cronogramaTentativoService
-          .autorizarUpdate(cronograma.id, { autorizado: nuevoEstado })
-          .subscribe({
-            next: () => {
-              this.toastr.success(`Cronograma "${nuevoEstado}"`, 'Autorización', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
-              });
-            },
-            error: () => {
-              this.toastr.error('Error al actualizar el estado', 'Autorización', {
-                timeOut: 6000,
-                positionClass: 'toast-top-center',
-                progressBar: true
-              });
-            }
-          });
-      }
-    });
-  }
-
   goBack(): void {
     this.location.back();
   }
@@ -267,4 +235,16 @@ loadEfectorName(): void {
     });
   }
 
+openFormChanges(cronograma: CronogramaTentativoListAtorizadoDto): void {
+  const dialogRef = this.dialog.open(CronogramaPendienteEditComponent, {
+    width: '400px',
+    data: cronograma
+  });
+
+  dialogRef.afterClosed().subscribe((resultado) => {
+    if (resultado) {
+      this.listPendientes();
+    }
+  });
+}
 }

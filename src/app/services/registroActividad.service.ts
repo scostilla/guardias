@@ -4,6 +4,7 @@ import { Observable, Subject, BehaviorSubject, tap } from "rxjs";
 import { RegistroActividad } from "../models/RegistroActividad";
 import { RegistroActividadDto } from "../dto/RegistroActividadDto";
 import { RegActivRegSalidaDto } from "../dto/RegistroActividad/RegActivRegSalidaDto";
+import { RegActivNombresDto } from "../dto/RegistroActividad/RegActivNombresDto";
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +72,11 @@ export class RegistroActividadService {
       )
   }
 
+  listRegActivPendienteByEfector(idEfector: number): Observable<RegActivNombresDto[]> {
+    const url = `${this.registroActividadURL}listRegActivPendienteByEfector/${idEfector}`;
+    return this.httpClient.get<RegActivNombresDto[]>(url);
+  }
+  
   public delete(id: number): Observable<any> {
     return this.httpClient.put<any>(this.registroActividadURL + `delete/${id}`, {});
   }

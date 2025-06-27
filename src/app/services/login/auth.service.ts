@@ -84,4 +84,7 @@ export class AuthService {
     return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel`);
   }
 
+  getNombreYApellidoById(id: number): Observable<string> {
+        return this.httpClient.get<string>(`${this.authUrl}detailNombreYApellido/${id}`);
+  }
 }

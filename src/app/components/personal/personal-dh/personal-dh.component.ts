@@ -620,7 +620,7 @@ getHorasForDate(
     }
   }
   
-  // Cargar las novedades personales
+  /*/ Cargar las novedades personales
   loadNovedades(): void {
     if (this.asistencial) {
       this.novedadPersonalService.getNovedadesByPersona(this.asistencial.id!).subscribe((novedades) => {
@@ -635,6 +635,26 @@ getHorasForDate(
           );
         });
         this.setupColumns();  // Configurar columnas dinámicamente para reflejar las novedades
+      });
+    }
+  }*/
+
+  loadNovedades(): void {
+    if (this.asistencial && this.mesYanio) {
+      const mesYanioMoment = moment(this.mesYanio, 'MM-YYYY');
+      const mes = mesYanioMoment.month() + 1;
+      const anio = mesYanioMoment.year();
+
+      this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(this.asistencial.id!, mes, anio).subscribe({
+        next: (novedades) => {
+          this.novedadesPersonales = novedades;
+          this.setupColumns();
+        },
+        error: (error) => {
+          console.warn('No se encontraron novedades o hubo un error:', error);
+          this.novedadesPersonales = [];
+          this.setupColumns();
+        }
       });
     }
   }

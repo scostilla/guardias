@@ -10,7 +10,7 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs'; //no borrar, sirve para eventDeleted
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
@@ -175,43 +175,61 @@ export class CronogramaComponent {
   }
 
   // Mapeo de los cronogramas al formato adecuado
-  mapCronogramas(cronogramas: any[]): any[] {
-    return cronogramas.map((cronograma) => {
-      const tipoGuardia = cronograma.tipoGuardia?.nombre;
-      const observacion = cronograma.observacion;
-      const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
-      const id = cronograma.id;
-      const auth = cronograma.autorizado;
+mapCronogramas(cronogramas: any[]): any[] {
+  return cronogramas.map((cronograma) => {
+    const tipoGuardia = cronograma.tipoGuardia?.nombre;
+    const observacion = cronograma.observacion;
+    const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
+    const id = cronograma.id;
+    const auth = cronograma.autorizado;
+    const authfor = `${cronograma.autoridad?.persona?.apellido}, ${cronograma.autoridad?.persona?.nombre}`;
+    const motivo = cronograma.motivoAutorizacion;
 
-      const fechaHoraIngreso = moment(cronograma.fechaIngreso)
-        .set({
-          hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
-          minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
-          second: 0
-        });
-
-      const fechaHoraEgreso = moment(cronograma.fechaEgreso)
-        .set({
-          hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
-          minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
-          second: 0
-        });
-
-      const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
-
-      return {
-        start: fechaHoraIngreso.toDate(),
-        end: fechaHoraEgreso.toDate(),
-        title: `${cronograma.asistencial!.apellido}, ${cronograma.asistencial!.nombre} - ${tipoGuardia}`,
-        servicio: servicio,
-        obs: observacion,
-        auth: auth,
-        id: id,
-        color: color,
-        meta: cronograma
-      };
+    const fechaHoraIngreso = moment(cronograma.fechaIngreso).set({
+      hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
+      minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
+      second: 0
     });
-  }
+
+    const fechaHoraEgreso = moment(cronograma.fechaEgreso).set({
+      hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
+      minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
+      second: 0
+    });
+
+    const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
+
+    const result = {
+      start: fechaHoraIngreso.toDate(),
+      end: fechaHoraEgreso.toDate(),
+      title: `${cronograma.asistencial?.apellido}, ${cronograma.asistencial?.nombre} - ${tipoGuardia}`,
+      servicio: servicio,
+      obs: observacion,
+      auth: auth,
+      authfor: authfor,
+      motivo: motivo,
+      id: id,
+      color: color,
+      meta: cronograma
+    };
+
+    console.log('📝 Cronograma procesado:', {
+      id: id,
+      tipoGuardia,
+      servicio,
+      observacion,
+      auth,
+      authfor,
+      motivo,
+      fechaHoraIngreso: fechaHoraIngreso.toISOString(),
+      fechaHoraEgreso: fechaHoraEgreso.toISOString(),
+      title: result.title,
+      color
+    });
+
+    return result;
+  });
+}
   
   refreshView(): void {
     this.viewDate = new Date(this.viewDate.getTime());

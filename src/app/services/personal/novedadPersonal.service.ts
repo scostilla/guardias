@@ -34,6 +34,10 @@ export class NovedadPersonalService {
     return this.httpClient.get<NovedadPersonal[]>(`${this.novedadesPersonalesURL}detailpersona/${id}`);
   }
 
+  getNovedadesActivasPorPersonaYFecha(idPersona: number, mes: number, anio: number): Observable<NovedadPersonal[]> {
+    return this.httpClient.get<NovedadPersonal[]>(`${this.novedadesPersonalesURL}detailPersonaAndActivo/${idPersona}/${mes}/${anio}`);
+  }
+
   // Obtener novedades por fecha
   getNovedadesByFecha(fecha: string): Observable<NovedadPersonal[]> {
     return this.httpClient.get<NovedadPersonal[]>(`${this.novedadesPersonalesURL}detailfecha/${fecha}`);

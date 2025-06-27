@@ -34,11 +34,15 @@
                   <mat-icon>face</mat-icon>
                   <span>Usuarios</span>
                 </button>
-                <button 
+                <!--<button 
                   mat-menu-item 
                   routerLink="/cronograma-pendiente" 
                   *ngIf="isSuper || isAutoridad"
-                  [disabled]="pendientesCount === 0"> 
+                  [disabled]="pendientesCount === 0">-->
+                <button 
+                  mat-menu-item 
+                  routerLink="/cronograma-pendiente" 
+                  *ngIf="isSuper || isAutoridad"> 
                   <mat-icon 
                     matBadge="{{pendientesCount}}" 
                     matBadgeColor="warn" 

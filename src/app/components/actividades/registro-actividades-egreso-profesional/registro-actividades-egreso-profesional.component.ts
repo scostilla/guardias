@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { RegistroActividad } from 'src/app/models/RegistroActividad'; // Puedes eliminar esto si no lo necesitas
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
+import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { TipoGuardiaService } from 'src/app/services/tipoGuardia.service';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { RegistrosPendientes } from 'src/app/models/RegistrosPendientes';
+import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { RegActivRegSalidaDto } from 'src/app/dto/RegistroActividad/RegActivRegSalidaDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
@@ -60,6 +62,7 @@ export class RegistroActividadesEgresoProfesionalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private registroActividadService: RegistroActividadService,
+    private cronogramaTentativoService: CronogramaTentativoService,
     private tipoGuardiaService: TipoGuardiaService,
     private toastr: ToastrService,
     private router: Router,
@@ -326,6 +329,43 @@ validarFechaEgresoMayorOIgual() {
       });
     console.log('Formulario después de patch:', this.registroForm.value);
 
+    // Paso 1: Crear el DTO
+    const dto = new RegActivRegIngresoDto(
+      registro.idAsistencial,
+      registro.idEfector,
+      registro.idTipoGuardia,
+      registro.idServicio,
+      new Date(registro.fechaIngreso),
+      new Date(`1970-01-01T${registro.horaIngreso}`) // convertir hora string a Date
+    );
+
+    // Paso 2: Llamar al servicio
+    this.cronogramaTentativoService.calcularHoraMaximaSalida(dto).subscribe({
+      next: (respuesta: string) => {
+        const horaMaxima = new Date(respuesta); // viene como ISO string, parseo a Date
+        const ahora = new Date();
+
+        console.log('Hora máxima permitida:', horaMaxima);
+        console.log('Hora actual:', ahora);
+
+        if (ahora > horaMaxima) {
+          this.toastr.warning(
+            'Excediste el total de tus horas de guardia. Contacta al administrativo del hospital para cargar tu egreso del día',
+            'Límite superado',
+            {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            }
+          );
+          this.router.navigateByUrl('/registro-diario');
+        }
+      },
+      error: (err) => {
+        console.error('Error al calcular hora máxima de salida:', err);
+        this.toastr.error('No se pudo verificar el límite de hora de salida');
+      }
+  });
     /*  // Deshabilitar campos de ingreso (ya que son datos históricos)
      this.registroForm.get('fechaIngreso')?.disable();
      this.registroForm.get('eventStartTime')?.disable();

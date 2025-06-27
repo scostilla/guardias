@@ -132,7 +132,17 @@ export class CronogramaTentativoService {
 
     getServicioByIdTentativo(idTentativo: number): Observable<CronogramaTentativoServicioDto> {
       return this.httpClient.get<CronogramaTentativoServicioDto>(`${this.cTentativoURL}getServicio/${idTentativo}`);
-    }  
-  }
+    }
+
+    calcularHoraMaximaSalida(dto: RegActivRegIngresoDto): Observable<string> {
+      const url = `${this.cTentativoURL}calcularHoraMaximaSalida`;
+      return this.httpClient.post<string>(url, dto);
+    }
+
+    getIdAutoridadByIdUsuario(idUsuario: number): Observable<number> {
+        const url = `${this.cTentativoURL}getIdAutoridadByIdUsuario/${idUsuario}`;
+        return this.httpClient.get<number>(url);
+      }
+}
     
     

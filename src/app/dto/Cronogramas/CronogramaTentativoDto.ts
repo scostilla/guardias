@@ -11,7 +11,10 @@ export class CronogramaTentativoDto {
     idAsistencial: number;
     idServicio: number;
     idEfector: number;
-    observacion: string | null
+    observacion: string | null;
+    motivoAutorizacion?: string;
+    motivoPendiente?: string;
+    idAutoridad?: number;
 
     constructor(
         fechaIngreso: Date,  
@@ -25,7 +28,11 @@ export class CronogramaTentativoDto {
         idAsistencial: number,
         idServicio: number,
         idEfector: number,
-        observacion: string | null    
+        observacion: string | null,
+        motivoAutorizacion?: string,
+        motivoPendiente?: string,
+        idAutoridad?: number
+    
     ) {
         this.fechaIngreso = fechaIngreso;
         this.fechaEgreso = fechaEgreso;
@@ -39,7 +46,9 @@ export class CronogramaTentativoDto {
         this.idServicio = idServicio;
         this.idEfector = idEfector;
         this.observacion = observacion;
+        this.motivoAutorizacion = motivoAutorizacion;
+        this.motivoPendiente = motivoPendiente;
+        this.idAutoridad = idAutoridad;
       }
   
-  };
-  
+  }

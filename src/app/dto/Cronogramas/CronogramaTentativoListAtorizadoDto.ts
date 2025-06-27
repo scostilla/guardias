@@ -10,6 +10,10 @@ export class CronogramaTentativoListAtorizadoDto {
     horaIngreso: Date;
     horaEgreso: Date;
     autorizado: string;
+    motivoAutorizacion: string;
+    motivoPendiente: string;
+    idAutoridad: number;
+
 
     constructor(
         id: number,
@@ -21,6 +25,9 @@ export class CronogramaTentativoListAtorizadoDto {
         horaIngreso: Date,
         horaEgreso: Date,
         autorizado: string,
+        motivoAutorizacion: string,
+        motivoPendiente: string,
+        idAutoridad: number,
     ) {
         this.id = id;
         this.asistencial = asistencial;
@@ -31,6 +38,9 @@ export class CronogramaTentativoListAtorizadoDto {
         this.horaIngreso = horaIngreso;
         this.horaEgreso = horaEgreso;
         this.autorizado = autorizado;
-      }
+        this.motivoAutorizacion = motivoAutorizacion;
+        this.motivoPendiente = motivoPendiente;
+        this.idAutoridad = idAutoridad;
+    }
   
   }
