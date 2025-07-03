@@ -12,12 +12,21 @@
       </tr>    
       <tr>
         <th scope="row">Vínculo laboral</th>
-        <td>{{ getLegajoActualId(asistencial)?.revista?.tipoRevista?.nombre }}</td>
+        <td>{{ legajoActual?.nombreTipoRevista }}</td>
       </tr>    
       <tr>
         <th scope="row">Categoria</th>
-        <td>{{ getLegajoActualId(asistencial)?.revista?.categoria?.nombre +'('+getLegajoActualId(asistencial)?.revista?.adicional?.nombre+')' }}</td>
+        <td>{{ legajoActual?.nombreCategoria }} ({{ legajoActual?.nombreAdicional }})</td>
       </tr>      
+      <tr>
+      <th scope="row">Novedades</th>
+      <td>
+        <div *ngFor="let novedad of novedadesActivas">
+          {{ novedad.tipoLicencia.nombre }} 
+          <span>({{ formatDate(novedad.fechaInicio, novedad.fechaFinal) }})</span>
+        </div>
+      </td>
+      </tr>
     </tbody>
   </table>
   <div mat-dialog-actions class="action mt-4">

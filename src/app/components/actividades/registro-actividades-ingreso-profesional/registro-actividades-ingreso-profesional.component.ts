@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from 'src/app/services/login/token.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
-//import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
-//import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { Servicio } from 'src/app/models/Configuracion/Servicio';
-//import { ServicioService } from 'src/app/services/servicio.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { RegistroActividadDto } from 'src/app/dto/RegistroActividadDto';
@@ -17,13 +12,12 @@ import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivReg
 import { CronogramaTentativoService } from 'src/app/services/Cronogramas/cronogramaTentativo.service';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/VerificacionTentativoResponseDto';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistencial/AsistencialTiposGuardiasDto';
-import { CronogramaTentativoServicioDto } from 'src/app/dto/Cronogramas/CronogramaTentativoServicioDto';
+import { TentativoIdsResponseDto } from 'src/app/dto/Cronogramas/TentativoIdsResponseDto';
+import { TentativoSearchRequestDto } from 'src/app/dto/Cronogramas/TentativoSearchRequestDto';
 
 @Component({
   selector: 'app-registro-actividades-ingreso-profesional',
@@ -34,7 +28,6 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
   registroForm: FormGroup;
   tiposGuardias: AsistencialTiposGuardiasDto[] = [];
   //asistenciales: AsistencialSummaryDto[] = [];
-  servicios: ServicioSummaryDto[] = [];
   efectorId: number | null = null;
   efectorNombre: string | null = null; // Propiedad para almacenar el nombre del efector
   timeControl: FormControl = new FormControl();
@@ -54,6 +47,8 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
   apellidoPersona: string | null = null;
   currentRole: string | null = null;
 
+  idServicio!: number;
+  idTipoGuardia!: number;
 
   constructor(
     private fb: FormBuilder,
@@ -61,7 +56,6 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
     private cronogramaTentativoService: CronogramaTentativoService,
     private novedadPersonalService: NovedadPersonalService,
     private asistencialService: AsistencialService,
-    private hospitalService: HospitalService,
     private efectorService: EfectorService,
     private toastr: ToastrService,
     private router: Router,
@@ -78,13 +72,11 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       const horaFormateada = `${hours}:${minutes}`;
 
     this.registroForm = this.fb.group({
-      idTipoGuardia: ['', Validators.required],
       idAsistencial: [{ value: '', disabled: true }],
-      //idServicio: ['', Validators.required],
       idEfector: [''],
       fechaIngreso: [fechaFormateada, Validators.required],
       eventStartTime: [horaFormateada, Validators.required],
-      eventEndTime: [{ value: '', disabled: true }, Validators.required]
+      eventEndTime: [{ value: '', disabled: true }, Validators.required],
     });
 
     this.route.data.subscribe(data => {
@@ -101,8 +93,6 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       if (this.efectorId) {
         this.registroForm.patchValue({ idEfector: this.efectorId });
         this.loadEfectorName();
-        /*this.listAsistenciales();*/
-        //this.listServicios();
       } else {
         this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
         timeOut: 5000,
@@ -128,37 +118,12 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       this.apellidoPersona = personDto.apellido;
       this.inputValue = `${this.apellidoPersona} ${this.nombrePersona}`;
       this.registroForm.patchValue({ idAsistencial: this.inputValue });
-
-      this.listTiposGuardias();
     });
 
       const userIdFromToken = this.tokenService.getUserIdFromToken();
       this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
 
   }
-
-  listTiposGuardias(): void {
-    const idAsistencial = this.idPersona!;
-
-    this.asistencialService.getTiposGuardias(idAsistencial).subscribe({
-      next: (data) => {
-        console.log('Tipos de Guardia para asistencial:', data);
-        this.tiposGuardias = data;
-      },
-      error: (err) => {
-        console.error('Error al obtener tipos de guardia por asistencial:', err);
-      }
-    });
-  }
-
-  /*listAsistenciales(): void {
-    this.asistencialService.listSummary().subscribe(data => {
-      console.log('Lista de asistenciales de cargo:', data);
-      this.asistenciales = data;
-    }, error => {
-      console.log(error);
-    });
-  }*/
 
   // Roles a usar
   UserRoles(): void {
@@ -194,131 +159,118 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
     }
   }
 
-  /*listServicios(): void {
-    this.hospitalService.getServicio(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
-      this.servicios = data;
-    });
-  }*/
+  saveRegistro(): void {
+    if (!this.registroForm.valid) {
+      console.warn('Formulario inválido, no se puede guardar.');
+      return;
+    }
 
-  /*onTipoGuardiaChange(event: any): void {
-    console.log("Tipo de guardia seleccionado:", event.value);
-    const nuevoTipoGuardia = event.value;
-    // Cambiar el tipo de guardia y borrar solo los campos relacionados
-    this.cambiarTipoGuardia(nuevoTipoGuardia);
-  }
-
-  // Método para cambiar el tipo de guardia y borrar solo los campos relacionados
-  cambiarTipoGuardia(nuevoTipoGuardia: any): void {
-    // Borrar solo los campos relacionados con el tipo de guardia
-    this.registroForm.get('idServicio')?.reset();
-
-    // Actualizar el tipo de guardia en el formulario
-    this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
-
-  }*/
-
-saveRegistro(): void {
-  if (this.registroForm.valid) {
     const registroData = this.registroForm.value;
     const idPersona = this.idPersona!;
 
-    console.log('📥 Datos del formulario:', registroData);
-
-    // ✅ Convertir fecha DD/MM/YYYY a YYYY-MM-DD
+    // Convertir fecha DD/MM/YYYY a YYYY-MM-DD
     const [dia, mes, anio] = registroData.fechaIngreso.split('/');
     const fechaConsulta = `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
     registroData.fechaIngreso = fechaConsulta;
 
-    console.log('📅 Fecha de consulta para novedades:', fechaConsulta);
-    console.log('🔍 Verificando si el profesional puede hacer guardia...');
+    console.log('Datos del formulario:', registroData);
 
-    this.novedadPersonalService.puedeHacerGuardia(idPersona, fechaConsulta).subscribe({
-      next: (puedeHacerGuardia: boolean) => {
-        if (!puedeHacerGuardia) {
-          this.mostrarError('El profesional tiene novedades que impiden realizar guardia');
-          return;
-        }
+    // 🔍 PRIMERO obtener servicio y tipo de guardia
+    const searchDto: TentativoSearchRequestDto = {
+      idAsistencial: idPersona,
+      idEfector: registroData.idEfector,
+      fechaIngreso: registroData.fechaIngreso,
+      horaIngreso: registroData.eventStartTime
+    };
 
-        const verificarDto = this.crearVerificacionDto(registroData);
-        console.log('📤 Enviando VerificacionDto al backend:', verificarDto);
+    this.cronogramaTentativoService.getServicioAndTipoGuardia(searchDto).subscribe({
+      next: (response: TentativoIdsResponseDto) => {
+        console.log('🧩 Servicio y tipo de guardia desde backend:', response);
 
-        this.cronogramaTentativoService.verificarRegistroIngresoEnTentativo(verificarDto).subscribe({
-          next: (response: VerificacionTentativoResponseDto) => {
-            if (!response.existe || !response.id) {
-              this.mostrarError('Los datos no coinciden con el cronograma tentativo del profesional');
+        this.idServicio = response.idServicio;
+        this.idTipoGuardia = response.idTipoGuardia;
+
+        // 👉 Ahora sí: verificar novedades
+        this.novedadPersonalService.puedeHacerGuardia(idPersona, fechaConsulta).subscribe({
+          next: (puedeHacerGuardia: boolean) => {
+            if (!puedeHacerGuardia) {
+              this.mostrarError('El profesional tiene novedades que impiden realizar guardia');
               return;
             }
 
-            console.log('✅ Coincidencia con cronograma tentativo. Procediendo a guardar...');
-            this.guardarRegistro(registroData, response.id);
+            // 👉 Verificación en cronograma tentativo
+            const verificarDto = this.crearVerificacionDto(registroData);
+            console.log('Enviando VerificacionDto al backend:', verificarDto);
+
+            this.cronogramaTentativoService.verificarRegistroIngresoEnTentativo(verificarDto).subscribe({
+              next: (response: VerificacionTentativoResponseDto) => {
+                if (!response.existe || !response.id) {
+                  this.mostrarError('Los datos no coinciden con el cronograma tentativo del profesional');
+                  return;
+                }
+
+                // 👉 Guardar registro con el id del cronograma
+                this.guardarRegistro(registroData, response.id);
+              },
+              error: (error) => {
+                console.error('Error al verificar cronograma tentativo:', error);
+                this.mostrarError('Error al verificar cronograma tentativo', error);
+              }
+            });
           },
           error: (error) => {
-            console.error('❌ Error al verificar cronograma tentativo:', error);
-            this.mostrarError('Error al verificar cronograma tentativo', error);
+            console.error('Error al verificar novedades del profesional:', error);
+            this.mostrarError('Error al verificar novedades', error);
           }
         });
       },
       error: (error) => {
-        console.error('❌ Error al verificar novedades del profesional:', error);
-        this.mostrarError('Error al verificar novedades', error);
+        console.error('Error al obtener servicio y tipo de guardia:', error);
+        this.mostrarError('No se pudo obtener servicio y tipo de guardia', error);
       }
     });
-  } else {
-    console.warn('⚠️ Formulario inválido, no se puede guardar.');
   }
-}
 
-private guardarRegistro(registroData: any, idCronograma: number): void {
-  this.cronogramaTentativoService.getServicioByIdTentativo(idCronograma).subscribe({
-    next: (servicio: CronogramaTentativoServicioDto) => {
-      console.log('🧾 Servicio obtenido por tentativo:', servicio);
+  private guardarRegistro(registroData: any, idCronograma: number): void {
+    console.log('📌 Entrando a guardarRegistro con idCronograma:', idCronograma);
 
-      // Sobrescribir el idServicio en el registroData antes de crear el DTO
-      registroData.idServicio = { id: servicio.idServicio };
+    const registroDto = this.crearRegistroDto(registroData, idCronograma);
 
-      const registroDto = this.crearRegistroDto(registroData, idCronograma);
+    console.log('📦 DTO enviado a guardar:', {
+      idCronograma,
+      registroDto,
+      modo: this.initialData?.id ? 'Actualización' : 'Creación'
+    });
 
-      console.log('📦 DTO enviado a guardar:', {
-        idCronograma,
-        registroDto,
-        modo: this.initialData?.id ? 'Actualización' : 'Creación'
-      });
+    const observable = this.initialData?.id
+      ? this.registroActividadService.update(this.initialData.id, registroDto)
+      : this.registroActividadService.save(registroDto);
 
-      const observable = this.initialData?.id
-        ? this.registroActividadService.update(this.initialData.id, registroDto)
-        : this.registroActividadService.save(registroDto);
-
-      observable.subscribe({
-        next: () => {
-          this.cronogramaTentativoService.aceptar(idCronograma).subscribe({
-            next: () => {
-              this.mostrarExito('Registro guardado y cronograma aceptado');
-              this.router.navigate(['/registro-diario']);
-            },
-            error: (error) => {
-              this.mostrarExito('Registro guardado, pero no se pudo marcar el cronograma como aceptado');
-              this.router.navigate(['/registro-diario']);
-              console.error('Error al aceptar cronograma:', error);
-            }
-          });
-        },
-        error: (error) => this.mostrarError('Error al guardar el registro', error)
-      });
-    },
-    error: (err) => {
-      console.error('❌ Error al obtener servicio por tentativo:', err);
-      this.mostrarError('No se pudo obtener el servicio del cronograma tentativo', err);
-    }
-  });
-}
+    observable.subscribe({
+      next: () => {
+        this.cronogramaTentativoService.aceptar(idCronograma).subscribe({
+          next: () => {
+            this.mostrarExito('Registro guardado y cronograma aceptado');
+            this.router.navigate(['/registro-diario']);
+          },
+          error: (error) => {
+            this.mostrarExito('Registro guardado, pero no se pudo marcar el cronograma como aceptado');
+            this.router.navigate(['/registro-diario']);
+            console.error('Error al aceptar cronograma:', error);
+          }
+        });
+      },
+      error: (error) => this.mostrarError('Error al guardar el registro', error)
+    });
+  }
 
   // Métodos auxiliares
 private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
   const dto = new RegActivRegIngresoDto(
     this.idPersona!,
     registroData.idEfector,
-    registroData.idTipoGuardia.id,
-    registroData.idServicio.id,
+    this.idTipoGuardia,
+    this.idServicio,
     registroData.fechaIngreso,
     registroData.eventStartTime
   );
@@ -326,8 +278,8 @@ private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
   console.log('🛠️ DTO creado para verificación:', {
     idAsistencial: this.idPersona,
     idEfector: registroData.idEfector,
-    idTipoGuardia: registroData.idTipoGuardia?.id,
-    idServicio: registroData.idServicio?.id,
+    idTipoGuardia: this.idTipoGuardia,
+    idServicio: this.idServicio,
     fechaIngreso: registroData.fechaIngreso,
     horaIngreso: registroData.eventStartTime
   });
@@ -341,10 +293,10 @@ private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
       registroData.fechaEgreso,
       registroData.eventStartTime,
       registroData.eventEndTime,
-      registroData.idTipoGuardia.id,
+      this.idTipoGuardia,
       true,
       this.idPersona!,
-      registroData.idServicio.id,
+      this.idServicio,
       registroData.idEfector,
       this.userId!, //idUsuarioIngreso
       registroData.idUsuarioEgreso ?? null,
@@ -375,14 +327,6 @@ private crearVerificacionDto(registroData: any): RegActivRegIngresoDto {
 
   compareTipoGuardia(p1: AsistencialTiposGuardiasDto, p2: AsistencialTiposGuardiasDto): boolean {
     return p1 && p2 ? p1.idTipoGuardia  === p2.idTipoGuardia  : p1 === p2;
-  }
-
-  /*compareAsistencial(p1: AsistencialSummaryDto, p2: AsistencialSummaryDto): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }*/
-
-  compareServicio(p1: Servicio, p2: Servicio): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   cancel(): void {

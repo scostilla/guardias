@@ -3,11 +3,11 @@ export class RegActivRegIngresoDto{
     idEfector: number;
     idTipoGuardia: number;
     idServicio: number;
-    fechaIngreso: Date;
-    horaIngreso: Date;
+    fechaIngreso: string;
+    horaIngreso: string;
 
 
-    constructor(idAsistencial: number, idEfector: number, idTipoGuardia: number, idServicio: number,fechaIngreso: Date, horaIngreso: Date) {
+    constructor(idAsistencial: number, idEfector: number, idTipoGuardia: number, idServicio: number,fechaIngreso: string, horaIngreso: string) {
 
         this.idAsistencial = idAsistencial;
         this.idEfector = idEfector;

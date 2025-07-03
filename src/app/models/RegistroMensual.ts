@@ -1,6 +1,9 @@
 import { Person } from "./Configuracion/Person";
 import { Efector } from "./Configuracion/Efector";
 import { RegistroActividad } from "./RegistroActividad";
+import { SumaHoras } from './suma-horas';
+import { Ddjj } from './Configuracion/Ddjj';
+
 
 export class RegistroMensual {
     id?: number;
@@ -10,6 +13,8 @@ export class RegistroMensual {
     activo: boolean;
     registroActividad: RegistroActividad[];
     efector: Efector;
+    ddjj?: Ddjj;
+    totalHoras?: SumaHoras;
 
     constructor (
         mes: string, 
@@ -17,7 +22,9 @@ export class RegistroMensual {
         asistencial: Person, 
         activo: boolean, 
         registroActividad: RegistroActividad[], 
-        efector: Efector
+        efector: Efector,
+        ddjj?: Ddjj,
+        totalHoras?: SumaHoras,
     ){
         this.mes = mes;
         this.anio= anio;
@@ -25,5 +32,7 @@ export class RegistroMensual {
         this.activo = activo;
         this.registroActividad = registroActividad;
         this.efector = efector;
+        this.ddjj = ddjj;
+        this.totalHoras = totalHoras;
     }
 }

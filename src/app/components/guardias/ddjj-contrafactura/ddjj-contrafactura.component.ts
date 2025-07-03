@@ -1,4 +1,4 @@
-/*import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
@@ -522,7 +522,7 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 
 //aqui decia actual en vez de activo, revisar si corresponde
 getLegajoActualId(asistencial: Person): Legajo | undefined {
-  const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
+  const legajoActual = asistencial.legajos.find(legajo => legajo.activo && !legajo.esAutoridad);
   return legajoActual ? legajoActual : undefined;
 }
 
@@ -664,8 +664,8 @@ exportarAExcel() {
     this.suscription?.unsubscribe();
   }
 
-}*/
-
+}
+/*
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DdjjExtraDetailComponent } from '../ddjj-extra-detail/ddjj-extra-detail.component';
@@ -678,7 +678,6 @@ import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
@@ -686,7 +685,6 @@ import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
-import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -858,7 +856,7 @@ export class DdjjContrafacturaComponent {
       });
     }
   
-    filterDataByDate(month: number, year: number): RegistroMensual[] {
+    /*filterDataByDate(month: number, year: number): RegistroMensual[] {
       // Filtra los datos según el mes y año proporcionados
       return this.registrosMensuales.filter(registro => {
         // Convertir el mes a formato numérico
@@ -1082,17 +1080,7 @@ export class DdjjContrafacturaComponent {
     }
     return output;
   }
-  
-  //verificar, aqui decia actual en vez de activo
-  getLegajoActualId(asistencial: Person): Legajo | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
-    return legajoActual ? legajoActual : undefined;
-  }
-  
-  getNovedades(asistencial: Person): NovedadPersonal[] {
-    return asistencial.novedadesPersonales;
-  }
-  
+    
   formatDate(startDate: Date, endDate: Date): string {
     const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
     const formattedEndDate = moment(endDate).format('DD/MM/YYYY');
@@ -1118,7 +1106,7 @@ export class DdjjContrafacturaComponent {
     };
     worksheet.getRow(1).font = { bold: true };
   
-    const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D'];
+    const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Total mes', 'Total L-V', 'Total S-D'];
     const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
       return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
     });
@@ -1135,15 +1123,9 @@ export class DdjjContrafacturaComponent {
         Apellido: registro.asistencial.apellido,
         Nombre: registro.asistencial.nombre,
         Cuil: registro.asistencial.cuil,
-        Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
-        Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
       };
   
-      const novedades = this.getNovedades(registro.asistencial);
-      const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
-  
-      exportData['Novedades'] = novedadesString || '-';
-  
+    
       // Calcular los totales y agregarlos al objeto exportData
       const totalMes = this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear);
       const totalLV = this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
@@ -1213,7 +1195,7 @@ export class DdjjContrafacturaComponent {
 
 
 
-/*  constructor(
+  constructor(
     public dialogReg: MatDialog,
   ){}
     openPopupCf(){
@@ -1229,6 +1211,7 @@ export class DdjjContrafacturaComponent {
       disableClose: true,
     }) 
 }
-*/
+
 
 }
+*/

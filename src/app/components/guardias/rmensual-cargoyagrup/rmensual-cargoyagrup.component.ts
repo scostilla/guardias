@@ -1,0 +1,914 @@
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { RegistroActividad } from 'src/app/models/RegistroActividad';
+import { Person } from 'src/app/models/Configuracion/Person';
+import { RegistroMensual } from 'src/app/models/RegistroMensual';
+import { RegistroMensualService } from 'src/app/services/registroMensual.service';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import * as moment from 'moment';
+import 'moment/locale/es';
+import { Feriado } from 'src/app/models/Configuracion/Feriado';
+import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
+import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { Router } from '@angular/router';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { DdjjService } from 'src/app/services/ddjj.service';
+import { DdjjDto } from 'src/app/dto/DdjjDto';
+import { ToastrService } from 'ngx-toastr';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = (pdfFonts as any).vfs;
+
+//Autenticación
+import { TokenService } from 'src/app/services/login/token.service';
+import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+
+
+interface ClasesNovedad {
+  [key: string]: string;
+}
+
+const clases: ClasesNovedad = {
+  'compensatorio': 'novedad-personal-compensatorio',
+  'licencia anual ordinaria': 'novedad-personal-lao',
+  'licencia por maternidad': 'novedad-personal-maternidad',
+  'parte por enfermedad': 'novedad-personal-parte-enfermo',
+  'parte por cuidado de familiar enfermo': 'novedad-personal-familiar-enfermo',
+  'falta sin aviso': 'novedad-personal-falta-sin-aviso',
+  'duelo': 'novedad-personal-duelo'
+};
+
+@Component({
+  selector: 'app-rmensual-cargoyagrup',
+  templateUrl: './rmensual-cargoyagrup.component.html',
+  styleUrls: ['./rmensual-cargoyagrup.component.css']
+})
+
+export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
+
+  @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
+  dataSource!: MatTableDataSource<RegistroMensual>;
+  suscription!: Subscription;
+
+  diasEnMes: moment.Moment[] = [];
+  feriados: Feriado[] = [];
+  registrosMensuales: RegistroMensual[] = [];
+  servicios: ServicioSummaryDto[] = []; 
+
+  dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
+
+  selectedServicio?: number | null = null; 
+  selectedMonth: number = moment().month();
+  selectedYear: number = moment().year();
+  months = moment.months().map((name, value) => ({ value, name }));
+  years: number[] = [2023, 2024, 2025];
+
+  botonDph = true;
+  revisandoDPH: boolean = false;
+  efectorId: number | null = null;
+  efectorNombre: string | null = null;
+
+  //Autenticación
+  roles: string[] = [];
+  currentRole: string | null = null;
+  isAutoridad: boolean = false;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+
+  constructor(
+    private registroMensualService: RegistroMensualService,
+    private feriadoService: FeriadoService,
+    private dialog: MatDialog,
+    private paginatorIntl: MatPaginatorIntl,
+    private hospitalService: HospitalService,
+    private efectorService: EfectorService,
+    private novedadPersonalService: NovedadPersonalService,
+    private ddjjService: DdjjService,
+    private toastr: ToastrService,
+    private tokenService: TokenService,
+    private sanitizer: DomSanitizer,
+    private router: Router
+  ) {
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.nextPageLabel = "Siguiente página";
+    this.paginatorIntl.previousPageLabel = "Página anterior";
+    this.paginatorIntl.firstPageLabel = "Primera página";
+    this.paginatorIntl.lastPageLabel = "Última página";
+    this.paginatorIntl.getRangeLabel = (page, size, length) => {
+      const start = page * size + 1;
+      const end = Math.min((page + 1) * size, length);
+      return `${start} - ${end} de ${length}`;
+    };
+  }
+
+  ngOnInit(): void {
+    // Obtener el ID efector del servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+      if (this.efectorId) {
+        this.loadEfectorName();
+          moment.locale('es');
+          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.generarDiasDelMes();
+          this.loadHospitalDetails();
+    
+        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+          this.feriados = feriados;
+    });
+
+      } else {
+        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.router.navigateByUrl('/home-page');
+    }
+  
+    // Obtener rol actual
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
+
+      this.selectedServicio = null;
+  }
+
+  //trae el nombre del efector esta en sesion
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.efectorService.getEfectorNombre(this.efectorId).subscribe(
+        (efector: EfectorSummaryDto) => {
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
+  }
+
+  // Roles a usar
+  UserRoles(): void {
+    if (this.currentRole) {
+      this.isUsuario = this.currentRole === 'ROLE_USER';
+      this.isAdministrativo = this.currentRole === 'ROLE_ADMIN';
+      this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
+      this.isDph = this.currentRole === 'ROLE_DPH';
+      this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+    } else {
+      // Si no hay rol seleccionado, todos como false
+      this.isAdministrativo = false;
+      this.isAutoridad = false;
+      this.isUsuario = false;
+      this.isDph = false;
+      this.isSuper = false;
+    }
+  }
+
+  loadHospitalDetails(): void {
+    if (!this.efectorId) {
+      console.error('No hay efectorId disponible');
+      return;
+    }
+
+    console.log('Llamando a getServiciosActivos con efectorId:', this.efectorId);
+
+    this.hospitalService.getServiciosActivos(this.efectorId).subscribe(
+      (servicios) => {
+        this.servicios = servicios.map(s => new ServicioSummaryDto(s.id, s.descripcion));
+        if (this.servicios.length > 0) {
+        }
+
+        this.loadRegistrosMensuales();
+      },
+      (error) => {
+        console.error('Error al obtener servicios activos del hospital:', error);
+      }
+    );
+  }
+
+  isHabilitadoBotonDdjj(): boolean {
+    const today = new Date();
+    let mes = Number(this.selectedMonth) + 1;
+    let anio = this.selectedYear;
+
+    if (mes > 11) {
+      mes = 0; // Enero
+      anio += 1;
+    }
+
+    const inicio = new Date(anio, mes, 1); // Día 1 del mes siguiente
+    const fin = new Date(anio, mes, 5, 23, 59, 59); // Día 5 inclusive, hasta las 23:59
+
+    return today >= inicio && today <= fin;
+  }
+
+  generarDiasDelMes(): void {
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
+    const endOfMonth = startOfMonth.clone().endOf('month');
+    let day = startOfMonth;
+
+    this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
+
+    while (day <= endOfMonth) {
+      this.displayedColumns.push(day.format('YYYY_MM_DD'));
+      day.add(1, 'day');
+    }
+  }
+
+  updateTableDataSource(): void {
+    this.dataSource.data = this.registrosMensuales;
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  loadRegistrosMensuales(): void {
+    const anio = this.selectedYear;
+    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+    const idEfector = this.efectorId;
+
+    if (idEfector === null) {
+      console.error("El ID del hospital no puede ser null");
+      return;
+    }
+
+    if (this.selectedServicio == null) {
+      // Todos los servicios
+      this.registroMensualService
+        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
+        .subscribe(data => {
+          this.registrosMensuales = data;
+          this.updateTableDataSource(); // Mostrar todos
+        });
+    } else {
+      // Servicio específico
+      this.registroMensualService
+        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
+        .subscribe(data => {
+          this.registrosMensuales = data;
+          this.updateTableDataSource(); // Mostrar filtrado
+        });
+    }
+  }
+
+  updateDateAndLoadData(): void {
+
+    this.generarDiasDelMes();
+    this.loadRegistrosMensuales();
+  }
+
+  /*filterDataByDate(month: number, year: number): RegistroMensual[] {
+    // Filtra los datos según el mes y año proporcionados
+    return this.registrosMensuales.filter(registro => {
+      // Convertir el mes a formato numérico
+    const monthNumber = moment().month(registro.mes).month();
+    return monthNumber === month && registro.anio === year;
+    });
+  }*/
+ 
+  /*loadData() {
+    this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
+    this.updateTableDataSource();
+  }*/
+
+  getMonthName(monthIndex: number): string {
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    return monthNames[monthIndex];
+  }
+
+  getFechaFromColumnId(columnId: string): Date {
+    return moment(columnId, 'YYYY_MM_DD').toDate();
+  }
+
+  openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+    const dataToSend = {
+      asistencial,
+      month: selectedMonth,
+      year: selectedYear
+    };
+
+    this.dialogRef = this.dialog.open(RmensualCargoyagrupDetailComponent, {
+      width: '600px',
+      data: dataToSend
+    });
+  }
+
+openDdjjConfirm(): void {
+  const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
+    width: '500px',
+  });
+
+  dialogRef.afterClosed().subscribe((result) => {
+    if (result) {
+      this.revisandoDPH = true;
+      this.botonDph = false;
+
+      this.crearDdjjDesdeRegistros();
+    }
+  });
+}
+
+crearDdjjDesdeRegistros(): void {
+  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+  const anio = this.selectedYear;
+
+  if (this.efectorId == null) {
+    console.error('El ID del efector no puede ser nulo');
+    this.toastr.error('El ID del efector no puede ser nulo');
+    return;
+  }
+  const idEfector = this.efectorId;
+
+  if (!this.registrosMensuales || this.registrosMensuales.length === 0) {
+    console.warn('No hay registros mensuales para crear la DDJJ');
+    this.toastr.warning('No hay registros mensuales para crear la DDJJ');
+    return;
+  }
+
+  const idRegistrosMensuales = this.registrosMensuales
+  .filter(reg => reg.id !== undefined && reg.id !== null)
+  .map(reg => reg.id as number);
+
+  const totalHoras = this.registrosMensuales[0].totalHoras;
+  const subtotal = totalHoras?.horasLav ?? 0;
+  const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
+
+  const ddjj = new DdjjDto(
+    mes,
+    anio,
+    true, // activo
+    subtotal,
+    total,
+    idEfector,
+    idRegistrosMensuales,
+    'PENDIENTE',
+    undefined,      // idValorGmi
+    undefined,      // idDirector
+    undefined,      // idDirectorDPH
+    undefined,      // estadoDdjjDirectorDPH
+    true            // enPosesionDirector
+  );
+
+  console.log('DTO a enviar creacion (DdjjDto):', ddjj);
+
+
+  this.ddjjService.create(ddjj).subscribe({
+    next: () => {
+      this.toastr.success('DDJJ creada y enviada al Director con éxito');
+      this.loadRegistrosMensuales();
+    },
+    error: (err) => {
+      console.error('Error al crear DDJJ:', err);
+      this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
+      this.revisandoDPH = false;
+      this.botonDph = true;
+    }
+  });
+}
+
+  isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
+    const dateMoment = moment(date).startOf('day');
+    const feriadoFound = this.feriados.find(feriado => {
+      const feriadoMoment = moment(feriado.fecha).startOf('day');
+      return dateMoment.isSame(feriadoMoment);
+    });
+
+    return {
+      isHoliday: !!feriadoFound,
+      motivo: feriadoFound ? feriadoFound.motivo : ''
+    };
+  }
+
+  isWeekend(date: Date): boolean {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+
+isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
+  const dateMoment = moment(date).startOf('day');
+
+  const novedadFound = novedades.find(novedad => {
+    const inicioMoment = moment(novedad.fechaInicio).startOf('day');
+    const finMoment = moment(novedad.fechaFinal).startOf('day');
+    
+    const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
+        
+    return isBetween;
+  });
+
+  return {
+    isNovedad: !!novedadFound,
+    tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
+  };
+}
+  
+  getNovedadCssClass(tipoLicencia: string): string {
+    const tipo = tipoLicencia.toLowerCase();
+    return clases[tipo] || 'novedad-personal-otros';
+  }
+
+  isNovedadClass(date: Date, registro: any): string {
+    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+
+    if (isNovedad) {
+      return this.getNovedadCssClass(tipoLicencia);
+    }
+
+    if (this.isHoliday(date).isHoliday) {
+      return 'holiday';
+    }
+
+    if (this.isWeekend(date)) {
+      return 'weekend';
+    }
+
+    return '';
+  }
+
+  calculateTooltip(date: Date, registro: any): string {
+    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+    if (novedad.isNovedad) {
+      return novedad.tipoLicencia;
+    } else {
+      const holiday = this.isHoliday(date);
+      if (holiday.isHoliday) {
+        return holiday.motivo;
+      }
+    }
+    return '';
+  }
+
+/*formatDecimalHours(decimalHours: number): string {
+  if (!decimalHours || decimalHours <= 0) return '';
+  
+  let hours = Math.floor(decimalHours);
+  let minutes = Math.round((decimalHours - hours) * 60);
+
+  if (minutes === 60) {
+    hours += 1;
+    minutes = 0;
+  }
+
+  const paddedMinutes = minutes.toString().padStart(2, '0');
+  return `${hours}:${paddedMinutes} hs`;
+}*/
+  
+calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): SafeHtml {
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+
+  if (!registro) return this.sanitizer.bypassSecurityTrustHtml('');
+
+  for (let actividad of registroActividades) {
+    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+      return this.sanitizer.bypassSecurityTrustHtml('sin egreso');
+    }
+  }
+
+  if (registro.fechaIngreso && registro.fechaEgreso) {
+    const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+    const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+
+    if (hoursIn.isValid() && hoursOut.isValid()) {
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+
+      if (diffHours > 0) {
+        const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia);
+        const rounded = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
+        const html = `<span style="color: ${color};">${rounded}</span>`;
+        return this.sanitizer.bypassSecurityTrustHtml(html);
+      } else {
+        return this.sanitizer.bypassSecurityTrustHtml('');
+      }
+    } else {
+      return this.sanitizer.bypassSecurityTrustHtml('Datos inválidos');
+    }
+  }
+
+  return this.sanitizer.bypassSecurityTrustHtml('');
+}
+
+  getColor(tipoGuardia: TipoGuardia): string {
+    if (tipoGuardia && tipoGuardia.id) {
+      if (tipoGuardia.id === 1) {
+        return '#91A8DA'; // Color para CARGO
+      } else if (tipoGuardia.id === 2) {
+        return '#eb7430'; // Color para REAGRUPACION DE HS
+      }
+    }
+    return ''; // Color por defecto
+  }
+  
+  calculateHoursColor(registroActividad: RegistroActividad[], date: Date): string {
+    const registro = registroActividad.find((actividad) => {
+      const ingresoDate = moment(actividad.fechaIngreso);
+      return ingresoDate.isSame(date, 'day');
+    });
+
+    if (!registro) {
+      return '';
+    }
+
+    const tipoGuardia = registro.tipoGuardia;
+    if (tipoGuardia && tipoGuardia.id) {
+      if (tipoGuardia.id === 1) {
+        return '#91A8DA'; // Color para CARGO
+      } else if (tipoGuardia.id === 2) {
+        return '#eb7430'; // Color para REAGRUPACION DE HS
+      }
+    }
+    return ''; // Color por defecto
+  }
+
+  /*getPlainHourDifference(registroActividades: RegistroActividad[], date: Date): number {
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+
+  if (!registro || !registro.fechaIngreso || !registro.fechaEgreso) return 0;
+
+  const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+  const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+
+  if (!hoursIn.isValid() || !hoursOut.isValid()) return 0;
+
+  const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+  return diffHours > 0 ? diffHours : 0;
+}
+
+calculateTotalHoursForRow(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
+  let totalHours = 0;
+  for (let day = 1; day <= moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth(); day++) {
+    const date = new Date(anioDeInteres, mesDeInteres, day);
+    totalHours += this.getPlainHourDifference(registroActividades, date);
+  }
+  return this.formatDecimalHours(totalHours);
+}
+
+calculateWeekdaysTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
+  let totalWeekdaysHours = 0;
+  const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(anioDeInteres, mesDeInteres, day);
+    if (date.getDay() !== 0 && date.getDay() !== 6) {
+      totalWeekdaysHours += this.getPlainHourDifference(registroActividades, date);
+    }
+  }
+  return this.formatDecimalHours(totalWeekdaysHours);
+}
+
+calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
+  let totalWeekendsHours = 0;
+  const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(anioDeInteres, mesDeInteres, day);
+    if (date.getDay() === 0 || date.getDay() === 6) {
+      totalWeekendsHours += this.getPlainHourDifference(registroActividades, date);
+    }
+  }
+  return this.formatDecimalHours(totalWeekendsHours);
+}*/
+
+calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): string { 
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+
+  if (!registro) return '';
+
+  for (let actividad of registroActividades) {
+    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+      return 'sin egreso';
+    }
+  }
+
+  if (registro.fechaIngreso && registro.fechaEgreso) {
+    const hoursIn = moment(`${registro.fechaIngreso} ${registro.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
+    const hoursOut = moment(`${registro.fechaEgreso} ${registro.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
+
+    if (hoursIn.isValid() && hoursOut.isValid()) {
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+
+      if (diffHours > 0) {
+        const redondeado = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
+        return redondeado.toString();
+      } else {
+        return '0';
+      }
+    } else {
+      return 'Datos inválidos';
+    }
+  }
+
+  return '';
+}
+
+//aqui decia actual en vez de activo, revisar si corresponde
+getLegajoActualId(asistencial: Person): Legajo | undefined {
+  const legajoActual = asistencial.legajos.find(legajo => legajo.activo && !legajo.esAutoridad);
+  return legajoActual ? legajoActual : undefined;
+}
+
+getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
+  const idAsistencial = asistencial.id!;
+  const mes = Number(this.selectedMonth) + 1;
+  const anio = this.selectedYear;
+
+  console.log('[getNovedades] Solicitando novedades para:', {
+    idAsistencial,
+    mes,
+    anio
+  });
+
+  const observable = this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(
+    idAsistencial,
+    mes,
+    anio
+  );
+
+  // Loguear lo que llega desde el backend
+  observable.subscribe({
+    next: (novedades) => {
+      console.log(`[getNovedades] Novedades recibidas para ${idAsistencial}:`, novedades);
+    },
+    error: (err) => {
+      console.error(`[getNovedades] Error para ${idAsistencial}:`, err);
+    }
+  });
+
+  return observable;
+}
+
+formatDate(startDate: Date, endDate: Date): string {
+  const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
+  const formattedEndDate = moment(endDate).format('DD/MM/YYYY');
+
+  if (formattedStartDate === formattedEndDate) {
+    return formattedStartDate;
+  } else {
+    return `${formattedStartDate} - ${formattedEndDate}`;
+  }
+}
+
+async exportarAExcel() {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Datos');
+
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+
+  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`]).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFADD8E6' }
+  };
+  worksheet.getRow(1).font = { bold: true };
+
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F'];
+  const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
+    return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
+  });
+  const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
+  worksheet.addRow(combinedHeaders).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFFFFF00' }
+  };
+  worksheet.getRow(2).font = { bold: true };
+
+  // Recorrer con for...of para usar await
+  for (const registro of this.dataSource.data) {
+    // Esperar las novedades
+    const novedades: NovedadPersonal[] = await firstValueFrom(
+      this.getNovedades(registro.asistencial)
+    );
+
+    const exportData: any = {
+      Apellido: registro.asistencial.apellido,
+      Nombre: registro.asistencial.nombre,
+      Cuil: registro.asistencial.cuil,
+      Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
+      Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
+      Novedades: novedades.length > 0
+        ? novedades.map(novedad => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ')
+        : '-'
+    };
+
+    const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
+    const totalLV = registro.totalHoras?.horasLav ?? 0;
+    const totalSD = registro.totalHoras?.horasSdf ?? 0;
+
+    exportData['Total mes'] = totalMes;
+    exportData['Total L-V'] = totalLV;
+    exportData['Total S-D-F'] = totalSD;
+
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+    });
+
+    worksheet.addRow(Object.values(exportData));
+    const row = worksheet.lastRow!;
+
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      const date = this.getFechaFromColumnId(fechaColumna);
+      const isHoliday = this.isHoliday(date).isHoliday;
+
+      if (isHoliday) {
+        const cellIndex = dataColumnHeaders.length + index + 1;
+        const cell = row.getCell(cellIndex);
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'd4c2cd' }
+        };
+        cell.font = { color: { argb: '000000' } };
+      }
+    });
+  }
+
+  const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+
+  worksheet.eachRow((row, rowNumber) => {
+    row.eachCell((cell, colNumber) => {
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  saveAs(blob, fileName);
+}
+async exportarAPDF() {
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+
+  const headers = [
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
+    ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+  ];
+
+  const body: any[] = [headers];
+
+  for (const registro of this.dataSource.data) {
+    const novedades: NovedadPersonal[] = await firstValueFrom(
+      this.getNovedades(registro.asistencial)
+    );
+
+    const row = [];
+
+    row.push(registro.asistencial.apellido);
+    row.push(registro.asistencial.nombre);
+    row.push(registro.asistencial.cuil);
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '');
+
+    const novedadesString = novedades.length > 0
+      ? novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ')
+      : '-';
+    row.push(novedadesString);
+
+    row.push((registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0));
+    row.push(registro.totalHoras?.horasLav ?? 0);
+    row.push(registro.totalHoras?.horasSdf ?? 0);
+
+    this.displayedColumns.slice(6).forEach(fechaColumna => {
+      const fecha = this.getFechaFromColumnId(fechaColumna);
+      const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
+
+      const { isHoliday } = this.isHoliday(fecha);
+
+      if (isHoliday) {
+        row.push({
+          text: horas,
+          fillColor: '#F9CACA',  // Fondo rosado para feriado
+          color: 'red',          // Texto rojo
+          bold: true,
+          alignment: 'center'
+        });
+      } else {
+        row.push(horas);
+      }
+    });
+
+    body.push(row);
+  }
+
+  const docDefinition: any = {
+    pageSize: 'A3', //Más grande que A4
+    pageOrientation: 'landscape',
+    pageMargins: [10, 10, 10, 10], //Márgenes reducidos
+    content: [
+      { text: `Registro Mensual - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+      {
+        table: {
+          headerRows: 1,
+          widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
+          body
+        },
+        layout: {
+          hLineWidth: () => 0.5,
+          vLineWidth: () => 0.5,
+          hLineColor: () => '#000000',
+          vLineColor: () => '#000000'
+        }
+      }
+    ],
+    styles: {
+      header: {
+        fontSize: 14,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 10]
+      }
+    },
+    defaultStyle: {
+      fontSize: 7
+    }
+  };
+
+  pdfMake.createPdf(docDefinition).download(`rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
+}
+
+async onExportarAExcel() {
+  try {
+    await this.exportarAExcel();
+  } catch (error) {
+    console.error('Error exportando a Excel:', error);
+  }
+}
+
+async onExportarAPDF() {
+  try {
+    await this.exportarAPDF();
+  } catch (error) {
+    console.error('Error exportando a PDF:', error);
+  }
+}
+
+accentFilter(input: string): string {
+    const acentos = "ÁÉÍÓÚáéíóú";
+    const original = "AEIOUaeiou";
+    let output = "";
+    for (let i = 0; i < input.length; i++) {
+      const index = acentos.indexOf(input[i]);
+      if (index >= 0) {
+        output += original[index];
+      } else {
+        output += input[i];
+      }
+    }
+    return output;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+      const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
+      const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
+
+      filter = this.accentFilter(filter.toLowerCase());
+      return nombre.includes(filter) || apellido.includes(filter);
+    };
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
+  }
+
+}

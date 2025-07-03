@@ -5,6 +5,8 @@ import { tap } from 'rxjs/operators';
 import { Legajo } from "src/app/models/Configuracion/Legajo";
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 import { LegajoBajaDto } from 'src/app/dto/Configuracion/LegajoBajaDto';
+import { LegajoActualDto } from 'src/app/dto/Configuracion/asistencial/LegajoActualDto';
+
 
 @Injectable({
   providedIn: 'root'
@@ -57,5 +59,10 @@ public verificarAutoridad(id: number): Observable<any> {
 
 tieneTipoGuardiaPermitido(idPersona: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.legajosURL}/tieneTipoGuardiaPermitido/${idPersona}`);
+}
+
+listByAsistencial(idAsistencial: number): Observable<LegajoActualDto[]> {
+  const url = `${this.legajosURL}listByAsistencial/${idAsistencial}`;
+  return this.httpClient.get<LegajoActualDto[]>(url);
 }
 }

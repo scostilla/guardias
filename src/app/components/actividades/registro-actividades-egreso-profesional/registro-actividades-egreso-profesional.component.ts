@@ -329,15 +329,28 @@ validarFechaEgresoMayorOIgual() {
       });
     console.log('Formulario después de patch:', this.registroForm.value);
 
+    const fechaIngresoString = moment(registro.fechaIngreso).format('YYYY-MM-DD');
+    const horaIngresoString = registro.horaIngreso.slice(0, 5);
+
     // Paso 1: Crear el DTO
     const dto = new RegActivRegIngresoDto(
       registro.idAsistencial,
       registro.idEfector,
       registro.idTipoGuardia,
       registro.idServicio,
-      new Date(registro.fechaIngreso),
-      new Date(`1970-01-01T${registro.horaIngreso}`) // convertir hora string a Date
+      fechaIngresoString,
+      horaIngresoString
     );
+
+    // Log completo para verificar qué se está enviando al backend
+console.log('[DTO enviado a calcularHoraMaximaSalida]', {
+  idAsistencial: registro.idAsistencial,
+  idEfector: registro.idEfector,
+  idTipoGuardia: registro.idTipoGuardia,
+  idServicio: registro.idServicio,
+  fechaIngreso: fechaIngresoString,
+  horaIngreso: horaIngresoString
+});
 
     // Paso 2: Llamar al servicio
     this.cronogramaTentativoService.calcularHoraMaximaSalida(dto).subscribe({

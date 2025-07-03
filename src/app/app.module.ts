@@ -277,6 +277,14 @@ import { CronogramaPendienteEditComponent } from './components/cronogramas/crono
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
+import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
+import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
+import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
+import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
+import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
+import { RmensualContrafacturaDetailComponent } from './components/guardias/rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
+import { RmensualExtraDetailComponent } from './components/guardias/rmensual-extra-detail/rmensual-extra-detail.component';
+import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 
 @NgModule({
   declarations: [
@@ -502,6 +510,14 @@ import { RegistroActividadesEgresoProfesionalComponent } from './components/acti
     NotFoundComponent,
     RegistroActividadesIngresoProfesionalComponent,
     RegistroActividadesEgresoProfesionalComponent,
+    RmensualCargoyagrupComponent,
+    RmensualExtraComponent,
+    RmensualContrafacturaComponent,
+    RmensualSeleccionComponent,
+    DdjjSeleccionComponent,
+    RmensualContrafacturaDetailComponent,
+    RmensualExtraDetailComponent,
+    RmensualCargoyagrupDetailComponent,
   ],
 
   imports: [

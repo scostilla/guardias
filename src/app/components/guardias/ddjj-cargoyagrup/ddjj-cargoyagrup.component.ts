@@ -258,7 +258,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.loadRegistrosMensuales();
   }
 
-  filterDataByDate(month: number, year: number): RegistroMensual[] {
+  /*filterDataByDate(month: number, year: number): RegistroMensual[] {
     // Filtra los datos según el mes y año proporcionados
     return this.registrosMensuales.filter(registro => {
       // Convertir el mes a formato numérico
@@ -270,7 +270,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   loadData() {
     this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
     this.updateTableDataSource();
-  }
+  }*/
 
   getMonthName(monthIndex: number): string {
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -542,7 +542,7 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 
 //aqui decia actual en vez de activo, revisar si corresponde
 getLegajoActualId(asistencial: Person): Legajo | undefined {
-  const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
+  const legajoActual = asistencial.legajos.find(legajo => legajo.activo && !legajo.esAutoridad);
   return legajoActual ? legajoActual : undefined;
 }
 

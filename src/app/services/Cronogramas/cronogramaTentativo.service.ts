@@ -9,6 +9,8 @@ import { AutorizadoUpdateDto } from "src/app/dto/Cronogramas/AutorizadoUpdateDto
 import { RegActivRegIngresoDto } from 'src/app/dto/RegistroActividad/RegActivRegIngresoDto';
 import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/VerificacionTentativoResponseDto';
 import { CronogramaTentativoServicioDto } from 'src/app/dto/Cronogramas/CronogramaTentativoServicioDto';
+import { TentativoIdsResponseDto } from 'src/app/dto/Cronogramas/TentativoIdsResponseDto';
+import { TentativoSearchRequestDto } from 'src/app/dto/Cronogramas/TentativoSearchRequestDto';
 
 @Injectable({
   providedIn: 'root'
@@ -143,6 +145,15 @@ export class CronogramaTentativoService {
         const url = `${this.cTentativoURL}getIdAutoridadByIdUsuario/${idUsuario}`;
         return this.httpClient.get<number>(url);
       }
+
+  calcularHoraMaximaIngreso(dto: RegActivRegIngresoDto): Observable<string> {
+    return this.httpClient.post<string>(`${this.cTentativoURL}calcularHoraMaximaIngreso`, dto);
+  }
+
+  getServicioAndTipoGuardia(request: TentativoSearchRequestDto): Observable<TentativoIdsResponseDto> {
+    const url = `${this.cTentativoURL}getServicioAndTipoGuardia`;
+    return this.httpClient.post<TentativoIdsResponseDto>(url, request);
+  }
 }
     
     

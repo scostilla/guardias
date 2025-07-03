@@ -1,9 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { LegajoActualDto } from 'src/app/dto/Configuracion/asistencial/LegajoActualDto';
 import * as moment from 'moment';
 
 @Component({
@@ -16,9 +18,13 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
   month: number;
   year: number;
   registroMensual!: RegistroMensual;
+  novedadesActivas: NovedadPersonal[] = [];
+  legajoActual!: LegajoActualDto | null;
 
   constructor(
     public dialogRef: MatDialogRef<DdjjCargoyagrupDetailComponent>,
+    private novedadPersonalService: NovedadPersonalService,
+    private legajoService: LegajoService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.asistencial = data.asistencial;
@@ -26,55 +32,40 @@ export class DdjjCargoyagrupDetailComponent implements OnInit {
     this.year = data.year;
   }
 
-ngOnInit(): void {
-  console.log('📌 Datos recibidos en el dialog:', this.data);
-  console.log('🧑‍⚕️ Asistencial:', this.asistencial);
-  console.log('📅 Mes seleccionado:', this.month);
-  console.log('📅 Año seleccionado:', this.year);
-
-  const legajo = this.getLegajoActualId(this.asistencial);
-  console.log('🆔 Legajo actual:', legajo);
-
-  const novedades = this.getNovedades(this.asistencial);
-  console.log('🗒️ Todas las novedades personales:', novedades);
-
-  const novedadesActivas = this.getNovedadesActivas(this.asistencial);
-  console.log('✅ Novedades activas en el mes/año seleccionado:', novedadesActivas);
-}
-  
-  //aqui decia actual en vez de activo, luego revisar este metodo y su uso
-  getLegajoActualId(asistencial: Asistencial): Legajo | undefined {
-    const legajoActual = asistencial.legajos.find(legajo => legajo.activo);
-    return legajoActual ? legajoActual : undefined;
-  } 
-
-  getNovedades(asistencial: Asistencial): NovedadPersonal[] {
-    return asistencial.novedadesPersonales;
+  ngOnInit(): void {
+    this.cargarLegajoActual();
+    this.cargarNovedadesActivas();
   }
-    
+
+  private cargarLegajoActual(): void {
+    this.legajoService.listByAsistencial(this.asistencial.id!).subscribe({
+      next: legajos => {
+        this.legajoActual = legajos[0] ?? null;
+      },
+      error: err => {
+        console.error('Error al obtener legajo actual:', err);
+        this.legajoActual = null;
+      }
+    });
+  }
+
+  private cargarNovedadesActivas(): void {
+    const mes = Number(this.month) + 1;
+    const anio = this.year;
+
+    this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(this.asistencial.id!, mes, anio).subscribe({
+      next: novedades => {
+        this.novedadesActivas = novedades;
+      },
+      error: err => {
+        console.error('Error al obtener novedades activas:', err);
+        this.novedadesActivas = [];
+      }
+    });
+  }
+
   cerrar(): void {
     this.dialogRef.close();
-  }
-
-  getNovedadesActivas(asistencial: Asistencial): NovedadPersonal[] {
-    const selectedMonth = this.month;
-    const selectedYear = this.year;
-  
-    const novedadesActivas = asistencial.novedadesPersonales.filter(novedad => {
-      const inicio = moment(novedad.fechaInicio);
-      const fin = moment(novedad.fechaFinal);
-  
-      return (
-        (inicio.year() < selectedYear || (inicio.year() === selectedYear && inicio.month() <= selectedMonth)) &&
-        (fin.year() > selectedYear || (fin.year() === selectedYear && fin.month() >= selectedMonth))
-      );
-    });
-  
-    novedadesActivas.sort((a, b) => {
-      return moment(a.fechaInicio).valueOf() - moment(b.fechaInicio).valueOf();
-    });
-  
-    return novedadesActivas;
   }
 
   formatDate(startDate: Date, endDate: Date): string {

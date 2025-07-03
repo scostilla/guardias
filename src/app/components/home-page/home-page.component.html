@@ -81,23 +81,24 @@
       <div class="row">
         <div class="col-lg">
           <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="currentEfectorType === 'ministerio' || currentEfectorType === 'caps'"
-          [routerLink]="currentEfectorType !== 'ministerio' && currentEfectorType !== 'caps' ? '/guardias-view' : null">
+          [routerLink]="currentEfectorType !== 'ministerio' && currentEfectorType !== 'caps' ? '/rmensual-seleccion' : null">
             <div class="icon4_btnMenu">
-              <img class="img-fluid" src="/assets/img/i_guardias.png" />
+              <img class="img-fluid" src="/assets/img/i_rmensual.png" />
             </div>
             <div class="card-body text-center">
-              <h2 class="fs-4 fw-bold"><span>GUARDIAS</span></h2>
+              <h2 class="fs-4 fw-bold"><span>REGISTRO MENSUAL</span></h2>
             </div>
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="true">
+          <div class="btnMenu card border-0 align-items-center" type="button" [class.disabled]="currentEfectorType === 'ministerio' || currentEfectorType === 'caps'"
+          [routerLink]="currentEfectorType !== 'ministerio' && currentEfectorType !== 'caps' ? '/ddjj-seleccion' : null">
           <!--<div class="btnMenu card border-0 align-items-center" type="button" routerLink="/disponibilidad">-->
             <div class="icon5_btnMenu">
-              <img class="img-fluid" src="/assets/img/i_disponibilidad.png" />
+              <img class="img-fluid" src="/assets/img/i_ddjj.png" />
             </div>
             <div class="card-body text-center">
-              <h2 class="fs-4 fw-bold"><span>RRHH DISPONIBLE</span></h2>
+              <h2 class="fs-4 fw-bold"><span>DDJJ</span></h2>
               <!--app-no-asistencial class="fs-4 fw-bold" routerLink="/disponibilidad"><span>RRHH DISPONIBLE</span></h2>-->
             </div>
           </div>
