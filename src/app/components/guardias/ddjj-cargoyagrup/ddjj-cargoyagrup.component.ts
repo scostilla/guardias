@@ -1,28 +1,33 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DdjjCargoyagrupDetailComponent } from '../ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
-import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, firstValueFrom } from 'rxjs';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
-import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
+import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { DdjjService } from 'src/app/services/ddjj.service';
+import { DdjjDto } from 'src/app/dto/DdjjDto';
+import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 import { ToastrService } from 'ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -59,25 +64,51 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
+  mostrarMontos: boolean = false;
+
+  columnasBase: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
+  columnasMontos: string[] = ['montoTotal', 'montoLav', 'montoSdf'];
+  columnasFechas: string[] = []; // esto reemplaza el uso directo de `displayedColumns`
+
+  get displayedColumns(): string[] {
+    return [
+      ...this.columnasBase,
+      ...(this.mostrarMontos ? this.columnasMontos : []),
+      ...this.columnasFechas
+    ];
+  }
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
+  ddjjSeleccionada?: Ddjj;
 
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
   registrosMensuales: RegistroMensual[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
-  dialogRef!: MatDialogRef<DdjjCargoyagrupDetailComponent>;
+  dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
 
   selectedServicio?: number | null = null; 
-  selectedMonth: number = moment().month();
+  selectedMonth: number = moment().month() + 1;
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024, 2025];
+  selectedMonthYear: string = '';
+  mesesDisponibles: { value: string, label: string }[] = [];
 
-  botonDph = true;
-  revisandoDPH: boolean = false;
+  botonDirectorIcon: 'assignment_ind' | 'assignment_late' | 'assignment_turned_in' = 'assignment_ind';
+  evaluacionDdjjCargada = false;
+  botonDirectorDeshabilitado: boolean = false;
+  mensajeDirector: 'pendiente' | 'rechazado' | 'aceptado' | null = null;
+
+  botonDphIcon: 'assignment' | 'assignment_late' | 'assignment_turned_in' | 'snooze' = 'assignment';
+  botonDphDeshabilitado: boolean = false;
+  mensajeDph: 'pendiente' | 'rechazado' | 'aceptado' | null = null;
+  evaluacionDdjjDphCargada: boolean = false;
+
+  creacionDDJJ: boolean = false;
+  verificandoDdjj: boolean = false;
+  ddjjYaExiste: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
@@ -91,14 +122,16 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   isSuper: boolean = false;
 
   constructor(
-    private registroMensualService: RegistroMensualService,
     private feriadoService: FeriadoService,
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
+    private novedadPersonalService: NovedadPersonalService,
+    private ddjjService: DdjjService,
     private toastr: ToastrService,
     private tokenService: TokenService,
+    private sanitizer: DomSanitizer,
     private router: Router
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -120,8 +153,10 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         this.loadEfectorName();
           moment.locale('es');
           this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-          this.generarDiasDelMes();
+          this.generarMesesDisponibles();
+          this.updateDateAndLoadData();
           this.loadHospitalDetails();
+          this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
     
         this.feriadoService.list().subscribe((feriados: Feriado[]) => {
           this.feriados = feriados;
@@ -204,18 +239,179 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     );
   }
 
-  generarDiasDelMes(): void {
-    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
-    const endOfMonth = startOfMonth.clone().endOf('month');
-    let day = startOfMonth;
+  isHabilitadoBotonDdjj(): boolean {
+    const today = new Date();
+    let mes = this.selectedMonth; // selectedMonth ya es 1–12
+    let anio = this.selectedYear;
 
-    this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
-
-    while (day <= endOfMonth) {
-      this.displayedColumns.push(day.format('YYYY_MM_DD'));
-      day.add(1, 'day');
+    if (mes === 12) {
+      mes = 1;
+      anio += 1;
+    } else {
+      mes += 1;
     }
+
+    const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
+    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
+
+    return today >= inicio && today <= fin;
   }
+
+  verificarExistenciaDdjj(): void {
+    this.verificandoDdjj = true;
+
+    const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
+    const anio = this.selectedYear;
+    const efectorId = this.efectorId;
+    const tipoGuardiaId = 1;
+
+    if (!efectorId) {
+      console.error('El ID del efector no puede ser null');
+      this.verificandoDdjj = false;
+      return;
+    }
+
+    this.ddjjService.existsDdjj(anio, nombreMes, efectorId, tipoGuardiaId).subscribe({
+      next: (existe: boolean) => {
+        this.ddjjYaExiste = existe;
+        this.verificandoDdjj = false;
+      },
+      error: (err) => {
+        console.error('Error verificando existencia de DDJJ:', err);
+        this.ddjjYaExiste = false;
+        this.verificandoDdjj = false;
+      }
+    });
+  }
+
+evaluarEstadoDdjj(ddjj: Ddjj): void {
+  console.log('Evaluando DDJJ:', {
+    id: ddjj.id,
+    estadoDdjjDirector: ddjj.estadoDdjjDirector,
+    enPosesionDirector: ddjj.enPosesionDirector,
+    estadoDdjjDirectorDPH: ddjj.estadoDdjjDirectorDPH,
+    enPosesionDirectorDPH: ddjj.enPosesionDirectorDPH
+  });
+
+  const estado = ddjj.estadoDdjjDirector;
+  const enPosesion = ddjj.enPosesionDirector;
+
+  if (enPosesion && estado === 'PENDIENTE') {
+    console.log('Caso: en posesión del director y pendiente');
+    this.botonDirectorIcon = 'assignment_late';
+    this.botonDirectorDeshabilitado = true;
+    this.mensajeDirector = 'pendiente';
+
+  } else if (!enPosesion && estado === 'RECHAZADO') {
+    console.log('Caso: rechazado por el director');
+    this.botonDirectorIcon = 'assignment_ind';
+    this.botonDirectorDeshabilitado = false;
+    this.mensajeDirector = 'rechazado';
+
+  } else if (!enPosesion && estado === 'APROBADO') {
+    console.log('Caso: aprobado por el director');
+    this.botonDirectorIcon = 'assignment_turned_in';
+    this.botonDirectorDeshabilitado = true;
+
+  } else {
+    console.log('Caso: estado desconocido o no manejado explícitamente');
+    this.botonDirectorIcon = 'assignment_ind';
+    this.botonDirectorDeshabilitado = false;
+    this.mensajeDirector = null;
+  }
+
+  // 👇 Esto garantiza que el botón sólo se renderice después de evaluación
+  this.evaluacionDdjjCargada = true;
+}
+
+evaluarEstadoDdjjDph(ddjj: Ddjj): void {
+  const estadoDirector = ddjj.estadoDdjjDirector;
+  const estadoDph = ddjj.estadoDdjjDirectorDPH;
+  const enPosesionDph = ddjj.enPosesionDirectorDPH;
+
+  console.log('Evaluando estado DPH:', {
+    estadoDirector,
+    estadoDph,
+    enPosesionDph
+  });
+
+  if (estadoDirector !== 'APROBADO') {
+    console.log('DPH: El director aún no aprobó, se deshabilita');
+    this.botonDphIcon = 'snooze';
+    this.botonDphDeshabilitado = true;
+    this.mensajeDph = null;
+  } else if (enPosesionDph && estadoDph === 'PENDIENTE') {
+    console.log('DPH: En posesión DPH y pendiente');
+    this.botonDphIcon = 'assignment_late';
+    this.botonDphDeshabilitado = true;
+    this.mensajeDph = 'pendiente';
+  } else if (!enPosesionDph && estadoDph === 'RECHAZADO') {
+    console.log('DPH: Rechazado por DPH');
+    this.botonDphIcon = 'assignment';
+    this.botonDphDeshabilitado = false;
+    this.mensajeDph = 'rechazado';
+  } else if (!enPosesionDph && estadoDph === 'APROBADO') {
+    console.log('DPH: Aprobado por DPH');
+    this.botonDphIcon = 'assignment_turned_in';
+    this.botonDphDeshabilitado = true;
+    this.mensajeDph = 'aceptado';
+  } else {
+    console.log('DPH: Estado desconocido');
+    this.botonDphIcon = 'assignment';
+    this.botonDphDeshabilitado = false;
+    this.mensajeDph = null;
+  }
+
+  this.evaluacionDdjjDphCargada = true;
+}
+
+  convertirMesANombre(numeroMes: number): string {
+    const meses = [
+      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+      'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
+    ];
+    return meses[numeroMes];
+  }
+
+  isHabilitadoBotonDdjjFinal(): boolean {
+    return this.isHabilitadoBotonDdjj() && !this.ddjjYaExiste;
+  }
+
+  mostrarMensajeRechazoDdjj(): boolean {
+    const today = new Date();
+    let mes = this.selectedMonth;
+    let anio = this.selectedYear;
+
+    // Calcular mes siguiente
+    if (mes === 12) {
+      mes = 1;
+      anio += 1;
+    } else {
+      mes += 1;
+    }
+
+    // Solo mostrar mensaje si ya pasó el 15 del mes siguiente
+    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
+
+    return (
+      !this.verificandoDdjj &&
+      !this.ddjjYaExiste &&
+      today > fin
+    );
+  }
+  
+generarDiasDelMes(): void {
+  const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
+  const endOfMonth = startOfMonth.clone().endOf('month');
+  let day = startOfMonth.clone();
+
+  this.columnasFechas = [];
+
+  while (day <= endOfMonth) {
+    this.columnasFechas.push(day.format('YYYY_MM_DD'));
+    day.add(1, 'day');
+  }
+}
 
   updateTableDataSource(): void {
     this.dataSource.data = this.registrosMensuales;
@@ -223,39 +419,83 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
   }
 
-  loadRegistrosMensuales(): void {
-    const anio = this.selectedYear;
-    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-    const idEfector = this.efectorId;
+loadRegistrosMensuales(): void {
+  const anio = this.selectedYear;
+  const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+  const idEfector = this.efectorId;
 
-    if (idEfector === null) {
-      console.error("El ID del hospital no puede ser null");
-      return;
+  if (!idEfector) {
+    console.error("El ID del hospital no puede ser null");
+    return;
+  }
+
+  const ddjj$: Observable<Ddjj[]> = this.selectedServicio == null
+    ? this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector)
+    : this.ddjjService.listDdjjCargoyAgrupAndServicio(anio, mes, idEfector, this.selectedServicio);
+
+  ddjj$.subscribe({
+    next: (ddjjs: Ddjj[]) => {
+      if (ddjjs.length > 0) {
+        const primeraDdjj = ddjjs[0];
+        this.ddjjSeleccionada = primeraDdjj; // 👈 esto es clave
+        this.evaluarEstadoDdjj(primeraDdjj);
+        this.evaluarEstadoDdjjDph(primeraDdjj);
+      } else {
+        this.ddjjSeleccionada = undefined;
+      }
+
+      this.registrosMensuales = ddjjs.flatMap(ddjj =>
+        (ddjj.registrosMensuales || []).map(reg => {
+          reg.ddjj = ddjj;
+          return reg;
+        })
+      );
+
+      this.updateTableDataSource();
+    },
+    error: (err: any) => {
+      console.error('Error cargando DDJJ:', err);
+      this.registrosMensuales = [];
+      this.updateTableDataSource();
+    }
+  });
+}
+
+  generarMesesDisponibles(): void {
+    const fechaActual = moment(); // hoy
+    const mesesPasados = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const mesAnio = fechaActual.clone().subtract(i, 'months');
+      const mes = mesAnio.month() + 1; // de 1 a 12
+      const anio = mesAnio.year();
+
+      mesesPasados.push({
+        value: `${mes}-${anio}`, // ej: "5-2025"
+        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
+      });
     }
 
-    if (this.selectedServicio == null) {
-      // Todos los servicios
-      this.registroMensualService
-        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
-        .subscribe(data => {
-          this.registrosMensuales = data;
-          this.updateTableDataSource(); // Mostrar todos
-        });
-    } else {
-      // Servicio específico
-      this.registroMensualService
-        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
-        .subscribe(data => {
-          this.registrosMensuales = data;
-          this.updateTableDataSource(); // Mostrar filtrado
-        });
-    }
+    this.mesesDisponibles = mesesPasados;
+
+    // Establecer por defecto el mes y año actuales (en formato humano)
+    this.selectedMonth = fechaActual.month() + 1;
+    this.selectedYear = fechaActual.year();
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+  }
+
+  onMonthYearChange(): void {
+  const [mesStr, anioStr] = this.selectedMonthYear.split('-');
+  this.selectedMonth = Number(mesStr);
+  this.selectedYear = Number(anioStr);
+
+  this.updateDateAndLoadData();
   }
 
   updateDateAndLoadData(): void {
-
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
+    this.verificarExistenciaDdjj(); // ← Agregado
   }
 
   /*filterDataByDate(month: number, year: number): RegistroMensual[] {
@@ -265,16 +505,24 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const monthNumber = moment().month(registro.mes).month();
     return monthNumber === month && registro.anio === year;
     });
-  }
-
-  loadData() {
+  }*/
+ 
+  /*loadData() {
     this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
     this.updateTableDataSource();
   }*/
 
-  getMonthName(monthIndex: number): string {
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    return monthNames[monthIndex];
+  getMonthName(mes: number): string {
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    // Si recibe 1 a 12, ajustamos para índice 0-11
+    if (mes >= 1 && mes <= 12) {
+      return meses[mes - 1];
+    }
+    return '';
   }
 
   getFechaFromColumnId(columnId: string): Date {
@@ -288,25 +536,122 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       year: selectedYear
     };
 
-    this.dialogRef = this.dialog.open(DdjjCargoyagrupDetailComponent, {
+    this.dialogRef = this.dialog.open(RmensualCargoyagrupDetailComponent, {
       width: '600px',
       data: dataToSend
     });
   }
 
-  openDdjjConfirm(): void {
-    const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
-      width: '500px',
-    });
+openDdjjConfirm(destino: 'DIRECTOR' | 'DPH'): void {
+  const destinatarioTexto = destino === 'DIRECTOR' ? 'el director del hospital' : 'DPH';
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.revisandoDPH = true;
-        this.botonDph = false;
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '450px',
+    data: {
+      title: 'Confirmación de pase:',
+      message: `
+        <p class="negrita">
+          ¿Estás seguro que deseas enviar la declaración jurada de todos los servicios para su revisión por <span class="destino">${destinatarioTexto}</span>?
+        </p>
+        <p class="btnRemove">Esta acción no podrá deshacerse.</p>
+      `
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.enviarDdjj(destino);
+    }
+  });
+}
+
+enviarDdjj(destino: 'DIRECTOR' | 'DPH'): void {
+  if (!this.ddjjSeleccionada) {
+    this.toastr.error('No hay DDJJ seleccionada para enviar.', 'Error');
+    return;
+  }
+
+  const estadoDto: EstadoDdjjDto = new EstadoDdjjDto(
+    this.ddjjSeleccionada.id!, // asumimos que id siempre existe
+    destino === 'DIRECTOR' ? this.ddjjSeleccionada.director?.id : undefined,
+    destino === 'DPH' ? this.ddjjSeleccionada.directorDPH?.id : undefined,
+    destino === 'DIRECTOR' ? 'PENDIENTE' : this.ddjjSeleccionada.estadoDdjjDirector!,
+    destino === 'DPH' ? 'PENDIENTE' : this.ddjjSeleccionada.estadoDdjjDirectorDPH!,
+    destino === 'DIRECTOR',
+    destino === 'DPH',
+    this.ddjjSeleccionada.motivoDirector || '',
+    this.ddjjSeleccionada.motivoDirectorDPH || ''
+  );
+
+  console.log('Enviando EstadoDdjjDto:', estadoDto);
+
+  this.ddjjService.cambiarEstado(estadoDto).subscribe({
+    next: () => {
+      this.toastr.success('La DDJJ fue enviada con éxito.', 'Guardado');
+      this.loadRegistrosMensuales();
+    },
+    error: () => {
+      this.toastr.error('Ocurrió un error al enviar la DDJJ.', 'Error');
+    }
+  });
+}
+
+  crearDdjjDesdeRegistros(): void {
+    const mes = moment().month(this.selectedMonth -1).format('MMMM').toUpperCase();
+    const anio = this.selectedYear;
+
+    if (this.efectorId == null) {
+      console.error('El ID del efector no puede ser nulo');
+      this.toastr.error('El ID del efector no puede ser nulo');
+      return;
+    }
+    const idEfector = this.efectorId;
+
+    if (!this.registrosMensuales || this.registrosMensuales.length === 0) {
+      console.warn('No hay registros mensuales para crear la DDJJ');
+      this.toastr.warning('No hay registros mensuales para crear la DDJJ');
+      return;
+    }
+
+    const idRegistrosMensuales = this.registrosMensuales
+    .filter(reg => reg.id !== undefined && reg.id !== null)
+    .map(reg => reg.id as number);
+
+    const totalHoras = this.registrosMensuales[0].totalHoras;
+    const subtotal = totalHoras?.horasLav ?? 0;
+    const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
+
+    const ddjj = new DdjjDto(
+      mes,
+      anio,
+      true, // activo
+      subtotal,
+      total,
+      idEfector,
+      idRegistrosMensuales,
+      'PENDIENTE',
+      undefined,      // idValorGmi
+      undefined,      // idDirector
+      undefined,      // idDirectorDPH
+      undefined,      // estadoDdjjDirectorDPH
+      true            // enPosesionDirector
+    );
+
+    console.log('DTO a enviar creacion (DdjjDto):', ddjj);
+
+
+    this.ddjjService.create(ddjj).subscribe({
+      next: () => {
+        this.toastr.success('DDJJ creada y enviada al Director con éxito');
+        this.loadRegistrosMensuales();
+        this.verificarExistenciaDdjj();
+      },
+      error: (err) => {
+        console.error('Error al crear DDJJ:', err);
+        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
       }
     });
   }
-
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
     const dateMoment = moment(date).startOf('day');
@@ -379,45 +724,58 @@ isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoL
     }
     return '';
   }
+
+/*formatDecimalHours(decimalHours: number): string {
+  if (!decimalHours || decimalHours <= 0) return '';
   
-  calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): string {
-    let output = '';
-  
-    const registro = registroActividades.find((actividad) => {
-      const ingresoDate = moment(actividad.fechaIngreso);
-      return ingresoDate.isSame(date, 'day');
-    });
-    
-    if (!registro) return '';
+  let hours = Math.floor(decimalHours);
+  let minutes = Math.round((decimalHours - hours) * 60);
 
-    for (let actividad of registroActividades) {
-      if (actividad.fechaIngreso && !actividad.fechaEgreso) {
-        return 'sin egreso';
-      }
-    }
-    // Si hay fechas de ingreso y egreso, calcular las horas
-    if (registro.fechaIngreso && registro.fechaEgreso) {
-      const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
-      const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
-
-      if (hoursIn.isValid() && hoursOut.isValid()) {
-        const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-
-        if (diffHours > 0) {
-          // Obtener el color de la fuente según el tipoGuardia
-          const color = this.getColor(registro.tipoGuardia);
-          // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
-          output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`;
-          //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales
-        } else {
-          output = '0';
-        }
-      } else {
-        output = 'Datos inválidos';
-      }
-    }
-    return output;
+  if (minutes === 60) {
+    hours += 1;
+    minutes = 0;
   }
+
+  const paddedMinutes = minutes.toString().padStart(2, '0');
+  return `${hours}:${paddedMinutes} hs`;
+}*/
+  
+calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): SafeHtml {
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+
+  if (!registro) return this.sanitizer.bypassSecurityTrustHtml('');
+
+  for (let actividad of registroActividades) {
+    if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+      return this.sanitizer.bypassSecurityTrustHtml('sin egreso');
+    }
+  }
+
+  if (registro.fechaIngreso && registro.fechaEgreso) {
+    const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+    const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+
+    if (hoursIn.isValid() && hoursOut.isValid()) {
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+
+      if (diffHours > 0) {
+        const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia!);
+        const rounded = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
+        const html = `<span style="color: ${color};">${rounded}</span>`;
+        return this.sanitizer.bypassSecurityTrustHtml(html);
+      } else {
+        return this.sanitizer.bypassSecurityTrustHtml('');
+      }
+    } else {
+      return this.sanitizer.bypassSecurityTrustHtml('Datos inválidos');
+    }
+  }
+
+  return this.sanitizer.bypassSecurityTrustHtml('');
+}
 
   getColor(tipoGuardia: TipoGuardia): string {
     if (tipoGuardia && tipoGuardia.id) {
@@ -451,67 +809,64 @@ isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoL
     return ''; // Color por defecto
   }
 
-  calculateTotalHoursForRow(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
-    let totalHours = 0;
-    // Iterar sobre cada día del mes de interés
-    for (let day = 1; day <= moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth(); day++) {
-      const date = new Date(anioDeInteres, mesDeInteres, day);
-      const hoursForDate = this.calculateHoursForDate(registroActividades, date);
-      // Asegurarse de que el resultado es un número y sumarlo al total
-      const hoursNumber = parseFloat(hoursForDate.replace(/<[^>]*>/g, '')); // Eliminar etiquetas HTML
-      if (!isNaN(hoursNumber)) {
-        totalHours += hoursNumber;
-      }
-    }
-    return totalHours;
-  }
-
-  calculateWeekdaysTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
-    let totalWeekdaysHours = 0;
-    const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
-
-    // Iterar sobre cada día del mes de interés
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(anioDeInteres, mesDeInteres, day);
-      if (date.getDay() !== 0 && date.getDay() !== 6) { // Si el día no es sábado ni domingo
-        const hoursForDate = this.calculateHoursForDate(registroActividades, date);
-        // Asegurarse de que el resultado es un número y sumarlo al total de horas de días laborales
-        const hoursNumber = parseFloat(hoursForDate.replace(/<[^>]*>/g, '')); // Eliminar etiquetas HTML
-        if (!isNaN(hoursNumber)) {
-          totalWeekdaysHours += hoursNumber;
-        }
-      }
-    }
-    return totalWeekdaysHours;
-}
-
-calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): number {
-    let totalWeekendsHours = 0;
-    const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
-
-    // Iterar sobre cada día del mes de interés
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(anioDeInteres, mesDeInteres, day);
-      if (date.getDay() === 0 || date.getDay() === 6) { // Si el día es sábado o domingo
-        const hoursForDate = this.calculateHoursForDate(registroActividades, date);
-        // Asegurarse de que el resultado es un número y sumarlo al total de horas de fines de semana
-        const hoursNumber = parseFloat(hoursForDate.replace(/<[^>]*>/g, '')); // Eliminar etiquetas HTML
-        if (!isNaN(hoursNumber)) {
-          totalWeekendsHours += hoursNumber;
-        }
-      }
-    }
-    return totalWeekendsHours;
-}
-
-calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): string {
-  let output = '';
-
+  /*getPlainHourDifference(registroActividades: RegistroActividad[], date: Date): number {
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
     return ingresoDate.isSame(date, 'day');
   });
-  
+
+  if (!registro || !registro.fechaIngreso || !registro.fechaEgreso) return 0;
+
+  const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
+  const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+
+  if (!hoursIn.isValid() || !hoursOut.isValid()) return 0;
+
+  const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+  return diffHours > 0 ? diffHours : 0;
+}
+
+calculateTotalHoursForRow(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
+  let totalHours = 0;
+  for (let day = 1; day <= moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth(); day++) {
+    const date = new Date(anioDeInteres, mesDeInteres, day);
+    totalHours += this.getPlainHourDifference(registroActividades, date);
+  }
+  return this.formatDecimalHours(totalHours);
+}
+
+calculateWeekdaysTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
+  let totalWeekdaysHours = 0;
+  const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(anioDeInteres, mesDeInteres, day);
+    if (date.getDay() !== 0 && date.getDay() !== 6) {
+      totalWeekdaysHours += this.getPlainHourDifference(registroActividades, date);
+    }
+  }
+  return this.formatDecimalHours(totalWeekdaysHours);
+}
+
+calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
+  let totalWeekendsHours = 0;
+  const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(anioDeInteres, mesDeInteres, day);
+    if (date.getDay() === 0 || date.getDay() === 6) {
+      totalWeekendsHours += this.getPlainHourDifference(registroActividades, date);
+    }
+  }
+  return this.formatDecimalHours(totalWeekendsHours);
+}*/
+
+calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): string { 
+  const registro = registroActividades.find((actividad) => {
+    const ingresoDate = moment(actividad.fechaIngreso);
+    return ingresoDate.isSame(date, 'day');
+  });
+
   if (!registro) return '';
 
   for (let actividad of registroActividades) {
@@ -519,25 +874,26 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
       return 'sin egreso';
     }
   }
-  // Si hay fechas de ingreso y egreso, calcular las horas
+
   if (registro.fechaIngreso && registro.fechaEgreso) {
-    const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
-    const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
+    const hoursIn = moment(`${registro.fechaIngreso} ${registro.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
+    const hoursOut = moment(`${registro.fechaEgreso} ${registro.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
 
     if (hoursIn.isValid() && hoursOut.isValid()) {
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
 
       if (diffHours > 0) {
-        // Muestra la diferencia de horas como un número entero
-        output = `${Math.round(diffHours)}`;
+        const redondeado = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
+        return redondeado.toString();
       } else {
-        output = '0';
+        return '0';
       }
     } else {
-      output = 'Datos inválidos';
+      return 'Datos inválidos';
     }
   }
-  return output;
+
+  return '';
 }
 
 //aqui decia actual en vez de activo, revisar si corresponde
@@ -546,8 +902,34 @@ getLegajoActualId(asistencial: Person): Legajo | undefined {
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Person): NovedadPersonal[] {
-  return asistencial.novedadesPersonales;
+getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
+  const idAsistencial = asistencial.id!;
+  const mes = Number(this.selectedMonth) + 1;
+  const anio = this.selectedYear;
+
+  console.log('[getNovedades] Solicitando novedades para:', {
+    idAsistencial,
+    mes,
+    anio
+  });
+
+  const observable = this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(
+    idAsistencial,
+    mes,
+    anio
+  );
+
+  // Loguear lo que llega desde el backend
+  observable.subscribe({
+    next: (novedades) => {
+      console.log(`[getNovedades] Novedades recibidas para ${idAsistencial}:`, novedades);
+    },
+    error: (err) => {
+      console.error(`[getNovedades] Error para ${idAsistencial}:`, err);
+    }
+  });
+
+  return observable;
 }
 
 formatDate(startDate: Date, endDate: Date): string {
@@ -561,7 +943,7 @@ formatDate(startDate: Date, endDate: Date): string {
   }
 }
 
-exportarAExcel() {
+async exportarAExcel() {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Datos');
 
@@ -575,7 +957,7 @@ exportarAExcel() {
   };
   worksheet.getRow(1).font = { bold: true };
 
-  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D'];
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F'];
   const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
     return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
   });
@@ -587,27 +969,31 @@ exportarAExcel() {
   };
   worksheet.getRow(2).font = { bold: true };
 
-  this.dataSource.data.forEach((registro: RegistroMensual) => {
+  // Recorrer con for...of para usar await
+  for (const registro of this.dataSource.data) {
+    // Esperar las novedades
+    const novedades: NovedadPersonal[] = await firstValueFrom(
+      this.getNovedades(registro.asistencial)
+    );
+
     const exportData: any = {
       Apellido: registro.asistencial.apellido,
       Nombre: registro.asistencial.nombre,
       Cuil: registro.asistencial.cuil,
       Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
       Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
+      Novedades: novedades.length > 0
+        ? novedades.map(novedad => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ')
+        : '-'
     };
 
-    const novedades = this.getNovedades(registro.asistencial);
-    const novedadesString = novedades.map((novedad: NovedadPersonal) => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ');
-
-    exportData['Novedades'] = novedadesString || '-';
-
-    const totalMes = this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear);
-    const totalLV = this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
-    const totalSD = this.calculateWeekendsTotal(registro.registroActividad, this.selectedMonth, this.selectedYear);
+    const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
+    const totalLV = registro.totalHoras?.horasLav ?? 0;
+    const totalSD = registro.totalHoras?.horasSdf ?? 0;
 
     exportData['Total mes'] = totalMes;
     exportData['Total L-V'] = totalLV;
-    exportData['Total S-D'] = totalSD;
+    exportData['Total S-D-F'] = totalSD;
 
     this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
       exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
@@ -616,24 +1002,24 @@ exportarAExcel() {
     worksheet.addRow(Object.values(exportData));
     const row = worksheet.lastRow!;
 
-      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
-        const date = this.getFechaFromColumnId(fechaColumna);
-        const isHoliday = this.isHoliday(date).isHoliday;
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      const date = this.getFechaFromColumnId(fechaColumna);
+      const isHoliday = this.isHoliday(date).isHoliday;
 
-        if (isHoliday) {
-          const cellIndex = dataColumnHeaders.length + index + 1;
-          const cell = row.getCell(cellIndex);
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'd4c2cd' }
-          };
-          cell.font = { color: { argb: '000000' } };
-        }
-      });
-  });
+      if (isHoliday) {
+        const cellIndex = dataColumnHeaders.length + index + 1;
+        const cell = row.getCell(cellIndex);
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'd4c2cd' }
+        };
+        cell.font = { color: { argb: '000000' } };
+      }
+    });
+  }
 
-  const fileName = `ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+  const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
 
   worksheet.eachRow((row, rowNumber) => {
     row.eachCell((cell, colNumber) => {
@@ -646,24 +1032,26 @@ exportarAExcel() {
     });
   });
 
-  workbook.xlsx.writeBuffer().then((buffer: ArrayBuffer) => {
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, fileName);
-  });
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  saveAs(blob, fileName);
 }
-
-exportarAPDF() {
+async exportarAPDF() {
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
 
   const headers = [
-    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D',
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
     ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
 
   const body: any[] = [headers];
 
-  this.dataSource.data.forEach((registro: RegistroMensual) => {
+  for (const registro of this.dataSource.data) {
+    const novedades: NovedadPersonal[] = await firstValueFrom(
+      this.getNovedades(registro.asistencial)
+    );
+
     const row = [];
 
     row.push(registro.asistencial.apellido);
@@ -672,46 +1060,47 @@ exportarAPDF() {
     row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
     row.push(this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '');
 
-    const novedades = this.getNovedades(registro.asistencial);
-    const novedadesString = novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ');
-    row.push(novedadesString || '-');
+    const novedadesString = novedades.length > 0
+      ? novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ')
+      : '-';
+    row.push(novedadesString);
 
-    row.push(this.calculateTotalHoursForRow(registro.registroActividad, this.selectedMonth, this.selectedYear));
-    row.push(this.calculateWeekdaysTotal(registro.registroActividad, this.selectedMonth, this.selectedYear));
-    row.push(this.calculateWeekendsTotal(registro.registroActividad, this.selectedMonth, this.selectedYear));
+    row.push((registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0));
+    row.push(registro.totalHoras?.horasLav ?? 0);
+    row.push(registro.totalHoras?.horasSdf ?? 0);
 
- this.displayedColumns.slice(6).forEach(fechaColumna => {
-    const fecha = this.getFechaFromColumnId(fechaColumna);
-    const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
+    this.displayedColumns.slice(6).forEach(fechaColumna => {
+      const fecha = this.getFechaFromColumnId(fechaColumna);
+      const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
 
-    const { isHoliday } = this.isHoliday(fecha);
+      const { isHoliday } = this.isHoliday(fecha);
 
-    if (isHoliday) {
-      row.push({
-        text: horas,
-        fillColor: '#F9CACA',  // Fondo rosado para feriado
-        color: 'red',          // Texto rojo
-        bold: true,
-        alignment: 'center'
-      });
-    } else {
-      row.push(horas);
-    }
-  });
+      if (isHoliday) {
+        row.push({
+          text: horas,
+          fillColor: '#F9CACA',  // Fondo rosado para feriado
+          color: 'red',          // Texto rojo
+          bold: true,
+          alignment: 'center'
+        });
+      } else {
+        row.push(horas);
+      }
+    });
 
-  body.push(row);
-});
-    
+    body.push(row);
+  }
+
   const docDefinition: any = {
     pageSize: 'A3', //Más grande que A4
     pageOrientation: 'landscape',
     pageMargins: [10, 10, 10, 10], //Márgenes reducidos
     content: [
-      { text: `Declaración Jurada - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+      { text: `Registro Mensual - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
       {
         table: {
           headerRows: 1,
-           widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
+          widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
           body
         },
         layout: {
@@ -735,10 +1124,26 @@ exportarAPDF() {
     }
   };
 
-  pdfMake.createPdf(docDefinition).download(`ddjj-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
+  pdfMake.createPdf(docDefinition).download(`rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
 }
 
-  accentFilter(input: string): string {
+async onExportarAExcel() {
+  try {
+    await this.exportarAExcel();
+  } catch (error) {
+    console.error('Error exportando a Excel:', error);
+  }
+}
+
+async onExportarAPDF() {
+  try {
+    await this.exportarAPDF();
+  } catch (error) {
+    console.error('Error exportando a PDF:', error);
+  }
+}
+
+accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
     const original = "AEIOUaeiou";
     let output = "";

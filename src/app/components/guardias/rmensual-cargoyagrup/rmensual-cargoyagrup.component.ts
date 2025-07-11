@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
-import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+import { DialogConfirmRmensualComponent } from '../dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -75,13 +75,17 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
 
   selectedServicio?: number | null = null; 
-  selectedMonth: number = moment().month();
+  selectedMonth: number = moment().month() + 1;
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024, 2025];
+  selectedMonthYear: string = '';
+  mesesDisponibles: { value: string, label: string }[] = [];
 
-  botonDph = true;
-  revisandoDPH: boolean = false;
+botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assignment_late' = 'assignment_return';
+  creacionDDJJ: boolean = false;
+  verificandoDdjj: boolean = false;
+  ddjjYaExiste: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
@@ -127,8 +131,10 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
         this.loadEfectorName();
           moment.locale('es');
           this.dataSource = new MatTableDataSource<RegistroMensual>([]);
-          this.generarDiasDelMes();
+          this.generarMesesDisponibles();
+          this.updateDateAndLoadData();
           this.loadHospitalDetails();
+          this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
     
         this.feriadoService.list().subscribe((feriados: Feriado[]) => {
           this.feriados = feriados;
@@ -213,24 +219,116 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
 
   isHabilitadoBotonDdjj(): boolean {
     const today = new Date();
-    let mes = Number(this.selectedMonth) + 1;
+    let mes = this.selectedMonth; // selectedMonth ya es 1–12
     let anio = this.selectedYear;
 
-    if (mes > 11) {
-      mes = 0; // Enero
+    if (mes === 12) {
+      mes = 1;
       anio += 1;
+    } else {
+      mes += 1;
     }
 
-    const inicio = new Date(anio, mes, 1); // Día 1 del mes siguiente
-    const fin = new Date(anio, mes, 5, 23, 59, 59); // Día 5 inclusive, hasta las 23:59
+    const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
+    //const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
+        const fin = new Date(anio, mes - 1, 15, 23, 59, 59); //uso para pruebas luego habilitar anterior
 
     return today >= inicio && today <= fin;
   }
 
+verificarExistenciaDdjj(): void {
+  this.verificandoDdjj = true;
+
+  const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
+  const anio = this.selectedYear;
+  const efectorId = this.efectorId;
+  const tipoGuardiaId = 1;
+
+  if (!efectorId) {
+    console.error('El ID del efector no puede ser null');
+    this.verificandoDdjj = false;
+    return;
+  }
+
+  this.ddjjService.existsDdjj(anio, nombreMes, efectorId, tipoGuardiaId).subscribe({
+    next: (existe: boolean) => {
+      this.ddjjYaExiste = existe;
+
+      const today = new Date();
+      let mes = this.selectedMonth;
+      let anioEvaluado = this.selectedYear;
+
+      if (mes === 12) {
+        mes = 1;
+        anioEvaluado += 1;
+      } else {
+        mes += 1;
+      }
+
+      const inicio = new Date(anioEvaluado, mes - 1, 1);   // 1 del mes siguiente
+      const fin = new Date(anioEvaluado, mes - 1, 15, 23, 59, 59); // 15 inclusive
+
+      if (existe) {
+        this.botonDDJJIcon = 'assignment_turned_in'; // ya existe
+      } else if (today < inicio) {
+        this.botonDDJJIcon = 'snooze'; // todavía no comienza el período
+      } else if (today >= inicio && today <= fin) {
+        this.botonDDJJIcon = 'assignment_return'; // dentro del período habilitado
+      } else {
+        this.botonDDJJIcon = 'assignment_late'; // fuera del período sin haber creado
+      }
+
+      this.verificandoDdjj = false;
+    },
+    error: (err) => {
+      console.error('Error verificando existencia de DDJJ:', err);
+      this.ddjjYaExiste = false;
+      this.botonDDJJIcon = 'assignment_return'; // fallback
+      this.verificandoDdjj = false;
+    }
+  });
+}
+
+  convertirMesANombre(numeroMes: number): string {
+    const meses = [
+      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+      'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
+    ];
+    return meses[numeroMes];
+  }
+
+  isHabilitadoBotonDdjjFinal(): boolean {
+    return this.isHabilitadoBotonDdjj() && !this.ddjjYaExiste;
+  }
+
+  mostrarMensajeRechazoDdjj(): boolean {
+    const today = new Date();
+    let mes = this.selectedMonth;
+    let anio = this.selectedYear;
+
+    // Calcular mes siguiente
+    if (mes === 12) {
+      mes = 1;
+      anio += 1;
+    } else {
+      mes += 1;
+    }
+
+    // Solo mostrar mensaje si ya pasó el 5 del mes siguiente
+    //const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
+        const fin = new Date(anio, mes - 1, 15, 23, 59, 59); //uso para pruebas, habilitar luego anterior
+
+    return (
+      !this.verificandoDdjj &&
+      !this.ddjjYaExiste &&
+      today > fin
+    );
+  }
+  
   generarDiasDelMes(): void {
-    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth).startOf('month');
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
     const endOfMonth = startOfMonth.clone().endOf('month');
-    let day = startOfMonth;
+    let day = startOfMonth.clone();
 
     this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
 
@@ -248,7 +346,7 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
 
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
-    const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
+    const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const idEfector = this.efectorId;
 
     if (idEfector === null) {
@@ -275,10 +373,41 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateDateAndLoadData(): void {
+  generarMesesDisponibles(): void {
+    const fechaActual = moment(); // hoy
+    const mesesPasados = [];
 
+    for (let i = 6; i >= 0; i--) {
+      const mesAnio = fechaActual.clone().subtract(i, 'months');
+      const mes = mesAnio.month() + 1; // de 1 a 12
+      const anio = mesAnio.year();
+
+      mesesPasados.push({
+        value: `${mes}-${anio}`, // ej: "5-2025"
+        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
+      });
+    }
+
+    this.mesesDisponibles = mesesPasados;
+
+    // Establecer por defecto el mes y año actuales (en formato humano)
+    this.selectedMonth = fechaActual.month() + 1;
+    this.selectedYear = fechaActual.year();
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+  }
+
+  onMonthYearChange(): void {
+  const [mesStr, anioStr] = this.selectedMonthYear.split('-');
+  this.selectedMonth = Number(mesStr);
+  this.selectedYear = Number(anioStr);
+
+  this.updateDateAndLoadData();
+  }
+
+  updateDateAndLoadData(): void {
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
+    this.verificarExistenciaDdjj(); // ← Agregado
   }
 
   /*filterDataByDate(month: number, year: number): RegistroMensual[] {
@@ -295,9 +424,17 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     this.updateTableDataSource();
   }*/
 
-  getMonthName(monthIndex: number): string {
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    return monthNames[monthIndex];
+  getMonthName(mes: number): string {
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    // Si recibe 1 a 12, ajustamos para índice 0-11
+    if (mes >= 1 && mes <= 12) {
+      return meses[mes - 1];
+    }
+    return '';
   }
 
   getFechaFromColumnId(columnId: string): Date {
@@ -317,78 +454,76 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     });
   }
 
-openDdjjConfirm(): void {
-  const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
-    width: '500px',
-  });
+  openDdjjConfirm(): void {
+    const dialogRef = this.dialog.open(DialogConfirmRmensualComponent, {
+      width: '500px',
+    });
 
-  dialogRef.afterClosed().subscribe((result) => {
-    if (result) {
-      this.revisandoDPH = true;
-      this.botonDph = false;
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.creacionDDJJ = true;
 
-      this.crearDdjjDesdeRegistros();
-    }
-  });
-}
-
-crearDdjjDesdeRegistros(): void {
-  const mes = moment().month(this.selectedMonth).format('MMMM').toUpperCase();
-  const anio = this.selectedYear;
-
-  if (this.efectorId == null) {
-    console.error('El ID del efector no puede ser nulo');
-    this.toastr.error('El ID del efector no puede ser nulo');
-    return;
-  }
-  const idEfector = this.efectorId;
-
-  if (!this.registrosMensuales || this.registrosMensuales.length === 0) {
-    console.warn('No hay registros mensuales para crear la DDJJ');
-    this.toastr.warning('No hay registros mensuales para crear la DDJJ');
-    return;
+        this.crearDdjjDesdeRegistros();
+      }
+    });
   }
 
-  const idRegistrosMensuales = this.registrosMensuales
-  .filter(reg => reg.id !== undefined && reg.id !== null)
-  .map(reg => reg.id as number);
+  crearDdjjDesdeRegistros(): void {
+    const mes = moment().month(this.selectedMonth -1).format('MMMM').toUpperCase();
+    const anio = this.selectedYear;
 
-  const totalHoras = this.registrosMensuales[0].totalHoras;
-  const subtotal = totalHoras?.horasLav ?? 0;
-  const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
-
-  const ddjj = new DdjjDto(
-    mes,
-    anio,
-    true, // activo
-    subtotal,
-    total,
-    idEfector,
-    idRegistrosMensuales,
-    'PENDIENTE',
-    undefined,      // idValorGmi
-    undefined,      // idDirector
-    undefined,      // idDirectorDPH
-    undefined,      // estadoDdjjDirectorDPH
-    true            // enPosesionDirector
-  );
-
-  console.log('DTO a enviar creacion (DdjjDto):', ddjj);
-
-
-  this.ddjjService.create(ddjj).subscribe({
-    next: () => {
-      this.toastr.success('DDJJ creada y enviada al Director con éxito');
-      this.loadRegistrosMensuales();
-    },
-    error: (err) => {
-      console.error('Error al crear DDJJ:', err);
-      this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
-      this.revisandoDPH = false;
-      this.botonDph = true;
+    if (this.efectorId == null) {
+      console.error('El ID del efector no puede ser nulo');
+      this.toastr.error('El ID del efector no puede ser nulo');
+      return;
     }
-  });
-}
+    const idEfector = this.efectorId;
+
+    if (!this.registrosMensuales || this.registrosMensuales.length === 0) {
+      console.warn('No hay registros mensuales para crear la DDJJ');
+      this.toastr.warning('No hay registros mensuales para crear la DDJJ');
+      return;
+    }
+
+    const idRegistrosMensuales = this.registrosMensuales
+    .filter(reg => reg.id !== undefined && reg.id !== null)
+    .map(reg => reg.id as number);
+
+    const totalHoras = this.registrosMensuales[0].totalHoras;
+    const subtotal = totalHoras?.horasLav ?? 0;
+    const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
+
+    const ddjj = new DdjjDto(
+      mes,
+      anio,
+      true, // activo
+      subtotal,
+      total,
+      idEfector,
+      idRegistrosMensuales,
+      'PENDIENTE',
+      undefined,      // idValorGmi
+      undefined,      // idDirector
+      undefined,      // idDirectorDPH
+      undefined,      // estadoDdjjDirectorDPH
+      true            // enPosesionDirector
+    );
+
+    console.log('DTO a enviar creacion (DdjjDto):', ddjj);
+
+
+    this.ddjjService.create(ddjj).subscribe({
+      next: () => {
+        this.toastr.success('DDJJ creada y enviada al Director con éxito');
+        this.loadRegistrosMensuales();
+        this.verificarExistenciaDdjj();
+      },
+      error: (err) => {
+        console.error('Error al crear DDJJ:', err);
+        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
+      }
+    });
+  }
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
     const dateMoment = moment(date).startOf('day');
@@ -499,7 +634,7 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): Saf
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
 
       if (diffHours > 0) {
-        const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia);
+        const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia!);
         const rounded = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
         const html = `<span style="color: ${color};">${rounded}</span>`;
         return this.sanitizer.bypassSecurityTrustHtml(html);

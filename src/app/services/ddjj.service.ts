@@ -73,4 +73,35 @@ export class DdjjService {
   listByEfectorAndEstadoAprobadoDph(idEfector: number): Observable<Ddjj[]> {
     return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listByEfectorAndEstadoAprobadoDph/${idEfector}`);
   }
+
+  existsDdjj(anio: number, mes: string, idEfector: number, idtipoGuardia: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.baseUrl}existsDdjj/${anio}/${mes}/${idEfector}/${idtipoGuardia}`);
+  }
+
+  // DDJJ CARGO Y AGRUPACIÓN
+  listDdjjCargoyAgrup(anio: number, mes: string, idEfector: number): Observable<Ddjj[]> {
+    return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCargoyAgrup/${anio}/${mes}/${idEfector}`);
+  }
+
+  listDdjjCargoyAgrupAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<Ddjj[]> {
+    return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCargoyaAgrupServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  // DDJJ EXTRA
+  listDdjjExtra(anio: number, mes: string, idEfector: number): Observable<Ddjj[]> {
+    return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjExtra/${anio}/${mes}/${idEfector}`);
+  }
+
+  listDdjjExtraAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<Ddjj[]> {
+    return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjExtraServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  // DDJJ CF
+  listDdjjCf(anio: number, mes: string, idEfector: number): Observable<Ddjj[]> {
+    return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCf/${anio}/${mes}/${idEfector}`);
+  }
+
+  listDdjjCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<Ddjj[]> {
+    return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCfServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
 }

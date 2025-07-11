@@ -285,6 +285,7 @@ import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddj
 import { RmensualContrafacturaDetailComponent } from './components/guardias/rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
 import { RmensualExtraDetailComponent } from './components/guardias/rmensual-extra-detail/rmensual-extra-detail.component';
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 
 @NgModule({
   declarations: [
@@ -518,6 +519,7 @@ import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensu
     RmensualContrafacturaDetailComponent,
     RmensualExtraDetailComponent,
     RmensualCargoyagrupDetailComponent,
+    DialogConfirmRmensualComponent,
   ],
 
   imports: [

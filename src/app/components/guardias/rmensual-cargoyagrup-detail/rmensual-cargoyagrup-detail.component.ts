@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
@@ -14,7 +14,7 @@ import * as moment from 'moment';
   styleUrls: ['./rmensual-cargoyagrup-detail.component.css']
 })
 export class RmensualCargoyagrupDetailComponent implements OnInit {
-  asistencial!: Asistencial;
+  asistencial!: Person;
   month: number;
   year: number;
   registroMensual!: RegistroMensual;
@@ -50,7 +50,7 @@ export class RmensualCargoyagrupDetailComponent implements OnInit {
   }
 
   private cargarNovedadesActivas(): void {
-    const mes = Number(this.month) + 1;
+    const mes = Number(this.month);
     const anio = this.year;
 
     this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(this.asistencial.id!, mes, anio).subscribe({

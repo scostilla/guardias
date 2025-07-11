@@ -1,24 +1,24 @@
 export class EstadoDdjjDto {
     idDdjj: number;
-    idDirector: number;
-    idDirectorDPH: number;
-    estadoDdjjDirector: string;
-    estadoDdjjDirectorDPH: string;
-    enPosesionDirector: boolean;
-    enPosesionDirectorDPH: boolean;
-    motivoDirector: string;
-    motivoDirectorDPH: string;
+    idDirector?: number;
+    idDirectorDPH?: number;
+    estadoDdjjDirector?: string;
+    estadoDdjjDirectorDPH?: string;
+    enPosesionDirector?: boolean;
+    enPosesionDirectorDPH?: boolean;
+    motivoDirector?: string;
+    motivoDirectorDPH?: string;
 
     constructor(
         idDdjj: number,
-        idDirector: number,
-        idDirectorDPH: number,
-        estadoDdjjDirector: string,
-        estadoDdjjDirectorDPH: string,
-        enPosesionDirector: boolean,
-        enPosesionDirectorDPH: boolean,
-        motivoDirector: string,
-        motivoDirectorDPH: string
+        idDirector?: number,
+        idDirectorDPH?: number,
+        estadoDdjjDirector?: string,
+        estadoDdjjDirectorDPH?: string,
+        enPosesionDirector?: boolean,
+        enPosesionDirectorDPH?: boolean,
+        motivoDirector?: string,
+        motivoDirectorDPH?: string
     ) {
 
         this.idDdjj = idDdjj; 

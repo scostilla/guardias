@@ -22,10 +22,15 @@
           <span>Exportar a PDF</span>
         </button>
       </mat-menu>
-      <button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openDdjjConfirm()" [disabled]="!isHabilitadoBotonDdjj()" [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjj()}"  
-        matTooltip="Crear DDJJ y enviar a Director">
-        <mat-icon *ngIf="botonDph" style="transform: scaleX(-1)">assignment_return</mat-icon>
-        <mat-icon *ngIf="!botonDph">assignment_turned_in</mat-icon>
+      <button *ngIf="!verificandoDdjj"
+              mat-fab
+              class="button-pase"
+              style="margin-left: 5px;"
+              (click)="openDdjjConfirm()"
+              [disabled]="!isHabilitadoBotonDdjjFinal()"
+              [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal()}"
+              matTooltip="Crear DDJJ y enviar a Director">
+        <mat-icon [ngClass]="{'flip-horizontal': botonDDJJIcon === 'assignment_return'}">{{ botonDDJJIcon }}</mat-icon>
       </button>
     </div>
 
@@ -63,11 +68,8 @@
     <div class="col-md-6 d-flex justify-content-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Fecha:</span>
-        <select class="select-tabla" [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
-          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
-        </select>
-        <select class="select-tabla" [(ngModel)]="selectedYear" (change)="updateDateAndLoadData()">
-          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        <select class="select-tabla" [(ngModel)]="selectedMonthYear" (change)="onMonthYearChange()">
+          <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
         </select>
       </div>
     </div>
@@ -85,7 +87,31 @@
     </div>  
   </div>
 
-  <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por el Director del hospital. Para revisar su resolución debes acceder a la sección de DDJJ.</div>
+  <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
+    <mat-icon class="icono-pase">lock_open</mat-icon>
+    <div class="mensaje-pase">
+      Tienes desde el 1 al 5 de este mes para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
+    </div>
+  </div>
+
+  <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-pase">
+    <mat-icon class="icono-pase">lock</mat-icon>
+    <div class="mensaje-pase">
+      Ya realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
+      La misma está en proceso de revisión por el Director del hospital.<br>
+      Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-cargoyagrup">sección de DDJJ</span>.
+    </div>
+  </div>
+
+  <div *ngIf="mostrarMensajeRechazoDdjj()" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      No realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con soporte para su creación.
+    </div>
+  </div>
 
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
@@ -152,7 +178,7 @@
     <div class="col-lg-4">  
         <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
         <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
-        <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="negrita" style="color: #ff0000;">Incumplimiento de hs</span>
+        <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="negrita" style="color: #ff0000;" matTooltip="No se suman al total">Incumplimiento de hs</span>
     </div>
     <div class="col-lg-8">  
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>

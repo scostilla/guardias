@@ -89,7 +89,7 @@ export class RegistroActividadesEComponent implements OnInit, OnDestroy {
     
           this.registroForm.patchValue({
             tipoGuardia: data.tipoGuardia,
-            asistencial: data.asistencial.id,
+            asistencial: data.asistencial?.id,
             servicio: data.servicio,
             efector: data.efector,
             fechaIngreso: data.fechaIngreso,
@@ -97,7 +97,7 @@ export class RegistroActividadesEComponent implements OnInit, OnDestroy {
           });
     
           // Muestra el nombre y apellido en el input
-          this.inputValue = `${data.asistencial.apellido} ${data.asistencial.nombre}`;
+          this.inputValue = `${data.asistencial?.apellido} ${data.asistencial?.nombre}`;
         },
         error => {
           this.toastr.error('Error al cargar el registro', 'Error', {
