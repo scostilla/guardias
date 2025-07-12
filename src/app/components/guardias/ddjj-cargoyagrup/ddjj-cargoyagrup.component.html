@@ -51,6 +51,31 @@
           <mat-icon>{{ botonDphIcon }}</mat-icon>
         </button>
       </ng-container>
+      <!-- Botón de respuesta del DIRECTOR -->
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjCargada">
+        <button mat-fab
+                class="button-pase-director"
+                style="margin-left: 5px;"
+                (click)="openDdjjRespuesta('DIRECTOR_AUTH')"
+                [disabled]="botonDirectorAuthDeshabilitado"
+                [ngClass]="{'disabled-button-ddjj': botonDirectorAuthDeshabilitado}"
+                matTooltip="Aprobar/Rechazar DDJJ">
+          <mat-icon>{{ botonDirectorAuthIcon }}</mat-icon>
+        </button>
+      </ng-container>
+
+      <!-- Botón de respuesta de la DPH -->
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada">
+        <button mat-fab
+                class="button-pase-ddjj"
+                style="margin-left: 5px;"
+                (click)="openDdjjRespuesta('DPH_AUTH')"
+                [disabled]="botonDphAuthDeshabilitado"
+                [ngClass]="{'disabled-button-ddjj': botonDphAuthDeshabilitado}"
+                matTooltip="Aprobar/Rechazar DDJJ">
+          <mat-icon>{{ botonDphAuthIcon }}</mat-icon>
+        </button>
+      </ng-container>
     </div>
 
     <div class="col-12 col-md-3 mt-3 mt-md-0">
@@ -117,8 +142,9 @@
 <div *ngIf="mensajeDirector === 'rechazado'" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
-    El director rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }} debido a...
+    El director del hospital rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <br/>
+    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirector || 'Sin especificar' }}</span>
   </div>
 </div>
 
@@ -126,7 +152,8 @@
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
     La DDJJ de guardias de CARGO y AGRUPACIÓN para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }} fue aprobada por el director del hospital y enviada a DPH para su aprobación.
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }} fue aprobada por el director del hospital y enviada a DPH.<br/>
+    La misma esta en proceso de revisión por la DPH.
   </div>
 </div>
 
@@ -134,7 +161,8 @@
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     DPH rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }} debido a...
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
+    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirectorDPH || 'Sin especificar' }}</span>
   </div>
 </div>
 
@@ -144,6 +172,42 @@
     La DDJJ de guardias de CARGO y AGRUPACIÓN para
     {{ getMonthName(selectedMonth) }} {{ selectedYear }} fue aprobada por la DPH. 
     El proceso para el mes ha finalizado con éxito.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'revision'" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Debes realizar la aprobación o rechazo de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <span (click)="openDdjjRespuesta('DIRECTOR_AUTH')" class="cursor">Haz clic aquí</span>.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'rechazado'" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    Haz rechazado la DDJJ de guardias de CARGO y AGRUPACIÓN para 
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
+    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirector || 'Sin especificar' }}</span><br/>
+    Se espera la devolución por parte del administrativo.
+  </div>
+</div>
+
+<div *ngIf="mensajeDphAuth === 'revision'" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Debes realizar la aprobación o rechazo de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <span (click)="openDdjjRespuesta('DPH_AUTH')" class="cursor">Haz clic aquí</span>.
+  </div>
+</div>
+
+<div *ngIf="mensajeDphAuth === 'rechazado'" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    Haz rechazado la DDJJ de guardias de CARGO y AGRUPACIÓN para 
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
+    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirectorDPH || 'Sin especificar' }}</span><br/>
+    Se espera la devolución por parte del administrativo.
   </div>
 </div>
 
@@ -216,13 +280,14 @@
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
-        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-          [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
-          [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
-          <span 
-              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-          </span>
-        </td>
+<td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+    [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
+    [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)"
+    [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
+    (click)="onCeldaClick(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
+  
+  <span [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))"></span>
+</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

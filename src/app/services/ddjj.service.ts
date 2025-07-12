@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { DdjjDto } from 'src/app/dto/DdjjDto';
 import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
@@ -11,8 +11,14 @@ import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 export class DdjjService {
 
   private readonly baseUrl = 'http://localhost:8080/ddjj/';
+  private _refresh$ = new Subject<void>();
+
 
   constructor(private httpClient: HttpClient) {}
+
+  get refresh$(){
+    return this._refresh$;
+  }
 
   list(): Observable<Ddjj[]> {
     return this.httpClient.get<Ddjj[]>(`${this.baseUrl}list`);
@@ -39,11 +45,21 @@ export class DdjjService {
   }
 
   create(ddjjDto: DdjjDto): Observable<any> {
-    return this.httpClient.post<any>(`${this.baseUrl}create`, ddjjDto);
+    return this.httpClient.post<any>(`${this.baseUrl}create`, ddjjDto)
+    .pipe(
+      tap(() => {
+        this._refresh$.next();
+      })
+    )
   }
 
   update(id: number, ddjjDto: DdjjDto): Observable<any> {
-    return this.httpClient.put<any>(`${this.baseUrl}update/${id}`, ddjjDto);
+    return this.httpClient.put<any>(`${this.baseUrl}update/${id}`, ddjjDto)
+    .pipe(
+      tap(() => {
+        this._refresh$.next();
+      })
+    )
   }
 
   logicDelete(id: number): Observable<any> {

@@ -286,6 +286,7 @@ import { RmensualContrafacturaDetailComponent } from './components/guardias/rmen
 import { RmensualExtraDetailComponent } from './components/guardias/rmensual-extra-detail/rmensual-extra-detail.component';
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
+import { RegistroActividadesEditComponent } from './components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 
 @NgModule({
   declarations: [
@@ -520,6 +521,7 @@ import { DialogConfirmRmensualComponent } from './components/guardias/dialog-con
     RmensualExtraDetailComponent,
     RmensualCargoyagrupDetailComponent,
     DialogConfirmRmensualComponent,
+    RegistroActividadesEditComponent,
   ],
 
   imports: [

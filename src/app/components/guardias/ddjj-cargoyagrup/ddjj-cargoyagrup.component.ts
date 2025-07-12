@@ -3,6 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
+import { RegistroActividadesEditComponent } from 'src/app/components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -105,6 +107,16 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   botonDphDeshabilitado: boolean = false;
   mensajeDph: 'pendiente' | 'rechazado' | 'aceptado' | null = null;
   evaluacionDdjjDphCargada: boolean = false;
+
+  botonDirectorAuthIcon: string = 'assignment_ind';
+  botonDirectorAuthDeshabilitado: boolean = true;
+  mensajeDirectorAuth: string | null = null;
+
+  botonDphAuthIcon: string = 'assignment_ind';
+  botonDphAuthDeshabilitado: boolean = true;
+  mensajeDphAuth: string | null = null;
+
+  puedeEditarCeldas: boolean = false;
 
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
@@ -307,11 +319,13 @@ evaluarEstadoDdjj(ddjj: Ddjj): void {
     this.botonDirectorIcon = 'assignment_ind';
     this.botonDirectorDeshabilitado = false;
     this.mensajeDirector = 'rechazado';
+    this.puedeEditarCeldas = true;
 
   } else if (!enPosesion && estado === 'APROBADO') {
     console.log('Caso: aprobado por el director');
     this.botonDirectorIcon = 'assignment_turned_in';
     this.botonDirectorDeshabilitado = true;
+    this.mensajeDirector = null;
 
   } else {
     console.log('Caso: estado desconocido o no manejado explícitamente');
@@ -350,6 +364,7 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
     this.botonDphIcon = 'assignment';
     this.botonDphDeshabilitado = false;
     this.mensajeDph = 'rechazado';
+    this.puedeEditarCeldas = true;
   } else if (!enPosesionDph && estadoDph === 'APROBADO') {
     console.log('DPH: Aprobado por DPH');
     this.botonDphIcon = 'assignment_turned_in';
@@ -363,6 +378,44 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
   }
 
   this.evaluacionDdjjDphCargada = true;
+}
+
+evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
+  const estado = ddjj.estadoDdjjDirector;
+  const enPosesion = ddjj.enPosesionDirector;
+
+  if (enPosesion && estado === 'PENDIENTE') {
+    this.botonDirectorAuthIcon = 'assignment_ind';
+    this.botonDirectorAuthDeshabilitado = false;
+    this.mensajeDirectorAuth = 'revision';
+  } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
+    this.botonDirectorAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
+    this.botonDirectorAuthDeshabilitado = true;
+    this.mensajeDirectorAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
+  } else {
+    this.botonDirectorAuthIcon = 'assignment_ind';
+    this.botonDirectorAuthDeshabilitado = true;
+    this.mensajeDirectorAuth = null;
+  }
+}
+
+evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
+  const estado = ddjj.estadoDdjjDirectorDPH;
+  const enPosesion = ddjj.enPosesionDirectorDPH;
+
+  if (enPosesion && estado === 'PENDIENTE') {
+    this.botonDphAuthIcon = 'assignment';
+    this.botonDphAuthDeshabilitado = false;
+    this.mensajeDphAuth = 'revision';
+  } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
+    this.botonDphAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
+    this.botonDphAuthDeshabilitado = true;
+    this.mensajeDphAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
+  } else {
+    this.botonDphAuthIcon = 'assignment';
+    this.botonDphAuthDeshabilitado = true;
+    this.mensajeDphAuth = null;
+  }
 }
 
   convertirMesANombre(numeroMes: number): string {
@@ -440,6 +493,8 @@ loadRegistrosMensuales(): void {
         this.ddjjSeleccionada = primeraDdjj; // 👈 esto es clave
         this.evaluarEstadoDdjj(primeraDdjj);
         this.evaluarEstadoDdjjDph(primeraDdjj);
+        this.evaluarRespuestaDirectorDdjj(primeraDdjj);
+        this.evaluarRespuestaDphDdjj(primeraDdjj);
       } else {
         this.ddjjSeleccionada = undefined;
       }
@@ -498,20 +553,6 @@ loadRegistrosMensuales(): void {
     this.verificarExistenciaDdjj(); // ← Agregado
   }
 
-  /*filterDataByDate(month: number, year: number): RegistroMensual[] {
-    // Filtra los datos según el mes y año proporcionados
-    return this.registrosMensuales.filter(registro => {
-      // Convertir el mes a formato numérico
-    const monthNumber = moment().month(registro.mes).month();
-    return monthNumber === month && registro.anio === year;
-    });
-  }*/
- 
-  /*loadData() {
-    this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
-    this.updateTableDataSource();
-  }*/
-
   getMonthName(mes: number): string {
     const meses = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -542,6 +583,21 @@ loadRegistrosMensuales(): void {
     });
   }
 
+  openEditDialog(id: number): void {
+  const dialogRef = this.dialog.open(RegistroActividadesEditComponent, {
+    width: '600px',
+    data: { id }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result === 'updated') {
+      this.toastr.success('Registro actividad modificado correctamente');
+      this.loadRegistrosMensuales();
+    }
+  });
+}
+
+
 openDdjjConfirm(destino: 'DIRECTOR' | 'DPH'): void {
   const destinatarioTexto = destino === 'DIRECTOR' ? 'el director del hospital' : 'DPH';
 
@@ -563,6 +619,29 @@ openDdjjConfirm(destino: 'DIRECTOR' | 'DPH'): void {
       this.enviarDdjj(destino);
     }
   });
+}
+
+getRegistroIdForFecha(actividades: RegistroActividad[], fecha: Date): number | null {
+  const fechaBuscada = this.formatDateOnly(fecha);
+  
+  const actividad = actividades.find(act => 
+    this.formatDateOnly(new Date(act.fechaIngreso)) === fechaBuscada
+  );
+
+  return actividad?.id ?? null;
+}
+
+private formatDateOnly(date: Date): string {
+  return date.toISOString().split('T')[0]; // devuelve 'YYYY-MM-DD'
+}
+
+onCeldaClick(actividades: RegistroActividad[], fecha: Date): void {
+  if (!this.puedeEditarCeldas) return;
+
+  const id = this.getRegistroIdForFecha(actividades, fecha);
+  if (id != null) {
+    this.openEditDialog(id);
+  }
 }
 
 enviarDdjj(destino: 'DIRECTOR' | 'DPH'): void {
@@ -587,71 +666,90 @@ enviarDdjj(destino: 'DIRECTOR' | 'DPH'): void {
 
   this.ddjjService.cambiarEstado(estadoDto).subscribe({
     next: () => {
-      this.toastr.success('La DDJJ fue enviada con éxito.', 'Guardado');
+      this.toastr.success('La DDJJ fue enviada con éxito.', 'Enviada', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
       this.loadRegistrosMensuales();
     },
     error: () => {
-      this.toastr.error('Ocurrió un error al enviar la DDJJ.', 'Error');
+      this.toastr.error('Ocurrió un error al enviar la DDJJ.', 'Error', {
+        timeOut: 8000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
     }
   });
 }
 
-  crearDdjjDesdeRegistros(): void {
-    const mes = moment().month(this.selectedMonth -1).format('MMMM').toUpperCase();
-    const anio = this.selectedYear;
+openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
+  if (!this.ddjjSeleccionada) {
+    this.toastr.error('No hay DDJJ seleccionada.', 'Error');
+    return;
+  }
 
-    if (this.efectorId == null) {
-      console.error('El ID del efector no puede ser nulo');
-      this.toastr.error('El ID del efector no puede ser nulo');
-      return;
+  const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
+    width: '400px',
+    data: {
+      destino: destino,
+      title: 'Confirmar o rechazar DDJJ',
+      //message: `Seleccioná el estado de respuesta para ${destino === 'DIRECTOR_AUTH' ? 'el director del hospital' : 'DPH_AUTH'}.`
     }
-    const idEfector = this.efectorId;
+  });
 
-    if (!this.registrosMensuales || this.registrosMensuales.length === 0) {
-      console.warn('No hay registros mensuales para crear la DDJJ');
-      this.toastr.warning('No hay registros mensuales para crear la DDJJ');
-      return;
-    }
+  dialogRef.afterClosed().subscribe(result => {
+    if (!result) return; // Cancelado
 
-    const idRegistrosMensuales = this.registrosMensuales
-    .filter(reg => reg.id !== undefined && reg.id !== null)
-    .map(reg => reg.id as number);
+    const aprobado = result.estado === 'APROBADO';
+    const motivo = result.motivo?.trim() || '';
+    const ddjj = this.ddjjSeleccionada!;
 
-    const totalHoras = this.registrosMensuales[0].totalHoras;
-    const subtotal = totalHoras?.horasLav ?? 0;
-    const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
+    const estadoDto = new EstadoDdjjDto(
+      ddjj.id!,
+      destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? 2 : undefined,
+      destino === 'DPH_AUTH' ? ddjj.directorDPH?.id ?? 3 : undefined,
 
-    const ddjj = new DdjjDto(
-      mes,
-      anio,
-      true, // activo
-      subtotal,
-      total,
-      idEfector,
-      idRegistrosMensuales,
-      'PENDIENTE',
-      undefined,      // idValorGmi
-      undefined,      // idDirector
-      undefined,      // idDirectorDPH
-      undefined,      // estadoDdjjDirectorDPH
-      true            // enPosesionDirector
+      // Estado director
+      destino === 'DIRECTOR_AUTH' ? result.estado : ddjj.estadoDdjjDirector!,
+
+      // Estado DPH: si aprobó el director, lo pasamos a PENDIENTE
+      destino === 'DIRECTOR_AUTH' && aprobado ? 'PENDIENTE' :
+      destino === 'DPH_AUTH' ? result.estado : ddjj.estadoDdjjDirectorDPH!,
+
+      // enPosesionDirector
+      destino === 'DIRECTOR_AUTH' ? false : ddjj.enPosesionDirector!,
+
+      // enPosesionDirectorDPH: true si aprobó el director
+      destino === 'DIRECTOR_AUTH' && aprobado ? true :
+      destino === 'DPH_AUTH' ? false : ddjj.enPosesionDirectorDPH!,
+
+      // motivos
+      destino === 'DIRECTOR_AUTH' ? motivo : ddjj.motivoDirector!,
+      destino === 'DPH_AUTH' ? motivo : ddjj.motivoDirectorDPH!
     );
 
-    console.log('DTO a enviar creacion (DdjjDto):', ddjj);
+    console.log('EstadoDdjjDto enviado:', estadoDto);
 
-
-    this.ddjjService.create(ddjj).subscribe({
+    this.ddjjService.cambiarEstado(estadoDto).subscribe({
       next: () => {
-        this.toastr.success('DDJJ creada y enviada al Director con éxito');
+        this.toastr.success('La respuesta fue enviada al correctamente.', 'Enviada', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
         this.loadRegistrosMensuales();
-        this.verificarExistenciaDdjj();
       },
-      error: (err) => {
-        console.error('Error al crear DDJJ:', err);
-        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
+      error: () => {
+        this.toastr.error('Ocurrió un error al guardar la respuesta.', 'Error', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
       }
     });
-  }
+  });
+}
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
     const dateMoment = moment(date).startOf('day');
