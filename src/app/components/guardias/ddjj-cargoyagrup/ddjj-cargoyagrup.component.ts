@@ -29,6 +29,9 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
 import { DdjjDto } from 'src/app/dto/DdjjDto';
+import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
+import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
+import { ObservacionDdjjUltimoDto } from 'src/app/dto/ObservacionDdjjUltimoDto';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 import { ToastrService } from 'ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -82,6 +85,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   ddjjSeleccionada?: Ddjj;
+  tablaListaParaMostrar = false;
 
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
@@ -101,11 +105,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   botonDirectorIcon: 'assignment_ind' | 'assignment_late' | 'assignment_turned_in' = 'assignment_ind';
   evaluacionDdjjCargada = false;
   botonDirectorDeshabilitado: boolean = false;
-  mensajeDirector: 'pendiente' | 'rechazado' | 'aceptado' | null = null;
+  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | null = null;
 
   botonDphIcon: 'assignment' | 'assignment_late' | 'assignment_turned_in' | 'snooze' = 'assignment';
   botonDphDeshabilitado: boolean = false;
-  mensajeDph: 'pendiente' | 'rechazado' | 'aceptado' | null = null;
+  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | null = null;
   evaluacionDdjjDphCargada: boolean = false;
 
   botonDirectorAuthIcon: string = 'assignment_ind';
@@ -117,6 +121,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   mensajeDphAuth: string | null = null;
 
   puedeEditarCeldas: boolean = false;
+
+  ultimaObservacionDirector?: ObservacionDdjjUltimoDto;
+  ultimaObservacionDph?: ObservacionDdjjUltimoDto;
 
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
@@ -141,6 +148,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private efectorService: EfectorService,
     private novedadPersonalService: NovedadPersonalService,
     private ddjjService: DdjjService,
+    private observacionDdjjService: ObservacionDdjjService,
     private toastr: ToastrService,
     private tokenService: TokenService,
     private sanitizer: DomSanitizer,
@@ -251,6 +259,22 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     );
   }
 
+  get hayDatosParaMostrar(): boolean {
+    return (
+      this.tablaListaParaMostrar &&
+      this.dataSource &&
+      this.dataSource.data &&
+      this.dataSource.data.length > 0
+    );
+  }
+
+  get noHayDatosParaMostrar(): boolean {
+    return (
+      this.tablaListaParaMostrar &&
+      (!this.dataSource?.data?.length || this.dataSource.data.length === 0)
+    );
+  }
+
   isHabilitadoBotonDdjj(): boolean {
     const today = new Date();
     let mes = this.selectedMonth; // selectedMonth ya es 1–12
@@ -308,12 +332,20 @@ evaluarEstadoDdjj(ddjj: Ddjj): void {
   const estado = ddjj.estadoDdjjDirector;
   const enPosesion = ddjj.enPosesionDirector;
 
-  if (enPosesion && estado === 'PENDIENTE') {
-    console.log('Caso: en posesión del director y pendiente');
+if (enPosesion && estado === 'PENDIENTE') {
+  if (ddjj.director == null) {
+    console.log('Caso: en posesión del director y pendiente (nunca revisada)');
     this.botonDirectorIcon = 'assignment_late';
     this.botonDirectorDeshabilitado = true;
     this.mensajeDirector = 'pendiente';
-
+    this.puedeEditarCeldas = false;
+  } else {
+    console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
+    this.botonDirectorIcon = 'assignment_late';
+    this.botonDirectorDeshabilitado = true;
+    this.mensajeDirector = 'pendiente_devuelto';
+    this.puedeEditarCeldas = false;
+  }
   } else if (!enPosesion && estado === 'RECHAZADO') {
     console.log('Caso: rechazado por el director');
     this.botonDirectorIcon = 'assignment_ind';
@@ -325,8 +357,8 @@ evaluarEstadoDdjj(ddjj: Ddjj): void {
     console.log('Caso: aprobado por el director');
     this.botonDirectorIcon = 'assignment_turned_in';
     this.botonDirectorDeshabilitado = true;
-    this.mensajeDirector = null;
-
+    this.mensajeDirector = 'aceptado';
+    this.puedeEditarCeldas = false;
   } else {
     console.log('Caso: estado desconocido o no manejado explícitamente');
     this.botonDirectorIcon = 'assignment_ind';
@@ -355,10 +387,19 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
     this.botonDphDeshabilitado = true;
     this.mensajeDph = null;
   } else if (enPosesionDph && estadoDph === 'PENDIENTE') {
+  if (ddjj.directorDPH == null) {
     console.log('DPH: En posesión DPH y pendiente');
     this.botonDphIcon = 'assignment_late';
     this.botonDphDeshabilitado = true;
     this.mensajeDph = 'pendiente';
+    this.puedeEditarCeldas = false;
+  } else {
+    console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
+    this.botonDphIcon = 'assignment_late';
+    this.botonDphDeshabilitado = true;
+    this.mensajeDph = 'pendiente_devuelto';
+    this.puedeEditarCeldas = false;
+  }
   } else if (!enPosesionDph && estadoDph === 'RECHAZADO') {
     console.log('DPH: Rechazado por DPH');
     this.botonDphIcon = 'assignment';
@@ -370,11 +411,13 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
     this.botonDphIcon = 'assignment_turned_in';
     this.botonDphDeshabilitado = true;
     this.mensajeDph = 'aceptado';
+    this.puedeEditarCeldas = false;
   } else {
     console.log('DPH: Estado desconocido');
     this.botonDphIcon = 'assignment';
     this.botonDphDeshabilitado = false;
     this.mensajeDph = null;
+    this.puedeEditarCeldas = false;
   }
 
   this.evaluacionDdjjDphCargada = true;
@@ -486,6 +529,8 @@ loadRegistrosMensuales(): void {
     ? this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector)
     : this.ddjjService.listDdjjCargoyAgrupAndServicio(anio, mes, idEfector, this.selectedServicio);
 
+  this.tablaListaParaMostrar = false;
+
   ddjj$.subscribe({
     next: (ddjjs: Ddjj[]) => {
       if (ddjjs.length > 0) {
@@ -495,8 +540,12 @@ loadRegistrosMensuales(): void {
         this.evaluarEstadoDdjjDph(primeraDdjj);
         this.evaluarRespuestaDirectorDdjj(primeraDdjj);
         this.evaluarRespuestaDphDdjj(primeraDdjj);
+
+        this.cargarUltimaObservacionDirector(); 
+        this.cargarUltimaObservacionDph(); 
       } else {
         this.ddjjSeleccionada = undefined;
+        this.ultimaObservacionDirector = undefined;
       }
 
       this.registrosMensuales = ddjjs.flatMap(ddjj =>
@@ -507,13 +556,43 @@ loadRegistrosMensuales(): void {
       );
 
       this.updateTableDataSource();
+      this.tablaListaParaMostrar = true;
     },
     error: (err: any) => {
       console.error('Error cargando DDJJ:', err);
       this.registrosMensuales = [];
       this.updateTableDataSource();
+      this.tablaListaParaMostrar = true;
     }
   });
+}
+
+cargarUltimaObservacionDirector(): void {
+  if (!this.ddjjSeleccionada?.id) return;
+
+  this.observacionDdjjService.getUltimaObservacionPorDdjjYTipoDph(this.ddjjSeleccionada.id, false)
+    .subscribe({
+      next: (obs) => {
+        this.ultimaObservacionDirector = obs;
+      },
+      error: () => {
+        this.ultimaObservacionDirector = undefined;
+      }
+    });
+}
+
+cargarUltimaObservacionDph(): void {
+  if (!this.ddjjSeleccionada?.id) return;
+
+  this.observacionDdjjService.getUltimaObservacionPorDdjjYTipoDph(this.ddjjSeleccionada.id, true)
+    .subscribe({
+      next: (obs) => {
+        this.ultimaObservacionDph = obs;
+      },
+      error: () => {
+        this.ultimaObservacionDph = undefined;
+      }
+    });
 }
 
   generarMesesDisponibles(): void {
@@ -548,9 +627,20 @@ loadRegistrosMensuales(): void {
   }
 
   updateDateAndLoadData(): void {
+    this.evaluacionDdjjCargada = false;
+    this.evaluacionDdjjDphCargada = false;
+    this.ddjjSeleccionada = undefined;
+
+    this.mensajeDirector = null;
+    this.mensajeDph = null;
+    this.mensajeDirectorAuth = null;
+    this.mensajeDphAuth = null;
+
+    this.puedeEditarCeldas = false;
+
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
-    this.verificarExistenciaDdjj(); // ← Agregado
+    this.verificarExistenciaDdjj();
   }
 
   getMonthName(mes: number): string {
@@ -591,7 +681,6 @@ loadRegistrosMensuales(): void {
 
   dialogRef.afterClosed().subscribe(result => {
     if (result === 'updated') {
-      this.toastr.success('Registro actividad modificado correctamente');
       this.loadRegistrosMensuales();
     }
   });
@@ -651,7 +740,7 @@ enviarDdjj(destino: 'DIRECTOR' | 'DPH'): void {
   }
 
   const estadoDto: EstadoDdjjDto = new EstadoDdjjDto(
-    this.ddjjSeleccionada.id!, // asumimos que id siempre existe
+    this.ddjjSeleccionada.id!,
     destino === 'DIRECTOR' ? this.ddjjSeleccionada.director?.id : undefined,
     destino === 'DPH' ? this.ddjjSeleccionada.directorDPH?.id : undefined,
     destino === 'DIRECTOR' ? 'PENDIENTE' : this.ddjjSeleccionada.estadoDdjjDirector!,
@@ -693,18 +782,46 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
     width: '400px',
     data: {
       destino: destino,
-      title: 'Confirmar o rechazar DDJJ',
-      //message: `Seleccioná el estado de respuesta para ${destino === 'DIRECTOR_AUTH' ? 'el director del hospital' : 'DPH_AUTH'}.`
+      title: 'Confirmar o rechazar DDJJ'
     }
   });
 
   dialogRef.afterClosed().subscribe(result => {
-    if (!result) return; // Cancelado
+    if (!result) return;
 
     const aprobado = result.estado === 'APROBADO';
     const motivo = result.motivo?.trim() || '';
     const ddjj = this.ddjjSeleccionada!;
 
+    // 👉 Crear observación si hay motivo y es un rechazo
+    if (!aprobado && motivo) {
+      const observacion = new ObservacionDdjjDto(
+        motivo,
+        destino === 'DPH_AUTH',
+        destino === 'DIRECTOR_AUTH' ? 2 : 3, // ID hardcodeado por ahora
+        ddjj.id!,
+        true
+      );
+
+       console.log('Observación a enviar:', {
+    motivo: observacion.motivo,
+    tipoDph: observacion.tipoDph,
+    idUsuario: observacion.idUsuario,
+    idDdjj: observacion.idDdjj,
+    activo: observacion.activo
+  });
+
+      this.observacionDdjjService.save(observacion).subscribe({
+        next: () => {
+          console.log('Observación guardada con éxito.');
+        },
+        error: () => {
+          this.toastr.warning('No se pudo guardar la observación.', 'Atención');
+        }
+      });
+    }
+
+    // 👉 Preparar DTO para actualizar estado
     const estadoDto = new EstadoDdjjDto(
       ddjj.id!,
       destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? 2 : undefined,
@@ -713,39 +830,39 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
       // Estado director
       destino === 'DIRECTOR_AUTH' ? result.estado : ddjj.estadoDdjjDirector!,
 
-      // Estado DPH: si aprobó el director, lo pasamos a PENDIENTE
+      // Estado DPH
       destino === 'DIRECTOR_AUTH' && aprobado ? 'PENDIENTE' :
       destino === 'DPH_AUTH' ? result.estado : ddjj.estadoDdjjDirectorDPH!,
 
       // enPosesionDirector
       destino === 'DIRECTOR_AUTH' ? false : ddjj.enPosesionDirector!,
 
-      // enPosesionDirectorDPH: true si aprobó el director
+      // enPosesionDPH
       destino === 'DIRECTOR_AUTH' && aprobado ? true :
       destino === 'DPH_AUTH' ? false : ddjj.enPosesionDirectorDPH!,
 
-      // motivos
-      destino === 'DIRECTOR_AUTH' ? motivo : ddjj.motivoDirector!,
-      destino === 'DPH_AUTH' ? motivo : ddjj.motivoDirectorDPH!
+      // Motivos (ya no usamos estos si está rechazado, pero se deben llenar igual)
+      destino === 'DIRECTOR_AUTH' ? '' : ddjj.motivoDirector!,
+      destino === 'DPH_AUTH' ? '' : ddjj.motivoDirectorDPH!
     );
 
     console.log('EstadoDdjjDto enviado:', estadoDto);
 
     this.ddjjService.cambiarEstado(estadoDto).subscribe({
       next: () => {
-        this.toastr.success('La respuesta fue enviada al correctamente.', 'Enviada', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
+        this.toastr.success('La respuesta fue enviada correctamente.', 'Enviada', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
         this.loadRegistrosMensuales();
       },
       error: () => {
         this.toastr.error('Ocurrió un error al guardar la respuesta.', 'Error', {
-        timeOut: 5000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       }
     });
   });

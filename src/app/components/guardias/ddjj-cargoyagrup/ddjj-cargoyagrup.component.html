@@ -8,7 +8,7 @@
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-seleccion">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <button mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
+      <button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
       </button>
 
@@ -22,7 +22,7 @@
           <span>Exportar a PDF</span>
         </button>
       </mat-menu>
-      <button mat-fab class="button-montos" style="margin-left: 5px;"
+      <button *ngIf="hayDatosParaMostrar" mat-fab class="button-montos" style="margin-left: 5px;"
               [matTooltip]="mostrarMontos ? 'Ocultar montos' : 'Mostrar montos'"
               (click)="mostrarMontos = !mostrarMontos">
         <mat-icon>{{ mostrarMontos ? 'money_off' : 'attach_money' }}</mat-icon>
@@ -119,7 +119,7 @@
     </div>
   
     <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
-      <div class="contenedor-titulo-select-tabla">
+      <div *ngIf="hayDatosParaMostrar" class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
           <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
             <option [ngValue]="null">Todos</option>
@@ -139,12 +139,24 @@
   </div>
 </div>
 
+<div *ngIf="mensajeDirector === 'pendiente_devuelto'" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Reenviaste la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }} y nuevamente está en proceso de revisión por el director del hospital.
+  </div>
+</div>
+
 <div *ngIf="mensajeDirector === 'rechazado'" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     El director del hospital rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para
     {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirector || 'Sin especificar' }}</span>
+    Realiza los cambios necesarios según las observaciones y reenvía la DDJJ al Director.<br/>
+    <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
 
@@ -157,12 +169,24 @@
   </div>
 </div>
 
+<div *ngIf="mensajeDph === 'pendiente_devuelto'" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Reenviaste la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }} y nuevamente está en proceso de revisión por la DPH.<br/>
+  </div>
+</div>
+
 <div *ngIf="mensajeDph === 'rechazado'" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     DPH rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirectorDPH || 'Sin especificar' }}</span>
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Realiza los cambios necesarios según las observaciones y reenvía la DDJJ a la DPH.<br/>
+        <span *ngIf="ultimaObservacionDph?.nombreUsuario">
+    Rechazado por: {{ ultimaObservacionDph?.nombreUsuario }} {{ ultimaObservacionDph?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDph?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
 
@@ -187,9 +211,12 @@
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     Haz rechazado la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirector || 'Sin especificar' }}</span><br/>
-    Se espera la devolución por parte del administrativo.
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Se espera la devolución por parte del administrativo.<br/>
+    <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
 
@@ -205,11 +232,22 @@
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     Haz rechazado la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirectorDPH || 'Sin especificar' }}</span><br/>
-    Se espera la devolución por parte del administrativo.
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Se espera la devolución por parte del administrativo.<br/>
+    <span *ngIf="ultimaObservacionDph?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDph?.nombreUsuario }} {{ ultimaObservacionDph?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDph?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
+
+<ng-template [ngIf]="noHayDatosParaMostrar">
+    <div class="alert alert-info mt-3">
+      No hay datos cargados para el mes y servicio seleccionados.
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="hayDatosParaMostrar">
 
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
@@ -301,6 +339,23 @@
     </div>
     <div class="col-lg-8">  
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+  </ng-container>
+
+  <div class="row">
+    <div *ngIf="mensajeDirector === 'aceptado'" class="col-6">
+      <button mat-fab extended class="bg-warning text-light" routerLink="/ddjj-cargoyagrup-total-ap" matTooltip="Descarga DDJJ con firma director hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO HOSPITAL
+      </button>
+    </div>
+
+    <div *ngIf="mensajeDph === 'aceptado'" class="col-6 d-flex justify-content-end">
+      <button mat-fab extended class="bg-success text-light" routerLink="/ddjj-cargoyagrup-total-ap" matTooltip="Descarga DDJJ con firma DPH">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO DPH
+      </button>
     </div>
   </div>
 </div>

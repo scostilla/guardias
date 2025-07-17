@@ -8,7 +8,7 @@
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-seleccion">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <button mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
+      <button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
       </button>
 
@@ -22,7 +22,7 @@
           <span>Exportar a PDF</span>
         </button>
       </mat-menu>
-      <button *ngIf="!verificandoDdjj"
+      <button *ngIf="!verificandoDdjj && hayDatosParaMostrar"
               mat-fab
               class="button-pase"
               style="margin-left: 5px;"
@@ -35,7 +35,7 @@
     </div>
 
     <div class="col-12 col-md-3 mt-3 mt-md-0">
-      <mat-form-field>
+      <mat-form-field *ngIf="hayDatosParaMostrar">
         <mat-label>Filtro</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre o apellido">
         <button mat-icon-button matSuffix>
@@ -75,7 +75,7 @@
     </div>
   
     <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
-      <div class="contenedor-titulo-select-tabla">
+      <div *ngIf="hayDatosParaMostrar" class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
           <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
             <option [ngValue]="null">Todos</option>
@@ -90,7 +90,7 @@
   <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
-      Tienes desde el 1 al 5 de este mes para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Tienes <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
     </div>
   </div>
@@ -105,14 +105,21 @@
     </div>
   </div>
 
-  <div *ngIf="mostrarMensajeRechazoDdjj()" class="text-rechazo">
+  <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      No realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con soporte para su creación.
+      No se realizó la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con la DPH para su creación.
     </div>
   </div>
 
+  <ng-template [ngIf]="noHayDatosParaMostrar">
+    <div class="alert alert-info mt-3">
+      No hay datos cargados para el mes y servicio seleccionados.
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="hayDatosParaMostrar">
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
@@ -184,4 +191,5 @@
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
+  </ng-container>
 </div>
