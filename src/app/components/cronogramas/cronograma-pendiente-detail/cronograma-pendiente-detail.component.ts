@@ -4,6 +4,8 @@ import { CronogramaTentativoListAtorizadoDto } from 'src/app/dto/Cronogramas/Cro
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
+import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
+import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,11 +17,13 @@ export class CronogramaPendienteDetailComponent implements OnInit {
 
   cronograma!: CronogramaTentativoListAtorizadoDto;
   nombreEfector: string = '';
+  nombreAutoridad: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<CronogramaPendienteDetailComponent>,
     private hospitalService: HospitalService,
     private asistencialService: AsistencialService,
+    private autoridadService: AutoridadService,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) private data: CronogramaTentativoListAtorizadoDto 
   ) { }
@@ -37,7 +41,21 @@ ngOnInit(): void {
       this.nombreEfector = 'Nombre no disponible';
     }
   });
-}
+
+    // 👤 Traer nombre autoridad solo si no está pendiente
+    if (this.cronograma.autorizado !== 'PENDIENTE' && this.cronograma.idAutoridad) {
+      this.autoridadService.detail(this.cronograma.idAutoridad).subscribe({
+        next: (autoridad: Autoridad) => {
+          const persona = autoridad.persona;
+          this.nombreAutoridad = `${persona?.apellido}, ${persona?.nombre}`;
+        },
+        error: (err) => {
+          console.error('Error obteniendo la autoridad:', err);
+          this.nombreAutoridad = 'No disponible';
+        }
+      });
+    }
+  }
 
 verDistribucion(): void {
   this.asistencialService.setCurrentAsistencialId(this.cronograma.asistencial.id);

@@ -1,0 +1,91 @@
+.animated-button {
+  display: block;
+  position: relative;
+  width: 200px;
+  height: 60px;
+  line-height: 100px;
+  margin: auto;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+}
+
+.animated-button .label,
+.animated-button .icon {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animated-button .label {
+  left: 0;
+  width: 72%;
+  font-size: 18px;
+  text-transform: uppercase;
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+}
+
+.animated-button .label::after {
+  content: '';
+  width: 2px;
+  height: 70%;
+  position: absolute;
+  top: 15%;
+  right: -1px;
+}
+
+/* Icono */
+.animated-button .icon {
+  right: 0;
+  width: 28%;
+  font-size: 30px;
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+}
+
+/* Hover genérico */
+.animated-button:hover .label {
+  left: -72%;
+  opacity: 0;
+}
+
+.animated-button:hover .icon {
+  width: 100%;
+  font-size: 45px;
+}
+
+/* ====================
+   ESTILOS POR TIPO
+   ==================== */
+
+/* SALIDA - rojo */
+.animated-button.salida {
+  background-color: #243c74;
+}
+
+.animated-button.salida .label::after {
+  background-color: #30519c;
+}
+
+.animated-button.salida:hover {
+  background-color: #3f68c7;
+}
+
+/* ENTRADA - verde */
+.animated-button.entrada {
+  background-color: #37BBED;
+}
+
+.animated-button.entrada .label::after {
+  background-color: #31a3cc;
+}
+
+.animated-button.entrada:hover {
+  background-color: #2986a8;
+}

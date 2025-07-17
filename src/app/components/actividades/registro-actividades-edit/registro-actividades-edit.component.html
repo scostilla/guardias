@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Editar Registro</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <!-- Agregá tus campos aquí, por ejemplo: -->
+    <mat-form-field>
+      <mat-label>Fecha Ingreso</mat-label>
+      <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso">
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Repetir para cada campo necesario -->
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-button color="primary" (click)="save()" [disabled]="form.invalid">Guardar</button>
+</div>

@@ -8,7 +8,7 @@
       <ng-container *ngFor="let event of data.events">
         <div>
           <span class="evento-contenedor"><span [style.color]="event.color.primary">{{ event.title }}<mat-icon class="delete-icon" (click)="deleteEvent(event)" matTooltip="Eliminar guardia tentativa">delete</mat-icon></span>
-          <span class="texto-resaltado" [ngClass]="{
+          <span class="texto-resaltado" style="cursor: default;"  [matTooltip]="getTooltipText(event)" [ngClass]="{
             'auth-pendiente': event.auth === 'PENDIENTE',
             'auth-confirmado': event.auth === 'CONFIRMADO',
             'auth-rechazado': event.auth === 'RECHAZADO',

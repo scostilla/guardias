@@ -1,8 +1,8 @@
 .animated-button {
   display: block;
   position: relative;
-  width: 300px;
-  height: 100px;
+  width: 200px;
+  height: 60px;
   line-height: 100px;
   margin: auto;
   color: #fff;
@@ -27,7 +27,7 @@
 .animated-button .label {
   left: 0;
   width: 72%;
-  font-size: 22px;
+  font-size: 18px;
   text-transform: uppercase;
   transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
 }

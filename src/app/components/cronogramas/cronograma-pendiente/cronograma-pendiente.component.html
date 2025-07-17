@@ -60,27 +60,9 @@
               </button>
 
               <!-- Botón para abrir el menú de cambio de estado -->
-              <button mat-icon-button [matMenuTriggerFor]="menuEstado">
-                <mat-icon class="btnEdit">edit</mat-icon>
+              <button mat-icon-button matTooltip="Confirmar/rechazar" (click)="openFormChanges(cronograma)" *ngIf="isAutoridad">
+                <mat-icon class="btnEdit">how_to_reg</mat-icon>
               </button>
-
-              <!-- Menú de opciones de estado -->
-              <mat-menu #menuEstado="matMenu">
-                <!-- Opción PENDIENTE -->
-                <ng-container *ngIf="cronograma.autorizado !== 'PENDIENTE'">
-                  <button mat-menu-item (click)="updateEstado(cronograma, 'PENDIENTE')">PENDIENTE</button>
-                </ng-container>
-
-                <!-- Opción CONFIRMADO -->
-                <ng-container *ngIf="cronograma.autorizado !== 'CONFIRMADO'">
-                  <button mat-menu-item (click)="updateEstado(cronograma, 'CONFIRMADO')">CONFIRMADO</button>
-                </ng-container>
-
-                <!-- Opción RECHAZADO -->
-                <ng-container *ngIf="cronograma.autorizado !== 'RECHAZADO'">
-                  <button mat-menu-item (click)="updateEstado(cronograma, 'RECHAZADO')">RECHAZADO</button>
-                </ng-container>
-              </mat-menu>
             </td>
           </ng-container>
 

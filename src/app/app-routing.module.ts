@@ -175,6 +175,7 @@ import { CronogramaPendienteDetailComponent } from './components/cronogramas/cro
 
 
 //Sección: Guardias
+import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { DdjjCargoyagrupTotComponent } from './components/guardias/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
 import { DdjjCargoyagrupTotalApComponent } from './components/guardias/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
@@ -196,6 +197,11 @@ import { GuardiasViewPComponent } from './components/guardias/guardias-view-p/gu
 import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
+
+import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
+import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
+import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
+import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 
 
 //Sección: Disponibilidad
@@ -437,6 +443,7 @@ const routes: Routes = [
   {path:'guardias-view-p', component: GuardiasViewPComponent},
   {path:'guardia-activa',component:GuardiaActivaComponent},
   {path:'guardia-pasiva', component:GuardiaPasivaComponent},
+  {path:'ddjj-seleccion',component:DdjjSeleccionComponent},
   {path:'ddjj-extra',component:DdjjExtraComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
   {path:'ddjj-extra-detail',component:DdjjExtraDetailComponent},
   {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
@@ -454,6 +461,14 @@ const routes: Routes = [
   {path:'ddjj-tentativo',component:DdjjTentativoComponent},
   {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
   {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
+
+  {path:'rmensual-seleccion',component:RmensualSeleccionComponent},
+  {path:'rmensual-cargoyagrup',component:RmensualCargoyagrupComponent},
+  {path:'rmensual-extra',component:RmensualExtraComponent},
+  {path:'rmensual-contrafactura',component:RmensualContrafacturaComponent},
+
+
+  
  
 
   //Sección: Disponibilidad

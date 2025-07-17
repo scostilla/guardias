@@ -21,7 +21,7 @@
             <div class="form-row">
                 <mat-form-field appearance="fill">
                     <mat-label>Tipo de Guardia</mat-label>
-                    <mat-select formControlName="idTipoGuardia" [compareWith]="compareTipoGuardia"
+                    <mat-select formControlName="idTipoGuardia"
                         (selectionChange)="onTipoGuardiaChange($event)">
                         <mat-option *ngFor="let tipoGuardia of tiposGuardias" [value]="tipoGuardia">{{
                             tipoGuardia.nombre
@@ -38,7 +38,7 @@
                 <div class="form-row">
                     <mat-form-field appearance="fill">
                         <mat-label>Profesional</mat-label>
-                        <input matInput formControlName="idAsistencial" [value]="inputValue"
+                        <input matInput [value]="inputValue"
                             (click)="openAsistencialDialog()" readonly required>
                         <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
                         <mat-error *ngIf="registroForm.get('idAsistencial')?.errors?.['required']">El profesional es
@@ -71,24 +71,51 @@
                 </div>
                 <div class="form-row">
                     <mat-form-field appearance="fill" class="form-field">
-                        <mat-label>Egreso</mat-label>
-                        <input matInput [matDatepicker]="picker2" formControlName="fechaEgreso" [readonly]="!registroForm.get('fechaIngreso')?.value">
-                        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                        <mat-datepicker #picker2></mat-datepicker>
-                        <mat-hint>MM/DD/YYYY</mat-hint>
-                        <mat-error *ngIf="registroForm.get('fechaEgreso')?.errors?.['required']">La fecha de egreso es requerida.</mat-error>
-                        <mat-error *ngIf="registroForm.get('fechaEgreso')?.errors?.['fechaEgresoInvalida']">La fecha de egreso debe ser igual o posterior a la fecha de ingreso.</mat-error>
-                      </mat-form-field>
-                      
-                    <mat-form-field appearance="fill" class="form-field">
-                        <mat-label>Hora de Finalización</mat-label>
-                            <input matInput formControlName="eventEndTime" [ngxMatTimepicker]="horaPicker2" [format]="24" (click)="horaPicker2.open()" [readonly]="!registroForm.get('fechaEgreso')?.value">
-                            <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
-                            <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
-                            <mat-error *ngIf="registroForm?.get('eventEndTime')?.invalid && registroForm?.get('eventEndTime')?.touched">
-                                El campo es obligatorio (HH:mm).
-                            </mat-error>
+                    <mat-label>Egreso</mat-label>
+                    <input matInput [matDatepicker]="picker2" formControlName="fechaEgreso"
+                            [readonly]="!registroForm.get('fechaIngreso')?.value"
+                            [max]="maxFechaEgreso">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-error *ngIf="registroForm.get('fechaEgreso')?.hasError('required')">
+                    La fecha de egreso es requerida.
+                    </mat-error>
+
+                    <mat-error *ngIf="registroForm.get('fechaEgreso')?.hasError('fechaEgresoInvalida') || registroForm.hasError('fechaEgresoInvalida')">
+                    La fecha de egreso debe ser igual o posterior a la fecha de ingreso.
+                    </mat-error>
+
+                    <mat-error *ngIf="registroForm.get('fechaEgreso')?.hasError('egresoAntesDeIngreso') || registroForm.hasError('egresoAntesDeIngreso')">
+                    La fecha y hora de egreso no pueden ser anteriores a las de ingreso.
+                    </mat-error>
+
+                    <mat-error *ngIf="registroForm.get('fechaEgreso')?.hasError('egresoExcedido') || registroForm.hasError('egresoExcedido')">
+                    La fecha de egreso excede el máximo permitido.
+                    </mat-error>
                     </mat-form-field>
+
+                    <mat-form-field appearance="fill" class="form-field">
+                    <mat-label>Hora de Finalización</mat-label>
+                    <input matInput formControlName="eventEndTime"
+                            [ngxMatTimepicker]="horaPicker2" [format]="24"
+                            (click)="horaPicker2.open()"
+                            [readonly]="!registroForm.get('fechaEgreso')?.value"
+                            [max]="maxHoraEgreso">
+                    <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+                    <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+                    <mat-error *ngIf="registroForm.get('eventEndTime')?.hasError('required')">
+                    La hora de egreso es requerida.
+                    </mat-error>
+
+                    <mat-error *ngIf="registroForm.get('eventEndTime')?.hasError('egresoAntesDeIngreso') || registroForm.hasError('egresoAntesDeIngreso')">
+                    La fecha y hora de egreso no pueden ser anteriores a las de ingreso.
+                    </mat-error>
+
+                    <mat-error *ngIf="registroForm.get('eventEndTime')?.hasError('egresoExcedido') || registroForm.hasError('egresoExcedido')">
+                    La hora de egreso excede el máximo permitido.
+                    </mat-error>
+                </mat-form-field>
                 </div>
                 
             </ng-container>

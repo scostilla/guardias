@@ -541,7 +541,9 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
     formData.asistencial,
     formData.idServicio,
     this.efectorId!,
-    formData.observacion
+    formData.observacion,
+    undefined,
+    'Coincide con la guardia existente en D.H.',
   );
 
   this.cronoService.existCronograma(cronogramaDto).subscribe(
@@ -689,6 +691,7 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
 
       } else if (respuesta.existeDistribucionParcial) {
         cronogramaDto.autorizado = 'PENDIENTE';
+        cronogramaDto.motivoPendiente = 'La guardia ingresada no coincide con la cargada en D.H.';
         cronogramaDto.aceptado = true;
 
         this.toastr.warning('El ingreso no coincide con lo cargado en Distribución Horaria. Guardia pendiente de autorización.', undefined, {
@@ -700,13 +703,14 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
         this.guardarCronogramaConAutorizacion(cronogramaDto);
 
       } else if (respuesta.sinDistribucion) {
-        // 👉 PRIMERA VERIFICACIÓN: distribución semanal
+        // 👉 PRIMERA VERIFICACIÓN: distribución guardia semanal
         this.distribucionGuardiaService.validarDistribucionSemanal(cronogramaRequest).subscribe(
           tieneDistribucionEnSemana => {
             if (tieneDistribucionEnSemana) {
               cronogramaDto.autorizado = 'PENDIENTE';
+              cronogramaDto.motivoPendiente = 'Existe otro tipo de guardia cargada en D.H. para la fecha solicitada.';
 
-              this.toastr.success('El ingreso coincide con la AGRUPACION cargada en Distribución Horaria. Guardia pendiente de autorización.', undefined, {
+              this.toastr.success('El ingreso coincide con otra guardia cargada en Distribución Horaria. Guardia pendiente de autorización.', undefined, {
                 timeOut: 6000,
                 positionClass: 'toast-top-center',
                 progressBar: true
@@ -719,6 +723,7 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
                 existeEnConsultorio => {
                   if (existeEnConsultorio) {
                     cronogramaDto.autorizado = 'PENDIENTE';
+                    cronogramaDto.motivoPendiente = 'Existe un consultorio cargado en D.H. para la fecha solicitada.';
 
                     this.toastr.warning('Conflicto de horario, el ingreso coincide con consultorio. Guardia pendiente de autorización.', undefined, {
                       timeOut: 9000,
@@ -732,6 +737,7 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
                       existeEnGira => {
                         if (existeEnGira) {
                           cronogramaDto.autorizado = 'PENDIENTE';
+                          cronogramaDto.motivoPendiente = 'Existe una gira médica cargada en D.H. para la fecha solicitada.';
 
                           this.toastr.warning('Conflicto de horario, el ingreso coincide con gira médica. Guardia pendiente de autorización.', undefined, {
                             timeOut: 9000,
@@ -745,6 +751,7 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
                             existeEnOtro => {
                               if (existeEnOtro) {
                                 cronogramaDto.autorizado = 'PENDIENTE';
+                                cronogramaDto.motivoPendiente = 'Existe otra actividad cargada en D.H. para la fecha solicitada.';
 
                                 this.toastr.warning('Conflicto de horario, el ingreso coincide con otras actividades. Guardia pendiente de autorización.', undefined, {
                                   timeOut: 9000,
@@ -900,6 +907,7 @@ private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
           enConsultorio => {
             if (enConsultorio) {
               cronogramaDto.autorizado = 'PENDIENTE';
+              cronogramaDto.motivoPendiente = 'Existe un consultorio cargado en D.H. para la fecha solicitada.';
 
               this.toastr.warning('Conflicto de horario, el ingreso coincide con consultorio. Guardia pendiente de autorización.', undefined, {
                 timeOut: 9000,
@@ -913,6 +921,7 @@ private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
                 enGira => {
                   if (enGira) {
                     cronogramaDto.autorizado = 'PENDIENTE';
+                    cronogramaDto.motivoPendiente = 'Existe una gira médica cargada en D.H. para la fecha solicitada.';
 
                     this.toastr.warning('Conflicto de horario, el ingreso coincide con gira médica. Guardia pendiente de autorización.', undefined, {
                       timeOut: 9000,
@@ -926,6 +935,7 @@ private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
                       enOtro => {
                         if (enOtro) {
                           cronogramaDto.autorizado = 'PENDIENTE';
+                          cronogramaDto.motivoPendiente = 'Existe otra actividad cargada en D.H. para la fecha solicitada.';
 
                           this.toastr.warning('Conflicto de horario, el ingreso coincide con otras actividades. Guardia pendiente de autorización.', undefined, {
                             timeOut: 9000,
@@ -961,6 +971,7 @@ private procesarCronogramaExtra(cronogramaDto: CronogramaTentativoDto): void {
 }
     
     private guardarCronogramaConAutorizacion(cronogramaDto: CronogramaTentativoDto): void {
+      console.log('DTO enviado al guardar:', cronogramaDto);
       this.cronoService.save(cronogramaDto).subscribe(
         response => {
           this.toastr.success('Cronograma tentativo guardado', 'Éxito', {

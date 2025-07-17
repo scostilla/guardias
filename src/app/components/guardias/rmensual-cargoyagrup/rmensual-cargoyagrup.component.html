@@ -1,0 +1,187 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-6 col-md-7">
+      <div class="titulos">Registro mensual: <span class="titulos-second">CARGO Y AGRUPACIÓN</span></div>
+    </div>
+    <div class="col-6 col-md-2 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-seleccion">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <button mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
+        <mat-icon>get_app</mat-icon>
+      </button>
+
+      <mat-menu #downloadMenu="matMenu">
+        <button mat-menu-item (click)="onExportarAExcel()">
+          <mat-icon>table_chart</mat-icon>
+          <span>Exportar a Excel</span>
+        </button>
+        <button mat-menu-item (click)="onExportarAPDF()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>Exportar a PDF</span>
+        </button>
+      </mat-menu>
+      <button *ngIf="!verificandoDdjj"
+              mat-fab
+              class="button-pase"
+              style="margin-left: 5px;"
+              (click)="openDdjjConfirm()"
+              [disabled]="!isHabilitadoBotonDdjjFinal()"
+              [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal()}"
+              matTooltip="Crear DDJJ y enviar a Director">
+        <mat-icon [ngClass]="{'flip-horizontal': botonDDJJIcon === 'assignment_return'}">{{ botonDDJJIcon }}</mat-icon>
+      </button>
+    </div>
+
+    <div class="col-12 col-md-3 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre o apellido">
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-1">
+      <div class="contenedor-bocadillo">
+        <div>{{ getMonthName(selectedMonth) }}</div>
+        <div>{{ selectedYear }}</div>
+      </div>
+    </div>
+    <div class="col-md-8 d-flex justify-content-start">
+      <div class="contenedor-titulo-bocadillo">
+        {{efectorNombre}}
+      </div>
+    </div>
+    <div class="col-md-3 d-flex justify-content-start">
+      <div class="contenedor-subtitulo-bocadillo">
+        GUARDIAS ACTIVAS
+      </div>  
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 d-flex justify-content-start mt-sm-3">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Fecha:</span>
+        <select class="select-tabla" [(ngModel)]="selectedMonthYear" (change)="onMonthYearChange()">
+          <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Servicio:</span>
+          <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
+            <option [ngValue]="null">Todos</option>
+            <option *ngFor="let servicio of servicios" [ngValue]="servicio.id">
+              {{ servicio.descripcion }}
+            </option>
+          </select>
+      </div>
+    </div>  
+  </div>
+
+  <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
+    <mat-icon class="icono-pase">lock_open</mat-icon>
+    <div class="mensaje-pase">
+      Tienes desde el 1 al 5 de este mes para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
+    </div>
+  </div>
+
+  <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-pase">
+    <mat-icon class="icono-pase">lock</mat-icon>
+    <div class="mensaje-pase">
+      Ya realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
+      La misma está en proceso de revisión por el Director del hospital.<br>
+      Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-cargoyagrup">sección de DDJJ</span>.
+    </div>
+  </div>
+
+  <div *ngIf="mostrarMensajeRechazoDdjj()" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      No realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con soporte para su creación.
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
+
+      <ng-container matColumnDef="apellido" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Apellido </th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.apellido}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nombre </th>
+        <td mat-cell *matCellDef="let registro">{{registro.asistencial.nombre}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let registro" class="cell-actions">
+          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial, selectedMonth, selectedYear)">
+            <mat-icon color="primary">zoom_in</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalHoras">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">Total mes</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
+          {{ (registro.totalHoras?.horasLav || 0) + (registro.totalHoras?.horasSdf || 0) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="weekdaysTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L-V</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
+          {{ registro.totalHoras?.horasLav || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="weekendsTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">Total S&#8209;D&#8209;F</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">
+          {{ registro.totalHoras?.horasSdf || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container *ngFor="let fechaColumna of displayedColumns.slice(6)" [matColumnDef]="fechaColumna">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
+          {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
+        </th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+          [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
+          [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
+          <span 
+              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <div class="row mt-3">
+    <div class="col-lg-4">  
+        <span class="ref-circulo circulo--cargo"></span>&nbsp;<span class="ref ref-cargo">Cargo</span>
+        <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="ref ref-agrupacion">Agrupación</span>
+        <span class="ref-circulo circulo--agrupacion"></span>&nbsp;<span class="negrita" style="color: #ff0000;" matTooltip="No se suman al total">Incumplimiento de hs</span>
+    </div>
+    <div class="col-lg-8">  
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@ import { forkJoin } from 'rxjs';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
+import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistencial/AsistencialTiposGuardiasDto';
 import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { BehaviorSubject } from 'rxjs';
@@ -165,5 +166,8 @@ public esCargoAgrupacion(idAsistencial: number): Observable<boolean> {
   return this.httpClient.get<boolean>(this.asistencialesURL + `es-cargo-o-agrupacion/${idAsistencial}`);
 }
 
+getTiposGuardias(idAsistencial: number): Observable<AsistencialTiposGuardiasDto[]> {
+  return this.httpClient.get<AsistencialTiposGuardiasDto[]>(`${this.asistencialesURL}getTiposGuardias/${idAsistencial}`);
+}
 
 }

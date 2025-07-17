@@ -1,1 +1,37 @@
-<p>cronograma-pendiente-edit works!</p>
+<h2 mat-dialog-title>Autorizar cronogramas pendientes
+    <h5 class="['required']Field">*Campos Obligatorios</h5>
+</h2>
+<mat-dialog-content class="mat-typography">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+
+        <mat-form-field appearance="fill">
+            <mat-label>Confirmar</mat-label>
+            <mat-select formControlName="autorizado">
+                <mat-option value="RECHAZADO">Rechazado</mat-option>
+                <mat-option value="CONFIRMADO">Confirmado</mat-option>
+                <mat-option value="PENDIENTE">Pendiente</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('autorizado')?.hasError('required')">
+                Debe confirmar o rechazar la asignación de autoridad.
+            </mat-error>
+        </mat-form-field> 
+
+        <mat-form-field appearance="fill">
+            <mat-label>Motivo</mat-label>
+            <input matInput formControlName="motivoAutorizacion" />
+            <mat-error *ngIf="form.get('motivo')?.hasError('required')">El campo es obligatorio.</mat-error>
+            <mat-error *ngIf="form.get('motivo')?.hasError('maxlength')">Máximo 200 caracteres.</mat-error>
+        </mat-form-field>
+      
+        <div mat-dialog-actions class="action mt-4">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
+               Guardar
+            </button>
+            <button mat-raised-button color="secondary" type="button" (click)="cancel()">
+                Cancelar
+            </button>
+        </div>
+    </form>
+</mat-dialog-content>

@@ -267,12 +267,22 @@ import { interceptorProvider } from './interceptors/interceptor.service';
 
 import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 
+import { RegistroActividadesEditComponent } from './components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
 import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
+import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
+import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
+import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
+import { RmensualContrafacturaDetailComponent } from './components/guardias/rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
+import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
+import { RmensualExtraDetailComponent } from './components/guardias/rmensual-extra-detail/rmensual-extra-detail.component';
+import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
+import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
@@ -503,6 +513,16 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     NotFoundComponent,
     RegistroActividadesIngresoProfesionalComponent,
     RegistroActividadesEgresoProfesionalComponent,
+    RmensualCargoyagrupComponent,
+    RmensualExtraComponent,
+    RmensualContrafacturaComponent,
+    RmensualSeleccionComponent,
+    DdjjSeleccionComponent,
+    RmensualContrafacturaDetailComponent,
+    RmensualExtraDetailComponent,
+    RmensualCargoyagrupDetailComponent,
+    DialogConfirmRmensualComponent,
+    RegistroActividadesEditComponent,
   ],
 
   imports: [

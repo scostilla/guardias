@@ -7,6 +7,8 @@ import { DistribucionGuardiaDto } from "src/app/dto/personal/DistribucionGuardia
 import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/CronogramaTentativoResquestDto";
 import { ValidacionCronogramaResponseDto } from "src/app/dto/Cronogramas/ValidacionCronogramaResponseDto";
 import { DistribucionCheckDto } from "src/app/dto/personal/distribucionGuardia/DistribucionCheckDto";
+import { ConsultaLicenciaCompensatorioDto } from "src/app/dto/novedades/ConsultaLicenciaCompensatorioDto";
+
 
 
 
@@ -114,5 +116,9 @@ validarDistribucionSemanal(cTentativos: CronogramaTentativoResquestDto): Observa
 
 tieneDistribucionActiva(dto: DistribucionCheckDto): Observable<boolean> {
   return this.httpClient.post<boolean>(`${this.distribucionGuardiasURL}tieneDistribucionActiva`, dto);
+}
+
+verificarSuperposicionConCargo(dto: ConsultaLicenciaCompensatorioDto): Observable<boolean> {
+  return this.httpClient.post<boolean>(`${this.distribucionGuardiasURL}verificarSuperposicionConCargo`, dto);
 }
 }

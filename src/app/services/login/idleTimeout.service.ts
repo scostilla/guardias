@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class IdleTimeout {
-  private timeoutInMs = 15 * 60 * 1000; // 15 minutos
-  private warningTime = 14 * 60 * 1000; // 14 minutos (muestra aviso)
+  private timeoutInMs = 30 * 60 * 1000; // 30 minutos
+  private warningTime = 29 * 60 * 1000; // 29 minutos (muestra aviso)
   private warningShown = false;
   private timeoutId: any;
   private warningId: any;

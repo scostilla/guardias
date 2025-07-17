@@ -180,6 +180,15 @@ footer {
   font-weight: bold;
 }
 
+.cursor {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cursor:hover {
+  text-decoration: underline;  
+}
+
 .scroll {
   overflow: auto;
 }
@@ -265,8 +274,23 @@ footer {
   color: #fff !important;
 }
 
+.button-montos {
+    background-color: #78ce32 !important;
+    color: #fff !important;
+}
+
 .button-pase {
   background-color: #F44A3E !important;
+  color: #fff !important;
+}
+
+.button-pase-director {
+  background-color: #a12b8e !important;
+  color: #fff !important;
+}
+
+.button-pase-ddjj {
+  background-color: #dd2e62 !important;
   color: #fff !important;
 }
 
@@ -282,7 +306,24 @@ footer {
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  text-align: left; /* Para el bloque de texto */
+}
+
+.icono-pase {
+  font-size: 26px;
+  margin-right: 18px;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.flip-horizontal {
+  transform: scaleX(-1);
+}
+
+.mensaje-pase {
+  flex: 1;
 }
 
 .text-rechazo {
@@ -305,8 +346,17 @@ footer {
   text-align: center;
 }
 
+.text-aviso {
+  background-color: #50b5dd !important;
+  color: #153a49;
+  font-weight: bold;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
 
-.button-success:hover, .button-primary:hover, .button-pase:hover, .button-delete:hover {
+.button-success:hover, .button-primary:hover, .button-pase:hover, .button-delete:hover, .button-montos:hover, .button-pase-director:hover, .button-pase-ddjj:hover {
   background-color: #37BBED !important;
 }
 

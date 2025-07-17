@@ -152,7 +152,7 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
       // Filtrar los registros por el servicio seleccionado dentro de RegistroActividad
       const filteredRegistros = this.registrosMensuales.filter(registroMensual =>
         registroMensual.registroActividad.some(registroActividad =>
-          registroActividad.servicio.id === servicioIdSeleccionado
+          registroActividad.servicio?.id === servicioIdSeleccionado
         )
       );
       this.dataSource.data = filteredRegistros;
@@ -327,7 +327,7 @@ export class AsistProfesionalComponent implements OnInit, OnDestroy {
 
         if (diffHours > 0) {
           // Obtener el color de la fuente según el tipoGuardia
-          const color = this.getColor(registro.tipoGuardia);
+          const color = this.getColor(registro.tipoGuardia!);
           // Muestra la diferencia de horas como un número entero con el color de la fuente correspondiente
           output = `<span style="color: ${color};">${Math.round(diffHours)}</span>`;
           //output = `${diffHours.toFixed(2)}`; // Redondear a dos decimales

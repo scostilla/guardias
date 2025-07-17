@@ -21,6 +21,17 @@ export class CronogramaDetailComponent {
   ) {}
 
   deleteEvent(event: any): void {
+    const fechaInicio = new Date(event.start);
+
+    if (new Date() >= fechaInicio) {
+      this.toastr.warning('No se puede eliminar una guardia anterior o igual a la fecha y hora actual.', 'Aviso', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      return;
+    }
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         message: '¿Estás seguro de que deseas eliminar la guardia de ' + event.title + '?',
@@ -28,9 +39,8 @@ export class CronogramaDetailComponent {
       }
     });
 
-    // Suscríbete a la respuesta del diálogo
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {  // Si el usuario confirma
+      if (result) {
         this.cronoService.delete(event.id).subscribe(
           response => {
             this.toastr.success('Guardia tentativa eliminada con éxito', 'Éxito', {
@@ -39,11 +49,9 @@ export class CronogramaDetailComponent {
               progressBar: true
             });
 
-            // Filtro el evento eliminado de la lista de eventos y actualizo el dialog
             const updatedEvents = this.data.events.filter((e: any) => e.id !== event.id);
             this.data.events = updatedEvents;
 
-            // Emitio el evento para notificar al componente principal
             this.eventDeleted.emit();
           },
           error => {
@@ -59,6 +67,21 @@ export class CronogramaDetailComponent {
     });
   }
 
+  getTooltipText(event: any): string {
+    const nombre = event?.authfor;
+    const motivo = event?.motivo;
+
+    if (!nombre || nombre === 'undefined, undefined') {
+      return '';
+    }
+
+    if (!motivo || motivo === 'null') {
+      return `Indicado por: ${nombre}`;
+    }
+
+    return `Indicado por: ${nombre}; motivo: ${motivo}`;
+  }
+  
   cerrar(): void {
     this.dialogRef.close();
   }
