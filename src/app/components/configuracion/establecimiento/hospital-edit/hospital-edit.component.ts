@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { HospitalDto } from 'src/app/dto/Configuracion/HospitalDto';
-import { Localidad } from 'src/app/models/Configuracion/Localidad';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
-import { Region } from 'src/app/models/Configuracion/Region';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { HospitalDto } from 'src/app/dto/Configuracion/HospitalDto';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
+import { Region } from 'src/app/models/Configuracion/Region';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
 
 @Component({
   selector: 'app-hospital-edit',
@@ -20,6 +20,10 @@ export class HospitalEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = []; 
+   selectedFile: File | null = null;
+  fileUrl: string | null = null;
+
+
 
   
   constructor(
@@ -37,6 +41,7 @@ export class HospitalEditComponent implements OnInit {
       localidad: ['', Validators.required],
       region: ['', Validators.required],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
+        url: [this.data ? this.data.url : ''],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]],
       nivelComplejidad: ['', Validators.required],
       esCabecera: ['', Validators.required],
@@ -52,7 +57,11 @@ export class HospitalEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+     if (this.data?.url) {
+    this.hospitalForm.patchValue({ url: this.data.url });
+  }
     this.initialData = this.hospitalForm.value;
+    console.log(this.hospitalForm.value);
   }
 
   isModified(): boolean {
@@ -84,9 +93,36 @@ listLocalidad(): void {
     this.hospitalForm.get('nombre')?.setValue(uppercaseValue);
   }
 
+  onFileSelected(event: any): void {
+  this.selectedFile = event.target.files[0];
+  this.uploadFile(); 
+}
+
+uploadFile(): void {
+  if (this.selectedFile) {
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+
+    this.hospitalService.uploadImage(formData).subscribe(
+      (filename: string) => {
+        // Aquí el backend debería devolver el nombre del archivo guardado
+        this.fileUrl = `assets/img/sello-efectores/${filename}`;
+        this.hospitalForm.patchValue({ url: this.fileUrl });
+        this.toastr.success('Archivo subido correctamente');
+      },
+      (error) => {
+        console.error('Error al subir el archivo:', error);
+        this.toastr.error('Error al subir el archivo');
+      }
+    );
+  } else {
+    this.toastr.warning('No se seleccionó ningún archivo');
+  }
+}
   saveHospital(): void {
-    if (this.hospitalForm.valid) {
-      const formValue = this.hospitalForm.value;
+       if (this.hospitalForm.valid) {
+    const formValue = this.hospitalForm.value;
+
   
       const hospitalDto = new HospitalDto(
         formValue.nombre.toUpperCase(),
@@ -95,6 +131,7 @@ listLocalidad(): void {
         formValue.localidad.id,
         formValue.telefono,
         formValue.observacion,
+        formValue.url,
         formValue.esCabecera,
         formValue.admitePasiva,
         formValue.nivelComplejidad

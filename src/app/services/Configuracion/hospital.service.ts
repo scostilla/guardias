@@ -94,4 +94,8 @@ getServiciosActivos(idHospital: number): Observable<ServicioSummaryDto[]> {
   return this.httpClient.get<ServicioSummaryDto[]>(`${this.hospitalesURL}serviciosActivos/${idHospital}`);
 }
 
+uploadImage(file: FormData): Observable<string> {
+  return this.httpClient.post<string>(this.hospitalesURL + 'upload', file);
+}
+
 }

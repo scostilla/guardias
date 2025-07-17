@@ -1,23 +1,23 @@
-    import { Person } from "./Person";
     import { Efector } from "./Efector";
+import { Person } from "./Person";
     export class HabilitacionesGenerales {
         id?: number;
         activo: boolean;
         persona: Person;
         efectores: Efector[];
-        tipoEfectorEx?: string;
+        /* tipoEfectorEx?: string; */
 
       
         constructor(
             activo: boolean,
             persona: Person,
             efectores: Efector[],
-            tipoEfectorEx?: string  
+            /* tipoEfectorEx?: string   */
         ) {
           this.activo = activo;
           this.persona = persona;
           this.efectores = efectores;
-          this.tipoEfectorEx = tipoEfectorEx
+          /* this.tipoEfectorEx = tipoEfectorEx */
         }
       }
       

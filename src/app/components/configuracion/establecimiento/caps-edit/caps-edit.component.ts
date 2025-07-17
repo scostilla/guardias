@@ -1,16 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Caps } from 'src/app/models/Configuracion/Caps';
-import { CapsService } from 'src/app/services/Configuracion/caps.service';
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
-import { Localidad } from 'src/app/models/Configuracion/Localidad';
-import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
-import { Region } from 'src/app/models/Configuracion/Region';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { Hospital } from 'src/app/models/Configuracion/Hospital';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
+import { Caps } from 'src/app/models/Configuracion/Caps';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { Localidad } from 'src/app/models/Configuracion/Localidad';
+import { Region } from 'src/app/models/Configuracion/Region';
+import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
 
 
 @Component({
@@ -23,7 +23,10 @@ export class CapsEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = [];
-  hospitales: Hospital[] = []; 
+  hospitales: Hospital[] = [];
+  selectedFile: File | null = null;
+  fileUrl: string | null = null;
+
 
   
   constructor(
@@ -42,6 +45,7 @@ export class CapsEditComponent implements OnInit {
       localidad: ['', Validators.required],
       region: ['', Validators.required],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
+      url: [this.data ? this.data.url : ''],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]],
       cabecera: ['', Validators.required],
       tipoCaps: ['', Validators.required]
@@ -113,6 +117,21 @@ export class CapsEditComponent implements OnInit {
     this.capsForm.get('nombre')?.setValue(uppercaseValue);
   }
 
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
+    this.uploadFile(); 
+  }
+
+  uploadFile(): void {
+    if (this.selectedFile) {
+      const filename = `${this.selectedFile.name}`;
+      this.fileUrl = `assets/img/sello-efectores/${filename}`;
+      this.capsForm.patchValue({ url: this.fileUrl });
+      console.log('Archivo simulado guardado en:', this.fileUrl);
+    } else {
+      console.error('No se ha seleccionado ningún archivo.');
+    }
+  }
   saveCaps(): void {
     if (this.capsForm.valid) {
       const formValue = this.capsForm.value;
@@ -124,6 +143,7 @@ export class CapsEditComponent implements OnInit {
         formValue.localidad.id,
         formValue.telefono,
         formValue.observacion,
+        formValue.url,
         //formValue.idCabecera.id,
         formValue.cabecera.id,
         this.data ? this.data.areaProgramatica : 1,

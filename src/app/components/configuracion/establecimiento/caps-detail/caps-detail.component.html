@@ -32,6 +32,12 @@
           <th scope="row">Hospital Cabecera</th>
           <td>{{cabeceraName }}</td>
         </tr>
+          <tr>
+        <th scope="row">Sello</th>
+        <td>
+          <img *ngIf="caps.url" [src]="caps.url" alt="Imagen del Hospital" style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;">
+        </td>
+      </tr>
       </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">

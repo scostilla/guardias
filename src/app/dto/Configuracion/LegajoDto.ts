@@ -21,6 +21,7 @@ export class LegajoDto {
   nroDecreto?: string; // solo para autoridad
   fechaResolucion?: string;  // solo para autoridad
   tipoEfector?: string;
+  tipoEfectorCargo?: string; // nuevo campo para tipo de efector en cargo
   tipoUdo?: string;
   fechaBajaSistema?: string;  // esto lo carga el back
   
@@ -50,6 +51,7 @@ export class LegajoDto {
     nroDecreto?: string, // solo para autoridad
     fechaResolucion?: string,  // solo para autoridad
     tipoEfector?: string,
+    tipoEfectorCargo?: string, // nuevo campo para tipo de efector en cargo
     tipoUdo?: string,
     fechaBajaSistema?: string,  // esto lo carga el back  
   
@@ -76,6 +78,7 @@ export class LegajoDto {
     this.nroDecreto = nroDecreto ?? undefined;
     this.fechaResolucion = fechaResolucion ?? undefined;
     this.tipoEfector = tipoEfector ?? undefined;
+    this.tipoEfectorCargo = tipoEfectorCargo ?? undefined; // nuevo campo para tipo de efector en cargo
     this.tipoUdo = tipoUdo ?? undefined
     this.fechaBajaSistema = fechaBajaSistema ?? undefined;
     

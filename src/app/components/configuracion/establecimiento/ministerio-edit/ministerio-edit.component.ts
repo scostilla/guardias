@@ -21,6 +21,9 @@ export class MinisterioEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = []; 
+   selectedFile: File | null = null;
+  fileUrl: string | null = null;
+
 
   
   constructor(
@@ -38,6 +41,7 @@ export class MinisterioEditComponent implements OnInit {
       localidad: ['', Validators.required],
       region: ['', Validators.required],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
+      url: [this.data ? this.data.url : ''],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]]
     });
 
@@ -79,6 +83,21 @@ export class MinisterioEditComponent implements OnInit {
     this.ministerioForm.get('nombre')?.setValue(uppercaseValue);
   }
 
+   onFileSelected(event: any): void {
+  this.selectedFile = event.target.files[0];
+  this.uploadFile(); 
+}
+
+uploadFile(): void {
+  if (this.selectedFile) {
+    const filename = `${this.selectedFile.name}`;
+    this.fileUrl = `assets/img/sello-efectores/${filename}`;
+    this.ministerioForm.patchValue({ url: this.fileUrl }); 
+    console.log('Archivo simulado guardado en:', this.fileUrl);
+  } else {
+    console.error('No se ha seleccionado un archivo.');
+  }
+}
   saveMinisterio(): void {
     if (this.ministerioForm.valid) {
       const formValue = this.ministerioForm.value;
@@ -97,6 +116,7 @@ export class MinisterioEditComponent implements OnInit {
         localidadId,
         formValue.telefono,
         formValue.observacion,
+        formValue.url,
         cabeceraId,
       );
   

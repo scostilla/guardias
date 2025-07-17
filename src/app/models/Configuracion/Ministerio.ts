@@ -20,6 +20,7 @@ export class Ministerio extends Efector {
         telefono: string, 
         estado: boolean, 
         observacion: string,
+        url: string,
         region: Region,
         localidad: Localidad,  
         distribucionesHorarias: DistribucionHoraria[],
@@ -35,7 +36,7 @@ export class Ministerio extends Efector {
         idCabecera: number
     ) 
         {
-        super(nombre, domicilio, telefono, estado, observacion, region, localidad, distribucionesHorarias,legajosUdo,legajos, servicios, notificaciones,autoridades,registrosActividades,registroMensual,ddjjs,registrosPendientes);
+        super(nombre, domicilio, telefono, estado, observacion, url, region, localidad, distribucionesHorarias,legajosUdo,legajos, servicios, notificaciones,autoridades,registrosActividades,registroMensual,ddjjs,registrosPendientes);
         this.idCabecera = idCabecera;
     }
 }

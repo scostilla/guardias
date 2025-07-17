@@ -15,11 +15,12 @@ export class CapsDto extends EfectorDto {
       idLocalidad: number,
       telefono: string,
       observacion: string,
+      url: string,
       idCabecera: number,
       areaProgramatica: number,
       tipoCaps: string
   ) {
-    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion);
+    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion, url);
     this.idCabecera = idCabecera;
     this.areaProgramatica = areaProgramatica;
     this.tipoCaps = tipoCaps;

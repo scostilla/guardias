@@ -12,9 +12,10 @@ export class MinisterioDto extends EfectorDto {
       idLocalidad: number,
       telefono: string,
       observacion: string,
+      url: string,
       idCabecera: number,
   ) {
-    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion);
+    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion, url);
     this.idCabecera = idCabecera;
   }
 }

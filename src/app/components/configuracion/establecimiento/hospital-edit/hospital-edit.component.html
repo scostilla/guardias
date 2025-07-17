@@ -124,6 +124,19 @@
             </div>
           </div>
 
+  <div class="row">
+  <div class="col">
+    <label for="archivo">Archivo:</label>
+    <input type="file" id="archivo" (change)="onFileSelected($event)" />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <img *ngIf="hospitalForm.get('url')?.value" [src]="hospitalForm.get('url')?.value" alt="Logo del hospital" style="max-width: 200px; margin-top: 10px;">
+  </div>
+</div>
+
           <div mat-dialog-actions class="action mt-4">
             <button mat-raised-button color="primary" type="submit" [disabled]="!hospitalForm.valid || !isModified()">
               {{data ? 'Modificar' : 'Agregar'}}

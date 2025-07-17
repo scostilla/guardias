@@ -2,19 +2,19 @@ export class HabilitacionesGeneralesDto {
     activo: boolean;
     idPersona: number;
     idEfectores: number[];
-    tipoEfectorEx: string[]
+    /* tipoEfectorEx: string[] */
     
     
     constructor(
         activo: boolean,
         idPersona: number,
         idEfectores: number[],
-        tipoEfectorEx: string[]
+       /*  tipoEfectorEx: string[] */
     ){
         this.activo = activo;
         this.idPersona = idPersona;
         this.idEfectores = idEfectores;
-        this.tipoEfectorEx = tipoEfectorEx
+       /*  this.tipoEfectorEx = tipoEfectorEx */
       }
     }
     

@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
-import { Caps } from "src/app/models/Configuracion/Caps";
-import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { EfectorCapsDto } from "src/app/dto/Configuracion/efector/EfectorCapsDto";
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
+import { Caps } from "src/app/models/Configuracion/Caps";
 
 @Injectable({
   providedIn: 'root'
@@ -71,7 +71,7 @@ public delete(id:number): Observable<any> {
 // Método para obtener el nombre del hospital asociado a un CAPS
 getCabeceraNameByCapsId(id: number): Observable<string> {
   console.log('Llamando al backend con ID:', id);
-  return this.httpClient.get<string>(this.capsURL + `${id}/cabecera`, { responseType: 'text' as 'json' });
+  return this.httpClient.get<string>(this.capsURL + `getCabecera/${id}`, { responseType: 'text' as 'json' });
 }
 
   // Método para verificar si el id corresponde a un CAPS

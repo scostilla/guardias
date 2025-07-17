@@ -32,9 +32,24 @@
             <th scope="row">Es Cabecera</th>
             <td>{{hospital.esCabecera ? 'Si' : 'No'}}</td>
           </tr>
+          <tr>
+        <th scope="row">Sello</th>
+        <td>
+          <img *ngIf="hospital.url" [src]="hospital.url" alt="Imagen del Hospital" style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;">
+        </td>
+      </tr>
+     <!--  <tr>
+        <th scope="row">Url</th>
+        <td>
+          <a href="{{hospital.url}}" target="_blank">{{hospital.url}}</a>
+        </td>
+      </tr> -->
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">
         <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
     </div>
   </mat-dialog-content>
+
+
+     
