@@ -4,9 +4,3 @@
   .col-center {
     text-align: center;
   }
-
-.contador-rojo {
-  color: rgb(161, 49, 49);
-  font-weight: bold;
-  font-size: 16px !important;
-}

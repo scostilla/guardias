@@ -14,8 +14,6 @@ import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
-import * as moment from 'moment';
-import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
@@ -28,12 +26,14 @@ import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
-import { DdjjDto } from 'src/app/dto/DdjjDto';
 import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
 import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
 import { ObservacionDdjjUltimoDto } from 'src/app/dto/ObservacionDdjjUltimoDto';
+import { DialogHistorialObservacionesComponent } from '../dialog-historial-observaciones/dialog-historial-observaciones.component';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 import { ToastrService } from 'ngx-toastr';
+import * as moment from 'moment';
+import 'moment/locale/es';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
@@ -102,14 +102,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   selectedMonthYear: string = '';
   mesesDisponibles: { value: string, label: string }[] = [];
 
-  botonDirectorIcon: 'assignment_ind' | 'assignment_late' | 'assignment_turned_in' = 'assignment_ind';
+  botonDirectorIcon: 'assignment_ind' | 'assignment_late' | 'block' | 'assignment_turned_in' = 'assignment_ind';
   evaluacionDdjjCargada = false;
   botonDirectorDeshabilitado: boolean = false;
-  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | null = null;
+  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
 
-  botonDphIcon: 'assignment' | 'assignment_late' | 'assignment_turned_in' | 'snooze' = 'assignment';
+  botonDphIcon: 'assignment' | 'assignment_late' | 'assignment_turned_in' | 'block' | 'snooze' = 'assignment';
   botonDphDeshabilitado: boolean = false;
-  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | null = null;
+  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
   evaluacionDdjjDphCargada: boolean = false;
 
   botonDirectorAuthIcon: string = 'assignment_ind';
@@ -124,16 +124,19 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   ultimaObservacionDirector?: ObservacionDdjjUltimoDto;
   ultimaObservacionDph?: ObservacionDdjjUltimoDto;
+  mostrarBotonHistorialDirector = false;
+  mostrarBotonHistorialDph = false;
 
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
-  ddjjYaExiste: boolean = false;
+  mostrarBotonDDJJ: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
   //Autenticación
   roles: string[] = [];
   currentRole: string | null = null;
+  userId: number | null = null;
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
@@ -200,6 +203,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         console.warn('No hay un rol seleccionado actualmente.');
       }
     });
+
+      const userIdFromToken = this.tokenService.getUserIdFromToken();
+      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
 
       this.selectedServicio = null;
   }
@@ -275,50 +281,38 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     );
   }
 
-  isHabilitadoBotonDdjj(): boolean {
-    const today = new Date();
-    let mes = this.selectedMonth; // selectedMonth ya es 1–12
-    let anio = this.selectedYear;
+verificarExistenciaDdjj(): void {
+  this.verificandoDdjj = true;
 
-    if (mes === 12) {
-      mes = 1;
-      anio += 1;
-    } else {
-      mes += 1;
-    }
+  const today = new Date();
+  let mes = this.selectedMonth; // Mes actual seleccionado
+  let anioEvaluado = this.selectedYear;
 
-    const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
-    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
-
-    return today >= inicio && today <= fin;
+  // Ajustar si el mes es diciembre
+  if (mes === 12) {
+    mes = 1;
+    anioEvaluado += 1;
+  } else {
+    mes += 1;
   }
 
-  verificarExistenciaDdjj(): void {
-    this.verificandoDdjj = true;
+  // Crear rango del 1 al 10 del mes siguiente
+  const inicio = new Date(anioEvaluado, mes - 1, 1); // Día 1 del mes siguiente
+  const fin = new Date(anioEvaluado, mes - 1, 24, 23, 59, 59); // Día 10 inclusive
 
-    const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
-    const anio = this.selectedYear;
-    const efectorId = this.efectorId;
-    const tipoGuardiaId = 1;
+  this.mostrarBotonDDJJ = (today >= inicio && today <= fin);
+  this.verificandoDdjj = false;
+}
 
-    if (!efectorId) {
-      console.error('El ID del efector no puede ser null');
-      this.verificandoDdjj = false;
-      return;
-    }
-
-    this.ddjjService.existsDdjj(anio, nombreMes, efectorId, tipoGuardiaId).subscribe({
-      next: (existe: boolean) => {
-        this.ddjjYaExiste = existe;
-        this.verificandoDdjj = false;
-      },
-      error: (err) => {
-        console.error('Error verificando existencia de DDJJ:', err);
-        this.ddjjYaExiste = false;
-        this.verificandoDdjj = false;
-      }
-    });
+private calcularFechaLimiteEnvio(mes: number, anio: number): Date {
+  if (mes === 12) {
+    mes = 1;
+    anio += 1;
+  } else {
+    mes += 1;
   }
+  return new Date(anio, mes - 1, 24, 23, 59, 59);
+}
 
 evaluarEstadoDdjj(ddjj: Ddjj): void {
   console.log('Evaluando DDJJ:', {
@@ -331,6 +325,20 @@ evaluarEstadoDdjj(ddjj: Ddjj): void {
 
   const estado = ddjj.estadoDdjjDirector;
   const enPosesion = ddjj.enPosesionDirector;
+
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+  const hoy = new Date();
+
+  if (hoy > fechaLimite && estado !== 'APROBADO') {
+    console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    this.botonDirectorIcon = 'block';
+    this.botonDirectorDeshabilitado = true;
+    this.mensajeDirector = 'fuera_rango_tiempo';
+    this.puedeEditarCeldas = false;
+    this.evaluacionDdjjCargada = true;
+    return; // Salir sin seguir evaluando estados
+  }
 
 if (enPosesion && estado === 'PENDIENTE') {
   if (ddjj.director == null) {
@@ -374,6 +382,19 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
   const estadoDirector = ddjj.estadoDdjjDirector;
   const estadoDph = ddjj.estadoDdjjDirectorDPH;
   const enPosesionDph = ddjj.enPosesionDirectorDPH;
+
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth + 1, this.selectedYear);
+  const hoy = new Date();
+
+  if (hoy > fechaLimite && estadoDph && estadoDph !== 'APROBADO') {
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    this.botonDphIcon = 'block';
+    this.botonDphDeshabilitado = true;
+    this.mensajeDph = 'fuera_rango_tiempo';
+    this.puedeEditarCeldas = false;
+    this.evaluacionDdjjDphCargada = true;
+    return; // Salir sin seguir evaluando estados
+  }
 
   console.log('Evaluando estado DPH:', {
     estadoDirector,
@@ -427,6 +448,18 @@ evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
   const estado = ddjj.estadoDdjjDirector;
   const enPosesion = ddjj.enPosesionDirector;
 
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+  const hoy = new Date();
+
+  if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
+    console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    this.botonDirectorAuthIcon = 'block';
+    this.botonDirectorAuthDeshabilitado = true;
+    this.mensajeDirectorAuth = 'fuera_rango_tiempo';
+    return; // Salir sin seguir evaluando estados
+  }
+
   if (enPosesion && estado === 'PENDIENTE') {
     this.botonDirectorAuthIcon = 'assignment_ind';
     this.botonDirectorAuthDeshabilitado = false;
@@ -446,6 +479,18 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
   const estado = ddjj.estadoDdjjDirectorDPH;
   const enPosesion = ddjj.enPosesionDirectorDPH;
 
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+  const hoy = new Date();
+
+  if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
+    console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    this.botonDphAuthIcon = 'block';
+    this.botonDphAuthDeshabilitado = true;
+    this.mensajeDphAuth = 'fuera_rango_tiempo';
+    return; // Salir sin seguir evaluando estados
+  }
+
   if (enPosesion && estado === 'PENDIENTE') {
     this.botonDphAuthIcon = 'assignment';
     this.botonDphAuthDeshabilitado = false;
@@ -461,6 +506,32 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
   }
 }
 
+  getMensajeContadorDdjj(): string | null {
+    const today = new Date();
+    let mes = this.selectedMonth;
+    let anio = this.selectedYear;
+
+    if (mes === 12) {
+      mes = 1;
+      anio += 1;
+    } else {
+      mes += 1;
+    }
+
+    const inicio = new Date(anio, mes - 1, 1);
+    const fin = new Date(anio, mes - 1, 24, 23, 59, 59);
+
+    if (today >= inicio && today <= fin) {
+      const diasRestantes = 24 - today.getDate() + 1;
+
+      if (diasRestantes >= 1 && diasRestantes <= 24) {
+        return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
+      }
+    }
+
+    return null;
+  }
+
   convertirMesANombre(numeroMes: number): string {
     const meses = [
       'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
@@ -469,32 +540,32 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
     return meses[numeroMes];
   }
 
-  isHabilitadoBotonDdjjFinal(): boolean {
-    return this.isHabilitadoBotonDdjj() && !this.ddjjYaExiste;
-  }
+validarHistorialBotones() {
+  if (!this.ddjjSeleccionada?.id) return;
 
-  mostrarMensajeRechazoDdjj(): boolean {
-    const today = new Date();
-    let mes = this.selectedMonth;
-    let anio = this.selectedYear;
+  this.observacionDdjjService.getObservacionesActivasPorDdjjYTipoDph(this.ddjjSeleccionada.id, false)
+    .subscribe({
+      next: (data) => this.mostrarBotonHistorialDirector = data.length > 0,
+      error: () => this.mostrarBotonHistorialDirector = false
+    });
 
-    // Calcular mes siguiente
-    if (mes === 12) {
-      mes = 1;
-      anio += 1;
-    } else {
-      mes += 1;
+  this.observacionDdjjService.getObservacionesActivasPorDdjjYTipoDph(this.ddjjSeleccionada.id, true)
+    .subscribe({
+      next: (data) => this.mostrarBotonHistorialDph = data.length > 0,
+      error: () => this.mostrarBotonHistorialDph = false
+    });
+}
+
+openDdjjHistorial(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
+  const tipoDph = destino === 'DPH_AUTH';
+  this.dialog.open(DialogHistorialObservacionesComponent, {
+    width: '800px',
+    data: {
+      idDdjj: this.ddjjSeleccionada?.id,
+      tipoDph
     }
-
-    // Solo mostrar mensaje si ya pasó el 15 del mes siguiente
-    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
-
-    return (
-      !this.verificandoDdjj &&
-      !this.ddjjYaExiste &&
-      today > fin
-    );
-  }
+  });
+}  
   
 generarDiasDelMes(): void {
   const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
@@ -542,7 +613,8 @@ loadRegistrosMensuales(): void {
         this.evaluarRespuestaDphDdjj(primeraDdjj);
 
         this.cargarUltimaObservacionDirector(); 
-        this.cargarUltimaObservacionDph(); 
+        this.cargarUltimaObservacionDph();
+        this.validarHistorialBotones();
       } else {
         this.ddjjSeleccionada = undefined;
         this.ultimaObservacionDirector = undefined;
@@ -637,6 +709,8 @@ cargarUltimaObservacionDph(): void {
     this.mensajeDphAuth = null;
 
     this.puedeEditarCeldas = false;
+
+    this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
 
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
@@ -792,15 +866,21 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
     const aprobado = result.estado === 'APROBADO';
     const motivo = result.motivo?.trim() || '';
     const ddjj = this.ddjjSeleccionada!;
+    const fechaHora = new Date();
+    const fecha = fechaHora.toISOString().split('T')[0]; // "2025-07-22"
+    const hora = fechaHora.toTimeString().split(' ')[0]; // "17:42:08"
+    const user = this.userId!;
 
     // 👉 Crear observación si hay motivo y es un rechazo
     if (!aprobado && motivo) {
       const observacion = new ObservacionDdjjDto(
         motivo,
         destino === 'DPH_AUTH',
-        destino === 'DIRECTOR_AUTH' ? 2 : 3, // ID hardcodeado por ahora
+        user,
         ddjj.id!,
-        true
+        true,
+        fecha,
+        hora
       );
 
        console.log('Observación a enviar:', {
@@ -808,7 +888,9 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
     tipoDph: observacion.tipoDph,
     idUsuario: observacion.idUsuario,
     idDdjj: observacion.idDdjj,
-    activo: observacion.activo
+    activo: observacion.activo,
+    fecha: fecha,
+    hora: hora,
   });
 
       this.observacionDdjjService.save(observacion).subscribe({
@@ -824,8 +906,8 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
     // 👉 Preparar DTO para actualizar estado
     const estadoDto = new EstadoDdjjDto(
       ddjj.id!,
-      destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? 2 : undefined,
-      destino === 'DPH_AUTH' ? ddjj.directorDPH?.id ?? 3 : undefined,
+      destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? user : undefined,
+      destino === 'DPH_AUTH' ? ddjj.directorDPH?.id ?? user : undefined,
 
       // Estado director
       destino === 'DIRECTOR_AUTH' ? result.estado : ddjj.estadoDdjjDirector!,
@@ -1234,7 +1316,7 @@ async exportarAExcel() {
     });
   }
 
-  const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+  const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_sinAprobacion.xlsx`;
 
   worksheet.eachRow((row, rowNumber) => {
     row.eachCell((cell, colNumber) => {
@@ -1251,7 +1333,8 @@ async exportarAExcel() {
   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   saveAs(blob, fileName);
 }
-async exportarAPDF() {
+
+async exportarAPDF(textoAdicional: string = '', imagenBase64: string = '', nombreArchivo: string = 'exportacion.pdf') {
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
 
@@ -1263,10 +1346,7 @@ async exportarAPDF() {
   const body: any[] = [headers];
 
   for (const registro of this.dataSource.data) {
-    const novedades: NovedadPersonal[] = await firstValueFrom(
-      this.getNovedades(registro.asistencial)
-    );
-
+    const novedades: NovedadPersonal[] = await firstValueFrom(this.getNovedades(registro.asistencial));
     const row = [];
 
     row.push(registro.asistencial.apellido);
@@ -1283,18 +1363,20 @@ async exportarAPDF() {
     row.push((registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0));
     row.push(registro.totalHoras?.horasLav ?? 0);
     row.push(registro.totalHoras?.horasSdf ?? 0);
+    //row.push(registro.totalHoras?.montoTotal ?? 0);
+    //row.push(registro.totalHoras?.montoLav ?? 0);
+    //row.push(registro.totalHoras?.montoSdf ?? 0);
 
     this.displayedColumns.slice(6).forEach(fechaColumna => {
       const fecha = this.getFechaFromColumnId(fechaColumna);
       const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
-
       const { isHoliday } = this.isHoliday(fecha);
 
       if (isHoliday) {
         row.push({
           text: horas,
-          fillColor: '#F9CACA',  // Fondo rosado para feriado
-          color: 'red',          // Texto rojo
+          fillColor: '#F9CACA',
+          color: 'red',
           bold: true,
           alignment: 'center'
         });
@@ -1306,26 +1388,36 @@ async exportarAPDF() {
     body.push(row);
   }
 
-  const docDefinition: any = {
-    pageSize: 'A3', //Más grande que A4
-    pageOrientation: 'landscape',
-    pageMargins: [10, 10, 10, 10], //Márgenes reducidos
-    content: [
-      { text: `Registro Mensual - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
-      {
-        table: {
-          headerRows: 1,
-          widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
-          body
-        },
-        layout: {
-          hLineWidth: () => 0.5,
-          vLineWidth: () => 0.5,
-          hLineColor: () => '#000000',
-          vLineColor: () => '#000000'
-        }
+  const content: any[] = [
+    { text: `DDJJ - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+    {
+      table: {
+        headerRows: 1,
+        widths: headers.map(() => 'auto'),
+        body
+      },
+      layout: {
+        hLineWidth: () => 0.5,
+        vLineWidth: () => 0.5,
+        hLineColor: () => '#000000',
+        vLineColor: () => '#000000'
       }
-    ],
+    }
+  ];
+
+  // Agrega texto e imagen si se proporcionan
+  if (textoAdicional || imagenBase64) {
+    content.push(
+      { text: textoAdicional, margin: [0, 20, 0, 5], fontSize: 8 },
+      { image: imagenBase64, width: 200 }  // Ajusta tamaño según necesidad
+    );
+  }
+
+  const docDefinition: any = {
+    pageSize: 'A3',
+    pageOrientation: 'landscape',
+    pageMargins: [10, 10, 10, 10],
+    content,
     styles: {
       header: {
         fontSize: 14,
@@ -1339,7 +1431,18 @@ async exportarAPDF() {
     }
   };
 
-  pdfMake.createPdf(docDefinition).download(`rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
+  pdfMake.createPdf(docDefinition).download(`DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${nombreArchivo}.pdf`);
+}
+
+getBase64FromUrl(url: string): Promise<string> {
+  return fetch(url)
+    .then(response => response.blob())
+    .then(blob => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
 }
 
 async onExportarAExcel() {
@@ -1350,9 +1453,40 @@ async onExportarAExcel() {
   }
 }
 
-async onExportarAPDF() {
+/*async onExportarAPDF() {
   try {
     await this.exportarAPDF();
+  } catch (error) {
+    console.error('Error exportando a PDF:', error);
+  }
+}*/
+
+async onExportarConHospital() {
+  const texto = 'Texto para exportación de hospitales. El director del hospital aprobó esta Declaración Jurada; -';
+  const imagen = await this.getBase64FromUrl('assets/img/firma_arias.png');
+   const nombreArchivo = 'AprobadoHospital';
+    try {
+    await this.exportarAPDF(texto, imagen, nombreArchivo);
+  } catch (error) {
+    console.error('Error exportando a PDF:', error);
+  }
+}
+
+async onExportarConDPH() {
+  const texto = 'Texto para exportación de DPH. CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE ENCUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD; -';
+  const imagen = await this.getBase64FromUrl('assets/img/firma_arias.png');
+  const nombreArchivo = 'AprobadoDPH';
+    try {
+    await this.exportarAPDF(texto, imagen, nombreArchivo);
+  } catch (error) {
+    console.error('Error exportando a PDF:', error);
+  }
+}
+
+async onExportarLimpio() {
+    const nombreArchivo = 'SinAprobar';
+    try {
+    await this.exportarAPDF(undefined, undefined, nombreArchivo);
   } catch (error) {
     console.error('Error exportando a PDF:', error);
   }

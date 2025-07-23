@@ -4,6 +4,8 @@ export class ObservacionDdjjDto {
     tipoDph: boolean;
     idUsuario: number;
     idDdjj: number;
+    fechaCreacion?: string;
+    horaCreacion?: string;
     
     constructor(
         motivo: string,
@@ -11,6 +13,8 @@ export class ObservacionDdjjDto {
         idUsuario: number,
         idDdjj: number,
         activo?: boolean,
+        fechaCreacion?: string,
+        horaCreacion?: string
     ) {
         
         this.activo = activo;
@@ -18,6 +22,8 @@ export class ObservacionDdjjDto {
         this.tipoDph = tipoDph;
         this.idUsuario = idUsuario;
         this.idDdjj = idDdjj;
+        this.fechaCreacion = fechaCreacion;
+        this.horaCreacion = horaCreacion;
     }
 
 }

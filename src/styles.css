@@ -294,6 +294,11 @@ footer {
   color: #fff !important;
 }
 
+.button-historial-ddjj {
+  background-color: #ddc32e !important;
+  color: #fff !important;
+}
+
 .button-delete {
   background-color: #9c1d13 !important;
   color: #fff !important;
@@ -308,7 +313,7 @@ footer {
   border-radius: 10px;
   display: flex;
   align-items: center;
-  text-align: left; /* Para el bloque de texto */
+  text-align: left;
 }
 
 .icono-pase {
@@ -333,17 +338,21 @@ footer {
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  text-align: left;
 }
 
 .text-aprobado {
-  background-color: #72cf06 !important;
-  color: #ffffff;
+  background-color: #71af2a !important;
+  color: #263d0b;
   font-weight: bold;
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  align-items: center;
 }
 
 .text-aviso {
@@ -353,10 +362,12 @@ footer {
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  align-items: center;
 }
 
-.button-success:hover, .button-primary:hover, .button-pase:hover, .button-delete:hover, .button-montos:hover, .button-pase-director:hover, .button-pase-ddjj:hover {
+.button-success:hover, .button-primary:hover, .button-pase:hover, .button-delete:hover, .button-montos:hover, .button-pase-director:hover, .button-pase-ddjj:hover, .button-historial-ddjj:hover {
   background-color: #37BBED !important;
 }
 
@@ -373,6 +384,12 @@ footer {
 .disabled-button-ddjj {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.contador-rojo {
+  color: rgb(161, 49, 49);
+  font-weight: bold;
+  font-size: 16px !important;
 }
 
 ::ng-deep .mat-tooltip.multi-line-tooltip { 

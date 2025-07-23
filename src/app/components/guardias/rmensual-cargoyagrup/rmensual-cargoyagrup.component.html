@@ -22,7 +22,7 @@
           <span>Exportar a PDF</span>
         </button>
       </mat-menu>
-      <button *ngIf="!verificandoDdjj && hayDatosParaMostrar"
+      <button *ngIf="!verificandoDdjj && hayDatosParaMostrar && isAdministrativo"
               mat-fab
               class="button-pase"
               style="margin-left: 5px;"
@@ -90,26 +90,34 @@
   <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
-      Tienes <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
+      Quedan <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}. Al ser creada pasará a revisión por el director del hospital.
     </div>
   </div>
 
-  <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-pase">
+  <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-aprobado">
     <mat-icon class="icono-pase">lock</mat-icon>
     <div class="mensaje-pase">
-      Ya realizaste la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Se finalizó la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
       La misma está en proceso de revisión por el Director del hospital.<br>
       Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-cargoyagrup">sección de DDJJ</span>.
     </div>
   </div>
 
-  <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar" class="text-rechazo">
+  <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar && isAdministrativo" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
       No se realizó la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con la DPH para su creación.
+    </div>
+  </div>
+
+  <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar && !isAdministrativo" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      No se realizó la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite.
     </div>
   </div>
 

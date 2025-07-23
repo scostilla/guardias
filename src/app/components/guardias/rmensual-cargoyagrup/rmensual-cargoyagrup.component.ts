@@ -232,7 +232,7 @@ botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assign
 
     const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
     //const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
-        const fin = new Date(anio, mes - 1, 15, 23, 59, 59); //uso para pruebas luego habilitar anterior
+        const fin = new Date(anio, mes - 1, 5, 23, 59, 59); //uso para pruebas luego habilitar anterior
 
     return today >= inicio && today <= fin;
   }
@@ -250,12 +250,12 @@ botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assign
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
 
     if (today >= inicio && today <= fin) {
-      const diasRestantes = 15 - today.getDate() + 1;
+      const diasRestantes = 5 - today.getDate() + 1;
 
-      if (diasRestantes >= 1 && diasRestantes <= 15) {
+      if (diasRestantes >= 1 && diasRestantes <= 5) {
         return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
       }
     }
@@ -285,6 +285,7 @@ verificarExistenciaDdjj(): void {
       let mes = this.selectedMonth;
       let anioEvaluado = this.selectedYear;
 
+      // Ajustar si el mes es diciembre
       if (mes === 12) {
         mes = 1;
         anioEvaluado += 1;
@@ -293,7 +294,7 @@ verificarExistenciaDdjj(): void {
       }
 
       const inicio = new Date(anioEvaluado, mes - 1, 1);   // 1 del mes siguiente
-      const fin = new Date(anioEvaluado, mes - 1, 15, 23, 59, 59); // 15 inclusive
+      const fin = new Date(anioEvaluado, mes - 1, 5, 23, 59, 59); // 5 inclusive
 
       if (existe) {
         this.botonDDJJIcon = 'assignment_turned_in'; // ya existe
@@ -342,8 +343,7 @@ verificarExistenciaDdjj(): void {
     }
 
     // Solo mostrar mensaje si ya pasó el 5 del mes siguiente
-    //const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
-        const fin = new Date(anio, mes - 1, 15, 23, 59, 59); //uso para pruebas, habilitar luego anterior
+        const fin = new Date(anio, mes - 1, 5, 23, 59, 59); 
 
     return (
       !this.verificandoDdjj &&

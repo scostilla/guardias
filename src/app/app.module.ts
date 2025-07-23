@@ -287,6 +287,7 @@ import { RmensualExtraDetailComponent } from './components/guardias/rmensual-ext
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 import { RegistroActividadesEditComponent } from './components/actividades/registro-actividades-edit/registro-actividades-edit.component';
+import { DialogHistorialObservacionesComponent } from './components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
 
 @NgModule({
   declarations: [
@@ -522,6 +523,7 @@ import { RegistroActividadesEditComponent } from './components/actividades/regis
     RmensualCargoyagrupDetailComponent,
     DialogConfirmRmensualComponent,
     RegistroActividadesEditComponent,
+    DialogHistorialObservacionesComponent,
   ],
 
   imports: [

@@ -40,4 +40,9 @@ export class ObservacionDdjjService {
   getUltimaObservacionPorDdjjYTipoDph(idDdjj: number, tipoDph: boolean): Observable<ObservacionDdjjUltimoDto> {
     return this.httpClient.get<ObservacionDdjjUltimoDto>(`${this.baseUrl}ultimaPorDdjj/${idDdjj}/${tipoDph}`);
   }
+
+  getObservacionesActivasPorDdjjYTipoDph(idDdjj: number, tipoDph: boolean): Observable<ObservacionDdjjUltimoDto[]> {
+    return this.httpClient.get<ObservacionDdjjUltimoDto[]>(`${this.baseUrl}todasActivasPorDdjj/${idDdjj}/${tipoDph}`);
+  }
+
 }
