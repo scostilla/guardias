@@ -157,6 +157,20 @@ ngOnInit(): void {
   }
 
   openDetail(legajo: Legajo): void {
+
+    this.legajoService.getById(legajo.id!).subscribe(
+      (legajoActualizado) => {
+        console.log('🔄 Datos actualizados del legajo:', legajoActualizado);
+        this.dialogRef = this.dialog.open(LegajoDetailComponent, { 
+          width: '600px',
+          data: legajoActualizado // 🔥 USAR DATOS FRESCOS
+        });
+        this.dialogRef.afterClosed().subscribe(() => {
+          this.dialogRef.close();
+        });
+      },
+      (error) => {
+        console.error('❌ Error al obtener el legajo:', error);
     this.dialogRef = this.dialog.open(LegajoDetailComponent, {
       width: '600px',
       data: legajo
@@ -164,6 +178,8 @@ ngOnInit(): void {
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
     });
+  }
+);
   }
 
   createLegajo(): void {

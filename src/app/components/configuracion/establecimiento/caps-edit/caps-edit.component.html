@@ -116,36 +116,254 @@
 
     <div class="row">
       <div class="col">
-        <label for="archivo">Archivo</label>
-        <input type="file" id="archivo" (change)="onFileSelected($event)" />
-      </div>
-    </div>
+        <div 
+          [class]="getDropAreaClasses()"
+          (dragenter)="onDragEnter($event)"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (mouseleave)="onMouseLeave($event)"
+          (click)="openFileSelector()"
+        >
+          <div class="drop-zone-content">
+            <!-- 🔥 ICONO DINÁMICO -->
+            <div class="icon-container">
+              <mat-icon 
+                class="drop-icon error-icon"
+                *ngIf="uploadError && !isDragOver"
+                style="color: #f44336;"
+              >
+                error
+              </mat-icon>
+              
+              <mat-icon 
+                class="drop-icon success-icon"
+                *ngIf="selectedFile && !uploadError && !isDragOver && !isUploading"
+                style="color: #4caf50;"
+              >
+                check_circle
+              </mat-icon>
+              
+              <mat-icon 
+                class="drop-icon uploading-icon"
+                *ngIf="isUploading && !isDragOver"
+                style="color: #ff9800;"
+              >
+                hourglass_empty
+              </mat-icon>
+              
+              <mat-icon 
+                class="drop-icon drag-icon"
+                *ngIf="isDragOver"
+                style="color: #1976d2;"
+              >
+                file_upload
+              </mat-icon>
+              
+              <mat-icon 
+                class="drop-icon normal-icon"
+                *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading"
+                style="color: #666;"
+              >
+                add_photo_alternate
+              </mat-icon>
+            </div>
 
-    <div class="row">
-      <div class="col">
-        <img
-          *ngIf="capsForm.get('url')?.value"
-          [src]="capsForm.get('url')?.value"
-          alt="Logo del hospital"
-          style="max-width: 200px; margin-top: 10px"
+            <!-- 🔥 TEXTO DINÁMICO -->
+            <div class="drop-text">
+              <span *ngIf="isDragOver" style="color: #1976d2; font-weight: bold;">
+                📂 Suelta tu imagen aquí
+              </span>
+              <span *ngIf="isUploading && !isDragOver" style="color: #ff9800;">
+                🔄 Verificando imagen...
+              </span>
+              <span *ngIf="selectedFile && !uploadError && !isUploading && !isDragOver && !isDuplicateImage" style="color: #4caf50;">
+                ✓ Imagen seleccionada: {{ selectedFile.name }} - Se subirá al guardar
+              </span>
+              <span *ngIf="uploadError && !isUploading && !isDragOver" style="color: #f44336;">
+                ⚠ {{ uploadError }}
+              </span>
+              <span *ngIf="isDuplicateImage && !isUploading && !isDragOver" style="color: #f44336; font-weight: bold;">
+                ❌ Imagen duplicada detectada
+              </span>
+              <span *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading && !isDuplicateImage">
+                📸 Arrastra tu imagen aquí o haz clic para seleccionar
+              </span>
+            </div>
+
+            <div class="drop-subtext">
+              <span *ngIf="isDragOver">
+                Imágenes JPG, PNG, GIF
+              </span>
+              <span *ngIf="isUploading && !isDragOver">
+                Verificando si la imagen ya existe...
+              </span>
+              <span *ngIf="!selectedFile && !isUploading && !isDragOver && !isDuplicateImage">
+                Formatos soportados: JPG, PNG, GIF (máx. 5MB)
+              </span>
+              <span *ngIf="selectedFile && !isUploading && !isDragOver && !isDuplicateImage">
+                {{ getFileInfo() }} - Se guardará al hacer clic en {{ data ? 'Modificar' : 'Agregar' }}
+              </span>
+              <span *ngIf="isDuplicateImage && !isUploading && !isDragOver" style="color: #f44336;">
+                Esta imagen ya existe. Seleccione una imagen diferente.
+              </span>
+            </div>
+
+            <!-- 🔥 BOTONES -->
+            <div *ngIf="!isDragOver">
+              <button 
+                mat-raised-button 
+                class="browse-button"
+                type="button"
+                (click)="$event.stopPropagation(); openFileSelector()"
+                *ngIf="!selectedFile && !isUploading"
+                [disabled]="isUploading"
+              >
+                <mat-icon>folder_open</mat-icon>
+                Explorar archivos
+              </button>
+
+              <button 
+                mat-raised-button 
+                color="accent"
+                type="button"
+                (click)="$event.stopPropagation(); openFileSelector()"
+                *ngIf="selectedFile && !isUploading"
+                [disabled]="isUploading"
+                style="margin-top: 10px;"
+              >
+                <mat-icon>swap_horiz</mat-icon>
+                Cambiar imagen
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🔥 INPUT FILE OCULTO -->
+        <input 
+          type="file" 
+          id="archivo" 
+          accept="image/*" 
+          (change)="onFileSelected($event)" 
+          style="display: none;"
         />
+
+        <!-- 🔥 INFORMACIÓN DEL ARCHIVO SELECCIONADO -->
+        <div class="file-info" *ngIf="selectedFile && !uploadError">
+          <mat-icon style="color: #4caf50;">description</mat-icon>
+          <span class="file-info-text">{{ getFileInfo() }}</span>
+          <button 
+            mat-icon-button 
+            class="remove-file-btn"
+            color="warn"
+            type="button"
+            (click)="removeSelectedFile()"
+            title="Remover archivo"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- 🔥 ADVERTENCIA PROMINENTE PARA IMAGEN DUPLICADA -->
+        <div class="row" *ngIf="isDuplicateImage">
+          <div class="col">
+            <mat-card style="margin-top: 15px; background-color: #ffebee; border-left: 4px solid #f44336;">
+              <mat-card-content style="display: flex; align-items: center; gap: 10px;">
+                <mat-icon style="color: #f44336;">error</mat-icon>
+                <div style="flex: 1;">
+                  <span style="color: #c62828; font-size: 14px; font-weight: bold; display: block;">
+                    Imagen duplicada detectada
+                  </span>
+                  <span style="color: #d32f2f; font-size: 12px;">
+                    {{ uploadError }}
+                  </span>
+                </div>
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  type="button" 
+                  (click)="openFileSelector()"
+                  style="font-size: 12px;"
+                >
+                  <mat-icon>image_search</mat-icon>
+                  Seleccionar otra imagen
+                </button>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+
+        <!-- 🔥 ADVERTENCIA PARA CAPS EXISTENTES -->
+        <div class="row" *ngIf="data && data.id && selectedFile">
+          <div class="col">
+            <mat-card style="margin-top: 15px; background-color: #fff3e0; border-left: 4px solid #ff9800;">
+              <mat-card-content style="display: flex; align-items: center; gap: 10px;">
+                <mat-icon style="color: #ff9800;">info</mat-icon>
+                <span style="color: #f57c00; font-size: 14px;">
+                  La nueva imagen reemplazará la actual al hacer clic en "Modificar".
+                </span>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+          
+        <!-- 🔥 BOTÓN ELIMINAR IMAGEN PARA CAPS EXISTENTES -->
+        <div style="margin-top: 15px;" *ngIf="data && data.id && capsForm.get('url')?.value && !selectedFile">
+          <button 
+            mat-raised-button 
+            color="warn" 
+            type="button" 
+            (click)="deleteImage()"
+          >
+            <mat-icon>delete</mat-icon>
+            Eliminar Imagen Actual
+          </button>
+        </div>
       </div>
     </div>
 
+    <!-- 🔥 VISTA PREVIA DE LA IMAGEN -->
+    <div class="row" *ngIf="fileUrl">
+      <div class="col">
+        <div class="preview-container">
+          <h4 style="margin-bottom: 15px; color: #333;">Vista previa:</h4>
+          <img 
+            [src]="fileUrl" 
+            alt="Logo del CAPS" 
+            class="preview-image"
+            (error)="onImageError($event)"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 BOTONES DE ACCIÓN ACTUALIZADOS -->
     <div mat-dialog-actions class="action mt-4">
       <button
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="!capsForm.valid || !isModified()"
+        [disabled]="!capsForm.valid || (!isModified() && !selectedFile) || isDuplicateImage || isUploading"
       >
-        {{ data ? "Modificar" : "Agregar" }}
+        <mat-icon *ngIf="isUploading">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="isDuplicateImage && !isUploading">block</mat-icon>
+        
+        <span *ngIf="isUploading">
+          Procesando...
+        </span>
+        <span *ngIf="isDuplicateImage && !isUploading">
+          Imagen duplicada - Seleccione otra
+        </span>
+        <span *ngIf="!isUploading && !isDuplicateImage">
+          {{ data ? "Modificar" : "Agregar" }}
+        </span>
       </button>
       <button
         mat-raised-button
         color="secondary"
         type="button"
         (click)="cancel()"
+        [disabled]="isUploading"
       >
         Cancelar
       </button>

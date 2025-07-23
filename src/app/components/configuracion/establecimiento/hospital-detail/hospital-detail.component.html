@@ -33,17 +33,19 @@
             <td>{{hospital.esCabecera ? 'Si' : 'No'}}</td>
           </tr>
           <tr>
-        <th scope="row">Sello</th>
-        <td>
-          <img *ngIf="hospital.url" [src]="hospital.url" alt="Imagen del Hospital" style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;">
-        </td>
-      </tr>
-     <!--  <tr>
-        <th scope="row">Url</th>
-        <td>
-          <a href="{{hospital.url}}" target="_blank">{{hospital.url}}</a>
-        </td>
-      </tr> -->
+  <th scope="row">Sello</th>
+  <td>
+    <img 
+                *ngIf="hospital.url" 
+                [src]="imageUrl" 
+                alt="Imagen del Hospital" 
+                style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;"
+                (load)="onImageLoad($event)"
+                (error)="onImageError($event)"
+              >
+    <span *ngIf="!hospital.url" style="color: #666; font-style: italic;">Sin imagen</span>
+  </td>
+</tr>
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">
@@ -52,4 +54,3 @@
   </mat-dialog-content>
 
 
-     

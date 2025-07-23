@@ -1,38 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
-import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
-import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
-import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
-import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
-import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
-import { RevistaService } from 'src/app/services/Configuracion/revista.service';
-import { Profesion } from 'src/app/models/Configuracion/Profesion';
+import { Adicional } from 'src/app/models/Configuracion/Adicional';
+import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
+import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Categoria } from 'src/app/models/Configuracion/Categoria';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
-import { Categoria } from 'src/app/models/Configuracion/Categoria';
-import { Adicional } from 'src/app/models/Configuracion/Adicional';
-import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
-import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
-import { Revista } from 'src/app/models/Configuracion/Revista';
-import { ToastrService } from 'ngx-toastr';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
-import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
-import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
-import { CargoService } from 'src/app/services/Configuracion/cargo.service';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
+import { Profesion } from 'src/app/models/Configuracion/Profesion';
 import { Region } from 'src/app/models/Configuracion/Region';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Revista } from 'src/app/models/Configuracion/Revista';
+import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
+import { AdicionalService } from 'src/app/services/Configuracion/adicional.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { CargaHorariaService } from 'src/app/services/Configuracion/carga-horaria.service';
+import { CargoService } from 'src/app/services/Configuracion/cargo.service';
+import { CategoriaService } from 'src/app/services/Configuracion/categoria.service';
+import { EspecialidadService } from 'src/app/services/Configuracion/especialidad.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { ProfesionService } from 'src/app/services/Configuracion/profesion.service';
+import { RevistaService } from 'src/app/services/Configuracion/revista.service';
+import { TipoRevistaService } from 'src/app/services/Configuracion/tipo-revista.service';
+import { TipoGuardiaService } from 'src/app/services/Configuracion/tipoGuardia.service';
 
 
 
@@ -296,6 +293,7 @@ export class LegajoEditNoasistencialComponent implements OnInit {
       legajoData.fechaInicio,
       legajoData.esAutoridad,
       true,
+      legajoData.url,
       this.personId,
       legajoData.fechaFinal,
       esRegional,

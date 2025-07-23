@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { HospitalDetailComponent } from '../hospital-detail/hospital-detail.component';
 import { HospitalEditComponent } from '../hospital-edit/hospital-edit.component';
-import { HospitalDetailComponent } from '../hospital-detail/hospital-detail.component'; 
 
 @Component({
   selector: 'app-hospital',
@@ -129,14 +129,34 @@ export class HospitalComponent implements OnInit, OnDestroy {
   
 
   openDetail(hospital: Hospital): void {
-    this.dialogRef = this.dialog.open(HospitalDetailComponent, { 
-      width: '600px',
-      data: hospital
-    });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
-    });
+  // 🔥 OBTENER DATOS FRESCOS DEL SERVIDOR
+  this.hospitalService.getById(hospital.id!).subscribe(
+    (hospitalActualizado) => {
+      console.log('🔄 Datos actualizados del hospital:', hospitalActualizado);
+      
+      this.dialogRef = this.dialog.open(HospitalDetailComponent, { 
+        width: '600px',
+        data: hospitalActualizado // 🔥 USAR DATOS FRESCOS
+      });
+      
+      this.dialogRef.afterClosed().subscribe(() => {
+        this.dialogRef.close();
+      });
+    },
+    (error) => {
+      console.error('❌ Error al obtener datos actualizados:', error);
+      // Fallback: usar datos originales
+      this.dialogRef = this.dialog.open(HospitalDetailComponent, { 
+        width: '600px',
+        data: hospital
+      });
+      
+      this.dialogRef.afterClosed().subscribe(() => {
+        this.dialogRef.close();
+      });
     }
+  );
+}
 
   deleteHospital(hospital: Hospital): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

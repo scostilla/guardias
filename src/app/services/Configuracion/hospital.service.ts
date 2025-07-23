@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, Subject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { EfectorHospitalDto } from "src/app/dto/Configuracion/efector/EfectorHospitalDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
@@ -94,8 +94,53 @@ getServiciosActivos(idHospital: number): Observable<ServicioSummaryDto[]> {
   return this.httpClient.get<ServicioSummaryDto[]>(`${this.hospitalesURL}serviciosActivos/${idHospital}`);
 }
 
-uploadImage(file: FormData): Observable<string> {
-  return this.httpClient.post<string>(this.hospitalesURL + 'upload', file);
+/* uploadImage(hospitalId: number, file: FormData): Observable<any> {
+  return this.httpClient.post<any>(`${this.hospitalesURL}uploadImage/${hospitalId}`, file);
+} */
+
+uploadImage(hospitalId: number, file: FormData): Observable<any> {
+  console.log('📤 Subiendo imagen para hospital ID:', hospitalId);
+  return this.httpClient.post<any>(`${this.hospitalesURL}uploadImage/${hospitalId}`, file)
+    .pipe(
+      tap((response) => {
+        console.log('📸 Respuesta de subida de imagen:', response);
+        console.log('📁 Carpeta creada:', response.folderName);
+      })
+    );
+}
+
+checkImageDuplicate(hospitalId: number, file: FormData): Observable<any> {
+  console.log('🔍 Verificando duplicado de imagen para hospital ID:', hospitalId);
+  return this.httpClient.post<any>(`${this.hospitalesURL}checkDuplicate/${hospitalId}`, file)
+    .pipe(
+      tap((response) => {
+        console.log('🔍 Resultado de verificación de duplicado:', response);
+      }),
+      catchError((error) => {
+        console.error('❌ Error al verificar duplicado:', error);
+        return throwError(error);
+      })
+    );
+}
+
+deleteImage(hospitalId: number): Observable<any> {
+  console.log('🗑️ Eliminando imagen para hospital ID:', hospitalId);
+  return this.httpClient.delete<any>(`${this.hospitalesURL}deleteImage/${hospitalId}`)
+    .pipe(
+      tap((response) => {
+        console.log('✅ Imagen eliminada:', response);
+      })
+    );
+}
+
+listImages(hospitalId: number): Observable<any> {
+  console.log('📋 Listando imágenes para hospital ID:', hospitalId);
+  return this.httpClient.get<any>(`${this.hospitalesURL}listImages/${hospitalId}`)
+    .pipe(
+      tap((response) => {
+        console.log('📸 Imágenes encontradas:', response);
+      })
+    );
 }
 
 }

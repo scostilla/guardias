@@ -1,0 +1,315 @@
+.icon-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;  /* 🔥 Aumentar altura */
+  width: 80px;   /* 🔥 Aumentar anchura */
+  margin: 0 auto 10px auto;
+}
+
+/* 🔥 ESTILOS BASE PARA ICONOS CORREGIDOS */
+.drop-icon {
+  font-size: 48px !important;
+  transition: all 0.2s ease; /* 🔥 Transición más rápida */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* 🔥 ANIMACIONES ESPECÍFICAS CORREGIDAS */
+.success-icon {
+  animation: successPulse 0.6s ease;
+}
+
+.error-icon {
+  animation: errorShake 0.5s ease;
+}
+
+.uploading-icon {
+  animation: uploadingRotate 2s linear infinite;
+}
+
+.drag-icon {
+  animation: dragBounce 1s ease-in-out infinite alternate;
+}
+
+.normal-icon:hover {
+  transform: scale(1.1);
+  color: #1976d2 !important;
+}
+
+/* 🔥 KEYFRAMES CORREGIDOS */
+@keyframes successPulse {
+  0% { 
+    transform: scale(0.8); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+}
+
+@keyframes errorShake {
+  0%, 100% { 
+    transform: translateX(0); 
+  }
+  25% { 
+    transform: translateX(-5px); 
+  }
+  75% { 
+    transform: translateX(5px); 
+  }
+}
+
+@keyframes uploadingRotate {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+@keyframes dragBounce {
+  from { 
+    transform: translateY(0px); 
+  }
+  to { 
+    transform: translateY(-10px); 
+  }
+}
+
+/* 🔥 ÁREA DE DROP MEJORADA */
+.file-drop-area {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 40px 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease; /* 🔥 Transición más rápida */
+  background-color: #fafafa;
+  margin: 10px 0;
+  position: relative;
+  overflow: visible;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 🔥 Evitar que los elementos hijos interfieran con el drag */
+  pointer-events: auto;
+}
+
+.file-drop-area * {
+  /* 🔥 Los elementos hijos no interfieren con eventos de drag */
+  pointer-events: none;
+}
+
+.file-drop-area button {
+  /* 🔥 Pero los botones sí deben ser clickeables */
+  pointer-events: auto;
+}
+
+.file-drop-area:hover {
+  border-color: #1976d2;
+  background-color: #f0f7ff;
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.1);
+}
+
+.file-drop-area.drag-over {
+  border-color: #1976d2 !important;
+  background-color: #e3f2fd !important;
+  transform: scale(1.01); /* 🔥 Escalado más sutil */
+  box-shadow: 0 8px 16px rgba(25, 118, 210, 0.2);
+  border-style: solid; /* 🔥 Cambiar a sólido cuando se arrastra */
+}
+
+.file-drop-area.has-file {
+  border-color: #4caf50;
+  background-color: #f1f8e9;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.1);
+}
+
+.file-drop-area.error {
+  border-color: #f44336;
+  background-color: #ffebee;
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.1);
+}
+
+.file-drop-area.uploading {
+  border-color: #ff9800;
+  background-color: #fff3e0;
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.1);
+  pointer-events: none;
+}
+
+/* 🔥 DROP ZONE CONTENT MEJORADO */
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+  padding: 10px;
+  transition: all 0.2s ease; /* 🔥 Transición suave */
+}
+
+/* 🔥 MEJORAR TEXTOS */
+.drop-text {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 5px;
+  transition: color 0.2s ease; /* 🔥 Transición de color */
+}
+
+.drop-subtext {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  line-height: 1.3;
+  margin-top: 5px;
+  transition: color 0.2s ease; /* 🔥 Transición de color */
+}
+
+.file-drop-area.drag-over .drop-text {
+  color: #1976d2 !important;
+  font-weight: bold;
+}
+
+.file-drop-area.drag-over .drop-subtext {
+  color: #1565c0 !important;
+}
+
+/* 🔥 MEJORAR BOTONES */
+.browse-button {
+  margin-top: 15px !important; /* 🔥 Aumentar margen */
+  background-color: #1976d2 !important;
+  color: white !important;
+  border-radius: 24px !important;
+  padding: 10px 28px !important; /* 🔥 Aumentar padding */
+  font-weight: 500 !important;
+  text-transform: none !important;
+  min-height: 40px !important; /* 🔥 Altura mínima */
+}
+
+.browse-button:hover {
+  background-color: #1565c0 !important;
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+}
+
+/* 🔥 RESPONSIVE MEJORADO */
+@media (max-width: 600px) {
+  .file-drop-area {
+    padding: 30px 20px;
+    min-height: 220px;
+  }
+  
+  .icon-container {
+    height: 60px;
+    width: 60px;
+  }
+  
+  .drag-icon {
+  animation: dragPulse 1.5s ease-in-out infinite; /* 🔥 Animación más suave */
+}
+
+@keyframes dragPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 0.8;
+  }
+}
+  
+  .drop-text {
+    font-size: 14px;
+  }
+  
+  .drop-subtext {
+    font-size: 11px;
+  }
+  
+  .drop-zone-content {
+    gap: 15px;
+    max-width: 280px;
+  }
+}
+
+/* 🔥 ESTADO DE CARGA GLOBAL */
+.file-drop-area.uploading .drop-zone-content {
+  opacity: 0.8;
+}
+
+/* 🔥 AGREGAR ESTILOS PARA ARCHIVOS INFO */
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background-color: #e8f5e8;
+  border-radius: 6px;
+  border: 1px solid #4caf50;
+  margin-top: 15px;
+  animation: fadeInUp 0.3s ease;
+}
+
+.file-info-text {
+  flex: 1;
+  font-size: 14px;
+  color: #2e7d32;
+}
+
+.remove-file-btn {
+  min-width: auto !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+}
+
+/* 🔥 PREVIEW CONTAINER */
+.preview-container {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+  text-align: center;
+  animation: fadeInUp 0.3s ease;
+}
+
+.preview-image {
+  max-width: 250px;
+  max-height: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 🔥 ANIMACIÓN FADE IN UP */
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

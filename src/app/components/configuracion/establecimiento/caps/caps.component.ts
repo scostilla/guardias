@@ -129,14 +129,32 @@ export class CapsComponent implements OnInit, OnDestroy {
   
 
   openDetail(caps: Caps): void {
-    console.log('Datos enviados al diálogo:', caps); // Log para inspeccionar los datos
-    this.dialogRef = this.dialog.open(CapsDetailComponent, { 
-      width: '600px',
-      data: caps
-    });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
-    });
+    this.capsService.getById(caps.id!).subscribe(
+        (capsActualizado) => {
+          console.log('🔄 Datos actualizados del caps:', capsActualizado);
+
+          this.dialogRef = this.dialog.open(CapsDetailComponent, {
+            width: '600px',
+            data: capsActualizado // 🔥 USAR DATOS FRESCOS
+          });
+          
+          this.dialogRef.afterClosed().subscribe(() => {
+            this.dialogRef.close();
+          });
+        },
+        (error) => {
+          console.error('❌ Error al obtener datos actualizados:', error);
+          // Fallback: usar datos originales
+          this.dialogRef = this.dialog.open(CapsDetailComponent, {
+            width: '600px',
+            data: caps
+          });
+          
+          this.dialogRef.afterClosed().subscribe(() => {
+            this.dialogRef.close();
+          });
+        }
+      );
     }
 
   deleteCaps(caps: Caps): void {

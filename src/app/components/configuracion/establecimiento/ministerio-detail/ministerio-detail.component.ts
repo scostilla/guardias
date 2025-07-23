@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 
 @Component({
@@ -10,6 +10,7 @@ import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 export class MinisterioDetailComponent implements OnInit {
 
   ministerio!: Ministerio;
+  imageUrl: string | null = null;
 
   constructor(
     private dialogRef: MatDialogRef<MinisterioDetailComponent>,
@@ -18,6 +19,31 @@ export class MinisterioDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.ministerio = this.data;
+
+    if (this.ministerio.url) {
+      this.imageUrl = `http://localhost:8080${this.ministerio.url}`;
+      console.log('🖼️ URL completa construida:', this.imageUrl);
+    } else {
+      console.log('❌ No hay URL de imagen');
+    }
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    console.error('❌ Error al cargar imagen:');
+    console.error('- URL que falló:', target.src);
+    console.error('- URL original:', this.ministerio.url);
+    console.error('- Ministerio ID:', this.ministerio.id);
+    console.error('- Ministerio nombre:', this.ministerio.nombre);
+
+    if (target) {
+      target.style.display = 'none';
+    }
+  }
+
+  onImageLoad(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    console.log('✅ Imagen cargada exitosamente:', target.src);
   }
 
   cerrar(): void {

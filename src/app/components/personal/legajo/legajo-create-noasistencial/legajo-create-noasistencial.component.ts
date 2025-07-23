@@ -1,38 +1,35 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common';
 
 //Autenticación
-import { TokenService } from 'src/app/services/login/token.service';
-import { AuthService } from 'src/app/services/login/auth.service';
-import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
 
 //Services
-import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
-import { CargoService } from 'src/app/services/Configuracion/cargo.service';
-import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { CargoService } from 'src/app/services/Configuracion/cargo.service';
+import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { RegionService } from 'src/app/services/Configuracion/region.service';
 
 //Models y Dto
+import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
+import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
-import { Caps } from 'src/app/models/Configuracion/Caps';
-import { Cargo } from 'src/app/models/Configuracion/Cargo';
 import { Region } from 'src/app/models/Configuracion/Region';
-import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
-import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 
 
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -972,6 +969,7 @@ if (this.initialData) {
         legajoData.fechaInicio,
         esAutoridad,
         true, //activo
+        legajoData.url,
         legajoData.idPersona,
         legajoData.fechaFinal,
         esRegional,

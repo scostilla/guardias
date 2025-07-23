@@ -33,11 +33,19 @@
           <td>{{ministerio.idCabecera}}</td>
         </tr>
          <tr>
-        <th scope="row">Sello</th>
-        <td>
-          <img *ngIf="ministerio.url" [src]="ministerio.url" alt="Imagen del Hospital" style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;">
-        </td>
-      </tr>
+  <th scope="row">Sello</th>
+  <td>
+    <img 
+                *ngIf="ministerio.url" 
+                [src]="imageUrl" 
+                alt="Imagen del Ministerio" 
+                style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;"
+                (load)="onImageLoad($event)"
+                (error)="onImageError($event)"
+              >
+    <span *ngIf="!ministerio.url" style="color: #666; font-style: italic;">Sin imagen</span>
+  </td>
+</tr>
       </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">

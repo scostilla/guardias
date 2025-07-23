@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component';
 import { MinisterioEditComponent } from '../ministerio-edit/ministerio-edit.component';
-import { MinisterioDetailComponent } from '../ministerio-detail/ministerio-detail.component'; 
 
 @Component({
   selector: 'app-ministerio',
@@ -129,13 +129,32 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   
 
   openDetail(ministerio: Ministerio): void {
-    this.dialogRef = this.dialog.open(MinisterioDetailComponent, { 
-      width: '600px',
-      data: ministerio
-    });
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef.close();
-    });
+    this.ministerioService.getById(ministerio.id!).subscribe(
+        (ministerioActualizado) => {
+          console.log('🔄 Datos actualizados del ministerio:', ministerioActualizado);
+
+          this.dialogRef = this.dialog.open(MinisterioDetailComponent, {
+            width: '600px',
+            data: ministerioActualizado // 🔥 USAR DATOS FRESCOS
+          });
+          
+          this.dialogRef.afterClosed().subscribe(() => {
+            this.dialogRef.close();
+          });
+        },
+        (error) => {
+          console.error('❌ Error al obtener datos actualizados:', error);
+          // Fallback: usar datos originales
+          this.dialogRef = this.dialog.open(MinisterioDetailComponent, {
+            width: '600px',
+            data: ministerio
+          });
+          
+          this.dialogRef.afterClosed().subscribe(() => {
+            this.dialogRef.close();
+          });
+        }
+      );
     }
 
   deleteMinisterio(ministerio: Ministerio): void {

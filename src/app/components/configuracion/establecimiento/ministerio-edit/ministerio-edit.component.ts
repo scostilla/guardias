@@ -21,8 +21,17 @@ export class MinisterioEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = []; 
-   selectedFile: File | null = null;
+  
+  // 🔥 NUEVAS PROPIEDADES PARA MANEJO DE IMÁGENES
+  selectedFile: File | null = null;
   fileUrl: string | null = null;
+  isUploading: boolean = false; 
+  isDragOver: boolean = false;
+  uploadError: string | null = null;
+  pendingFile: File | null = null;
+  isDuplicateDialogOpen: boolean = false;
+  isDuplicateImage: boolean = false;
+  dragCounter: number = 0;
 
 
   
@@ -54,11 +63,55 @@ export class MinisterioEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('🔍 Inicializando componente con data:', this.data);
+    console.log('🔍 Verificando URL en data:', this.data?.url);
+
+    // 🔥 VERIFICAR SI HAY URL Y NO ES VACÍA
+    if (this.data?.url && this.data.url.trim() !== '') {
+      console.log('📸 Ministerio tiene URL de imagen:', this.data.url);
+      this.ministerioForm.patchValue({ url: this.data.url });
+      this.fileUrl = `http://localhost:8080${this.data.url}`;
+      console.log('🖼️ URL completa construida:', this.fileUrl);
+    } else {
+      console.log('❌ Ministerio sin URL de imagen válida');
+      
+      // 🔥 SI NO HAY URL EN DATA, INTENTAR OBTENERLA DEL SERVIDOR
+      if (this.data?.id) {
+        console.log('🔄 Intentando obtener URL desde el servidor...');
+        this.ministerioService.getById(this.data.id).subscribe(
+          (ministerioCompleto) => {
+            console.log('✅ Ministerio completo desde servidor:', ministerioCompleto);
+            if (ministerioCompleto.url && ministerioCompleto.url.trim() !== '') {
+              console.log('📸 URL encontrada en servidor:', ministerioCompleto.url);
+              this.ministerioForm.patchValue({ url: ministerioCompleto.url });
+              this.fileUrl = `http://localhost:8080${ministerioCompleto.url}`;
+              
+              // 🔥 ACTUALIZAR EL DATA OBJETO
+              this.data.url = ministerioCompleto.url;
+            }
+          },
+          (error) => {
+            console.error('❌ Error al obtener ministerio desde servidor:', error);
+          }
+        );
+      }
+    }
+    
     this.initialData = this.ministerioForm.value;
+    console.log('💾 Datos iniciales del formulario:', this.ministerioForm.value);
   }
 
   isModified(): boolean {
-    return JSON.stringify(this.initialData) !== JSON.stringify(this.ministerioForm.value);
+    if (!this.data) {
+      // Para ministerios nuevos, considerar modificado si hay datos o archivo seleccionado
+      return this.ministerioForm.dirty || this.selectedFile !== null;
+    }
+    
+    // Para ministerios existentes, comparar con datos iniciales
+    const currentValue = this.ministerioForm.value;
+    const hasFormChanges = JSON.stringify(currentValue) !== JSON.stringify(this.initialData);
+    const hasImageChanges = this.selectedFile !== null;
+    return hasFormChanges || hasImageChanges;
   }
 
   listLocalidad(): void {
@@ -83,30 +136,349 @@ export class MinisterioEditComponent implements OnInit {
     this.ministerioForm.get('nombre')?.setValue(uppercaseValue);
   }
 
-   onFileSelected(event: any): void {
-  this.selectedFile = event.target.files[0];
-  this.uploadFile(); 
-}
-
-uploadFile(): void {
-  if (this.selectedFile) {
-    const filename = `${this.selectedFile.name}`;
-    this.fileUrl = `assets/img/sello-efectores/${filename}`;
-    this.ministerioForm.patchValue({ url: this.fileUrl }); 
-    console.log('Archivo simulado guardado en:', this.fileUrl);
-  } else {
-    console.error('No se ha seleccionado un archivo.');
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    this.handleFileSelection(file);
   }
-}
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.types.includes('Files') && !this.isDragOver) {
+      this.isDragOver = true;
+      this.uploadError = null;
+      console.log('🎯 Drag enter - Activado');
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.types.includes('Files')) {
+      this.isDragOver = true;
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'copy';
+      }
+    } else {
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'none';
+      }
+    }
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const target = event.currentTarget as HTMLElement;
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    
+    if (target && (!relatedTarget || !target.contains(relatedTarget))) {
+      this.isDragOver = false;
+      console.log('🚪 Drag leave - Desactivado');
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.isDragOver = false;
+    console.log('📂 Drop event triggered - Estado reseteado');
+    
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      console.log('📁 Archivo detectado:', files[0].name);
+      this.handleFileSelection(files[0]);
+    } else {
+      console.log('❌ No se detectaron archivos en el drop');
+    }
+  }
+
+  resetDragState(): void {
+    this.isDragOver = false;
+    console.log('🔄 Estado de drag reseteado manualmente');
+  }
+
+  onMouseLeave(event: MouseEvent): void {
+    if (!event.buttons) {
+      this.resetDragState();
+    }
+  }
+
+  handleFileSelection(file: File | null): void {
+    if (!file) {
+      this.uploadError = 'No se seleccionó ningún archivo';
+      this.toastr.warning(this.uploadError);
+      return;
+    }
+
+    // 🔥 VALIDACIONES EN EL FRONTEND
+    if (!file.type.startsWith('image/')) {
+      this.uploadError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
+      this.toastr.error(this.uploadError);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.uploadError = 'El archivo no puede ser mayor a 5MB';
+      this.toastr.error(this.uploadError);
+      return;
+    }
+
+    // 🔥 VERIFICAR SI ES EL MISMO ARCHIVO QUE YA ESTÁ SELECCIONADO
+    if (this.selectedFile && this.isSameFile(this.selectedFile, file)) {
+      this.toastr.info('Este archivo ya está seleccionado');
+      return;
+    }
+
+    // 🔥 RESETEAR ESTADO DE DUPLICADO
+    this.isDuplicateImage = false;
+    this.uploadError = null;
+    this.selectedFile = file;
+
+    // 🔥 MOSTRAR PREVIEW LOCAL INMEDIATAMENTE
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.fileUrl = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // 🔥 VERIFICAR DUPLICADO SI ES MINISTERIO EXISTENTE
+    if (this.data?.id) {
+      this.checkImageDuplicateOnSelection();
+    } else {
+      this.toastr.info('Imagen seleccionada. Se subirá cuando se cree el ministerio.');
+    }
+  }
+
+  private checkImageDuplicateOnSelection(): void {
+    if (!this.selectedFile || !this.data?.id) return;
+
+    console.log('🔍 Verificando si la imagen ya existe al seleccionar:', this.selectedFile.name);
+    
+    this.isUploading = true;
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+
+    this.ministerioService.checkImageDuplicate(this.data.id, formData).subscribe(
+      (response: any) => {
+        this.isUploading = false;
+        console.log('🔍 Respuesta de verificación de duplicado:', response);
+        
+        if (response.isDuplicate) {
+          this.handleDuplicateImageOnSelection(response);
+        } else {
+          this.isDuplicateImage = false;
+          this.uploadError = null;
+          this.toastr.success('Imagen válida. Se subirá al guardar los cambios.', 'Imagen nueva');
+        }
+      },
+      (error) => {
+        this.isUploading = false;
+        console.error('❌ Error al verificar imagen:', error);
+        
+        this.isDuplicateImage = false;
+        this.uploadError = null;
+        this.toastr.warning('No se pudo verificar la imagen. Se intentará subir al guardar.', 'Verificación fallida');
+      }
+    );
+  }
+
+   private handleDuplicateImageOnSelection(response: any): void {
+    console.log('⚠️ Imagen duplicada detectada en selección:', response);
+    
+    this.isDuplicateImage = true;
+    this.uploadError = `Esta imagen ya existe: ${response.existingFile}`;
+
+    this.selectedFile = null;
+    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.ministerioForm.patchValue({ url: response.url });
+    
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+
+    this.toastr.error(
+      `La imagen "${response.existingFile}" ya existe en este ministerio. Seleccione una imagen diferente.`,
+      'Imagen duplicada',
+      { 
+        timeOut: 8000,
+        closeButton: true,
+        progressBar: true 
+      }
+    );
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.uploadError = null;
+    
+    if (!this.data || !this.data.id) {
+      this.fileUrl = null;
+    }
+    
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    
+    this.toastr.info('Archivo removido');
+  }
+
+  getFileInfo(): string {
+    if (!this.selectedFile) return '';
+    
+    const size = this.selectedFile.size;
+    const sizeInMB = (size / (1024 * 1024)).toFixed(2);
+    return `${this.selectedFile.name} (${sizeInMB} MB)`;
+  }
+
+  getDropAreaClasses(): string {
+    let classes = 'file-drop-area';
+    
+    if (this.isUploading) {
+      classes += ' uploading';
+    } else if (this.isDragOver) {
+      classes += ' drag-over';
+    } else if (this.selectedFile && !this.uploadError) {
+      classes += ' has-file';
+    } else if (this.uploadError) {
+      classes += ' error';
+    }
+    
+    return classes;
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.style.display = 'none';
+    }
+  }
+
+  private isSameFile(file1: File, file2: File): boolean {
+    return file1.name === file2.name && 
+           file1.size === file2.size && 
+           file1.lastModified === file2.lastModified;
+  }
+
+  deleteImage(): void {
+    if (!this.data || !this.data.id) {
+      this.toastr.error('No se puede eliminar la imagen');
+      return;
+    }
+
+    if (confirm('¿Está seguro de que desea eliminar la imagen? Esto también eliminará la carpeta si está vacía.')) {
+      this.ministerioService.deleteImage(this.data.id).subscribe(
+        (response: any) => {
+          this.fileUrl = null;
+          this.ministerioForm.patchValue({ url: null });
+          this.ministerioForm.markAsDirty();
+          
+          this.toastr.success(response.mensaje || 'Imagen eliminada correctamente');
+        },
+        (error) => {
+          console.error('Error al eliminar la imagen:', error);
+          let errorMessage = 'Error al eliminar la imagen';
+          if (error.error && error.error.mensaje) {
+            errorMessage = error.error.mensaje;
+          }
+          this.toastr.error(errorMessage);
+        }
+      );
+    }
+  }
+
+private uploadImageAfterCreation(ministerioId: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.selectedFile) {
+        resolve(null);
+        return;
+      }
+
+      console.log('🔄 Iniciando subida de imagen para ministerio ID:', ministerioId);
+      this.isUploading = true;
+      const formData = new FormData();
+      formData.append('image', this.selectedFile);
+
+      this.ministerioService.uploadImage(ministerioId, formData).subscribe(
+        (response: any) => {
+          console.log('✅ Imagen subida exitosamente después de crear ministerio:', response);
+          console.log('📝 URL de la imagen:', response.url);
+          
+          this.isUploading = false;
+          this.fileUrl = `http://localhost:8080${response.url}`;
+          
+          const fileInput = document.getElementById('archivo') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          this.selectedFile = null;
+          
+          resolve(response);
+        },
+        (error) => {
+          console.error('❌ Error al subir imagen después de crear ministerio:', error);
+          this.isUploading = false;
+          this.selectedFile = null;
+          reject(error);
+        }
+      );
+    });
+  }
+
+  private uploadImageAfterUpdate(ministerioId: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.selectedFile) {
+        resolve(null);
+        return;
+      }
+
+      console.log('🔄 Iniciando subida real de imagen para ministerio actualizado ID:', ministerioId);
+      const formData = new FormData();
+      formData.append('image', this.selectedFile);
+
+      this.ministerioService.uploadImage(ministerioId, formData).subscribe(
+        (response: any) => {
+          console.log('✅ Imagen subida exitosamente después de actualizar ministerio:', response);
+          console.log('📝 URL de la imagen:', response.url);
+          
+          this.fileUrl = `http://localhost:8080${response.url}`;
+          
+          const fileInput = document.getElementById('archivo') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          this.selectedFile = null;
+          
+          resolve(response);
+        },
+        (error) => {
+          console.error('❌ Error al subir imagen después de actualizar ministerio:', error);
+          this.selectedFile = null;
+          reject(error);
+        }
+      );
+    });
+  }
+
   saveMinisterio(): void {
     if (this.ministerioForm.valid) {
       const formValue = this.ministerioForm.value;
-  
-      // Verifica que tanto region como localidad estén definidos antes de acceder a su id
+      
       const regionId = formValue.region ? formValue.region.id : null;
       const localidadId = formValue.localidad ? formValue.localidad.id : null;
-      
-      // Asegúrate de que `cabecera` también esté definido
       const cabeceraId = formValue.cabecera ? formValue.cabecera.id : null;
       
       const ministerioDto = new MinisterioDto(
@@ -116,32 +488,83 @@ uploadFile(): void {
         localidadId,
         formValue.telefono,
         formValue.observacion,
-        formValue.url,
+        '', // Para nuevos ministerios
         cabeceraId,
       );
-  
-      console.log('MinisterioDto:', ministerioDto);
-  
+
+      console.log('🚀 MinisterioDto a enviar:', ministerioDto);
+
       if (this.data && this.data.id) {
+        // 🔥 ACTUALIZACIÓN DE MINISTERIO EXISTENTE
+        ministerioDto.url = formValue.url || '';
+        
         this.ministerioService.update(this.data.id, ministerioDto).subscribe(
-          result => {
-            console.log('Ministerio actualizado:', result);
+          async (result) => {
+            console.log('✅ Ministerio actualizado:', result);
+            
+            // 🔥 SUBIR IMAGEN DESPUÉS DE ACTUALIZAR SI HAY UNA SELECCIONADA
+            if (this.selectedFile) {
+              console.log('📤 Subiendo imagen después de actualizar ministerio...');
+              try {
+                this.isUploading = true;
+                const uploadResponse = await this.uploadImageAfterUpdate(this.data.id!);
+                
+                if (uploadResponse && uploadResponse.url) {
+                  this.ministerioForm.patchValue({ url: uploadResponse.url });
+                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  result.url = uploadResponse.url;
+                }
+                
+              } catch (uploadError) {
+                console.error('❌ Error al subir imagen:', uploadError);
+                this.toastr.warning('Ministerio actualizado pero hubo un error al subir la imagen');
+              } finally {
+                this.isUploading = false;
+              }
+            }
+            
+            this.selectedFile = null;
+            this.initialData = { ...this.ministerioForm.value };
+            
             this.dialogRef.close({ type: 'save', data: result });
           },
           error => {
-            console.error('Error al actualizar ministerio:', error);
-            this.dialogRef.close({ type: 'error', data: error });
+            console.error('❌ Error al actualizar ministerio:', error);
+            this.toastr.error('Error al actualizar el ministerio');
           }
         );
       } else {
+        // 🔥 CREACIÓN DE NUEVO MINISTERIO
         this.ministerioService.save(ministerioDto).subscribe(
-          result => {
-            console.log('Ministerio creado:', result);
-            this.dialogRef.close({ type: 'save', data: result });
+          async (ministerioCreado) => {
+            console.log('✅ Ministerio creado exitosamente:', ministerioCreado);
+            
+            this.data = ministerioCreado;
+            
+            if (this.selectedFile && ministerioCreado.id) {
+              console.log('📤 Subiendo imagen después de crear ministerio...');
+              try {
+                const uploadResponse = await this.uploadImageAfterCreation(ministerioCreado.id);
+                
+                if (uploadResponse && uploadResponse.url) {
+                  this.ministerioForm.patchValue({ url: uploadResponse.url });
+                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  ministerioCreado.url = uploadResponse.url;
+                }
+                
+              } catch (uploadError) {
+                console.error('❌ Error al subir imagen:', uploadError);
+                this.toastr.warning('Ministerio creado pero hubo un error al subir la imagen');
+              }
+            } else {
+              this.toastr.success('Ministerio creado correctamente');
+            }
+            
+            this.dialogRef.close({ type: 'save', data: ministerioCreado });
           },
           error => {
-            console.error('Error al crear ministerio:', error);
-            this.dialogRef.close({ type: 'error', data: error });
+            console.error('❌ Error al crear ministerio:', error);
+            this.toastr.error('Error al crear el ministerio');
           }
         );
       }

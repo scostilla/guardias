@@ -4,6 +4,7 @@ export class LegajoDto {
   esAutoridad: boolean;
   esRegional?: boolean;
   activo: boolean;
+  url: string;
   matriculaNacional?: string | null;
   matriculaProvincial?: string | null;
   idSuspencion?: number | null;
@@ -30,6 +31,7 @@ export class LegajoDto {
     fechaInicio: Date | null,
     esAutoridad: boolean,
     activo: boolean,
+    url: string,
     idPersona: number,
 
     // Parámetros opcionales
@@ -61,6 +63,7 @@ export class LegajoDto {
     this.esAutoridad = esAutoridad;
     this.esRegional = esRegional;
     this.activo = activo;
+    this.url = url;
     this.matriculaNacional = matriculaNacional ?? null;
     this.matriculaProvincial = matriculaProvincial;
     this.idSuspencion = idSuspencion ?? null;

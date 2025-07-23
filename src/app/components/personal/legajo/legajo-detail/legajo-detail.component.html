@@ -94,6 +94,21 @@
           </td>
         </tr>
 
+        <tr>
+  <th scope="row">Firma</th>
+  <td>
+    <img 
+                *ngIf="legajo.url" 
+                [src]="imageUrl" 
+                alt="Imagen del Hospital" 
+                style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;"
+                (load)="onImageLoad($event)"
+                (error)="onImageError($event)"
+              >
+    <span *ngIf="!legajo.url" style="color: #666; font-style: italic;">Sin imagen</span>
+  </td>
+</tr>
+
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">

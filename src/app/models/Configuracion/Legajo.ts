@@ -16,6 +16,7 @@ export class Legajo {
     esAutoridad: boolean;
     esRegional?: boolean;
     activo:boolean;
+    url: string;
     matriculaNacional?: string | null;
     matriculaProvincial?: string | null;
     motivoBaja?: string | null; 
@@ -42,6 +43,7 @@ export class Legajo {
         fechaInicio: Date | null,
         esAutoridad: boolean,
         activo:boolean,
+        url: string,
         efectores: Efector[],
         especialidades: Especialidad[],
         tipoGuardias: TipoGuardia[],
@@ -74,6 +76,7 @@ export class Legajo {
         this.esAutoridad = esAutoridad;
         this.esRegional = esRegional;
         this.activo = activo;
+        this.url = url;
         this.matriculaNacional = matriculaNacional;
         this.matriculaProvincial = matriculaProvincial;
         this.motivoBaja = motivoBaja;

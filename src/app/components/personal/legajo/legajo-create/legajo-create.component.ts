@@ -170,6 +170,17 @@ export class LegajoCreateComponent implements OnInit {
 
   hospitalHabilitacionesGuardias!: number | null;
 
+   // 🔥 NUEVAS PROPIEDADES PARA MANEJO DE IMÁGENES (SOLO AUTORIDADES)
+  selectedFile: File | null = null;
+  fileUrl: string | null = null;
+  isUploading: boolean = false;
+  isDragOver: boolean = false;
+  uploadError: string | null = null;
+  pendingFile: File | null = null;
+  isDuplicateDialogOpen: boolean = false;
+  isDuplicateImage: boolean = false;
+  dragCounter: number = 0;
+
   constructor(
     private fb: FormBuilder,
     public dialog: MatDialog,
@@ -237,6 +248,7 @@ export class LegajoCreateComponent implements OnInit {
       habilitacionesGenerales: [[]],
       selectedHospitalsGenerales: [[]],
       selectedHospitalsGuardias: [[]],
+      url: [''],
 
     });
 
@@ -310,6 +322,14 @@ export class LegajoCreateComponent implements OnInit {
   // Listener para el campo esAutoridad
   this.legajoForm.get('esAutoridad')?.valueChanges.subscribe(esAutoridad => {
     this.onAutoridadChange(esAutoridad);
+
+    if (!esAutoridad) {
+        this.selectedFile = null;
+        this.fileUrl = null;
+        this.uploadError = null;
+        this.legajoForm.patchValue({ url: '' });
+      }
+
   });
 
   // Listener para el campo cargo
@@ -708,6 +728,214 @@ this.initialHabilitacionesGenerales =efectoresFiltradosGeneral;
 
 }
 
+onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    this.handleFileSelection(file);
+  }
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.types.includes('Files') && !this.isDragOver) {
+      this.isDragOver = true;
+      this.uploadError = null;
+      console.log('🎯 Drag enter - Activado');
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.types.includes('Files')) {
+      this.isDragOver = true;
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'copy';
+      }
+    } else {
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'none';
+      }
+    }
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const target = event.currentTarget as HTMLElement;
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    
+    if (target && (!relatedTarget || !target.contains(relatedTarget))) {
+      this.isDragOver = false;
+      console.log('🚪 Drag leave - Desactivado');
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.isDragOver = false;
+    console.log('📂 Drop event triggered - Estado reseteado');
+    
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      console.log('📁 Archivo detectado:', files[0].name);
+      this.handleFileSelection(files[0]);
+    } else {
+      console.log('❌ No se detectaron archivos en el drop');
+    }
+  }
+
+  resetDragState(): void {
+    this.isDragOver = false;
+    console.log('🔄 Estado de drag reseteado manualmente');
+  }
+
+  onMouseLeave(event: MouseEvent): void {
+    if (!event.buttons) {
+      this.resetDragState();
+    }
+  }
+
+  handleFileSelection(file: File | null): void {
+    if (!file) {
+      this.uploadError = 'No se seleccionó ningún archivo';
+      this.toastr.warning(this.uploadError);
+      return;
+    }
+
+    // 🔥 VALIDACIONES EN EL FRONTEND
+    if (!file.type.startsWith('image/')) {
+      this.uploadError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
+      this.toastr.error(this.uploadError);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.uploadError = 'El archivo no puede ser mayor a 5MB';
+      this.toastr.error(this.uploadError);
+      return;
+    }
+
+    // 🔥 VERIFICAR SI ES EL MISMO ARCHIVO QUE YA ESTÁ SELECCIONADO
+    if (this.selectedFile && this.isSameFile(this.selectedFile, file)) {
+      this.toastr.info('Este archivo ya está seleccionado');
+      return;
+    }
+
+    // 🔥 RESETEAR ESTADO DE DUPLICADO
+    this.isDuplicateImage = false;
+    this.uploadError = null;
+    this.selectedFile = file;
+
+    // 🔥 MOSTRAR PREVIEW LOCAL INMEDIATAMENTE
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.fileUrl = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    this.toastr.info('Imagen seleccionada. Se subirá cuando se cree el legajo.');
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.uploadError = null;
+    this.fileUrl = null;
+    
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    
+    this.toastr.info('Archivo removido');
+  }
+
+  getFileInfo(): string {
+    if (!this.selectedFile) return '';
+    
+    const size = this.selectedFile.size;
+    const sizeInMB = (size / (1024 * 1024)).toFixed(2);
+    return `${this.selectedFile.name} (${sizeInMB} MB)`;
+  }
+
+  getDropAreaClasses(): string {
+    let classes = 'file-drop-area';
+    
+    if (this.isUploading) {
+      classes += ' uploading';
+    } else if (this.isDragOver) {
+      classes += ' drag-over';
+    } else if (this.selectedFile && !this.uploadError) {
+      classes += ' has-file';
+    } else if (this.uploadError) {
+      classes += ' error';
+    }
+    
+    return classes;
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.style.display = 'none';
+    }
+  }
+
+  private isSameFile(file1: File, file2: File): boolean {
+    return file1.name === file2.name && 
+           file1.size === file2.size && 
+           file1.lastModified === file2.lastModified;
+  }
+
+  private uploadImageAfterCreation(legajoId: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.selectedFile) {
+        resolve(null);
+        return;
+      }
+
+      console.log('🔄 Iniciando subida de imagen para legajo ID:', legajoId);
+      this.isUploading = true;
+      const formData = new FormData();
+      formData.append('image', this.selectedFile);
+
+      this.legajoService.uploadImage(legajoId, formData).subscribe(
+        (response: any) => {
+          console.log('✅ Imagen subida exitosamente después de crear legajo:', response);
+          console.log('📝 URL de la imagen:', response.url);
+          
+          this.isUploading = false;
+          this.fileUrl = `http://localhost:8080${response.url}`;
+          
+          const fileInput = document.getElementById('archivo') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          this.selectedFile = null;
+          
+          this.toastr.success('Legajo e imagen guardados correctamente');
+          resolve(response);
+        },
+        (error) => {
+          console.error('❌ Error al subir imagen después de crear legajo:', error);
+          this.isUploading = false;
+          this.selectedFile = null;
+          reject(error);
+        }
+      );
+    });
+  }
 
 // Función para evaluar el estado del formulario para Director Regional
 evaluarFormularioDirectorRegional(): void {
@@ -2212,7 +2440,7 @@ alMenosUnoHabilitacionesGuardiasValidator(): ValidatorFn {
 
     
   // Verifica si el campo 'esAutoridad' está habilitado
-  let esAutoridad;
+  let esAutoridad : boolean;
 
   // Si el campo 'esAutoridad' está habilitado, toma el valor del formulario
   if (this.legajoForm.get('esAutoridad')?.enabled) {
@@ -2265,6 +2493,7 @@ alMenosUnoHabilitacionesGuardiasValidator(): ValidatorFn {
         legajoData.fechaInicio,
         esAutoridad,
         true, //activo
+        '',
         legajoData.idPersona,
         legajoData.fechaFinal,
         esRegional,
@@ -2322,29 +2551,50 @@ if (legajoData.tipoGuardias &&
     
       // Guardar el legajo sin la parte de revista si no corresponde
       this.legajoService.save(legajoDto).subscribe(
-        (result) => {
-          this.toastr.success('Legajo creado con éxito', 'EXITO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-    
-          if (this.fromAsistencial) {
-            this.router.navigate(['/personal']);
-          } else if (this.fromNoAsistencial) {
-            this.router.navigate(['/personal-no-asistencial']);
-          } else {
-            this.location.back();
+    async (legajoCreado) => {
+      console.log('✅ Legajo creado exitosamente:', legajoCreado);
+      
+      // 🔥 SI ES AUTORIDAD Y HAY IMAGEN SELECCIONADA, SUBIRLA
+      if (esAutoridad && this.selectedFile && legajoCreado.id) {
+        console.log('📤 Subiendo imagen para legajo de autoridad...');
+        try {
+          const uploadResponse = await this.uploadImageAfterCreation(legajoCreado.id);
+          
+          if (uploadResponse && uploadResponse.url) {
+            console.log('✅ Imagen subida correctamente:', uploadResponse.url);
+            legajoCreado.url = uploadResponse.url;
           }
-        },
-        (error) => {
-          this.toastr.error('Ocurrió un error al crear el Legajo', error, {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
+          
+        } catch (uploadError) {
+          console.error('❌ Error al subir imagen:', uploadError);
+          this.toastr.warning('Legajo creado pero hubo un error al subir la imagen');
         }
-      );
+      } else if (esAutoridad && !this.selectedFile) {
+        console.log('ℹ️ Legajo de autoridad creado sin imagen');
+        this.toastr.success('Legajo de autoridad creado correctamente');
+      } else {
+        console.log('ℹ️ Legajo general creado (sin imagen)');
+        this.toastr.success('Legajo creado con éxito');
+      }
+
+      // 🔥 NAVEGAR SEGÚN EL TIPO DE LEGAJO
+      if (this.fromAsistencial) {
+        this.router.navigate(['/personal']);
+      } else if (this.fromNoAsistencial) {
+        this.router.navigate(['/personal-no-asistencial']);
+      } else {
+        this.location.back();
+      }
+    },
+    (error) => {
+      console.error('❌ Error al crear el Legajo:', error);
+      this.toastr.error('Ocurrió un error al crear el Legajo', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+    }
+  );
     }
 
     saveHabilitacionesGuardias(legajoData: any): void {

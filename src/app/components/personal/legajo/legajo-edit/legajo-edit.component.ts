@@ -188,6 +188,17 @@ export class LegajoEditComponent implements OnInit {
   hospitalHabilitacionesGuardias!: number | null;
   hospitalHabilitacionesGenerales!: number | null;
 
+  // 🔥 NUEVAS PROPIEDADES PARA MANEJO DE IMÁGENES (SOLO AUTORIDADES)
+  selectedFile: File | null = null;
+  fileUrl: string | null = null;
+  isUploading: boolean = false;
+  isDragOver: boolean = false;
+  uploadError: string | null = null;
+  pendingFile: File | null = null;
+  isDuplicateDialogOpen: boolean = false;
+  isDuplicateImage: boolean = false;
+  dragCounter: number = 0;
+
   constructor(
     private fb: FormBuilder,
     public dialog: MatDialog,
@@ -256,6 +267,7 @@ export class LegajoEditComponent implements OnInit {
       habilitacionesGenerales: [[]],
       selectedHospitalsGenerales: [[]],
       selectedHospitalsGuardias: [[]],
+      url: ['']
     }, { validator: this.validarFechas });
 
     // recupero el estado del router
@@ -329,6 +341,11 @@ if (navigation?.extras.state) {
 
 
   ngOnInit(): void {
+
+    if (this.initialData?.url) {
+      this.fileUrl = `http://localhost:8080${this.initialData.url}`;
+    }
+
   // 🎯 VERIFICAR SI ES DIRECTOR REGIONAL
   const esDirectorRegional = this.initialData?.esRegional === true || 
                             (this.initialData?.cargo?.nombre?.toLowerCase() === 'director regional');
@@ -875,6 +892,321 @@ this.initialHabilitacionesGuardias = efectoresFiltrados;
   ]);
 
 }
+
+// Agregar método para verificar si se puede modificar el legajo
+get puedeModificarLegajo(): boolean {
+  // 🔥 SI HAY IMAGEN DUPLICADA, NO PERMITIR MODIFICACIÓN
+  if (this.isDuplicateImage) {
+    return false;
+  }
+  
+  // 🔥 VERIFICAR FORMULARIO VÁLIDO NORMAL
+  return this.formularioValidoCompleto;
+}
+
+// 🔥 MÉTODOS PARA MANEJO DE IMÁGENES
+
+onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    this.handleFileSelection(file);
+  }
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.types.includes('Files') && !this.isDragOver) {
+      this.isDragOver = true;
+      this.uploadError = null;
+      console.log('🎯 Drag enter - Activado');
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.types.includes('Files')) {
+      this.isDragOver = true;
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'copy';
+      }
+    } else {
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'none';
+      }
+    }
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const target = event.currentTarget as HTMLElement;
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    
+    if (target && (!relatedTarget || !target.contains(relatedTarget))) {
+      this.isDragOver = false;
+      console.log('🚪 Drag leave - Desactivado');
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.isDragOver = false;
+    console.log('📂 Drop event triggered - Estado reseteado');
+    
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      console.log('📁 Archivo detectado:', files[0].name);
+      this.handleFileSelection(files[0]);
+    } else {
+      console.log('❌ No se detectaron archivos en el drop');
+    }
+  }
+
+  resetDragState(): void {
+    this.isDragOver = false;
+    console.log('🔄 Estado de drag reseteado manualmente');
+  }
+
+  onMouseLeave(event: MouseEvent): void {
+    if (!event.buttons) {
+      this.resetDragState();
+    }
+  }
+
+  handleFileSelection(file: File | null): void {
+  if (!file) {
+    this.uploadError = 'No se seleccionó ningún archivo';
+    this.toastr.warning(this.uploadError);
+    return;
+  }
+
+  // 🔥 VALIDACIONES BÁSICAS EN EL FRONTEND
+  if (!file.type.startsWith('image/')) {
+    this.uploadError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
+    this.toastr.error(this.uploadError);
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    this.uploadError = 'El archivo no puede ser mayor a 5MB';
+    this.toastr.error(this.uploadError);
+    return;
+  }
+
+  // 🔥 VERIFICAR SI ES EL MISMO ARCHIVO QUE YA ESTÁ SELECCIONADO
+  if (this.selectedFile && this.isSameFile(this.selectedFile, file)) {
+    this.toastr.info('Este archivo ya está seleccionado');
+    return;
+  }
+
+  // 🔥 VERIFICAR DUPLICADOS EN EL SERVIDOR SI HAY ID DE LEGAJO
+  if (this.initialData?.id) {
+    this.isUploading = true;
+    this.uploadError = null;
+    
+    const formData = new FormData();
+    formData.append('image', file);
+
+    console.log('🔍 Verificando duplicados para legajo ID:', this.initialData.id);
+    
+    this.legajoService.checkImageDuplicate(this.initialData.id, formData).subscribe(
+      (response: any) => {
+        console.log('📸 Respuesta de verificación:', response);
+        this.isUploading = false;
+        
+        if (response.isDuplicate) {
+          // 🔥 IMAGEN DUPLICADA DETECTADA
+          this.handleDuplicateImageOnSelection(response);
+        } else {
+          // 🔥 IMAGEN NUEVA, PROCEDER NORMALMENTE
+          this.processNewImage(file);
+        }
+      },
+      (error) => {
+        console.error('❌ Error al verificar duplicados:', error);
+        this.isUploading = false;
+        
+        // En caso de error, permitir continuar pero mostrar advertencia
+        this.isDuplicateImage = false;
+        this.uploadError = null;
+        this.toastr.warning('No se pudo verificar la imagen. Se intentará subir al guardar.', 'Verificación fallida');
+        this.processNewImage(file);
+      }
+    );
+    
+  } else {
+    // 🔥 SI NO HAY ID (LEGAJO NUEVO), PROCEDER SIN VERIFICAR DUPLICADOS
+    this.processNewImage(file);
+  }
+}
+
+// 🔥 MÉTODO AUXILIAR PARA PROCESAR IMAGEN NUEVA
+private processNewImage(file: File): void {
+  console.log('✅ Imagen nueva, procesando...');
+  
+  // 🔥 RESETEAR ESTADO DE DUPLICADO
+  this.isDuplicateImage = false; // 🔥 IMPORTANTE: RESETEAR ESTADO
+  this.uploadError = null;
+  this.selectedFile = file;
+  this.pendingFile = null;
+
+  // 🔥 MOSTRAR PREVIEW LOCAL INMEDIATAMENTE
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.fileUrl = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO PARA HABILITAR BOTÓN
+  this.legajoForm.updateValueAndValidity();
+
+  this.toastr.success('Imagen seleccionada. Se subirá cuando se actualice el legajo.', 'Imagen nueva');
+}
+
+// 🔥 MÉTODO PARA MANEJAR IMAGEN DUPLICADA EN SELECCIÓN
+private handleDuplicateImageOnSelection(response: any): void {
+  console.log('⚠️ Imagen duplicada detectada en selección:', response);
+  
+  this.isDuplicateImage = true; // 🔥 MARCAR COMO DUPLICADA
+  this.uploadError = `Esta imagen ya existe: ${response.existingFile}`;
+
+  // 🔥 LIMPIAR SELECCIÓN Y MANTENER IMAGEN EXISTENTE
+  this.selectedFile = null;
+  this.fileUrl = `http://localhost:8080${response.url}`;
+  this.legajoForm.patchValue({ url: response.url });
+  
+  // 🔥 LIMPIAR INPUT FILE
+  const fileInput = document.getElementById('archivo') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
+  }
+
+  // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO PARA DESHABILITAR BOTÓN
+  this.legajoForm.updateValueAndValidity();
+
+  this.toastr.warning(
+    `Esta imagen ya existe en el legajo: ${response.filename}. El botón de modificar se ha deshabilitado.`,
+    'Imagen duplicada',
+    {
+      timeOut: 8000, // 🔥 TIEMPO MÁS LARGO PARA QUE EL USUARIO LEA
+      positionClass: 'toast-top-center',
+      progressBar: true
+    }
+  );
+}
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  removeSelectedFile(): void {
+  this.selectedFile = null;
+  this.uploadError = null;
+  this.isDuplicateImage = false; // 🔥 RESETEAR ESTADO DE DUPLICADO
+  
+  // 🔥 SI HAY IMAGEN EXISTENTE, MOSTRARLA DE NUEVO
+  if (this.initialData?.url) {
+    this.fileUrl = `http://localhost:8080${this.initialData.url}`;
+  } else {
+    this.fileUrl = null;
+  }
+  
+  const fileInput = document.getElementById('archivo') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
+  }
+  
+  // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO
+  this.legajoForm.updateValueAndValidity();
+  
+  this.toastr.info('Archivo removido. Botón de modificar habilitado.');
+}
+
+  getFileInfo(): string {
+    if (!this.selectedFile) return '';
+    
+    const size = this.selectedFile.size;
+    const sizeInMB = (size / (1024 * 1024)).toFixed(2);
+    return `${this.selectedFile.name} (${sizeInMB} MB)`;
+  }
+
+  getDropAreaClasses(): string {
+    let classes = 'file-drop-area';
+    
+    if (this.isUploading) {
+      classes += ' uploading';
+    } else if (this.isDragOver) {
+      classes += ' drag-over';
+    } else if ((this.selectedFile || this.initialData?.url) && !this.uploadError) {
+      classes += ' has-file';
+    } else if (this.uploadError) {
+      classes += ' error';
+    }
+    
+    return classes;
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.style.display = 'none';
+    }
+  }
+
+  private isSameFile(file1: File, file2: File): boolean {
+    return file1.name === file2.name && 
+           file1.size === file2.size && 
+           file1.lastModified === file2.lastModified;
+  }
+
+  private uploadImageAfterUpdate(legajoId: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.selectedFile) {
+        resolve(null);
+        return;
+      }
+
+      console.log('🔄 Iniciando subida de imagen para legajo actualizado ID:', legajoId);
+      console.log('📁 Archivo seleccionado:', this.selectedFile.name);
+      
+      const formData = new FormData();
+      formData.append('image', this.selectedFile);
+
+      this.legajoService.uploadImage(legajoId, formData).subscribe(
+        (response: any) => {
+          console.log('✅ Imagen subida exitosamente después de actualizar legajo:', response);
+          console.log('📝 URL de la imagen:', response.url);
+          
+          this.fileUrl = `http://localhost:8080${response.url}`;
+          
+          // 🔥 LIMPIAR INPUT FILE
+          const fileInput = document.getElementById('archivo') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          this.selectedFile = null;
+          
+          // 🔥 AGREGAR MENSAJE DE ÉXITO
+          this.toastr.success('Legajo e imagen actualizados correctamente');
+          
+          resolve(response);
+        },
+        (error) => {
+          console.error('❌ Error al subir imagen después de actualizar legajo:', error);
+          this.selectedFile = null;
+          reject(error);
+        }
+      );
+    });
+  }
 
  // Función para evaluar el estado del formulario para Director Regional
   evaluarFormularioDirectorRegional(): void {
@@ -3129,6 +3461,7 @@ if (idRevistaActual !== idRevistaNueva) {
       legajoExistente.fechaInicio,
       legajoExistente.esAutoridad,
       false, // ❌ Desactivar
+      legajoExistente.url,
       legajoExistente.persona?.id ?? legajoData.idPersona,
       new Date(),
       legajoExistente.esRegional || false,
@@ -3180,6 +3513,7 @@ if (idRevistaActual !== idRevistaNueva) {
           legajoData.fechaInicio,
           esAutoridad,
           true, // ✅ Activo
+          legajoData.url,
           legajoData.idPersona,
           legajoData.fechaFinal,
           esRegionalActual, // 🎯 Usar la determinación actual
@@ -3241,30 +3575,49 @@ if (idRevistaActual !== idRevistaNueva) {
 
         // Crear el nuevo legajo
         this.legajoService.save(legajoNuevo).subscribe(
-          (result) => {
-            this.toastr.success('Legajo actualizado con éxito', 'ÉXITO', {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
-
-            if (this.fromAsistencial) {
-              this.router.navigate(['/personal']);
-            } else if (this.fromNoAsistencial) {
-              this.router.navigate(['/personal-no-asistencial']);
-            } else {
-              this.location.back();
+      async (result) => {
+        console.log('✅ Nuevo legajo creado exitosamente:', result);
+        
+        // 🔥 SI ES AUTORIDAD Y HAY IMAGEN SELECCIONADA, SUBIRLA
+        if (esAutoridad && this.selectedFile && result.id) {
+          console.log('📤 Subiendo imagen para legajo de autoridad...');
+          try {
+            const uploadResponse = await this.uploadImageAfterUpdate(result.id);
+            
+            if (uploadResponse && uploadResponse.url) {
+              console.log('✅ Imagen subida correctamente:', uploadResponse.url);
+              result.url = uploadResponse.url;
             }
-          },
-          (error) => {
-            console.error("❌ Error al crear el nuevo legajo", error);
-            this.toastr.error('Ocurrió un error al actualizar el Legajo', error.error?.mensaje || error.message, {
-              timeOut: 6000,
-              positionClass: 'toast-top-center',
-              progressBar: true
-            });
+            
+          } catch (uploadError) {
+            console.error('❌ Error al subir imagen:', uploadError);
+            this.toastr.warning('Legajo actualizado pero hubo un error al subir la imagen');
           }
-        );
+        } else {
+          this.toastr.success('Legajo actualizado con éxito', 'ÉXITO', {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          });
+        }
+
+        if (this.fromAsistencial) {
+          this.router.navigate(['/personal']);
+        } else if (this.fromNoAsistencial) {
+          this.router.navigate(['/personal-no-asistencial']);
+        } else {
+          this.location.back();
+        }
+      },
+      (error) => {
+        console.error("❌ Error al crear el nuevo legajo", error);
+        this.toastr.error('Ocurrió un error al actualizar el Legajo', error.error?.mensaje || error.message, {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    );
       },
       (error) => {
         console.error("❌ Error al desactivar el legajo", error);

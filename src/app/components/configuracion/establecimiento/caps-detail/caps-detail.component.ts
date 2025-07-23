@@ -13,6 +13,7 @@ export class CapsDetailComponent implements OnInit {
   caps!: Caps;
   cabeceraName!: string;
   cargando = true; // Variable para mostrar el spinner de carga
+  imageUrl: string | null = null;
 
   constructor(
     private dialogRef: MatDialogRef<CapsDetailComponent>,
@@ -24,11 +25,40 @@ export class CapsDetailComponent implements OnInit {
   ngOnInit(): void {
    
     this.caps = this.data;
-    
+
+    console.log('🏥 Caps completo:', this.caps);
+    console.log('🔗 URL original:', this.caps.url);
+
+    if (this.caps.url) {
+      this.imageUrl = `http://localhost:8080${this.caps.url}`;
+      console.log('🖼️ URL completa construida:', this.imageUrl);
+    } else {
+      console.log('❌ No hay URL de imagen');
+    }
+
     // Usar ChangeDetectorRef para asegurar la detección de cambios
     setTimeout(() => {
       this.getCabeceraName();
     }, 0);
+  }
+
+  // 🔥 AGREGAR MÉTODO PARA MANEJAR ERROR DE IMAGEN
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    console.error('❌ Error al cargar imagen:');
+    console.error('- URL que falló:', target.src);
+    console.error('- URL original:', this.caps.url);
+    console.error('- Caps ID:', this.caps.id);
+    console.error('- Caps nombre:', this.caps.nombre);
+
+    if (target) {
+      target.style.display = 'none';
+    }
+  }
+
+  onImageLoad(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    console.log('✅ Imagen cargada exitosamente:', target.src);
   }
 
   // Método para obtener el nombre de la cabecera desde el servicio

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, Subject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
 import { EfectorCapsDto } from "src/app/dto/Configuracion/efector/EfectorCapsDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
@@ -77,6 +77,51 @@ getCabeceraNameByCapsId(id: number): Observable<string> {
   // Método para verificar si el id corresponde a un CAPS
   isCaps(id: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.capsURL}isCaps/${id}`);
+  }
+
+  uploadImage(capsId: number, file: FormData): Observable<any> {
+    console.log('📤 Subiendo imagen para caps ID:', capsId);
+    return this.httpClient.post<any>(`${this.capsURL}uploadImage/${capsId}`, file)
+      .pipe(
+        tap((response) => {
+          console.log('📸 Respuesta de subida de imagen:', response);
+          console.log('📁 Carpeta creada:', response.folderName);
+        })
+      );
+  }
+
+  checkImageDuplicate(capsId: number, file: FormData): Observable<any> {
+    console.log('🔍 Verificando duplicado de imagen para caps ID:', capsId);
+    return this.httpClient.post<any>(`${this.capsURL}checkDuplicate/${capsId}`, file)
+      .pipe(
+        tap((response) => {
+          console.log('🔍 Resultado de verificación de duplicado:', response);
+        }),
+        catchError((error) => {
+          console.error('❌ Error al verificar duplicado:', error);
+          return throwError(error);
+        })
+      );
+  }
+
+  deleteImage(capsId: number): Observable<any> {
+    console.log('🗑️ Eliminando imagen para caps ID:', capsId);
+    return this.httpClient.delete<any>(`${this.capsURL}deleteImage/${capsId}`)
+      .pipe(
+        tap((response) => {
+          console.log('✅ Imagen eliminada:', response);
+        })
+      );
+  }
+  
+  listImages(capsId: number): Observable<any> {
+    console.log('📋 Listando imágenes para caps ID:', capsId);
+    return this.httpClient.get<any>(`${this.capsURL}listImages/${capsId}`)
+      .pipe(
+        tap((response) => {
+          console.log('📸 Imágenes encontradas:', response);
+        })
+      );
   }
 
 }

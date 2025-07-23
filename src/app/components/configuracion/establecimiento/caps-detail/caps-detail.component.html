@@ -29,15 +29,19 @@
           <td>{{caps.localidad.nombre}}</td>
         </tr>
         <tr>
-          <th scope="row">Hospital Cabecera</th>
-          <td>{{cabeceraName }}</td>
-        </tr>
-          <tr>
-        <th scope="row">Sello</th>
-        <td>
-          <img *ngIf="caps.url" [src]="caps.url" alt="Imagen del Hospital" style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;">
-        </td>
-      </tr>
+  <th scope="row">Sello</th>
+  <td>
+    <img
+                *ngIf="caps.url"
+                [src]="imageUrl"
+                alt="Imagen del Caps"
+                style="max-width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;"
+                (load)="onImageLoad($event)"
+                (error)="onImageError($event)"
+              >
+    <span *ngIf="!caps.url" style="color: #666; font-style: italic;">Sin imagen</span>
+  </td>
+</tr>
       </tbody>
     </table>
   <div mat-dialog-actions class="action mt-4">
