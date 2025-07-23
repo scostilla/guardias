@@ -15,7 +15,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill" *ngIf="isSuper && data?.id">
-            <mat-label>Confirmar</mat-label>
+            <mat-label>Seleccionar estado</mat-label>
             <mat-select formControlName="confirmado">
                 <mat-option [value]="false">Rechazado</mat-option>
                 <mat-option [value]="true">Confirmado</mat-option>

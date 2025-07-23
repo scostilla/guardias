@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
-import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
+import { NoAsistencialListDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialListDto';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -66,7 +66,7 @@ export class AsistencialSelectorAllComponent implements OnInit {
         this.dataSource.data = data;
       });
     } else if (type === 'noAsistencial') {
-      this.noAsistencialService.listNoAsistencialAll().subscribe((data: NoAsistencialSummaryDto[]) => {
+      this.noAsistencialService.listNoAsistencialSummary().subscribe((data: NoAsistencialListDto[]) => {
         this.dataSource.data = data;
       });
     }
@@ -94,7 +94,7 @@ export class AsistencialSelectorAllComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
-  selectPersona(persona: AsistencialSummaryDto | NoAsistencialSummaryDto): void {
+  selectPersona(persona: AsistencialSummaryDto | NoAsistencialListDto): void {
     this.dialogRef.close(persona);
   }
 
