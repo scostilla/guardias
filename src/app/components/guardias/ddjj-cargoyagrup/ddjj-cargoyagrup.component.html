@@ -8,7 +8,7 @@
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-seleccion">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <button mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
+      <button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
       </button>
 
@@ -17,18 +17,18 @@
           <mat-icon>table_chart</mat-icon>
           <span>Exportar a Excel</span>
         </button>
-        <button mat-menu-item (click)="onExportarAPDF()">
+        <button mat-menu-item (click)="onExportarLimpio()">
           <mat-icon>picture_as_pdf</mat-icon>
           <span>Exportar a PDF</span>
         </button>
       </mat-menu>
-      <button mat-fab class="button-montos" style="margin-left: 5px;"
+      <button *ngIf="hayDatosParaMostrar" mat-fab class="button-montos" style="margin-left: 5px;"
               [matTooltip]="mostrarMontos ? 'Ocultar montos' : 'Mostrar montos'"
               (click)="mostrarMontos = !mostrarMontos">
         <mat-icon>{{ mostrarMontos ? 'money_off' : 'attach_money' }}</mat-icon>
       </button>
-      <ng-container *ngIf="evaluacionDdjjCargada">
-      <button *ngIf="!verificandoDdjj"
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada && (isAdministrativo || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ"
               mat-fab
               class="button-pase-director"
               style="margin-left: 5px;"
@@ -39,8 +39,8 @@
         <mat-icon>{{ botonDirectorIcon }}</mat-icon>
       </button>
       </ng-container>
-      <ng-container *ngIf="evaluacionDdjjDphCargada">
-        <button *ngIf="!verificandoDdjj"
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada && (isAdministrativo || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ"
                 mat-fab
                 class="button-pase-ddjj"
                 style="margin-left: 5px;"
@@ -52,8 +52,8 @@
         </button>
       </ng-container>
       <!-- Botón de respuesta del DIRECTOR -->
-      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjCargada">
-        <button mat-fab
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjCargada && (isAutoridad || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ" mat-fab
                 class="button-pase-director"
                 style="margin-left: 5px;"
                 (click)="openDdjjRespuesta('DIRECTOR_AUTH')"
@@ -65,8 +65,8 @@
       </ng-container>
 
       <!-- Botón de respuesta de la DPH -->
-      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada">
-        <button mat-fab
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada && (isDph || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ" mat-fab
                 class="button-pase-ddjj"
                 style="margin-left: 5px;"
                 (click)="openDdjjRespuesta('DPH_AUTH')"
@@ -74,6 +74,25 @@
                 [ngClass]="{'disabled-button-ddjj': botonDphAuthDeshabilitado}"
                 matTooltip="Aprobar/Rechazar DDJJ">
           <mat-icon>{{ botonDphAuthIcon }}</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="mostrarBotonHistorialDirector && (isAutoridad || isSuper)">
+        <button mat-fab
+                class="button-historial-ddjj"
+                style="margin-left: 5px;"
+                (click)="openDdjjHistorial('DIRECTOR_AUTH')"
+                matTooltip="Historial de observaciones">
+          <mat-icon>history</mat-icon>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="mostrarBotonHistorialDph && (isDph || isSuper)">
+        <button mat-fab
+                class="button-historial-ddjj"
+                style="margin-left: 5px;"
+                (click)="openDdjjHistorial('DPH_AUTH')"
+                matTooltip="Historial de observaciones">
+          <mat-icon>history</mat-icon>
         </button>
       </ng-container>
     </div>
@@ -119,7 +138,7 @@
     </div>
   
     <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
-      <div class="contenedor-titulo-select-tabla">
+      <div *ngIf="hayDatosParaMostrar" class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
           <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
             <option [ngValue]="null">Todos</option>
@@ -131,42 +150,70 @@
     </div>  
   </div>
 
-<div *ngIf="mensajeDirector === 'pendiente'" class="text-pase">
-  <mat-icon class="icono-pase">assignment_late</mat-icon>
+<div *ngIf="!verificandoDdjj && mostrarBotonDDJJ" class="text-aviso">
+  <mat-icon class="icono-pase">lock_open</mat-icon>
   <div class="mensaje-pase">
-    La DDJJ de guardias de CARGO y AGRUPACIÓN para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }} está en proceso de revisión por el director del hospital.
+    Quedan <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para finalizar el proceso de aprobación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
   </div>
 </div>
 
-<div *ngIf="mensajeDirector === 'rechazado'" class="text-rechazo">
+<div *ngIf="mensajeDirector === 'pendiente' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Está en proceso de revisión por el director del hospital.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirector === 'pendiente_devuelto' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Reenviaste la DDJJ y nuevamente está en proceso de revisión por el director del hospital.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirector === 'rechazado' && (isAdministrativo || isSuper)" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     El director del hospital rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para
     {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirector || 'Sin especificar' }}</span>
+    Realiza los cambios necesarios según las observaciones y reenvía la DDJJ al Director.<br/>
+    <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
 
-<div *ngIf="mensajeDph === 'pendiente'" class="text-pase">
+<div *ngIf="mensajeDph === 'pendiente' && (isAdministrativo || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
-    La DDJJ de guardias de CARGO y AGRUPACIÓN para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }} fue aprobada por el director del hospital y enviada a DPH.<br/>
+    Fue aprobada por el director del hospital y enviada a la DPH.<br/>
     La misma esta en proceso de revisión por la DPH.
   </div>
 </div>
 
-<div *ngIf="mensajeDph === 'rechazado'" class="text-rechazo">
-  <mat-icon class="icono-pase">block</mat-icon>
+<div *ngIf="mensajeDph === 'pendiente_devuelto' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
-    DPH rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirectorDPH || 'Sin especificar' }}</span>
+    Reenviaste la DDJJ y nuevamente está en proceso de revisión por la DPH.<br/>
   </div>
 </div>
 
-<div *ngIf="mensajeDph === 'aceptado'" class="text-aviso">
+<div *ngIf="mensajeDph === 'rechazado' && (isAdministrativo || isSuper)" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    DPH rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para 
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Realiza los cambios necesarios según las observaciones y reenvía la DDJJ a la DPH.<br/>
+        <span *ngIf="ultimaObservacionDph?.nombreUsuario">
+    Rechazado por: {{ ultimaObservacionDph?.nombreUsuario }} {{ ultimaObservacionDph?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDph?.motivo || 'Sin especificar' }}</span>
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'aceptado'" class="text-aprobado">
   <mat-icon class="icono-pase">lock</mat-icon>
   <div class="mensaje-pase">
     La DDJJ de guardias de CARGO y AGRUPACIÓN para
@@ -175,41 +222,91 @@
   </div>
 </div>
 
-<div *ngIf="mensajeDirectorAuth === 'revision'" class="text-pase">
+<div *ngIf="mensajeDirectorAuth === 'revision' && (isAutoridad || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
-    Debes realizar la aprobación o rechazo de la DDJJ de guardias de CARGO y AGRUPACIÓN para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <span (click)="openDdjjRespuesta('DIRECTOR_AUTH')" class="cursor">Haz clic aquí</span>.
+    Debes realizar su aprobación o las observaciones necesarias. <span (click)="openDdjjRespuesta('DIRECTOR_AUTH')" class="cursor">Haz clic aquí</span>.
   </div>
 </div>
 
-<div *ngIf="mensajeDirectorAuth === 'rechazado'" class="text-rechazo">
+<div *ngIf="mensajeDirectorAuth === 'rechazado' && (isAutoridad || isSuper)" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     Haz rechazado la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirector || 'Sin especificar' }}</span><br/>
-    Se espera la devolución por parte del administrativo.
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Se espera la devolución por parte del administrativo.<br/>
+    <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
 
-<div *ngIf="mensajeDphAuth === 'revision'" class="text-pase">
+<div *ngIf="mensajeDphAuth === 'revision' && (isDph || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
-    Debes realizar la aprobación o rechazo de la DDJJ de guardias de CARGO y AGRUPACIÓN para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <span (click)="openDdjjRespuesta('DPH_AUTH')" class="cursor">Haz clic aquí</span>.
+    Debes realizar su aprobación o las observaciones necesarias. <span (click)="openDdjjRespuesta('DPH_AUTH')" class="cursor">Haz clic aquí</span>.
   </div>
 </div>
 
-<div *ngIf="mensajeDphAuth === 'rechazado'" class="text-rechazo">
+<div *ngIf="mensajeDphAuth === 'rechazado' && (isDph || isSuper)" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
     Haz rechazado la DDJJ de guardias de CARGO y AGRUPACIÓN para 
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}<br/>
-    Motivo: <span class="negrita">{{ ddjjSeleccionada?.motivoDirectorDPH || 'Sin especificar' }}</span><br/>
-    Se espera la devolución por parte del administrativo.
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Se espera la devolución por parte del administrativo.<br/>
+    <span *ngIf="ultimaObservacionDph?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDph?.nombreUsuario }} {{ ultimaObservacionDph?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDph?.motivo || 'Sin especificar' }}</span>
   </div>
 </div>
+
+  <div *ngIf="mensajeDirector === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director del hospital.<br/>
+      Contactáctate con la DPH.
+    </div>
+  </div>
+  <div *ngIf="mensajeDph === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director de la DPH.<br/>
+      Contactáctate con la DPH.
+    </div>
+  </div>
+
+  <div *ngIf="mensajeDirectorAuth === 'fuera_rango_tiempo' && (isAutoridad || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director del hospital.<br/>
+      Contactáctate con la DPH.
+    </div>
+  </div>
+  <div *ngIf="mensajeDphAuth === 'fuera_rango_tiempo' && (isDph || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director de la DPH.<br/>
+      Contactáctate con la DPH.
+    </div>
+  </div>
+
+<ng-template [ngIf]="noHayDatosParaMostrar">
+    <div class="alert alert-info mt-3">
+      No hay datos cargados para el mes y servicio seleccionados.
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="hayDatosParaMostrar">
 
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
@@ -301,6 +398,23 @@
     </div>
     <div class="col-lg-8">  
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+  </ng-container>
+
+  <div class="row mt-3">
+    <div *ngIf="mensajeDirector === 'aceptado'" class="col-12 col-md-6">
+      <button mat-fab extended class="button-pase-director" (click)="onExportarConHospital()" matTooltip="Descarga DDJJ con firma director hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO HOSPITAL
+      </button>
+    </div>
+
+    <div *ngIf="mensajeDph === 'aceptado'" class="col-12 col-md-6 d-flex justify-content-sm-end mt-3 mt-md-0">
+      <button mat-fab extended class="button-pase-ddjj" (click)="onExportarConDPH()" matTooltip="Descarga DDJJ con firma DPH">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO DPH
+      </button>
     </div>
   </div>
 </div>

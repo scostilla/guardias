@@ -1,15 +1,71 @@
-<h1 mat-dialog-title>Editar Registro</h1>
+<h1 mat-dialog-title>Editar registro actividad</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
-    <!-- Agregá tus campos aquí, por ejemplo: -->
-    <mat-form-field>
-      <mat-label>Fecha Ingreso</mat-label>
-      <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso">
-      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-      <mat-datepicker #picker1></mat-datepicker>
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Fecha Ingreso</mat-label>
+        <!--<input matInput [matDatepicker]="picker1" formControlName="fechaIngreso" [min]="minFechaIngreso" [max]="maxFechaIngreso">-->
+        <input matInput [matDatepicker]="picker1" formControlName="fechaIngreso">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
 
-    <!-- Repetir para cada campo necesario -->
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Hora de Inicio</mat-label>
+          <input matInput formControlName="horaIngreso" [ngxMatTimepicker]="horaPicker" [format]="24"
+            readonly>
+          <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
+          <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Fecha Egreso</mat-label>
+        <input matInput 
+              [matDatepicker]="picker2" 
+              formControlName="fechaEgreso"
+              [min]="form.get('fechaIngreso')?.value || minFechaIngreso">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <div *ngIf="form.errors?.['fechaEgresoAnterior']" class="error">
+        La fecha de egreso no puede ser anterior a la fecha de ingreso.
+      </div>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Hora de Finalización</mat-label>
+          <input matInput formControlName="horaEgreso" [ngxMatTimepicker]="horaPicker2" [format]="24"
+            readonly>
+          <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>
+          <ngx-mat-timepicker #horaPicker2></ngx-mat-timepicker>
+      </mat-form-field>
+
+      <div *ngIf="form.errors?.['horaEgresoInvalida']" class="error">
+        La hora de egreso debe ser mayor a la hora de ingreso si es el mismo día.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field>
+        <mat-label>Tipo de Guardia</mat-label>
+        <mat-select formControlName="idTipoGuardia">
+          <mat-option *ngFor="let tipo of tiposGuardia" [value]="tipo.idTipoGuardia">
+            {{ tipo.nombreTipoGuardia }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="form-row">
+      <mat-form-field>
+        <mat-label>Servicio</mat-label>
+        <mat-select formControlName="idServicio">
+          <mat-option *ngFor="let s of servicios" [value]="s.id">{{ s.descripcion }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
   </form>
 </div>
 <div mat-dialog-actions align="end">

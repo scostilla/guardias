@@ -276,6 +276,7 @@ import { CronogramaPendienteEditComponent } from './components/cronogramas/crono
 import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
 import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
+import { DialogHistorialObservacionesComponent } from './components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
 import { RmensualContrafacturaDetailComponent } from './components/guardias/rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
@@ -523,6 +524,7 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     RmensualCargoyagrupDetailComponent,
     DialogConfirmRmensualComponent,
     RegistroActividadesEditComponent,
+    DialogHistorialObservacionesComponent,
   ],
 
   imports: [
