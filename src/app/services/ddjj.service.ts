@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
 import { DdjjDto } from 'src/app/dto/DdjjDto';
+import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
 import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 
@@ -119,5 +120,13 @@ export class DdjjService {
 
   listDdjjCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<Ddjj[]> {
     return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCfServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  getAutoridadImageUrl(idUsuario: number): Observable<AutoridadImagenDto> {
+    return this.httpClient.get<AutoridadImagenDto>(`${this.baseUrl}getAutoridadImageUrl/${idUsuario}`);
+  }
+
+  checkCompleteDdjjSet(anio: number, mes: string, idEfector: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.baseUrl}existCompleteSet/${anio}/${mes}/${idEfector}`);
   }
 }

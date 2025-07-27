@@ -36,7 +36,7 @@
               [disabled]="botonDirectorDeshabilitado"
               [ngClass]="{'disabled-button-ddjj': botonDirectorDeshabilitado}"
               matTooltip="Enviar a Director de hospital">
-        <mat-icon>{{ botonDirectorIcon }}</mat-icon>
+        <mat-icon [ngClass]="{'flip-horizontal': botonDirectorIcon === 'assignment_return'}">{{ botonDirectorIcon }}</mat-icon>
       </button>
       </ng-container>
       <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada && (isAdministrativo || isSuper)">
@@ -48,7 +48,7 @@
                 [disabled]="botonDphDeshabilitado"
                 [ngClass]="{'disabled-button-ddjj': botonDphDeshabilitado}"
                 matTooltip="Enviar a DPH">
-          <mat-icon>{{ botonDphIcon }}</mat-icon>
+          <mat-icon [ngClass]="{'flip-horizontal': botonDphIcon === 'assignment_return'}">{{ botonDphIcon }}</mat-icon>
         </button>
       </ng-container>
       <!-- Botón de respuesta del DIRECTOR -->
@@ -60,7 +60,7 @@
                 [disabled]="botonDirectorAuthDeshabilitado"
                 [ngClass]="{'disabled-button-ddjj': botonDirectorAuthDeshabilitado}"
                 matTooltip="Aprobar/Rechazar DDJJ">
-          <mat-icon>{{ botonDirectorAuthIcon }}</mat-icon>
+          <mat-icon [ngClass]="{'flip-horizontal': botonDirectorAuthIcon === 'assignment_return'}">{{ botonDirectorAuthIcon }}</mat-icon>
         </button>
       </ng-container>
 
@@ -73,7 +73,7 @@
                 [disabled]="botonDphAuthDeshabilitado"
                 [ngClass]="{'disabled-button-ddjj': botonDphAuthDeshabilitado}"
                 matTooltip="Aprobar/Rechazar DDJJ">
-          <mat-icon>{{ botonDphAuthIcon }}</mat-icon>
+          <mat-icon [ngClass]="{'flip-horizontal': botonDphAuthIcon === 'assignment_return'}">{{ botonDphAuthIcon }}</mat-icon>
         </button>
       </ng-container>
       <ng-container *ngIf="mostrarBotonHistorialDirector && (isAutoridad || isSuper)">
@@ -185,6 +185,22 @@
   </div>
 </div>
 
+<div *ngIf="mensajeDph === 'enviar_dph' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    El director del hospital ya aprobó todas las DDJJ disponibles.<br/>
+    Debes realizar el envio a la DPH.
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'ddjj_incompletas' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">alarm_add</mat-icon>
+  <div class="mensaje-pase">
+    Hay DDJJ pendientes de aprobación por el director del hospital.<br/>
+    El mismo debe aprobar todas las DDJJ de cada tipo de guardia disponible para que puedas realizar el envío a la DPH.
+  </div>
+</div>
+
 <div *ngIf="mensajeDph === 'pendiente' && (isAdministrativo || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
@@ -239,6 +255,14 @@
       Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
     </span><br/>
     Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'aceptado' && (isAutoridad || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">lock</mat-icon>
+  <div class="mensaje-pase">
+    Aprobaste la DDJJ de guardias de CARGO y AGRUPACIÓN para {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Una vez apruebes las DDJJ de otros tipo de guardia (si es que existieran) disponibles para {{ getMonthName(selectedMonth) }} el administrativo realizará el envio a la DPH.
   </div>
 </div>
 

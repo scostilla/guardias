@@ -25,10 +25,12 @@ import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
 import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
 import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
 import { ObservacionDdjjUltimoDto } from 'src/app/dto/ObservacionDdjjUltimoDto';
+import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
 import { DialogHistorialObservacionesComponent } from '../dialog-historial-observaciones/dialog-historial-observaciones.component';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 import { ToastrService } from 'ngx-toastr';
@@ -102,14 +104,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   selectedMonthYear: string = '';
   mesesDisponibles: { value: string, label: string }[] = [];
 
-  botonDirectorIcon: 'assignment_ind' | 'assignment_late' | 'block' | 'assignment_turned_in' = 'assignment_ind';
+  botonDirectorIcon: 'assignment_return' | 'assignment_late' | 'block' | 'assignment_turned_in' = 'assignment_return';
   evaluacionDdjjCargada = false;
   botonDirectorDeshabilitado: boolean = false;
   mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
 
-  botonDphIcon: 'assignment' | 'assignment_late' | 'assignment_turned_in' | 'block' | 'snooze' = 'assignment';
+  botonDphIcon: 'assignment_return' | 'assignment_late' | 'assignment_turned_in' | 'block' | 'alarm_add' | 'snooze' = 'assignment_return';
   botonDphDeshabilitado: boolean = false;
-  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
+  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | 'enviar_dph' | 'ddjj_incompletas' | null = null;
   evaluacionDdjjDphCargada: boolean = false;
 
   botonDirectorAuthIcon: string = 'assignment_ind';
@@ -148,6 +150,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
+    private ministerioService: HospitalService,
     private efectorService: EfectorService,
     private novedadPersonalService: NovedadPersonalService,
     private ddjjService: DdjjService,
@@ -298,7 +301,7 @@ verificarExistenciaDdjj(): void {
 
   // Crear rango del 1 al 10 del mes siguiente
   const inicio = new Date(anioEvaluado, mes - 1, 1); // Día 1 del mes siguiente
-  const fin = new Date(anioEvaluado, mes - 1, 24, 23, 59, 59); // Día 10 inclusive
+  const fin = new Date(anioEvaluado, mes - 1, 27, 23, 59, 59); // Día 10 inclusive
 
   this.mostrarBotonDDJJ = (today >= inicio && today <= fin);
   this.verificandoDdjj = false;
@@ -311,7 +314,7 @@ private calcularFechaLimiteEnvio(mes: number, anio: number): Date {
   } else {
     mes += 1;
   }
-  return new Date(anio, mes - 1, 24, 23, 59, 59);
+  return new Date(anio, mes - 1, 27, 23, 59, 59);
 }
 
 evaluarEstadoDdjj(ddjj: Ddjj): void {
@@ -356,7 +359,7 @@ if (enPosesion && estado === 'PENDIENTE') {
   }
   } else if (!enPosesion && estado === 'RECHAZADO') {
     console.log('Caso: rechazado por el director');
-    this.botonDirectorIcon = 'assignment_ind';
+    this.botonDirectorIcon = 'assignment_return';
     this.botonDirectorDeshabilitado = false;
     this.mensajeDirector = 'rechazado';
     this.puedeEditarCeldas = true;
@@ -369,7 +372,7 @@ if (enPosesion && estado === 'PENDIENTE') {
     this.puedeEditarCeldas = false;
   } else {
     console.log('Caso: estado desconocido o no manejado explícitamente');
-    this.botonDirectorIcon = 'assignment_ind';
+    this.botonDirectorIcon = 'assignment_return';
     this.botonDirectorDeshabilitado = false;
     this.mensajeDirector = null;
   }
@@ -407,23 +410,56 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
     this.botonDphIcon = 'snooze';
     this.botonDphDeshabilitado = true;
     this.mensajeDph = null;
-  } else if (enPosesionDph && estadoDph === 'PENDIENTE') {
-  if (ddjj.directorDPH == null) {
-    console.log('DPH: En posesión DPH y pendiente');
-    this.botonDphIcon = 'assignment_late';
-    this.botonDphDeshabilitado = true;
-    this.mensajeDph = 'pendiente';
-    this.puedeEditarCeldas = false;
-  } else {
-    console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
-    this.botonDphIcon = 'assignment_late';
-    this.botonDphDeshabilitado = true;
-    this.mensajeDph = 'pendiente_devuelto';
-    this.puedeEditarCeldas = false;
+    return;
   }
+
+  if (!enPosesionDph && estadoDirector === 'APROBADO') {
+    const mesNombre = this.convertirMesANombre(this.selectedMonth);
+    this.ddjjService
+      .checkCompleteDdjjSet(this.selectedYear, mesNombre, this.efectorId!)
+      .subscribe({
+        next: (estaCompleto: boolean) => {
+          if (estaCompleto) {
+            console.log('En espera aprobación del director de las 3 ddjj');
+            this.botonDphIcon = 'alarm_add';
+            this.botonDphDeshabilitado = false;
+            this.mensajeDph = 'enviar_dph';
+            this.puedeEditarCeldas = false;
+          } else {
+            console.log('Set de DDJJ incompleto, deshabilitado');
+            this.botonDphIcon = 'alarm_add';
+            this.botonDphDeshabilitado = true;
+            this.mensajeDph = 'ddjj_incompletas';
+            this.puedeEditarCeldas = false;
+          }
+          this.evaluacionDdjjDphCargada = true;
+        },
+        error: (err) => {
+          console.error('Error verificando set completo de DDJJ:', err);
+          this.evaluacionDdjjDphCargada = true;
+        }
+      });
+
+    return;
+  }
+
+  if (enPosesionDph && estadoDph === 'PENDIENTE') {
+    if (ddjj.directorDPH == null) {
+      console.log('DPH: En posesión DPH y pendiente');
+      this.botonDphIcon = 'assignment_late';
+      this.botonDphDeshabilitado = true;
+      this.mensajeDph = 'pendiente';
+      this.puedeEditarCeldas = false;
+    } else {
+      console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
+      this.botonDphIcon = 'assignment_late';
+      this.botonDphDeshabilitado = true;
+      this.mensajeDph = 'pendiente_devuelto';
+      this.puedeEditarCeldas = false;
+    }
   } else if (!enPosesionDph && estadoDph === 'RECHAZADO') {
     console.log('DPH: Rechazado por DPH');
-    this.botonDphIcon = 'assignment';
+    this.botonDphIcon = 'assignment_return';
     this.botonDphDeshabilitado = false;
     this.mensajeDph = 'rechazado';
     this.puedeEditarCeldas = true;
@@ -435,8 +471,8 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
     this.puedeEditarCeldas = false;
   } else {
     console.log('DPH: Estado desconocido');
-    this.botonDphIcon = 'assignment';
-    this.botonDphDeshabilitado = false;
+    this.botonDphIcon = 'assignment_return';
+    this.botonDphDeshabilitado = true;
     this.mensajeDph = null;
     this.puedeEditarCeldas = false;
   }
@@ -461,15 +497,15 @@ evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
   }
 
   if (enPosesion && estado === 'PENDIENTE') {
-    this.botonDirectorAuthIcon = 'assignment_ind';
+    this.botonDirectorAuthIcon = 'assignment_return';
     this.botonDirectorAuthDeshabilitado = false;
     this.mensajeDirectorAuth = 'revision';
   } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
     this.botonDirectorAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
     this.botonDirectorAuthDeshabilitado = true;
-    this.mensajeDirectorAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
+    this.mensajeDirectorAuth = estado === 'RECHAZADO' ? 'rechazado' : 'aceptado';
   } else {
-    this.botonDirectorAuthIcon = 'assignment_ind';
+    this.botonDirectorAuthIcon = 'assignment_return';
     this.botonDirectorAuthDeshabilitado = true;
     this.mensajeDirectorAuth = null;
   }
@@ -492,7 +528,7 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
   }
 
   if (enPosesion && estado === 'PENDIENTE') {
-    this.botonDphAuthIcon = 'assignment';
+    this.botonDphAuthIcon = 'assignment_return';
     this.botonDphAuthDeshabilitado = false;
     this.mensajeDphAuth = 'revision';
   } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
@@ -500,7 +536,7 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
     this.botonDphAuthDeshabilitado = true;
     this.mensajeDphAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
   } else {
-    this.botonDphAuthIcon = 'assignment';
+    this.botonDphAuthIcon = 'assignment_return';
     this.botonDphAuthDeshabilitado = true;
     this.mensajeDphAuth = null;
   }
@@ -519,12 +555,12 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 24, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 27, 23, 59, 59);
 
     if (today >= inicio && today <= fin) {
-      const diasRestantes = 24 - today.getDate() + 1;
+      const diasRestantes = 27 - today.getDate() + 1;
 
-      if (diasRestantes >= 1 && diasRestantes <= 24) {
+      if (diasRestantes >= 1 && diasRestantes <= 27) {
         return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
       }
     }
@@ -606,7 +642,7 @@ loadRegistrosMensuales(): void {
     next: (ddjjs: Ddjj[]) => {
       if (ddjjs.length > 0) {
         const primeraDdjj = ddjjs[0];
-        this.ddjjSeleccionada = primeraDdjj; // 👈 esto es clave
+        this.ddjjSeleccionada = primeraDdjj;
         this.evaluarEstadoDdjj(primeraDdjj);
         this.evaluarEstadoDdjjDph(primeraDdjj);
         this.evaluarRespuestaDirectorDdjj(primeraDdjj);
@@ -913,14 +949,13 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
       destino === 'DIRECTOR_AUTH' ? result.estado : ddjj.estadoDdjjDirector!,
 
       // Estado DPH
-      destino === 'DIRECTOR_AUTH' && aprobado ? 'PENDIENTE' :
       destino === 'DPH_AUTH' ? result.estado : ddjj.estadoDdjjDirectorDPH!,
 
       // enPosesionDirector
       destino === 'DIRECTOR_AUTH' ? false : ddjj.enPosesionDirector!,
 
       // enPosesionDPH
-      destino === 'DIRECTOR_AUTH' && aprobado ? true :
+      destino === 'DIRECTOR_AUTH' && aprobado ? false :
       destino === 'DPH_AUTH' ? false : ddjj.enPosesionDirectorDPH!,
 
       // Motivos (ya no usamos estos si está rechazado, pero se deben llenar igual)
@@ -1201,7 +1236,7 @@ getLegajoActualId(asistencial: Person): Legajo | undefined {
 
 getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
   const idAsistencial = asistencial.id!;
-  const mes = Number(this.selectedMonth) + 1;
+  const mes = Number(this.selectedMonth);
   const anio = this.selectedYear;
 
   console.log('[getNovedades] Solicitando novedades para:', {
@@ -1254,8 +1289,8 @@ async exportarAExcel() {
   };
   worksheet.getRow(1).font = { bold: true };
 
-  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F'];
-  const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F', 'montoTotal', 'montoLav', 'montoSdf'];
+  const formattedColumnTitles = this.displayedColumns.slice(9).map(columnTitle => {
     return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
   });
   const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
@@ -1287,19 +1322,26 @@ async exportarAExcel() {
     const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
     const totalLV = registro.totalHoras?.horasLav ?? 0;
     const totalSD = registro.totalHoras?.horasSdf ?? 0;
+    const montoTotal = (registro.totalHoras?.montoTotal ?? 0);
+    const montoLV = registro.totalHoras?.montoLav ?? 0;
+    const montoSDF = registro.totalHoras?.montoSdf ?? 0;
+
 
     exportData['Total mes'] = totalMes;
     exportData['Total L-V'] = totalLV;
     exportData['Total S-D-F'] = totalSD;
+    exportData['Monto Total'] = montoTotal;
+    exportData['Monto L-V'] = montoLV;
+    exportData['Monto S-D-F'] = montoSDF;
 
-    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+    this.displayedColumns.slice(9).forEach((fechaColumna: string, index: number) => {
       exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
     });
 
     worksheet.addRow(Object.values(exportData));
     const row = worksheet.lastRow!;
 
-    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+    this.displayedColumns.slice(9).forEach((fechaColumna: string, index: number) => {
       const date = this.getFechaFromColumnId(fechaColumna);
       const isHoliday = this.isHoliday(date).isHoliday;
 
@@ -1334,12 +1376,15 @@ async exportarAExcel() {
   saveAs(blob, fileName);
 }
 
-async exportarAPDF(textoAdicional: string = '', imagenBase64: string = '', nombreArchivo: string = 'exportacion.pdf') {
+
+
+async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaBase64: string = '', autoridadDto?: AutoridadImagenDto, nombreArchivo: string = 'exportacion.pdf') {
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
+  const efectorNombre = this.efectorNombre;
 
   const headers = [
-    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
     ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
 
@@ -1389,7 +1434,7 @@ async exportarAPDF(textoAdicional: string = '', imagenBase64: string = '', nombr
   }
 
   const content: any[] = [
-    { text: `DDJJ - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+    { text: `DDJJ - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado} - ${efectorNombre}`, style: 'header' },
     {
       table: {
         headerRows: 1,
@@ -1405,12 +1450,42 @@ async exportarAPDF(textoAdicional: string = '', imagenBase64: string = '', nombr
     }
   ];
 
-  // Agrega texto e imagen si se proporcionan
-  if (textoAdicional || imagenBase64) {
-    content.push(
-      { text: textoAdicional, margin: [0, 20, 0, 5], fontSize: 8 },
-      { image: imagenBase64, width: 200 }  // Ajusta tamaño según necesidad
-    );
+  // Agrega texto e imagenes de sello y firma
+  if (textoAdicional || selloBase64 || firmaBase64 || autoridadDto) {
+  content.push({
+    alignment: 'center',
+    margin: [0, 20, 0, 0],
+    stack: [
+      { text: textoAdicional, fontSize: 8, margin: [0, 0, 0, 0] },
+
+{
+  columns: [
+    {
+      width: '99%',
+      stack: [
+        firmaBase64 ? { image: firmaBase64, width: 120, alignment: 'center', margin: [0, 0, 0, 5] } : {},
+        autoridadDto?.personaName
+          ? { text: autoridadDto.personaName, alignment: 'center', fontSize: 10, bold: true }
+          : {},
+        autoridadDto?.cargo
+          ? { text: autoridadDto.cargo, alignment: 'center', fontSize: 8 }
+          : {}
+      ],
+      alignment: 'center'
+    },
+    {
+      width: '1%',
+      stack: [
+        selloBase64 ? { image: selloBase64, width: 120, alignment: 'right' } : {}
+      ],
+      alignment: 'right'
+    }
+  ],
+  columnGap: 20,
+  margin: [0, 40, 0, 0]
+}
+    ]
+  });
   }
 
   const docDefinition: any = {
@@ -1453,40 +1528,73 @@ async onExportarAExcel() {
   }
 }
 
-/*async onExportarAPDF() {
-  try {
-    await this.exportarAPDF();
-  } catch (error) {
-    console.error('Error exportando a PDF:', error);
-  }
-}*/
-
 async onExportarConHospital() {
-  const texto = 'Texto para exportación de hospitales. El director del hospital aprobó esta Declaración Jurada; -';
-  const imagen = await this.getBase64FromUrl('assets/img/firma_arias.png');
-   const nombreArchivo = 'AprobadoHospital';
-    try {
-    await this.exportarAPDF(texto, imagen, nombreArchivo);
+  const textoAdicional = 'APROBACIÓN DE LA DDJJ POR PARTE DEL DIRECTOR DEL HOSPITAL PARA SU PASE A DPH.-';
+  const nombreArchivo = 'AprobadoHospital';
+  const ddjj = this.ddjjSeleccionada!;
+
+  try {
+    // 1. Obtener sello del hospital
+    const imagenesHospital = await this.hospitalService.listImages(this.efectorId!).toPromise();
+    const selloUrl = imagenesHospital?.currentImage ? '/assets' + imagenesHospital.currentImage : null;
+
+    if (!selloUrl) {
+      console.warn('No se encontró la imagen actual del sello del hospital.');
+      return;
+    }
+    const selloBase64 = await this.getBase64FromUrl(selloUrl);
+
+    // 2. Obtener firma de autoridad
+    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.director!.id!).toPromise();
+
+    if (!autoridadDto) {
+      console.warn('No se encontró firma de autoridad.');
+      return;
+    }
+    const firmaUrl = autoridadDto?.url ? '/assets' + autoridadDto.url : undefined;
+    const firmaBase64 = firmaUrl ? await this.getBase64FromUrl(firmaUrl) : undefined;
+    // 3. Llamar a exportarAPDF con texto, imágenes y datos
+    await this.exportarAPDF(textoAdicional, selloBase64, firmaBase64, autoridadDto, nombreArchivo);
   } catch (error) {
-    console.error('Error exportando a PDF:', error);
+    console.error('Error exportando a PDF con sello y firma:', error);
   }
 }
 
 async onExportarConDPH() {
-  const texto = 'Texto para exportación de DPH. CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE ENCUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD; -';
-  const imagen = await this.getBase64FromUrl('assets/img/firma_arias.png');
+  const textoAdicional = 'CORRESPONDE EL PAGO DE GUARDIAS DEL CARGO EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE ENCUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD.-';
   const nombreArchivo = 'AprobadoDPH';
-    try {
-    await this.exportarAPDF(texto, imagen, nombreArchivo);
+  const ddjj = this.ddjjSeleccionada!;
+
+  try {
+    // 1. Obtener sello del hospital
+    const imagenesHospital = await this.ministerioService.listImages(this.efectorId!).toPromise();
+    const selloUrl = imagenesHospital?.currentImage ? '/assets' + imagenesHospital.currentImage : null;
+
+    if (!selloUrl) {
+      console.warn('No se encontró la imagen actual del sello del hospital.');
+      return;
+    }
+    const selloBase64 = await this.getBase64FromUrl(selloUrl);
+
+    // 2. Obtener firma de autoridad
+    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.director!.id!).toPromise();
+
+    if (!autoridadDto) {
+      console.warn('No se encontró firma de autoridad.');
+      return;
+    }
+    const firmaBase64 = await this.getBase64FromUrl(autoridadDto.url);
+    // 3. Llamar a exportarAPDF con texto, imágenes y datos
+    await this.exportarAPDF(textoAdicional, selloBase64, firmaBase64, autoridadDto, nombreArchivo);
   } catch (error) {
-    console.error('Error exportando a PDF:', error);
+    console.error('Error exportando a PDF con sello y firma:', error);
   }
 }
 
 async onExportarLimpio() {
     const nombreArchivo = 'SinAprobar';
     try {
-    await this.exportarAPDF(undefined, undefined, nombreArchivo);
+    await this.exportarAPDF(undefined, undefined, undefined, undefined, nombreArchivo);
   } catch (error) {
     console.error('Error exportando a PDF:', error);
   }

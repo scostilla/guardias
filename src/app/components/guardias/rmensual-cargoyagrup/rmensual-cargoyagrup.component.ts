@@ -231,8 +231,7 @@ botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assign
     }
 
     const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
-    //const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
-        const fin = new Date(anio, mes - 1, 5, 23, 59, 59); //uso para pruebas luego habilitar anterior
+    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
 
     return today >= inicio && today <= fin;
   }
@@ -550,11 +549,15 @@ verificarExistenciaDdjj(): void {
       idEfector,
       idRegistrosMensuales,
       'PENDIENTE',
+      1,              //idTipoGuardia
       undefined,      // idValorGmi
       undefined,      // idDirector
       undefined,      // idDirectorDPH
       undefined,      // estadoDdjjDirectorDPH
-      true            // enPosesionDirector
+      true,            // enPosesionDirector
+      undefined,      // enPosesionDirectorDPH
+      null,       //motivoDirector
+      null,      //motivoDirectorDPH
     );
 
     console.log('DTO a enviar creacion (DdjjDto):', ddjj);
@@ -562,13 +565,21 @@ verificarExistenciaDdjj(): void {
 
     this.ddjjService.create(ddjj).subscribe({
       next: () => {
-        this.toastr.success('DDJJ creada y enviada al Director con éxito');
+        this.toastr.success('DDJJ creada y enviada al Director con éxito', 'Éxito', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
         this.loadRegistrosMensuales();
         this.verificarExistenciaDdjj();
       },
       error: (err) => {
         console.error('Error al crear DDJJ:', err);
-        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
+        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.', 'Error', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
       }
     });
   }
@@ -824,7 +835,7 @@ getLegajoActualId(asistencial: Person): Legajo | undefined {
 
 getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
   const idAsistencial = asistencial.id!;
-  const mes = Number(this.selectedMonth) + 1;
+  const mes = Number(this.selectedMonth);
   const anio = this.selectedYear;
 
   console.log('[getNovedades] Solicitando novedades para:', {
@@ -961,7 +972,7 @@ async exportarAPDF() {
   const anioSeleccionado = this.selectedYear;
 
   const headers = [
-    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
     ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
 
