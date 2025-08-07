@@ -210,7 +210,7 @@
  -->
             <div class="form-row">
             <mat-form-field appearance="fill" *ngIf="showHabilitacionesGenerales">
-              <mat-label>Asignar efectores (para supervisión de autoridad)</mat-label>
+              <mat-label>Asignar hospitales (para supervisión de autoridad)</mat-label>
               <mat-select formControlName="habilitacionesGeneralesHospital" [(value)]="selectedHospitalsGeneral" multiple (selectionChange)="onHospitalesChangeGeneral($event)">
                 <mat-option *ngFor="let efector of hospitales" [value]="efector.id">{{ efector.nombre }}</mat-option>
               </mat-select>
@@ -234,7 +234,7 @@
 
                   <div class="form-row">
   <mat-form-field appearance="fill" *ngIf="showHabilitacionesGenerales">
-    <mat-label>Asignar efectores (para supervisión de autoridad)</mat-label>
+    <mat-label>Asignar Caps (para supervisión de autoridad)</mat-label>
     <mat-select formControlName="habilitacionesGeneralesCaps" [(value)]="selectedCapsGeneral" multiple (selectionChange)="onCapsChangeGeneral($event)">
       <mat-option *ngFor="let efector of habilitacionesGeneralesCaps" [value]="efector.id">{{ efector.nombre }}</mat-option>
     </mat-select>
@@ -461,7 +461,7 @@
  -->
           <div class="form-row">
   <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
-    <mat-label>Asignar efectores (para Extra/Contrafactura/Pasiva)</mat-label>
+    <mat-label>Asignar hospitales (para Extra/Contrafactura/Pasiva)</mat-label>
     <mat-select formControlName="habilitacionesGuardiasHospital" [(value)]="selectedHospitals" multiple (selectionChange)="onHospitalesChange($event)">
       <mat-option *ngFor="let efector of hospitales" [value]="efector.id">{{ efector.nombre }}</mat-option>
     </mat-select>
@@ -481,14 +481,14 @@
               </mat-select>
             
               <mat-error *ngIf="legajoForm.get('hospitalHabilitacionesGuardias')?.errors?.['required']">
-                El hospital es requerido para seleccionar un caps.
+                El hospital es requerido para seleccionar un Caps.
               </mat-error>
             </mat-form-field>
             </div>
 
          <div class="form-row">
   <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
-    <mat-label>Asignar efectores (para Extra/Contrafactura/Pasiva)</mat-label>
+    <mat-label>Asignar Caps (para Extra/Contrafactura/Pasiva)</mat-label>
     <mat-select formControlName="habilitacionesGuardiasCaps" [(value)]="selectedCaps" multiple (selectionChange)="onCapsChange($event)">
       <mat-option *ngFor="let efector of habilitacionesGuardiasCaps" [value]="efector.id">{{ efector.nombre }}</mat-option>
     </mat-select>

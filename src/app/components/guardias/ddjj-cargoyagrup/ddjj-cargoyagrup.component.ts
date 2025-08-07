@@ -9,6 +9,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
@@ -30,6 +31,8 @@ import { DdjjService } from 'src/app/services/ddjj.service';
 import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
 import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
 import { ObservacionDdjjUltimoDto } from 'src/app/dto/ObservacionDdjjUltimoDto';
+import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronogramaDefinitivo.service';
+import { CronogramaDefinitivoDto } from 'src/app/dto/Cronogramas/CronogramaDefinitivoDto';
 import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
 import { DialogHistorialObservacionesComponent } from '../dialog-historial-observaciones/dialog-historial-observaciones.component';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
@@ -123,6 +126,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   mensajeDphAuth: string | null = null;
 
   puedeEditarCeldas: boolean = false;
+  rangoPermitidoDDJJ: boolean = false;
 
   ultimaObservacionDirector?: ObservacionDdjjUltimoDto;
   ultimaObservacionDph?: ObservacionDdjjUltimoDto;
@@ -155,6 +159,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private novedadPersonalService: NovedadPersonalService,
     private ddjjService: DdjjService,
     private observacionDdjjService: ObservacionDdjjService,
+    private registroActividadService: RegistroActividadService,
+    private cronogramaDefinitivoService: CronogramaDefinitivoService,
     private toastr: ToastrService,
     private tokenService: TokenService,
     private sanitizer: DomSanitizer,
@@ -288,10 +294,9 @@ verificarExistenciaDdjj(): void {
   this.verificandoDdjj = true;
 
   const today = new Date();
-  let mes = this.selectedMonth; // Mes actual seleccionado
+  let mes = this.selectedMonth +1;
   let anioEvaluado = this.selectedYear;
 
-  // Ajustar si el mes es diciembre
   if (mes === 12) {
     mes = 1;
     anioEvaluado += 1;
@@ -299,22 +304,22 @@ verificarExistenciaDdjj(): void {
     mes += 1;
   }
 
-  // Crear rango del 1 al 10 del mes siguiente
-  const inicio = new Date(anioEvaluado, mes - 1, 1); // Día 1 del mes siguiente
-  const fin = new Date(anioEvaluado, mes - 1, 27, 23, 59, 59); // Día 10 inclusive
+  const inicio = new Date(anioEvaluado, mes - 1, 1);
+  const fin = new Date(anioEvaluado, mes - 1, 10, 23, 59, 59);
 
-  this.mostrarBotonDDJJ = (today >= inicio && today <= fin);
+  this.rangoPermitidoDDJJ = (today >= inicio && today <= fin);
   this.verificandoDdjj = false;
 }
 
 private calcularFechaLimiteEnvio(mes: number, anio: number): Date {
+   mes += 1;
   if (mes === 12) {
     mes = 1;
     anio += 1;
   } else {
     mes += 1;
   }
-  return new Date(anio, mes - 1, 27, 23, 59, 59);
+  return new Date(anio, mes - 1, 10, 23, 59, 59);
 }
 
 evaluarEstadoDdjj(ddjj: Ddjj): void {
@@ -332,9 +337,9 @@ evaluarEstadoDdjj(ddjj: Ddjj): void {
   const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
   const hoy = new Date();
 
-  if (hoy > fechaLimite && estado !== 'APROBADO') {
+  if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
     console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
-    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitido AdminDirector');
     this.botonDirectorIcon = 'block';
     this.botonDirectorDeshabilitado = true;
     this.mensajeDirector = 'fuera_rango_tiempo';
@@ -379,6 +384,7 @@ if (enPosesion && estado === 'PENDIENTE') {
 
   // 👇 Esto garantiza que el botón sólo se renderice después de evaluación
   this.evaluacionDdjjCargada = true;
+  this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estado === 'APROBADO';
 }
 
 evaluarEstadoDdjjDph(ddjj: Ddjj): void {
@@ -386,11 +392,11 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
   const estadoDph = ddjj.estadoDdjjDirectorDPH;
   const enPosesionDph = ddjj.enPosesionDirectorDPH;
 
-  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth + 1, this.selectedYear);
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
   const hoy = new Date();
 
   if (hoy > fechaLimite && estadoDph && estadoDph !== 'APROBADO') {
-    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitido AdminDPH');
     this.botonDphIcon = 'block';
     this.botonDphDeshabilitado = true;
     this.mensajeDph = 'fuera_rango_tiempo';
@@ -413,10 +419,9 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
     return;
   }
 
-  if (!enPosesionDph && estadoDirector === 'APROBADO') {
-    const mesNombre = this.convertirMesANombre(this.selectedMonth);
-    this.ddjjService
-      .checkCompleteDdjjSet(this.selectedYear, mesNombre, this.efectorId!)
+  /*if (!enPosesionDph && estadoDirector === 'APROBADO') {
+    this.registroActividadService
+      .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear,)
       .subscribe({
         next: (estaCompleto: boolean) => {
           if (estaCompleto) {
@@ -441,7 +446,7 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
       });
 
     return;
-  }
+  }*/
 
   if (enPosesionDph && estadoDph === 'PENDIENTE') {
     if (ddjj.directorDPH == null) {
@@ -478,6 +483,7 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
   }
 
   this.evaluacionDdjjDphCargada = true;
+  this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estadoDph === 'APROBADO';
 }
 
 evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
@@ -489,7 +495,7 @@ evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
 
   if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
     console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
-    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitidoDirector');
     this.botonDirectorAuthIcon = 'block';
     this.botonDirectorAuthDeshabilitado = true;
     this.mensajeDirectorAuth = 'fuera_rango_tiempo';
@@ -500,11 +506,28 @@ evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
     this.botonDirectorAuthIcon = 'assignment_return';
     this.botonDirectorAuthDeshabilitado = false;
     this.mensajeDirectorAuth = 'revision';
-  } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
-    this.botonDirectorAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
+  } else if (!enPosesion && estado === 'RECHAZADO') {
+    this.botonDirectorAuthIcon = 'assignment_late';
     this.botonDirectorAuthDeshabilitado = true;
-    this.mensajeDirectorAuth = estado === 'RECHAZADO' ? 'rechazado' : 'aceptado';
-  } else {
+    this.mensajeDirectorAuth = 'rechazado';
+  } else if (!enPosesion && estado === 'APROBADO') {
+    // Validar precondiciones si fue aprobado
+    this.registroActividadService
+      .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+      .subscribe({
+        next: (precondicionesCumplidas: boolean) => {
+          this.botonDirectorAuthIcon = 'assignment_turned_in';
+          this.botonDirectorAuthDeshabilitado = true;
+          this.mensajeDirectorAuth = precondicionesCumplidas ? 'aceptado_completo' : 'aceptado';
+        },
+        error: () => {
+          console.warn('Error al validar precondiciones del cronograma.');
+          this.botonDirectorAuthIcon = 'assignment_turned_in';
+          this.botonDirectorAuthDeshabilitado = true;
+          this.mensajeDirectorAuth = 'aceptado';
+        }
+      });
+    } else {
     this.botonDirectorAuthIcon = 'assignment_return';
     this.botonDirectorAuthDeshabilitado = true;
     this.mensajeDirectorAuth = null;
@@ -520,31 +543,53 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
 
   if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
     console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
-    console.log('DPH: Ya no se puede cargar, fuera del rango permitido');
+    console.log('DPH: Ya no se puede cargar, fuera del rango permitidoDPH');
     this.botonDphAuthIcon = 'block';
     this.botonDphAuthDeshabilitado = true;
     this.mensajeDphAuth = 'fuera_rango_tiempo';
     return; // Salir sin seguir evaluando estados
   }
 
-  if (enPosesion && estado === 'PENDIENTE') {
-    this.botonDphAuthIcon = 'assignment_return';
-    this.botonDphAuthDeshabilitado = false;
-    this.mensajeDphAuth = 'revision';
-  } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
-    this.botonDphAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
-    this.botonDphAuthDeshabilitado = true;
-    this.mensajeDphAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
-  } else {
-    this.botonDphAuthIcon = 'assignment_return';
-    this.botonDphAuthDeshabilitado = true;
-    this.mensajeDphAuth = null;
+  // Validar si se cumplen las precondiciones antes de mostrar botones
+  this.registroActividadService
+    .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+    .subscribe({
+      next: (precondicionesCumplidas: boolean) => {
+        if (!precondicionesCumplidas) {
+          // No cumple precondiciones, por lo tanto no habilita nada todavía
+          this.botonDphAuthIcon = 'assignment_return';
+          this.botonDphAuthDeshabilitado = true;
+          this.mensajeDphAuth = null;
+          return;
+        }
+
+        // Lógica original solo si precondiciones == true
+        if (enPosesion && estado === 'PENDIENTE') {
+          this.botonDphAuthIcon = 'assignment_return';
+          this.botonDphAuthDeshabilitado = false;
+          this.mensajeDphAuth = 'revision';
+        } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
+          this.botonDphAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
+          this.botonDphAuthDeshabilitado = true;
+          this.mensajeDphAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
+        } else {
+          this.botonDphAuthIcon = 'assignment_return';
+          this.botonDphAuthDeshabilitado = true;
+          this.mensajeDphAuth = null;
+        }
+      },
+      error: () => {
+        console.warn('Error al validar precondiciones del cronograma.');
+        this.botonDphAuthIcon = 'assignment_return';
+        this.botonDphAuthDeshabilitado = true;
+        this.mensajeDphAuth = null;
+      }
+    });
   }
-}
 
   getMensajeContadorDdjj(): string | null {
     const today = new Date();
-    let mes = this.selectedMonth;
+    let mes = this.selectedMonth +1;
     let anio = this.selectedYear;
 
     if (mes === 12) {
@@ -555,12 +600,12 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 27, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 10, 23, 59, 59);
 
     if (today >= inicio && today <= fin) {
-      const diasRestantes = 27 - today.getDate() + 1;
+      const diasRestantes = 10 - today.getDate() + 1;
 
-      if (diasRestantes >= 1 && diasRestantes <= 27) {
+      if (diasRestantes >= 1 && diasRestantes <= 10) {
         return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
       }
     }
@@ -576,16 +621,16 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
     return meses[numeroMes];
   }
 
-validarHistorialBotones() {
-  if (!this.ddjjSeleccionada?.id) return;
+validarHistorialBotones(ddjjId: number) {
+  if (!ddjjId) return;
 
-  this.observacionDdjjService.getObservacionesActivasPorDdjjYTipoDph(this.ddjjSeleccionada.id, false)
+  this.observacionDdjjService.getObservacionesActivasPorDdjjYTipoDph(ddjjId, false)
     .subscribe({
       next: (data) => this.mostrarBotonHistorialDirector = data.length > 0,
       error: () => this.mostrarBotonHistorialDirector = false
     });
 
-  this.observacionDdjjService.getObservacionesActivasPorDdjjYTipoDph(this.ddjjSeleccionada.id, true)
+  this.observacionDdjjService.getObservacionesActivasPorDdjjYTipoDph(ddjjId, true)
     .subscribe({
       next: (data) => this.mostrarBotonHistorialDph = data.length > 0,
       error: () => this.mostrarBotonHistorialDph = false
@@ -650,7 +695,7 @@ loadRegistrosMensuales(): void {
 
         this.cargarUltimaObservacionDirector(); 
         this.cargarUltimaObservacionDph();
-        this.validarHistorialBotones();
+        this.validarHistorialBotones(primeraDdjj.id!);
       } else {
         this.ddjjSeleccionada = undefined;
         this.ultimaObservacionDirector = undefined;
@@ -707,7 +752,7 @@ cargarUltimaObservacionDph(): void {
     const fechaActual = moment(); // hoy
     const mesesPasados = [];
 
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 6; i >= 1; i--) {
       const mesAnio = fechaActual.clone().subtract(i, 'months');
       const mes = mesAnio.month() + 1; // de 1 a 12
       const anio = mesAnio.year();
@@ -720,10 +765,11 @@ cargarUltimaObservacionDph(): void {
 
     this.mesesDisponibles = mesesPasados;
 
-    // Establecer por defecto el mes y año actuales (en formato humano)
-    this.selectedMonth = fechaActual.month() + 1;
-    this.selectedYear = fechaActual.year();
-    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+ // Establecer por defecto el mes anterior al actual
+  const mesAnterior = fechaActual.clone().subtract(1, 'months');
+  this.selectedMonth = mesAnterior.month() + 1;
+  this.selectedYear = mesAnterior.year();
+  this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
   }
 
   onMonthYearChange(): void {
@@ -738,6 +784,9 @@ cargarUltimaObservacionDph(): void {
     this.evaluacionDdjjCargada = false;
     this.evaluacionDdjjDphCargada = false;
     this.ddjjSeleccionada = undefined;
+
+    this.mostrarBotonHistorialDirector = false;
+    this.mostrarBotonHistorialDph = false;
 
     this.mensajeDirector = null;
     this.mensajeDph = null;
@@ -882,7 +931,7 @@ enviarDdjj(destino: 'DIRECTOR' | 'DPH'): void {
   });
 }
 
-openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
+/*openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
   if (!this.ddjjSeleccionada) {
     this.toastr.error('No hay DDJJ seleccionada.', 'Error');
     return;
@@ -907,7 +956,7 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
     const hora = fechaHora.toTimeString().split(' ')[0]; // "17:42:08"
     const user = this.userId!;
 
-    // 👉 Crear observación si hay motivo y es un rechazo
+    // Crear observación si hay motivo y es un rechazo
     if (!aprobado && motivo) {
       const observacion = new ObservacionDdjjDto(
         motivo,
@@ -939,7 +988,7 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
       });
     }
 
-    // 👉 Preparar DTO para actualizar estado
+    // Preparar DTO para actualizar estado
     const estadoDto = new EstadoDdjjDto(
       ddjj.id!,
       destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? user : undefined,
@@ -973,6 +1022,131 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
           progressBar: true
         });
         this.loadRegistrosMensuales();
+      },
+      error: () => {
+        this.toastr.error('Ocurrió un error al guardar la respuesta.', 'Error', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+      }
+    });
+  });
+}*/
+
+openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
+  if (!this.ddjjSeleccionada) {
+    this.toastr.error('No hay DDJJ seleccionada.', 'Error');
+    return;
+  }
+
+  const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
+    width: '400px',
+    data: {
+      destino: destino,
+      title: 'Confirmar o rechazar DDJJ'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (!result) return;
+
+    const aprobado = result.estado === 'APROBADO';
+    const motivo = result.motivo?.trim() || '';
+    const ddjj = this.ddjjSeleccionada!;
+    const fechaHora = new Date();
+    const fecha = fechaHora.toISOString().split('T')[0];
+    const hora = fechaHora.toTimeString().split(' ')[0];
+    const user = this.userId!;
+
+    if (!aprobado && motivo) {
+      const observacion = new ObservacionDdjjDto(
+        motivo,
+        destino === 'DPH_AUTH',
+        user,
+        ddjj.id!,
+        true,
+        fecha,
+        hora
+      );
+
+      this.observacionDdjjService.save(observacion).subscribe({
+        next: () => console.log('Observación guardada con éxito.'),
+        error: () => {
+          this.toastr.warning('No se pudo guardar la observación.', 'Atención');
+        }
+      });
+    }
+
+    const estadoDto = new EstadoDdjjDto(
+      ddjj.id!,
+      destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? user : undefined,
+      destino === 'DPH_AUTH' ? ddjj.directorDPH?.id ?? user : undefined,
+      destino === 'DIRECTOR_AUTH' ? result.estado : ddjj.estadoDdjjDirector!,
+      destino === 'DIRECTOR_AUTH' && aprobado ? 'PENDIENTE' :
+      destino === 'DPH_AUTH' ? result.estado : ddjj.estadoDdjjDirectorDPH!,
+      destino === 'DIRECTOR_AUTH' ? false : ddjj.enPosesionDirector!,
+      destino === 'DIRECTOR_AUTH' && aprobado ? true :
+      destino === 'DPH_AUTH' ? false : ddjj.enPosesionDirectorDPH!,
+      destino === 'DIRECTOR_AUTH' ? '' : ddjj.motivoDirector!,
+      destino === 'DPH_AUTH' ? '' : ddjj.motivoDirectorDPH!
+    );
+
+    this.ddjjService.cambiarEstado(estadoDto).subscribe({
+      next: () => {
+        this.toastr.success('La respuesta fue enviada correctamente.', 'Enviada', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+
+        this.loadRegistrosMensuales();
+
+        // Solo en caso de DIRECTOR y si fue aprobado
+        if (destino === 'DIRECTOR_AUTH' && aprobado) {
+          console.log('Validando precondiciones luego del cambio de estado...');
+          this.registroActividadService
+            .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+            .subscribe({
+              next: (estaCompleto: boolean) => {
+                console.log('Resultado de validarPrecondicionesCronograma:', estaCompleto);
+                if (estaCompleto) {
+                  this.registroActividadService
+                    .obtenerDdjjAprobadas(this.efectorId!, this.selectedMonth, this.selectedYear)
+                    .subscribe({
+                      next: (ids: number[]) => {
+                        const mesNombre = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+                        const cronogramaDto = new CronogramaDefinitivoDto(
+                          mesNombre,
+                          this.selectedYear,
+                          true,
+                          this.efectorId!,
+                          ids
+                        );
+
+                        console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
+
+                        this.cronogramaDefinitivoService.save(cronogramaDto).subscribe({
+                          next: () => {
+                            console.log('Cronograma definitivo creado con éxito.');
+                            this.toastr.success('Se creó el cronograma definitivo.', 'Éxito');
+                          },
+                          error: () => {
+                            this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención');
+                          }
+                        });
+                      },
+                      error: () => {
+                        console.error('Error obteniendo DDJJ aprobadas');
+                      }
+                    });
+                }
+              },
+              error: () => {
+                console.error('Error al validar precondiciones');
+              }
+            });
+        }
       },
       error: () => {
         this.toastr.error('Ocurrió un error al guardar la respuesta.', 'Error', {
@@ -1193,7 +1367,7 @@ calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: n
   return this.formatDecimalHours(totalWeekendsHours);
 }*/
 
-calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): string { 
+calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): number | string {
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
     return ingresoDate.isSame(date, 'day');
@@ -1213,12 +1387,11 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 
     if (hoursIn.isValid() && hoursOut.isValid()) {
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-
       if (diffHours > 0) {
         const redondeado = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
-        return redondeado.toString();
+        return redondeado; // devuelve como número
       } else {
-        return '0';
+        return 0;
       }
     } else {
       return 'Datos inválidos';
@@ -1281,29 +1454,37 @@ async exportarAExcel() {
 
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
+  const efectorNombre = this.efectorNombre;
 
-  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`]).fill = {
+  // Título principal
+  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: 'FFADD8E6' }
+    fgColor: { argb: 'FFADD8E6' } // Azul claro
   };
   worksheet.getRow(1).font = { bold: true };
 
+  // Encabezados de columnas
   const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F', 'montoTotal', 'montoLav', 'montoSdf'];
   const formattedColumnTitles = this.displayedColumns.slice(9).map(columnTitle => {
     return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
   });
   const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
+  
   worksheet.addRow(combinedHeaders).fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: 'FFFFFF00' }
+    fgColor: { argb: 'FFFFFF00' } // Amarillo
   };
   worksheet.getRow(2).font = { bold: true };
 
-  // Recorrer con for...of para usar await
+  // Índices de columnas de totales (base 1)
+  const totalMesIndex = combinedHeaders.indexOf('Total mes') + 1;
+  const totalLvIndex = combinedHeaders.indexOf('Total L-V') + 1;
+  const totalSdfIndex = combinedHeaders.indexOf('Total S-D-F') + 1;
+
+  // Datos
   for (const registro of this.dataSource.data) {
-    // Esperar las novedades
     const novedades: NovedadPersonal[] = await firstValueFrom(
       this.getNovedades(registro.asistencial)
     );
@@ -1316,50 +1497,57 @@ async exportarAExcel() {
       Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
       Novedades: novedades.length > 0
         ? novedades.map(novedad => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ')
-        : '-'
+        : '-',
+      'Total mes': (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0),
+      'Total L-V': registro.totalHoras?.horasLav ?? 0,
+      'Total S-D-F': registro.totalHoras?.horasSdf ?? 0,
+      'montoTotal': (registro.totalHoras?.montoTotal ?? 0),
+      'montoLav': registro.totalHoras?.montoLav ?? 0,
+      'montoSdf': registro.totalHoras?.montoSdf ?? 0
     };
 
-    const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
-    const totalLV = registro.totalHoras?.horasLav ?? 0;
-    const totalSD = registro.totalHoras?.horasSdf ?? 0;
-    const montoTotal = (registro.totalHoras?.montoTotal ?? 0);
-    const montoLV = registro.totalHoras?.montoLav ?? 0;
-    const montoSDF = registro.totalHoras?.montoSdf ?? 0;
-
-
-    exportData['Total mes'] = totalMes;
-    exportData['Total L-V'] = totalLV;
-    exportData['Total S-D-F'] = totalSD;
-    exportData['Monto Total'] = montoTotal;
-    exportData['Monto L-V'] = montoLV;
-    exportData['Monto S-D-F'] = montoSDF;
-
+    // Horas por día
     this.displayedColumns.slice(9).forEach((fechaColumna: string, index: number) => {
-      exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+      exportData[combinedHeaders[dataColumnHeaders.length + index]] = 
+        this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
     });
 
     worksheet.addRow(Object.values(exportData));
     const row = worksheet.lastRow!;
 
+    // Colorear totales (verde claro)
+    [totalMesIndex, totalLvIndex, totalSdfIndex].forEach(colIndex => {
+      row.getCell(colIndex).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE2EFDA' } // Verde claro
+      };
+    });
+
+    // Colorear feriados (rojo) y fines de semana (gris)
     this.displayedColumns.slice(9).forEach((fechaColumna: string, index: number) => {
       const date = this.getFechaFromColumnId(fechaColumna);
       const isHoliday = this.isHoliday(date).isHoliday;
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6; // 0=domingo, 6=sábado
+      const cellIndex = dataColumnHeaders.length + index + 1;
 
       if (isHoliday) {
-        const cellIndex = dataColumnHeaders.length + index + 1;
-        const cell = row.getCell(cellIndex);
-        cell.fill = {
+        row.getCell(cellIndex).fill = {
           type: 'pattern',
           pattern: 'solid',
-          fgColor: { argb: 'd4c2cd' }
+          fgColor: { argb: 'FFD4C2CD' } // Rojo claro
         };
-        cell.font = { color: { argb: '000000' } };
+      } else if (isWeekend) {
+        row.getCell(cellIndex).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF0F0F0' } // Gris claro
+        };
       }
     });
   }
 
-  const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_sinAprobacion.xlsx`;
-
+  // Bordes para todas las celdas
   worksheet.eachRow((row, rowNumber) => {
     row.eachCell((cell, colNumber) => {
       cell.border = {
@@ -1371,11 +1559,12 @@ async exportarAExcel() {
     });
   });
 
+  // Exportar
+  const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_sinAprobacion.xlsx`;
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   saveAs(blob, fileName);
 }
-
 
 
 async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaBase64: string = '', autoridadDto?: AutoridadImagenDto, nombreArchivo: string = 'exportacion.pdf') {
@@ -1383,58 +1572,90 @@ async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaB
   const anioSeleccionado = this.selectedYear;
   const efectorNombre = this.efectorNombre;
 
+  // Encabezados
   const headers = [
-    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
-    ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 
+    'Total mes', 'Total L-V', 'Total S-D-F',
+    ...this.displayedColumns.slice(6).map(columnTitle => 
+      moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
 
   const body: any[] = [headers];
 
+  // Datos
   for (const registro of this.dataSource.data) {
-    const novedades: NovedadPersonal[] = await firstValueFrom(this.getNovedades(registro.asistencial));
-    const row = [];
+    const novedades: NovedadPersonal[] = await firstValueFrom(
+      this.getNovedades(registro.asistencial)
+    );
 
+    const row = [];
     row.push(registro.asistencial.apellido);
     row.push(registro.asistencial.nombre);
     row.push(registro.asistencial.cuil);
     row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
-    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '');
+    row.push(
+      this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + 
+      '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || ''
+    );
 
-    const novedadesString = novedades.length > 0
-      ? novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ')
-      : '-';
-    row.push(novedadesString);
+    // Novedades
+    row.push(
+      novedades.length > 0
+        ? novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ')
+        : '-'
+    );
 
-    row.push((registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0));
-    row.push(registro.totalHoras?.horasLav ?? 0);
-    row.push(registro.totalHoras?.horasSdf ?? 0);
-    //row.push(registro.totalHoras?.montoTotal ?? 0);
-    //row.push(registro.totalHoras?.montoLav ?? 0);
-    //row.push(registro.totalHoras?.montoSdf ?? 0);
+    // Totales (con color verde claro)
+    row.push({
+      text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0),
+      fillColor: '#E2EFDA',
+      alignment: 'center'
+    });
+    row.push({
+      text: (registro.totalHoras?.horasLav ?? 0),
+      fillColor: '#E2EFDA',
+      alignment: 'center'
+    });
+    row.push({
+      text: (registro.totalHoras?.horasSdf ?? 0),
+      fillColor: '#E2EFDA',
+      alignment: 'center'
+    });
 
+    // Horas por día (feriados y fines de semana)
     this.displayedColumns.slice(6).forEach(fechaColumna => {
       const fecha = this.getFechaFromColumnId(fechaColumna);
       const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
       const { isHoliday } = this.isHoliday(fecha);
+      const isWeekend = fecha.getDay() === 0 || fecha.getDay() === 6;
 
       if (isHoliday) {
         row.push({
           text: horas,
-          fillColor: '#F9CACA',
-          color: 'red',
+          fillColor: '#F9CACA', // Rojo claro (feriado)
           bold: true,
           alignment: 'center'
         });
+      } else if (isWeekend) {
+        row.push({
+          text: horas,
+          fillColor: '#F0F0F0', // Gris claro (fin de semana)
+          alignment: 'center'
+        });
       } else {
-        row.push(horas);
+        row.push(horas); // Día normal
       }
     });
 
     body.push(row);
   }
 
+  // Configuración del PDF
   const content: any[] = [
-    { text: `DDJJ - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado} - ${efectorNombre}`, style: 'header' },
+    { 
+      text: `DDJJ - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado} - ${efectorNombre}`, 
+      style: 'header' 
+    },
     {
       table: {
         headerRows: 1,
@@ -1450,42 +1671,37 @@ async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaB
     }
   ];
 
-  // Agrega texto e imagenes de sello y firma
+  // Pie de página (sello, firma, texto)
   if (textoAdicional || selloBase64 || firmaBase64 || autoridadDto) {
-  content.push({
-    alignment: 'center',
-    margin: [0, 20, 0, 0],
-    stack: [
-      { text: textoAdicional, fontSize: 8, margin: [0, 0, 0, 0] },
-
-{
-  columns: [
-    {
-      width: '99%',
+    content.push({
+      alignment: 'center',
+      margin: [0, 20, 0, 0],
       stack: [
-        firmaBase64 ? { image: firmaBase64, width: 120, alignment: 'center', margin: [0, 0, 0, 5] } : {},
-        autoridadDto?.personaName
-          ? { text: autoridadDto.personaName, alignment: 'center', fontSize: 10, bold: true }
-          : {},
-        autoridadDto?.cargo
-          ? { text: autoridadDto.cargo, alignment: 'center', fontSize: 8 }
-          : {}
-      ],
-      alignment: 'center'
-    },
-    {
-      width: '1%',
-      stack: [
-        selloBase64 ? { image: selloBase64, width: 120, alignment: 'right' } : {}
-      ],
-      alignment: 'right'
-    }
-  ],
-  columnGap: 20,
-  margin: [0, 40, 0, 0]
-}
-    ]
-  });
+        { text: textoAdicional, fontSize: 8 },
+        {
+          columns: [
+            {
+              width: '50%',
+              stack: [
+                firmaBase64 ? { image: firmaBase64, width: 120, alignment: 'right' } : {},
+                autoridadDto?.personaName ? 
+                  { text: autoridadDto.personaName, alignment: 'right', bold: true } : {},
+                autoridadDto?.cargo ? 
+                  { text: autoridadDto.cargo, alignment: 'right', fontSize: 8 } : {}
+              ]
+            },
+            {
+              width: '50%',
+              stack: [
+                selloBase64 ? { image: selloBase64, width: 120, alignment: 'left' } : {}
+              ]
+            }
+          ],
+          columnGap: 20,
+          margin: [0, 40, 0, 0]
+        }
+      ]
+    });
   }
 
   const docDefinition: any = {
@@ -1506,7 +1722,10 @@ async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaB
     }
   };
 
-  pdfMake.createPdf(docDefinition).download(`DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${nombreArchivo}.pdf`);
+  // Descargar
+  pdfMake.createPdf(docDefinition).download(
+    `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_${nombreArchivo}.pdf`
+  );
 }
 
 getBase64FromUrl(url: string): Promise<string> {

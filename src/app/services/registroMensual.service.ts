@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject, tap } from "rxjs";
 import { RegistroMensual } from "../models/RegistroMensual";
 import { RegistroMensualDto } from "../dto/RegistroMensualDto";
+import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
 
 @Injectable({
     providedIn: 'root'
@@ -71,5 +72,31 @@ import { RegistroMensualDto } from "../dto/RegistroMensualDto";
   public delete(id:number): Observable<any> {
     return this.httpClient.put<any>(this.registroMensualURL + `delete/${id}`, {});
   }
-  
+
+
+  // ===================== FILTROS POR TIPO DE GUARDIA =====================
+
+  listCargoyagrup(anio: number, mes: string, idEfector: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCargoyagrup/${anio}/${mes}/${idEfector}`);
   }
+
+  listCargoyagrupAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCargoyagrupAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  listExtra(anio: number, mes: string, idEfector: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listExtra/${anio}/${mes}/${idEfector}`);
+  }
+
+  listExtraAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listExtraAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  listCf(anio: number, mes: string, idEfector: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCf/${anio}/${mes}/${idEfector}`);
+  }
+
+  listCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCfAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+ }

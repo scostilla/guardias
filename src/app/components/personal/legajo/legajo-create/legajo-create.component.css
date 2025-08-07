@@ -245,3 +245,27 @@
     max-width: 280px;
   }
 }
+
+/* Estructura básica */
+.mat-optgroup {
+  position: relative;
+  padding-left: 24px;
+}
+
+.hospital-checkbox {
+  margin-left: -16px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.loading-message {
+  color: #666;
+  font-style: italic;
+  font-size: 0.8em;
+  padding-left: 24px;
+}
+
+/* Opciones de CAPS */
+.mat-option {
+  padding-left: 32px !important;
+}

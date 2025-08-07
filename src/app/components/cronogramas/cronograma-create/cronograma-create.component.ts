@@ -703,7 +703,7 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
         this.guardarCronogramaConAutorizacion(cronogramaDto);
 
       } else if (respuesta.sinDistribucion) {
-        // 👉 PRIMERA VERIFICACIÓN: distribución guardia semanal
+        // PRIMERA VERIFICACIÓN: distribución guardia semanal
         this.distribucionGuardiaService.validarDistribucionSemanal(cronogramaRequest).subscribe(
           tieneDistribucionEnSemana => {
             if (tieneDistribucionEnSemana) {
@@ -718,7 +718,7 @@ private procesarCronogramaCargoOAgrupacion(cronogramaDto: CronogramaTentativoDto
 
               this.guardarCronogramaConAutorizacion(cronogramaDto);
             } else {
-              // 👉 Si no hay distribución semanal, se verifican las otras bases (Consultorio, Gira, Otro)
+              // Si no hay distribución semanal, se verifican las otras bases (Consultorio, Gira, Otro)
               this.distribucionConsultorioService.existeTentativoEnDistribucionConsultorio(cronogramaRequest).subscribe(
                 existeEnConsultorio => {
                   if (existeEnConsultorio) {

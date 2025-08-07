@@ -81,4 +81,11 @@ export class RegistroActividadService {
     return this.httpClient.put<any>(this.registroActividadURL + `delete/${id}`, {});
   }
 
+  public validarPrecondicionesCronograma(idEfector: number, mes: number, anio: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.registroActividadURL}validar-precondiciones-cronograma/${idEfector}/${mes}/${anio}`);
+  }
+
+  public obtenerDdjjAprobadas(idEfector: number, mes: number, anio: number): Observable<number[]> {
+    return this.httpClient.get<number[]>(`${this.registroActividadURL}obtener-ddjj-aprobadas/${idEfector}/${mes}/${anio}`);
+  }
 }

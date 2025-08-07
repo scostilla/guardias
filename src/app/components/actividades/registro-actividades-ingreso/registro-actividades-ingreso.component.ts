@@ -308,7 +308,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
         // 4. Solo si el registro se guardó correctamente, marcamos como aceptado
         this.cronogramaTentativoService.aceptar(idCronograma).subscribe({
           next: () => {
-            this.mostrarExito('Registro guardado y cronograma aceptado');
+            this.mostrarExito('Registro de ingreso cargado');
             this.router.navigate(['/registro-diario']);
           },
           error: (error) => {
