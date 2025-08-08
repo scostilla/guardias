@@ -15,6 +15,7 @@ export class DdjjDto {
   enPosesionDirectorDPH?: boolean | null;
   motivoDirector?: string | null;
   motivoDirectorDPH?: string | null;
+  idTipoGuardia: number;
 
       constructor(
         mes: string,               // enum
@@ -25,6 +26,7 @@ export class DdjjDto {
         idEfector: number,
         idRegistrosMensuales: number[],
         estadoDdjjDirector: string,
+        idTipoGuardia: number,
         idValorGmi?: number | null,  // opcional
         idDirector?: number | null,
         idDirectorDPH?: number | null,
@@ -50,6 +52,7 @@ export class DdjjDto {
         this.enPosesionDirector = enPosesionDirector;
         this.enPosesionDirectorDPH = enPosesionDirectorDPH;
         this.motivoDirector = motivoDirector;
-        this.motivoDirectorDPH = motivoDirectorDPH;   
+        this.motivoDirectorDPH = motivoDirectorDPH;
+        this.idTipoGuardia = idTipoGuardia;   
     }
 }

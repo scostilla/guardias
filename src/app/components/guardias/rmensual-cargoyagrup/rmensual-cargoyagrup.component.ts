@@ -7,9 +7,9 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subscription, Observable, firstValueFrom } from 'rxjs';
-import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { Person } from 'src/app/models/Configuracion/Person';
-import { RegistroMensual } from 'src/app/models/RegistroMensual';
+import { RegActivListDto } from 'src/app/dto/guardias/RegActivListDto';
+import { AsistencialListForRmensualDto } from 'src/app/dto/guardias/AsistencialListForRmensualDto';
+import { RegistroMensualListDto } from 'src/app/dto/RegistroMensualListDto';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
@@ -59,18 +59,18 @@ const clases: ClasesNovedad = {
 
 export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
+  @ViewChild(MatTable) table!: MatTable<RegistroMensualListDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
-  dataSource!: MatTableDataSource<RegistroMensual>;
+  dataSource!: MatTableDataSource<RegistroMensualListDto>;
   suscription!: Subscription;
   tablaListaParaMostrar = false;
 
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
-  registrosMensuales: RegistroMensual[] = [];
+  registrosMensuales: RegistroMensualListDto[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
@@ -131,7 +131,7 @@ botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assign
       if (this.efectorId) {
         this.loadEfectorName();
           moment.locale('es');
-          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
           this.generarMesesDisponibles();
           this.updateDateAndLoadData();
           this.loadHospitalDetails();
@@ -231,8 +231,7 @@ botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assign
     }
 
     const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
-    //const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
-        const fin = new Date(anio, mes - 1, 5, 23, 59, 59); //uso para pruebas luego habilitar anterior
+    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
 
     return today >= inicio && today <= fin;
   }
@@ -387,7 +386,7 @@ verificarExistenciaDdjj(): void {
     if (this.selectedServicio == null) {
       // Todos los servicios
       this.registroMensualService
-        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacion(anio, mes, idEfector)
+        .listCargoyagrup(anio, mes, idEfector)
         .subscribe(data => {
           this.registrosMensuales = data;
           this.updateTableDataSource();
@@ -396,7 +395,7 @@ verificarExistenciaDdjj(): void {
     } else {
       // Servicio específico
       this.registroMensualService
-        .listByYearMonthEfectorAndTipoGuardiaCargoReagrupacionService(anio, mes, idEfector, this.selectedServicio)
+        .listCargoyagrupAndServicio(anio, mes, idEfector, this.selectedServicio)
         .subscribe(data => {
           this.registrosMensuales = data;
           this.updateTableDataSource();
@@ -489,7 +488,7 @@ verificarExistenciaDdjj(): void {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-  openDetail(asistencial: Person, selectedMonth: number, selectedYear: number): void {
+  openDetail(asistencial: AsistencialListForRmensualDto, selectedMonth: number, selectedYear: number): void {
     const dataToSend = {
       asistencial,
       month: selectedMonth,
@@ -550,11 +549,15 @@ verificarExistenciaDdjj(): void {
       idEfector,
       idRegistrosMensuales,
       'PENDIENTE',
+      1,              //idTipoGuardia
       undefined,      // idValorGmi
       undefined,      // idDirector
       undefined,      // idDirectorDPH
       undefined,      // estadoDdjjDirectorDPH
-      true            // enPosesionDirector
+      true,            // enPosesionDirector
+      undefined,      // enPosesionDirectorDPH
+      null,       //motivoDirector
+      null,      //motivoDirectorDPH
     );
 
     console.log('DTO a enviar creacion (DdjjDto):', ddjj);
@@ -562,13 +565,21 @@ verificarExistenciaDdjj(): void {
 
     this.ddjjService.create(ddjj).subscribe({
       next: () => {
-        this.toastr.success('DDJJ creada y enviada al Director con éxito');
+        this.toastr.success('DDJJ creada y enviada al Director con éxito', 'Éxito', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
         this.loadRegistrosMensuales();
         this.verificarExistenciaDdjj();
       },
       error: (err) => {
         console.error('Error al crear DDJJ:', err);
-        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.');
+        this.toastr.error('Error al crear la DDJJ. Intente nuevamente.', 'Error', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
       }
     });
   }
@@ -660,7 +671,7 @@ isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoL
   return `${hours}:${paddedMinutes} hs`;
 }*/
   
-calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): SafeHtml {
+calculateHoursForDate(registroActividades: RegActivListDto[], date: Date): SafeHtml {
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
     return ingresoDate.isSame(date, 'day');
@@ -682,7 +693,7 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): Saf
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
 
       if (diffHours > 0) {
-        const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia!);
+        const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia.id);
         const rounded = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
         const html = `<span style="color: ${color};">${rounded}</span>`;
         return this.sanitizer.bypassSecurityTrustHtml(html);
@@ -697,18 +708,16 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): Saf
   return this.sanitizer.bypassSecurityTrustHtml('');
 }
 
-  getColor(tipoGuardia: TipoGuardia): string {
-    if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 1) {
-        return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.id === 2) {
-        return '#eb7430'; // Color para REAGRUPACION DE HS
-      }
-    }
-    return ''; // Color por defecto
+getColor(tipoGuardiaId: number): string {
+  if (tipoGuardiaId === 1) {
+    return '#91A8DA'; // Color para CARGO
+  } else if (tipoGuardiaId === 2) {
+    return '#eb7430'; // Color para REAGRUPACION DE HS
   }
-  
-  calculateHoursColor(registroActividad: RegistroActividad[], date: Date): string {
+  return ''; // Color por defecto
+}
+
+  calculateHoursColor(registroActividad: RegActivListDto[], date: Date): string {
     const registro = registroActividad.find((actividad) => {
       const ingresoDate = moment(actividad.fechaIngreso);
       return ingresoDate.isSame(date, 'day');
@@ -781,7 +790,7 @@ calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: n
   return this.formatDecimalHours(totalWeekendsHours);
 }*/
 
-calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): string { 
+calculateHoursForExcel(registroActividades: RegActivListDto[], date: Date): number | string {
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
     return ingresoDate.isSame(date, 'day');
@@ -801,12 +810,11 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
 
     if (hoursIn.isValid() && hoursOut.isValid()) {
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-
       if (diffHours > 0) {
         const redondeado = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
-        return redondeado.toString();
+        return redondeado; // devuelve como número
       } else {
-        return '0';
+        return 0;
       }
     } else {
       return 'Datos inválidos';
@@ -816,15 +824,15 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): st
   return '';
 }
 
-//aqui decia actual en vez de activo, revisar si corresponde
-getLegajoActualId(asistencial: Person): Legajo | undefined {
+/*/aqui decia actual en vez de activo, revisar si corresponde
+getLegajoActualId(asistencial: AsistencialListForRmensualDto): Legajo | undefined {
   const legajoActual = asistencial.legajos.find(legajo => legajo.activo && !legajo.esAutoridad);
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
+getNovedades(asistencial: AsistencialListForRmensualDto): Observable<NovedadPersonal[]> {
   const idAsistencial = asistencial.id!;
-  const mes = Number(this.selectedMonth) + 1;
+  const mes = Number(this.selectedMonth);
   const anio = this.selectedYear;
 
   console.log('[getNovedades] Solicitando novedades para:', {
@@ -850,7 +858,7 @@ getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
   });
 
   return observable;
-}
+}*/
 
 formatDate(startDate: Date, endDate: Date): string {
   const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
@@ -869,8 +877,9 @@ async exportarAExcel() {
 
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
+  const efectorNombre = this.efectorNombre;
 
-  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`]).fill = {
+  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
     type: 'pattern',
     pattern: 'solid',
     fgColor: { argb: 'FFADD8E6' }
@@ -892,19 +901,16 @@ async exportarAExcel() {
   // Recorrer con for...of para usar await
   for (const registro of this.dataSource.data) {
     // Esperar las novedades
-    const novedades: NovedadPersonal[] = await firstValueFrom(
-      this.getNovedades(registro.asistencial)
-    );
 
-    const exportData: any = {
+    const exportData: Record<string, string | number> = {
       Apellido: registro.asistencial.apellido,
       Nombre: registro.asistencial.nombre,
       Cuil: registro.asistencial.cuil,
-      Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
-      Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
-      Novedades: novedades.length > 0
-        ? novedades.map(novedad => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ')
-        : '-'
+      Vinculos_Laborales: registro.asistencial.legajos[0].revista.tipoRevista.nombre || '-',
+      Categoria: registro.asistencial.legajos[0].revista.categoria.nombre + '(' + registro.asistencial.legajos[0].revista.adicional.nombre + ')' || '',
+      Novedades: registro.asistencial.novedadesPersonales?.length > 0
+    ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+        .join('; ') : '-'
     };
 
     const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
@@ -939,7 +945,7 @@ async exportarAExcel() {
     });
   }
 
-  const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.xlsx`;
+  const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
 
   worksheet.eachRow((row, rowNumber) => {
     row.eachCell((cell, colNumber) => {
@@ -956,32 +962,34 @@ async exportarAExcel() {
   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   saveAs(blob, fileName);
 }
+
 async exportarAPDF() {
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
   const anioSeleccionado = this.selectedYear;
+  const efectorNombre = this.efectorNombre;
 
   const headers = [
-    'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
     ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
 
   const body: any[] = [headers];
 
   for (const registro of this.dataSource.data) {
-    const novedades: NovedadPersonal[] = await firstValueFrom(
-      this.getNovedades(registro.asistencial)
-    );
 
     const row = [];
 
     row.push(registro.asistencial.apellido);
     row.push(registro.asistencial.nombre);
     row.push(registro.asistencial.cuil);
-    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
-    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '');
+    row.push(registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-');
+    row.push(registro.asistencial.legajos?.[0]?.revista
+    ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`: '-');
 
-    const novedadesString = novedades.length > 0
-      ? novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ')
+    const novedadesString = registro.asistencial.novedadesPersonales?.length > 0
+      ? registro.asistencial.novedadesPersonales
+          .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+          .join('; ')
       : '-';
     row.push(novedadesString);
 
@@ -999,7 +1007,7 @@ async exportarAPDF() {
         row.push({
           text: horas,
           fillColor: '#F9CACA',  // Fondo rosado para feriado
-          color: 'red',          // Texto rojo
+          //color: 'red',          // Texto rojo
           bold: true,
           alignment: 'center'
         });
@@ -1016,7 +1024,7 @@ async exportarAPDF() {
     pageOrientation: 'landscape',
     pageMargins: [10, 10, 10, 10], //Márgenes reducidos
     content: [
-      { text: `Registro Mensual - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
+      { text: `Registro Mensual - Cargo y Agrupación - ${efectorNombre} - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
       {
         table: {
           headerRows: 1,
@@ -1044,7 +1052,7 @@ async exportarAPDF() {
     }
   };
 
-  pdfMake.createPdf(docDefinition).download(`rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}.pdf`);
+  pdfMake.createPdf(docDefinition).download(`rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.pdf`);
 }
 
 async onExportarAExcel() {
@@ -1080,7 +1088,7 @@ accentFilter(input: string): string {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+    this.dataSource.filterPredicate = (data: RegistroMensualListDto, filter: string) => {
       const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
       const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
 

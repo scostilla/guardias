@@ -641,6 +641,7 @@ private async verificarMesesDisponibles(): Promise<void> {
 
   // Itera desde el mes actual hasta los próximos 6 (total 7)
   for (let i = 0; i < 7; i++) {
+    //for (let i = -3; i < 7; i++) { // para pruebas de meses anteriores
     const mes = moment(hoy).add(i, 'months').startOf('month');
     const mesNombreCapitalizado = mes.format('MMMM').charAt(0).toUpperCase() + mes.format('MMMM').slice(1);
     const fechaFinalizacion = mes.endOf('month');

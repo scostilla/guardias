@@ -2,6 +2,9 @@ import { RegistroMensual } from "../RegistroMensual";
 import { Efector } from "./Efector";
 import { Usuario } from "../login/Usuario";
 import { ValorGmi } from "../ValorGmi";
+import { ObservacionDdjj } from '../ObservacionDdjj';
+import { TipoGuardia } from './TipoGuardia';
+import { CronogramaDefinitivo } from '../Cronogramas/CronogramaDefinitivo';
 
 export class Ddjj {
     id?: number;
@@ -12,7 +15,10 @@ export class Ddjj {
     total: number;
     valorGmi?: ValorGmi | null;
     efector?: Efector | null;
+
     registrosMensuales?: RegistroMensual[];
+    observacionesDdjj?: ObservacionDdjj[];
+
     director?: Usuario | null;
     directorDPH?: Usuario | null;
     estadoDdjjDirector?: string | null;
@@ -22,6 +28,9 @@ export class Ddjj {
     motivoDirector?: string | null;
     motivoDirectorDPH?: string | null;
 
+    tipoGuardia?: TipoGuardia | null;
+    cronogramasDefinitivos?: CronogramaDefinitivo[];
+
     constructor(
         activo: boolean,
         mes: string,
@@ -30,7 +39,10 @@ export class Ddjj {
         total: number,
         valorGmi?: ValorGmi | null,
         efector?: Efector | null,
+
         registrosMensuales?: RegistroMensual[],
+        observacionesDdjj?: ObservacionDdjj[],
+
         director?: Usuario | null,
         directorDPH?: Usuario | null,
         estadoDdjjDirector?: string | null,
@@ -38,7 +50,10 @@ export class Ddjj {
         enPosesionDirector?: boolean | null,
         enPosesionDirectorDPH?: boolean | null,
         motivoDirector?: string | null,
-        motivoDirectorDPH?: string | null
+        motivoDirectorDPH?: string | null,
+
+        tipoGuardia?: TipoGuardia | null,
+        cronogramasDefinitivos?: CronogramaDefinitivo[],
     ) {
         this.activo = activo;
         this.mes = mes;
@@ -48,6 +63,7 @@ export class Ddjj {
         this.valorGmi = valorGmi;
         this.efector = efector;
         this.registrosMensuales = registrosMensuales;
+        this.observacionesDdjj = observacionesDdjj;
         this.director = director;
         this.directorDPH = directorDPH;
         this.estadoDdjjDirector = estadoDdjjDirector;
@@ -56,5 +72,7 @@ export class Ddjj {
         this.enPosesionDirectorDPH = enPosesionDirectorDPH;
         this.motivoDirector = motivoDirector;
         this.motivoDirectorDPH = motivoDirectorDPH;
+        this.tipoGuardia = tipoGuardia;
+        this.cronogramasDefinitivos = cronogramasDefinitivos;
     }
 }

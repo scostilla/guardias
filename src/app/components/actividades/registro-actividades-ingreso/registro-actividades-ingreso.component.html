@@ -2,7 +2,7 @@
 <div class="container">
     <div class="row">
         <div class="col-6">
-            <div class="titulos">Registro de Ingreso</div>
+            <div class="titulos titulo_entrada">Registro de Ingreso</div>
         </div>
         <div class="col-6 m mt-3 d-flex justify-content-end">
             <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/registro-diario">
@@ -89,7 +89,7 @@
             <div mat-dialog-actions class="action mt-4">
                 <button mat-raised-button color="primary" type="submit"
                     [disabled]="!registroForm.valid || !isModified()" class="me-2">
-                    {{initialData ? 'Modificar' : 'Agregar'}} registro
+                    {{initialData ? 'Modificar' : 'Registrar'}} Ingreso
                 </button>
                 <button mat-raised-button color="secondary" type="button" (click)="cancel()">
                     Cancelar

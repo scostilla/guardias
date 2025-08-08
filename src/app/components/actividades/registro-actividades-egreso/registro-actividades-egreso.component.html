@@ -2,7 +2,7 @@
 <div class="container">
     <div class="row">
         <div class="col-6">
-            <div class="titulos">Registro de Salida</div>
+            <div class="titulos titulo_salida">Registro de Egreso</div>
         </div>
         <div class="col-6 m mt-3 d-flex justify-content-end">
             <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/registro-diario">
@@ -60,7 +60,7 @@
                     <mat-form-field appearance="fill" class="form-field">
                         <mat-label>Hora de Inicio</mat-label>
                         <input matInput formControlName="eventStartTime" [ngxMatTimepicker]="horaPicker" [format]="24"
-                            readonly (click)="horaPicker.open()">
+                            readonly>
                         <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker"></ngx-mat-timepicker-toggle>
                         <ngx-mat-timepicker #horaPicker></ngx-mat-timepicker>
                         <mat-error
@@ -99,7 +99,6 @@
                     <mat-label>Hora de Finalización</mat-label>
                     <input matInput formControlName="eventEndTime"
                             [ngxMatTimepicker]="horaPicker2" [format]="24"
-                            (click)="horaPicker2.open()"
                             [readonly]="!registroForm.get('fechaEgreso')?.value"
                             [max]="maxHoraEgreso">
                     <ngx-mat-timepicker-toggle matSuffix [for]="horaPicker2"></ngx-mat-timepicker-toggle>

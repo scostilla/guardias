@@ -324,6 +324,7 @@ validarFechaHoraEgresoNoExcedida(): ValidatorFn {
   cambiarTipoGuardia(nuevoTipoGuardia: any): void {
     // Borrar solo los campos relacionados con el tipo de guardia
     this.registroForm.get('idAsistencial')?.reset();
+    this.inputValue = '';
 
     // Actualizar el tipo de guardia en el formulario
     this.registroForm.get('idTipoGuardia')?.setValue(nuevoTipoGuardia);
