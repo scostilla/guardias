@@ -89,13 +89,45 @@ if (navigation?.extras.state) {
       console.warn('⚠️ No se recibió un ID de asistencial válido');
     }
   } else if (this.fromNoAsistencial) {
-    const noAsistencial = navigation.extras.state['noAsistencial'] as NoAsistencial;
+  const noAsistencialData = navigation.extras.state['noAsistencial'];
+  console.log('📋 Datos recibidos de noAsistencial:', noAsistencialData, 'Tipo:', typeof noAsistencialData);
+  
+  if (typeof noAsistencialData === 'number') {
+    // 🔥 CASO 1: Se recibió solo el ID (como en tu caso: 365)
+    console.log('📋 Recibido ID de noAsistencial:', noAsistencialData);
+    this.personId = noAsistencialData; // Usar directamente el ID
+    
+    // Obtener el objeto completo del servicio para el nombre
+    this.noAsistencialService.detail(noAsistencialData).subscribe({
+      next: (noAsistencial: NoAsistencial) => {
+        this.initialData = noAsistencial;
+        this.nombreCompleto = `${noAsistencial.nombre} ${noAsistencial.apellido}`;
+        console.log('✅ No Asistencial obtenido del servicio:', noAsistencial);
+        console.log('🔍 PersonId no asistencial:', this.personId);
+        this.listLegajos(this.personId!);
+      },
+      error: (err) => {
+        console.error('❌ Error al obtener el no asistencial:', err);
+        this.toastr.error('Error al cargar datos del personal no asistencial', 'ERROR');
+      }
+    });
+    
+  } else if (noAsistencialData && typeof noAsistencialData === 'object' && noAsistencialData.id) {
+    // 🔥 CASO 2: Se recibió el objeto completo
+    console.log('📋 Recibido objeto completo de noAsistencial:', noAsistencialData);
+    const noAsistencial = noAsistencialData as NoAsistencial;
     this.initialData = noAsistencial;
     this.personId = noAsistencial.id;
     this.nombreCompleto = `${noAsistencial.nombre} ${noAsistencial.apellido}`;
-    console.log('✅ No Asistencial recibido:', noAsistencial);
+    console.log('✅ No Asistencial recibido como objeto:', noAsistencial);
+    console.log('🔍 PersonId no asistencial:', this.personId);
     this.listLegajos(this.personId!);
+    
+  } else {
+    console.error('❌ Datos de noAsistencial no válidos:', noAsistencialData);
+    this.toastr.error('Error: Datos de navegación no válidos', 'ERROR');
   }
+}
 }
 }
 
@@ -139,7 +171,9 @@ ngOnInit(): void {
         }
       });
     } else if (this.fromNoAsistencial) {
+      console.log('id de la persona', personId);
       this.noAsistencialService.getLegajosByNoAsistencial(personId).subscribe({
+        
         next: (data) => {
           this.legajos = data;
           this.dataSource = new MatTableDataSource(this.legajos);

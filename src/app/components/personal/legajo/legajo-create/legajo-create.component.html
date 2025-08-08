@@ -586,22 +586,6 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
             </mat-form-field>
-                        
-            <!--<mat-form-field appearance="fill">
-              <mat-label>U.D.O. (a la que pertenece el cargo)</mat-label>
-              <mat-select formControlName="udo">
-                <mat-option *ngFor="let udo of efectores" [value]="udo">{{ udo.nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('udo')?.errors?.['required']">La U.D.O. es requerida.</mat-error>
-            </mat-form-field>
-            
-            <mat-form-field appearance="fill">
-              <mat-label>Efector</mat-label>
-              <mat-select formControlName="efectores">
-                <mat-option *ngFor="let efector of getEfectoresFiltrados()" [value]="efector.id">{{ efector.nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="legajoForm.get('efectores')?.errors?.['required']">El efector es requerido.</mat-error>
-            </mat-form-field>-->
 
             <mat-radio-group formControlName="tipoEfector" (change)="onTipoEfectorChange($event)" class="radio-group-with-line">
               <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">Ministerio</mat-radio-button>
