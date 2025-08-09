@@ -893,7 +893,7 @@ this.initialHabilitacionesGuardias = efectoresFiltrados;
 
 }
 
-// Agregar método para verificar si se puede modificar el legajo
+// Método para verificar si se puede modificar el legajo
 get puedeModificarLegajo(): boolean {
   // 🔥 SI HAY IMAGEN DUPLICADA, NO PERMITIR MODIFICACIÓN
   if (this.isDuplicateImage) {
@@ -1971,8 +1971,7 @@ listMinisterios(): void {
   onDateChange(event: MatDatepickerInputEvent<Date>) {
     const selectedDate = event.value;
     const nuevaFechaInicio = event.value;
-  
-    // Puedes agregar más lógica si es necesario, por ejemplo:
+
     if (nuevaFechaInicio) {
       const fechaInicioDate = new Date(nuevaFechaInicio);
       fechaInicioDate.setDate(fechaInicioDate.getDate() + 1);

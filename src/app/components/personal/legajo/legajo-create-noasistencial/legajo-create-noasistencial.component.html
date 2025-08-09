@@ -31,6 +31,24 @@
           </mat-form-field>
         </div>
 
+            <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>Matrícula Nacional</mat-label>
+              <input matInput formControlName="matriculaNacional">
+              <mat-error *ngIf="legajoForm.get('matriculaNacional')?.errors?.['pattern']">El n° de matrícula puede tener solo números (entre 5 y 10 digitos).</mat-error>
+            </mat-form-field>
+            </div>
+
+            <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>Matrícula Provincial</mat-label>
+              <input matInput formControlName="matriculaProvincial">
+              <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['required']">El n° de matrícula es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['pattern']">El n° de matrícula puede tener solo números (entre 5 y 10 digitos).</mat-error>
+            </mat-form-field>
+            </div>
+
+
         <div class="form-row">
           <mat-form-field appearance="fill" style="margin-top: 20px;">
               <mat-label>Tipo de legajo</mat-label>
@@ -42,27 +60,48 @@
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="fill" *ngIf="legajoForm.get('esAutoridad')?.value">
+         <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
               <mat-label>Cargo</mat-label>
               <mat-select formControlName="idCargo" (selectionChange)="onCargoChange()">
                 <ng-container *ngFor="let cargo of cargos">
-                  <!--siendo 2 el id del cargo del Director Regional-->
-                  <mat-option *ngIf="isAdministrativo ? cargo.id !== 2 : true" [value]="cargo.id">
+                  <mat-option *ngIf="isAdministrativo ? cargo.id !== this.idDirectorRegional : true" [value]="cargo.id">
                     {{ cargo.nombre }}
                   </mat-option>
                 </ng-container>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('idCargo')?.errors?.['required']">El cargo es requerido.</mat-error>
-          </mat-form-field>
-
-            <mat-form-field appearance="fill" *ngIf="showEfectorAutoridad">
-              <mat-label>Efector del cargo</mat-label>
-              <mat-select formControlName="efectoresAutoridad">
-                <mat-option *ngFor="let efector of getEfectoresFiltrados()" [value]="efector.id">{{ efector.nombre }}</mat-option>
-              </mat-select>
             </mat-form-field>
-        </div>
+            </div>
+
+            <div class="form-row" *ngIf="showEfectorAutoridad">
+            <mat-radio-group formControlName="tipoEfectorCargo" (change)="onTipoEfectorCargoChange($event)" class="radio-group-with-line">
+              <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">Ministerio</mat-radio-button>
+              <mat-radio-button [value]="'HOSPITAL'" style="margin-right: 10px;">Hospital</mat-radio-button>
+              <mat-radio-button color="warn" [value]="'CAPS'">CAPS</mat-radio-button>
+              <mat-error *ngIf="legajoForm.get('tipoEfectorCargo')?.errors?.['required']">Efector requiere seleccionar: Ministerio, Hospital o Caps.</mat-error>
+            </mat-radio-group>
+            </div>
+
+            <mat-form-field *ngIf="tipoEfectorCargo === 'CAPS' && showEfectorAutoridad" appearance="fill">
+              <mat-label>Seleccionar Hospital para listar Caps</mat-label>
+              <mat-select formControlName="hospitalEfectorCargo" (selectionChange)="onHospitalEfectorCargoChange($event)">
+                <mat-option *ngFor="let hospital of getEfectoresFiltrados()" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('hospitalEfectorCargo')?.errors?.['required']">
+                El hospital es requerido para seleccionar un caps.
+              </mat-error>
+            </mat-form-field>
+
+            <div class="form-row" *ngIf="showEfectorAutoridad">
+            <mat-form-field appearance="fill">
+              <mat-label>Efector (lugar de trabajo)</mat-label>
+              <mat-select formControlName="efectoresAutoridad">
+                <mat-option *ngFor="let efector of efectorCargoOptions" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('efectoresAutoridad')?.errors?.['required']">El efector es requerido.</mat-error>
+            </mat-form-field>
+            </div>
 
 
         <div class="form-row">
@@ -74,6 +113,33 @@
               <mat-error *ngIf="legajoForm.get('idRegion')?.errors?.['required']">La región es requerida.</mat-error>
             </mat-form-field>
         </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>N° decreto</mat-label>
+              <input matInput formControlName="nroDecreto">
+              <mat-error *ngIf="legajoForm.get('nroDecreto')?.errors?.['required']">El n° de decreto es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('nroDecreto')?.errors?.['pattern']">El n° de decreto puede tener solo números (entre 1 y 5 digitos).</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>N° resolución</mat-label>
+              <input matInput formControlName="nroResolucion">
+              <mat-error *ngIf="legajoForm.get('nroResolucion')?.errors?.['required']">El n° de resolución es requerido.</mat-error>
+              <mat-error *ngIf="legajoForm.get('nroResolucion')?.errors?.['pattern']">El n° de resolución puede tener solo números (entre 1 y 5 digitos).</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" *ngIf="showSiEsAutoridad">
+              <mat-label>Fecha Resolución</mat-label>
+              <input matInput [matDatepicker]="pickerResolucion" formControlName="fechaResolucion" [max]="maxDate">
+              <mat-datepicker-toggle matSuffix [for]="pickerResolucion"></mat-datepicker-toggle>
+              <mat-datepicker #pickerResolucion></mat-datepicker>
+              <mat-error *ngIf="legajoForm.get('fechaResolucion')?.errors?.['required']">La fecha es requerida.</mat-error>
+              <mat-error *ngIf="legajoForm.get('fechaResolucion')?.hasError('required')">La fecha es requerida.</mat-error>
+            </mat-form-field>
+            </div>
 
           <div class="form-row">
             <mat-form-field appearance="fill">
@@ -93,6 +159,225 @@
             </mat-form-field>
           </div>
 
+          <div class="form-row">
+            <mat-form-field appearance="fill" *ngIf="showHabilitacionesGenerales">
+              <mat-label>Asignar efectores (para supervisión de autoridad)</mat-label>
+              <mat-select formControlName="habilitacionesGeneralesHospital" [(value)]="selectedHospitalsGeneral" multiple (selectionChange)="onHospitalesChangeGeneral($event)">
+                <mat-option *ngFor="let efector of hospitales" [value]="efector.id">{{ efector.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.errors?.['alMenosUnoRequerido']">
+  Debe seleccionar al menos una habilitación general (hospital o CAPS).
+</mat-error>
+            </mat-form-field>
+            </div>
+
+            <div class="form-row">
+            <mat-form-field *ngIf="showHabilitacionesGenerales" appearance="fill">
+              <mat-label>Seleccionar Hospital para listar Caps</mat-label>
+              <mat-select formControlName="hospitalHabilitacionesGenerales" multiple (selectionChange)="onHospitalHabilitacionesGeneralesChange($event)">
+                <mat-option *ngFor="let hospital of getEfectoresFiltrados()" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="legajoForm.get('hospitalHabilitacionesGenerales')?.errors?.['required']">
+                El hospital es requerido para seleccionar un caps.
+              </mat-error>
+            </mat-form-field>
+            </div>
+
+                  <div class="form-row">
+  <mat-form-field appearance="fill" *ngIf="showHabilitacionesGenerales">
+    <mat-label>Asignar efectores (para supervisión de autoridad)</mat-label>
+    <mat-select formControlName="habilitacionesGeneralesCaps" [(value)]="selectedCapsGeneral" multiple (selectionChange)="onCapsChangeGeneral($event)">
+      <mat-option *ngFor="let efector of habilitacionesGeneralesCaps" [value]="efector.id">{{ efector.nombre }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="legajoForm.errors?.['alMenosUnoRequerido']">
+  Debe seleccionar al menos una habilitación general (hospital o CAPS).
+</mat-error>
+<mat-error *ngIf="legajoForm.errors?.['capsRequeridoCuandoHayHospital']">
+  Debe asignar al menos un efector (CAPS) cuando se selecciona un hospital para listar CAPS.
+</mat-error>
+  </mat-form-field>
+</div>
+
+<div *ngIf="showSiEsAutoridad && legajoForm.get('esAutoridad')?.value" class="row">
+  <div class="col">
+    <h4 style="margin: 20px 0 15px 0; color: #333; font-weight: 500;">
+      📸 Imagen de Autoridad (Opcional)
+    </h4>
+    
+    <!-- 🔥 ÁREA DE DRAG & DROP -->
+    <div 
+      [class]="getDropAreaClasses()"
+      (dragenter)="onDragEnter($event)"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (mouseleave)="onMouseLeave($event)"
+      (click)="openFileSelector()"
+    >
+      <div class="drop-zone-content">
+        <!-- 🔥 ICONO DINÁMICO -->
+        <div class="icon-container">
+          <mat-icon 
+            class="drop-icon error-icon"
+            *ngIf="uploadError && !isDragOver"
+            style="color: #f44336;"
+          >
+            error
+          </mat-icon>
+          
+          <mat-icon 
+            class="drop-icon success-icon"
+            *ngIf="selectedFile && !uploadError && !isDragOver && !isUploading"
+            style="color: #4caf50;"
+          >
+            check_circle
+          </mat-icon>
+          
+          <mat-icon 
+            class="drop-icon uploading-icon"
+            *ngIf="isUploading && !isDragOver"
+            style="color: #ff9800;"
+          >
+            hourglass_empty
+          </mat-icon>
+          
+          <mat-icon 
+            class="drop-icon drag-icon"
+            *ngIf="isDragOver"
+            style="color: #1976d2;"
+          >
+            file_upload
+          </mat-icon>
+          
+          <mat-icon 
+            class="drop-icon normal-icon"
+            *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading"
+            style="color: #666;"
+          >
+            add_photo_alternate
+          </mat-icon>
+        </div>
+
+        <!-- 🔥 TEXTO DINÁMICO -->
+        <div class="drop-text">
+          <span *ngIf="isDragOver" style="color: #1976d2; font-weight: bold;">
+            📂 Suelta tu imagen aquí
+          </span>
+          <span *ngIf="isUploading && !isDragOver" style="color: #ff9800;">
+            🔄 Preparando imagen...
+          </span>
+          <span *ngIf="selectedFile && !uploadError && !isUploading && !isDragOver" style="color: #4caf50;">
+            ✓ Imagen seleccionada: {{ selectedFile.name }} - Se subirá al crear el legajo
+          </span>
+          <span *ngIf="uploadError && !isUploading && !isDragOver" style="color: #f44336;">
+            ⚠ {{ uploadError }}
+          </span>
+          <span *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading">
+            📸 Arrastra tu imagen aquí o haz clic para seleccionar
+          </span>
+        </div>
+
+        <div class="drop-subtext">
+          <span *ngIf="isDragOver">
+            Imágenes JPG, PNG, GIF
+          </span>
+          <span *ngIf="isUploading && !isDragOver">
+            Preparando imagen para subir...
+          </span>
+          <span *ngIf="!selectedFile && !isUploading && !isDragOver">
+            Formatos soportados: JPG, PNG, GIF (máx. 5MB)
+          </span>
+          <span *ngIf="selectedFile && !isUploading && !isDragOver">
+            {{ getFileInfo() }} - Se guardará al crear el legajo
+          </span>
+        </div>
+
+        <!-- 🔥 BOTONES -->
+        <div *ngIf="!isDragOver">
+          <button 
+            mat-raised-button 
+            class="browse-button"
+            type="button"
+            (click)="$event.stopPropagation(); openFileSelector()"
+            *ngIf="!selectedFile && !isUploading"
+            [disabled]="isUploading"
+          >
+            <mat-icon>folder_open</mat-icon>
+            Explorar archivos
+          </button>
+
+          <button 
+            mat-raised-button 
+            color="accent"
+            type="button"
+            (click)="$event.stopPropagation(); openFileSelector()"
+            *ngIf="selectedFile && !isUploading"
+            [disabled]="isUploading"
+            style="margin-top: 10px;"
+          >
+            <mat-icon>swap_horiz</mat-icon>
+            Cambiar imagen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 INPUT FILE OCULTO -->
+    <input 
+      type="file" 
+      id="archivo" 
+      accept="image/*" 
+      (change)="onFileSelected($event)" 
+      style="display: none;"
+    />
+
+    <!-- 🔥 INFORMACIÓN DEL ARCHIVO SELECCIONADO -->
+    <div class="file-info" *ngIf="selectedFile && !uploadError">
+      <mat-icon style="color: #4caf50;">description</mat-icon>
+      <span class="file-info-text">{{ getFileInfo() }}</span>
+      <button 
+        mat-icon-button 
+        class="remove-file-btn"
+        color="warn"
+        type="button"
+        (click)="removeSelectedFile()"
+        title="Remover archivo"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- 🔥 VISTA PREVIA DE LA IMAGEN -->
+    <div class="row" *ngIf="fileUrl">
+      <div class="col">
+        <div class="preview-container">
+          <h4 style="margin-bottom: 15px; color: #333;">Vista previa:</h4>
+          <img 
+            [src]="fileUrl" 
+            alt="Imagen de autoridad" 
+            class="preview-image"
+            (error)="onImageError($event)"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 INFORMACIÓN PARA LEGAJO GENERAL -->
+    <div *ngIf="!legajoForm.get('esAutoridad')?.value" class="info-card">
+      <mat-card style="margin-top: 15px; background-color: #f5f5f5; border-left: 4px solid #2196f3;">
+        <mat-card-content style="display: flex; align-items: center; gap: 10px;">
+          <mat-icon style="color: #2196f3;">info</mat-icon>
+          <span style="color: #1976d2; font-size: 14px;">
+            La carga de imágenes solo está disponible para legajos de autoridad.
+          </span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="!showSiEsAutoridad" class="general-section">
             <mat-radio-group formControlName="tipoUdo" (change)="onTipoUdoChange($event)" class="radio-group-with-line">
               <mat-radio-button color="primary" [value]="'MINISTERIO'" style="margin-right: 10px;">Ministerio</mat-radio-button>
               <mat-radio-button [value]="'HOSPITAL'" style="margin-right: 10px;">Hospital</mat-radio-button>
@@ -140,9 +425,10 @@
               </mat-select>
               <mat-error *ngIf="legajoForm.get('efectores')?.errors?.['required']">El efector es requerido.</mat-error>
             </mat-form-field>
+          </div>
     
         <div mat-dialog-actions class="action mt-4">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!legajoForm.valid" class="me-2">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!formularioValidoCompleto" class="me-2">
             Agregar Legajo
           </button>
 
