@@ -4,22 +4,16 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { DialogConfirmRmensualComponent } from '../dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { RegActivListDto } from 'src/app/dto/guardias/RegActivListDto';
-import { AsistencialListForRmensualDto } from 'src/app/dto/guardias/AsistencialListForRmensualDto';
 import { RegistroMensualListDto } from 'src/app/dto/RegistroMensualListDto';
 import { RegistroMensualService } from 'src/app/services/registroMensual.service';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
-import * as moment from 'moment';
-import 'moment/locale/es';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
-import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
-import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import { NovedadPersonalListDto } from 'src/app/dto/guardias/NovedadPersonalListDto';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
@@ -28,6 +22,9 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 import { DdjjService } from 'src/app/services/ddjj.service';
 import { DdjjDto } from 'src/app/dto/DdjjDto';
 import { ToastrService } from 'ngx-toastr';
+import * as moment from 'moment';
+import 'moment/locale/es';
+
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
@@ -83,7 +80,7 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   selectedMonthYear: string = '';
   mesesDisponibles: { value: string, label: string }[] = [];
 
-botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assignment_late' = 'assignment_return';
+  botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assignment_late' = 'assignment_return';
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
   ddjjYaExiste: boolean = false;
@@ -106,7 +103,6 @@ botonDDJJIcon: 'snooze' | 'assignment_return' | 'assignment_turned_in' | 'assign
     private paginatorIntl: MatPaginatorIntl,
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
-    private novedadPersonalService: NovedadPersonalService,
     private ddjjService: DdjjService,
     private toastr: ToastrService,
     private tokenService: TokenService,
@@ -457,20 +453,6 @@ verificarExistenciaDdjj(): void {
     );
   }
 
-  /*filterDataByDate(month: number, year: number): RegistroMensual[] {
-    // Filtra los datos según el mes y año proporcionados
-    return this.registrosMensuales.filter(registro => {
-      // Convertir el mes a formato numérico
-    const monthNumber = moment().month(registro.mes).month();
-    return monthNumber === month && registro.anio === year;
-    });
-  }*/
- 
-  /*loadData() {
-    this.registrosMensuales = this.filterDataByDate(this.selectedMonth, this.selectedYear);
-    this.updateTableDataSource();
-  }*/
-
   getMonthName(mes: number): string {
     const meses = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -488,18 +470,19 @@ verificarExistenciaDdjj(): void {
     return moment(columnId, 'YYYY_MM_DD').toDate();
   }
 
-  openDetail(asistencial: AsistencialListForRmensualDto, selectedMonth: number, selectedYear: number): void {
-    const dataToSend = {
-      asistencial,
-      month: selectedMonth,
-      year: selectedYear
-    };
+openDetail(registro: RegistroMensualListDto): void {
+  const dataToSend = {
+    asistencial: registro.asistencial,
+    registroActividad: registro.registroActividad,
+    novedades: registro.asistencial?.novedadesPersonales ?? [],
+  };
+  console.log('📤 Enviando al diálogo:', dataToSend);
 
-    this.dialogRef = this.dialog.open(RmensualCargoyagrupDetailComponent, {
-      width: '600px',
-      data: dataToSend
-    });
-  }
+  this.dialogRef = this.dialog.open(RmensualCargoyagrupDetailComponent, {
+    width: '600px',
+    data: dataToSend
+  });
+}
 
   openDdjjConfirm(): void {
     const dialogRef = this.dialog.open(DialogConfirmRmensualComponent, {
@@ -602,7 +585,7 @@ verificarExistenciaDdjj(): void {
     return day === 0 || day === 6;
   }
 
-isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
+isNovedad(date: Date, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
   const dateMoment = moment(date).startOf('day');
 
   const novedadFound = novedades.find(novedad => {
@@ -655,21 +638,6 @@ isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoL
     }
     return '';
   }
-
-/*formatDecimalHours(decimalHours: number): string {
-  if (!decimalHours || decimalHours <= 0) return '';
-  
-  let hours = Math.floor(decimalHours);
-  let minutes = Math.round((decimalHours - hours) * 60);
-
-  if (minutes === 60) {
-    hours += 1;
-    minutes = 0;
-  }
-
-  const paddedMinutes = minutes.toString().padStart(2, '0');
-  return `${hours}:${paddedMinutes} hs`;
-}*/
   
 calculateHoursForDate(registroActividades: RegActivListDto[], date: Date): SafeHtml {
   const registro = registroActividades.find((actividad) => {
@@ -738,58 +706,6 @@ getColor(tipoGuardiaId: number): string {
     return ''; // Color por defecto
   }
 
-  /*getPlainHourDifference(registroActividades: RegistroActividad[], date: Date): number {
-  const registro = registroActividades.find((actividad) => {
-    const ingresoDate = moment(actividad.fechaIngreso);
-    return ingresoDate.isSame(date, 'day');
-  });
-
-  if (!registro || !registro.fechaIngreso || !registro.fechaEgreso) return 0;
-
-  const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
-  const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
-
-  if (!hoursIn.isValid() || !hoursOut.isValid()) return 0;
-
-  const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-  return diffHours > 0 ? diffHours : 0;
-}
-
-calculateTotalHoursForRow(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
-  let totalHours = 0;
-  for (let day = 1; day <= moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth(); day++) {
-    const date = new Date(anioDeInteres, mesDeInteres, day);
-    totalHours += this.getPlainHourDifference(registroActividades, date);
-  }
-  return this.formatDecimalHours(totalHours);
-}
-
-calculateWeekdaysTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
-  let totalWeekdaysHours = 0;
-  const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = new Date(anioDeInteres, mesDeInteres, day);
-    if (date.getDay() !== 0 && date.getDay() !== 6) {
-      totalWeekdaysHours += this.getPlainHourDifference(registroActividades, date);
-    }
-  }
-  return this.formatDecimalHours(totalWeekdaysHours);
-}
-
-calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: number, anioDeInteres: number): string {
-  let totalWeekendsHours = 0;
-  const daysInMonth = moment({ year: anioDeInteres, month: mesDeInteres }).daysInMonth();
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = new Date(anioDeInteres, mesDeInteres, day);
-    if (date.getDay() === 0 || date.getDay() === 6) {
-      totalWeekendsHours += this.getPlainHourDifference(registroActividades, date);
-    }
-  }
-  return this.formatDecimalHours(totalWeekendsHours);
-}*/
-
 calculateHoursForExcel(registroActividades: RegActivListDto[], date: Date): number | string {
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
@@ -823,42 +739,6 @@ calculateHoursForExcel(registroActividades: RegActivListDto[], date: Date): numb
 
   return '';
 }
-
-/*/aqui decia actual en vez de activo, revisar si corresponde
-getLegajoActualId(asistencial: AsistencialListForRmensualDto): Legajo | undefined {
-  const legajoActual = asistencial.legajos.find(legajo => legajo.activo && !legajo.esAutoridad);
-  return legajoActual ? legajoActual : undefined;
-}
-
-getNovedades(asistencial: AsistencialListForRmensualDto): Observable<NovedadPersonal[]> {
-  const idAsistencial = asistencial.id!;
-  const mes = Number(this.selectedMonth);
-  const anio = this.selectedYear;
-
-  console.log('[getNovedades] Solicitando novedades para:', {
-    idAsistencial,
-    mes,
-    anio
-  });
-
-  const observable = this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(
-    idAsistencial,
-    mes,
-    anio
-  );
-
-  // Loguear lo que llega desde el backend
-  observable.subscribe({
-    next: (novedades) => {
-      console.log(`[getNovedades] Novedades recibidas para ${idAsistencial}:`, novedades);
-    },
-    error: (err) => {
-      console.error(`[getNovedades] Error para ${idAsistencial}:`, err);
-    }
-  });
-
-  return observable;
-}*/
 
 formatDate(startDate: Date, endDate: Date): string {
   const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
@@ -902,16 +782,17 @@ async exportarAExcel() {
   for (const registro of this.dataSource.data) {
     // Esperar las novedades
 
-    const exportData: Record<string, string | number> = {
-      Apellido: registro.asistencial.apellido,
-      Nombre: registro.asistencial.nombre,
-      Cuil: registro.asistencial.cuil,
-      Vinculos_Laborales: registro.asistencial.legajos[0].revista.tipoRevista.nombre || '-',
-      Categoria: registro.asistencial.legajos[0].revista.categoria.nombre + '(' + registro.asistencial.legajos[0].revista.adicional.nombre + ')' || '',
-      Novedades: registro.asistencial.novedadesPersonales?.length > 0
-    ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
-        .join('; ') : '-'
-    };
+const exportData: Record<string, string | number> = {
+  Apellido: registro.asistencial.apellido,
+  Nombre: registro.asistencial.nombre,
+  Cuil: registro.asistencial.cuil,
+  Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
+  Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
+             ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
+  Novedades: registro.asistencial.novedadesPersonales?.length > 0
+    ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`).join('; ')
+    : '-'
+};
 
     const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
     const totalLV = registro.totalHoras?.horasLav ?? 0;

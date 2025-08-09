@@ -145,7 +145,7 @@
       <ng-container matColumnDef="acciones" sticky>
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let registro" class="cell-actions">
-          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial, selectedMonth, selectedYear)">
+          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro)">
             <mat-icon color="primary">zoom_in</mat-icon>
           </button>
         </td>
