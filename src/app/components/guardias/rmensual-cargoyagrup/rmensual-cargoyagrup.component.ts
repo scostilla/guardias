@@ -227,7 +227,7 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1); // restar 1 porque Date usa base 0
-    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
 
     return today >= inicio && today <= fin;
   }
@@ -245,12 +245,12 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
 
     if (today >= inicio && today <= fin) {
-      const diasRestantes = 5 - today.getDate() + 1;
+      const diasRestantes = 15 - today.getDate() + 1;
 
-      if (diasRestantes >= 1 && diasRestantes <= 5) {
+      if (diasRestantes >= 1 && diasRestantes <= 15) {
         return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
       }
     }
@@ -289,7 +289,7 @@ verificarExistenciaDdjj(): void {
       }
 
       const inicio = new Date(anioEvaluado, mes - 1, 1);   // 1 del mes siguiente
-      const fin = new Date(anioEvaluado, mes - 1, 5, 23, 59, 59); // 5 inclusive
+      const fin = new Date(anioEvaluado, mes - 1, 15, 23, 59, 59); // 5 inclusive
 
       if (existe) {
         this.botonDDJJIcon = 'assignment_turned_in'; // ya existe
@@ -338,7 +338,7 @@ verificarExistenciaDdjj(): void {
     }
 
     // Solo mostrar mensaje si ya pasó el 5 del mes siguiente
-        const fin = new Date(anio, mes - 1, 5, 23, 59, 59); 
+        const fin = new Date(anio, mes - 1, 15, 23, 59, 59); 
 
     return (
       !this.verificandoDdjj &&
@@ -766,7 +766,7 @@ async exportarAExcel() {
   };
   worksheet.getRow(1).font = { bold: true };
 
-  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F'];
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F'];
   const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
     return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
   });
@@ -798,9 +798,9 @@ const exportData: Record<string, string | number> = {
     const totalLV = registro.totalHoras?.horasLav ?? 0;
     const totalSD = registro.totalHoras?.horasSdf ?? 0;
 
-    exportData['Total mes'] = totalMes;
-    exportData['Total L-V'] = totalLV;
-    exportData['Total S-D-F'] = totalSD;
+    exportData['Horas mes'] = totalMes;
+    exportData['Horas L-V'] = totalLV;
+    exportData['Horas S-D-F'] = totalSD;
 
     this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
       exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
@@ -850,7 +850,7 @@ async exportarAPDF() {
   const efectorNombre = this.efectorNombre;
 
   const headers = [
-    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F',
+    'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F',
     ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
 

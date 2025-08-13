@@ -6,15 +6,12 @@ import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confir
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { RegistroActividadesEditComponent } from 'src/app/components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Person } from 'src/app/models/Configuracion/Person';
-import { RegistroMensual } from 'src/app/models/RegistroMensual';
-import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
@@ -26,7 +23,6 @@ import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
 import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
 import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
@@ -35,7 +31,9 @@ import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronog
 import { CronogramaDefinitivoDto } from 'src/app/dto/Cronogramas/CronogramaDefinitivoDto';
 import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
 import { DialogHistorialObservacionesComponent } from '../dialog-historial-observaciones/dialog-historial-observaciones.component';
-import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
+import { DdjjListDto } from 'src/app/dto/DdjjListDto';
+import { RegistroMensualListDto } from 'src/app/dto/RegistroMensualListDto';
+import { RegActivListDto } from 'src/app/dto/guardias/RegActivListDto';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -70,7 +68,7 @@ const clases: ClasesNovedad = {
 
 export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
+  @ViewChild(MatTable) table!: MatTable<RegistroMensualListDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -87,14 +85,14 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       ...this.columnasFechas
     ];
   }
-  dataSource!: MatTableDataSource<RegistroMensual>;
+  dataSource!: MatTableDataSource<RegistroMensualListDto>;
   suscription!: Subscription;
-  ddjjSeleccionada?: Ddjj;
+  ddjjSeleccionada?: DdjjListDto;
   tablaListaParaMostrar = false;
 
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
-  registrosMensuales: RegistroMensual[] = [];
+  registrosMensuales: RegistroMensualListDto[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
@@ -124,6 +122,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   botonDphAuthIcon: string = 'assignment_ind';
   botonDphAuthDeshabilitado: boolean = true;
   mensajeDphAuth: string | null = null;
+  estadoDphAprobado = false
 
   puedeEditarCeldas: boolean = false;
   rangoPermitidoDDJJ: boolean = false;
@@ -156,7 +155,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     private hospitalService: HospitalService,
     private ministerioService: HospitalService,
     private efectorService: EfectorService,
-    private novedadPersonalService: NovedadPersonalService,
     private ddjjService: DdjjService,
     private observacionDdjjService: ObservacionDdjjService,
     private registroActividadService: RegistroActividadService,
@@ -184,7 +182,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       if (this.efectorId) {
         this.loadEfectorName();
           moment.locale('es');
-          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
           this.generarMesesDisponibles();
           this.updateDateAndLoadData();
           this.loadHospitalDetails();
@@ -305,7 +303,7 @@ verificarExistenciaDdjj(): void {
   }
 
   const inicio = new Date(anioEvaluado, mes - 1, 1);
-  const fin = new Date(anioEvaluado, mes - 1, 10, 23, 59, 59);
+  const fin = new Date(anioEvaluado, mes - 1, 15, 23, 59, 59);
 
   this.rangoPermitidoDDJJ = (today >= inicio && today <= fin);
   this.verificandoDdjj = false;
@@ -319,10 +317,10 @@ private calcularFechaLimiteEnvio(mes: number, anio: number): Date {
   } else {
     mes += 1;
   }
-  return new Date(anio, mes - 1, 10, 23, 59, 59);
+  return new Date(anio, mes - 1, 15, 23, 59, 59);
 }
 
-evaluarEstadoDdjj(ddjj: Ddjj): void {
+evaluarEstadoDdjj(ddjj: DdjjListDto): void {
   console.log('Evaluando DDJJ:', {
     id: ddjj.id,
     estadoDdjjDirector: ddjj.estadoDdjjDirector,
@@ -349,7 +347,7 @@ evaluarEstadoDdjj(ddjj: Ddjj): void {
   }
 
 if (enPosesion && estado === 'PENDIENTE') {
-  if (ddjj.director == null) {
+  if (ddjj.idDirector == null) {
     console.log('Caso: en posesión del director y pendiente (nunca revisada)');
     this.botonDirectorIcon = 'assignment_late';
     this.botonDirectorDeshabilitado = true;
@@ -387,7 +385,7 @@ if (enPosesion && estado === 'PENDIENTE') {
   this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estado === 'APROBADO';
 }
 
-evaluarEstadoDdjjDph(ddjj: Ddjj): void {
+evaluarEstadoDdjjDph(ddjj: DdjjListDto): void {
   const estadoDirector = ddjj.estadoDdjjDirector;
   const estadoDph = ddjj.estadoDdjjDirectorDPH;
   const enPosesionDph = ddjj.enPosesionDirectorDPH;
@@ -449,7 +447,7 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
   }*/
 
   if (enPosesionDph && estadoDph === 'PENDIENTE') {
-    if (ddjj.directorDPH == null) {
+    if (ddjj.idDirectorDPH == null) {
       console.log('DPH: En posesión DPH y pendiente');
       this.botonDphIcon = 'assignment_late';
       this.botonDphDeshabilitado = true;
@@ -486,7 +484,7 @@ evaluarEstadoDdjjDph(ddjj: Ddjj): void {
   this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estadoDph === 'APROBADO';
 }
 
-evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
+evaluarRespuestaDirectorDdjj(ddjj: DdjjListDto): void {
   const estado = ddjj.estadoDdjjDirector;
   const enPosesion = ddjj.enPosesionDirector;
 
@@ -534,9 +532,11 @@ evaluarRespuestaDirectorDdjj(ddjj: Ddjj): void {
   }
 }
 
-evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
+evaluarRespuestaDphDdjj(ddjj: DdjjListDto): void {
   const estado = ddjj.estadoDdjjDirectorDPH;
   const enPosesion = ddjj.enPosesionDirectorDPH;
+
+  this.estadoDphAprobado = (estado === 'APROBADO');
 
   const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
   const hoy = new Date();
@@ -600,12 +600,12 @@ evaluarRespuestaDphDdjj(ddjj: Ddjj): void {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 10, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 15, 23, 59, 59);
 
     if (today >= inicio && today <= fin) {
-      const diasRestantes = 10 - today.getDate() + 1;
+      const diasRestantes = 15 - today.getDate() + 1;
 
-      if (diasRestantes >= 1 && diasRestantes <= 10) {
+      if (diasRestantes >= 1 && diasRestantes <= 15) {
         return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
       }
     }
@@ -677,14 +677,14 @@ loadRegistrosMensuales(): void {
     return;
   }
 
-  const ddjj$: Observable<Ddjj[]> = this.selectedServicio == null
-    ? this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector)
-    : this.ddjjService.listDdjjCargoyAgrupAndServicio(anio, mes, idEfector, this.selectedServicio);
+  const ddjj$: Observable<DdjjListDto[]> = this.selectedServicio == null
+    ? this.ddjjService.listCargoyAgrup(anio, mes, idEfector)
+    : this.ddjjService.listCargoyAgrupAndServicio(anio, mes, idEfector, this.selectedServicio);
 
   this.tablaListaParaMostrar = false;
 
   ddjj$.subscribe({
-    next: (ddjjs: Ddjj[]) => {
+    next: (ddjjs: DdjjListDto[]) => {
       if (ddjjs.length > 0) {
         const primeraDdjj = ddjjs[0];
         this.ddjjSeleccionada = primeraDdjj;
@@ -703,7 +703,7 @@ loadRegistrosMensuales(): void {
 
       this.registrosMensuales = ddjjs.flatMap(ddjj =>
         (ddjj.registrosMensuales || []).map(reg => {
-          reg.ddjj = ddjj;
+          reg.idDdjj = ddjj.id;
           return reg;
         })
       );
@@ -900,8 +900,8 @@ enviarDdjj(destino: 'DIRECTOR' | 'DPH'): void {
 
   const estadoDto: EstadoDdjjDto = new EstadoDdjjDto(
     this.ddjjSeleccionada.id!,
-    destino === 'DIRECTOR' ? this.ddjjSeleccionada.director?.id : undefined,
-    destino === 'DPH' ? this.ddjjSeleccionada.directorDPH?.id : undefined,
+    destino === 'DIRECTOR' ? this.ddjjSeleccionada.idDirector : undefined,
+    destino === 'DPH' ? this.ddjjSeleccionada.idDirectorDPH : undefined,
     destino === 'DIRECTOR' ? 'PENDIENTE' : this.ddjjSeleccionada.estadoDdjjDirector!,
     destino === 'DPH' ? 'PENDIENTE' : this.ddjjSeleccionada.estadoDdjjDirectorDPH!,
     destino === 'DIRECTOR',
@@ -1080,8 +1080,8 @@ openDdjjRespuesta(destino: 'DIRECTOR_AUTH' | 'DPH_AUTH'): void {
 
     const estadoDto = new EstadoDdjjDto(
       ddjj.id!,
-      destino === 'DIRECTOR_AUTH' ? ddjj.director?.id ?? user : undefined,
-      destino === 'DPH_AUTH' ? ddjj.directorDPH?.id ?? user : undefined,
+      destino === 'DIRECTOR_AUTH' ? ddjj.idDirector ?? user : undefined,
+      destino === 'DPH_AUTH' ? ddjj.idDirectorDPH ?? user : undefined,
       destino === 'DIRECTOR_AUTH' ? result.estado : ddjj.estadoDdjjDirector!,
       destino === 'DIRECTOR_AUTH' && aprobado ? 'PENDIENTE' :
       destino === 'DPH_AUTH' ? result.estado : ddjj.estadoDdjjDirectorDPH!,
@@ -1367,7 +1367,7 @@ calculateWeekendsTotal(registroActividades: RegistroActividad[], mesDeInteres: n
   return this.formatDecimalHours(totalWeekendsHours);
 }*/
 
-calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): number | string {
+calculateHoursForExcel(registroActividades: RegActivListDto[], date: Date): number | string {
   const registro = registroActividades.find((actividad) => {
     const ingresoDate = moment(actividad.fechaIngreso);
     return ingresoDate.isSame(date, 'day');
@@ -1401,42 +1401,6 @@ calculateHoursForExcel(registroActividades: RegistroActividad[], date: Date): nu
   return '';
 }
 
-//aqui decia actual en vez de activo, revisar si corresponde
-getLegajoActualId(asistencial: Person): Legajo | undefined {
-  const legajoActual = asistencial.legajos.find(legajo => legajo.activo && !legajo.esAutoridad);
-  return legajoActual ? legajoActual : undefined;
-}
-
-getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
-  const idAsistencial = asistencial.id!;
-  const mes = Number(this.selectedMonth);
-  const anio = this.selectedYear;
-
-  console.log('[getNovedades] Solicitando novedades para:', {
-    idAsistencial,
-    mes,
-    anio
-  });
-
-  const observable = this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(
-    idAsistencial,
-    mes,
-    anio
-  );
-
-  // Loguear lo que llega desde el backend
-  observable.subscribe({
-    next: (novedades) => {
-      console.log(`[getNovedades] Novedades recibidas para ${idAsistencial}:`, novedades);
-    },
-    error: (err) => {
-      console.error(`[getNovedades] Error para ${idAsistencial}:`, err);
-    }
-  });
-
-  return observable;
-}
-
 formatDate(startDate: Date, endDate: Date): string {
   const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
   const formattedEndDate = moment(endDate).format('DD/MM/YYYY');
@@ -1456,98 +1420,95 @@ async exportarAExcel() {
   const anioSeleccionado = this.selectedYear;
   const efectorNombre = this.efectorNombre;
 
-  // Título principal
   worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: 'FFADD8E6' } // Azul claro
+    fgColor: { argb: 'FFADD8E6' }
   };
   worksheet.getRow(1).font = { bold: true };
 
-  // Encabezados de columnas
-  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Total mes', 'Total L-V', 'Total S-D-F', 'montoTotal', 'montoLav', 'montoSdf'];
-  const formattedColumnTitles = this.displayedColumns.slice(9).map(columnTitle => {
+  const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F', 'Monto total', 'Monto L-V', 'Monto S-D-F'];
+  const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
     return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
   });
   const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
-  
   worksheet.addRow(combinedHeaders).fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: 'FFFFFF00' } // Amarillo
+    fgColor: { argb: 'FFFFFF00' }
   };
   worksheet.getRow(2).font = { bold: true };
 
-  // Índices de columnas de totales (base 1)
-  const totalMesIndex = combinedHeaders.indexOf('Total mes') + 1;
-  const totalLvIndex = combinedHeaders.indexOf('Total L-V') + 1;
-  const totalSdfIndex = combinedHeaders.indexOf('Total S-D-F') + 1;
-
-  // Datos
+  // Recorrer con for...of para usar await
   for (const registro of this.dataSource.data) {
-    const novedades: NovedadPersonal[] = await firstValueFrom(
-      this.getNovedades(registro.asistencial)
-    );
+    // Esperar las novedades
 
-    const exportData: any = {
-      Apellido: registro.asistencial.apellido,
-      Nombre: registro.asistencial.nombre,
-      Cuil: registro.asistencial.cuil,
-      Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
-      Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || '',
-      Novedades: novedades.length > 0
-        ? novedades.map(novedad => `${novedad.tipoLicencia.nombre} (${this.formatDate(novedad.fechaInicio, novedad.fechaFinal)})`).join('; ')
-        : '-',
-      'Total mes': (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0),
-      'Total L-V': registro.totalHoras?.horasLav ?? 0,
-      'Total S-D-F': registro.totalHoras?.horasSdf ?? 0,
-      'montoTotal': (registro.totalHoras?.montoTotal ?? 0),
-      'montoLav': registro.totalHoras?.montoLav ?? 0,
-      'montoSdf': registro.totalHoras?.montoSdf ?? 0
-    };
+const exportData: Record<string, string | number> = {
+  Apellido: registro.asistencial.apellido,
+  Nombre: registro.asistencial.nombre,
+  Cuil: registro.asistencial.cuil,
+  Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
+  Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
+             ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
+  Novedades: registro.asistencial.novedadesPersonales?.length > 0
+    ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`).join('; ')
+    : '-'
+};
 
-    // Horas por día
-    this.displayedColumns.slice(9).forEach((fechaColumna: string, index: number) => {
-      exportData[combinedHeaders[dataColumnHeaders.length + index]] = 
-        this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+    const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
+    const totalLV = registro.totalHoras?.horasLav ?? 0;
+    const totalSD = registro.totalHoras?.horasSdf ?? 0;
+    const montoTotal = (registro.totalHoras?.montoTotal ?? 0);
+    const montoLV = registro.totalHoras?.montoLav ?? 0;
+    const montoSD = registro.totalHoras?.montoSdf ?? 0
+
+
+    exportData['Horas mes'] = totalMes;
+    exportData['Horas L-V'] = totalLV;
+    exportData['Horas S-D-F'] = totalSD;
+    exportData['Monto total'] = montoTotal;
+    exportData['Monto L-V'] = montoLV;
+    exportData['Monto S-D-F'] = montoSD;
+    
+
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
     });
 
     worksheet.addRow(Object.values(exportData));
     const row = worksheet.lastRow!;
 
-    // Colorear totales (verde claro)
-    [totalMesIndex, totalLvIndex, totalSdfIndex].forEach(colIndex => {
-      row.getCell(colIndex).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FFE2EFDA' } // Verde claro
-      };
-    });
-
-    // Colorear feriados (rojo) y fines de semana (gris)
-    this.displayedColumns.slice(9).forEach((fechaColumna: string, index: number) => {
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
       const date = this.getFechaFromColumnId(fechaColumna);
       const isHoliday = this.isHoliday(date).isHoliday;
-      const isWeekend = date.getDay() === 0 || date.getDay() === 6; // 0=domingo, 6=sábado
-      const cellIndex = dataColumnHeaders.length + index + 1;
 
       if (isHoliday) {
-        row.getCell(cellIndex).fill = {
+        const cellIndex = dataColumnHeaders.length + index + 1;
+        const cell = row.getCell(cellIndex);
+        cell.fill = {
           type: 'pattern',
           pattern: 'solid',
-          fgColor: { argb: 'FFD4C2CD' } // Rojo claro
+          fgColor: { argb: 'd4c2cd' }
         };
-      } else if (isWeekend) {
-        row.getCell(cellIndex).fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFF0F0F0' } // Gris claro
-        };
+        cell.font = { color: { argb: '000000' } };
       }
     });
+    // color columnas de monto
+    ['Total monto', 'Monto L-V', 'Monto S-D-F'].forEach(headerName => {
+      const colIndex = combinedHeaders.indexOf(headerName) + 1; // +1 porque ExcelJS usa 1-based index
+      if (colIndex > 0) {
+        const cell = row.getCell(colIndex);
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'E2EFDA' }
+        };
+      }
+    });  
   }
 
-  // Bordes para todas las celdas
+  const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_sinAprobacion.xlsx`;
+
   worksheet.eachRow((row, rowNumber) => {
     row.eachCell((cell, colNumber) => {
       cell.border = {
@@ -1559,13 +1520,10 @@ async exportarAExcel() {
     });
   });
 
-  // Exportar
-  const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_sinAprobacion.xlsx`;
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   saveAs(blob, fileName);
 }
-
 
 async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaBase64: string = '', autoridadDto?: AutoridadImagenDto, nombreArchivo: string = 'exportacion.pdf') {
   const mesSeleccionado = this.getMonthName(this.selectedMonth);
@@ -1575,7 +1533,7 @@ async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaB
   // Encabezados
   const headers = [
     'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 
-    'Total mes', 'Total L-V', 'Total S-D-F',
+    'Horas mes', 'Horas L-V', 'Horas S-D-F',
     ...this.displayedColumns.slice(6).map(columnTitle => 
       moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
   ];
@@ -1584,26 +1542,22 @@ async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaB
 
   // Datos
   for (const registro of this.dataSource.data) {
-    const novedades: NovedadPersonal[] = await firstValueFrom(
-      this.getNovedades(registro.asistencial)
-    );
 
     const row = [];
+
     row.push(registro.asistencial.apellido);
     row.push(registro.asistencial.nombre);
     row.push(registro.asistencial.cuil);
-    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
-    row.push(
-      this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + 
-      '(' + this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre + ')' || ''
-    );
+    row.push(registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-');
+    row.push(registro.asistencial.legajos?.[0]?.revista
+    ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`: '-');
 
-    // Novedades
-    row.push(
-      novedades.length > 0
-        ? novedades.map(n => `${n.tipoLicencia.nombre} (${this.formatDate(n.fechaInicio, n.fechaFinal)})`).join('; ')
-        : '-'
-    );
+    const novedadesString = registro.asistencial.novedadesPersonales?.length > 0
+      ? registro.asistencial.novedadesPersonales
+          .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+          .join('; ')
+      : '-';
+    row.push(novedadesString);
 
     // Totales (con color verde claro)
     row.push({
@@ -1764,7 +1718,7 @@ async onExportarConHospital() {
     const selloBase64 = await this.getBase64FromUrl(selloUrl);
 
     // 2. Obtener firma de autoridad
-    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.director!.id!).toPromise();
+    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.idDirector).toPromise();
 
     if (!autoridadDto) {
       console.warn('No se encontró firma de autoridad.');
@@ -1786,8 +1740,8 @@ async onExportarConDPH() {
 
   try {
     // 1. Obtener sello del hospital
-    const imagenesHospital = await this.ministerioService.listImages(this.efectorId!).toPromise();
-    const selloUrl = imagenesHospital?.currentImage ? '/assets' + imagenesHospital.currentImage : null;
+    const imagenesMinisterio = await this.ministerioService.listImages(this.efectorId!).toPromise();
+    const selloUrl = imagenesMinisterio?.currentImage ? '/assets' + imagenesMinisterio.currentImage : null;
 
     if (!selloUrl) {
       console.warn('No se encontró la imagen actual del sello del hospital.');
@@ -1796,13 +1750,14 @@ async onExportarConDPH() {
     const selloBase64 = await this.getBase64FromUrl(selloUrl);
 
     // 2. Obtener firma de autoridad
-    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.director!.id!).toPromise();
+    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.idDirectorDPH).toPromise();
 
     if (!autoridadDto) {
       console.warn('No se encontró firma de autoridad.');
       return;
     }
-    const firmaBase64 = await this.getBase64FromUrl(autoridadDto.url);
+    const firmaUrl = autoridadDto?.url ? '/assets' + autoridadDto.url : undefined;
+    const firmaBase64 = firmaUrl ? await this.getBase64FromUrl(firmaUrl) : undefined;
     // 3. Llamar a exportarAPDF con texto, imágenes y datos
     await this.exportarAPDF(textoAdicional, selloBase64, firmaBase64, autoridadDto, nombreArchivo);
   } catch (error) {
@@ -1836,7 +1791,7 @@ accentFilter(input: string): string {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+    this.dataSource.filterPredicate = (data: RegistroMensualListDto, filter: string) => {
       const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
       const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
 
