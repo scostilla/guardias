@@ -9,6 +9,7 @@ export class RegistroMensualListDto {
     asistencial: AsistencialListForRmensualDto;
     registroActividad: RegActivListDto[];
     totalHoras: SumaHorasListDto;
+    idDdjj: number;
 
     constructor (
         id: number,
@@ -16,7 +17,8 @@ export class RegistroMensualListDto {
         anio: number,
         asistencial: AsistencialListForRmensualDto,
         registroActividad: RegActivListDto[],
-        totalHoras: SumaHorasListDto
+        totalHoras: SumaHorasListDto,
+        idDdjj: number,
     ){
         this.id = id;
         this.mes = mes;
@@ -24,5 +26,6 @@ export class RegistroMensualListDto {
         this.asistencial = asistencial;
         this.registroActividad = registroActividad;
         this.totalHoras = totalHoras;
+        this.idDdjj = idDdjj;
     }
 }

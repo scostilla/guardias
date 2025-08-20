@@ -1,29 +1,40 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { concat, of } from 'rxjs';
+import { switchMap, reduce, map, catchError } from 'rxjs/operators';
 import { RmensualCargoyagrupDetailComponent } from 'src/app/components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { DialogConfirmDdjjComponent } from 'src/app/components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { RegistroActividadesEditComponent } from 'src/app/components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Person } from 'src/app/models/Configuracion/Person';
 import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { NovedadPersonalService } from 'src/app/services/personal/novedadPersonal.service';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
-import { NovedadPersonal } from 'src/app/models/guardias/NovedadPersonal';
+import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
+import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
+import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
+import { ObservacionDdjjUltimoDto } from 'src/app/dto/ObservacionDdjjUltimoDto';
+import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronogramaDefinitivo.service';
+import { CronogramaDefinitivoDto } from 'src/app/dto/Cronogramas/CronogramaDefinitivoDto';
+import { CronogramaDefinitivo } from 'src/app/models/Cronogramas/CronogramaDefinitivo';
 import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
+import { DialogHistorialObservacionesComponent } from 'src/app/components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
@@ -35,23 +46,6 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
-import { CronogramaDefinitivo } from 'src/app/models/Cronogramas/CronogramaDefinitivo';
-import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronogramaDefinitivo.service';
-
-
-interface ClasesNovedad {
-  [key: string]: string;
-}
-
-const clases: ClasesNovedad = {
-  'compensatorio': 'novedad-personal-compensatorio',
-  'licencia anual ordinaria': 'novedad-personal-lao',
-  'licencia por maternidad': 'novedad-personal-maternidad',
-  'parte por enfermedad': 'novedad-personal-parte-enfermo',
-  'parte por cuidado de familiar enfermo': 'novedad-personal-familiar-enfermo',
-  'falta sin aviso': 'novedad-personal-falta-sin-aviso',
-  'duelo': 'novedad-personal-duelo'
-};
 
 @Component({
   selector: 'app-cronograma-def',
@@ -65,20 +59,16 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  mostrarMontos: boolean = false;
-
-  columnasBase: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
-  columnasMontos: string[] = ['montoTotal', 'montoLav', 'montoSdf'];
+  columnasBase: string[] = ['tipoGuardia', 'apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
   columnasFechas: string[] = []; // esto reemplaza el uso directo de `displayedColumns`
 
   get displayedColumns(): string[] {
     return [
       ...this.columnasBase,
-      ...(this.mostrarMontos ? this.columnasMontos : []),
       ...this.columnasFechas
     ];
   }
-  dataSource!: MatTableDataSource<CronogramaDefinitivo | RegistroMensual>;
+  dataSource!: MatTableDataSource<RegistroMensual>;
   suscription!: Subscription;
   ddjjSeleccionada?: Ddjj;
   tablaListaParaMostrar = false;
@@ -89,6 +79,7 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
+  registrosAgrupadosPorTipoGuardia: { tipoGuardia: string; registros: RegistroMensual[] }[] = [];
 
   selectedServicio?: number | null = null; 
   selectedMonth: number = moment().month() + 1;
@@ -97,6 +88,32 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
   years: number[] = [2023, 2024, 2025];
   selectedMonthYear: string = '';
   mesesDisponibles: { value: string, label: string }[] = [];
+
+  botonDirectorIcon: 'assignment_return' | 'assignment_late' | 'block' | 'assignment_turned_in' = 'assignment_return';
+  evaluacionDdjjCargada = false;
+  botonDirectorDeshabilitado: boolean = false;
+  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
+
+  botonDphIcon: 'assignment_return' | 'assignment_late' | 'assignment_turned_in' | 'block' | 'alarm_add' | 'snooze' = 'assignment_return';
+  botonDphDeshabilitado: boolean = false;
+  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | 'enviar_dph' | 'ddjj_incompletas' | null = null;
+  evaluacionDdjjDphCargada: boolean = false;
+
+  botonDirectorAuthIcon: string = 'assignment_ind';
+  botonDirectorAuthDeshabilitado: boolean = true;
+  mensajeDirectorAuth: string | null = null;
+
+  botonDphAuthIcon: string = 'assignment_ind';
+  botonDphAuthDeshabilitado: boolean = true;
+  mensajeDphAuth: string | null = null;
+
+  puedeEditarCeldas: boolean = false;
+  rangoPermitidoDDJJ: boolean = false;
+
+  ultimaObservacionDirector?: ObservacionDdjjUltimoDto;
+  ultimaObservacionDph?: ObservacionDdjjUltimoDto;
+  mostrarBotonHistorialDirector = false;
+  mostrarBotonHistorialDph = false;
 
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
@@ -121,8 +138,9 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
     private hospitalService: HospitalService,
     private ministerioService: HospitalService,
     private efectorService: EfectorService,
-    private novedadPersonalService: NovedadPersonalService,
     private ddjjService: DdjjService,
+    private observacionDdjjService: ObservacionDdjjService,
+    private registroActividadService: RegistroActividadService,
     private cronogramaDefinitivoService: CronogramaDefinitivoService,
     private toastr: ToastrService,
     private tokenService: TokenService,
@@ -147,7 +165,7 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
       if (this.efectorId) {
         this.loadEfectorName();
           moment.locale('es');
-          //this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
           this.generarMesesDisponibles();
           this.updateDateAndLoadData();
           this.loadHospitalDetails();
@@ -253,7 +271,7 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
     );
   }
 
-convertirMesANombre(numeroMes: number): string {
+  convertirMesANombre(numeroMes: number): string {
     const meses = [
       'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
       'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
@@ -279,6 +297,56 @@ generarDiasDelMes(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+/*
+  loadRegistrosMensuales(): void {
+  const anio = this.selectedYear;
+  const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+  const idEfector = this.efectorId;
+
+  if (!idEfector) {
+    console.error("El ID del hospital no puede ser null");
+    return;
+  }
+
+  // Usamos directamente el servicio de DDJJ sin filtro por servicio
+  const ddjj$: Observable<Ddjj[]> = this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector);
+
+  this.tablaListaParaMostrar = false;
+
+  ddjj$.subscribe({
+    next: (ddjjs: Ddjj[]) => {
+      if (ddjjs.length > 0) {
+        const primeraDdjj = ddjjs[0];
+        this.ddjjSeleccionada = primeraDdjj;
+
+      } else {
+        this.ddjjSeleccionada = undefined;
+      }
+
+      // Procesamos los registros manteniendo la lógica original
+      this.registrosMensuales = ddjjs.flatMap(ddjj =>
+        (ddjj.registrosMensuales || []).map(reg => {
+          reg.ddjj = ddjj;
+          return reg;
+        })
+      );
+
+      // Ordenamos por tipo de guardia para la agrupación visual
+      this.registrosMensuales.sort((a, b) => 
+        (a.ddjj?.tipoGuardia?.nombre || '').localeCompare(b.ddjj?.tipoGuardia?.nombre || '')
+      );
+
+      this.updateTableDataSource();
+      this.tablaListaParaMostrar = true;
+    },
+    error: (err: any) => {
+      console.error('Error cargando DDJJ:', err);
+      this.registrosMensuales = [];
+      this.updateTableDataSource();
+      this.tablaListaParaMostrar = true;
+    }
+  });
+}*/
 
 loadRegistrosMensuales(): void {
   const anio = this.selectedYear;
@@ -292,43 +360,178 @@ loadRegistrosMensuales(): void {
 
   this.tablaListaParaMostrar = false;
 
+  // 1. Obtenemos primero el cronograma definitivo
   this.cronogramaDefinitivoService.listByAnioMesEfector(anio, mes, idEfector).subscribe({
     next: (cronogramas: CronogramaDefinitivo[]) => {
-      // Aplanamos la estructura para mostrar en la tabla
-      const tableData: (CronogramaDefinitivo | RegistroMensual)[] = [];
-      
-      cronogramas.forEach(cronograma => {
-        // Agregamos el tipo de guardia como fila
-        tableData.push(cronograma);
-        
-        // Agregamos las DDJJ y sus registros
-        cronograma.ddjjs?.forEach(ddjj => {
-          if (ddjj.registrosMensuales) {
-            ddjj.registrosMensuales.forEach(reg => {
-              reg.ddjj = ddjj;
-              tableData.push(reg);
-            });
-          }
-        });
+      // 2. Extraemos todas las DDJJs del cronograma
+      const ddjjsCronograma = cronogramas.flatMap(c => c.ddjjs || []);
+
+      // 3. Determinamos qué tipos de guardia necesitamos cargar
+      const tiposNecesarios = new Set<number>();
+      ddjjsCronograma.forEach(ddjj => {
+        if (ddjj.tipoGuardia?.id) {
+          tiposNecesarios.add(ddjj.tipoGuardia.id);
+        }
       });
 
-      this.dataSource.data = tableData;
-      this.tablaListaParaMostrar = true;
+      // 4. Si no hay DDJJs en el cronograma, cargamos todos los tipos
+      if (tiposNecesarios.size === 0) {
+        tiposNecesarios.add(1); // CARGO
+        tiposNecesarios.add(3); // EXTRA
+        tiposNecesarios.add(4); // CF
+      }
+
+      // 5. Cargamos las DDJJs según los tipos necesarios
+      this.cargarDdjjsPorTipo(Array.from(tiposNecesarios), anio, mes, idEfector, ddjjsCronograma);
     },
-    error: (err: any) => {
-      console.error('Error cargando cronogramas:', err);
-      this.dataSource.data = [];
-      this.tablaListaParaMostrar = true;
+    error: (err) => {
+      console.error('Error cargando cronograma:', err);
+      // Fallback: cargar todos los tipos directamente
+      this.cargarTodosLosTipos(anio, mes, idEfector);
     }
   });
 }
 
-// Agregar método para determinar si una fila es un tipo de guardia
-isTipoGuardiaRow(item: CronogramaDefinitivo | RegistroMensual): item is CronogramaDefinitivo {
-  return (item as CronogramaDefinitivo).ddjjs !== undefined;
+private cargarDdjjsPorTipo(tiposIds: number[], anio: number, mes: string, idEfector: number, ddjjsCronograma: Ddjj[]): void {
+  const cargas: Observable<Ddjj[]>[] = [];
+
+  // Configuramos las cargas según los tipos necesarios
+  tiposIds.forEach(tipoId => {
+    switch(tipoId) {
+      case 1: // CARGO
+        cargas.push(this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector));
+        break;
+      case 3: // EXTRA
+        cargas.push(this.ddjjService.listDdjjExtra(anio, mes, idEfector));
+        break;
+      case 4: // CF
+        cargas.push(this.ddjjService.listDdjjCf(anio, mes, idEfector));
+        break;
+    }
+  });
+
+  // Ejecutamos las cargas en secuencia
+  this.ejecutarCargasSecuenciales(cargas, ddjjsCronograma);
 }
 
-generarMesesDisponibles(): void {
+private ejecutarCargasSecuenciales(cargas: Observable<Ddjj[]>[], ddjjsCronograma: Ddjj[]): void {
+  if (cargas.length === 0) {
+    this.procesarDdjjsCompletas([]);
+    return;
+  }
+
+  const resultados: Ddjj[] = [];
+  let indice = 0;
+
+  const ejecutarSiguiente = () => {
+    if (indice < cargas.length) {
+      cargas[indice].subscribe({
+        next: (ddjjs) => {
+          resultados.push(...ddjjs);
+          indice++;
+          ejecutarSiguiente();
+        },
+        error: (err) => {
+          console.error(`Error cargando tipo ${indice}:`, err);
+          indice++;
+          ejecutarSiguiente(); // Continuar con el siguiente aunque falle
+        }
+      });
+    } else {
+      // Filtramos solo las DDJJs que están en el cronograma (si hay)
+      const ddjjsFiltradas = ddjjsCronograma.length > 0 
+        ? resultados.filter(ddjj => ddjjsCronograma.some(d => d.id === ddjj.id))
+        : resultados;
+      
+      this.procesarDdjjsCompletas(ddjjsFiltradas);
+    }
+  };
+
+  ejecutarSiguiente();
+}
+
+private cargarTodosLosTipos(anio: number, mes: string, idEfector: number): void {
+  // Cargamos todos los tipos como fallback
+  const cargas = [
+    this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector),
+    this.ddjjService.listDdjjExtra(anio, mes, idEfector),
+    this.ddjjService.listDdjjCf(anio, mes, idEfector)
+  ];
+
+  this.ejecutarCargasSecuenciales(cargas, []);
+}
+
+private procesarDdjjsCompletas(ddjjs: Ddjj[]): void {
+  if (ddjjs.length > 0) {
+    const primeraDdjj = ddjjs[0];
+    this.ddjjSeleccionada = primeraDdjj;
+    // Aquí puedes agregar otras evaluaciones de estado si son necesarias
+  } else {
+    this.ddjjSeleccionada = undefined;
+  }
+
+  // Procesamiento idéntico a tu versión actual
+  this.registrosMensuales = ddjjs.flatMap(ddjj =>
+    (ddjj.registrosMensuales || []).map(reg => {
+      reg.ddjj = ddjj;
+      return reg;
+    })
+  );
+
+  // Ordenamiento por tipo de guardia
+  this.registrosMensuales.sort((a, b) => 
+    (a.ddjj?.tipoGuardia?.nombre || '').localeCompare(b.ddjj?.tipoGuardia?.nombre || '')
+  );
+
+  this.updateTableDataSource();
+  this.tablaListaParaMostrar = true;
+}
+// Métodos para manejar la agrupación por tipo de guardia
+shouldShowTipoGuardia(registro: RegistroMensual, index: number): boolean {
+  if (index === 0) return true;
+  
+  const prevRegistro = this.registrosMensuales[index - 1];
+  return registro.ddjj?.tipoGuardia?.id !== prevRegistro.ddjj?.tipoGuardia?.id;
+}
+
+getRowspanForTipoGuardia(registro: RegistroMensual, index: number): number {
+  if (!this.shouldShowTipoGuardia(registro, index)) return 1;
+  
+  const tipoGuardiaId = registro.ddjj?.tipoGuardia?.id;
+  let count = 1;
+  
+  for (let i = index + 1; i < this.registrosMensuales.length; i++) {
+    if (this.registrosMensuales[i].ddjj?.tipoGuardia?.id === tipoGuardiaId) {
+      count++;
+    } else {
+      break;
+    }
+  }
+  
+  return count;
+}
+
+getNombreTipoGuardia(tipoGuardia: TipoGuardia | null | undefined): string {
+  if (!tipoGuardia) return 'Sin tipo';
+  
+  // Si es CARGO (id 1), agregamos "Y AGRUPACION"
+  if (tipoGuardia.id === 1) {
+    return `${tipoGuardia.nombre} Y AGRUPACION`;
+  }
+  
+  return tipoGuardia.nombre;
+}
+
+getColorTipoGuardia(tipoGuardiaId: number | undefined): string {
+  switch(tipoGuardiaId) {
+    case 1: return '#91A8DA';  // CARGO
+    case 3: return '#fcc932';  // EXTRA
+    case 4: return '#A9D08F';  // CONTRAFACTURA
+    default: return '#f5f5f5'; // Color por defecto
+  }
+}
+
+  generarMesesDisponibles(): void {
     const fechaActual = moment(); // hoy
     const mesesPasados = [];
 
@@ -362,7 +565,7 @@ generarMesesDisponibles(): void {
 
   updateDateAndLoadData(): void {
     this.ddjjSeleccionada = undefined;
-
+    this.puedeEditarCeldas = false;
 
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
@@ -374,7 +577,6 @@ generarMesesDisponibles(): void {
       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
 
-    // Si recibe 1 a 12, ajustamos para índice 0-11
     if (mes >= 1 && mes <= 12) {
       return meses[mes - 1];
     }
@@ -398,18 +600,6 @@ generarMesesDisponibles(): void {
     });
   }
 
-  openEditDialog(id: number): void {
-  const dialogRef = this.dialog.open(RegistroActividadesEditComponent, {
-    width: '600px',
-    data: { id }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result === 'updated') {
-      this.loadRegistrosMensuales();
-    }
-  });
-}
 
 getRegistroIdForFecha(actividades: RegistroActividad[], fecha: Date): number | null {
   const fechaBuscada = this.formatDateOnly(fecha);
@@ -443,35 +633,7 @@ private formatDateOnly(date: Date): string {
     return day === 0 || day === 6;
   }
 
-isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoLicencia: string } {
-  const dateMoment = moment(date).startOf('day');
-
-  const novedadFound = novedades.find(novedad => {
-    const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-    const finMoment = moment(novedad.fechaFinal).startOf('day');
-    
-    const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-        
-    return isBetween;
-  });
-
-  return {
-    isNovedad: !!novedadFound,
-    tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
-  };
-}
-  
-  getNovedadCssClass(tipoLicencia: string): string {
-    const tipo = tipoLicencia.toLowerCase();
-    return clases[tipo] || 'novedad-personal-otros';
-  }
-
-  isNovedadClass(date: Date, registro: any): string {
-    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-
-    if (isNovedad) {
-      return this.getNovedadCssClass(tipoLicencia);
-    }
+  isDetalleClass(date: Date): string {
 
     if (this.isHoliday(date).isHoliday) {
       return 'holiday';
@@ -485,14 +647,9 @@ isNovedad(date: Date, novedades: NovedadPersonal[]): { isNovedad: boolean, tipoL
   }
 
   calculateTooltip(date: Date, registro: any): string {
-    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-    if (novedad.isNovedad) {
-      return novedad.tipoLicencia;
-    } else {
-      const holiday = this.isHoliday(date);
-      if (holiday.isHoliday) {
-        return holiday.motivo;
-      }
+    const holiday = this.isHoliday(date);
+    if (holiday.isHoliday) {
+      return holiday.motivo;
     }
     return '';
   }
@@ -606,36 +763,6 @@ getLegajoActualId(asistencial: Person): Legajo | undefined {
   return legajoActual ? legajoActual : undefined;
 }
 
-getNovedades(asistencial: Person): Observable<NovedadPersonal[]> {
-  const idAsistencial = asistencial.id!;
-  const mes = Number(this.selectedMonth);
-  const anio = this.selectedYear;
-
-  console.log('[getNovedades] Solicitando novedades para:', {
-    idAsistencial,
-    mes,
-    anio
-  });
-
-  const observable = this.novedadPersonalService.getNovedadesActivasPorPersonaYFecha(
-    idAsistencial,
-    mes,
-    anio
-  );
-
-  // Loguear lo que llega desde el backend
-  observable.subscribe({
-    next: (novedades) => {
-      console.log(`[getNovedades] Novedades recibidas para ${idAsistencial}:`, novedades);
-    },
-    error: (err) => {
-      console.error(`[getNovedades] Error para ${idAsistencial}:`, err);
-    }
-  });
-
-  return observable;
-}
-
 formatDate(startDate: Date, endDate: Date): string {
   const formattedStartDate = moment(startDate).format('DD/MM/YYYY');
   const formattedEndDate = moment(endDate).format('DD/MM/YYYY');
@@ -644,6 +771,335 @@ formatDate(startDate: Date, endDate: Date): string {
     return formattedStartDate;
   } else {
     return `${formattedStartDate} - ${formattedEndDate}`;
+  }
+}
+
+async exportarAExcel() {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Datos');
+
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+  const efectorNombre = this.efectorNombre;
+
+  worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFADD8E6' }
+  };
+  worksheet.getRow(1).font = { bold: true };
+
+  const dataColumnHeaders = ['Tipo', 'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 
+                           'Total mes', 'Total L-V', 'Total S-D-F'];
+  const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
+    return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
+  });
+  const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
+  
+  worksheet.addRow(combinedHeaders).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFFFFF00' }
+  };
+  worksheet.getRow(2).font = { bold: true };
+
+  const totalMesIndex = combinedHeaders.indexOf('Total mes') + 1;
+  const totalLvIndex = combinedHeaders.indexOf('Total L-V') + 1;
+  const totalSdfIndex = combinedHeaders.indexOf('Total S-D-F') + 1;
+
+  for (const registro of this.dataSource.data) {
+    const exportData: any = {
+      Tipo: this.getNombreTipoGuardia(registro.ddjj?.tipoGuardia),
+      Apellido: registro.asistencial.apellido,
+      Nombre: registro.asistencial.nombre,
+      Cuil: registro.asistencial.cuil,
+      Vinculos_Laborales: this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-',
+      Categoria: this.getLegajoActualId(registro.asistencial)?.revista?.categoria?.nombre + 
+                (this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre ? 
+                 `(${this.getLegajoActualId(registro.asistencial)?.revista?.adicional?.nombre})` : '') || '',
+      'Total mes': (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0),
+      'Total L-V': registro.totalHoras?.horasLav ?? 0,
+      'Total S-D-F': registro.totalHoras?.horasSdf ?? 0,
+    };
+
+    // Horas por día
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      exportData[combinedHeaders[dataColumnHeaders.length + index]] = 
+        this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+    });
+
+    const row = worksheet.addRow(Object.values(exportData));
+    
+    // Colorear celda de tipo de guardia según el tipo
+    const tipoGuardiaId = registro.ddjj?.tipoGuardia?.id;
+    if (tipoGuardiaId) {
+      row.getCell(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: this.getColorTipoGuardia(tipoGuardiaId).replace('#', '') }
+      };
+    }
+
+    // Colorear totales (verde claro)
+    [totalMesIndex, totalLvIndex, totalSdfIndex].forEach(colIndex => {
+      row.getCell(colIndex).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE2EFDA' }
+      };
+    });
+
+    // Colorear feriados (rojo) y fines de semana (gris)
+    this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      const date = this.getFechaFromColumnId(fechaColumna);
+      const isHoliday = this.isHoliday(date).isHoliday;
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      const cellIndex = dataColumnHeaders.length + index + 1;
+
+      if (isHoliday) {
+        row.getCell(cellIndex).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFD4C2CD' }
+        };
+      } else if (isWeekend) {
+        row.getCell(cellIndex).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF0F0F0' }
+        };
+      }
+    });
+  }
+
+  worksheet.eachRow((row, rowNumber) => {
+    row.eachCell((cell, colNumber) => {
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+  });
+
+  const fileName = `CronogramaDefinitivo-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  saveAs(blob, fileName);
+}
+
+async exportarAPDF(textoAdicional: string = '', selloBase64: string = '', firmaBase64: string = '', autoridadDto?: AutoridadImagenDto, nombreArchivo: string = 'exportacion.pdf') {
+  const mesSeleccionado = this.getMonthName(this.selectedMonth);
+  const anioSeleccionado = this.selectedYear;
+  const efectorNombre = this.efectorNombre;
+
+  const headers = [
+    'Tipo', 'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 
+    'Total mes', 'Total L-V', 'Total S-D-F',
+    ...this.displayedColumns.slice(6).map(columnTitle => 
+      moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+  ];
+
+  const body: any[] = [headers];
+
+  // Datos
+  for (const registro of this.dataSource.data) {
+    const row = [];
+    
+    // Tipo de guardia con color
+    const tipoGuardiaId = registro.ddjj?.tipoGuardia?.id;
+    row.push({
+      text: this.getNombreTipoGuardia(registro.ddjj?.tipoGuardia),
+      fillColor: tipoGuardiaId ? this.getColorTipoGuardia(tipoGuardiaId) : '#f5f5f5',
+      alignment: 'center'
+    });
+
+    row.push(registro.asistencial.apellido);
+    row.push(registro.asistencial.nombre);
+    row.push(registro.asistencial.cuil);
+    row.push(this.getLegajoActualId(registro.asistencial)?.revista?.tipoRevista?.nombre || '-');
+    const legajo = this.getLegajoActualId(registro.asistencial);
+    const categoria = legajo?.revista?.categoria?.nombre || '';
+    const adicional = legajo?.revista?.adicional?.nombre ? ` (${legajo.revista.adicional.nombre})` : '';
+    row.push(categoria + adicional);
+    row.push({
+      text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0),
+      fillColor: '#E2EFDA',
+      alignment: 'center'
+    });
+    row.push({
+      text: (registro.totalHoras?.horasLav ?? 0),
+      fillColor: '#E2EFDA',
+      alignment: 'center'
+    });
+    row.push({
+      text: (registro.totalHoras?.horasSdf ?? 0),
+      fillColor: '#E2EFDA',
+      alignment: 'center'
+    });
+
+    // Horas por día (feriados y fines de semana)
+    this.displayedColumns.slice(6).forEach(fechaColumna => {
+      const fecha = this.getFechaFromColumnId(fechaColumna);
+      const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
+      const { isHoliday } = this.isHoliday(fecha);
+      const isWeekend = fecha.getDay() === 0 || fecha.getDay() === 6;
+
+      if (isHoliday) {
+        row.push({
+          text: horas,
+          fillColor: '#F9CACA',
+          bold: true,
+          alignment: 'center'
+        });
+      } else if (isWeekend) {
+        row.push({
+          text: horas,
+          fillColor: '#F0F0F0',
+          alignment: 'center'
+        });
+      } else {
+        row.push(horas);
+      }
+    });
+
+    body.push(row);
+  }
+
+  const content: any[] = [
+    { 
+      text: `Cronograma Definitivo - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado} - ${efectorNombre}`, 
+      style: 'header' 
+    },
+    {
+      table: {
+        headerRows: 1,
+        widths: headers.map(() => 'auto'),
+        body
+      },
+      layout: {
+        hLineWidth: () => 0.5,
+        vLineWidth: () => 0.5,
+        hLineColor: () => '#000000',
+        vLineColor: () => '#000000'
+      }
+    }
+  ];
+
+  // Pie de página (sello, firma, texto)
+  if (textoAdicional || selloBase64 || firmaBase64 || autoridadDto) {
+    content.push({
+      alignment: 'center',
+      margin: [0, 20, 0, 0],
+      stack: [
+        { text: textoAdicional, fontSize: 8 },
+        {
+          columns: [
+            {
+              width: '50%',
+              stack: [
+                firmaBase64 ? { image: firmaBase64, width: 120, alignment: 'right' } : {},
+                autoridadDto?.personaName ? 
+                  { text: autoridadDto.personaName, alignment: 'right', bold: true } : {},
+                autoridadDto?.cargo ? 
+                  { text: autoridadDto.cargo, alignment: 'right', fontSize: 8 } : {}
+              ]
+            },
+            {
+              width: '50%',
+              stack: [
+                selloBase64 ? { image: selloBase64, width: 120, alignment: 'left' } : {}
+              ]
+            }
+          ],
+          columnGap: 20,
+          margin: [0, 40, 0, 0]
+        }
+      ]
+    });
+  }
+
+  const docDefinition: any = {
+    pageSize: 'A3',
+    pageOrientation: 'landscape',
+    pageMargins: [10, 10, 10, 10],
+    content,
+    styles: {
+      header: {
+        fontSize: 14,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 10]
+      }
+    },
+    defaultStyle: {
+      fontSize: 7
+    }
+  };
+
+  pdfMake.createPdf(docDefinition).download(
+    `CronogramaDefinitivo-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.pdf`
+  );
+}
+
+getBase64FromUrl(url: string): Promise<string> {
+  return fetch(url)
+    .then(response => response.blob())
+    .then(blob => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+}
+
+async onExportarAExcel() {
+  try {
+    await this.exportarAExcel();
+  } catch (error) {
+    console.error('Error exportando a Excel:', error);
+  }
+}
+
+async onExportarConHospital() {
+  const textoAdicional = 'APROBACIÓN DEL CRONOGRAMA DEFINITIVO POR PARTE DEL DIRECTOR DEL HOSPITAL.-';
+  const nombreArchivo = 'AprobadoHospital';
+  const ddjj = this.ddjjSeleccionada!;
+
+  try {
+    // 1. Obtener sello del hospital
+    const imagenesHospital = await this.hospitalService.listImages(this.efectorId!).toPromise();
+    const selloUrl = imagenesHospital?.currentImage ? '/assets' + imagenesHospital.currentImage : null;
+
+    if (!selloUrl) {
+      console.warn('No se encontró la imagen actual del sello del hospital.');
+      return;
+    }
+    const selloBase64 = await this.getBase64FromUrl(selloUrl);
+
+    // 2. Obtener firma de autoridad
+    const autoridadDto = await this.ddjjService.getAutoridadImageUrl(ddjj.director!.id!).toPromise();
+
+    if (!autoridadDto) {
+      console.warn('No se encontró firma de autoridad.');
+      return;
+    }
+    const firmaUrl = autoridadDto?.url ? '/assets' + autoridadDto.url : undefined;
+    const firmaBase64 = firmaUrl ? await this.getBase64FromUrl(firmaUrl) : undefined;
+    // 3. Llamar a exportarAPDF con texto, imágenes y datos
+    await this.exportarAPDF(textoAdicional, selloBase64, firmaBase64, autoridadDto, nombreArchivo);
+  } catch (error) {
+    console.error('Error exportando a PDF con sello y firma:', error);
+  }
+}
+
+async onExportarLimpio() {
+    const nombreArchivo = 'SinAprobar';
+    try {
+    await this.exportarAPDF(undefined, undefined, undefined, undefined, nombreArchivo);
+  } catch (error) {
+    console.error('Error exportando a PDF:', error);
   }
 }
 
@@ -662,6 +1118,17 @@ accentFilter(input: string): string {
     return output;
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+      const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
+      const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
+
+      filter = this.accentFilter(filter.toLowerCase());
+      return nombre.includes(filter) || apellido.includes(filter);
+    };
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();

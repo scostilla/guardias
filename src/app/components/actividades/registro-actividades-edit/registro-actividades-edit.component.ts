@@ -185,21 +185,32 @@ export class RegistroActividadesEditComponent implements OnInit {
       this.usuarioEgresoId!
     );
 
-    this.registroActividadService.update(this.idRegistro, dto).subscribe({
+    this.registroActividadService.delete(this.idRegistro).subscribe({
       next: () => {
-        this.toastr.success('Registro actividad actualizado correctamente', 'Exito', {
-        timeOut: 5000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-        this.dialogRef.close('updated');
+        this.registroActividadService.save(dto).subscribe({
+          next: () => {
+            this.toastr.success('Registro actividad creado correctamente', 'Éxito', {
+              timeOut: 5000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+            this.dialogRef.close('created');
+          },
+          error: () => {
+            this.toastr.error('No se pudo crear el registro actividad', 'Error', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+          }
+        });
       },
       error: () => {
-        this.toastr.error('No se pudo actualizar el registro actividad', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
+        this.toastr.error('No se pudo modificar el registro actividad original', 'Error', {
+          timeOut: 6000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
       }
     });
   }

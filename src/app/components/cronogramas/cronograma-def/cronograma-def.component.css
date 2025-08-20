@@ -2,3 +2,39 @@ th {
     vertical-align: middle;
     text-align: center;
   }
+
+  /* Estilos para la columna de tipo de guardia */
+.tipo-guardia-cell {
+  border-right: 1px solid #e0e0e0;
+  vertical-align: middle;
+  text-align: center;
+  width: 120px;
+  min-width: 120px;
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap; /* Mantiene el texto en una sola línea */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es muy largo */
+  padding: 8px;
+  font-size: 14px;
+  text-transform: uppercase; /* Opcional: para mostrar todo en mayúsculas */
+}
+
+.rotated-text {
+  transform: rotate(-90deg);
+  transform-origin: left top 0;
+  white-space: nowrap;
+  display: block;
+  position: relative;
+  left: 50%;
+  width: 100px;
+  text-align: center;
+  margin-left: -50px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Asegurar altura suficiente para el texto rotado */
+.mat-row, .mat-header-row {
+  min-height: 100px;
+}

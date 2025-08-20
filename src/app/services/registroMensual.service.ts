@@ -74,7 +74,7 @@ import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
   }
 
 
-  // ===================== FILTROS POR TIPO DE GUARDIA =====================
+  // ===================== FILTROS POR TIPO DE GUARDIA con DTO =====================
 
   listCargoyagrup(anio: number, mes: string, idEfector: number): Observable<RegistroMensualListDto[]> {
     return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCargoyagrup/${anio}/${mes}/${idEfector}`);

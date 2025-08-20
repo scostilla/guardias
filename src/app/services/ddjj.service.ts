@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
 import { DdjjDto } from 'src/app/dto/DdjjDto';
-import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
 import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
+import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
+import { DdjjListDto } from 'src/app/dto/DdjjListDto';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 
 @Injectable({
@@ -122,11 +123,42 @@ export class DdjjService {
     return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCfServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
   }
 
+  // ===================== MANEJO FIRMA SEGUN USUARIO =====================
+
+
   getAutoridadImageUrl(idUsuario: number): Observable<AutoridadImagenDto> {
     return this.httpClient.get<AutoridadImagenDto>(`${this.baseUrl}getAutoridadImageUrl/${idUsuario}`);
   }
 
+  // ===================== VERIFICAR SI SE COMPLETARON TODOS LOS TIPOS DE GUARDIA =====================
+
   checkCompleteDdjjSet(anio: number, mes: string, idEfector: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.baseUrl}existCompleteSet/${anio}/${mes}/${idEfector}`);
+  }
+
+  // ===================== FILTROS POR TIPO DE GUARDIA con DTO =====================
+
+  listCargoyAgrupAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCargoyaAgrupServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  listCargoyAgrup(anio: number, mes: string, idEfector: number): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCargoyaAgrup/${anio}/${mes}/${idEfector}`);
+  }
+
+  listExtraAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listExtraServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  listExtra(anio: number, mes: string, idEfector: number): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listExtra/${anio}/${mes}/${idEfector}`);
+  }
+
+  listCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCfServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  }
+
+  listCf(anio: number, mes: string, idEfector: number): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCf/${anio}/${mes}/${idEfector}`);
   }
 }

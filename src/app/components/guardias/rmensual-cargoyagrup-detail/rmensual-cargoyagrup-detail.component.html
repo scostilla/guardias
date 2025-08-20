@@ -6,29 +6,40 @@
         <th scope="row">Apellido y nombre</th>
         <td>{{ asistencial.apellido }}, {{ asistencial.nombre }}</td>
       </tr>    
+
       <tr>
         <th scope="row">CUIL</th>
-        <td>{{ asistencial.cuil }}</td>
+        <td>{{ formatCuil(asistencial.cuil) }}</td>
       </tr>    
+
       <tr>
         <th scope="row">Vínculo laboral</th>
-        <td>{{ legajoActual?.nombreTipoRevista }}</td>
-      </tr>    
+        <td>{{ asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-' }}</td>
+      </tr>
+
       <tr>
-        <th scope="row">Categoria</th>
-        <td>{{ legajoActual?.nombreCategoria }} ({{ legajoActual?.nombreAdicional }})</td>
-      </tr>      
+        <th scope="row">Categoría</th>
+        <td>
+          {{ asistencial.legajos[0]?.revista?.categoria?.nombre || '-' }}
+          ({{ asistencial.legajos[0]?.revista?.adicional?.nombre || '-' }})
+        </td>
+      </tr>
+
       <tr>
-      <th scope="row">Novedades</th>
-      <td>
-        <div *ngFor="let novedad of novedadesActivas">
-          {{ novedad.tipoLicencia.nombre }} 
-          <span>({{ formatDate(novedad.fechaInicio, novedad.fechaFinal) }})</span>
-        </div>
-      </td>
+        <th scope="row">Novedades</th>
+        <td>
+          <ng-container *ngIf="asistencial.novedadesPersonales.length > 0; else sinNovedades">
+            <div *ngFor="let novedad of asistencial.novedadesPersonales">
+              {{ novedad.tipoLicencia.nombre || '-' }} 
+              <span>({{ formatDate(novedad.fechaInicio, novedad.fechaFinal) }})</span>
+            </div>
+          </ng-container>
+          <ng-template #sinNovedades>-</ng-template>
+        </td>
       </tr>
     </tbody>
   </table>
+
   <div mat-dialog-actions class="action mt-4">
     <button mat-raised-button color="primary" type="button" mat-button (click)="cerrar()">Cerrar</button>
   </div>
