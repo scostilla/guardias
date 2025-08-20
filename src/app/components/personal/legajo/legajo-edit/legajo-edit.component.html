@@ -333,7 +333,7 @@
 
         <div class="drop-subtext">
           <span *ngIf="isDragOver">
-            Imágenes JPG, PNG, GIF
+            Imágenes JPG, PNG
           </span>
           <span *ngIf="isUploading && !isDragOver">
             Actualizando imagen...
@@ -345,7 +345,7 @@
             Imagen actual guardada - Selecciona nueva para cambiar
           </span>
           <span *ngIf="!selectedFile && !initialData?.url && !isUploading && !isDragOver">
-            Formatos soportados: JPG, PNG, GIF (máx. 5MB)
+            Formatos soportados: JPG, PNG (máx. 5MB)
           </span>
         </div>
 
