@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 
 import { CronogramaDefinitivo } from 'src/app/models/Cronogramas/CronogramaDefinitivo';
 import { CronogramaDefinitivoDto } from 'src/app/dto/Cronogramas/CronogramaDefinitivoDto';
+import { CronogramaDefinitivoListDto } from 'src/app/dto/CronogramaDefinitivoListDto';
 
 @Injectable({
   providedIn: 'root'
@@ -54,5 +55,13 @@ export class CronogramaDefinitivoService {
 
   public listByAnioMesEfector(anio: number, mes: string, idEfector: number): Observable<CronogramaDefinitivo[]> {
     return this.httpClient.get<CronogramaDefinitivo[]>(`${this.cDefinitivoURL}listCronogramaByAnioMesEfector/${anio}/${mes}/${idEfector}`);
+  }
+
+  listByAnioMesEfectorAndTipoGuardia(anio: number, mes: string, idEfector: number, idTipoGuardia: number): Observable<CronogramaDefinitivoListDto[]> {
+    return this.httpClient.get<CronogramaDefinitivoListDto[]>(`${this.cDefinitivoURL}listCronogramaByAnioMesEfectorGuardia/${anio}/${mes}/${idEfector}/${idTipoGuardia}`);
+  }
+
+  getTiposGuardia(id: number): Observable<number[]> {
+    return this.httpClient.get<number[]>(`${this.cDefinitivoURL}tiposGuardia/${id}`);
   }
 }

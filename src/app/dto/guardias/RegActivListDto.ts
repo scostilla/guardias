@@ -1,5 +1,6 @@
 import { TipoGuardiaListDto } from './TipoGuardiaListDto';
 import { SumaHorasListDto } from './SumaHorasListDto';
+import { ServicioSummaryDto } from '../Configuracion/ServicioSummaryDto';
 
 export class RegActivListDto {
   id: number;
@@ -8,6 +9,7 @@ export class RegActivListDto {
   horaIngreso: Date;  // formato: 'HH:mm'
   horaEgreso: Date;   // formato: 'HH:mm'
   tipoGuardia: TipoGuardiaListDto;
+  servicio: ServicioSummaryDto;
   horasRealizadas: SumaHorasListDto;
 
     constructor (
@@ -17,6 +19,7 @@ export class RegActivListDto {
         horaIngreso: Date,  // formato: 'HH:mm'
         horaEgreso: Date,   // formato: 'HH:mm'
         tipoGuardia: TipoGuardiaListDto,
+        servicio: ServicioSummaryDto,
         horasRealizadas: SumaHorasListDto
     ){
         this.id = id;
@@ -25,6 +28,7 @@ export class RegActivListDto {
         this.horaIngreso = horaIngreso;
         this.horaEgreso = horaEgreso;
         this.tipoGuardia = tipoGuardia;
+        this.servicio = servicio;
         this.horasRealizadas = horasRealizadas;
     }
 }

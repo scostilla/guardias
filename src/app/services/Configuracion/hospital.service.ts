@@ -98,6 +98,10 @@ getServiciosActivos(idHospital: number): Observable<ServicioSummaryDto[]> {
   return this.httpClient.post<any>(`${this.hospitalesURL}uploadImage/${hospitalId}`, file);
 } */
 
+getImageByUserId(idUsuario: number): Observable<any> {
+    return this.httpClient.get<any>(`${this.hospitalesURL}imageByUser/${idUsuario}`);
+}
+
 uploadImage(hospitalId: number, file: FormData): Observable<any> {
   console.log('📤 Subiendo imagen para hospital ID:', hospitalId);
   return this.httpClient.post<any>(`${this.hospitalesURL}uploadImage/${hospitalId}`, file)

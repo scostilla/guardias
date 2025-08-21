@@ -1,35 +1,103 @@
 <app-spinner></app-spinner>
 <div class="container">
   <div class="row">
-    <div class="col-6 col-md-7">
-      <div class="titulos">DDJJ <span class="titulos-second">EXTRAS</span></div>
+    <div class="col-12 col-md-7">
+      <div class="titulos">DDJJ <span class="titulos-second">EXTRA</span></div>
     </div>
-    <div class="col-6 col-md-1 m d-flex justify-content-end">
+    <div class="col-12 col-md-5 m d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/ddjj-seleccion">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <button mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
+      <button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
       </button>
 
-        <mat-menu #downloadMenu="matMenu">
-          <button mat-menu-item (click)="exportarAExcel()">
-            <mat-icon>table_chart</mat-icon>
-            <span>Exportar a Excel</span>
-          </button>
-          <button mat-menu-item (click)="exportarAPDF()">
-            <mat-icon>picture_as_pdf</mat-icon>
-            <span>Exportar a PDF</span>
-          </button>
-        </mat-menu>      
-      <button mat-fab class="button-pase" style="margin-left: 5px;" (click)="openDdjjConfirm()" [disabled]="!botonDph" [ngClass]="{'disabled-button-ddjj': !botonDph}"  
-        matTooltip="Pase a DPH">
-        <mat-icon *ngIf="botonDph" style="transform: scaleX(-1)">assignment_return</mat-icon>
-        <mat-icon *ngIf="!botonDph">assignment_turned_in</mat-icon>
+      <mat-menu #downloadMenu="matMenu">
+        <button mat-menu-item (click)="onExportarAExcel()">
+          <mat-icon>table_chart</mat-icon>
+          <span>Exportar a Excel</span>
+        </button>
+        <button mat-menu-item (click)="onExportarLimpio()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>Exportar a PDF</span>
+        </button>
+      </mat-menu>
+      <button *ngIf="hayDatosParaMostrar" mat-fab class="button-montos" style="margin-left: 5px;"
+              [matTooltip]="mostrarMontos ? 'Ocultar montos' : 'Mostrar montos'"
+              (click)="mostrarMontos = !mostrarMontos">
+        <mat-icon>{{ mostrarMontos ? 'money_off' : 'attach_money' }}</mat-icon>
       </button>
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjCargada && (isAdministrativo || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ"
+              mat-fab
+              class="button-pase-director"
+              style="margin-left: 5px;"
+              (click)="openDdjjConfirm('DIRECTOR')"
+              [disabled]="botonDirectorDeshabilitado"
+              [ngClass]="{'disabled-button-ddjj': botonDirectorDeshabilitado}"
+              matTooltip="Enviar a Director de hospital">
+        <mat-icon [ngClass]="{'flip-horizontal': botonDirectorIcon === 'assignment_return'}">{{ botonDirectorIcon }}</mat-icon>
+      </button>
+      </ng-container>
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada && (isAdministrativo || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ"
+                mat-fab
+                class="button-pase-ddjj"
+                style="margin-left: 5px;"
+                (click)="openDdjjConfirm('DPH')"
+                [disabled]="botonDphDeshabilitado"
+                [ngClass]="{'disabled-button-ddjj': botonDphDeshabilitado}"
+                matTooltip="Enviar a DPH">
+          <mat-icon [ngClass]="{'flip-horizontal': botonDphIcon === 'assignment_return'}">{{ botonDphIcon }}</mat-icon>
+        </button>
+      </ng-container>
+      <!-- Botón de respuesta del DIRECTOR -->
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjCargada && (isAutoridad || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ" mat-fab
+                class="button-pase-director"
+                style="margin-left: 5px;"
+                (click)="enviarDdjjRespuesta('DIRECTOR_AUTH')"
+                [disabled]="botonDirectorAuthDeshabilitado"
+                [ngClass]="{'disabled-button-ddjj': botonDirectorAuthDeshabilitado}"
+                matTooltip="Aprobar/Rechazar DDJJ">
+          <mat-icon [ngClass]="{'flip-horizontal': botonDirectorAuthIcon === 'assignment_return'}">{{ botonDirectorAuthIcon }}</mat-icon>
+        </button>
+      </ng-container>
+
+      <!-- Botón de respuesta de la DPH -->
+      <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjDphCargada && (isDph || isSuper)">
+        <button *ngIf="mostrarBotonDDJJ" mat-fab
+                class="button-pase-ddjj"
+                style="margin-left: 5px;"
+                (click)="enviarDdjjRespuesta('DPH_AUTH')"
+                [disabled]="botonDphAuthDeshabilitado"
+                [ngClass]="{'disabled-button-ddjj': botonDphAuthDeshabilitado}"
+                matTooltip="Aprobar/Rechazar DDJJ">
+          <mat-icon [ngClass]="{'flip-horizontal': botonDphAuthIcon === 'assignment_return'}">{{ botonDphAuthIcon }}</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="mostrarBotonHistorialDirector && (isAutoridad || isSuper)">
+        <button mat-fab
+                class="button-historial-ddjj"
+                style="margin-left: 5px;"
+                (click)="openDdjjHistorial('DIRECTOR_AUTH')"
+                matTooltip="Historial de observaciones Director">
+          <mat-icon>history</mat-icon>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="mostrarBotonHistorialDph && (isDph || isSuper)">
+        <button mat-fab
+                class="button-historial-ddjj"
+                style="margin-left: 5px;"
+                (click)="openDdjjHistorial('DPH_AUTH')"
+                matTooltip="Historial de observaciones DPH">
+          <mat-icon>history</mat-icon>
+        </button>
+      </ng-container>
     </div>
 
-    <div class="col-12 col-md-4 mt-3 mt-md-0">
+    <!--<div class="col-12 col-md-3 mt-3 mt-md-0">
       <mat-form-field>
         <mat-label>Filtro</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre o apellido">
@@ -37,7 +105,7 @@
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
-    </div>
+    </div>-->
   </div>
 
   <div class="row mb-3">
@@ -63,17 +131,14 @@
     <div class="col-md-6 d-flex justify-content-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Fecha:</span>
-        <select class="select-tabla" [(ngModel)]="selectedMonth" (change)="updateDateAndLoadData()">
-          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
-        </select>
-        <select class="select-tabla" [(ngModel)]="selectedYear" (change)="updateDateAndLoadData()">
-          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        <select class="select-tabla" [(ngModel)]="selectedMonthYear" (change)="onMonthYearChange()">
+          <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
         </select>
       </div>
     </div>
   
     <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
-      <div class="contenedor-titulo-select-tabla">
+      <div *ngIf="hayDatosParaMostrar" class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
           <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
             <option [ngValue]="null">Todos</option>
@@ -85,7 +150,195 @@
     </div>  
   </div>
 
-  <div *ngIf="revisandoDPH" class="text-pase">Ya realizaste el pase de la DDJJ de guardias EXTRAS para {{ getMonthName(selectedMonth) }} {{ selectedYear }}. La misma está en proceso de revisión por la DPH.</div>
+<ng-template [ngIf]="noHayDatosParaMostrar">
+    <div class="alert alert-info mt-3">
+      No hay datos cargados para el mes y servicio seleccionados.
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="hayDatosParaMostrar">
+
+<div *ngIf="!verificandoDdjj && rangoPermitidoDDJJ && !estadoDphAprobado" class="text-aviso">
+  <mat-icon class="icono-pase">lock_open</mat-icon>
+  <div class="mensaje-pase">
+    <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para finalizar el proceso de aprobación de la DDJJ de guardias EXTRA para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirector === 'pendiente' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Está en proceso de revisión por el director del hospital.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirector === 'pendiente_devuelto' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Reenviaste la DDJJ y nuevamente está en proceso de revisión por el director del hospital.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirector === 'rechazado' && (isAdministrativo || isSuper)" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    El director del hospital rechazó la DDJJ de guardias EXTRA para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <br/>
+    Realiza los cambios necesarios según las observaciones y reenvía la DDJJ al Director.<br/>
+    <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'enviar_dph' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    El director del hospital ya aprobó todas las DDJJ disponibles.<br/>
+    Debes realizar el envio a la DPH.
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'ddjj_incompletas' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">alarm_add</mat-icon>
+  <div class="mensaje-pase">
+    Hay DDJJ pendientes de aprobación por el director del hospital.<br/>
+    El mismo debe aprobar todas las DDJJ de cada tipo de guardia disponible para que puedas realizar el envío a la DPH.
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'pendiente' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Fue aprobada por el director del hospital y enviada a la DPH.<br/>
+    La misma esta en proceso de revisión por la DPH.
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'pendiente_devuelto' && (isAdministrativo || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Reenviaste la DDJJ y nuevamente está en proceso de revisión por la DPH.<br/>
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'rechazado' && (isAdministrativo || isSuper)" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    DPH rechazó la DDJJ de guardias EXTRA para 
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Realiza los cambios necesarios según las observaciones y reenvía la DDJJ a la DPH.<br/>
+        <span *ngIf="ultimaObservacionDph?.nombreUsuario">
+    Rechazado por: {{ ultimaObservacionDph?.nombreUsuario }} {{ ultimaObservacionDph?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDph?.motivo || 'Sin especificar' }}</span>
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'aceptado'" class="text-aprobado">
+  <mat-icon class="icono-pase">lock</mat-icon>
+  <div class="mensaje-pase">
+    La DDJJ de guardias EXTRA para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }} fue aprobada por la DPH. 
+    El proceso para el mes ha finalizado con éxito.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'revision' && (isAutoridad || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Debes realizar su aprobación o las observaciones necesarias. <span (click)="enviarDdjjRespuesta('DIRECTOR_AUTH')" class="cursor">Haz clic aquí</span>.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'rechazado' && (isAutoridad || isSuper)" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    Haz rechazado la DDJJ de guardias EXTRA para 
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Se espera la devolución por parte del administrativo.<br/>
+    <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDirector?.nombreUsuario }} {{ ultimaObservacionDirector?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDirector?.motivo || 'Sin especificar' }}</span>
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'aceptado' && (isAutoridad || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">lock</mat-icon>
+  <div class="mensaje-pase">
+    Aprobaste la DDJJ de guardias EXTRA para {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Una vez apruebes las DDJJ existentes de otros tipo de guardia para {{ getMonthName(selectedMonth) }} se creará el cronograma definitivo y se enviará a la DPH.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'aceptado_completo' && !estadoDphAprobado && (isAutoridad || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">alarm_add</mat-icon>
+  <div class="mensaje-pase">
+    Aprobaste todas las DDJJ existentes para {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Las mismas fueron enviadas a la DPH junto con el cronograma definitivo.
+  </div>
+</div>
+
+<div *ngIf="mensajeDphAuth === 'revision' && (isDph || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    Debes realizar su aprobación o las observaciones necesarias. <span (click)="enviarDdjjRespuesta('DPH_AUTH')" class="cursor">Haz clic aquí</span>.
+  </div>
+</div>
+
+<div *ngIf="mensajeDphAuth === 'rechazado' && (isDph || isSuper)" class="text-rechazo">
+  <mat-icon class="icono-pase">block</mat-icon>
+  <div class="mensaje-pase">
+    Haz rechazado la DDJJ de guardias EXTRA para 
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Se espera la devolución por parte del administrativo.<br/>
+    <span *ngIf="ultimaObservacionDph?.nombreUsuario">
+      Rechazado por: {{ ultimaObservacionDph?.nombreUsuario }} {{ ultimaObservacionDph?.apellidoUsuario }}
+    </span><br/>
+    Observaciones: <span class="negrita">{{ ultimaObservacionDph?.motivo || 'Sin especificar' }}</span>
+  </div>
+</div>
+
+  <div *ngIf="mensajeDirector === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias EXTRA para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director del hospital.<br/>
+      Contactáctate con la DPH.
+    </div>
+  </div>
+  <div *ngIf="mensajeDph === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias EXTRA para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director de la DPH.<br/>
+      Contactáctate con la DPH.
+    </div>
+  </div>
+
+  <div *ngIf="mensajeDirectorAuth === 'fuera_rango_tiempo' && (isAutoridad || isDph || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias EXTRA para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director del hospital.<br/>
+      <span *ngIf="!isDph">Contactáctate con la DPH.</span>
+    </div>
+  </div>
+  
+  <div *ngIf="mensajeDphAuth === 'fuera_rango_tiempo' && (isAutoridad || isDph || isSuper)" class="text-rechazo">
+    <mat-icon class="icono-pase">block</mat-icon>
+    <div class="mensaje-pase">
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias EXTRA para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+      Falta aprobación del director de la DPH.<br/>
+    </div>
+  </div>
 
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
@@ -104,45 +357,66 @@
       <ng-container matColumnDef="acciones" sticky>
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let registro" class="cell-actions">
-          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro.asistencial, selectedMonth, selectedYear)">
+          <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro)">
             <mat-icon color="primary">zoom_in</mat-icon>
           </button>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="totalHoras">
-        <th mat-header-cell *matHeaderCellDef class="negrita" style="background-color: #bdbdbd;">Total mes</th>
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">Horas mes</th>
         <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
-          {{ calculateTotalHoursForRow(registro.registroActividad, selectedMonth, selectedYear) }} hs
+          {{ (registro.totalHoras?.horasLav || 0) + (registro.totalHoras?.horasSdf || 0) }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="weekdaysTotal">
-        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L-V</th>
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Horas L&#8209;V</th>
         <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
-          {{ calculateWeekdaysTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
-        </td>
-      </ng-container>
-        
-      <ng-container matColumnDef="weekendsTotal">
-        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total S-D</th>
-        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
-          {{ calculateWeekendsTotal(registro.registroActividad, selectedMonth, selectedYear) }} hs
+          {{ registro.totalHoras?.horasLav || 0 }}
         </td>
       </ng-container>
 
-      <ng-container *ngFor="let fechaColumna of displayedColumns.slice(6)" [matColumnDef]="fechaColumna">
+      <ng-container matColumnDef="weekendsTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">Horas S&#8209;D&#8209;F</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">
+          {{ registro.totalHoras?.horasSdf || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="montoTotal">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #639b6d;">Monto Total</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #639b6d;">
+          {{ (registro.totalHoras?.horasLav || 0) + (registro.totalHoras?.montoTotal || 0) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="montoLav">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #75af80;">Monto L&#8209;V</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #75af80;">
+          {{ registro.totalHoras?.montoLav || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="montoSdf">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #84c08f;">Monto S&#8209;D&#8209;F</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #84c08f;">
+          {{ registro.totalHoras?.montoSdf || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container *ngFor="let fechaColumna of columnasFechas" [matColumnDef]="fechaColumna">
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
-        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-          [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
-          [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
-          <span 
-              [style.color]="calculateHoursColor(registro.registroActividad, getFechaFromColumnId(fechaColumna))"
-              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-          </span>
-        </td>
+<td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+    [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
+    [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)"
+    [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
+    (click)="onCeldaClick(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
+  
+  <span [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))"></span>
+</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -150,292 +424,28 @@
     </table>
   </div>
   <div class="row mt-3">
-    <div class="col-lg-3">  
+    <div class="col-lg-4">  
         <span class="ref-circulo circulo--extra"></span>&nbsp;<span class="ref ref-extra">Extra</span>
     </div>
-    <div class="col-lg-9">  
+    <div class="col-lg-8">  
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
+  </ng-container>
 
-  <!--<div class="row mt-3">
-    <button mat-fab extended color="warn" routerLink="/ddjj-extra-tot">
-      <mat-icon>assignment_turned_in</mat-icon>
-      Pase a DPH
-    </button>
+  <div class="row mt-3">
+    <div *ngIf="mensajeDirector === 'aceptado'" class="col-12 col-md-6">
+      <button mat-fab extended class="button-pase-director" (click)="onExportarConHospital()" matTooltip="Descarga DDJJ con firma director hospital">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO HOSPITAL
+      </button>
+    </div>
+
+    <div *ngIf="mensajeDph === 'aceptado'" class="col-12 col-md-6 d-flex justify-content-sm-end mt-3 mt-md-0">
+      <button mat-fab extended class="button-pase-ddjj" (click)="onExportarConDPH()" matTooltip="Descarga DDJJ con firma DPH">
+        <mat-icon>assignment_turned_in</mat-icon>
+        APROBADO DPH
+      </button>
+    </div>
   </div>
 </div>
-
-
-<div class="tabla-center">
-    <div class="row" style="margin-bottom: 10px;">
-        <div class="col">
-          <button mat-fab extended color="primary" routerLink="/guardias-view">
-            <mat-icon>arrow_back_ios</mat-icon>
-            Volver
-          </button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="titulos"> DDJJ <span class="titulos-second">EXTRAS</span>
-      </div>
-  
-    <div class="row mt-3">
-      <div class="col-sm scroll">
-          <table class="table table-sm table-borderless">
-                <thead  class="col-center thead-celeste">
-                    <tr>
-                        <th class="titulo-tabla">DECLARACION JURADA GUARDIAS ACTIVAS EXTRAS</th>
-                    </tr>
-                    <tr>
-                        <th >Julio 2023</th>
-                    </tr>
-                    <tr>
-                        <th>MINISTERIO DE SALUD</th>
-                    </tr>
-                    <tr>
-                        <th>"DN. PABLO SORIA"</th>
-                    </tr>
-                    <tr>
-                        <th>REGION: CENTRO</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="16">
-                            <table class="table table-hover table-bordered table-sm caption-top">
-                                <thead class="thead-gris">
-                                  <tr>
-                                    <th rowspan="3">N° ORDEN</th>
-                                    <th rowspan="3">SERVICIO</th>
-                                    <th rowspan="3">APELLIDO Y NOMBRE</th>
-                                    <th rowspan="3">CUIL</th>
-                                    <th rowspan="3">VINCULO LABORAL - UDO</th>
-                                    <th rowspan="3">CATEGORIA</th>
-                                    <th rowspan="3">NOVEDADES</th>
-                                    <th colspan="31">GUARDIAS ACTIVAS</th>
-                                  </tr>
-                                  <tr>
-                                    <td style="background-color: #9e9ea1;">Sa</td>
-                                    <td style="background-color: #9e9ea1;">Do</td>
-                                    <td>Lu</td>
-                                    <td>Ma</td>
-                                    <td>Mi</td>
-                                    <td>Ju</td>
-                                    <td>Vi</td>
-                                    <td style="background-color: #9e9ea1;">Sa</td>
-                                    <td style="background-color: #9e9ea1;">Do</td>
-                                    <td>Lu</td>
-                                    <td>Ma</td>
-                                    <td>Mi</td>
-                                    <td>Ju</td>
-                                    <td>Vi</td>
-                                    <td style="background-color: #9e9ea1;">Sa</td>
-                                    <td style="background-color: #9e9ea1;">Do</td>
-                                    <td>Lu</td>
-                                    <td>Ma</td>
-                                    <td>Mi</td>
-                                    <td>Ju</td>
-                                    <td>Vi</td>
-                                    <td style="background-color: #9e9ea1;">Sa</td>
-                                    <td style="background-color: #9e9ea1;">Do</td>
-                                    <td>Lu</td>
-                                    <td>Ma</td>
-                                    <td>Mi</td>
-                                    <td>Ju</td>
-                                    <td>Vi</td>
-                                    <td style="background-color: #9e9ea1;">Sa</td>
-                                    <td style="background-color: #9e9ea1;">Do</td>
-                                    <td>Lu</td>
-                                  </tr>
-                                  <tr>
-                                    <td style="background-color: #9e9ea1;">1</td>
-                                    <td style="background-color: #9e9ea1;">2</td>
-                                    <td>3</td>
-                                    <td>4</td>
-                                    <td>5</td>
-                                    <td>6</td>
-                                    <td>7</td>
-                                    <td style="background-color: #9e9ea1;">8</td>
-                                    <td style="background-color: #df7545;">9</td>
-                                    <td>10</td>
-                                    <td>11</td>
-                                    <td>12</td>
-                                    <td>13</td>
-                                    <td>14</td>
-                                    <td style="background-color: #9e9ea1;">15</td>
-                                    <td style="background-color: #9e9ea1;">16</td>
-                                    <td>17</td>
-                                    <td>18</td>
-                                    <td>19</td>
-                                    <td>20</td>
-                                    <td>21</td>
-                                    <td style="background-color: #9e9ea1;">22</td>
-                                    <td style="background-color: #9e9ea1;">23</td>
-                                    <td>24</td>
-                                    <td>25</td>
-                                    <td>26</td>
-                                    <td>27</td>
-                                    <td>28</td>
-                                    <td style="background-color: #9e9ea1;">29</td>
-                                    <td style="background-color: #9e9ea1;">30</td>
-                                    <td>31</td>
-                                  </tr>
-                                                    </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>1</td>
-                                    <td>Terapia</td>
-                                    <td>APAZA, JUAN FERNANDO</td>
-                                    <td>20-27324976-2</td>
-                                    <td>Planta Permanente</td>
-                                    <td>A(J-2)</td>
-                                    <td>-</td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #df7545;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>                                  </tr>
-                                  <tr>
-                                    <td>2</td>
-                                    <td>Ginecología</td>
-                                    <td>BUSTOS, RITA MARIA</td>
-                                    <td>27-24324954-1</td>
-                                    <td>Planta Permanente</td>
-                                    <td>24 HS.</td>
-                                    <td>-</td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #df7545;"></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td>24</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td>24</td>
-                                  </tr>
-                                  <tr>
-                                    <td>3</td>
-                                    <td>Clínica</td>
-                                    <td>SAINZ, ADRIANA  ELENA</td>
-                                    <td>27-18405994-6</td>
-                                    <td>Planta Permanente</td>
-                                    <td>B(J-2)</td>
-                                    <td>-</td>
-                                    <td style="background-color: #9e9ea1;">24</td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td style="background-color: #9e9ea1;">24</td>
-                                    <td style="background-color: #df7545;"></td>
-                                    <td></td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td style="background-color: #9e9ea1;">24</td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td style="background-color: #9e9ea1;">24</td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td>4</td>
-                                    <td style="background-color: #9e9ea1;">24</td>
-                                    <td style="background-color: #9e9ea1;"></td>
-                                    <td></td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td>OBSERV.:</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="row">
-  <div class="col offset-1">
-    <span class="ref-circulo circulo--finde-tabla"></span>&nbsp;<span class="ref ref-calendar-dia--finde-tabla">Fin de semana</span>
-    <span class="ref-circulo circulo--feriado"></span>&nbsp;<span class="ref ref-calendar-dia--feriado">Asueto/Feriado</span>
-</div>
-<div class="col-auto">
-  <button mat-fab extended color="basic" [matMenuTriggerFor]="menu2" ml-5>
-    <mat-icon>get_app</mat-icon>
-    Descargar
-  </button>
-  <mat-menu #menu2="matMenu">
-    <button mat-menu-item>PDF</button>
-    <button mat-menu-item>XLS</button>
-  </mat-menu>
-    <button mat-fab extended color="warn" routerLink="/ddjj-extra-tot">
-    <mat-icon>assignment_turned_in</mat-icon>
-    Pase a DPH
-  </button>
-</div>
-<div class="col-1">
-</div>
-</div>
-</div> -->

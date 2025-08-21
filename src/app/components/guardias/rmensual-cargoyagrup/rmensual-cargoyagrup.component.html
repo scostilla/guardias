@@ -75,7 +75,7 @@
     </div>
   
     <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
-      <div *ngIf="hayDatosParaMostrar" class="contenedor-titulo-select-tabla">
+      <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
           <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
             <option [ngValue]="null">Todos</option>
@@ -90,7 +90,7 @@
   <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
-      Quedan <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}. Al ser creada pasará a revisión por el director del hospital.
     </div>
   </div>
@@ -98,7 +98,7 @@
   <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-aprobado">
     <mat-icon class="icono-pase">lock</mat-icon>
     <div class="mensaje-pase">
-      Se finalizó la creación de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Se finalizó la creación de la DDJJ de todas las guardias para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
       La misma está en proceso de revisión por el Director del hospital.<br>
       Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-cargoyagrup">sección de DDJJ</span>.
@@ -176,13 +176,13 @@
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
-        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+      <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
           [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
           [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
-          <span 
-              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-          </span>
-        </td>
+        <span [innerHTML]="calculateHoursForDate(
+            getActividadesPorFecha(registro.id, getFechaFromColumnId(fechaColumna))
+          )"></span>
+      </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -72,6 +72,10 @@ export class MinisterioService {
     return this.httpClient.get<boolean>(`${this.ministeriosURL}isMinisterio/${id}`);
   }
 
+  getImageByUserId(idUsuario: number): Observable<any> {
+      return this.httpClient.get<any>(`${this.ministeriosURL}imageByUser/${idUsuario}`);
+  }
+  
   uploadImage(ministerioId: number, file: FormData): Observable<any> {
     console.log('📤 Subiendo imagen para ministerio ID:', ministerioId);
     return this.httpClient.post<any>(`${this.ministeriosURL}uploadImage/${ministerioId}`, file)
