@@ -215,12 +215,13 @@ export class MinisterioEditComponent implements OnInit {
       return;
     }
 
-    // 🔥 VALIDACIONES EN EL FRONTEND
-    if (!file.type.startsWith('image/')) {
-      this.uploadError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
-      this.toastr.error(this.uploadError);
-      return;
-    }
+    // 🔥 VALIDAR SOLO JPG Y PNG
+  const validTypes = ['image/jpeg', 'image/png'];
+  if (!validTypes.includes(file.type)) {
+    this.uploadError = 'Solo se permiten imágenes JPG o PNG';
+    this.toastr.error(this.uploadError);
+    return;
+  }
 
     if (file.size > 5 * 1024 * 1024) {
       this.uploadError = 'El archivo no puede ser mayor a 5MB';

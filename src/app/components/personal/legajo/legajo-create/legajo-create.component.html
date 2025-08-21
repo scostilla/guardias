@@ -328,13 +328,13 @@
 
         <div class="drop-subtext">
           <span *ngIf="isDragOver">
-            Imágenes JPG, PNG, GIF
+            Imágenes JPG, PNG
           </span>
           <span *ngIf="isUploading && !isDragOver">
             Preparando imagen para subir...
           </span>
           <span *ngIf="!selectedFile && !isUploading && !isDragOver">
-            Formatos soportados: JPG, PNG, GIF (máx. 5MB)
+            Formatos soportados: JPG, PNG (máx. 5MB)
           </span>
           <span *ngIf="selectedFile && !isUploading && !isDragOver">
             {{ getFileInfo() }} - Se guardará al crear el legajo

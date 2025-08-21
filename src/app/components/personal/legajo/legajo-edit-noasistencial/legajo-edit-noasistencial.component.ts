@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -29,6 +30,7 @@ import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 
 import { forkJoin } from 'rxjs';
+import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
 import { Caps } from 'src/app/models/Configuracion/Caps';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 
@@ -88,30 +90,28 @@ export class LegajoEditNoasistencialComponent implements OnInit {
   isAsistencial: boolean = false;
   isSituacionRevistaEnabled = false;
   asignadoAutoridad: boolean = false;
-  noEspecialidadesMessage: string = '';
   showRegion: boolean = false;
   showEfectorAutoridad: boolean = false;
   showHabilitacionesGenerales: boolean = false;
   idCargo?: number;
-  idAgrupacion?: number;
-  idContraFactura?: number;
-  idPasiva?: number;
-  idExtra?: number;
   esAutoridadValor: boolean = false;
   udoOptions: any[] = [];
   efectorOptions: any[] = [];
-  efectorCargoOptions: any[] = [];  // 🔥 AGREGAR
+  efectorCargoOptions: any[] = []; 
   habilitacionesGeneralesCaps: any[] = [];
   habilitacionesGeneralesOptions: any[] = [];
   tipoUdo!: string;
   tipoEfector!: string;
-  tipoHabilitacionesGenerales!: string;  // 🔥 AGREGAR
+  tipoHabilitacionesGenerales!: string;  
   tipoEfectorCargo!: string;
   initialHabilitacionesGenerales: any[] = [];
   selectedHospitalsGenerales: number[] = [];
 
   showSiEsAutoridad: boolean = false;
   formularioValidoParaDirectorRegional: boolean = false;
+  formularioValidoParaDirectorNoRegional: boolean = false; // 🔥 NUEVA PROPIEDAD
+  formularioValidoParaFormularioNormal: boolean = false;
+
   idDirectorRegional?: number;
 
   // Arrays para múltiples selecciones
@@ -123,15 +123,12 @@ export class LegajoEditNoasistencialComponent implements OnInit {
   selectedCapsGeneral: number[] = [];
 
 
-  tipoHabilitacionesGuardias!: string;
-  isUpdatingTipoGuardias: boolean = false;
+
   isSelectDisabled: boolean = true;
   previousHospitalUdo: any = null;
   previousHospitalEfector: any = null;
   previousCapsUdo: any = null;
   previousMinisterioUdo: any = null;
-  initialHabilitacionesGuardias: any[] = [];
-  selectedHospitalsGuardias: number[] = [];
   
 
   // 🔥 NUEVAS PROPIEDADES PARA MANEJO DE IMÁGENES
@@ -145,18 +142,9 @@ export class LegajoEditNoasistencialComponent implements OnInit {
   isDuplicateImage: boolean = false;
   dragCounter: number = 0;
 
-
-  agrupaciones: Agrup[] = [
-    { value: 'ADMINISTRATIVO', viewValue: 'Administrativo' },
-    { value: 'MANTENIMIENTO_Y_PRODUCCION', viewValue: 'Mantenimiento y Producción' },
-    { value: 'PROFESIONALES', viewValue: 'Profesionales' },
-    { value: 'SERVICIOS_GENERALES', viewValue: 'Servicios Generales' },
-    { value: 'TECNICOS', viewValue: 'Técnicos' },
-  ];
-
   habilitacionExistente: any;
   legajoExistente: any;
-  hospitalHabilitacionesGuardias!: number | null;
+
   hospitalHabilitacionesGenerales!: number | null;
 
   constructor(
@@ -177,13 +165,7 @@ export class LegajoEditNoasistencialComponent implements OnInit {
     private autoridadService: AutoridadService
   ) {
     this.legajoForm = this.fb.group({
-      agrupacion: ['', Validators.required],
-      categoria: ['', Validators.required],
-      adicional: ['', Validators.required],
-      cargaHoraria: ['', Validators.required],
-      tipoRevista: ['', Validators.required],
       idPersona: [this.asistencial?.id || this.noAsistencial?.id, Validators.required],
-      profesion: ['', Validators.required],
       tipoUdo: [null, Validators.required],
       udoSelected: [null, Validators.required],
       hospitalUdo: [''],
@@ -193,9 +175,6 @@ export class LegajoEditNoasistencialComponent implements OnInit {
       tipoEfectorCargo: [null],
       hospitalEfectorCargo: [''],
       efectoresAutoridad: [[]],
-      especialidades: [[]],
-      matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
-      matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
       esAutoridad: [false, Validators.required],
       idCargo: [null],
       idRegion: [null],
@@ -204,19 +183,12 @@ export class LegajoEditNoasistencialComponent implements OnInit {
       fechaResolucion: [null],
       fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
       fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
-      tipoGuardias: [[]],
-      tipoHabilitacionesGuardias: [null, Validators.required],
-      habilitacionesGuardias: [[]],
-      habilitacionesGuardiasHospital: [[]],
       habilitacionesGeneralesHospital: [[]],
-      habilitacionesGuardiasCaps: [[]],
       habilitacionesGeneralesCaps: [[]],
-      hospitalHabilitacionesGuardias: [[]],
       tipoHabilitacionesGenerales: [''],
       hospitalHabilitacionesGenerales: [[]],
       habilitacionesGenerales: [[]],
       selectedHospitalsGenerales: [[]],
-      selectedHospitalsGuardias: [[]],
       url: ['']
     }, { validator: this.validarFechas });
 
@@ -268,7 +240,9 @@ if (navigation?.extras.state) {
       
           this.loadCaps(); 
   
-  const efectoresFiltradosGeneral = this.asistencial?.habilitacionesGenerales
+          console.log('habilitaciones generales', this.noAsistencial?.habilitacionesGenerales)
+
+  const efectoresFiltradosGeneral = this.noAsistencial?.habilitacionesGenerales
           ?.filter((habilitacion: HabilitacionesGenerales) => habilitacion.activo) // Filtra solo las habilitaciones activas
           ?.flatMap((habilitacion: HabilitacionesGenerales) => habilitacion.efectores.map((efector: Efector) => efector.id)) || []; // Extraer efectores completos
   
@@ -374,13 +348,7 @@ if (navigation?.extras.state) {
       this.legajoForm = this.fb.group({
         tipoUdo: [this.initialData?.tipoUdo || '', Validators.required],
         udoSelected: ['', Validators.required],
-        agrupacion: ['', Validators.required],
-        categoria: ['', Validators.required],
-        adicional: ['', Validators.required],
-        cargaHoraria: ['', Validators.required],
-        tipoRevista: ['', Validators.required],
         idPersona: [this.asistencial?.id || this.noAsistencial?.id, Validators.required],
-        profesion: ['', Validators.required],
         hospitalUdo: [''],
         tipoEfector: [null, Validators.required],
         efectoresSelected: [[]],
@@ -389,8 +357,6 @@ if (navigation?.extras.state) {
         hospitalEfectorCargo: [''],
         efectoresAutoridad: [[]],
         especialidades: [[]],
-        matriculaNacional: ['', [Validators.pattern('^[0-9]{5,10}$')]],
-        matriculaProvincial: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
         esAutoridad: [false, Validators.required],
         idCargo: [null],
         idRegion: [null],
@@ -399,14 +365,8 @@ if (navigation?.extras.state) {
         fechaResolucion: [null],
         fechaInicio: [this.initialData?.fechaInicio || '', [Validators.required, this.dateLimitePresente]],
     fechaFinal: [{ value: this.initialData?.fechaFinal || '', disabled: !this.initialData?.fechaInicio }],
-        tipoGuardias: [[]], 
-       /*  tipoHabilitacionesGuardias: [tipoHabilitacionesGuardiasInicial, Validators.required],*/
-        habilitacionesGuardias: [[]], 
-        habilitacionesGuardiasHospital:[[]],
         habilitacionesGeneralesHospital: [[]],
-        habilitacionesGuardiasCaps: [[]],
         habilitacionesGeneralesCaps: [[]],
-        hospitalHabilitacionesGuardias: [''],
         hospitalHabilitacionesGenerales: [''],
         habilitacionesGenerales: [[]],
         tipoEfectorEx: [null],
@@ -480,10 +440,10 @@ if (navigation?.extras.state) {
   
     // Llamo al servicio para obtener todos los tipos de cargo
     this.cargoService.list().subscribe((cargos: Cargo[]) => {
-      this.cargos = cargos;
+    this.cargos = cargos;
       // Verifico si existe el cargo 'DIRECTOR REGIONAL' sin importar la capitalización
       this.idDirectorRegional = this.cargos.find(t => t.nombre.toLowerCase() === 'director regional'.toLowerCase())?.id;
-    });
+  });
   
         // Verifica si hay datos iniciales
         if (this.initialData) {
@@ -512,9 +472,6 @@ if (navigation?.extras.state) {
           this.legajoForm.patchValue({
             ...this.initialData,
            
-           /*  efectoresSelected: this.initialData?.efectores 
-            ? this.initialData.efectores.map((efector: any) => efector.id) 
-            : [],  */
             efectoresSelected: esDirectorRegional ? null : 
           (efectoresAsignados ? efectoresAsignados : 
            (this.initialData?.efectores && this.initialData.efectores.length > 0 ? 
@@ -527,21 +484,20 @@ if (navigation?.extras.state) {
             tipoEfectorCargo: this.initialData.tipoEfectorCargo,
             udoSelected: this.initialData.udo?.id,
             persona: this.initialData.persona?.id,
-         /*   tipoHabilitacionesGuardias: tipoHabilitacionesGuardiasInicial, */
            habilitacionesGenerales: efectoresFiltradosGeneral,
             fechaInicio: this.initialData.fechaInicio ? new Date(this.initialData.fechaInicio + 'T00:00:00') : null,
             fechaFinal: this.initialData.fechaFinal ? new Date(this.initialData.fechaFinal + 'T00:00:00' ) : null,
   
           }); 
+          console.log('udo selected', this.initialData.udo?.id)
+
+          console.log('habilitaciones generals', efectoresFiltradosGeneral )
     
-   this.habilitacionesGeneralesOptions = this.asistencial?.habilitacionesGenerales
+   this.habilitacionesGeneralesOptions = this.noAsistencial?.habilitacionesGenerales
     ?.filter((habilitacion: any) => habilitacion.activo) // Filtra solo habilitaciones activas
     ?.flatMap((habilitacion: any) => habilitacion.efectores.map((efector: any) => efector)) || [];
   
           this.habilitacionesGeneralesOptions = efectoresFiltradosGeneral;
-  
-          // Habilitar opciones si ya tiene guardia EXTRA o si hay habilitaciones guardias previas
-    
   
   // Llamar al método para manejar cambios en tipoUdo
    this.onTipoUdoChange({ value: this.initialData.tipoUdo });
@@ -680,9 +636,10 @@ onFileSelected(event: any): void {
     return;
   }
 
-  // 🔥 VALIDACIONES BÁSICAS EN EL FRONTEND
-  if (!file.type.startsWith('image/')) {
-    this.uploadError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
+  // 🔥 VALIDAR SOLO JPG Y PNG
+  const validTypes = ['image/jpeg', 'image/png'];
+  if (!validTypes.includes(file.type)) {
+    this.uploadError = 'Solo se permiten imágenes JPG o PNG';
     this.toastr.error(this.uploadError);
     return;
   }
@@ -957,8 +914,10 @@ private handleDuplicateImageOnSelection(response: any): void {
   // Combinar todos los listeners en una evaluación general
   const todosLosCampos = [
     'esAutoridad', 'idCargo', 'idRegion', 'nroResolucion', 
-    'nroDecreto', 'fechaResolucion', 'fechaInicio', 'profesion', 
-    'matriculaProvincial', 'idPersona'
+    'nroDecreto', 'fechaResolucion', 'fechaInicio',
+    // 🔥 AGREGAR CAMPOS DE DIRECTOR NO REGIONAL
+    'tipoUdo', 'udoSelected', 'tipoEfector', 'efectoresSelected',
+    'tipoEfectorCargo', 'efectoresAutoridad', 'habilitacionesGenerales'
   ];
 
   todosLosCampos.forEach(campo => {
@@ -975,15 +934,283 @@ get formularioValidoCompleto(): boolean {
   const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
   const cargoId = this.legajoForm.get('idCargo')?.value;
   
-  
-  // Si es Director Regional, usar validación específica
-  if (esAutoridad && cargoId === this.idDirectorRegional) {
+  // 🔥 SI ES DIRECTOR REGIONAL
+  if (esAutoridad && Number(cargoId) === Number(this.idDirectorRegional)) {
     return this.formularioValidoParaDirectorRegional;
   }
-  
-  // Si no es Director Regional, usar validación normal del formulario
 
-  return this.legajoForm.valid;
+  // 🔥 SI ES DIRECTOR NO REGIONAL
+  const esDirectorNoRegional = esAutoridad && 
+                               cargoId && 
+                               Number(cargoId) !== Number(this.idDirectorRegional) &&
+                               this.cargos.find(c => c.id === cargoId)?.nombre?.toLowerCase().includes('director');
+  
+  if (esDirectorNoRegional) {
+    return this.formularioValidoParaDirectorNoRegional;
+  }
+
+  // 🔥 PARA FORMULARIOS NORMALES
+  return this.formularioValidoParaFormularioNormal;
+}
+
+
+evaluarEstadoDirectorNoRegional(): void {
+  const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
+  const cargoId = this.legajoForm.get('idCargo')?.value;
+  
+  // 🔥 DETECTAR SI ES DIRECTOR PERO NO DIRECTOR REGIONAL
+  const esDirectorNoRegional = esAutoridad && 
+                               cargoId && 
+                               Number(cargoId) !== Number(this.idDirectorRegional) &&
+                               this.cargos.find(c => c.id === cargoId)?.nombre?.toLowerCase().includes('director');
+  
+  if (esDirectorNoRegional) {
+    console.log('✅ DEBUG - ES DIRECTOR NO REGIONAL DETECTADO');
+    
+    const camposRequeridosDirectorNoRegional = {
+      // Campos básicos obligatorios
+      esAutoridad: this.legajoForm.get('esAutoridad')?.value,
+      idCargo: this.legajoForm.get('idCargo')?.value,
+      fechaInicio: this.legajoForm.get('fechaInicio')?.value,
+      idPersona: this.personId || this.initialData?.persona?.id,
+      
+      // Campos de autoridad obligatorios
+      nroResolucion: this.legajoForm.get('nroResolucion')?.value,
+      nroDecreto: this.legajoForm.get('nroDecreto')?.value,
+      fechaResolucion: this.legajoForm.get('fechaResolucion')?.value,
+      
+     /*  // Campos UDO obligatorios
+      tipoUdo: this.legajoForm.get('tipoUdo')?.value,
+      udoSelected: this.legajoForm.get('udoSelected')?.value,
+      
+      // Campos Efector obligatorios
+      tipoEfector: this.legajoForm.get('tipoEfector')?.value,
+      efectoresSelected: this.legajoForm.get('efectoresSelected')?.value,
+      
+      // Campos Efector Cargo (para autoridades)
+      tipoEfectorCargo: this.legajoForm.get('tipoEfectorCargo')?.value,
+      efectoresAutoridad: this.legajoForm.get('efectoresAutoridad')?.value,
+       */
+
+      // Habilitaciones Generales (si están habilitadas)
+      ...(this.showHabilitacionesGenerales && {
+        habilitacionesGenerales: this.legajoForm.get('habilitacionesGenerales')?.value
+      })
+    };
+
+    // 🔥 MOSTRAR ESTADO DE CADA CAMPO
+    Object.entries(camposRequeridosDirectorNoRegional).forEach(([campo, valor]) => {
+      const estado = valor ? '✅' : '❌';
+      const tipo = typeof valor;
+      let valorMostrar = valor;
+      
+      if (Array.isArray(valor)) {
+        valorMostrar = `[${valor.length} elementos]: ${JSON.stringify(valor)}`;
+      } else if (valor instanceof Date) {
+        valorMostrar = valor.toISOString().split('T')[0];
+      } else if (valor === null) {
+        valorMostrar = 'null';
+      } else if (valor === undefined) {
+        valorMostrar = 'undefined';
+      }
+      
+      console.log(`🔍 ${estado} Campo DIRECTOR NO REGIONAL ${campo} (${tipo}):`, valorMostrar);
+    });
+
+    // 🎯 VERIFICAR QUE TODOS LOS CAMPOS OBLIGATORIOS ESTÉN COMPLETOS
+    const todosCamposCompletosDirectorNoRegional = Object.entries(camposRequeridosDirectorNoRegional).every(([campo, valor]) => {
+      if (campo === 'idPersona') {
+        return typeof valor === 'number' && valor > 0;
+      }
+      if (campo === 'esAutoridad') {
+        return valor === true;
+      }
+      if (Array.isArray(valor)) {
+        return valor.length > 0;
+      }
+      return valor !== null && valor !== undefined && valor !== '';
+    });
+
+    // 🔥 MOSTRAR RESULTADO Y CAMPOS FALTANTES
+    if (todosCamposCompletosDirectorNoRegional) {
+      console.log('🎉 TODOS LOS CAMPOS REQUERIDOS PARA DIRECTOR NO REGIONAL ESTÁN COMPLETOS');
+    } else {
+      const camposFaltantesDirectorNoRegional = Object.entries(camposRequeridosDirectorNoRegional)
+        .filter(([campo, valor]) => {
+          if (campo === 'idPersona') {
+            return !(typeof valor === 'number' && valor > 0);
+          }
+          if (campo === 'esAutoridad') {
+            return valor !== true;
+          }
+          if (Array.isArray(valor)) {
+            return valor.length === 0;
+          }
+          return !valor || valor === null || valor === undefined || valor === '';
+        })
+        .map(([campo, _]) => campo);
+      
+      // 🔥 LOG ESPECÍFICO PARA DIRECTOR NO REGIONAL
+      console.log('⚠️ CAMPOS FALTANTES PARA DIRECTOR NO REGIONAL:', camposFaltantesDirectorNoRegional);
+    }
+
+    // 🔥 ACTUALIZAR ESTADO ESPECÍFICO
+     this.formularioValidoParaDirectorNoRegional = todosCamposCompletosDirectorNoRegional;
+    this.formularioValidoParaDirectorRegional = false;
+    this.formularioValidoParaFormularioNormal = false; // 🔥 LIMPIAR OTROS ESTADOS
+    
+    
+    return;
+  }
+}
+
+evaluarEstadoFormularioNormal(): void {
+  const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
+  const cargoId = this.legajoForm.get('idCargo')?.value;
+  
+  // 🔥 SI NO ES DIRECTOR REGIONAL NI DIRECTOR NO REGIONAL, EVALUAR FORMULARIO NORMAL
+  const esDirectorNoRegional = esAutoridad && 
+                               cargoId && 
+                               Number(cargoId) !== Number(this.idDirectorRegional) &&
+                               this.cargos.find(c => c.id === cargoId)?.nombre?.toLowerCase().includes('director');
+
+  if (!esDirectorNoRegional) {
+    console.log('ℹ️ Evaluando formulario normal (no Director)');
+    
+    // 🎯 DETERMINAR CAMPOS REQUERIDOS SEGÚN EL TIPO DE LEGAJO NO ASISTENCIAL
+    let camposRequeridosNormal: { [key: string]: any } = {};
+    
+    if (esAutoridad) {
+      // 🔥 CAMPOS PARA AUTORIDAD NO DIRECTORA NO ASISTENCIAL
+      camposRequeridosNormal = {
+        // Campos básicos obligatorios
+        idPersona: this.personId || this.initialData?.persona?.id,
+        esAutoridad: this.legajoForm.get('esAutoridad')?.value,
+        idCargo: this.legajoForm.get('idCargo')?.value,
+        fechaInicio: this.legajoForm.get('fechaInicio')?.value,
+        
+        // Campos de autoridad obligatorios
+        nroResolucion: this.legajoForm.get('nroResolucion')?.value,
+        nroDecreto: this.legajoForm.get('nroDecreto')?.value,
+        fechaResolucion: this.legajoForm.get('fechaResolucion')?.value,
+        
+        // Campos UDO obligatorios
+        tipoUdo: this.legajoForm.get('tipoUdo')?.value,
+        udoSelected: this.legajoForm.get('udoSelected')?.value,
+        
+        // Campos Efector obligatorios
+        tipoEfector: this.legajoForm.get('tipoEfector')?.value,
+        efectoresSelected: this.legajoForm.get('efectoresSelected')?.value,
+        
+        // Campos Efector Cargo (para autoridades no asistenciales)
+        tipoEfectorCargo: this.legajoForm.get('tipoEfectorCargo')?.value,
+        efectoresAutoridad: this.legajoForm.get('efectoresAutoridad')?.value,
+        
+        // Habilitaciones Generales (si están habilitadas para no asistencial)
+        ...(this.showHabilitacionesGenerales && {
+          habilitacionesGenerales: this.legajoForm.get('habilitacionesGenerales')?.value
+        })
+      };
+      
+    } else {
+      // 🔥 CAMPOS PARA LEGAJO NORMAL NO ASISTENCIAL (NO AUTORIDAD)
+      camposRequeridosNormal = {
+        // Campos básicos obligatorios
+        idPersona: this.personId || this.initialData?.persona?.id,
+        fechaInicio: this.legajoForm.get('fechaInicio')?.value,
+        
+        // Campos UDO obligatorios
+        tipoUdo: this.legajoForm.get('tipoUdo')?.value,
+        udoSelected: this.legajoForm.get('udoSelected')?.value,
+        
+        // Campos Efector obligatorios
+        tipoEfector: this.legajoForm.get('tipoEfector')?.value,
+        efectoresSelected: this.legajoForm.get('efectoresSelected')?.value,
+        
+        // NO requiere habilitaciones para legajo normal no asistencial
+        // Las habilitaciones generales son solo para autoridades no asistenciales
+      };
+    }
+
+    // 🔥 MOSTRAR ESTADO DE CADA CAMPO
+    Object.entries(camposRequeridosNormal).forEach(([campo, valor]) => {
+      const estado = valor ? '✅' : '❌';
+      const tipo = typeof valor;
+      let valorMostrar = valor;
+      
+      if (Array.isArray(valor)) {
+        valorMostrar = `[${valor.length} elementos]: ${JSON.stringify(valor)}`;
+      } else if (valor instanceof Date) {
+        valorMostrar = valor.toISOString().split('T')[0];
+      } else if (valor === null) {
+        valorMostrar = 'null';
+      } else if (valor === undefined) {
+        valorMostrar = 'undefined';
+      }
+      
+    });
+
+    // 🎯 VERIFICAR QUE TODOS LOS CAMPOS OBLIGATORIOS ESTÉN COMPLETOS
+    const todosCamposCompletosNormal = Object.entries(camposRequeridosNormal).every(([campo, valor]) => {
+      if (campo === 'idPersona') {
+        return typeof valor === 'number' && valor > 0;
+      }
+      if (campo === 'esAutoridad') {
+        return valor === true;
+      }
+      if (Array.isArray(valor)) {
+        return valor.length > 0;
+      }
+      return valor !== null && valor !== undefined && valor !== '';
+    });
+
+    // 🔥 MOSTRAR RESULTADO Y CAMPOS FALTANTES
+    if (todosCamposCompletosNormal) {
+      console.log('🎉 TODOS LOS CAMPOS REQUERIDOS PARA FORMULARIO NO ASISTENCIAL NORMAL ESTÁN COMPLETOS');
+    } else {
+      const camposFaltantesNormal = Object.entries(camposRequeridosNormal)
+        .filter(([campo, valor]) => {
+          if (campo === 'idPersona') {
+            return !(typeof valor === 'number' && valor > 0);
+          }
+          if (campo === 'esAutoridad') {
+            return valor !== true;
+          }
+          if (Array.isArray(valor)) {
+            return valor.length === 0;
+          }
+          return !valor || valor === null || valor === undefined || valor === '';
+        })
+        .map(([campo, _]) => campo);
+      
+      // 🔥 LOG IGUAL AL DE DIRECTOR REGIONAL PERO PARA FORMULARIO NO ASISTENCIAL NORMAL
+      console.log('⚠️ CAMPOS FALTANTES PARA FORMULARIO NO ASISTENCIAL NORMAL:', camposFaltantesNormal);
+    }
+
+    // 🔥 ACTUALIZAR ESTADO DEL FORMULARIO NO ASISTENCIAL
+    this.formularioValidoParaFormularioNormal = todosCamposCompletosNormal;
+  }
+}
+
+// 🔥 TAMBIÉN AGREGAR LA FUNCIÓN AUXILIAR PARA EXTRAER EFECTORES SI NO EXISTE
+private extractEfectoresIdsSafe(habilitaciones: any[]): number[] {
+  if (!habilitaciones || !Array.isArray(habilitaciones)) {
+    console.warn('⚠️ habilitaciones no es un array válido:', habilitaciones);
+    return [];
+  }
+
+  return habilitaciones
+    .filter(habilitacion => habilitacion?.activo)
+    .flatMap(habilitacion => {
+      if (!habilitacion.efectores || !Array.isArray(habilitacion.efectores)) {
+        console.warn('⚠️ efectores no es un array válido en habilitación:', habilitacion);
+        return [];
+      }
+      
+      return habilitacion.efectores
+        .map((efector: any) => efector?.id)
+        .filter((id: any) => typeof id === 'number' && id !== undefined);
+    });
 }
 
   // Función que evalúa si todos los campos requeridos para Director Regional están completos
@@ -991,7 +1218,17 @@ evaluarEstadoDirectorRegional(): void {
   const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
   const cargoId = this.legajoForm.get('idCargo')?.value;
   
-  if (esAutoridad && cargoId === this.idDirectorRegional) {
+  // 🔥 AGREGAR LOGS PARA DEBUG
+  console.log('🔍 DEBUG - esAutoridad:', esAutoridad);
+  console.log('🔍 DEBUG - cargoId seleccionado:', cargoId);
+  console.log('🔍 DEBUG - idDirectorRegional:', this.idDirectorRegional);
+  console.log('🔍 DEBUG - Tipo de cargoId:', typeof cargoId);
+  console.log('🔍 DEBUG - Tipo de idDirectorRegional:', typeof this.idDirectorRegional);
+  
+  // 🔥 CORREGIR LA COMPARACIÓN - CONVERTIR AMBOS A NÚMERO
+  if (esAutoridad && Number(cargoId) === Number(this.idDirectorRegional)) {
+    console.log('✅ DEBUG - ES DIRECTOR REGIONAL DETECTADO CORRECTAMENTE');
+    
     
     const camposRequeridos = {
       esAutoridad: this.legajoForm.get('esAutoridad')?.value,
@@ -1001,8 +1238,6 @@ evaluarEstadoDirectorRegional(): void {
       nroDecreto: this.legajoForm.get('nroDecreto')?.value,
       fechaResolucion: this.legajoForm.get('fechaResolucion')?.value,
       fechaInicio: this.legajoForm.get('fechaInicio')?.value,
-      profesion: this.legajoForm.get('profesion')?.value,
-      matriculaProvincial: this.legajoForm.get('matriculaProvincial')?.value,
       // 🎯 USAR EL CAMPO CORRECTO PARA PERSONA
       idPersona: this.personId || this.initialData?.persona?.id
     };
@@ -1014,19 +1249,17 @@ evaluarEstadoDirectorRegional(): void {
     // 🎯 VERIFICAR QUE TODOS LOS CAMPOS TENGAN VALORES VÁLIDOS
     const todosCamposCompletos = Object.entries(camposRequeridos).every(([campo, valor]) => {
       if (campo === 'idPersona') {
-        // Para idPersona, verificar que sea un número válido
         return typeof valor === 'number' && valor > 0;
       }
       if (campo === 'esAutoridad') {
-        // Para esAutoridad, verificar que sea true
         return valor === true;
       }
-      // Para otros campos, verificar que no sean null, undefined o string vacío
       return valor !== null && valor !== undefined && valor !== '';
     });
 
-    // Actualizar la propiedad que controla si el formulario es válido para Director Regional
-    this.formularioValidoParaDirectorRegional = todosCamposCompletos;
+     this.formularioValidoParaDirectorRegional = todosCamposCompletos;
+    this.formularioValidoParaDirectorNoRegional = false;
+    this.formularioValidoParaFormularioNormal = false;
 
     if (todosCamposCompletos) {
       console.log('🎉 TODOS LOS CAMPOS REQUERIDOS PARA DIRECTOR REGIONAL ESTÁN COMPLETOS EN EDIT');
@@ -1046,8 +1279,14 @@ evaluarEstadoDirectorRegional(): void {
       console.log('⚠️ CAMPOS FALTANTES PARA DIRECTOR REGIONAL EN EDIT:', camposFaltantes);
     }
   } else {
-    // Si no es Director Regional, usar validación normal
-    console.log('ℹ️ No es Director Regional, usando validación normal del formulario');
+    // 🔥 VERIFICAR SI ES DIRECTOR NO REGIONAL
+    this.evaluarEstadoDirectorNoRegional();
+    
+    // 🔥 SI NO ES DIRECTOR, EVALUAR FORMULARIO NORMAL
+    if (!this.formularioValidoParaDirectorNoRegional) {
+      this.evaluarEstadoFormularioNormal();
+    }
+    
     this.formularioValidoParaDirectorRegional = false;
   }
 }
@@ -1077,7 +1316,7 @@ filterCapsGeneral(): void {
     return;
   }
 
-  const efectoresFiltrados = this.asistencial?.habilitacionesGenerales
+  const efectoresFiltrados = this.noAsistencial?.habilitacionesGenerales
     ?.filter((habilitacion: HabilitacionesGenerales) => habilitacion.activo) // Filtra solo las habilitaciones activas
     ?.flatMap((habilitacion: HabilitacionesGenerales) => habilitacion.efectores.map((efector: Efector) => efector.id)) || []; // Extraer efectores completos
 
@@ -1148,7 +1387,7 @@ filterCapsHabilitacionesGenerales(): void {
   }
 
   // Obtener los IDs de los efectores filtrados
-  const efectoresFiltrados = this.asistencial?.habilitacionesGenerales
+  const efectoresFiltrados = this.noAsistencial?.habilitacionesGenerales
     ?.filter((habilitacion: HabilitacionesGenerales) => habilitacion.activo)
     ?.flatMap((habilitacion: HabilitacionesGenerales) => habilitacion.efectores.map((efector: Efector) => efector.id)) || [];
 
@@ -1179,7 +1418,7 @@ filterHospitalHabilitacionesGenerales(): void {
     return;
   }
   // Obtener los IDs de los efectores filtrados
-  const efectoresFiltrados = this.asistencial?.habilitacionesGenerales
+  const efectoresFiltrados = this.noAsistencial?.habilitacionesGenerales
     ?.filter((habilitacion: HabilitacionesGenerales) => habilitacion.activo)
     ?.flatMap((habilitacion: HabilitacionesGenerales) => habilitacion.efectores.map((efector: Efector) => efector.id)) || [];
   // Obtener solo los IDs de los hospitales filtrados
@@ -1223,7 +1462,7 @@ private loadInitialData(): void {
         this.filterHospitalHabilitacionesGenerales();
       }
 
-      const efectoresFiltradosGeneral = !esDirectorRegional ? (this.asistencial?.habilitacionesGenerales
+      const efectoresFiltradosGeneral = !esDirectorRegional ? (this.noAsistencial?.habilitacionesGenerales
         ?.filter((habilitacion: HabilitacionesGenerales) => habilitacion.activo)
         ?.flatMap((habilitacion: HabilitacionesGenerales) => habilitacion.efectores.map((efector: Efector) => efector.id)) || []) : [];
 
@@ -1246,7 +1485,6 @@ private loadInitialData(): void {
       this.legajoForm.patchValue({
        
         efectoresSelected: efectoresSelected,
-        tipoGuardias: this.initialData?.tipoGuardias?.map((tipo: any) => tipo.id) || [],
         cargaHoraria: this.initialData?.revista?.cargaHoraria?.id || null,
         adicional: this.initialData?.revista?.adicional?.id || null,
         udoSelected: this.initialData?.udo?.id || null,
@@ -1268,9 +1506,6 @@ private loadInitialData(): void {
         // Para Director Regional, cargar solo los datos básicos
         this.legajoForm.patchValue({
            efectoresSelected: null,
-        tipoGuardias: this.initialData?.tipoGuardias?.map((tipo: any) => tipo.id) || [],
-        cargaHoraria: this.initialData?.revista?.cargaHoraria?.id || null,
-        adicional: this.initialData?.revista?.adicional?.id || null,
         udoSelected: this.initialData?.udo?.id || null,
         persona: this.initialData?.persona?.id,
         habilitacionesGenerales: [],
@@ -1844,7 +2079,9 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
   }
 
     //Form Datos legajo: si es un legajo tipo autoridad (esAutoridad) impide cargar tipoGuardia y habilita cargo
-    onAutoridadChange(esAutoridad: boolean): void {
+   onAutoridadChange(esAutoridad: boolean): void {
+    console.log('🔄 onAutoridadChange ejecutado para No Asistencial:', esAutoridad);
+    
     const idCargoControl = this.legajoForm.get('idCargo');
     const idNroResolucionControl = this.legajoForm.get('nroResolucion');
     const idNroDecretoControl = this.legajoForm.get('nroDecreto');
@@ -1852,8 +2089,12 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
     const idRegionControl = this.legajoForm.get('idRegion');
     const efectoresAutoridadControl = this.legajoForm.get('efectoresAutoridad');
     const habilitacionesGeneralesControl = this.legajoForm.get('habilitacionesGenerales');
-  
-    // Cuando cambia idAutoridad reseteo el valor de idCargo, tipoGuardia e idRegion; tambien oculto y hago no obligatorio idRegional
+    const tipoEfectorControl = this.legajoForm.get('tipoEfector');
+    const efectoresControl = this.legajoForm.get('efectores');
+    const tipoUdoControl = this.legajoForm.get('tipoUdo');
+    const udoControl = this.legajoForm.get('udo');
+
+    // Resetear campos
     idCargoControl?.reset();
     idNroResolucionControl?.reset();
     idNroDecretoControl?.reset();
@@ -1861,49 +2102,92 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
     idRegionControl?.reset();
     efectoresAutoridadControl?.reset();
     habilitacionesGeneralesControl?.reset();
-
-   
-    this.showEfectorAutoridad = false;
-    this.legajoForm.get('efectoresAutoridad')?.clearValidators();
-    this.showEfectorAutoridad = false;
-    this.showRegion = false;
-    this.legajoForm.get('idRegion')?.clearValidators();
-    this.showHabilitacionesGenerales = false;
-    this.legajoForm.get('habilitacionesGenerales')?.clearValidators();
-  
-    // Mostrar/ocultar el campo 'idCargo' y tipoGuardia basado en 'esAutoridad'
+    
     if (esAutoridad) {
-      // Si es autoridad muestro idCargo y oculto tipoGuardia y situacion de revista
-      this.showSiEsAutoridad = true;
-      idCargoControl?.enable();
-      this.legajoForm.get('idCargo')?.setValidators([Validators.required]);
-      idNroResolucionControl?.enable();
-      this.legajoForm.get('nroResolucion')?.setValidators([Validators.required, Validators.pattern('^[0-9]{1,5}$')]);
-      idNroDecretoControl?.enable();
-      this.legajoForm.get('nroDecreto')?.setValidators([Validators.required, Validators.pattern('^[0-9]{1,5}$')]);
-      idFechaResolucionControl?.enable();
-      this.legajoForm.get('fechaResolucion')?.setValidators([Validators.required]);
-      this.legajoForm.setValidators(this.alMenosUnoRequeridoValidator());
+    console.log('✅ Habilitando campos de autoridad');
+
+    
+    // SOLO mostrar el campo de cargo, OCULTAR todo lo demás hasta que se seleccione cargo
+    this.showSiEsAutoridad = true;
+    this.showEfectorAutoridad = false;           // ❌ OCULTO
+    this.showRegion = false;                     // ❌ OCULTO
+    this.showHabilitacionesGenerales = false;    // ❌ OCULTO
+    
+    idCargoControl?.enable();
+    this.legajoForm.get('idCargo')?.setValidators([Validators.required]);
+    idNroResolucionControl?.enable();
+    this.legajoForm.get('nroResolucion')?.setValidators([Validators.required, Validators.pattern('^[0-9]{1,5}$')]);
+    idNroDecretoControl?.enable();
+    this.legajoForm.get('nroDecreto')?.setValidators([Validators.required, Validators.pattern('^[0-9]{1,5}$')]);
+    idFechaResolucionControl?.enable();
+    this.legajoForm.get('fechaResolucion')?.setValidators([Validators.required]);
+    
+    this.isSituacionRevistaEnabled = false;
+    this.disableSituacionRevistaFields();
+    this.legajoForm.setValidators(this.alMenosUnoRequeridoValidator());
+    
+ 
+    
     } else {
-      // Si no es autoridad oculto idCargo y muestro tipoGuardia haciendola obligatoria
-      this.showSiEsAutoridad = false;
-      idCargoControl?.disable();
-      idCargoControl?.clearValidators(); // Remuevo validadores si no es autoridad
-      idNroResolucionControl?.disable();
-      idNroResolucionControl?.clearValidators(); // Remuevo validadores si no es autoridad
-      idNroDecretoControl?.disable();
-      idNroDecretoControl?.clearValidators(); // Remuevo validadores si no es autoridad
-      idFechaResolucionControl?.disable();
-      idFechaResolucionControl?.clearValidators(); // Remuevo validadores si no es autoridad
-   
+      console.log('❌ Deshabilitando TODOS los campos de autoridad para legajo GENERAL');
+
+    // 🎯 OCULTAR TODOS LOS CAMPOS DE AUTORIDAD PARA LEGAJO GENERAL
+    this.showSiEsAutoridad = false;              // ❌ OCULTO
+    this.showEfectorAutoridad = false;           // ❌ OCULTO  
+    this.showRegion = false;                     // ❌ OCULTO
+    this.showHabilitacionesGenerales = false;    // ❌ OCULTO
+    
+    // Deshabilitar campos de autoridad
+    idCargoControl?.disable();
+    idCargoControl?.clearValidators();
+    idNroResolucionControl?.disable();
+    idNroResolucionControl?.clearValidators();
+    idNroDecretoControl?.disable();
+    idNroDecretoControl?.clearValidators();
+    idFechaResolucionControl?.disable();
+    idFechaResolucionControl?.clearValidators();
+    
+    // Limpiar validadores de campos de autoridad
+    this.legajoForm.get('efectoresAutoridad')?.clearValidators();
+    this.legajoForm.get('idRegion')?.clearValidators();
+    this.legajoForm.get('habilitacionesGenerales')?.clearValidators();
+    this.legajoForm.get('tipoEfectorCargo')?.clearValidators();
+    this.legajoForm.get('hospitalEfectorCargo')?.clearValidators();
+    this.legajoForm.get('habilitacionesGeneralesHospital')?.clearValidators();
+    this.legajoForm.get('hospitalHabilitacionesGenerales')?.clearValidators();
+    this.legajoForm.get('habilitacionesGeneralesCaps')?.clearValidators();
     }
-  
-    // Actualizo la validez de los campos después de modificar los validadores y visibilidad
+    
+    // Actualizar validez
     idCargoControl?.updateValueAndValidity();
     idNroResolucionControl?.updateValueAndValidity();
     idNroDecretoControl?.updateValueAndValidity();
     idFechaResolucionControl?.updateValueAndValidity();
+    tipoEfectorControl?.updateValueAndValidity();
+    efectoresControl?.updateValueAndValidity();
+    tipoUdoControl?.updateValueAndValidity();
+    udoControl?.updateValueAndValidity();
+    
+    this.evaluarEstadoDirectorRegional();
   }
+
+  disableSituacionRevistaFields(): void {
+  this.legajoForm.get('tipoUdo')?.disable();
+  this.legajoForm.get('udo')?.disable();
+  this.legajoForm.get('hospitalUdo')?.disable();
+  this.legajoForm.get('tipoEfector')?.disable();
+  this.legajoForm.get('efectores')?.disable();
+  this.legajoForm.get('hospitalEfectores')?.disable();
+}
+
+enableSituacionRevistaFields(): void {
+  this.legajoForm.get('tipoUdo')?.enable();
+  this.legajoForm.get('udo')?.enable();
+  this.legajoForm.get('hospitalUdo')?.enable();
+  this.legajoForm.get('tipoEfector')?.enable();
+  this.legajoForm.get('efectores')?.enable();
+  this.legajoForm.get('hospitalEfectores')?.enable();
+}
     
     onCargoChange(): void {
   const esAutoridad = this.legajoForm.get('esAutoridad')?.value; 
@@ -1916,8 +2200,9 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
   const efectoresAutoridadControl = this.legajoForm.get('efectoresAutoridad');
   const habilitacionesGeneralesControl = this.legajoForm.get('habilitacionesGenerales');
 
-  if (cargoSeleccionado === this.idDirectorRegional) {
-
+  // 🔥 CORREGIR LA COMPARACIÓN AQUÍ TAMBIÉN
+  if (Number(cargoSeleccionado) === Number(this.idDirectorRegional)) {
+    console.log('✅ CARGO DIRECTOR REGIONAL SELECCIONADO');
     this.showRegion = true;
     this.legajoForm.get('idRegion')?.setValidators([Validators.required]);
     this.showEfectorAutoridad = false;
@@ -1927,7 +2212,7 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
     this.legajoForm.get('habilitacionesGenerales')?.clearValidators();
     habilitacionesGeneralesControl?.reset();
   } else {
-
+    console.log('✅ CARGO NO ES DIRECTOR REGIONAL');
     this.showRegion = false;
     idRegionControl?.reset();
     this.legajoForm.get('idRegion')?.clearValidators();
@@ -1988,91 +2273,634 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
     });
   }
   
-
-  updateLegajo(): void {
-    // Obtener los valores del formulario
-    const legajoData = this.legajoForm.value;
-    
-    legajoData.esAutoridad = this.legajoForm.get('esAutoridad')?.value;
-    const esRegional = legajoData.idCargo === 'Director Regional' ? true : false;
-
-    const legajoDto = new LegajoDto(
-      legajoData.fechaInicio,
-      legajoData.esAutoridad,
-      true,
-      legajoData.url,
-      this.personId,
-      legajoData.fechaFinal,
-      esRegional,
-      null, //matricula nacional
-      null, //matricula provincial                          
-      null, // idSuspencion
-      null, //motivoBaja
-      null, //id revista
-      legajoData.udo?.id ?? null,
-      legajoData.efectores ?? null,
-      null, //especialidad
-      null, //profesion
-      null, //tipo guardia
-      legajoData.idCargo ?? null,
-      legajoData.idRegion ?? null,
-    );
-
-    console.log("legajo a guardar ", legajoDto);
-    console.log("id a modificar  ", this.idLegajo);
-
-    this.legajoService.update(this.idLegajo, legajoDto).subscribe(
-      (result) => {
-        this.toastr.success('Legajo modificado con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-
-      if (this.asistencial) {
-        this.router.navigate(['/personal-legajo-select'], {
-          state: { asistencial: this.asistencial, fromAsistencial: true }
-        });
-      } else if (this.noAsistencial) {
-        this.router.navigate(['/personal-legajo-select'], {
-          state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
-        });
-      } else {
-        this.router.navigate(['/personal-legajo-select']);
-      }
-    },
-    (error) => {
-      this.toastr.error('Ocurrió un error al editar el Legajo', error, {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      console.error('Error al editar el legajo', error);
-    }
-  );
-}
-
-  cancel(): void { 
+  cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {
       timeOut: 6000,
       positionClass: 'toast-top-center',
       progressBar: true
     });
+    this.location.back();
+  }
+
+  async updateLegajo(): Promise<void> {
+  // 🔥 VERIFICAR SI EL FORMULARIO ES VÁLIDO ANTES DE PROCEDER
+  if (!this.formularioValidoCompleto) {
+    this.toastr.error('Por favor complete todos los campos requeridos', 'Formulario incompleto');
+    return;
+  }
+
+  // 🔥 VERIFICAR SI HAY IMAGEN DUPLICADA
+  if (this.isDuplicateImage) {
+    this.toastr.error('No se puede modificar el legajo con imagen duplicada', 'Imagen duplicada');
+    return;
+  }
+
+  try {
+    // Obtener los valores del formulario
+    const legajoData = this.legajoForm.value;
+    legajoData.esAutoridad = this.legajoForm.get('esAutoridad')?.value;
+    legajoData.idPersona = this.personId || this.initialData?.persona?.id;
+
+    console.log('🔍 DATOS DEL FORMULARIO:', legajoData);
+
+    // 🔥 VERIFICAR SI HAY CAMBIOS EN EL LEGAJO
+    const legajoExistente = await this.legajoService.detail(this.idLegajo).toPromise();
     
-    console.log('Cancelando. NoAsistencial:', this.noAsistencial);
+    if (!legajoExistente) {
+      this.toastr.error('No se pudo obtener la información del legajo existente', 'Error');
+      return;
+    }
+
+    console.log('🔍 LEGAJO EXISTENTE:', legajoExistente);
+
+    const sinCambios = this.sonLegajosIguales(legajoExistente, legajoData);
+
+    // 🔥 VERIFICAR CAMBIOS EN HABILITACIONES SI ES AUTORIDAD NO REGIONAL
+    const esAutoridad = this.legajoForm.get('esAutoridad')?.value;
+    const esRegionalActual = Number(legajoData.idCargo) === Number(this.idDirectorRegional);
+    
+    let huboCambiosHabilitacionGeneral = false;
+    if (esAutoridad && !esRegionalActual) {
+      huboCambiosHabilitacionGeneral = await this.cambiosHabilitacionGeneral(legajoExistente, legajoData, !sinCambios);
+    }
+
+    console.log('🎯 RESULTADO DE COMPARACIONES:');
+    console.log('  Sin cambios en legajo:', sinCambios);
+    console.log('  Cambios en habilitaciones:', huboCambiosHabilitacionGeneral);
+    console.log('  Imagen nueva:', !!this.selectedFile);
+
+    // 🔥 SI NO HAY CAMBIOS EN LEGAJO, HABILITACIONES NI IMAGEN NUEVA, NO HACER NADA
+    if (sinCambios && !huboCambiosHabilitacionGeneral && !this.selectedFile) {
+      console.log('ℹ️ No se detectaron cambios en el legajo. No se realiza ninguna acción.');
+      this.location.back();
+      // 🔥 NO MOSTRAR MENSAJE NI NAVEGAR - SIMPLEMENTE SALIR
+      return;
+    }
+
+    // 🔥 SI HAY CAMBIOS, PROCEDER CON LA ACTUALIZACIÓN
+    console.log('📝 Iniciando actualización del legajo...');
+    console.log('🔍 Cambios detectados:');
+    console.log('  - Datos del legajo:', !sinCambios);
+    console.log('  - Habilitaciones generales:', huboCambiosHabilitacionGeneral);
+    console.log('  - Imagen nueva:', !!this.selectedFile);
+    
+    // 🔥 LLAMAR AL MÉTODO PRINCIPAL DE ACTUALIZACIÓN
+    await this.updateLegajoDtoAndSave(legajoData);
+    
+  } catch (error) {
+    console.error('❌ Error al actualizar el legajo:', error);
+    this.toastr.error('Ocurrió un error al actualizar el legajo', 'Error');
+  }
+}
+
+      private arraysSonIguales(arr1: any[], arr2: any[]): boolean {
+      if (!arr1 || !arr2) return arr1 === arr2;
+      if (arr1.length !== arr2.length) return false;
+      return arr1.every(item => arr2.includes(item)) && arr2.every(item => arr1.includes(item));
+    }
+
+    private fechasSonIguales(fecha1: any, fecha2: any): boolean {
+      if (!fecha1 || !fecha2) return fecha1 === fecha2;
+    
+      // Normalizar ambas fechas a YYYY-MM-DD
+      const f1Str = new Date(fecha1).toISOString().split('T')[0];
+      const f2Str = new Date(fecha2).toISOString().split('T')[0];
+    
+      return f1Str === f2Str;
+    }
+
+    private async cambiosHabilitacionGeneral(legajoActual: any, legajoNuevo: any, legajoCambio: boolean): Promise<boolean> {
+  try {
+    console.log('🔍 VERIFICANDO CAMBIOS EN HABILITACIONES GENERALES:');
+    console.log('  Persona ID:', legajoNuevo.idPersona);
+    console.log('  Hay cambios en legajo:', legajoCambio);
+
+    // 🔥 SI ES DIRECTOR REGIONAL, NO HAY HABILITACIONES GENERALES
+    const esRegionalActual = Number(legajoNuevo.idCargo) === Number(this.idDirectorRegional);
+    if (esRegionalActual) {
+      console.log('✅ Es Director Regional - No requiere habilitaciones generales');
+      return false;
+    }
+
+    // 🔥 SI NO ES AUTORIDAD, NO HAY HABILITACIONES GENERALES
+    const esAutoridad = legajoNuevo.esAutoridad || this.legajoForm.get('esAutoridad')?.value;
+    if (!esAutoridad) {
+      console.log('✅ No es autoridad - No requiere habilitaciones generales');
+      return false;
+    }
+
+    const habilitacionExistente = await this.habilitacionesGeneralesService.getPermisoByPersona(legajoNuevo.idPersona).toPromise();
+
+    if (!habilitacionExistente || (Array.isArray(habilitacionExistente) && habilitacionExistente.length === 0)) {
+      console.log('⚠️ No hay habilitación existente - Se creará nueva');
+      return true;
+    }
+
+    // 🔥 OBTENER EFECTORES ACTUALES Y NUEVOS
+    const efectoresExistentes = Array.isArray(habilitacionExistente) 
+      ? habilitacionExistente.flatMap((hab: any) => hab.efectores.map((ef: any) => ef.id)).sort()
+      : habilitacionExistente.efectores.map((ef: any) => ef.id).sort();
+
+    const efectoresNuevos = (legajoNuevo.habilitacionesGenerales || []).sort();
+
+    console.log('  Efectores existentes:', efectoresExistentes);
+    console.log('  Efectores nuevos:', efectoresNuevos);
+
+    const mismosEfectores = JSON.stringify(efectoresExistentes) === JSON.stringify(efectoresNuevos);
+    
+    console.log('  ¿Mismos efectores?:', mismosEfectores);
+    console.log('  ¿Cambios en legajo?:', legajoCambio);
+
+    if (!mismosEfectores || legajoCambio) {
+      console.log('⚠️ HAY CAMBIOS EN HABILITACIONES GENERALES');
+      return true;
+    }
+
+    console.log('✅ NO HAY CAMBIOS EN HABILITACIONES GENERALES');
+    return false;
+  } catch (error) {
+    if ((error as any).status === 404) {
+      console.log('⚠️ Error 404 - No existe habilitación, se creará nueva');
+      return true;
+    }
+    console.error("❌ Error al verificar habilitación existente", error);
+    return false;
+  }
+}
+
+    private sonLegajosIguales(legajoActual: any, legajoNuevo: any): boolean {
+      console.log('🔍 COMPARANDO LEGAJOS:');
+  console.log('  Actual:', legajoActual);
+  console.log('  Nuevo:', legajoNuevo);
+
+      let sonIguales = true;
   
-    if (this.asistencial) {
-      this.router.navigate(['/personal-legajo-select'], {
-        state: { asistencial: this.asistencial, fromAsistencial: true }
-      });
-    } else if (this.noAsistencial) {
-      this.router.navigate(['/personal-legajo-select'], {
-        state: { noAsistencial: this.noAsistencial, fromNoAsistencial: true }
-      });
+      // 🔥 FUNCIÓN AUXILIAR PARA NORMALIZAR VALORES NULL/UNDEFINED
+  const normalizar = (valor: any): any => {
+    if (valor === null || valor === undefined || valor === '') {
+      return null;
+    }
+    return valor;
+  };
+    
+      if (!this.fechasSonIguales(legajoActual?.fechaInicio, legajoNuevo?.fechaInicio)) {
+    console.log('❌ Fechas inicio diferentes:', legajoActual?.fechaInicio, 'vs', legajoNuevo?.fechaInicio);
+    sonIguales = false;
+  } else {
+    console.log('✅ Fechas inicio iguales');
+  }
+    
+      if (!this.fechasSonIguales(legajoActual?.fechaFinal, legajoNuevo?.fechaFinal)) {
+    console.log('❌ Fechas final diferentes:', legajoActual?.fechaFinal, 'vs', legajoNuevo?.fechaFinal);
+    sonIguales = false;
+  } else {
+    console.log('✅ Fechas final iguales');
+  }
+
+
+      const efectorActualId = legajoActual?.efectores?.[0]?.id;
+  const efectorNuevoId = legajoNuevo?.efectoresSelected;
+  
+      if (Number(efectorActualId || 0) !== Number(efectorNuevoId || 0)) {
+    console.log('❌ Efectores diferentes:', efectorActualId, 'vs', efectorNuevoId);
+    sonIguales = false;
+  } else {
+    console.log('✅ Efectores iguales');
+  }
+
+  // 🔥 COMPARAR UDO (CORREGIR LÓGICA)|
+  const udoActualId = legajoActual?.udo?.id;
+  const udoNuevoId = legajoNuevo?.udoSelected;
+    
+      if (Number(udoActualId || 0) !== Number(udoNuevoId || 0)) {
+    console.log('❌ UDO diferentes:', udoActualId, 'vs', udoNuevoId);
+    sonIguales = false;
+  } else {
+    console.log('✅ UDO iguales');
+  }
+
+  const tipoEfectorActual = normalizar(legajoActual?.tipoEfector);
+  const tipoEfectorNuevo = normalizar(legajoNuevo?.tipoEfector);
+  
+  // 🔥 COMPARAR TIPO EFECTOR
+  if (tipoEfectorActual !== tipoEfectorNuevo) {
+    console.log('❌ Tipo efector diferente:', tipoEfectorActual, 'vs', tipoEfectorNuevo);
+    sonIguales = false;
+  } else {
+    console.log('✅ Tipo efector igual');
+  }
+
+  const tipoEfectorCargoActual = normalizar(legajoActual?.tipoEfectorCargo);
+  const tipoEfectorCargoNuevo = normalizar(legajoNuevo?.tipoEfectorCargo);
+  
+      // 🔥 COMPARAR TIPO EFECTOR CARGO
+  if (tipoEfectorCargoActual !== tipoEfectorCargoNuevo) {
+    console.log('❌ Tipo efector cargo diferente:', tipoEfectorCargoActual, 'vs', tipoEfectorCargoNuevo);
+    sonIguales = false;
+  } else {
+    console.log('✅ Tipo efector cargo igual');
+  }
+    
+  const tipoUdoActual = normalizar(legajoActual?.tipoUdo);
+  const tipoUdoNuevo = normalizar(legajoNuevo?.tipoUdo);
+  
+      // 🔥 COMPARAR TIPO UDO
+  if (tipoUdoActual !== tipoUdoNuevo) {
+    console.log('❌ Tipo UDO diferente:', tipoUdoActual, 'vs', tipoUdoNuevo);
+    sonIguales = false;
+  } else {
+    console.log('✅ Tipo UDO igual');
+  }
+
+  const nroResolucionActual = normalizar(legajoActual?.nroresolucion);
+  const nroResolucionNuevo = normalizar(legajoNuevo?.nroResolucion);
+  
+  // 🔥 COMPARAR CAMPOS DE AUTORIDAD
+  if (nroResolucionActual !== nroResolucionNuevo) {
+    console.log('❌ Número resolución diferente:', nroResolucionActual, 'vs', nroResolucionNuevo);
+    sonIguales = false;
+  } else {
+    console.log('✅ Número resolución igual');
+  }
+
+  const nroDecretoActual = normalizar(legajoActual?.nrodecreto);
+  const nroDecretoNuevo = normalizar(legajoNuevo?.nroDecreto);
+  
+  if (nroDecretoActual !== nroDecretoNuevo) {
+    console.log('❌ Número decreto diferente:', nroDecretoActual, 'vs', nroDecretoNuevo);
+    sonIguales = false;
+  } else {
+    console.log('✅ Número decreto igual');
+  }
+
+  if (!this.fechasSonIguales(legajoActual?.fechaResolucion, legajoNuevo?.fechaResolucion)) {
+    console.log('❌ Fecha resolución diferente:', legajoActual?.fechaResolucion, 'vs', legajoNuevo?.fechaResolucion);
+    sonIguales = false;
+  } else {
+    console.log('✅ Fecha resolución igual');
+  }
+
+  // 🔥 COMPARAR CARGO
+  if (Number(legajoActual?.cargo?.id || 0) !== Number(legajoNuevo?.idCargo || 0)) {
+    console.log('❌ Cargo diferente:', legajoActual?.cargo?.id, 'vs', legajoNuevo?.idCargo);
+    sonIguales = false;
+  } else {
+    console.log('✅ Cargo igual');
+  }
+
+  // 🔥 COMPARAR REGIÓN
+  if (Number(legajoActual?.region?.id || 0) !== Number(legajoNuevo?.idRegion || 0)) {
+    console.log('❌ Región diferente:', legajoActual?.region?.id, 'vs', legajoNuevo?.idRegion);
+    sonIguales = false;
+  } else {
+    console.log('✅ Región igual');
+  }
+    
+     console.log('🎯 RESULTADO FINAL sonLegajosIguales:', sonIguales);
+  return sonIguales;
+}
+
+    async updateLegajoDtoAndSave(legajoData: any, ): Promise<void> {
+      try {
+
+        // 🔥 FUNCIÓN AUXILIAR PARA NORMALIZAR VALORES
+    const normalizar = (valor: any): any => {
+      if (valor === null || valor === undefined || valor === '') {
+        return null;
+      }
+      return valor;
+    };
+
+    // 🔥 NORMALIZAR VALORES DEL LEGAJO ANTES DE PROCESAR
+    legajoData = {
+      ...legajoData,
+      tipoUdo: normalizar(legajoData.tipoUdo),
+      tipoEfector: normalizar(legajoData.tipoEfector),
+      tipoEfectorCargo: normalizar(legajoData.tipoEfectorCargo),
+      udoSelected: normalizar(legajoData.udoSelected),
+      efectoresSelected: normalizar(legajoData.efectoresSelected),
+      efectoresAutoridad: normalizar(legajoData.efectoresAutoridad),
+      nroResolucion: normalizar(legajoData.nroResolucion),
+      nroDecreto: normalizar(legajoData.nroDecreto),
+      fechaResolucion: legajoData.fechaResolucion,
+      idCargo: normalizar(legajoData.idCargo),
+      idRegion: normalizar(legajoData.idRegion)
+    };
+
+    console.log('🔍 LEGAJO DATA NORMALIZADO:', legajoData);
+
+
+  // Verifica si el campo 'esAutoridad' está habilitado
+  let esAutoridad: boolean;
+
+  // Si el campo 'esAutoridad' está habilitado, toma el valor del formulario
+  if (this.legajoForm.get('idCargo')?.enabled) {
+    esAutoridad = this.legajoForm.get('esAutoridad')?.value ?? false;
+  } else {
+    // Si el campo está deshabilitado, usa el valor guardado antes de de|shabilitarlo
+    esAutoridad = this.esAutoridadValor ?? false;
+  }
+
+  // 🎯 DETERMINAR SI ES REGIONAL BASADO EN EL CARGO ACTUAL
+  const esRegionalActual = legajoData.idCargo === this.idDirectorRegional;
+
+   console.log('🔍 Es autoridad:', esAutoridad);
+    console.log('🔍 Es regional actual:', esRegionalActual);
+    console.log('🔍 ID Cargo:', legajoData.idCargo);
+    console.log('🔍 ID Director Regional:', this.idDirectorRegional);
+
+  // 🎯 MANEJO DIFERENCIADO DE EFECTORES SEGÚN EL TIPO DE CARGO
+  let efectoresData: any[] = [];
+
+  if (esRegionalActual) {
+    // Si es Director Regional, no hay efectores específicos
+    efectoresData = [];
+
+  } else {
+    // Si NO es Director Regional, manejar efectores según el tipo
+    if (esAutoridad) {
+      // Para autoridades no regionales, usar efectoresAutoridad
+      const efectoresAutoridad = legajoData.efectoresAutoridad;
+      if (efectoresAutoridad) {
+        efectoresData = Array.isArray(efectoresAutoridad) ? efectoresAutoridad : [efectoresAutoridad];
+      }
+     
     } else {
-      console.error('No se encontró el objeto asistencial ni el objeto no asistencial.');
+      // Para legajos generales, usar efectoresSelected
+      const efectoresSelected = legajoData.efectoresSelected;
+      if (efectoresSelected) {
+        efectoresData = Array.isArray(efectoresSelected) ? efectoresSelected : [efectoresSelected];
+      }
     }
   }
+
+  const legajoExistente = await this.legajoService.detail(this.idLegajo).toPromise();
+
+  if (!legajoExistente || !legajoExistente.id) {
+
+    return;
+  }
+
+      console.log('✅ Procediendo con la actualización del legajo...');
+
+     // 🔥 DETERMINAR QUÉ URL USAR PARA EL NUEVO LEGAJO
+    let urlParaNuevoLegajo: string | null = null;
+    
+    if (this.selectedFile) {
+      // 🔥 SI HAY IMAGEN NUEVA SELECCIONADA, SE SUBIRÁ DESPUÉS
+      console.log('📸 Nueva imagen detectada, se subirá al crear el legajo');
+      urlParaNuevoLegajo = null; // Se establecerá después de subir
+    } else {
+      // 🔥 SI NO HAY IMAGEN NUEVA, MANTENER LA URL DEL LEGAJO ANTERIOR
+      urlParaNuevoLegajo = legajoExistente.url || null;
+      console.log('🔄 Manteniendo URL de imagen existente:', urlParaNuevoLegajo);
+    }
+
+    // 🎯 CONSTRUIR DTO DE DESACTIVACIÓN MANTENIENDO TODOS LOS DATOS ORIGINALES
+    const legajoDesactivado = new LegajoDto(
+      legajoExistente.fechaInicio,
+      legajoExistente.esAutoridad,
+      false, // ❌ Desactivar
+      legajoExistente.url,
+      legajoExistente.persona?.id ?? legajoData.idPersona,
+      new Date(),
+      legajoExistente.esRegional || false,
+      legajoExistente.matriculaNacional ?? null,
+      legajoExistente.matriculaProvincial ?? null,
+      null, // idSuspencion
+      null, // motivoBaja
+      null,
+      legajoExistente.udo?.id ?? null,
+      legajoExistente.efectores?.map((e: any) => e.id).filter((id: any): id is number => id !== undefined) ?? [],
+      null,
+      null,
+      null,
+      legajoExistente.cargo?.id ?? null,
+      legajoExistente.region?.id ?? null,
+      legajoExistente.nroresolucion ?? undefined,
+      legajoExistente.nrodecreto ?? undefined,
+      legajoExistente.fechaResolucion ?? undefined,
+      legajoExistente.tipoEfector ?? undefined,
+      legajoExistente.tipoEfectorCargo ?? undefined,
+      legajoExistente.tipoUdo ?? undefined
+    );
+
+     // 🎯 VERIFICAR HABILITACIONES ANTES DE CREAR EL NUEVO LEGAJO
+    if (esAutoridad) {
+        if (Number(legajoData.idCargo) === Number(this.idDirectorRegional)) {
+          // Habilitaciones para Director Regional
+          console.log('🔧 Creando habilitaciones para Director Regional...');
+          this.habilitacionesGeneralesService.addHabilitacionesAutoridadRegional(legajoData.idPersona, legajoData.idRegion).subscribe(
+            () => {
+              console.log('✅ Habilitaciones de Director Regional creadas');
+            },
+            (error) => {
+              console.error("❌ Error al guardar habilitaciones para autoridad regional", error);
+            }
+          );
+        } else {
+          // Habilitaciones para otras autoridades
+          console.log('🔧 Guardando habilitaciones generales...');
+          this.saveHabilitacionesGenerales(legajoData);
+        }
+      }
+
+    // Guardar el legajo desactivado
+        this.legajoService.update(this.idLegajo, legajoDesactivado).subscribe(
+          () => {
+    
+            // 🎯 CONSTRUIR DTO DEL NUEVO LEGAJO CON CAMPOS ESPECÍFICOS PARA DIRECTOR REGIONAL
+            const legajoNuevo = new LegajoDto(
+              legajoData.fechaInicio,
+              esAutoridad,
+              true, // ✅ Activo
+              urlParaNuevoLegajo ?? '',
+              legajoData.idPersona,
+              legajoData.fechaFinal,
+              esRegionalActual, // 🎯 Usar la determinación actual
+              legajoData.matriculaNacional ?? null,
+              legajoData.matriculaProvincial ?? null,
+              null, // idSuspencion
+              null, // motivoBaja
+              null,
+              // 🎯 CAMPOS ESPECÍFICOS SEGÚN EL TIPO DE CARGO
+              esRegionalActual ? null : (legajoData.udoSelected ?? null), // UDO solo para no regionales
+              efectoresData, // 🎯 Efectores procesados
+              null,
+              null,
+              null,
+              legajoData.idCargo ?? null,
+              legajoData.idRegion ?? null,
+              legajoData.nroResolucion ?? undefined,
+              legajoData.nroDecreto ?? undefined,
+              legajoData.fechaResolucion ?? undefined,
+              // 🎯 CAMPOS TIPO EFECTOR - LIMPIOS PARA DIRECTOR REGIONAL
+              esRegionalActual ? null : (legajoData.tipoEfector ?? null), // NULL si es Director Regional
+              esRegionalActual ? null : (legajoData.tipoEfectorCargo ?? null), // 🔥 NULL si es Director Regional (CAMPO PRINCIPAL)
+              esRegionalActual ? null : (legajoData.tipoUdo ?? null) // NULL si es Director Regional
+            );
+    
+            // Crear el nuevo legajo
+            this.legajoService.save(legajoNuevo).subscribe(
+            async (result) => {
+              console.log('✅ Nuevo legajo creado exitosamente:', result);
+              
+              // 🔥 MANEJAR IMAGEN SEGÚN EL CASO
+              if (esAutoridad && this.selectedFile && result.id) {
+                // 🔥 CASO 1: HAY IMAGEN NUEVA PARA SUBIR
+                console.log('📤 Subiendo nueva imagen para legajo de autoridad...');
+                try {
+                  const uploadResponse = await this.uploadImageAfterUpdate(result.id);
+                  
+                  if (uploadResponse && uploadResponse.url) {
+                    console.log('✅ Nueva imagen subida correctamente:', uploadResponse.url);
+                    this.toastr.success('Legajo actualizado con nueva imagen correctamente', 'ÉXITO');
+                  } else {
+                    this.toastr.success('Legajo actualizado. Error al subir nueva imagen.', 'Parcialmente exitoso');
+                  }
+                  
+                } catch (uploadError) {
+                  console.error('❌ Error al subir imagen:', uploadError);
+                  this.toastr.warning('Legajo actualizado pero hubo un error al subir la nueva imagen');
+                }
+                
+              } else if (esAutoridad && urlParaNuevoLegajo) {
+                // 🔥 CASO 2: SE MANTIENE LA IMAGEN EXISTENTE
+                console.log('🔄 Imagen existente mantenida:', urlParaNuevoLegajo);
+                this.toastr.success('Legajo actualizado manteniendo la imagen existente', 'ÉXITO');
+                
+              } else if (esAutoridad && !urlParaNuevoLegajo && !this.selectedFile) {
+                // 🔥 CASO 3: LEGAJO SIN IMAGEN
+                console.log('📝 Legajo actualizado sin imagen');
+                this.toastr.success('Legajo actualizado sin imagen', 'ÉXITO');
+                
+              } else {
+                // 🔥 CASO 4: LEGAJO NO ES AUTORIDAD
+                this.toastr.success('Legajo actualizado con éxito', 'ÉXITO');
+              }
+
+              // 🔥 NAVEGACIÓN
+              this.navigateAfterUpdate();
+            },
+            (error) => {
+              console.error("❌ Error al crear el nuevo legajo", error);
+              this.toastr.error('Ocurrió un error al actualizar el Legajo', error.error?.mensaje || error.message);
+            }
+          );
+          },
+          (error) => {
+            console.error("❌ Error al desactivar el legajo", error);
+            this.toastr.error('Error al desactivar el legajo existente', error.message);
+          }
+        );
+      } catch (error) {
+    console.error('❌ Error en updateLegajoDtoAndSave:', error);
+    this.toastr.error('Error al procesar la actualización del legajo', 'Error');
+  }
+}
+
+
+   private navigateAfterUpdate(): void {
+  if (this.fromAsistencial) {
+    this.router.navigate(['/personal']);
+  } else if (this.fromNoAsistencial) {
+    this.router.navigate(['/personal-no-asistencial']);
+  } else {
+    this.location.back();
+  }
+}
+
+saveHabilitacionesGenerales(legajoData: any, forzarActualizacion: boolean = false): void {
+    this.habilitacionesGeneralesService.getPermisoByPersona(legajoData.idPersona).subscribe(
+        (habilitacionExistente) => {
+            if (!habilitacionExistente) {
+               
+                this.crearNuevaHabilitacionGeneral(legajoData);
+                return;
+            }
+
+           
+
+            // Extraer los IDs de efectores de la habilitación existente y la nueva
+            const efectoresExistentes = habilitacionExistente.efectores.map((efector: any) => efector.id).sort();
+            const efectoresNuevos = (legajoData.habilitacionesGenerales || []).sort();
+
+            // Comparar efectores y tipo de efector
+            const mismosEfectores = JSON.stringify(efectoresExistentes) === JSON.stringify(efectoresNuevos);
+            /* const mismoTipoEfector = habilitacionExistente.tipoEfectorEx === legajoData.tipoEfectorEx; */
+
+            if (mismosEfectores /* && mismoTipoEfector  */&& !forzarActualizacion) {
+               
+                return;
+            }
+
+            // Obtener habilitaciones activas
+            const habilitacionesActivas = Array.isArray(habilitacionExistente) 
+                ? habilitacionExistente.filter(hab => hab.activo) 
+                : (habilitacionExistente.activo ? [habilitacionExistente] : []);
+
+            if (habilitacionesActivas.length === 0) {
+               
+                this.crearNuevaHabilitacionGeneral(legajoData);
+                return;
+            }
+
+            // Desactivar habilitaciones activas
+            const desactivaciones = habilitacionesActivas.map((habilitacion) => {
+                const habilitacionDesactivada = new HabilitacionesGeneralesDto(
+                    false, // Desactivar
+                    legajoData.idPersona,
+                    efectoresExistentes,
+                   /*  legajoData.tipoHabilitacionesGenerales?.tipoEfectorEx */
+                );
+
+                return this.habilitacionesGeneralesService.update(habilitacion.id!, habilitacionDesactivada).toPromise();
+            });
+
+            Promise.all(desactivaciones)
+                .then(() => {
+                    
+                    this.crearNuevaHabilitacionGeneral(legajoData);
+                })
+                .catch((error) => {
+                    console.error("Error al desactivar las habilitaciones generales previas", error);
+                });
+        },
+        (error) => {
+            if (error.status === 404) {
+                this.crearNuevaHabilitacionGeneral(legajoData);
+            } else {
+                console.error("Error al verificar habilitación general existente", error);
+            }
+        }
+    );
+}
+
+private crearNuevaHabilitacionGeneral(legajoData: any): void {
+    const efectoresNuevos = legajoData.habilitacionesGenerales || [];
+
+    if (efectoresNuevos.length === 0) {
+       
+        return;
+    }
+
+    const nuevaHabilitacionGeneral = new HabilitacionesGeneralesDto(
+        true, // Activo
+        legajoData.idPersona,
+        efectoresNuevos,
+        /* legajoData.tipoHabilitacionesGenerales */
+    );
+
+    this.habilitacionesGeneralesService.save(nuevaHabilitacionGeneral).subscribe(
+        (response) => {
+        },
+        (error) => {
+            console.error("Error al crear la nueva habilitación general", error);
+        }
+    );
+}
+
+  
           
   compareFn(o1: any, o2: any): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
@@ -2081,4 +2909,5 @@ onHospitalHabilitacionesGeneralesChange(event: any): void {
   compareFn_id(o1: any, o2: any): boolean {
     return o1 && o2 ? o1 === o2 : o1 === o2;
   }
+
 }
