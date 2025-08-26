@@ -409,14 +409,16 @@
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
-<td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-    [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
-    [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)"
-    [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
-    (click)="onCeldaClick(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-  
-  <span [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))"></span>
-</td>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+            [ngClass]="getCellInfo(getFechaFromColumnId(fechaColumna), registro).clase"
+            [matTooltip]="getCellInfo(getFechaFromColumnId(fechaColumna), registro).tooltip"
+            [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
+            (click)="onCeldaClick(getActividadesPorFecha(registro.id, getFechaFromColumnId(fechaColumna)), getFechaFromColumnId(fechaColumna))">
+
+          <span [innerHTML]="calculateHoursForDate(
+              getActividadesPorFecha(registro.id, getFechaFromColumnId(fechaColumna))
+            )"></span>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

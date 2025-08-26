@@ -28,7 +28,6 @@ import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service
 import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronogramaDefinitivo.service';
 
 //Models y dto
-import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { NovedadPersonalListDto } from 'src/app/dto/guardias/NovedadPersonalListDto';
 
@@ -83,7 +82,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   columnasBase: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
   columnasMontos: string[] = ['montoTotal', 'montoLav', 'montoSdf'];
-  columnasFechas: string[] = []; // esto reemplaza el uso directo de `displayedColumns`
+  columnasFechas: string[] = [];
 
   mostrarMontos: boolean = false;
 
@@ -98,9 +97,11 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   tablaListaParaMostrar = false;
 
+  private actividadesPorRegistro: Map<number, { [fecha: string]: RegActivListDto[] }> = new Map();
+  registrosMensuales: RegistroMensualListDto[] = [];
+
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
-  registrosMensuales: RegistroMensualListDto[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
@@ -284,6 +285,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const idEfector = this.efectorId;
 
+    this.tablaListaParaMostrar = false;
+
     if (!idEfector) {
       console.error("El ID del hospital no puede ser null");
       return;
@@ -293,10 +296,9 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       ? this.ddjjService.listCargoyAgrup(anio, mes, idEfector)
       : this.ddjjService.listCargoyAgrupAndServicio(anio, mes, idEfector, this.selectedServicio);
 
-    this.tablaListaParaMostrar = false;
-
     ddjj$.subscribe({
       next: (ddjjs: DdjjListDto[]) => {
+        // Tomar el primer DDJJ
         if (ddjjs.length > 0) {
           const primeraDdjj = ddjjs[0];
           this.ddjjSeleccionada = primeraDdjj;
@@ -313,6 +315,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
           this.ultimaObservacionDirector = undefined;
         }
 
+        // Aplanar registrosMensuales y asignar idDdjj
         this.registrosMensuales = ddjjs.flatMap(ddjj =>
           (ddjj.registrosMensuales || []).map(reg => {
             reg.idDdjj = ddjj.id;
@@ -320,6 +323,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
           })
         );
 
+        this.preprocesarActividades(); // Mapear actividades por registro
         this.updateTableDataSource();
         this.tablaListaParaMostrar = true;
       },
@@ -330,6 +334,58 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         this.tablaListaParaMostrar = true;
       }
     });
+  }
+
+  preprocesarActividades(): void {
+    this.actividadesPorRegistro.clear();
+
+    this.registrosMensuales.forEach(registro => {
+      const mapa: { [fecha: string]: RegActivListDto[] } = {};
+
+      registro.registroActividad.forEach(act => {
+        const fechaKey = moment(act.fechaIngreso).format("YYYY-MM-DD");
+        if (!mapa[fechaKey]) {
+          mapa[fechaKey] = [];
+        }
+        mapa[fechaKey].push(act);
+      });
+
+      this.actividadesPorRegistro.set(registro.id, mapa);
+    });
+  }
+
+  getActividadesPorFecha(registroId: number, date: Date): RegActivListDto[] {
+    const mapa = this.actividadesPorRegistro.get(registroId);
+    if (!mapa) return [];
+    const key = moment(date).format("YYYY-MM-DD");
+    return mapa[key] || [];
+  }
+
+  calculateHoursForDate(actividades: RegActivListDto[]): SafeHtml {
+    if (!actividades || actividades.length === 0) return this.sanitizer.bypassSecurityTrustHtml('');
+
+    const itemsHtml = actividades.map(act => {
+      const hoursIn = moment(`${act.fechaIngreso} ${act.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
+      const hoursOut = moment(`${act.fechaEgreso} ${act.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
+
+      if (!hoursIn.isValid() || !hoursOut.isValid()) return `<span style="color:red;">?</span>`;
+
+      const diffHours = hoursOut.diff(hoursIn, 'hours', true);
+      if (diffHours <= 0) return '';
+
+      const rounded = Math.round(diffHours);
+      const color = this.getColor(act.tipoGuardia.id);
+
+      return `<span style="color:${color}; margin-right:4px;">${rounded}</span>`;
+    });
+
+    return this.sanitizer.bypassSecurityTrustHtml(itemsHtml.join(''));
+  }
+
+  getColor(tipoGuardiaId: number): string {
+    if (tipoGuardiaId === 1) return '#91A8DA'; // Cargo
+    if (tipoGuardiaId === 2) return '#eb7430'; // Reagrupación
+    return '#000'; // Default negro
   }
 
   generarDiasDelMes(): void {
@@ -352,7 +408,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   getFechaFromColumnId(columnId: string): Date {
-    return moment(columnId, 'YYYY_MM_DD').toDate();
+    const [year, month, day] = columnId.split('_').map(Number);
+    return new Date(year, month - 1, day);
   }
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
@@ -373,21 +430,16 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
-    const dateMoment = moment(date).startOf('day');
-
+  isNovedad(dateMoment: moment.Moment, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
       const finMoment = moment(novedad.fechaFinal).startOf('day');
-      
-      const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-          
-      return isBetween;
+      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
     });
 
     return {
       isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
+      tipoLicencia: novedadFound?.tipoLicencia?.nombre ?? ''
     };
   }
   
@@ -397,101 +449,46 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   isNovedadClass(date: Date, registro: any): string {
-    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+    const dateMoment = moment(date).startOf('day');
+    
+    // Verificar novedad
+    const { isNovedad, tipoLicencia } = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
+    if (isNovedad) return this.getNovedadCssClass(tipoLicencia);
 
-    if (isNovedad) {
-      return this.getNovedadCssClass(tipoLicencia);
-    }
+    // Verificar feriado
+    if (this.isHoliday(date).isHoliday) return 'holiday';
 
-    if (this.isHoliday(date).isHoliday) {
-      return 'holiday';
-    }
+    // Verificar fin de semana
+    if (this.isWeekend(date)) return 'weekend';
 
-    if (this.isWeekend(date)) {
-      return 'weekend';
-    }
-
+    // Default
     return '';
   }
 
   calculateTooltip(date: Date, registro: any): string {
-    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-    if (novedad.isNovedad) {
-      return novedad.tipoLicencia;
-    } else {
-      const holiday = this.isHoliday(date);
-      if (holiday.isHoliday) {
-        return holiday.motivo;
-      }
-    }
+    const dateMoment = moment(date).startOf('day');
+    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
+
+    if (novedad.isNovedad) return novedad.tipoLicencia;
+
+    const holiday = this.isHoliday(date);
+    if (holiday.isHoliday) return holiday.motivo;
+
     return '';
   }
-  
-  calculateHoursForDate(registroActividades: RegActivListDto[], date: Date): SafeHtml {
-    const registro = registroActividades.find((actividad) => {
-      const ingresoDate = moment(actividad.fechaIngreso);
-      return ingresoDate.isSame(date, 'day');
-    });
 
-    if (!registro) return this.sanitizer.bypassSecurityTrustHtml('');
+  getCellInfo(date: Date, registro: any): { clase: string, tooltip: string } {
+    const dateMoment = moment(date).startOf('day');
+    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
 
-    for (let actividad of registroActividades) {
-      if (actividad.fechaIngreso && !actividad.fechaEgreso) {
-        return this.sanitizer.bypassSecurityTrustHtml('sin egreso');
-      }
-    }
+    if (novedad.isNovedad) return { clase: this.getNovedadCssClass(novedad.tipoLicencia), tooltip: novedad.tipoLicencia };
+    
+    const holiday = this.isHoliday(date);
+    if (holiday.isHoliday) return { clase: 'holiday', tooltip: holiday.motivo };
+    
+    if (this.isWeekend(date)) return { clase: 'weekend', tooltip: '' };
 
-    if (registro.fechaIngreso && registro.fechaEgreso) {
-      const hoursIn = moment(registro.fechaIngreso + ' ' + registro.horaIngreso, 'YYYY-MM-DD HH:mm:ss');
-      const hoursOut = moment(registro.fechaEgreso + ' ' + registro.horaEgreso, 'YYYY-MM-DD HH:mm:ss');
-
-      if (hoursIn.isValid() && hoursOut.isValid()) {
-        const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-
-        if (diffHours > 0) {
-          const color = diffHours < 4 ? '#FF0000' : this.getColor(registro.tipoGuardia.id);
-          const rounded = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
-          const html = `<span style="color: ${color};">${rounded}</span>`;
-          return this.sanitizer.bypassSecurityTrustHtml(html);
-        } else {
-          return this.sanitizer.bypassSecurityTrustHtml('');
-        }
-      } else {
-        return this.sanitizer.bypassSecurityTrustHtml('Datos inválidos');
-      }
-    }
-
-    return this.sanitizer.bypassSecurityTrustHtml('');
-  }
-
-  getColor(tipoGuardiaId: number): string {
-    if (tipoGuardiaId === 1) {
-      return '#91A8DA'; // Color para CARGO
-    } else if (tipoGuardiaId === 2) {
-      return '#eb7430'; // Color para REAGRUPACION DE HS
-    }
-    return ''; // Color por defecto
-  }
-  
-  calculateHoursColor(registroActividad: RegActivListDto[], date: Date): string {
-    const registro = registroActividad.find((actividad) => {
-      const ingresoDate = moment(actividad.fechaIngreso);
-      return ingresoDate.isSame(date, 'day');
-    });
-
-    if (!registro) {
-      return '';
-    }
-
-    const tipoGuardia = registro.tipoGuardia;
-    if (tipoGuardia && tipoGuardia.id) {
-      if (tipoGuardia.id === 1) {
-        return '#91A8DA'; // Color para CARGO
-      } else if (tipoGuardia.id === 2) {
-        return '#eb7430'; // Color para REAGRUPACION DE HS
-      }
-    }
-    return ''; // Color por defecto
+    return { clase: '', tooltip: '' };
   }
 
   //Manejo filtro busqueda en tabla
@@ -666,7 +663,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 10, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 25, 23, 59, 59);
 
     return { inicio, fin };
   }
@@ -702,7 +699,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       mes += 1;
     }
 
-    return new Date(anio, mes - 1, 10, 23, 59, 59);
+    return new Date(anio, mes - 1, 25, 23, 59, 59);
   }
   
   //Evaluaciones y cambios de estado DDJJ
@@ -804,19 +801,41 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     if (enPosesionDph && estadoDph === 'PENDIENTE') {
-      if (ddjj.idDirectorDPH == null) {
-        console.log('DPH: En posesión DPH y pendiente');
-        this.botonDphIcon = 'assignment_late';
-        this.botonDphDeshabilitado = true;
-        this.mensajeDph = 'pendiente';
-        this.puedeEditarCeldas = false;
-      } else {
-        console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
-        this.botonDphIcon = 'assignment_late';
-        this.botonDphDeshabilitado = true;
-        this.mensajeDph = 'pendiente_devuelto';
-        this.puedeEditarCeldas = false;
-      }
+      this.registroActividadService
+          .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+          .subscribe({
+            next: (precondicionesCumplidas: boolean) => {
+              if (precondicionesCumplidas) {      
+                if (ddjj.idDirectorDPH == null) {
+                console.log('DPH: En posesión DPH y pendiente');
+                this.botonDphIcon = 'assignment_late';
+                this.botonDphDeshabilitado = true;
+                this.mensajeDph = 'pendiente';
+                this.puedeEditarCeldas = false;
+                } else {
+                console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
+                this.botonDphIcon = 'assignment_late';
+                this.botonDphDeshabilitado = true;
+                this.mensajeDph = 'pendiente_devuelto';
+                this.puedeEditarCeldas = false;
+              }
+              } else {
+            console.log('DPH: Faltan ddjj por aprobar. En posesión DPH y pendiente');
+            this.botonDphIcon = 'alarm_add';
+            this.botonDphDeshabilitado = true;
+            this.mensajeDph = 'ddjj_incompletas';
+            this.puedeEditarCeldas = false;
+          }
+        },
+        error: () => {
+          console.warn('Error al validar precondiciones para DPH');
+          this.botonDphIcon = 'assignment_late';
+          this.botonDphDeshabilitado = true;
+          this.mensajeDph = 'ddjj_incompletas';
+          this.puedeEditarCeldas = false;
+        }
+      });
+
     } else if (!enPosesionDph && estadoDph === 'RECHAZADO') {
       console.log('DPH: Rechazado por DPH');
       this.botonDphIcon = 'assignment_return';
@@ -914,7 +933,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
         next: (precondicionesCumplidas: boolean) => {
           if (!precondicionesCumplidas) {
             // No cumple precondiciones, por lo tanto no habilita nada todavía
-            this.botonDphAuthIcon = 'assignment_return';
+            this.botonDphAuthIcon = 'alarm_add';
             this.botonDphAuthDeshabilitado = true;
             this.mensajeDphAuth = null;
             return;
@@ -1037,7 +1056,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       });
   }
 
-  getRegistroIdForFecha(actividades: RegistroActividad[], fecha: Date): number | null {
+  getRegistroIdForFecha(actividades: RegActivListDto[], fecha: Date): number | null {
     const fechaBuscada = this.formatDateOnly(fecha);
     
     const actividad = actividades.find(act => 
@@ -1051,7 +1070,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     return date.toISOString().split('T')[0]; // devuelve 'YYYY-MM-DD'
   }
 
-  onCeldaClick(actividades: RegistroActividad[], fecha: Date): void {
+  onCeldaClick(actividades: RegActivListDto[], fecha: Date): void {
     if (!this.puedeEditarCeldas) return;
 
     const id = this.getRegistroIdForFecha(actividades, fecha);
@@ -1228,38 +1247,30 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
 
   //Exportaciones a EXCEL y PDF
 
-  calculateHoursForExcel(registroActividades: RegActivListDto[], date: Date): number | string {
-    const registro = registroActividades.find((actividad) => {
-      const ingresoDate = moment(actividad.fechaIngreso);
-      return ingresoDate.isSame(date, 'day');
-    });
+  calculateHoursForExcel(actividades: RegActivListDto[], date: Date): number | string {
+    if (!actividades || actividades.length === 0) return '';
 
-    if (!registro) return '';
+    // Verificar si alguna actividad de ese día no tiene egreso
+    const sinEgreso = actividades.some(act => act.fechaIngreso && !act.fechaEgreso);
+    if (sinEgreso) return 'sin egreso';
 
-    for (let actividad of registroActividades) {
-      if (actividad.fechaIngreso && !actividad.fechaEgreso) {
-        return 'sin egreso';
-      }
-    }
-
-    if (registro.fechaIngreso && registro.fechaEgreso) {
-      const hoursIn = moment(`${registro.fechaIngreso} ${registro.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
-      const hoursOut = moment(`${registro.fechaEgreso} ${registro.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
+    // Calcular total de horas del día
+    let totalHoras = 0;
+    for (const act of actividades) {
+      const hoursIn = moment(`${act.fechaIngreso} ${act.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
+      const hoursOut = moment(`${act.fechaEgreso} ${act.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
 
       if (hoursIn.isValid() && hoursOut.isValid()) {
         const diffHours = hoursOut.diff(hoursIn, 'hours', true);
         if (diffHours > 0) {
-          const redondeado = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
-          return redondeado; // devuelve como número
-        } else {
-          return 0;
+          // Redondeo clásico: >= 0.5 hacia arriba, sino hacia abajo
+          const redondeado = diffHours % 1 >= 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
+          totalHoras += redondeado;
         }
-      } else {
-        return 'Datos inválidos';
       }
     }
 
-    return '';
+    return totalHoras > 0 ? totalHoras : '';
   }
 
   async exportarAExcel() {
@@ -1270,18 +1281,27 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
 
+    // Encabezado principal
     worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FFADD8E6' }
+      fgColor: { argb: 'FFFABF8F' }
     };
     worksheet.getRow(1).font = { bold: true };
 
-    const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F', 'Monto total', 'Monto L-V', 'Monto S-D-F'];
-    const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
-      return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
-    });
+    const dataColumnHeaders = [
+      'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades',
+      'Horas mes', 'Horas L-V', 'Horas S-D-F',
+      'Monto total', 'Monto L-V', 'Monto S-D-F'
+    ];
+
+    const formattedColumnTitles = this.displayedColumns.slice(6).map(col =>
+      moment(col, 'YYYY_MM_DD').format('ddd DD')
+    );
+
     const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
+
+    // Fila de títulos
     worksheet.addRow(combinedHeaders).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -1289,87 +1309,81 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     };
     worksheet.getRow(2).font = { bold: true };
 
-    // Recorrer con for...of para usar await
+    // Filas de datos
     for (const registro of this.dataSource.data) {
-      // Esperar las novedades
+      const exportData: Record<string, string | number> = {
+        Apellido: registro.asistencial.apellido,
+        Nombre: registro.asistencial.nombre,
+        Cuil: registro.asistencial.cuil,
+        Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
+        Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
+                  ` (${registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-'})`,
+        Novedades: registro.asistencial.novedadesPersonales?.length > 0
+          ? registro.asistencial.novedadesPersonales
+              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+              .join('; ')
+          : '-'
+      };
 
-  const exportData: Record<string, string | number> = {
-    Apellido: registro.asistencial.apellido,
-    Nombre: registro.asistencial.nombre,
-    Cuil: registro.asistencial.cuil,
-    Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
-    Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
-              ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
-    Novedades: registro.asistencial.novedadesPersonales?.length > 0
-      ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`).join('; ')
-      : '-'
-  };
+      // Totales de horas
+      exportData['Horas mes'] = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
+      exportData['Horas L-V'] = registro.totalHoras?.horasLav ?? 0;
+      exportData['Horas S-D-F'] = registro.totalHoras?.horasSdf ?? 0;
 
-      const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
-      const totalLV = registro.totalHoras?.horasLav ?? 0;
-      const totalSD = registro.totalHoras?.horasSdf ?? 0;
-      const montoTotal = (registro.totalHoras?.montoTotal ?? 0);
-      const montoLV = registro.totalHoras?.montoLav ?? 0;
-      const montoSD = registro.totalHoras?.montoSdf ?? 0
+      // Totales de monto
+      exportData['Monto total'] = registro.totalHoras?.montoTotal ?? 0;
+      exportData['Monto L-V'] = registro.totalHoras?.montoLav ?? 0;
+      exportData['Monto S-D-F'] = registro.totalHoras?.montoSdf ?? 0;
 
-
-      exportData['Horas mes'] = totalMes;
-      exportData['Horas L-V'] = totalLV;
-      exportData['Horas S-D-F'] = totalSD;
-      exportData['Monto total'] = montoTotal;
-      exportData['Monto L-V'] = montoLV;
-      exportData['Monto S-D-F'] = montoSD;
-      
-
-      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
-        exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+      // Horas por día
+      this.displayedColumns.slice(6).forEach((fechaColumna, index) => {
+        const fecha = this.getFechaFromColumnId(fechaColumna);
+        const actividadesDia = this.getActividadesPorFecha(registro.id, fecha);
+        exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(actividadesDia, fecha);
       });
 
       worksheet.addRow(Object.values(exportData));
       const row = worksheet.lastRow!;
 
-      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
-        const date = this.getFechaFromColumnId(fechaColumna);
-        const isHoliday = this.isHoliday(date).isHoliday;
+      // Colores por celda (feriado, fin de semana, novedad)
+      this.displayedColumns.slice(6).forEach((fechaColumna, index) => {
+        const fecha = this.getFechaFromColumnId(fechaColumna);
+        const { clase } = this.getCellInfo(fecha, registro);
+        const cellIndex = dataColumnHeaders.length + index + 1;
+        const cell = row.getCell(cellIndex);
 
-        if (isHoliday) {
-          const cellIndex = dataColumnHeaders.length + index + 1;
-          const cell = row.getCell(cellIndex);
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'd4c2cd' }
-          };
-          cell.font = { color: { argb: '000000' } };
-        }
+        if (clase === 'holiday') cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F9CACA' } };
+        else if (clase.startsWith('novedad-personal')) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D4F1F9' } };
+        else if (clase === 'weekend') cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
       });
-      // color columnas de monto
-      ['Total monto', 'Monto L-V', 'Monto S-D-F'].forEach(headerName => {
-        const colIndex = combinedHeaders.indexOf(headerName) + 1; // +1 porque ExcelJS usa 1-based index
-        if (colIndex > 0) {
-          const cell = row.getCell(colIndex);
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'E2EFDA' }
-          };
-        }
-      });  
+
+    // Totales verdes diferenciando horas y montos
+    ['Horas mes','Horas L-V','Horas S-D-F'].forEach(key => {
+      const cell = row.getCell(dataColumnHeaders.indexOf(key) + 1);
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E2EFDA' } };
+    });
+
+    ['Monto total','Monto L-V','Monto S-D-F'].forEach(key => {
+      const cell = row.getCell(dataColumnHeaders.indexOf(key) + 1);
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'C6E0B4' } };
+    });
     }
+    // Fila vacía + referencia de colores
+    worksheet.addRow([]);
+    worksheet.addRow(['Referencia:']).font = { bold: true };
+    ['Feriado', 'Novedades'].forEach(texto => {
+      const cell = worksheet.addRow([texto]).getCell(1);
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: texto === 'Feriado' ? 'F9CACA' : 'D4F1F9' } };
+    });
 
-    const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_sinAprobacion.xlsx`;
-
-    worksheet.eachRow((row, rowNumber) => {
-      row.eachCell((cell, colNumber) => {
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
+    // Bordes
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        cell.border = { top: { style:'thin' }, left: { style:'thin' }, bottom: { style:'thin' }, right: { style:'thin' } };
       });
     });
 
+    const fileName = `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, fileName);
@@ -1380,129 +1394,95 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
 
-    // Encabezados
     const headers = [
-      'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 
-      'Horas mes', 'Horas L-V', 'Horas S-D-F',
-      ...this.displayedColumns.slice(6).map(columnTitle => 
-        moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+      'Apellido','Nombre','Cuil','Vinculos Laborales','Categoria','Novedades',
+      'Horas mes','Horas L-V','Horas S-D-F',
+      ...this.displayedColumns.slice(6).map(col => moment(col,'YYYY_MM_DD').format('ddd DD'))
     ];
 
     const body: any[] = [headers];
 
-    // Datos
     for (const registro of this.dataSource.data) {
+      const row: any[] = [
+        registro.asistencial.apellido,
+        registro.asistencial.nombre,
+        registro.asistencial.cuil,
+        registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-',
+        registro.asistencial.legajos?.[0]?.revista
+          ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`
+          : '-',
+        registro.asistencial.novedadesPersonales?.length > 0
+          ? registro.asistencial.novedadesPersonales
+              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+              .join('; ')
+          : '-',
+        { text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0), fillColor:'#E2EFDA', alignment:'center' },
+        { text: registro.totalHoras?.horasLav ?? 0, fillColor:'#E2EFDA', alignment:'center' },
+        { text: registro.totalHoras?.horasSdf ?? 0, fillColor:'#E2EFDA', alignment:'center' }
+      ];
 
-      const row = [];
+      this.displayedColumns.slice(6).forEach(col => {
+        const fecha = this.getFechaFromColumnId(col);
+        const actividadesDia = this.getActividadesPorFecha(registro.id, fecha);
+        const horas = this.calculateHoursForExcel(actividadesDia, fecha);
+        const { clase } = this.getCellInfo(fecha, registro);
 
-      row.push(registro.asistencial.apellido);
-      row.push(registro.asistencial.nombre);
-      row.push(registro.asistencial.cuil);
-      row.push(registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-');
-      row.push(registro.asistencial.legajos?.[0]?.revista
-      ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`: '-');
-
-      const novedadesString = registro.asistencial.novedadesPersonales?.length > 0
-        ? registro.asistencial.novedadesPersonales
-            .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
-            .join('; ')
-        : '-';
-      row.push(novedadesString);
-
-      // Totales (con color verde claro)
-      row.push({
-        text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0),
-        fillColor: '#E2EFDA',
-        alignment: 'center'
-      });
-      row.push({
-        text: (registro.totalHoras?.horasLav ?? 0),
-        fillColor: '#E2EFDA',
-        alignment: 'center'
-      });
-      row.push({
-        text: (registro.totalHoras?.horasSdf ?? 0),
-        fillColor: '#E2EFDA',
-        alignment: 'center'
-      });
-
-      // Horas por día (feriados y fines de semana)
-      this.displayedColumns.slice(6).forEach(fechaColumna => {
-        const fecha = this.getFechaFromColumnId(fechaColumna);
-        const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
-        const { isHoliday } = this.isHoliday(fecha);
-        const isWeekend = fecha.getDay() === 0 || fecha.getDay() === 6;
-
-        if (isHoliday) {
-          row.push({
-            text: horas,
-            fillColor: '#F9CACA', // Rojo claro (feriado)
-            bold: true,
-            alignment: 'center'
-          });
-        } else if (isWeekend) {
-          row.push({
-            text: horas,
-            fillColor: '#F0F0F0', // Gris claro (fin de semana)
-            alignment: 'center'
-          });
-        } else {
-          row.push(horas); // Día normal
-        }
+        if (clase === 'holiday') row.push({ text: horas, fillColor: '#F9CACA', bold:true, alignment:'center' });
+        else if (clase.startsWith('novedad-personal')) row.push({ text: horas, fillColor: '#A8EFFF', alignment:'center' });
+        else if (clase === 'weekend') row.push({ text: horas, fillColor: '#E0E0E0', alignment:'center' });
+        else row.push({ text: horas, alignment:'center' });
       });
 
       body.push(row);
     }
 
-    // Configuración del PDF
-    const content: any[] = [
-      { 
-        text: `DDJJ - Cargo y Agrupación - ${mesSeleccionado} ${anioSeleccionado} - ${efectorNombre}`, 
-        style: 'header' 
+    const mainTable = {
+      table: { headerRows:1, widths: headers.map(()=>'auto'), body },
+      layout: { hLineWidth:()=>0.5, vLineWidth:()=>0.5, hLineColor:()=> '#000', vLineColor:()=> '#000' }
+    };
+
+    const referenciasTable = {
+      table: {
+        widths: headers.map(()=>'auto'),
+        body: [[
+          { text:'Feriados', alignment:'center', fillColor:'#F9CACA', bold:true },
+          { text:'Novedades', alignment:'center', fillColor:'#A8EFFF', bold:true },
+          ...Array(headers.length-2).fill({ text:'' })
+        ]]
       },
-      {
-        table: {
-          headerRows: 1,
-          widths: headers.map(() => 'auto'),
-          body
-        },
-        layout: {
-          hLineWidth: () => 0.5,
-          vLineWidth: () => 0.5,
-          hLineColor: () => '#000000',
-          vLineColor: () => '#000000'
-        }
-      }
+      layout: 'noBorders',
+      margin:[0,10,0,0]
+    };
+
+    const content: any[] = [
+      { text:`DDJJ - Cargo y Agrupación - ${efectorNombre} - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
+      mainTable,
+      referenciasTable
     ];
 
-    // Pie de página (sello, firma, texto)
     if (textoAdicional || selloBase64 || firmaBase64 || autoridadDto) {
       content.push({
-        alignment: 'center',
-        margin: [0, 20, 0, 0],
-        stack: [
-          { text: textoAdicional, fontSize: 8 },
+        alignment:'center',
+        margin:[0,20,0,0],
+        stack:[
+          { text:textoAdicional, fontSize:8 },
           {
-            columns: [
+            columns:[
               {
-                width: '50%',
-                stack: [
-                  firmaBase64 ? { image: firmaBase64, width: 120, alignment: 'right' } : {},
-                  autoridadDto?.personaName ? 
-                    { text: autoridadDto.personaName, alignment: 'right', bold: true } : {},
-                  autoridadDto?.cargo ? 
-                    { text: autoridadDto.cargo, alignment: 'right', fontSize: 8 } : {}
+                width:'50%',
+                stack:[
+                  firmaBase64 ? { image:firmaBase64, width:120, alignment:'right' } : {},
+                  autoridadDto?.personaName ? { text:autoridadDto.personaName, alignment:'right', bold:true } : {},
+                  autoridadDto?.cargo ? { text:autoridadDto.cargo, alignment:'right', fontSize:8 } : {}
                 ]
               },
               {
-                width: '50%',
-                stack: [
-                  selloBase64 ? { image: selloBase64, width: 120, alignment: 'left' } : {}
-                ]
+                width:'50%',
+                stack:[ selloBase64 ? { image:selloBase64, width:120, alignment:'left' } : {} ]
               }
             ],
-            columnGap: 20,
-            margin: [0, 40, 0, 0]
+            columnGap:20,
+            margin:[0,40,0,0]
           }
         ]
       });
@@ -1511,22 +1491,12 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     const docDefinition: any = {
       pageSize: 'A3',
       pageOrientation: 'landscape',
-      pageMargins: [10, 10, 10, 10],
+      pageMargins:[10,10,10,10],
       content,
-      styles: {
-        header: {
-          fontSize: 14,
-          bold: true,
-          alignment: 'center',
-          margin: [0, 0, 0, 10]
-        }
-      },
-      defaultStyle: {
-        fontSize: 7
-      }
+      styles:{ header:{ fontSize:14, bold:true, alignment:'center', margin:[0,0,0,10] } },
+      defaultStyle:{ fontSize:7 }
     };
 
-    // Descargar
     pdfMake.createPdf(docDefinition).download(
       `DDJJ-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_${nombreArchivo}.pdf`
     );

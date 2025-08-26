@@ -53,8 +53,8 @@ export class CronogramaDefinitivoService {
       .pipe(tap(() => this._refresh$.next()));
   }
 
-  public listByAnioMesEfector(anio: number, mes: string, idEfector: number): Observable<CronogramaDefinitivo[]> {
-    return this.httpClient.get<CronogramaDefinitivo[]>(`${this.cDefinitivoURL}listCronogramaByAnioMesEfector/${anio}/${mes}/${idEfector}`);
+  public listByAnioMesEfector(anio: number, mes: string, idEfector: number): Observable<CronogramaDefinitivoListDto[]> {
+    return this.httpClient.get<CronogramaDefinitivoListDto[]>(`${this.cDefinitivoURL}listCronogramaByAnioMesEfector/${anio}/${mes}/${idEfector}`);
   }
 
   listByAnioMesEfectorAndTipoGuardia(anio: number, mes: string, idEfector: number, idTipoGuardia: number): Observable<CronogramaDefinitivoListDto[]> {

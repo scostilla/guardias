@@ -98,7 +98,7 @@
   <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-aprobado">
     <mat-icon class="icono-pase">lock</mat-icon>
     <div class="mensaje-pase">
-      Se finalizó la creación de la DDJJ de todas las guardias para
+      Se finalizó la creación de la DDJJ de EXTRA para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
       La misma está en proceso de revisión por el Director del hospital.<br>
       Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-extra">sección de DDJJ</span>.
@@ -177,11 +177,11 @@
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
         <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-          [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
-          [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)">
-          <span 
-              [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-          </span>
+            [ngClass]="getCellInfo(getFechaFromColumnId(fechaColumna), registro).clase"
+            [matTooltip]="getCellInfo(getFechaFromColumnId(fechaColumna), registro).tooltip">
+          <span [innerHTML]="calculateHoursForDate(
+              getActividadesPorFecha(registro.id, getFechaFromColumnId(fechaColumna))
+            )"></span>
         </td>
       </ng-container>
 

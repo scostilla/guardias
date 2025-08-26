@@ -193,19 +193,19 @@
   </div>
 </div>
 
-<div *ngIf="mensajeDph === 'enviar_dph' && (isAdministrativo || isSuper)" class="text-pase">
+<!--<div *ngIf="mensajeDph === 'enviar_dph' && (isAdministrativo || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
     El director del hospital ya aprobó todas las DDJJ disponibles.<br/>
     Debes realizar el envio a la DPH.
   </div>
-</div>
+</div>-->
 
-<div *ngIf="mensajeDph === 'ddjj_incompletas' && (isAdministrativo || isSuper)" class="text-pase">
+<div *ngIf="mensajeDph === 'ddjj_incompletas' && (isAdministrativo || isSuper || isDph)" class="text-pase">
   <mat-icon class="icono-pase">alarm_add</mat-icon>
   <div class="mensaje-pase">
     Hay DDJJ pendientes de aprobación por el director del hospital.<br/>
-    El mismo debe aprobar todas las DDJJ de cada tipo de guardia disponible para que puedas realizar el envío a la DPH.
+    El mismo debe aprobar todas las DDJJ de cada tipo de guardia disponible para que sean enviadas a la DPH.
   </div>
 </div>
 
@@ -387,7 +387,7 @@
       <ng-container matColumnDef="montoTotal">
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #639b6d;">Monto Total</th>
         <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #639b6d;">
-          {{ (registro.totalHoras?.horasLav || 0) + (registro.totalHoras?.montoTotal || 0) }}
+          {{ registro.totalHoras?.montoTotal || 0 }}
         </td>
       </ng-container>
 
@@ -409,14 +409,16 @@
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
           {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
         </th>
-<td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-    [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
-    [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)"
-    [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
-    (click)="onCeldaClick(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-  
-  <span [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))"></span>
-</td>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+            [ngClass]="getCellInfo(getFechaFromColumnId(fechaColumna), registro).clase"
+            [matTooltip]="getCellInfo(getFechaFromColumnId(fechaColumna), registro).tooltip"
+            [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
+            (click)="onCeldaClick(getActividadesPorFecha(registro.id, getFechaFromColumnId(fechaColumna)), getFechaFromColumnId(fechaColumna))">
+
+          <span [innerHTML]="calculateHoursForDate(
+              getActividadesPorFecha(registro.id, getFechaFromColumnId(fechaColumna))
+            )"></span>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

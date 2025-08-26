@@ -1,26 +1,20 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { concat, of } from 'rxjs';
-import { switchMap, reduce, map, catchError } from 'rxjs/operators';
 import { RmensualCargoyagrupDetailComponent } from 'src/app/components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
-import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { DialogConfirmDdjjComponent } from 'src/app/components/guardias/dialog-confirm-ddjj/dialog-confirm-ddjj.component';
-import { RegistroActividadesEditComponent } from 'src/app/components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { RegistroActividadService } from 'src/app/services/registroActividad.service';
 import { RegistroActividad } from 'src/app/models/RegistroActividad';
 import { Person } from 'src/app/models/Configuracion/Person';
-import { RegistroMensual } from 'src/app/models/RegistroMensual';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
-import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
+import { DdjjListDto } from 'src/app/dto/DdjjListDto';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Router } from '@angular/router';
@@ -28,14 +22,12 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
 import { ObservacionDdjjService } from 'src/app/services/observacionDdjj.service';
-import { ObservacionDdjjDto } from 'src/app/dto/ObservacionDdjjDto';
+import { RegistroMensualListDto } from 'src/app/dto/RegistroMensualListDto';
 import { ObservacionDdjjUltimoDto } from 'src/app/dto/ObservacionDdjjUltimoDto';
 import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronogramaDefinitivo.service';
 import { CronogramaDefinitivoDto } from 'src/app/dto/Cronogramas/CronogramaDefinitivoDto';
-import { CronogramaDefinitivo } from 'src/app/models/Cronogramas/CronogramaDefinitivo';
+import { CronogramaDefinitivoListDto } from 'src/app/dto/CronogramaDefinitivoListDto';
 import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
-import { DialogHistorialObservacionesComponent } from 'src/app/components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
-import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -47,6 +39,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
+type RegistroMensualConDdjj = RegistroMensualListDto & { ddjjDto?: DdjjListDto };
+
 @Component({
   selector: 'app-cronograma-def',
   templateUrl: './cronograma-def.component.html',
@@ -55,7 +49,7 @@ import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 export class CronogramaDefComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table!: MatTable<RegistroMensual>;
+  @ViewChild(MatTable) table!: MatTable<RegistroMensualListDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -68,18 +62,20 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
       ...this.columnasFechas
     ];
   }
-  dataSource!: MatTableDataSource<RegistroMensual>;
+  dataSource!: MatTableDataSource<RegistroMensualConDdjj>;
   suscription!: Subscription;
-  ddjjSeleccionada?: Ddjj;
+  ddjjSeleccionada?: DdjjListDto;
   tablaListaParaMostrar = false;
+
+  
 
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
-  registrosMensuales: RegistroMensual[] = [];
+  registrosMensuales: RegistroMensualConDdjj[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
-  registrosAgrupadosPorTipoGuardia: { tipoGuardia: string; registros: RegistroMensual[] }[] = [];
+  registrosAgrupadosPorTipoGuardia: { tipoGuardia: string; registros: RegistroMensualConDdjj[] }[] = [];
 
   selectedServicio?: number | null = null; 
   selectedMonth: number = moment().month() + 1;
@@ -88,24 +84,6 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
   years: number[] = [2023, 2024, 2025];
   selectedMonthYear: string = '';
   mesesDisponibles: { value: string, label: string }[] = [];
-
-  botonDirectorIcon: 'assignment_return' | 'assignment_late' | 'block' | 'assignment_turned_in' = 'assignment_return';
-  evaluacionDdjjCargada = false;
-  botonDirectorDeshabilitado: boolean = false;
-  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
-
-  botonDphIcon: 'assignment_return' | 'assignment_late' | 'assignment_turned_in' | 'block' | 'alarm_add' | 'snooze' = 'assignment_return';
-  botonDphDeshabilitado: boolean = false;
-  mensajeDph: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | 'enviar_dph' | 'ddjj_incompletas' | null = null;
-  evaluacionDdjjDphCargada: boolean = false;
-
-  botonDirectorAuthIcon: string = 'assignment_ind';
-  botonDirectorAuthDeshabilitado: boolean = true;
-  mensajeDirectorAuth: string | null = null;
-
-  botonDphAuthIcon: string = 'assignment_ind';
-  botonDphAuthDeshabilitado: boolean = true;
-  mensajeDphAuth: string | null = null;
 
   puedeEditarCeldas: boolean = false;
   rangoPermitidoDDJJ: boolean = false;
@@ -165,7 +143,7 @@ export class CronogramaDefComponent implements OnInit, OnDestroy {
       if (this.efectorId) {
         this.loadEfectorName();
           moment.locale('es');
-          this.dataSource = new MatTableDataSource<RegistroMensual>([]);
+          this.dataSource = new MatTableDataSource<RegistroMensualConDdjj>([]);
           this.generarMesesDisponibles();
           this.updateDateAndLoadData();
           this.loadHospitalDetails();
@@ -292,61 +270,11 @@ generarDiasDelMes(): void {
   }
 }
 
-  updateTableDataSource(): void {
-    this.dataSource.data = this.registrosMensuales;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-/*
-  loadRegistrosMensuales(): void {
-  const anio = this.selectedYear;
-  const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
-  const idEfector = this.efectorId;
-
-  if (!idEfector) {
-    console.error("El ID del hospital no puede ser null");
-    return;
-  }
-
-  // Usamos directamente el servicio de DDJJ sin filtro por servicio
-  const ddjj$: Observable<Ddjj[]> = this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector);
-
-  this.tablaListaParaMostrar = false;
-
-  ddjj$.subscribe({
-    next: (ddjjs: Ddjj[]) => {
-      if (ddjjs.length > 0) {
-        const primeraDdjj = ddjjs[0];
-        this.ddjjSeleccionada = primeraDdjj;
-
-      } else {
-        this.ddjjSeleccionada = undefined;
-      }
-
-      // Procesamos los registros manteniendo la lógica original
-      this.registrosMensuales = ddjjs.flatMap(ddjj =>
-        (ddjj.registrosMensuales || []).map(reg => {
-          reg.ddjj = ddjj;
-          return reg;
-        })
-      );
-
-      // Ordenamos por tipo de guardia para la agrupación visual
-      this.registrosMensuales.sort((a, b) => 
-        (a.ddjj?.tipoGuardia?.nombre || '').localeCompare(b.ddjj?.tipoGuardia?.nombre || '')
-      );
-
-      this.updateTableDataSource();
-      this.tablaListaParaMostrar = true;
-    },
-    error: (err: any) => {
-      console.error('Error cargando DDJJ:', err);
-      this.registrosMensuales = [];
-      this.updateTableDataSource();
-      this.tablaListaParaMostrar = true;
-    }
-  });
-}*/
+updateTableDataSource(): void {
+  this.dataSource.data = this.registrosMensuales;
+  this.dataSource.paginator = this.paginator;
+  this.dataSource.sort = this.sort;
+}
 
 loadRegistrosMensuales(): void {
   const anio = this.selectedYear;
@@ -360,148 +288,58 @@ loadRegistrosMensuales(): void {
 
   this.tablaListaParaMostrar = false;
 
-  // 1. Obtenemos primero el cronograma definitivo
-  this.cronogramaDefinitivoService.listByAnioMesEfector(anio, mes, idEfector).subscribe({
-    next: (cronogramas: CronogramaDefinitivo[]) => {
-      // 2. Extraemos todas las DDJJs del cronograma
-      const ddjjsCronograma = cronogramas.flatMap(c => c.ddjjs || []);
+  this.cronogramaDefinitivoService.listByAnioMesEfector(anio, mes, idEfector)
+    .subscribe({
+      next: (cronogramas: CronogramaDefinitivoListDto[]) => {
+        // 🔹 Obtenemos todas las DDJJ de todos los cronogramas
+        const ddjjs: DdjjListDto[] = cronogramas.flatMap(c => c.ddjjs || []);
 
-      // 3. Determinamos qué tipos de guardia necesitamos cargar
-      const tiposNecesarios = new Set<number>();
-      ddjjsCronograma.forEach(ddjj => {
-        if (ddjj.tipoGuardia?.id) {
-          tiposNecesarios.add(ddjj.tipoGuardia.id);
-        }
-      });
+        // 🔹 Seleccionamos la primera DDJJ
+        this.ddjjSeleccionada = ddjjs.length > 0 ? ddjjs[0] : undefined;
 
-      // 4. Si no hay DDJJs en el cronograma, cargamos todos los tipos
-      if (tiposNecesarios.size === 0) {
-        tiposNecesarios.add(1); // CARGO
-        tiposNecesarios.add(3); // EXTRA
-        tiposNecesarios.add(4); // CF
+        // 🔹 Generamos registros mensuales incluyendo la referencia a la DDJJ
+        this.registrosMensuales = ddjjs.flatMap(ddjj =>
+          (ddjj.registrosMensuales || []).map(registro => {
+            const registroConDdjj: RegistroMensualConDdjj = {
+              ...registro,
+              ddjjDto: ddjj // 🔹 agregamos la referencia a la DDJJ
+            };
+            return registroConDdjj;
+          })
+        );
+
+        // 🔹 Ordenamos por tipo de guardia usando la DDJJ
+        this.registrosMensuales.sort((a, b) =>
+          (a.ddjjDto?.idTipoGuardia || 0) - (b.ddjjDto?.idTipoGuardia || 0)
+        );
+
+        this.updateTableDataSource();
+        this.tablaListaParaMostrar = true;
+      },
+      error: (err) => {
+        console.error("Error cargando cronograma:", err);
+        this.registrosMensuales = [];
+        this.tablaListaParaMostrar = true;
       }
-
-      // 5. Cargamos las DDJJs según los tipos necesarios
-      this.cargarDdjjsPorTipo(Array.from(tiposNecesarios), anio, mes, idEfector, ddjjsCronograma);
-    },
-    error: (err) => {
-      console.error('Error cargando cronograma:', err);
-      // Fallback: cargar todos los tipos directamente
-      this.cargarTodosLosTipos(anio, mes, idEfector);
-    }
-  });
+    });
 }
 
-private cargarDdjjsPorTipo(tiposIds: number[], anio: number, mes: string, idEfector: number, ddjjsCronograma: Ddjj[]): void {
-  const cargas: Observable<Ddjj[]>[] = [];
-
-  // Configuramos las cargas según los tipos necesarios
-  tiposIds.forEach(tipoId => {
-    switch(tipoId) {
-      case 1: // CARGO
-        cargas.push(this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector));
-        break;
-      case 3: // EXTRA
-        cargas.push(this.ddjjService.listDdjjExtra(anio, mes, idEfector));
-        break;
-      case 4: // CF
-        cargas.push(this.ddjjService.listDdjjCf(anio, mes, idEfector));
-        break;
-    }
-  });
-
-  // Ejecutamos las cargas en secuencia
-  this.ejecutarCargasSecuenciales(cargas, ddjjsCronograma);
-}
-
-private ejecutarCargasSecuenciales(cargas: Observable<Ddjj[]>[], ddjjsCronograma: Ddjj[]): void {
-  if (cargas.length === 0) {
-    this.procesarDdjjsCompletas([]);
-    return;
-  }
-
-  const resultados: Ddjj[] = [];
-  let indice = 0;
-
-  const ejecutarSiguiente = () => {
-    if (indice < cargas.length) {
-      cargas[indice].subscribe({
-        next: (ddjjs) => {
-          resultados.push(...ddjjs);
-          indice++;
-          ejecutarSiguiente();
-        },
-        error: (err) => {
-          console.error(`Error cargando tipo ${indice}:`, err);
-          indice++;
-          ejecutarSiguiente(); // Continuar con el siguiente aunque falle
-        }
-      });
-    } else {
-      // Filtramos solo las DDJJs que están en el cronograma (si hay)
-      const ddjjsFiltradas = ddjjsCronograma.length > 0 
-        ? resultados.filter(ddjj => ddjjsCronograma.some(d => d.id === ddjj.id))
-        : resultados;
-      
-      this.procesarDdjjsCompletas(ddjjsFiltradas);
-    }
-  };
-
-  ejecutarSiguiente();
-}
-
-private cargarTodosLosTipos(anio: number, mes: string, idEfector: number): void {
-  // Cargamos todos los tipos como fallback
-  const cargas = [
-    this.ddjjService.listDdjjCargoyAgrup(anio, mes, idEfector),
-    this.ddjjService.listDdjjExtra(anio, mes, idEfector),
-    this.ddjjService.listDdjjCf(anio, mes, idEfector)
-  ];
-
-  this.ejecutarCargasSecuenciales(cargas, []);
-}
-
-private procesarDdjjsCompletas(ddjjs: Ddjj[]): void {
-  if (ddjjs.length > 0) {
-    const primeraDdjj = ddjjs[0];
-    this.ddjjSeleccionada = primeraDdjj;
-    // Aquí puedes agregar otras evaluaciones de estado si son necesarias
-  } else {
-    this.ddjjSeleccionada = undefined;
-  }
-
-  // Procesamiento idéntico a tu versión actual
-  this.registrosMensuales = ddjjs.flatMap(ddjj =>
-    (ddjj.registrosMensuales || []).map(reg => {
-      reg.ddjj = ddjj;
-      return reg;
-    })
-  );
-
-  // Ordenamiento por tipo de guardia
-  this.registrosMensuales.sort((a, b) => 
-    (a.ddjj?.tipoGuardia?.nombre || '').localeCompare(b.ddjj?.tipoGuardia?.nombre || '')
-  );
-
-  this.updateTableDataSource();
-  this.tablaListaParaMostrar = true;
-}
 // Métodos para manejar la agrupación por tipo de guardia
-shouldShowTipoGuardia(registro: RegistroMensual, index: number): boolean {
+shouldShowTipoGuardia(registro: RegistroMensualConDdjj, index: number): boolean {
   if (index === 0) return true;
   
   const prevRegistro = this.registrosMensuales[index - 1];
-  return registro.ddjj?.tipoGuardia?.id !== prevRegistro.ddjj?.tipoGuardia?.id;
+  return registro.ddjjDto?.idTipoGuardia !== prevRegistro.ddjjDto?.idTipoGuardia;
 }
 
-getRowspanForTipoGuardia(registro: RegistroMensual, index: number): number {
+getRowspanForTipoGuardia(registro: RegistroMensualConDdjj, index: number): number {
   if (!this.shouldShowTipoGuardia(registro, index)) return 1;
   
-  const tipoGuardiaId = registro.ddjj?.tipoGuardia?.id;
+  const tipoGuardiaId = registro.ddjjDto?.idTipoGuardia;
   let count = 1;
   
   for (let i = index + 1; i < this.registrosMensuales.length; i++) {
-    if (this.registrosMensuales[i].ddjj?.tipoGuardia?.id === tipoGuardiaId) {
+    if (this.registrosMensuales[i].ddjjDto?.idTipoGuardia === tipoGuardiaId) {
       count++;
     } else {
       break;
@@ -511,19 +349,19 @@ getRowspanForTipoGuardia(registro: RegistroMensual, index: number): number {
   return count;
 }
 
-getNombreTipoGuardia(tipoGuardia: TipoGuardia | null | undefined): string {
-  if (!tipoGuardia) return 'Sin tipo';
+getNombreTipoGuardia(idTipoGuardia: number | undefined): string {
+  if (!idTipoGuardia) return 'Sin tipo';
   
-  // Si es CARGO (id 1), agregamos "Y AGRUPACION"
-  if (tipoGuardia.id === 1) {
-    return `${tipoGuardia.nombre} Y AGRUPACION`;
+  switch(idTipoGuardia) {
+    case 1: return 'CARGO Y AGRUPACION';
+    case 3: return 'EXTRA';
+    case 4: return 'CONTRAFACTURA';
+    default: return 'Otro';
   }
-  
-  return tipoGuardia.nombre;
 }
 
-getColorTipoGuardia(tipoGuardiaId: number | undefined): string {
-  switch(tipoGuardiaId) {
+getColorTipoGuardia(idTipoGuardia: number | undefined): string {
+  switch(idTipoGuardia) {
     case 1: return '#91A8DA';  // CARGO
     case 3: return '#fcc932';  // EXTRA
     case 4: return '#A9D08F';  // CONTRAFACTURA
@@ -774,7 +612,7 @@ formatDate(startDate: Date, endDate: Date): string {
   }
 }
 
-async exportarAExcel() {
+/*async exportarAExcel() {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Datos');
 
@@ -1101,7 +939,7 @@ async onExportarLimpio() {
   } catch (error) {
     console.error('Error exportando a PDF:', error);
   }
-}
+}*/
 
 accentFilter(input: string): string {
     const acentos = "ÁÉÍÓÚáéíóú";
@@ -1120,7 +958,7 @@ accentFilter(input: string): string {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filterPredicate = (data: RegistroMensual, filter: string) => {
+    this.dataSource.filterPredicate = (data: RegistroMensualConDdjj, filter: string) => {
       const nombre = this.accentFilter(data.asistencial.nombre.toLowerCase());
       const apellido = this.accentFilter(data.asistencial.apellido.toLowerCase());
 
