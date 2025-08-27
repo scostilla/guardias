@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Compoanentes
-import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { RmensualContrafacturaDetailComponent } from '../rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
 import { DialogConfirmRmensualComponent } from '../dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 
 
@@ -81,7 +81,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   feriados: Feriado[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
-  dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
+  dialogRef!: MatDialogRef<RmensualContrafacturaDetailComponent>;
 
   selectedServicio?: number | null = null; 
   selectedMonth: number = moment().month() + 1;
@@ -301,7 +301,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   // Colores por tipo de guardia
   getColor(tipoGuardiaId: number): string {
     if (tipoGuardiaId === 4) {
-      return '#A9D08F'; // CF
+      return '#769264'; // CF
     }
     return '#000'; // Default negro
   }
@@ -347,47 +347,13 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const day = date.getDay();
     return day === 0 || day === 6;
   }
-
-  isNovedad(dateMoment: moment.Moment, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound?.tipoLicencia?.nombre ?? ''
-    };
-  }
   
   getNovedadCssClass(tipoLicencia: string): string {
     const tipo = tipoLicencia.toLowerCase();
     return clases[tipo] || 'novedad-personal-otros';
   }
 
-  isNovedadClass(date: Date, registro: any): string {
-    const dateMoment = moment(date).startOf('day');
-    
-    // Verificar novedad
-    const { isNovedad, tipoLicencia } = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-    if (isNovedad) return this.getNovedadCssClass(tipoLicencia);
-
-    // Verificar feriado
-    if (this.isHoliday(date).isHoliday) return 'holiday';
-
-    // Verificar fin de semana
-    if (this.isWeekend(date)) return 'weekend';
-
-    // Default
-    return '';
-  }
-
-  calculateTooltip(date: Date, registro: any): string {
-    const dateMoment = moment(date).startOf('day');
-    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-
-    if (novedad.isNovedad) return novedad.tipoLicencia;
+  calculateTooltip(date: Date): string {
 
     const holiday = this.isHoliday(date);
     if (holiday.isHoliday) return holiday.motivo;
@@ -395,11 +361,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  getCellInfo(date: Date, registro: any): { clase: string, tooltip: string } {
-    const dateMoment = moment(date).startOf('day');
-    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-
-    if (novedad.isNovedad) return { clase: this.getNovedadCssClass(novedad.tipoLicencia), tooltip: novedad.tipoLicencia };
+  getCellInfo(date: Date): { clase: string, tooltip: string } {
     
     const holiday = this.isHoliday(date);
     if (holiday.isHoliday) return { clase: 'holiday', tooltip: holiday.motivo };
@@ -553,7 +515,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       mes += 1;
     }
     const rango2Inicio = new Date(anio, mes - 1, 1);
-    const rango2Fin = new Date(anio, mes - 1, 26, 23, 59, 59);
+    const rango2Fin = new Date(anio, mes - 1, 5, 23, 59, 59);
 
     return [
       { inicio: rango1Inicio, fin: rango1Fin },
@@ -592,32 +554,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     return !this.verificandoDdjj && !this.ddjjYaExiste && vencieronTodos;
   }
 
-  /*getMensajeContadorDdjj(): string | null {
-    const today = new Date();
-    let mes = this.selectedMonth;
-    let anio = this.selectedYear;
-
-    if (mes === 12) {
-      mes = 1;
-      anio += 1;
-    } else {
-      mes += 1;
-    }
-
-    const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
-
-    if (today >= inicio && today <= fin) {
-      const diasRestantes = 5 - today.getDate() + 1;
-
-      if (diasRestantes >= 1 && diasRestantes <= 5) {
-        return `${diasRestantes} ${diasRestantes === 1 ? 'día' : 'días'}`;
-      }
-    }
-
-    return null;
-  }*/
-
   verificarExistenciaDdjj(): void {
     this.verificandoDdjj = true;
 
@@ -635,36 +571,19 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     this.ddjjService.existsDdjj(anio, nombreMes, efectorId, tipoGuardiaId).subscribe({
       next: (existe: boolean) => {
         this.ddjjYaExiste = existe;
-
         const today = new Date();
-        let mes = this.selectedMonth;
-        let anioEvaluado = this.selectedYear;
-
-        // Ajustar si el mes es diciembre
-        if (mes === 12) {
-          mes = 1;
-          anioEvaluado += 1;
-        } else {
-          mes += 1;
-        }
-
-        const inicio = new Date(anioEvaluado, mes - 1, 1);   // 1 del mes siguiente
-        const fin = new Date(anioEvaluado, mes - 1, 5, 26, 59, 59); // 5 inclusive
+        const rangos = this.getRangosValidos();
 
         if (existe) {
-          this.botonDDJJIcon = 'assignment_turned_in'; 
+          this.botonDDJJIcon = 'assignment_turned_in';
+        } else if (rangos.some(r => today < r.inicio)) {
+          this.botonDDJJIcon = 'snooze'; // todavía no comienza ninguno de los rangos
+        } else if (rangos.some(r => this.estaEnRango(r.inicio, r.fin, today))) {
+          this.botonDDJJIcon = 'assignment_return'; // dentro de algún rango habilitado
         } else {
-          const today = new Date();
-          const rangos = this.getRangosValidos();
-
-          if (rangos.some(r => today < r.inicio)) {
-            this.botonDDJJIcon = 'snooze'; // todavía no comienza
-          } else if (rangos.some(r => this.estaEnRango(r.inicio, r.fin, today))) {
-            this.botonDDJJIcon = 'assignment_return'; // dentro de período habilitado
-          } else {
-            this.botonDDJJIcon = 'assignment_late'; // fuera de período
-          }
+          this.botonDDJJIcon = 'assignment_late'; // fuera de todos los rangos
         }
+
         this.verificandoDdjj = false;
       },
       error: (err) => {
@@ -708,12 +627,10 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   openDetail(registro: RegistroMensualListDto): void {
     const dataToSend = {
       asistencial: registro.asistencial,
-      registroActividad: registro.registroActividad,
-      novedades: registro.asistencial?.novedadesPersonales ?? [],
     };
     console.log('📤 Enviando al diálogo:', dataToSend);
 
-    this.dialogRef = this.dialog.open(RmensualCargoyagrupDetailComponent, {
+    this.dialogRef = this.dialog.open(RmensualContrafacturaDetailComponent, {
       width: '600px',
       data: dataToSend
     });
@@ -846,7 +763,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     };
     worksheet.getRow(1).font = { bold: true };
 
-    const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F'];
+    const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Horas mes', 'Horas L-V', 'Horas S-D-F'];
     const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle =>
       moment(columnTitle, 'YYYY_MM_DD').format('ddd DD')
     );
@@ -863,12 +780,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
         Apellido: registro.asistencial.apellido,
         Nombre: registro.asistencial.nombre,
         Cuil: registro.asistencial.cuil,
-        Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
-        Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
-                  ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
-        Novedades: registro.asistencial.novedadesPersonales?.length > 0
-          ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'}`).join('; ')
-          : '-'
       };
 
       const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
@@ -885,17 +796,15 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       worksheet.addRow(Object.values(exportData));
       const row = worksheet.lastRow!;
 
-      // Aplicar estilos de celda según feriado, fin de semana o novedad
-      this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
+      // Colores por celda (feriado, fin de semana)
+      this.displayedColumns.slice(6).forEach((fechaColumna, index) => {
         const fecha = this.getFechaFromColumnId(fechaColumna);
-        const { clase } = this.getCellInfo(fecha, registro);
+        const { clase } = this.getCellInfo(fecha);
         const cellIndex = dataColumnHeaders.length + index + 1;
         const cell = row.getCell(cellIndex);
 
         if (clase === 'holiday') {
           cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F9CACA' } };
-        } else if (clase.startsWith('novedad-personal')) {
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D4F1F9' } };
         } else if (clase === 'weekend') {
           cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
         }
@@ -910,12 +819,14 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
     // Agregar fila vacía y referencia de colores
     worksheet.addRow([]);
-    const referenciaRow = worksheet.addRow(['Referencia:']);
-    referenciaRow.font = { bold: true };
-    ['Feriado', 'Novedades'].forEach((texto, i) => {
-      const cell = worksheet.addRow([texto]).getCell(1);
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: texto === 'Feriado' ? 'F9CACA' : 'D4F1F9' } };
-    });
+    worksheet.addRow(['Referencia:']).font = { bold: true };
+
+    const cell = worksheet.addRow(['Feriado']).getCell(1);
+    cell.fill = { 
+      type: 'pattern', 
+      pattern: 'solid', 
+      fgColor: { argb: 'F9CACA' }  // Color para feriado
+    };
 
     // Bordes
     worksheet.eachRow((row) => {
@@ -937,7 +848,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
     // Encabezados
     const headers = [
-      'Apellido','Nombre','Cuil','Vinculos Laborales','Categoria','Novedades',
+      'Apellido','Nombre','Cuil',
       'Horas mes','Horas L-V','Horas S-D-F',
       ...this.displayedColumns.slice(6).map(col => moment(col,'YYYY_MM_DD').format('ddd DD'))
     ];
@@ -950,15 +861,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
         registro.asistencial.apellido,
         registro.asistencial.nombre,
         registro.asistencial.cuil,
-        registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-',
-        registro.asistencial.legajos?.[0]?.revista
-          ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`
-          : '-',
-        registro.asistencial.novedadesPersonales?.length > 0
-          ? registro.asistencial.novedadesPersonales
-              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
-              .join('; ')
-          : '-',
         // Totales verdes
         { text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0), fillColor:'#E2EFDA', alignment:'center' },
         { text: registro.totalHoras?.horasLav ?? 0, fillColor:'#E2EFDA', alignment:'center' },
@@ -969,10 +871,9 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       this.displayedColumns.slice(6).forEach(col => {
         const fecha = this.getFechaFromColumnId(col);
         const horas = this.calculateHoursForExcel(registro.id, fecha);
-        const { clase } = this.getCellInfo(fecha, registro);
+        const { clase } = this.getCellInfo(fecha);
 
         if (clase === 'holiday') row.push({ text: horas, fillColor: '#F9CACA', bold:true, alignment:'center' });
-        else if (clase.startsWith('novedad-personal')) row.push({ text: horas, fillColor: '#A8EFFF', alignment:'center' });
         else if (clase === 'weekend') row.push({ text: horas, fillColor: '#E0E0E0', alignment:'center' });
         else row.push({ text: horas, alignment:'center' });
       });
@@ -992,9 +893,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
         widths: headers.map(() => 'auto'),
         body: [
           [
-            { text: 'Feriados', alignment: 'center', fillColor: '#F9CACA', bold: true },
-            { text: 'Novedades', alignment: 'center', fillColor: '#A8EFFF', bold: true },
-            ...Array(headers.length - 2).fill({ text: '' })
+          { text:'Feriados', alignment:'center', fillColor:'#F9CACA', bold:true },
+          ...Array(headers.length-1).fill({ text:'' })
           ]
         ]
       },

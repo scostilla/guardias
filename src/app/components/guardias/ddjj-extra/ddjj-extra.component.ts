@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Componentes
-import { RmensualCargoyagrupDetailComponent } from '../rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
+import { RmensualExtraDetailComponent } from '../rmensual-extra-detail/rmensual-extra-detail.component';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { DialogConfirmDdjjComponent } from '../dialog-confirm-ddjj/dialog-confirm-ddjj.component';
 import { RegistroActividadesEditComponent } from 'src/app/components/actividades/registro-actividades-edit/registro-actividades-edit.component';
@@ -29,7 +29,6 @@ import { CronogramaDefinitivoService } from 'src/app/services/Cronogramas/cronog
 
 //Models y dto
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
-import { NovedadPersonalListDto } from 'src/app/dto/guardias/NovedadPersonalListDto';
 
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
@@ -51,21 +50,6 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
-
-
-interface ClasesNovedad {
-  [key: string]: string;
-}
-
-const clases: ClasesNovedad = {
-  'compensatorio': 'novedad-personal-compensatorio',
-  'licencia anual ordinaria': 'novedad-personal-lao',
-  'licencia por maternidad': 'novedad-personal-maternidad',
-  'parte por enfermedad': 'novedad-personal-parte-enfermo',
-  'parte por cuidado de familiar enfermo': 'novedad-personal-familiar-enfermo',
-  'falta sin aviso': 'novedad-personal-falta-sin-aviso',
-  'duelo': 'novedad-personal-duelo'
-};
 
 @Component({
   selector: 'app-ddjj-extra',
@@ -104,7 +88,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   feriados: Feriado[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
-  dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
+  dialogRef!: MatDialogRef<RmensualExtraDetailComponent>;
 
   selectedServicio?: number | null = null; 
   selectedMonth: number = moment().month() + 1;
@@ -383,7 +367,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   }
 
   getColor(tipoGuardiaId: number): string {
-    if (tipoGuardiaId === 3) return '#fcc932'; // Extra
+    if (tipoGuardiaId === 3) return '#D91E5B'; // Extra
     return '#000'; // Default negro
   }
 
@@ -428,47 +412,8 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     const day = date.getDay();
     return day === 0 || day === 6;
   }
-
-  isNovedad(dateMoment: moment.Moment, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
-    const novedadFound = novedades.find(novedad => {
-      const inicioMoment = moment(novedad.fechaInicio).startOf('day');
-      const finMoment = moment(novedad.fechaFinal).startOf('day');
-      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-    });
-
-    return {
-      isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound?.tipoLicencia?.nombre ?? ''
-    };
-  }
   
-  getNovedadCssClass(tipoLicencia: string): string {
-    const tipo = tipoLicencia.toLowerCase();
-    return clases[tipo] || 'novedad-personal-otros';
-  }
-
-  isNovedadClass(date: Date, registro: any): string {
-    const dateMoment = moment(date).startOf('day');
-    
-    // Verificar novedad
-    const { isNovedad, tipoLicencia } = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-    if (isNovedad) return this.getNovedadCssClass(tipoLicencia);
-
-    // Verificar feriado
-    if (this.isHoliday(date).isHoliday) return 'holiday';
-
-    // Verificar fin de semana
-    if (this.isWeekend(date)) return 'weekend';
-
-    // Default
-    return '';
-  }
-
-  calculateTooltip(date: Date, registro: any): string {
-    const dateMoment = moment(date).startOf('day');
-    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-
-    if (novedad.isNovedad) return novedad.tipoLicencia;
+  calculateTooltip(date: Date): string {
 
     const holiday = this.isHoliday(date);
     if (holiday.isHoliday) return holiday.motivo;
@@ -476,11 +421,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  getCellInfo(date: Date, registro: any): { clase: string, tooltip: string } {
-    const dateMoment = moment(date).startOf('day');
-    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-
-    if (novedad.isNovedad) return { clase: this.getNovedadCssClass(novedad.tipoLicencia), tooltip: novedad.tipoLicencia };
+  getCellInfo(date: Date): { clase: string, tooltip: string } {
     
     const holiday = this.isHoliday(date);
     if (holiday.isHoliday) return { clase: 'holiday', tooltip: holiday.motivo };
@@ -662,7 +603,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 10, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 26, 23, 59, 59);
 
     return { inicio, fin };
   }
@@ -698,7 +639,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       mes += 1;
     }
 
-    return new Date(anio, mes - 1, 10, 23, 59, 59);
+    return new Date(anio, mes - 1, 26, 23, 59, 59);
   }
   
   //Evaluaciones y cambios de estado DDJJ
@@ -966,12 +907,10 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   openDetail(registro: RegistroMensualListDto): void {
     const dataToSend = {
       asistencial: registro.asistencial,
-      registroActividad: registro.registroActividad,
-      novedades: registro.asistencial?.novedadesPersonales ?? [],
     };
     console.log('📤 Enviando al diálogo:', dataToSend);
 
-    this.dialogRef = this.dialog.open(RmensualCargoyagrupDetailComponent, {
+    this.dialogRef = this.dialog.open(RmensualExtraDetailComponent, {
       width: '600px',
       data: dataToSend
     });
@@ -1069,7 +1008,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   }
 
   onCeldaClick(actividades: RegActivListDto[], fecha: Date): void {
-    if (!this.puedeEditarCeldas) return;
+    if (!this.puedeEditarCeldas || !(this.isAdministrativo || this.isSuper)) return;
 
     const id = this.getRegistroIdForFecha(actividades, fecha);
     if (id != null) {
@@ -1288,7 +1227,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     worksheet.getRow(1).font = { bold: true };
 
     const dataColumnHeaders = [
-      'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades',
+      'Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria',
       'Horas mes', 'Horas L-V', 'Horas S-D-F',
       'Monto total', 'Monto L-V', 'Monto S-D-F'
     ];
@@ -1316,11 +1255,6 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
         Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
                   ` (${registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-'})`,
-        Novedades: registro.asistencial.novedadesPersonales?.length > 0
-          ? registro.asistencial.novedadesPersonales
-              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
-              .join('; ')
-          : '-'
       };
 
       // Totales de horas
@@ -1343,18 +1277,20 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
       worksheet.addRow(Object.values(exportData));
       const row = worksheet.lastRow!;
 
-      // Colores por celda (feriado, fin de semana, novedad)
+      // Colores por celda (feriado, fin de semana)
       this.displayedColumns.slice(6).forEach((fechaColumna, index) => {
         const fecha = this.getFechaFromColumnId(fechaColumna);
-        const { clase } = this.getCellInfo(fecha, registro);
+        const { clase } = this.getCellInfo(fecha);
         const cellIndex = dataColumnHeaders.length + index + 1;
         const cell = row.getCell(cellIndex);
 
-        if (clase === 'holiday') cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F9CACA' } };
-        else if (clase.startsWith('novedad-personal')) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D4F1F9' } };
-        else if (clase === 'weekend') cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
+        if (clase === 'holiday') {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F9CACA' } };
+        } else if (clase === 'weekend') {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
+        }
       });
-
+    
     // Totales verdes diferenciando horas y montos
     ['Horas mes','Horas L-V','Horas S-D-F'].forEach(key => {
       const cell = row.getCell(dataColumnHeaders.indexOf(key) + 1);
@@ -1369,10 +1305,13 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     // Fila vacía + referencia de colores
     worksheet.addRow([]);
     worksheet.addRow(['Referencia:']).font = { bold: true };
-    ['Feriado', 'Novedades'].forEach(texto => {
-      const cell = worksheet.addRow([texto]).getCell(1);
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: texto === 'Feriado' ? 'F9CACA' : 'D4F1F9' } };
-    });
+
+    const cell = worksheet.addRow(['Feriado']).getCell(1);
+    cell.fill = { 
+      type: 'pattern', 
+      pattern: 'solid', 
+      fgColor: { argb: 'F9CACA' }  // Color para feriado
+    };
 
     // Bordes
     worksheet.eachRow(row => {
@@ -1393,7 +1332,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
     const efectorNombre = this.efectorNombre;
 
     const headers = [
-      'Apellido','Nombre','Cuil','Vinculos Laborales','Categoria','Novedades',
+      'Apellido','Nombre','Cuil','Vinculos Laborales','Categoria',
       'Horas mes','Horas L-V','Horas S-D-F',
       ...this.displayedColumns.slice(6).map(col => moment(col,'YYYY_MM_DD').format('ddd DD'))
     ];
@@ -1409,11 +1348,6 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         registro.asistencial.legajos?.[0]?.revista
           ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`
           : '-',
-        registro.asistencial.novedadesPersonales?.length > 0
-          ? registro.asistencial.novedadesPersonales
-              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
-              .join('; ')
-          : '-',
         { text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0), fillColor:'#E2EFDA', alignment:'center' },
         { text: registro.totalHoras?.horasLav ?? 0, fillColor:'#E2EFDA', alignment:'center' },
         { text: registro.totalHoras?.horasSdf ?? 0, fillColor:'#E2EFDA', alignment:'center' }
@@ -1423,12 +1357,15 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         const fecha = this.getFechaFromColumnId(col);
         const actividadesDia = this.getActividadesPorFecha(registro.id, fecha);
         const horas = this.calculateHoursForExcel(actividadesDia, fecha);
-        const { clase } = this.getCellInfo(fecha, registro);
+        const { clase } = this.getCellInfo(fecha);
 
-        if (clase === 'holiday') row.push({ text: horas, fillColor: '#F9CACA', bold:true, alignment:'center' });
-        else if (clase.startsWith('novedad-personal')) row.push({ text: horas, fillColor: '#A8EFFF', alignment:'center' });
-        else if (clase === 'weekend') row.push({ text: horas, fillColor: '#E0E0E0', alignment:'center' });
-        else row.push({ text: horas, alignment:'center' });
+        if (clase === 'holiday') {
+          row.push({ text: horas, fillColor: '#F9CACA', bold: true, alignment: 'center' });
+        } else if (clase === 'weekend') {
+          row.push({ text: horas, fillColor: '#E0E0E0', alignment: 'center' });
+        } else {
+          row.push({ text: horas, alignment: 'center' });
+        }
       });
 
       body.push(row);
@@ -1444,8 +1381,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
         widths: headers.map(()=>'auto'),
         body: [[
           { text:'Feriados', alignment:'center', fillColor:'#F9CACA', bold:true },
-          { text:'Novedades', alignment:'center', fillColor:'#A8EFFF', bold:true },
-          ...Array(headers.length-2).fill({ text:'' })
+          ...Array(headers.length-1).fill({ text:'' })
         ]]
       },
       layout: 'noBorders',
@@ -1552,7 +1488,7 @@ export class DdjjExtraComponent implements OnInit, OnDestroy {
   }
 
   async onExportarConDPH() {
-    const textoAdicional = 'CORRESPONDE EL PAGO DE GUARDIAS EXTRA EFECTIVAMENTE CUMPLIDAS (PROFESIONALES 24 HS. Y J-2) Y BONO DE GUARDIAS COVID- SEGÚN RESOLUCIÓN  N° 516-S/2023  -  PARA AQUELLOS AGENTES QUE SE ENCUENTREN GOZANDO DE L.A.O., LIC. POR MATERNIDAD.-';
+    const textoAdicional = 'APROBACIÓN DE LA DDJJ POR PARTE DE DPH.-';
     const nombreArchivo = 'AprobadoDPH';
     const ddjj = this.ddjjSeleccionada!;
 

@@ -166,17 +166,17 @@
   </div>
 </div>
 
-<div *ngIf="mensajeDirector === 'pendiente' && (isAdministrativo || isSuper)" class="text-pase">
+<div *ngIf="mensajeDirector === 'pendiente' && (isAdministrativo || isDph || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
     Está en proceso de revisión por el director del hospital.
   </div>
 </div>
 
-<div *ngIf="mensajeDirector === 'pendiente_devuelto' && (isAdministrativo || isSuper)" class="text-pase">
+<div *ngIf="mensajeDirector === 'pendiente_devuelto' && (isAdministrativo || isDph || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
-    Reenviaste la DDJJ y nuevamente está en proceso de revisión por el director del hospital.
+    Se reenvió la DDJJ y nuevamente está en proceso de revisión por el director del hospital.
   </div>
 </div>
 
@@ -193,13 +193,22 @@
   </div>
 </div>
 
-<!--<div *ngIf="mensajeDph === 'enviar_dph' && (isAdministrativo || isSuper)" class="text-pase">
+<div *ngIf="mensajeDirector === 'rechazado' && (isDph || isSuper)" class="text-rechazo">
+  <mat-icon class="icono-pase">assignment_late</mat-icon>
+  <div class="mensaje-pase">
+    El director del hospital rechazó la DDJJ de guardias de CARGO y AGRUPACIÓN para
+    {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <br/>
+    El administrativo debe realizar los cambios necesarios según las observaciones y enviar la DDJJ al Director nuevamente.
+  </div>
+</div>
+
+<div *ngIf="mensajeDph === 'enviar_dph' && (isAdministrativo || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">assignment_late</mat-icon>
   <div class="mensaje-pase">
     El director del hospital ya aprobó todas las DDJJ disponibles.<br/>
     Debes realizar el envio a la DPH.
   </div>
-</div>-->
+</div>
 
 <div *ngIf="mensajeDph === 'ddjj_incompletas' && (isAdministrativo || isSuper || isDph)" class="text-pase">
   <mat-icon class="icono-pase">alarm_add</mat-icon>

@@ -301,9 +301,9 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   // Colores por tipo de guardia
   getColor(tipoGuardiaId: number): string {
     if (tipoGuardiaId === 1) {
-      return '#91A8DA'; // Cargo
+      return '#6126cfff'; // Cargo
     } else if (tipoGuardiaId === 2) {
-      return '#eb7430'; // Reagrupación
+      return '#FF7F0E'; // Reagrupación
     }
     return '#000'; // Default negro
   }
@@ -550,7 +550,7 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 25, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 5, 23, 59, 59);
 
     return { inicio, fin };
   }
@@ -794,8 +794,10 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
         Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
                   ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
         Novedades: registro.asistencial.novedadesPersonales?.length > 0
-          ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'}`).join('; ')
-          : '-'
+          ? registro.asistencial.novedadesPersonales
+              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+              .join('; ')
+          : '-'                
       };
 
       const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);

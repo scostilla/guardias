@@ -362,9 +362,9 @@ getNombreTipoGuardia(idTipoGuardia: number | undefined): string {
 
 getColorTipoGuardia(idTipoGuardia: number | undefined): string {
   switch(idTipoGuardia) {
-    case 1: return '#91A8DA';  // CARGO
-    case 3: return '#fcc932';  // EXTRA
-    case 4: return '#A9D08F';  // CONTRAFACTURA
+    case 1: return '#a883ebff';  // CARGO
+    case 3: return '#bd6381ff';  // EXTRA
+    case 4: return '#b0c0a6ff';  // CONTRAFACTURA
     default: return '#f5f5f5'; // Color por defecto
   }
 }
@@ -532,13 +532,18 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): Saf
   getColor(tipoGuardia: TipoGuardia): string {
     if (tipoGuardia && tipoGuardia.id) {
       if (tipoGuardia.id === 1) {
-        return '#91A8DA'; // Color para CARGO
+        return '#6126cfff'; // CARGO
       } else if (tipoGuardia.id === 2) {
-        return '#eb7430'; // Color para REAGRUPACION DE HS
+        return '#FF7F0E'; // REAGRUPACION DE HS
+      } else if (tipoGuardia.id === 3) {
+        return '#D91E5B'; // EXTRA
+      } else if (tipoGuardia.id === 4) {
+        return '#A9D08F'; // CONTRAFACTURA
       }
     }
     return ''; // Color por defecto
   }
+  
   
   calculateHoursColor(registroActividad: RegistroActividad[], date: Date): string {
     const registro = registroActividad.find((actividad) => {
@@ -553,9 +558,13 @@ calculateHoursForDate(registroActividades: RegistroActividad[], date: Date): Saf
     const tipoGuardia = registro.tipoGuardia;
     if (tipoGuardia && tipoGuardia.id) {
       if (tipoGuardia.id === 1) {
-        return '#91A8DA'; // Color para CARGO
+        return '#6126cfff'; // CARGO
       } else if (tipoGuardia.id === 2) {
-        return '#eb7430'; // Color para REAGRUPACION DE HS
+        return '#FF7F0E'; // REAGRUPACION DE HS
+      } else if (tipoGuardia.id === 3) {
+        return '#D91E5B'; // EXTRA
+      } else if (tipoGuardia.id === 4) {
+        return '#A9D08F'; // CONTRAFACTURA
       }
     }
     return ''; // Color por defecto

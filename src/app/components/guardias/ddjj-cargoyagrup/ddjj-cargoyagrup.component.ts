@@ -383,8 +383,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   getColor(tipoGuardiaId: number): string {
-    if (tipoGuardiaId === 1) return '#91A8DA'; // Cargo
-    if (tipoGuardiaId === 2) return '#eb7430'; // Reagrupación
+    if (tipoGuardiaId === 1) return '#6126cfff'; // Cargo
+    if (tipoGuardiaId === 2) return '#FF7F0E'; // Reagrupación
     return '#000'; // Default negro
   }
 
@@ -446,23 +446,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   getNovedadCssClass(tipoLicencia: string): string {
     const tipo = tipoLicencia.toLowerCase();
     return clases[tipo] || 'novedad-personal-otros';
-  }
-
-  isNovedadClass(date: Date, registro: any): string {
-    const dateMoment = moment(date).startOf('day');
-    
-    // Verificar novedad
-    const { isNovedad, tipoLicencia } = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
-    if (isNovedad) return this.getNovedadCssClass(tipoLicencia);
-
-    // Verificar feriado
-    if (this.isHoliday(date).isHoliday) return 'holiday';
-
-    // Verificar fin de semana
-    if (this.isWeekend(date)) return 'weekend';
-
-    // Default
-    return '';
   }
 
   calculateTooltip(date: Date, registro: any): string {
@@ -663,7 +646,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 25, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 26, 23, 59, 59);
 
     return { inicio, fin };
   }
@@ -699,7 +682,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
       mes += 1;
     }
 
-    return new Date(anio, mes - 1, 25, 23, 59, 59);
+    return new Date(anio, mes - 1, 26, 23, 59, 59);
   }
   
   //Evaluaciones y cambios de estado DDJJ
@@ -968,8 +951,6 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   openDetail(registro: RegistroMensualListDto): void {
     const dataToSend = {
       asistencial: registro.asistencial,
-      registroActividad: registro.registroActividad,
-      novedades: registro.asistencial?.novedadesPersonales ?? [],
     };
     console.log('📤 Enviando al diálogo:', dataToSend);
 
@@ -1071,7 +1052,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   onCeldaClick(actividades: RegActivListDto[], fecha: Date): void {
-    if (!this.puedeEditarCeldas) return;
+    if (!this.puedeEditarCeldas || !(this.isAdministrativo || this.isSuper)) return;
 
     const id = this.getRegistroIdForFecha(actividades, fecha);
     if (id != null) {
