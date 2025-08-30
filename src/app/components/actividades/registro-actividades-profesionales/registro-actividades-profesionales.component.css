@@ -1,20 +1,20 @@
 .ref-cargo {
-  color: #91A8DA !important;
+  color: #6126cfff !important;
   font-weight: bold;
 }
 
 .ref-extra {
-  color: #fcc932 !important;
+  color:  #D91E5B !important;
   font-weight: bold;
 }
 
 .ref-agrupacion {
-  color: #eb7430 !important;
+  color: #FF7F0E !important;
   font-weight: bold;
 }
 
 .ref-contrafactura {
-  color: #A9D08F !important;
+  color: #769264 !important;
   font-weight: bold;
 }
 
@@ -53,16 +53,16 @@
 
 /* Ovalos por tipo de guardia */
 .fila-ovalada.ref-cargo {
-  background: #91A8DA !important;
+  background: #6126cfff !important;
 }
 .fila-ovalada.ref-extra {
-  background: #fcc932 !important;
+  background:  #D91E5B !important;
 }
 .fila-ovalada.ref-agrupacion {
-  background: #eb7430 !important;
+  background: #FF7F0E !important;
 }
 .fila-ovalada.ref-contrafactura {
-  background: #A9D08F !important;
+  background: #769264 !important;
 }
 
 /* Horas en blanco dentro del óvalo */
