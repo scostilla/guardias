@@ -143,6 +143,11 @@ export interface FechaSeleccionada {
     );
   }
 
+   listFueraDeTerminoAgrupadoServicio(idEfector: number, mes: string, anio: number, idServicio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}fuera-de-termino-agrupados-servicio/${idEfector}/${mes}/${anio}/${idServicio}`
+    );
+  }
+
   existenRegistrosFueraDeTermino(idEfector: number, mes: string, anio: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-fuera-de-termino/${idEfector}/${mes}/${anio}`
     );

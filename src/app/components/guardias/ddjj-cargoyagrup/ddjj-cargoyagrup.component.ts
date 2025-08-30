@@ -1188,7 +1188,8 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
                             this.selectedYear,
                             true,
                             this.efectorId!,
-                            ids
+                            ids,
+                            'SEGUNDA',
                           );
 
                           console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);

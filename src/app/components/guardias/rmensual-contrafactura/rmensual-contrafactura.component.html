@@ -102,7 +102,7 @@
     </div>  
   </div>
 
-  <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
+  <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal() && hayDatosParaMostrar" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
       <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 

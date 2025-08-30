@@ -266,7 +266,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     }
 
     const request$ = this.selectedServicio
-      ? this.registroMensualService.listFueraDeTerminoPorServicio(idEfector, mes, anio, idServicio)
+      ? this.registroMensualService.listFueraDeTerminoAgrupadoServicio(idEfector, mes, anio, idServicio)
       : this.registroMensualService.listFueraDeTerminoAgrupado( idEfector, mes, anio);
 
     request$.subscribe(data => {

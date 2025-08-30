@@ -725,7 +725,7 @@ private getRangoMesSiguiente(): { inicio: Date, fin: Date | null }[] {
       if (this.estaEnRango(rango.inicio, rango.fin, today)) {
         if (!rango.fin) {
           // Caso FUERA_DE_TERMINO: no hay límite, devolvemos un mensaje genérico
-          return 'Fuera de término';
+          return 'Plazo abierto';
         }
 
         const diasRestantes = rango.fin.getDate() - today.getDate() + 1;

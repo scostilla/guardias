@@ -299,49 +299,45 @@ loadRegistrosMensuales(): void {
 
         // 🔹 Generamos registros mensuales incluyendo la referencia a la DDJJ
         this.registrosMensuales = ddjjs.flatMap(ddjj =>
-          (ddjj.registrosMensuales || []).map(registro => {
-            const registroConDdjj: RegistroMensualConDdjj = {
-              ...registro,
-              ddjjDto: ddjj // 🔹 agregamos la referencia a la DDJJ
-            };
-            return registroConDdjj;
-          })
+          (ddjj.registrosMensuales || []).map(registro => ({
+            ...registro,
+            ddjjDto: ddjj
+          }))
         );
 
-// 🔹 Agrupar contrafactura por asistencial
-const contrafacturas = this.registrosMensuales.filter(r => r.ddjjDto?.idTipoGuardia === 4);
-const otros = this.registrosMensuales.filter(r => r.ddjjDto?.idTipoGuardia !== 4);
+        // 🔹 Agrupar contrafactura por asistencial
+        const contrafacturas = this.registrosMensuales.filter(r => r.ddjjDto?.idTipoGuardia === 4);
+        const otros = this.registrosMensuales.filter(r => r.ddjjDto?.idTipoGuardia !== 4);
 
-const agrupadasContrafacturas: RegistroMensualConDdjj[] = Object.values(
-  contrafacturas.reduce((acc, curr) => {
-    const key = curr.asistencial.id;
-    if (!acc[key]) {
-      acc[key] = { ...curr };
-      acc[key].registroActividad = [...curr.registroActividad];
-    } else {
-      acc[key].registroActividad.push(...curr.registroActividad);
-      // combinar totales si es necesario
-      acc[key].totalHoras.horasLav += curr.totalHoras.horasLav;
-      acc[key].totalHoras.horasSdf += curr.totalHoras.horasSdf;
-      acc[key].totalHoras.montoLav += curr.totalHoras.montoLav;
-      acc[key].totalHoras.montoSdf += curr.totalHoras.montoSdf;
-    }
-    return acc;
-  }, {} as Record<number, RegistroMensualConDdjj>)
-);
-
-// 🔹 Reunir todos los registros ya agrupados
-this.registrosMensuales = [...otros, ...agrupadasContrafacturas];
-
-// 🔹 Ordenar por tipo de guardia si hace falta
-this.registrosMensuales.sort((a, b) =>
-  (a.ddjjDto?.idTipoGuardia || 0) - (b.ddjjDto?.idTipoGuardia || 0)
-);
-
-        // 🔹 Ordenamos por tipo de guardia usando la DDJJ
-        this.registrosMensuales.sort((a, b) =>
-          (a.ddjjDto?.idTipoGuardia || 0) - (b.ddjjDto?.idTipoGuardia || 0)
+        const agrupadasContrafacturas: RegistroMensualConDdjj[] = Object.values(
+          contrafacturas.reduce((acc, curr) => {
+            const key = curr.asistencial.id;
+            if (!acc[key]) {
+              acc[key] = { ...curr };
+              acc[key].registroActividad = [...curr.registroActividad];
+            } else {
+              acc[key].registroActividad.push(...curr.registroActividad);
+              // combinar totales si es necesario
+              acc[key].totalHoras.horasLav += curr.totalHoras.horasLav;
+              acc[key].totalHoras.horasSdf += curr.totalHoras.horasSdf;
+              acc[key].totalHoras.montoLav += curr.totalHoras.montoLav;
+              acc[key].totalHoras.montoSdf += curr.totalHoras.montoSdf;
+            }
+            return acc;
+          }, {} as Record<number, RegistroMensualConDdjj>)
         );
+
+        // 🔹 Reunir todos los registros ya agrupados
+        this.registrosMensuales = [...otros, ...agrupadasContrafacturas];
+
+        // 🔹 Ordenar por grupo (CARGO + AGRUPACIÓN juntos)
+        this.registrosMensuales.sort((a, b) => {
+          const grupoA = this.getTipoGuardiaGrupo(a.ddjjDto?.idTipoGuardia);
+          const grupoB = this.getTipoGuardiaGrupo(b.ddjjDto?.idTipoGuardia);
+          return grupoA - grupoB;
+        });
+
+        // ✅ Ya no volver a ordenar por idTipoGuardia aquí
 
         this.updateTableDataSource();
         this.tablaListaParaMostrar = true;
@@ -354,6 +350,8 @@ this.registrosMensuales.sort((a, b) =>
     });
 }
 
+
+
 // Métodos para manejar la agrupación por tipo de guardia
 shouldShowTipoGuardia(registro: RegistroMensualConDdjj, index: number): boolean {
   if (index === 0) {
@@ -362,17 +360,28 @@ shouldShowTipoGuardia(registro: RegistroMensualConDdjj, index: number): boolean 
   }
 
   const prev = this.registrosMensuales[index - 1];
-  const tipoGuardia = registro.ddjjDto?.idTipoGuardia;
 
-  if (tipoGuardia === 4) {
-    const mostrar = !(registro.asistencial.id === prev.asistencial.id && tipoGuardia === 4);
-    console.log(`[shouldShowTipoGuardia] index ${index} CONTRAFCTURA → asistencial: ${registro.asistencial.id}, prev: ${prev.asistencial.id}, mostrar:`, mostrar);
+  // 🔹 Unificamos CARGO (1) y AGRUPACIÓN (2) bajo el mismo grupo
+  const tipoGuardiaActual = this.getTipoGuardiaGrupo(registro.ddjjDto?.idTipoGuardia);
+  const tipoGuardiaPrevio = this.getTipoGuardiaGrupo(prev.ddjjDto?.idTipoGuardia);
+
+  // 🔹 Casos especiales para CONTRAFACTURA (idTipoGuardia = 4)
+  if (tipoGuardiaActual === 4) {
+    const mostrar = !(registro.asistencial.id === prev.asistencial.id && tipoGuardiaPrevio === 4);
+    console.log(`[shouldShowTipoGuardia] index ${index} CONTRAFACTURA → asistencial actual: ${registro.asistencial.id}, previo: ${prev.asistencial.id}, mostrar:`, mostrar);
     return mostrar;
   }
 
-  const mostrar = tipoGuardia !== prev.ddjjDto?.idTipoGuardia;
-  console.log(`[shouldShowTipoGuardia] index ${index} tipo: ${tipoGuardia}, prev tipo: ${prev.ddjjDto?.idTipoGuardia}, mostrar:`, mostrar);
+  // 🔹 Para los demás casos (cargo/agrupación unificados o extras)
+  const mostrar = tipoGuardiaActual !== tipoGuardiaPrevio;
+  console.log(`[shouldShowTipoGuardia] index ${index} tipoGrupo: ${tipoGuardiaActual}, prev tipoGrupo: ${tipoGuardiaPrevio}, mostrar:`, mostrar);
   return mostrar;
+}
+
+// 🔹 Helper para agrupar cargo y agrupación en el mismo grupo visual
+private getTipoGuardiaGrupo(idTipoGuardia: number | undefined): number {
+  if (idTipoGuardia === 1 || idTipoGuardia === 2) return 1; // Grupo “CARGO Y AGRUPACIÓN”
+  return idTipoGuardia || 0;
 }
 
 getRowspanForTipoGuardia(registro: RegistroMensualConDdjj, index: number): number {
@@ -408,22 +417,22 @@ getRowspanForTipoGuardia(registro: RegistroMensualConDdjj, index: number): numbe
 }
 
 getNombreTipoGuardia(idTipoGuardia: number | undefined): string {
-  if (!idTipoGuardia) return 'Sin tipo';
-  
-  switch(idTipoGuardia) {
-    case 1: return 'CARGO Y AGRUPACION';
+  const tipo = this.getTipoGuardiaGrupo(idTipoGuardia);
+
+  switch (tipo) {
+    case 1: return 'CARGO Y AGRUPACIÓN';
     case 3: return 'EXTRA';
     case 4: return 'CONTRAFACTURA';
-    default: return 'Otro';
+    default: return 'OTRO';
   }
 }
-
 getColorTipoGuardia(idTipoGuardia: number | undefined): string {
-  switch(idTipoGuardia) {
-    case 1: return '#a883ebff';  // CARGO
+  switch (idTipoGuardia) {
+    case 1: return '#a883ebff';  // CARGO (violeta)
+    case 2: return '#ffb347ff';  // AGRUPACIÓN (naranja)
     case 3: return '#bd6381ff';  // EXTRA
     case 4: return '#b0c0a6ff';  // CONTRAFACTURA
-    default: return '#f5f5f5'; // Color por defecto
+    default: return '#f5f5f5';   // Por defecto
   }
 }
 

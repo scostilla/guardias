@@ -825,8 +825,8 @@ verificarFueraDeTermino(): void {
     .map(reg => reg.id as number);
 
     const totalHoras = this.registrosMensuales[0].totalHoras;
-    const subtotal = totalHoras?.horasLav ?? 0;
-    const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
+    const subtotal = totalHoras?.montoLav ?? 0;
+    const total = totalHoras?.montoTotal ?? 0;
 
     const ddjj = new DdjjDto(
       mes,
