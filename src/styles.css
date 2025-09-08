@@ -952,31 +952,35 @@ mat-label{
 
 /* -- colores guardias -- */
 .ref-extra {
-  color: #fcc932;
+  color: #D91E5B;
 }
 
 .circulo--extra {
-  background: #fcc932;
+  background: #D91E5B;
+}
+
+.ref-cargo {
+  color: #6126cfff;
 }
 
 .circulo--cargo {
-  background: #91A8DA;
+  background: #6126cfff;
 }
 
 .ref-agrupacion {
-  color: #eb7430;
+  color: #FF7F0E;
 }
 
 .circulo--agrupacion {
-  background: #eb7430;
+  background: #FF7F0E;
 }
 
 .ref-contrafactura {
-  color: #A9D08F;
+  color: #769264;
 }
 
 .circulo--contrafactura {
-  background: #A9D08F;
+  background: #769264;
 }
 
 .circulo--general {

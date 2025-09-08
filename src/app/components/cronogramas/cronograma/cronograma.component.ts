@@ -28,10 +28,10 @@ enum TipoGuardia {
 
 // Mapeo de los colores según el tipo de guardia
 const colorMapping: Record<TipoGuardia, { primary: string, secondary: string }> = {
-  [TipoGuardia.CARGO]: { primary: '#91A8DA', secondary: '#B6C6E6' },
-  [TipoGuardia.AGRUPACION]: { primary: '#eb7430', secondary: '#F0B59E' },
-  [TipoGuardia.EXTRA]: { primary: '#fcc932', secondary: '#F9D784' },
-  [TipoGuardia.CONTRAFACTURA]: { primary: '#A9D08F', secondary: '#B8E0A6' }
+  [TipoGuardia.CARGO]: { primary: '#6126cfff', secondary: '#c3a3ffff' },
+  [TipoGuardia.AGRUPACION]: { primary: '#FF7F0E', secondary: '#f1cabaff' },
+  [TipoGuardia.EXTRA]: { primary: '#D91E5B', secondary: '#cc889fff' },
+  [TipoGuardia.CONTRAFACTURA]: { primary: '#769264', secondary: '#c3cfbbff' }
 };
 
 @Component({

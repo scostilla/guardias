@@ -5,10 +5,10 @@
       <div class="titulos">Cronograma <span class="titulos-second-def">Definitivo</span></div>
     </div>
     <div class="col-12 col-md-2 m d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/ddjj-seleccion">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/ddjj-seleccion" style="margin-right: 5px;">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-      <button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
+      <!--<button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
         <mat-icon>get_app</mat-icon>
       </button>
 
@@ -22,7 +22,7 @@
           <span>Exportar a PDF</span>
         </button>
       </mat-menu>
-    </div>
+    </div>-->
 
     <div class="col-12 col-md-3 mt-3 mt-md-0">
       <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
@@ -73,27 +73,31 @@
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6">
 
+        <!-- Columna Tipo de Guardia -->
         <ng-container matColumnDef="tipoGuardia" sticky>
           <th mat-header-cell *matHeaderCellDef class="negrita">Tipo</th>
-          <td mat-cell *matCellDef="let registro; let i = index" 
+          <td mat-cell *matCellDef="let registro; let i = index"
               [attr.rowspan]="shouldShowTipoGuardia(registro, i) ? getRowspanForTipoGuardia(registro, i) : null"
               class="tipo-guardia-cell"
               [style.display]="shouldShowTipoGuardia(registro, i) ? '' : 'none'"
-              [style.background-color]="getColorTipoGuardia(registro.ddjj?.tipoGuardia?.id)">
-            {{ getNombreTipoGuardia(registro.ddjj?.tipoGuardia) }}
+              [style.background-color]="getColorTipoGuardia(registro.ddjjDto?.idTipoGuardia)">
+            {{ getNombreTipoGuardia(registro.ddjjDto?.idTipoGuardia) }}
           </td>
         </ng-container>
 
+        <!-- Columna Apellido -->
         <ng-container matColumnDef="apellido">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Apellido</th>
-          <td mat-cell *matCellDef="let registro">{{registro.asistencial.apellido}}</td>
+          <td mat-cell *matCellDef="let registro">{{ registro.asistencial.apellido }}</td>
         </ng-container>
 
+        <!-- Columna Nombre -->
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita">Nombre</th>
-          <td mat-cell *matCellDef="let registro">{{registro.asistencial.nombre}}</td>
+          <td mat-cell *matCellDef="let registro">{{ registro.asistencial.nombre }}</td>
         </ng-container>
 
+        <!-- Columna Acciones -->
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let registro" class="cell-actions">
@@ -103,6 +107,7 @@
           </td>
         </ng-container>
 
+        <!-- Total Mes -->
         <ng-container matColumnDef="totalHoras">
           <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">Total mes</th>
           <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">
@@ -110,6 +115,7 @@
           </td>
         </ng-container>
 
+        <!-- Total L-V -->
         <ng-container matColumnDef="weekdaysTotal">
           <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">Total L&#8209;V</th>
           <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #d1d0d0;">
@@ -117,6 +123,7 @@
           </td>
         </ng-container>
 
+        <!-- Total S-D-F -->
         <ng-container matColumnDef="weekendsTotal">
           <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">Total S&#8209;D&#8209;F</th>
           <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">
@@ -124,40 +131,30 @@
           </td>
         </ng-container>
 
+        <!-- Columnas de Días -->
         <ng-container *ngFor="let fechaColumna of columnasFechas" [matColumnDef]="fechaColumna">
           <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
             {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
           </th>
-          <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
+          <td mat-cell *matCellDef="let registro"
               [ngClass]="isDetalleClass(getFechaFromColumnId(fechaColumna))"
               [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)"
-              [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'">
+              class="linea-vertical-tabla negrita">
             <span [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))"></span>
           </td>
         </ng-container>
 
-        <!--<ng-container *ngFor="let fechaColumna of columnasFechas" [matColumnDef]="fechaColumna">
-          <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita">
-            {{ getFechaFromColumnId(fechaColumna) | date: 'EEE dd' }}
-          </th>
-          <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"
-              [ngClass]="isNovedadClass(getFechaFromColumnId(fechaColumna), registro)"
-              [matTooltip]="calculateTooltip(getFechaFromColumnId(fechaColumna), registro)"
-              [style.cursor]="puedeEditarCeldas ? 'pointer' : 'default'"
-              (click)="onCeldaClick(registro.registroActividad, getFechaFromColumnId(fechaColumna))">
-            <span [innerHTML]="calculateHoursForDate(registro.registroActividad, getFechaFromColumnId(fechaColumna))"></span>
-          </td>
-        </ng-container>-->
-
-
+        <!-- Filas -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        
+
+        <!-- Sin datos -->
         <tr *matNoDataRow>
           <td [attr.colspan]="displayedColumns.length">
             No se encontraron registros para los filtros aplicados
           </td>
         </tr>
+
       </table>
     </div>
 
@@ -176,10 +173,10 @@
 
   <div *ngIf="hayDatosParaMostrar" class="row mt-3">
     <div class="col-12 col-md-6">
-      <button mat-fab extended class="button-pase-director" (click)="onExportarConHospital()" matTooltip="Descarga Cronograma def. aprobado por director hospital">
+      <!--<button mat-fab extended class="button-pase-director" (click)="onExportarConHospital()" matTooltip="Descarga Cronograma def. aprobado por director hospital">
         <mat-icon>assignment_turned_in</mat-icon>
         APROBADO HOSPITAL
-      </button>
+      </button>-->
   </div>
 
 </div>

@@ -74,9 +74,11 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
   tablaListaParaMostrar = false;
 
+  private actividadesPorRegistro: Map<number, { [fecha: string]: RegActivListDto[] }> = new Map();
+  registrosMensuales: RegistroMensualListDto[] = [];
+
   diasEnMes: moment.Moment[] = [];
   feriados: Feriado[] = [];
-  registrosMensuales: RegistroMensualListDto[] = [];
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualCargoyagrupDetailComponent>;
@@ -223,8 +225,6 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
 
   //Manejo de carga de datos en tabla
 
-  private actividadesPorRegistro: Map<number, { [fecha: string]: RegActivListDto[] }> = new Map();
-
   loadRegistrosMensuales(): void {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
@@ -278,17 +278,13 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
 
   // Mostrar horas (con color) de todas las guardias de un día
   calculateHoursForDate(actividades: RegActivListDto[]): SafeHtml {
-    if (!actividades || actividades.length === 0) {
-      return this.sanitizer.bypassSecurityTrustHtml('');
-    }
+    if (!actividades || actividades.length === 0) return this.sanitizer.bypassSecurityTrustHtml('');
 
     const itemsHtml = actividades.map(act => {
       const hoursIn = moment(`${act.fechaIngreso} ${act.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
       const hoursOut = moment(`${act.fechaEgreso} ${act.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
 
-      if (!hoursIn.isValid() || !hoursOut.isValid()) {
-        return `<span style="color:red;">?</span>`;
-      }
+      if (!hoursIn.isValid() || !hoursOut.isValid()) return `<span style="color:red;">?</span>`;
 
       const diffHours = hoursOut.diff(hoursIn, 'hours', true);
       if (diffHours <= 0) return '';
@@ -305,9 +301,9 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   // Colores por tipo de guardia
   getColor(tipoGuardiaId: number): string {
     if (tipoGuardiaId === 1) {
-      return '#91A8DA'; // Cargo
+      return '#6126cfff'; // Cargo
     } else if (tipoGuardiaId === 2) {
-      return '#eb7430'; // Reagrupación
+      return '#FF7F0E'; // Reagrupación
     }
     return '#000'; // Default negro
   }
@@ -332,7 +328,8 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   getFechaFromColumnId(columnId: string): Date {
-    return moment(columnId, 'YYYY_MM_DD').toDate();
+    const [year, month, day] = columnId.split('_').map(Number);
+    return new Date(year, month - 1, day);
   }
 
   isHoliday(date: Date): { isHoliday: boolean, motivo: string } {
@@ -353,21 +350,16 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     return day === 0 || day === 6;
   }
 
-  isNovedad(date: Date, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
-    const dateMoment = moment(date).startOf('day');
-
+  isNovedad(dateMoment: moment.Moment, novedades: NovedadPersonalListDto[]): { isNovedad: boolean, tipoLicencia: string } {
     const novedadFound = novedades.find(novedad => {
       const inicioMoment = moment(novedad.fechaInicio).startOf('day');
       const finMoment = moment(novedad.fechaFinal).startOf('day');
-      
-      const isBetween = dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
-          
-      return isBetween;
+      return dateMoment.isBetween(inicioMoment, finMoment, undefined, '[]');
     });
 
     return {
       isNovedad: !!novedadFound,
-      tipoLicencia: novedadFound ? novedadFound.tipoLicencia.nombre : ''
+      tipoLicencia: novedadFound?.tipoLicencia?.nombre ?? ''
     };
   }
   
@@ -377,36 +369,48 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
   }
 
   isNovedadClass(date: Date, registro: any): string {
-    const { isNovedad, tipoLicencia } = this.isNovedad(date, registro.asistencial.novedadesPersonales);
+    const dateMoment = moment(date).startOf('day');
+    
+    // Verificar novedad
+    const { isNovedad, tipoLicencia } = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
+    if (isNovedad) return this.getNovedadCssClass(tipoLicencia);
 
-    if (isNovedad) {
-      return this.getNovedadCssClass(tipoLicencia);
-    }
+    // Verificar feriado
+    if (this.isHoliday(date).isHoliday) return 'holiday';
 
-    if (this.isHoliday(date).isHoliday) {
-      return 'holiday';
-    }
+    // Verificar fin de semana
+    if (this.isWeekend(date)) return 'weekend';
 
-    if (this.isWeekend(date)) {
-      return 'weekend';
-    }
-
+    // Default
     return '';
   }
 
   calculateTooltip(date: Date, registro: any): string {
-    const novedad = this.isNovedad(date, registro.asistencial.novedadesPersonales);
-    if (novedad.isNovedad) {
-      return novedad.tipoLicencia;
-    } else {
-      const holiday = this.isHoliday(date);
-      if (holiday.isHoliday) {
-        return holiday.motivo;
-      }
-    }
+    const dateMoment = moment(date).startOf('day');
+    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
+
+    if (novedad.isNovedad) return novedad.tipoLicencia;
+
+    const holiday = this.isHoliday(date);
+    if (holiday.isHoliday) return holiday.motivo;
+
     return '';
   }
-  
+
+  getCellInfo(date: Date, registro: any): { clase: string, tooltip: string } {
+    const dateMoment = moment(date).startOf('day');
+    const novedad = this.isNovedad(dateMoment, registro.asistencial.novedadesPersonales);
+
+    if (novedad.isNovedad) return { clase: this.getNovedadCssClass(novedad.tipoLicencia), tooltip: novedad.tipoLicencia };
+    
+    const holiday = this.isHoliday(date);
+    if (holiday.isHoliday) return { clase: 'holiday', tooltip: holiday.motivo };
+    
+    if (this.isWeekend(date)) return { clase: 'weekend', tooltip: '' };
+
+    return { clase: '', tooltip: '' };
+  }
+
   //Manejo filtro busqueda en tabla
   
   accentFilter(input: string): string {
@@ -729,38 +733,29 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
 
   //Exportaciones a EXCEL y PDF
 
-  calculateHoursForExcel(registroActividades: RegActivListDto[], date: Date): number | string {
-    const registro = registroActividades.find((actividad) => {
-      const ingresoDate = moment(actividad.fechaIngreso);
-      return ingresoDate.isSame(date, 'day');
-    });
+  calculateHoursForExcel(registroId: number, date: Date): number | string {
+    const actividades = this.getActividadesPorFecha(registroId, date);
+    if (!actividades || actividades.length === 0) return '';
 
-    if (!registro) return '';
+    let horasTotales = 0;
 
-    for (let actividad of registroActividades) {
-      if (actividad.fechaIngreso && !actividad.fechaEgreso) {
+    for (const act of actividades) {
+      if (act.fechaIngreso && !act.fechaEgreso) {
         return 'sin egreso';
       }
-    }
 
-    if (registro.fechaIngreso && registro.fechaEgreso) {
-      const hoursIn = moment(`${registro.fechaIngreso} ${registro.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
-      const hoursOut = moment(`${registro.fechaEgreso} ${registro.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
+      if (act.fechaIngreso && act.fechaEgreso) {
+        const hoursIn = moment(`${act.fechaIngreso} ${act.horaIngreso}`, 'YYYY-MM-DD HH:mm:ss');
+        const hoursOut = moment(`${act.fechaEgreso} ${act.horaEgreso}`, 'YYYY-MM-DD HH:mm:ss');
 
-      if (hoursIn.isValid() && hoursOut.isValid()) {
-        const diffHours = hoursOut.diff(hoursIn, 'hours', true);
-        if (diffHours > 0) {
-          const redondeado = diffHours % 1 > 0.5 ? Math.ceil(diffHours) : Math.floor(diffHours);
-          return redondeado; // devuelve como número
-        } else {
-          return 0;
-        }
-      } else {
-        return 'Datos inválidos';
+        if (!hoursIn.isValid() || !hoursOut.isValid()) return 'Datos inválidos';
+
+        const diff = hoursOut.diff(hoursIn, 'hours', true);
+        horasTotales += diff > 0 ? Math.round(diff) : 0;
       }
     }
 
-    return '';
+    return horasTotales > 0 ? horasTotales : '';
   }
 
   async exportarAExcel() {
@@ -779,9 +774,9 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     worksheet.getRow(1).font = { bold: true };
 
     const dataColumnHeaders = ['Apellido', 'Nombre', 'Cuil', 'Vinculos_Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F'];
-    const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle => {
-      return moment(columnTitle, 'YYYY_MM_DD').format('ddd DD');
-    });
+    const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle =>
+      moment(columnTitle, 'YYYY_MM_DD').format('ddd DD')
+    );
     const combinedHeaders = [...dataColumnHeaders, ...formattedColumnTitles];
     worksheet.addRow(combinedHeaders).fill = {
       type: 'pattern',
@@ -790,67 +785,75 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     };
     worksheet.getRow(2).font = { bold: true };
 
-    // Recorrer con for...of para usar await
     for (const registro of this.dataSource.data) {
-      // Esperar las novedades
-
-  const exportData: Record<string, string | number> = {
-    Apellido: registro.asistencial.apellido,
-    Nombre: registro.asistencial.nombre,
-    Cuil: registro.asistencial.cuil,
-    Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
-    Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
-              ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
-    Novedades: registro.asistencial.novedadesPersonales?.length > 0
-      ? registro.asistencial.novedadesPersonales.map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`).join('; ')
-      : '-'
-  };
+      const exportData: Record<string, string | number> = {
+        Apellido: registro.asistencial.apellido,
+        Nombre: registro.asistencial.nombre,
+        Cuil: registro.asistencial.cuil,
+        Vinculos_Laborales: registro.asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-',
+        Categoria: (registro.asistencial.legajos[0]?.revista?.categoria?.nombre || '-') +
+                  ' (' + (registro.asistencial.legajos[0]?.revista?.adicional?.nombre || '-') + ')',
+        Novedades: registro.asistencial.novedadesPersonales?.length > 0
+          ? registro.asistencial.novedadesPersonales
+              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+              .join('; ')
+          : '-'                
+      };
 
       const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
-      const totalLV = registro.totalHoras?.horasLav ?? 0;
-      const totalSD = registro.totalHoras?.horasSdf ?? 0;
-
       exportData['Horas mes'] = totalMes;
-      exportData['Horas L-V'] = totalLV;
-      exportData['Horas S-D-F'] = totalSD;
+      exportData['Horas L-V'] = registro.totalHoras?.horasLav ?? 0;
+      exportData['Horas S-D-F'] = registro.totalHoras?.horasSdf ?? 0;
 
       this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
-        exportData[combinedHeaders[dataColumnHeaders.length + index]] = this.calculateHoursForExcel(registro.registroActividad, this.getFechaFromColumnId(fechaColumna));
+        const fecha = this.getFechaFromColumnId(fechaColumna);
+        const horas = this.calculateHoursForExcel(registro.id, fecha);
+        exportData[combinedHeaders[dataColumnHeaders.length + index]] = horas;
       });
 
       worksheet.addRow(Object.values(exportData));
       const row = worksheet.lastRow!;
 
+      // Aplicar estilos de celda según feriado, fin de semana o novedad
       this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
-        const date = this.getFechaFromColumnId(fechaColumna);
-        const isHoliday = this.isHoliday(date).isHoliday;
+        const fecha = this.getFechaFromColumnId(fechaColumna);
+        const { clase } = this.getCellInfo(fecha, registro);
+        const cellIndex = dataColumnHeaders.length + index + 1;
+        const cell = row.getCell(cellIndex);
 
-        if (isHoliday) {
-          const cellIndex = dataColumnHeaders.length + index + 1;
-          const cell = row.getCell(cellIndex);
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'd4c2cd' }
-          };
-          cell.font = { color: { argb: '000000' } };
+        if (clase === 'holiday') {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F9CACA' } };
+        } else if (clase.startsWith('novedad-personal')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D4F1F9' } };
+        } else if (clase === 'weekend') {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
         }
+      });
+
+      // Aplicar fondo a las 3 celdas de horas
+      ['Horas mes', 'Horas L-V', 'Horas S-D-F'].forEach((key, i) => {
+        const cell = row.getCell(dataColumnHeaders.indexOf(key) + 1);
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E2EFDA' } };
       });
     }
 
-    const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
+    // Agregar fila vacía y referencia de colores
+    worksheet.addRow([]);
+    const referenciaRow = worksheet.addRow(['Referencia:']);
+    referenciaRow.font = { bold: true };
+    ['Feriado', 'Novedades'].forEach((texto, i) => {
+      const cell = worksheet.addRow([texto]).getCell(1);
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: texto === 'Feriado' ? 'F9CACA' : 'D4F1F9' } };
+    });
 
-    worksheet.eachRow((row, rowNumber) => {
-      row.eachCell((cell, colNumber) => {
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
+    // Bordes
+    worksheet.eachRow((row) => {
+      row.eachCell(cell => {
+        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
       });
     });
 
+    const fileName = `rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, fileName);
@@ -861,88 +864,85 @@ export class RmensualCargoyagrupComponent implements OnInit, OnDestroy {
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
 
+    // Encabezados
     const headers = [
-      'Apellido', 'Nombre', 'Cuil', 'Vinculos Laborales', 'Categoria', 'Novedades', 'Horas mes', 'Horas L-V', 'Horas S-D-F',
-      ...this.displayedColumns.slice(6).map(columnTitle => moment(columnTitle, 'YYYY_MM_DD').format('ddd DD'))
+      'Apellido','Nombre','Cuil','Vinculos Laborales','Categoria','Novedades',
+      'Horas mes','Horas L-V','Horas S-D-F',
+      ...this.displayedColumns.slice(6).map(col => moment(col,'YYYY_MM_DD').format('ddd DD'))
     ];
 
     const body: any[] = [headers];
 
+    // Filas de datos
     for (const registro of this.dataSource.data) {
+      const row: any[] = [
+        registro.asistencial.apellido,
+        registro.asistencial.nombre,
+        registro.asistencial.cuil,
+        registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-',
+        registro.asistencial.legajos?.[0]?.revista
+          ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`
+          : '-',
+        registro.asistencial.novedadesPersonales?.length > 0
+          ? registro.asistencial.novedadesPersonales
+              .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
+              .join('; ')
+          : '-',
+        // Totales verdes
+        { text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0), fillColor:'#E2EFDA', alignment:'center' },
+        { text: registro.totalHoras?.horasLav ?? 0, fillColor:'#E2EFDA', alignment:'center' },
+        { text: registro.totalHoras?.horasSdf ?? 0, fillColor:'#E2EFDA', alignment:'center' }
+      ];
 
-      const row = [];
+      // Celdas de días
+      this.displayedColumns.slice(6).forEach(col => {
+        const fecha = this.getFechaFromColumnId(col);
+        const horas = this.calculateHoursForExcel(registro.id, fecha);
+        const { clase } = this.getCellInfo(fecha, registro);
 
-      row.push(registro.asistencial.apellido);
-      row.push(registro.asistencial.nombre);
-      row.push(registro.asistencial.cuil);
-      row.push(registro.asistencial.legajos?.[0]?.revista?.tipoRevista?.nombre ?? '-');
-      row.push(registro.asistencial.legajos?.[0]?.revista
-      ? `${registro.asistencial.legajos[0].revista.categoria?.nombre ?? ''} (${registro.asistencial.legajos[0].revista.adicional?.nombre ?? ''})`: '-');
-
-      const novedadesString = registro.asistencial.novedadesPersonales?.length > 0
-        ? registro.asistencial.novedadesPersonales
-            .map(nov => `${nov.tipoLicencia?.nombre ?? '-'} (${this.formatDate(nov.fechaInicio, nov.fechaFinal)})`)
-            .join('; ')
-        : '-';
-      row.push(novedadesString);
-
-      row.push((registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0));
-      row.push(registro.totalHoras?.horasLav ?? 0);
-      row.push(registro.totalHoras?.horasSdf ?? 0);
-
-      this.displayedColumns.slice(6).forEach(fechaColumna => {
-        const fecha = this.getFechaFromColumnId(fechaColumna);
-        const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
-
-        const { isHoliday } = this.isHoliday(fecha);
-
-        if (isHoliday) {
-          row.push({
-            text: horas,
-            fillColor: '#F9CACA',  // Fondo rosado para feriado
-            //color: 'red',          // Texto rojo
-            bold: true,
-            alignment: 'center'
-          });
-        } else {
-          row.push(horas);
-        }
+        if (clase === 'holiday') row.push({ text: horas, fillColor: '#F9CACA', bold:true, alignment:'center' });
+        else if (clase.startsWith('novedad-personal')) row.push({ text: horas, fillColor: '#A8EFFF', alignment:'center' });
+        else if (clase === 'weekend') row.push({ text: horas, fillColor: '#E0E0E0', alignment:'center' });
+        else row.push({ text: horas, alignment:'center' });
       });
 
       body.push(row);
     }
 
-    const docDefinition: any = {
-      pageSize: 'A3', //Más grande que A4
-      pageOrientation: 'landscape',
-      pageMargins: [10, 10, 10, 10], //Márgenes reducidos
-      content: [
-        { text: `Registro Mensual - Cargo y Agrupación - ${efectorNombre} - ${mesSeleccionado} ${anioSeleccionado}`, style: 'header' },
-        {
-          table: {
-            headerRows: 1,
-            widths: headers.map(() => 'auto'), // Ajusta automáticamente el ancho
-            body
-          },
-          layout: {
-            hLineWidth: () => 0.5,
-            vLineWidth: () => 0.5,
-            hLineColor: () => '#000000',
-            vLineColor: () => '#000000'
-          }
-        }
-      ],
-      styles: {
-        header: {
-          fontSize: 14,
-          bold: true,
-          alignment: 'center',
-          margin: [0, 0, 0, 10]
-        }
+    // Tabla principal
+    const mainTable = {
+      table: { headerRows:1, widths: headers.map(() => 'auto'), body },
+      layout: { hLineWidth:()=>0.5, vLineWidth:()=>0.5, hLineColor:()=> '#000000', vLineColor:()=> '#000000' }
+    };
+
+    // Tabla de referencias al final sin bordes
+    const referenciasTable = {
+      table: {
+        widths: headers.map(() => 'auto'),
+        body: [
+          [
+            { text: 'Feriados', alignment: 'center', fillColor: '#F9CACA', bold: true },
+            { text: 'Novedades', alignment: 'center', fillColor: '#A8EFFF', bold: true },
+            ...Array(headers.length - 2).fill({ text: '' })
+          ]
+        ]
       },
-      defaultStyle: {
-        fontSize: 7
-      }
+      layout: 'noBorders',
+      margin: [0, 10, 0, 0] // espacio entre tabla y referencias
+    };
+
+    // Definición del PDF
+    const docDefinition: any = {
+      pageSize: 'A3',
+      pageOrientation: 'landscape',
+      pageMargins: [10,10,10,10],
+      content: [
+        { text: `Registro Mensual - Cargo y Agrupación - ${efectorNombre} - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
+        mainTable,
+        referenciasTable
+      ],
+      styles: { header:{ fontSize:14, bold:true, alignment:'center', margin:[0,0,0,10] } },
+      defaultStyle: { fontSize:7 }
     };
 
     pdfMake.createPdf(docDefinition).download(`rMensual-Cargo-y-Agrupacion_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.pdf`);

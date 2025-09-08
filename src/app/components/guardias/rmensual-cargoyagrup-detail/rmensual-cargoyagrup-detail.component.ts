@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AsistencialListForRmensualDto } from 'src/app/dto/guardias/AsistencialListForRmensualDto';
-import { RegActivListDto } from 'src/app/dto/guardias/RegActivListDto';
 import * as moment from 'moment';
 
 @Component({
@@ -11,16 +10,12 @@ import * as moment from 'moment';
 })
 export class RmensualCargoyagrupDetailComponent implements OnInit {
   asistencial!: AsistencialListForRmensualDto;
-  registroActividad!: RegActivListDto[];
-  novedadesActivas!: any[];
 
   constructor(
     public dialogRef: MatDialogRef<RmensualCargoyagrupDetailComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.asistencial = data.asistencial;
-    this.registroActividad = data.registroActividad;
-    this.novedadesActivas = data.novedades;
   }
 
   ngOnInit(): void {
