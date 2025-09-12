@@ -28,10 +28,10 @@
         <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(element)">
           <mat-icon color="primary">zoom_in</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="Editar factura" (click)="openEdit(element)">
+        <button *ngIf="ddjjYaExiste === false" mat-icon-button matTooltip="Editar factura" (click)="openEdit(element)">
           <mat-icon class="btnEdit">edit</mat-icon>
         </button>
-        <button mat-icon-button matTooltip="Eliminar factura" (click)="openDelete(element)">
+        <button *ngIf="ddjjYaExiste === false" mat-icon-button matTooltip="Eliminar factura" (click)="openDelete(element)">
           <mat-icon class="btnRemove">delete</mat-icon>
         </button>
       </td>

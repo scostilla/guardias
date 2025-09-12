@@ -84,6 +84,10 @@ export class FacturaService {
     return this.httpClient.get<number>(`${this.facturaURL}getMonto/${idAsistencial}/${idEfector}/${mes}/${anio}`);
   }
 
+  public getMontoFueraTermino(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(`${this.facturaURL}getMontoFueraTermino/${idAsistencial}/${idEfector}/${mes}/${anio}`);
+  }
+
   // Obtener factura por asistencial
   getByAsistencial(idAsistencial: number): Observable<Factura> {
     return this.httpClient.get<Factura>(`${this.facturaURL}getByAsistencialAndFiltros/${idAsistencial}`);
@@ -93,6 +97,18 @@ export class FacturaService {
   listSummary(idEfector: number, anio: number, mes: string, quincena: string): Observable<FacturaSummaryDto[]> {
     return this.httpClient.get<FacturaSummaryDto[]>(
       `${this.facturaURL}listSummary/${idEfector}/${anio}/${mes}/${quincena}`
+    );
+  }
+
+  // Obtener factura por asistencial
+  listByAsistencialSinQuincena(idEfector: number, anio: number, mes: string, idAsistencial: number): Observable<FacturaDetailDto[]> {
+    return this.httpClient.get<FacturaDetailDto[]>(`${this.facturaURL}listByAsistencialSinQuincena/${idEfector}/${anio}/${mes}/${idAsistencial}`);
+  }
+
+  // Listado resumido por efector, año, mes y quincena
+  listSummarySinQuincena(idEfector: number, anio: number, mes: string): Observable<FacturaSummaryDto[]> {
+    return this.httpClient.get<FacturaSummaryDto[]>(
+      `${this.facturaURL}listSummarySinQuincena/${idEfector}/${anio}/${mes}}`
     );
   }
 

@@ -66,7 +66,7 @@ ngOnInit(): void {
     puntoVenta: [0, [Validators.required, Validators.min(1), Validators.max(999)]],
     numeroFactura: [0, [Validators.required, Validators.min(1), Validators.max(99999999)]],
     fechaEmision: ['', Validators.required],
-    monto: [0, [Validators.required, Validators.min(0), this.montoValidator.bind(this)]],
+    monto: [0, [Validators.required, Validators.min(0.01), this.montoValidator.bind(this)]],
     activo: [true]
   });
 
@@ -88,7 +88,6 @@ ngOnInit(): void {
         this.calcularMontoDisponible(
           this.data.asistencial?.id,
           this.data.idEfector,
-          this.data.quincena,
           this.data.mes,
           this.data.anio,
           (disponible) => {
@@ -116,7 +115,6 @@ ngOnInit(): void {
             this.calcularMontoDisponible(
               this.data.asistencial?.id,
               this.data.idEfector,
-              this.data.quincena,
               this.data.mes,
               this.data.anio,
               (disponible) => {
@@ -162,17 +160,16 @@ ngOnInit(): void {
 calcularMontoDisponible(
   idAsistencial: number,
   idEfector: number,
-  quincena: string,
   mes: string,
   anio: number,
   callback?: (disponible: number) => void
 ): void {
   this.registroMensualService
-    .getMontoTotal(idAsistencial, idEfector, mes, anio)
+    .getMontoTotalFueraTermino(idAsistencial, idEfector, mes, anio)
     .subscribe({
       next: (total) => {
         this.facturaService
-          .getMonto(idAsistencial, idEfector, mes, anio)
+          .getMontoFueraTermino(idAsistencial, idEfector, mes, anio)
           .subscribe({
             next: (facturado) => {
               const rawDisponible = total - facturado;

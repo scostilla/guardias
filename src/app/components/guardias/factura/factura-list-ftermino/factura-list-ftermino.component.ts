@@ -6,6 +6,7 @@ import { FacturaService } from 'src/app/services/factura.service';
 import { FacturaDetailDto } from 'src/app/dto/FacturaDetailDto';
 import { FacturaEditComponent } from '../factura-edit/factura-edit.component';
 import { FacturaDetailComponent } from '../factura-detail/factura-detail.component';
+import { DdjjService } from 'src/app/services/ddjj.service';
 
 @Component({
   selector: 'app-factura-list-ftermino',
@@ -18,12 +19,14 @@ export class FacturaListFterminoComponent implements OnInit {
   displayedColumns: string[] = ['numeroFactura', 'fechaEmision', 'monto', 'acciones'];
   nombreTitular: string = '';
   apellidoTitular: string = '';
+  ddjjYaExiste: boolean | null = null;
 
   constructor(
     private facturaService: FacturaService,
     private dialogRef: MatDialogRef<FacturaListFterminoComponent>,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private ddjjService: DdjjService,
 
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
@@ -44,12 +47,11 @@ export class FacturaListFterminoComponent implements OnInit {
   }
 
   private loadFacturas(): void {
-    this.facturaService.getByFiltros(
-      this.data.asistencial.id,
+    this.facturaService.listByAsistencialSinQuincena(
       this.data.idEfector,
       this.data.anio,
       this.data.mes,
-      this.data.quincena
+      this.data.asistencial.id,
     ).subscribe({
       next: (res) => {
         this.facturas = res;
@@ -97,6 +99,34 @@ export class FacturaListFterminoComponent implements OnInit {
         error: (err) => console.error('Error al eliminar factura', err)
       });
     }
+  }
+
+  verificarExistenciaDdjj(): void {
+    const nombreMes = this.data.mes;
+    const anio = this.data.anio;
+    const efectorId = this.data.idEfector;
+    const quincena = 'FUERA_DE_TERMINO';
+
+    if (!efectorId) {
+      console.error('El ID del efector no puede ser null');
+      return;
+    }
+
+    this.ddjjService.existsDdjjCf(anio, nombreMes, efectorId, quincena).subscribe({
+      next: (existe: boolean) => {
+        this.ddjjYaExiste = existe;
+
+        if (existe) {
+          console.log('Ya existe una DDJJ para estos filtros.');
+        } else {
+          console.log('No existe DDJJ previa, se puede eliminar facturas.');
+        }
+      },
+      error: (err) => {
+        console.error('Error verificando existencia de DDJJ:', err);
+        this.ddjjYaExiste = false;
+      }
+    });
   }
 
   onClose(): void {

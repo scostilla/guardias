@@ -14,7 +14,7 @@
   <!-- Si ya hay 2 facturas -->
   <div *ngIf="maximoAlcanzado && disponible !== 0" class="error-message"
       style="text-align: center; color: red; font-weight: bold; padding: 1rem;">
-    Ya se cargaron el máximo (2) de facturas permitidas para esta quincena.
+    Ya se cargaron el máximo (2) de facturas permitidas para fuera de término.
   </div>
 
   <!-- Si todavía se puede cargar -->
@@ -127,6 +127,9 @@
             />
             <mat-error *ngIf="facturaForm.get('monto')?.hasError('excedeMonto')">
               La factura no puede superar el monto de {{ disponible | number:'1.2-2':'es-AR' }}
+            </mat-error>
+            <mat-error *ngIf="facturaForm.get('monto')?.hasError('min')">
+              El monto debe ser mayor que 0.
             </mat-error>
           </mat-form-field>
 

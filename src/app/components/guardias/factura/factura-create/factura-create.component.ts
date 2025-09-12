@@ -65,7 +65,7 @@ ngOnInit(): void {
     puntoVenta: [0, [Validators.required, Validators.min(1), Validators.max(999)]],
     numeroFactura: [0, [Validators.required, Validators.min(1), Validators.max(99999999)]],
     fechaEmision: ['', Validators.required],
-    monto: [0, [Validators.required, Validators.min(0), this.montoValidator.bind(this)]],
+    monto: [0, [Validators.required, Validators.min(0.01), this.montoValidator.bind(this)]],
     activo: [true]
   });
 
