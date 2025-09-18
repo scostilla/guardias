@@ -1,0 +1,115 @@
+<h2 mat-dialog-title>Cargar Factura
+<h5>{{ data.quincena }} Quincena de {{ data.mes }}/{{ data.anio }}</h5>
+</h2>
+
+    <!-- Mostrar el disponible en pantalla -->
+    <div class="success-message" style="text-align: center;">
+    Monto disponible para facturar: <strong>{{ disponible | number:'1.2-2' }}</strong>
+    </div>
+
+<mat-dialog-content class="dialog-form">
+  <form [formGroup]="facturaForm">
+
+    <!-- Nombre -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Nombre Titular</mat-label>
+      <input matInput formControlName="nombreTitular">
+        <mat-error *ngIf="facturaForm.get('nombreTitular')?.errors?.['required']">El nombre es requerido.</mat-error>
+        <mat-error *ngIf="facturaForm.get('nombreTitular')?.errors?.['pattern']">El nombre debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+    </mat-form-field>
+
+    <!-- Apellido -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Apellido Titular</mat-label>
+      <input matInput formControlName="apellidoTitular">
+        <mat-error *ngIf="facturaForm.get('apellidoTitular')?.errors?.['required']">El apellido es requerido.</mat-error>
+        <mat-error *ngIf="facturaForm.get('apellidoTitular')?.errors?.['pattern']">El apellido debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+    </mat-form-field>
+
+    <!-- DNI -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>DNI Titular</mat-label>
+      <input matInput type="number" min="0" formControlName="dniTitular">
+        <mat-error *ngIf="facturaForm.get('dniTitular')?.errors?.['required']">El DNI es requerido.</mat-error>
+        <mat-error *ngIf="facturaForm.get('dniTitular')?.errors?.['pattern']">El DNI debe tener solo números (entre 8 y 20 dígitos).</mat-error>
+    </mat-form-field>
+
+    <!-- CUIL -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>CUIL Titular</mat-label>
+      <input matInput formControlName="cuilTitular">
+        <mat-error *ngIf="facturaForm.get('cuilTitular')?.errors?.['required']">El CUIL es requerido.</mat-error>
+        <mat-error *ngIf="facturaForm.get('cuilTitular')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
+    </mat-form-field>
+
+    <!-- Condición Fiscal -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Condición Fiscal</mat-label>
+      <mat-select formControlName="contribuyente">
+        <mat-option value="RESPONSABLE_INSCRIPTO">RESPONSABLE INSCRIPTO</mat-option>
+        <mat-option value="MONOTRIBUTISTA">MONOTRIBUTISTA</mat-option>
+        <mat-option value="CONSUMIDOR_FINAL">CONSUMIDOR FINAL</mat-option>
+        <mat-option value="EXENTO">EXENTO</mat-option>
+      </mat-select>
+        <mat-error *ngIf="facturaForm.get('contribuyente')?.errors?.['required']">La condición fiscal es requerida.</mat-error>
+    </mat-form-field>
+
+    <!-- Tipo -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Tipo de factura</mat-label>
+      <mat-select formControlName="tipo">
+        <mat-option value="A">A</mat-option>
+        <mat-option value="B">B</mat-option>
+      </mat-select>
+        <mat-error *ngIf="facturaForm.get('tipo')?.errors?.['required']">El tipo de factura es requerido.</mat-error>
+    </mat-form-field>
+
+    <!-- Punto de Venta -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Punto de Venta</mat-label>
+      <input matInput type="number" min="0" formControlName="puntoVenta">
+        <mat-error *ngIf="facturaForm.get('puntoVenta')?.hasError('min')">
+        El número de punto de venta debe ser mayor a 0
+        </mat-error>
+        <mat-error *ngIf="facturaForm.get('puntoVenta')?.hasError('max')">
+        El número de punto de venta no puede superar 9999
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Número de Factura -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Número Factura</mat-label>
+      <input matInput type="number" min="0" formControlName="numeroFactura">
+        <mat-error *ngIf="facturaForm.get('numeroFactura')?.hasError('min')">
+        El número de factura debe ser mayor a 0
+        </mat-error>
+        <mat-error *ngIf="facturaForm.get('numeroFactura')?.hasError('max')">
+        El número de factura no puede superar 99999999
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Fecha de Emisión -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Fecha Emisión</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="fechaEmision">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="facturaForm.get('fechaEmision')?.errors?.['required']">La fecha es requerida.</mat-error>
+    </mat-form-field>
+
+    <!-- Monto -->
+    <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Monto</mat-label>
+    <input matInput type="number" min="0" formControlName="monto" />
+    <mat-error *ngIf="facturaForm.get('monto')?.hasError('excedeMonto')">
+        La factura no puede superar el monto de {{ disponible | number:'1.2-2' }}
+    </mat-error>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="facturaForm.invalid || facturaForm.get('monto')?.value > disponible">Guardar</button>
+</mat-dialog-actions>

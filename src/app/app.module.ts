@@ -290,6 +290,10 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { FacturaCreateComponent } from './components/guardias/factura/factura-create/factura-create.component';
+import { FacturaListComponent } from './components/guardias/factura/factura-list/factura-list.component';
+import { FacturaEditComponent } from './components/guardias/factura/factura-edit/factura-edit.component';
+import { FacturaDetailComponent } from './components/guardias/factura/factura-detail/factura-detail.component';
 
 @NgModule({
   declarations: [
@@ -526,7 +530,11 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     DialogConfirmRmensualComponent,
     RegistroActividadesEditComponent,
     DialogHistorialObservacionesComponent,
-    RegistroActividadesProfesionalesComponent
+    RegistroActividadesProfesionalesComponent,
+    FacturaCreateComponent,
+    FacturaListComponent,
+    FacturaEditComponent,
+    FacturaDetailComponent,
   ],
 
   imports: [

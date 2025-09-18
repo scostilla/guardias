@@ -15,7 +15,10 @@ export class DdjjDto {
   enPosesionDirectorDPH?: boolean | null;
   motivoDirector?: string | null;
   motivoDirectorDPH?: string | null;
+  idObservacionesDdjj?: number[];
   idTipoGuardia: number;
+  idCronogramasDefinitivos?: number[];
+  quincena?: string; // QuincenaEnum
 
       constructor(
         mes: string,               // enum
@@ -35,6 +38,9 @@ export class DdjjDto {
         enPosesionDirectorDPH?: boolean | null,
         motivoDirector?: string | null,
         motivoDirectorDPH?: string | null,
+        idObservacionesDdjj?: number[],
+        idCronogramasDefinitivos?: number[],
+        quincena?: string,
     ) {
 
         this.mes = mes; 
@@ -53,6 +59,9 @@ export class DdjjDto {
         this.enPosesionDirectorDPH = enPosesionDirectorDPH;
         this.motivoDirector = motivoDirector;
         this.motivoDirectorDPH = motivoDirectorDPH;
+        this.idObservacionesDdjj = idObservacionesDdjj;
         this.idTipoGuardia = idTipoGuardia;   
+        this.idCronogramasDefinitivos = idCronogramasDefinitivos;
+        this.quincena = quincena;
     }
 }

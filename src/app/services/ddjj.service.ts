@@ -96,6 +96,10 @@ export class DdjjService {
     return this.httpClient.get<boolean>(`${this.baseUrl}existsDdjj/${anio}/${mes}/${idEfector}/${idtipoGuardia}`);
   }
 
+  existsDdjjCf(anio: number, mes: string, idEfector: number, quincena: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.baseUrl}existsDdjjCf/${anio}/${mes}/${idEfector}/${quincena}`);
+  }
+
   // DDJJ CARGO Y AGRUPACIÓN
   listDdjjCargoyAgrup(anio: number, mes: string, idEfector: number): Observable<Ddjj[]> {
     return this.httpClient.get<Ddjj[]>(`${this.baseUrl}listDdjjCargoyAgrup/${anio}/${mes}/${idEfector}`);
@@ -154,11 +158,11 @@ export class DdjjService {
     return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listExtra/${anio}/${mes}/${idEfector}`);
   }
 
-  listCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<DdjjListDto[]> {
-    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCfServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  listCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number, quincena: string): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCfServicio/${anio}/${mes}/${idEfector}/${idServicio}/${quincena}`);
   }
 
-  listCf(anio: number, mes: string, idEfector: number): Observable<DdjjListDto[]> {
-    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCf/${anio}/${mes}/${idEfector}`);
+  listCf(anio: number, mes: string, idEfector: number, quincena: string): Observable<DdjjListDto[]> {
+    return this.httpClient.get<DdjjListDto[]>(`${this.baseUrl}listCf/${anio}/${mes}/${idEfector}/${quincena}`);
   }
 }

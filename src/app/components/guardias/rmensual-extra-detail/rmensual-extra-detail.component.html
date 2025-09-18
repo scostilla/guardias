@@ -14,14 +14,14 @@
 
       <tr>
         <th scope="row">Vínculo laboral</th>
-        <td>{{ asistencial.legajos[0]?.revista?.tipoRevista?.nombre || '-' }}</td>
+        <td>{{ asistencial.legajos[0].revista.tipoRevista.nombre || '-' }}</td>
       </tr>
 
       <tr>
         <th scope="row">Categoría</th>
         <td>
-          {{ asistencial.legajos[0]?.revista?.categoria?.nombre || '-' }}
-          ({{ asistencial.legajos[0]?.revista?.adicional?.nombre || '-' }})
+          {{ asistencial.legajos[0].revista.categoria.nombre || '-' }}
+          ({{ asistencial.legajos[0].revista.adicional.nombre || '-' }})
         </td>
       </tr>
 
