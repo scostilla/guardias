@@ -67,7 +67,11 @@ export class RegistroActividadesProfesionalesComponent {
           entrada: string | null,
           salida: string | null,
           tipoGuardia: string,
-          servicio?: string
+          servicio?: string,
+          // NUEVO: datos para agrupar entre días
+          groupKey?: string,
+          isGroupStart?: boolean,
+          isGroupEnd?: boolean
         }[] = [];
 
       get uniqueFechas(): string[] {
@@ -222,14 +226,18 @@ export class RegistroActividadesProfesionalesComponent {
     ).subscribe({
       next: (data) => {
         this.actividades = data;
+        // CAMBIO: extender el tipo para permitir groupKey/isGroupStart/isGroupEnd
         const filas: {
           fecha: string,
           entrada: string | null,
           salida: string | null,
           tipoGuardia: string,
-          servicio?: string
+          servicio?: string,
+          groupKey?: string,
+          isGroupStart?: boolean,
+          isGroupEnd?: boolean
         }[] = [];
-        data.forEach(act => {
+        data.forEach((act, idx) => {
           const fechaIng = act.fechaIngreso instanceof Date ? act.fechaIngreso.toISOString().slice(0, 10) : act.fechaIngreso;
           const fechaEgr = act.fechaEgreso instanceof Date ? act.fechaEgreso.toISOString().slice(0, 10) : act.fechaEgreso;
           if (fechaIng === fechaEgr) {
@@ -242,26 +250,44 @@ export class RegistroActividadesProfesionalesComponent {
               servicio: act.servicio
             });
           } else {
-            // Entrada y salida en fechas distintas: dos filas
+            const groupKey = `${fechaIng}|${act.horaIngreso}|${fechaEgr}|${act.horaEgreso}|${act.tipoGuardia}|${act.servicio || ''}`;
+            // Entrada (inicio)
             filas.push({
               fecha: fechaIng,
               entrada: act.horaIngreso,
               salida: null,
               tipoGuardia: act.tipoGuardia,
-              servicio: act.servicio
+              servicio: act.servicio,
+              groupKey,
+              isGroupStart: true,
+              isGroupEnd: false
             });
+            // Salida (fin)
             if (act.fechaEgreso && act.horaEgreso) {
               filas.push({
                 fecha: fechaEgr,
                 entrada: null,
                 salida: act.horaEgreso,
                 tipoGuardia: act.tipoGuardia,
-                servicio: act.servicio
+                servicio: act.servicio,
+                groupKey,
+                isGroupStart: false,
+                isGroupEnd: true
               });
             }
           }
         });
-        this.tablaFilas = filas.sort((a, b) => a.fecha.localeCompare(b.fecha));
+        // Reemplaza el sort solo por fecha por uno que también ordena por hora dentro del mismo día
+        this.tablaFilas = filas.sort((a, b) => {
+          const cmpFecha = a.fecha.localeCompare(b.fecha);
+          if (cmpFecha !== 0) return cmpFecha;
+          const horaA = (a.entrada ?? a.salida ?? '');
+          const horaB = (b.entrada ?? b.salida ?? '');
+          if (horaA && horaB) return horaA.localeCompare(horaB);
+          if (horaA) return -1;
+          if (horaB) return 1;
+          return 0;
+        });
       },
       error: (err) => {
         this.actividades = [];
@@ -418,10 +444,44 @@ getFilasPorFecha(fecha: string) {
     return agrupadas;
   }
 
+  // Reemplaza la función agruparFilasPorRangoGuardia por esta versión mejorada:
+  private agruparFilasPorRangoGuardia(filas: any[]) {
+    // Agrupa filas consecutivas que forman parte de la misma guardia (entrada/salida cruzando fechas)
+    const agrupadas: any[] = [];
+    let i = 0;
+    while (i < filas.length) {
+      const actual = filas[i];
+      // Si la fila tiene entrada y salida, es una guardia completa en un solo día
+      if (actual.entrada && actual.salida) {
+        agrupadas.push({ ...actual, tipoGuardiaRowSpan: 1, mostrarTipoGuardia: true });
+        i++;
+        continue;
+      }
+      // Si la fila tiene solo entrada, buscar la salida en la siguiente fila con mismo tipo de guardia y servicio
+      if (actual.entrada && !actual.salida) {
+        agrupadas.push({ ...actual, tipoGuardiaRowSpan: 1, mostrarTipoGuardia: true });
+        i++;
+        continue;
+      }
+      // Fin (solo salida): NO mostrar el tipo (para evitar duplicado)
+      if (!actual.entrada && actual.salida) {
+        agrupadas.push({ ...actual, tipoGuardiaRowSpan: 1, mostrarTipoGuardia: !actual.isGroupEnd });
+        i++;
+        continue;
+      }
+      agrupadas.push({ ...actual, tipoGuardiaRowSpan: 1, mostrarTipoGuardia: true });
+      i++;
+    }
+    return agrupadas;
+  }
+
   async exportarAExcel() {
     const workbook = new ExcelJS.Workbook();
     const nombreHoja = moment({ month: this.selectedMonth - 1 }).format('MMMM').toUpperCase();
     const worksheet = workbook.addWorksheet(nombreHoja);
+
+    // Declarar el Map persistente (fuera del bucle de días)
+    const pendingMerge = new Map<string, { col: 'D' | 'H', startRow: number }>();
 
     // Encabezado principal: NOMBRE, APELLIDO, CUIL, HOSPITAL, SERVICIO, MES, AÑO
     const encabezadoPrincipal = worksheet.addRow(['NOMBRE', 'APELLIDO', 'CUIL', 'HOSPITAL', 'SERVICIO', 'MES', 'AÑO']);
@@ -457,23 +517,30 @@ getFilasPorFecha(fecha: string) {
     for (let i = 0; i < maxFilas; i++) {
       let filasDia1: any[] = [];
       if (diasBloque1[i]) {
-        filasDia1 = this.agruparFilasExcel(this.getFilasPorFecha(moment(diasBloque1[i], 'DD/MM/YYYY').format('YYYY-MM-DD')));
+        // CAMBIO: usar la nueva función de agrupación
+        filasDia1 = this.agruparFilasPorRangoGuardia(this.getFilasPorFecha(moment(diasBloque1[i], 'DD/MM/YYYY').format('YYYY-MM-DD')));
       }
       let filasDia2: any[] = [];
       if (diasBloque2[i]) {
-        filasDia2 = this.agruparFilasExcel(this.getFilasPorFecha(moment(diasBloque2[i], 'DD/MM/YYYY').format('YYYY-MM-DD')));
+        filasDia2 = this.agruparFilasPorRangoGuardia(this.getFilasPorFecha(moment(diasBloque2[i], 'DD/MM/YYYY').format('YYYY-MM-DD')));
       }
+
+      // CAMBIO: saber si el día pertenece a un rango (inicio o fin) ANTES de hacer merges dentro del día
+      const inGroup1 = filasDia1.some(f => f?.isGroupStart || f?.isGroupEnd);
+      const inGroup2 = filasDia2.some(f => f?.isGroupStart || f?.isGroupEnd);
+
       for (let j = 0; j < 3; j++) {
         let fila1 = ['', '', '', ''];
         let fila2 = ['', '', '', ''];
         let tipoGuardiaRowSpan1 = filasDia1[j]?.tipoGuardiaRowSpan || 1;
         let tipoGuardiaRowSpan2 = filasDia2[j]?.tipoGuardiaRowSpan || 1;
+        // Solo mostrar tipo de guardia si mostrarTipoGuardia es true
         if (filasDia1[j]) {
           fila1 = [
             j === 0 ? diasBloque1[i] : '',
             filasDia1[j].entrada || '',
             filasDia1[j].salida || '',
-            filasDia1[j].tipoGuardia || ''
+            filasDia1[j].mostrarTipoGuardia ? filasDia1[j].tipoGuardia : ''
           ];
         } else if (j === 0 && diasBloque1[i]) {
           fila1 = [diasBloque1[i], '', '', ''];
@@ -483,7 +550,7 @@ getFilasPorFecha(fecha: string) {
             j === 0 ? diasBloque2[i] : '',
             filasDia2[j].entrada || '',
             filasDia2[j].salida || '',
-            filasDia2[j].tipoGuardia || ''
+            filasDia2[j].mostrarTipoGuardia ? filasDia2[j].tipoGuardia : ''
           ];
         } else if (j === 0 && diasBloque2[i]) {
           fila2 = [diasBloque2[i], '', '', ''];
@@ -492,102 +559,192 @@ getFilasPorFecha(fecha: string) {
 
         // Colores según tipo de guardia y hora válida
         const horaRegex = /^\d{2}:\d{2}(:\d{2})?$/;
-        // Bloque 1
-        if (fila1[1] && horaRegex.test(fila1[1]) && fila1[3]) {
+
+        // NUEVO: tomar el tipo de guardia de la fila fuente (aunque el texto esté oculto)
+        const tipoGuardiaVal1 = filasDia1[j]?.tipoGuardia || '';
+        const tipoGuardiaVal2 = filasDia2[j]?.tipoGuardia || '';
+        const colorHex1 = this.getColorGuardia(tipoGuardiaVal1);
+        const colorHex2 = this.getColorGuardia(tipoGuardiaVal2);
+        const argb1 = colorHex1 ? ('FF' + colorHex1.replace('#', '')) : null;
+        const argb2 = colorHex2 ? ('FF' + colorHex2.replace('#', '')) : null;
+
+        // Bloque 1 (B: entrada, C: salida)
+        if (fila1[1] && horaRegex.test(fila1[1]) && argb1) {
           row.getCell(2).fill = {
             type: 'pattern',
             pattern: 'solid',
-            fgColor: { argb: this.getColorGuardia(fila1[3]).replace('#', '') }
+            fgColor: { argb: argb1 }
           };
         }
-        if (fila1[2] && horaRegex.test(fila1[2]) && fila1[3]) {
+        if (fila1[2] && horaRegex.test(fila1[2]) && argb1) {
           row.getCell(3).fill = {
             type: 'pattern',
             pattern: 'solid',
-            fgColor: { argb: this.getColorGuardia(fila1[3]).replace('#', '') }
-          };
-        }
-        // Bloque 2
-        if (fila2[1] && horaRegex.test(fila2[1]) && fila2[3]) {
-          row.getCell(6).fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: this.getColorGuardia(fila2[3]).replace('#', '') }
-          };
-        }
-        if (fila2[2] && horaRegex.test(fila2[2]) && fila2[3]) {
-          row.getCell(7).fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: this.getColorGuardia(fila2[3]).replace('#', '') }
+            fgColor: { argb: argb1 }
           };
         }
 
-        // Combinar celdas de tipo de guardia si tipoGuardiaRowSpan > 1
-        if (tipoGuardiaRowSpan1 > 1 && fila1[3]) {
-          worksheet.mergeCells(`D${row.number}:D${row.number + tipoGuardiaRowSpan1 - 1}`);
+        // Bloque 2 (F: entrada, G: salida)
+        if (fila2[1] && horaRegex.test(fila2[1]) && argb2) {
+          row.getCell(6).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: argb2 }
+          };
+        }
+        if (fila2[2] && horaRegex.test(fila2[2]) && argb2) {
+          row.getCell(7).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: argb2 }
+          };
+        }
+
+        // Mantener merges verticales de tipo dentro del día solo si NO pertenece a rango entre días
+        if (filasDia1[j]?.tipoGuardiaRowSpan > 1 && filasDia1[j].mostrarTipoGuardia && fila1[3] && !inGroup1) {
+          worksheet.mergeCells(`D${row.number}:D${row.number + filasDia1[j].tipoGuardiaRowSpan - 1}`);
           worksheet.getCell(`D${row.number}`).alignment = { vertical: 'middle', horizontal: 'center' };
         }
-        if (tipoGuardiaRowSpan2 > 1 && fila2[3]) {
-          worksheet.mergeCells(`H${row.number}:H${row.number + tipoGuardiaRowSpan2 - 1}`);
+        if (filasDia2[j]?.tipoGuardiaRowSpan > 1 && filasDia2[j].mostrarTipoGuardia && fila2[3] && !inGroup2) {
+          worksheet.mergeCells(`H${row.number}:H${row.number + filasDia2[j].tipoGuardiaRowSpan - 1}`);
           worksheet.getCell(`H${row.number}`).alignment = { vertical: 'middle', horizontal: 'center' };
         }
       }
 
-      // Combinación de celdas igual que el PDF
+      // Primer renglón de las 3 filas que se acaban de añadir para este día
       const baseRow = worksheet.lastRow ? worksheet.lastRow.number - 2 : 1;
-      worksheet.mergeCells(`A${baseRow}:A${baseRow+2}`); // DIA bloque 1
+
+      // Merges por día (D/H) condicionados por inGroup para NO duplicar tipo en rangos entre días
+      worksheet.mergeCells(`A${baseRow}:A${baseRow+2}`);
       worksheet.getCell(`A${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
-      worksheet.mergeCells(`E${baseRow}:E${baseRow+2}`); // DIA bloque 2
+      worksheet.mergeCells(`E${baseRow}:E${baseRow+2}`);
       worksheet.getCell(`E${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
 
       if (filasDia1.length === 1) {
         worksheet.mergeCells(`B${baseRow}:B${baseRow+2}`);
         worksheet.mergeCells(`C${baseRow}:C${baseRow+2}`);
-        worksheet.mergeCells(`D${baseRow}:D${baseRow+2}`);
+        if (!inGroup1) worksheet.mergeCells(`D${baseRow}:D${baseRow+2}`);
         worksheet.getCell(`B${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
         worksheet.getCell(`C${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell(`D${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        if (!inGroup1) worksheet.getCell(`D${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
       }
       if (filasDia2.length === 1) {
         worksheet.mergeCells(`F${baseRow}:F${baseRow+2}`);
         worksheet.mergeCells(`G${baseRow}:G${baseRow+2}`);
-        worksheet.mergeCells(`H${baseRow}:H${baseRow+2}`);
+        if (!inGroup2) worksheet.mergeCells(`H${baseRow}:H${baseRow+2}`);
         worksheet.getCell(`F${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
         worksheet.getCell(`G${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell(`H${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        if (!inGroup2) worksheet.getCell(`H${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
       }
       if (filasDia1.length === 2) {
         worksheet.mergeCells(`B${baseRow+1}:B${baseRow+2}`);
         worksheet.mergeCells(`C${baseRow+1}:C${baseRow+2}`);
-        worksheet.mergeCells(`D${baseRow+1}:D${baseRow+2}`);
+        if (!inGroup1) worksheet.mergeCells(`D${baseRow+1}:D${baseRow+2}`);
         worksheet.getCell(`B${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
         worksheet.getCell(`C${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell(`D${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        if (!inGroup1) worksheet.getCell(`D${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
       }
       if (filasDia2.length === 2) {
         worksheet.mergeCells(`F${baseRow+1}:F${baseRow+2}`);
         worksheet.mergeCells(`G${baseRow+1}:G${baseRow+2}`);
-        worksheet.mergeCells(`H${baseRow+1}:H${baseRow+2}`);
+        if (!inGroup2) worksheet.mergeCells(`H${baseRow+1}:H${baseRow+2}`);
         worksheet.getCell(`F${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
         worksheet.getCell(`G${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell(`H${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        if (!inGroup2) worksheet.getCell(`H${baseRow+1}`).alignment = { vertical: 'middle', horizontal: 'center' };
       }
       if (filasDia1.length === 0) {
         worksheet.mergeCells(`B${baseRow}:B${baseRow+2}`);
         worksheet.mergeCells(`C${baseRow}:C${baseRow+2}`);
-        worksheet.mergeCells(`D${baseRow}:D${baseRow+2}`);
+        if (!inGroup1) worksheet.mergeCells(`D${baseRow}:D${baseRow+2}`);
         worksheet.getCell(`B${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
         worksheet.getCell(`C${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell(`D${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        if (!inGroup1) worksheet.getCell(`D${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
       }
       if (filasDia2.length === 0) {
         worksheet.mergeCells(`F${baseRow}:F${baseRow+2}`);
         worksheet.mergeCells(`G${baseRow}:G${baseRow+2}`);
-        worksheet.mergeCells(`H${baseRow}:H${baseRow+2}`);
+        if (!inGroup2) worksheet.mergeCells(`H${baseRow}:H${baseRow+2}`);
         worksheet.getCell(`F${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
         worksheet.getCell(`G${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell(`H${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        if (!inGroup2) worksheet.getCell(`H${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+      }
+
+      // CAMBIO: registrar inicios y cerrar merges al encontrar fin (mismo bloque)
+      // BLOQUE 1 => columna D
+      if (diasBloque1[i]) {
+        // Índices exactos dentro del día (0..2) donde inicia/termina el rango
+        const startIdx1 = filasDia1.findIndex(f => f?.isGroupStart);
+        const endIdx1   = filasDia1.findIndex(f => f?.isGroupEnd);
+        const startKey1 = startIdx1 >= 0 ? filasDia1[startIdx1].groupKey : undefined;
+        const endKey1   = endIdx1   >= 0 ? filasDia1[endIdx1].groupKey   : undefined;
+
+        // Guardar inicio del merge en la fila exacta del día
+        if (startKey1) {
+          const startRow = baseRow + startIdx1; // 0->fila 1 del día, 1->fila 2, 2->fila 3
+          pendingMerge.set(startKey1, { col: 'D', startRow });
+        }
+
+        // Cerrar merge cuando aparece el fin en este día
+        if (endKey1 && pendingMerge.has(endKey1)) {
+          const info = pendingMerge.get(endKey1)!;
+          // NUEVO: si el día de fin solo tiene salida, extender hasta la 3ra fila del día
+          const isOnlySalida1 = filasDia1.length === 1 && !filasDia1[0]?.entrada && !!filasDia1[0]?.salida;
+          const endRow = isOnlySalida1 ? (baseRow + 2) : (baseRow + endIdx1);
+          if (info.col === 'D') {
+            worksheet.mergeCells(`D${info.startRow}:D${endRow}`);
+            worksheet.getCell(`D${info.startRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+          }
+          pendingMerge.delete(endKey1);
+        }
+      }
+
+      // BLOQUE 2 => columna H
+      if (diasBloque2[i]) {
+        const startIdx2 = filasDia2.findIndex(f => f?.isGroupStart);
+        const endIdx2   = filasDia2.findIndex(f => f?.isGroupEnd);
+        const startKey2 = startIdx2 >= 0 ? filasDia2[startIdx2].groupKey : undefined;
+        const endKey2   = endIdx2   >= 0 ? filasDia2[endIdx2].groupKey   : undefined;
+
+        if (startKey2) {
+          const startRow = baseRow + startIdx2;
+          pendingMerge.set(startKey2, { col: 'H', startRow });
+        }
+        if (endKey2 && pendingMerge.has(endKey2)) {
+          const info = pendingMerge.get(endKey2)!;
+          // NUEVO: si el día de fin solo tiene salida, extender hasta la 3ra fila del día
+          const isOnlySalida2 = filasDia2.length === 1 && !filasDia2[0]?.entrada && !!filasDia2[0]?.salida;
+          const endRow = isOnlySalida2 ? (baseRow + 2) : (baseRow + endIdx2);
+          if (info.col === 'H') {
+            worksheet.mergeCells(`H${info.startRow}:H${endRow}`);
+            worksheet.getCell(`H${info.startRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+          }
+          pendingMerge.delete(endKey2);
+        }
+      }
+
+      // NUEVO: Cruce de bloques 15→16 — combinar solo la columna "TIPO DE GUARDIA" por día
+      // Día 15 (bloque 1): inicio con única entrada y fin en bloque 2
+      if (diasBloque1[i] && filasDia1.length === 1 && !!filasDia1[0]?.isGroupStart) {
+        const gk = filasDia1[0].groupKey;
+        const fin = gk ? this.tablaFilas.find(f => f.groupKey === gk && f.isGroupEnd) : undefined;
+        const finDia = fin?.fecha ? moment(fin.fecha, 'YYYY-MM-DD').date() : undefined;
+        const cruzaABloque2 = finDia !== undefined && finDia >= 16;
+        if (cruzaABloque2) {
+          worksheet.mergeCells(`D${baseRow}:D${baseRow + 2}`);
+          worksheet.getCell(`D${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        }
+      }
+
+      // Día 16 (bloque 2): fin con única salida y comienzo en bloque 1
+      if (diasBloque2[i] && filasDia2.length === 1 && !!filasDia2[0]?.isGroupEnd) {
+        const gk = filasDia2[0].groupKey;
+        const inicio = gk ? this.tablaFilas.find(f => f.groupKey === gk && f.isGroupStart) : undefined;
+        const inicioDia = inicio?.fecha ? moment(inicio.fecha, 'YYYY-MM-DD').date() : undefined;
+        const vieneDeBloque1 = inicioDia !== undefined && inicioDia <= 15;
+        if (vieneDeBloque1) {
+          worksheet.mergeCells(`H${baseRow}:H${baseRow + 2}`);
+          worksheet.getCell(`H${baseRow}`).alignment = { vertical: 'middle', horizontal: 'center' };
+        }
       }
     }
 
@@ -731,25 +888,36 @@ getFilasPorFecha(fecha: string) {
     }
     const maxFilas = Math.max(diasBloque1.length, diasBloque2.length);
 
+    // Declarar el Map persistente (fuera del bucle de días)
+    const pendingMerge = new Map<string, { col: 'D' | 'H', startRow: number }>();
+
     for (let i = 0; i < maxFilas; i++) {
       let filasDia1: any[] = [];
       if (diasBloque1[i]) {
-        filasDia1 = this.getFilasPorFecha(moment(diasBloque1[i], 'DD/MM/YYYY').format('YYYY-MM-DD'));
+        // CAMBIO: usar la nueva función de agrupación
+        filasDia1 = this.agruparFilasPorRangoGuardia(this.getFilasPorFecha(moment(diasBloque1[i], 'DD/MM/YYYY').format('YYYY-MM-DD')));
       }
       let filasDia2: any[] = [];
       if (diasBloque2[i]) {
-        filasDia2 = this.getFilasPorFecha(moment(diasBloque2[i], 'DD/MM/YYYY').format('YYYY-MM-DD'));
+        filasDia2 = this.agruparFilasPorRangoGuardia(this.getFilasPorFecha(moment(diasBloque2[i], 'DD/MM/YYYY').format('YYYY-MM-DD')));
       }
-      // SIEMPRE 3 filas por bloque, igual que Excel
+
+      // CAMBIO: saber si el día pertenece a un rango (inicio o fin) ANTES de hacer merges dentro del día
+      const inGroup1 = filasDia1.some(f => f?.isGroupStart || f?.isGroupEnd);
+      const inGroup2 = filasDia2.some(f => f?.isGroupStart || f?.isGroupEnd);
+
       for (let j = 0; j < 3; j++) {
         let fila1 = ['', '', '', ''];
         let fila2 = ['', '', '', ''];
+        let tipoGuardiaRowSpan1 = filasDia1[j]?.tipoGuardiaRowSpan || 1;
+        let tipoGuardiaRowSpan2 = filasDia2[j]?.tipoGuardiaRowSpan || 1;
+        // Solo mostrar tipo de guardia si mostrarTipoGuardia es true
         if (filasDia1[j]) {
           fila1 = [
             j === 0 ? diasBloque1[i] : '',
             filasDia1[j].entrada || '',
             filasDia1[j].salida || '',
-            filasDia1[j].tipoGuardia || ''
+            filasDia1[j].mostrarTipoGuardia ? filasDia1[j].tipoGuardia : ''
           ];
         } else if (j === 0 && diasBloque1[i]) {
           fila1 = [diasBloque1[i], '', '', ''];
@@ -759,12 +927,11 @@ getFilasPorFecha(fecha: string) {
             j === 0 ? diasBloque2[i] : '',
             filasDia2[j].entrada || '',
             filasDia2[j].salida || '',
-            filasDia2[j].tipoGuardia || ''
+            filasDia2[j].mostrarTipoGuardia ? filasDia2[j].tipoGuardia : ''
           ];
         } else if (j === 0 && diasBloque2[i]) {
           fila2 = [diasBloque2[i], '', '', ''];
         }
-
         // Guardar tipo de guardia para color
         const tipoGuardia1 = filasDia1[j]?.tipoGuardia || '';
         const tipoGuardia2 = filasDia2[j]?.tipoGuardia || '';
@@ -817,9 +984,6 @@ getFilasPorFecha(fecha: string) {
             rowPDF[7].rowSpan = 2;
           } else if (filasDia2.length <= 1) {
             rowPDF[4] = null; rowPDF[5] = null; rowPDF[6] = null; rowPDF[7] = null;
-          }
-          if (rowPDF.every(c => c === null)) {
-            rowPDF = Array.from({ length: 8 }, () => ({ text: '', alignment: 'center' }));
           }
           rowPDF = rowPDF.map(ensureCellObj);
           body.push(rowPDF);
