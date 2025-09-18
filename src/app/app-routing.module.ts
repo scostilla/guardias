@@ -9,8 +9,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
-import { HomePageComponent } from './components/home-page/home-page.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
+import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { LoginComponent } from './components/login/login.component';
 
@@ -45,10 +45,10 @@ import { HospitalComponent } from './components/configuracion/establecimiento/ho
 import { MinisterioDetailComponent } from './components/configuracion/establecimiento/ministerio-detail/ministerio-detail.component';
 import { MinisterioEditComponent } from './components/configuracion/establecimiento/ministerio-edit/ministerio-edit.component';
 import { MinisterioComponent } from './components/configuracion/establecimiento/ministerio/ministerio.component';
+import { PermisosEfectoresComponent } from './components/configuracion/establecimiento/permisos-efectores/permisos-efectores.component';
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail//region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
-import { PermisosEfectoresComponent } from './components/configuracion/establecimiento/permisos-efectores/permisos-efectores.component';
 
 
 //Configuraciones: Profesionales
@@ -64,9 +64,9 @@ import { PersonDetailComponent } from './components/configuracion/usuarios/perso
 import { PersonEditComponent } from './components/configuracion/usuarios/person-edit/person-edit.component';
 import { PersonComponent } from './components/configuracion/usuarios/person/person.component';
 import { RevistaComponent } from './components/configuracion/usuarios/revista/revista.component';
-import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
 import { UsuarioDetailComponent } from './components/configuracion/usuarios/usuario-detail/usuario-detail.component';
 import { UsuarioEditComponent } from './components/configuracion/usuarios/usuario-edit/usuario-edit.component';
+import { UsuarioComponent } from './components/configuracion/usuarios/usuario/usuario.component';
 
 
 //Configuraciones: Leyes y novedades
@@ -102,61 +102,62 @@ import { DistHorariaGirasComponent } from './components/actividades/dist-horaria
 import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
 import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria-otras/dist-horaria-otras.component';
 import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
+import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
+import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
+import { RegistroActividadesProfesionalesComponent } from './components/actividades/registro-actividades-profesionales/registro-actividades-profesionales.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
-import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
-import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 
 
 //Sección: Personal
 import { AsistProfesionalComponent } from './components/personal/asist-profesional/asist-profesional.component';
+import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
+import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
 import { PersonalLegajoNoAsistencialComponent } from './components/personal/personal-legajo-no-asistencial/personal-legajo-no-asistencial.component';
 import { PersonalLegajoSelectComponent } from './components/personal/personal-legajo-select/personal-legajo-select.component';
 import { PersonalLegajoComponent } from './components/personal/personal-legajo/personal-legajo.component';
-import { PersonalComponent } from './components/personal/personal/personal.component';
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
-import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
-import { PersonalExternoComponent } from './components/personal/personal-externo/personal-externo.component';
+import { PersonalComponent } from './components/personal/personal/personal.component';
 
 import { AsistencialCreateComponent } from './components/personal/personal-contenido/asistencial-create/asistencial-create.component';
 import { AsistencialDetailComponent } from './components/personal/personal-contenido/asistencial-detail/asistencial-detail.component';
 import { AsistencialEditComponent } from './components/personal/personal-contenido/asistencial-edit/asistencial-edit.component';
-import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
+import { AsistencialSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector.component';
 import { AsistencialComponent } from './components/personal/personal-contenido/asistencial/asistencial.component';
+import { AutoridadListComponent } from './components/personal/personal-contenido/autoridad-list/autoridad-list.component';
 import { CargoDetailComponent } from './components/personal/personal-contenido/cargo-detail/cargo-detail.component';
 import { CargoEditComponent } from './components/personal/personal-contenido/cargo-edit/cargo-edit.component';
 import { CargoComponent } from './components/personal/personal-contenido/cargo/cargo.component';
+import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 import { NoAsistencialCreateComponent } from './components/personal/personal-contenido/no-asistencial-create/no-asistencial-create.component';
 import { NoAsistencialDetailComponent } from './components/personal/personal-contenido/no-asistencial-detail/no-asistencial-detail.component';
 import { NoAsistencialEditComponent } from './components/personal/personal-contenido/no-asistencial-edit/no-asistencial-edit.component';
 import { NoAsistencialComponent } from './components/personal/personal-contenido/no-asistencial/no-asistencial.component';
-import { SinLegajoComponent } from './components/personal/personal-contenido/sin-legajo/sin-legajo.component';
-import { AutoridadListComponent } from './components/personal/personal-contenido/autoridad-list/autoridad-list.component';
-import { ExternoComponent } from './components/personal/personal-contenido/externo/externo.component';
 
-import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
 import { LegajoCreateNoasistencialComponent } from './components/personal/legajo/legajo-create-noasistencial/legajo-create-noasistencial.component';
 import { LegajoCreateComponent } from './components/personal/legajo/legajo-create/legajo-create.component';
 import { LegajoDetailComponent } from './components/personal/legajo/legajo-detail/legajo-detail.component';
 import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
 import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
+import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
 
+import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
+import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
 import { PersonalDhHistorialComponent } from './components/personal/personal-dh-historial/personal-dh-historial.component';
 import { PersonalDhComponent } from './components/personal/personal-dh/personal-dh.component';
-import { PersonalDhEditComponent } from './components/personal/personal-dh-edit/personal-dh-edit.component';
-import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
-import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 
 
 //Sección: Cronograma
+import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { CronogramaDefMaternoComponent } from './components/cronogramas/cronograma-def-materno/cronograma-def-materno.component';
 import { CronogramaDefSroqueComponent } from './components/cronogramas/cronograma-def-sroque/cronograma-def-sroque.component';
 import { CronogramaDefComponent } from './components/cronogramas/cronograma-def/cronograma-def.component';
@@ -166,16 +167,14 @@ import { CronogramaPDefTotComponent } from './components/cronogramas/cronograma-
 import { CronogramaPDefComponent } from './components/cronogramas/cronograma-p-def/cronograma-p-def.component';
 import { CronogramaPHosComponent } from './components/cronogramas/cronograma-p-hos/cronograma-p-hos.component';
 import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cronograma-p.component';
+import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
+import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
 import { CronogramaRegComponent } from './components/cronogramas/cronograma-reg/cronograma-reg.component';
 import { CronogramaComponent } from './components/cronogramas/cronograma/cronograma.component';
-import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
-import { CronogramaPendienteComponent } from './components/cronogramas/cronograma-pendiente/cronograma-pendiente.component';
-import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 
 
 
 //Sección: Guardias
-import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
 import { DdjjCargoyagrupTotComponent } from './components/guardias/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
 import { DdjjCargoyagrupTotalApComponent } from './components/guardias/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
@@ -190,6 +189,7 @@ import { DdjjExtraTotApComponent } from './components/guardias/ddjj-extra-tot-ap
 import { DdjjExtraTotRecComponent } from './components/guardias/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
 import { DdjjExtraTotComponent } from './components/guardias/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjExtraComponent } from './components/guardias/ddjj-extra/ddjj-extra.component';
+import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DdjjTentativoComponent } from './components/guardias/ddjj-tentativo/ddjj-tentativo.component';
 import { GuardiaActivaComponent } from './components/guardias/guardia-activa/guardia-activa.component';
 import { GuardiaPasivaComponent } from './components/guardias/guardia-pasiva/guardia-pasiva.component';
@@ -198,10 +198,10 @@ import { GuardiasViewComponent } from './components/guardias/guardias-view/guard
 import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
 import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 
-import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
-import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
+import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
+import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 
 
 //Sección: Disponibilidad
@@ -250,10 +250,10 @@ import { PruebaDetailComponent } from './components/configuracion/territorio/pru
 import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
 import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
 import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
+import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { AutoridadDetailComponent } from './components/personal/personal-contenido/autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from './components/personal/personal-contenido/autoridad-edit/autoridad-edit.component';
 import { AutoridadComponent } from './components/personal/personal-contenido/autoridad/autoridad.component';
-import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 
 
 
@@ -367,6 +367,7 @@ const routes: Routes = [
   {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path: 'registro-actividades-profesionales', component: RegistroActividadesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
 
   {path:"registro-actividades-e", component: RegistroActividadesEComponent },
   {path:'dist-horaria', component:DistHorariaComponent},

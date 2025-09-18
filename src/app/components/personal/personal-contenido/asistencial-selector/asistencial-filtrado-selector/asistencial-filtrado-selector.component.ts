@@ -3,11 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Subscription } from 'rxjs';
-import { AsistencialMode } from 'src/app/enums/asistencial-mode';
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
+import { AsistencialMode } from 'src/app/enums/asistencial-mode';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { HabilitacionesGuardiasService } from 'src/app/services/Configuracion/habilitacionesGuardias.service';
 
 @Component({
@@ -57,6 +56,16 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
 
   loadAsistenciales() {
     const { idEfector, tipoGuardia } = this.data;
+
+    // Si solo quieres filtrar por efector, puedes usar getByEfector
+    if (!tipoGuardia) {
+      this.asistencialService.getByEfector(idEfector).subscribe(asistenciales => {
+        this.dataSource = new MatTableDataSource(asistenciales);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+      return;
+    }
 
     // Verifico el tipo de guardia para traer lista de asistenciales desde habilitaciones guardia
     const esTipoAlternativo = ['EXTRA', 'CONTRAFACTURA'].includes(tipoGuardia);

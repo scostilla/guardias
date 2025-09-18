@@ -182,6 +182,7 @@ import { SpinnerInterceptor } from './services/spinner-interceptor.service';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
+import { RegistroActividadesProfesionalesComponent } from './components/actividades/registro-actividades-profesionales/registro-actividades-profesionales.component';
 import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { EfectorDetailComponent } from './components/configuracion/establecimiento/efector-detail/efector-detail.component';
 import { EfectorEditComponent } from './components/configuracion/establecimiento/efector-edit/efector-edit.component';
@@ -529,6 +530,7 @@ import { FacturaDetailComponent } from './components/guardias/factura/factura-de
     DialogConfirmRmensualComponent,
     RegistroActividadesEditComponent,
     DialogHistorialObservacionesComponent,
+    RegistroActividadesProfesionalesComponent,
     FacturaCreateComponent,
     FacturaListComponent,
     FacturaEditComponent,

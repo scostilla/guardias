@@ -1,10 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, Subject, BehaviorSubject, tap } from "rxjs";
-import { RegistroActividad } from "../models/RegistroActividad";
-import { RegistroActividadDto } from "../dto/RegistroActividadDto";
-import { RegActivRegSalidaDto } from "../dto/RegistroActividad/RegActivRegSalidaDto";
+import { BehaviorSubject, Observable, Subject, tap } from "rxjs";
+import { RegActivAsistenciaDto } from "../dto/RegistroActividad/RegActivAsistenciaDto";
 import { RegActivNombresDto } from "../dto/RegistroActividad/RegActivNombresDto";
+import { RegActivRegSalidaDto } from "../dto/RegistroActividad/RegActivRegSalidaDto";
+import { RegistroActividadDto } from "../dto/RegistroActividadDto";
+import { RegistroActividad } from "../models/RegistroActividad";
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,11 @@ export class RegistroActividadService {
   listRegActivPendienteByEfector(idEfector: number): Observable<RegActivNombresDto[]> {
     const url = `${this.registroActividadURL}listRegActivPendienteByEfector/${idEfector}`;
     return this.httpClient.get<RegActivNombresDto[]>(url);
+  }
+
+  listAsistenciaByProfesionalEfectorMesAnio(idAsistencial:number, idEfector:number, mes:number, anio:number): Observable<RegActivAsistenciaDto[]> {
+    const url = `${this.registroActividadURL}listAsistenciaByProfesionalEfectorMesAnio/${idAsistencial}/${idEfector}/${mes}/${anio}`;
+    return this.httpClient.get<RegActivAsistenciaDto[]>(url);
   }
   
   public delete(id: number): Observable<any> {
