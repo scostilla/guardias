@@ -25,10 +25,10 @@ export class AsistencialCreateComponent implements OnInit {
     private toastr: ToastrService,
   ) {
     this.asistencialForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
-      apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
+      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ. ]{1,60}$')]],
+      apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ. ]{1,60}$')]],
       dni: ['', [Validators.required, Validators.pattern(/^\d{7,20}$/)]],
-      domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
+      domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ0-9,.#/@\\-° ]{1,90}$')]],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: [''],

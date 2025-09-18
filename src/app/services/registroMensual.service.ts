@@ -92,11 +92,17 @@ import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
     return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listExtraAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
   }
 
-  listCf(anio: number, mes: string, idEfector: number): Observable<RegistroMensualListDto[]> {
-    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCf/${anio}/${mes}/${idEfector}`);
+  listCf(anio: number, mes: string, idEfector: number, quincena: string): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCf/${anio}/${mes}/${idEfector}/${quincena}`);
   }
 
-  listCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number): Observable<RegistroMensualListDto[]> {
-    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCfAndServicio/${anio}/${mes}/${idEfector}/${idServicio}`);
+  listCfAndServicio(anio: number, mes: string, idEfector: number, idServicio: number, quincena: string): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(this.registroMensualURL + `listCfAndServicio/${anio}/${mes}/${idEfector}/${idServicio}/${quincena}`);
+  }
+
+  getMontoTotalByQuincena(idAsistencial: number, idEfector: number, quincena: string, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(
+      `${this.registroMensualURL}getMontoTotalByQuincena/${idAsistencial}/${idEfector}/${quincena}/${mes}/${anio}`
+    );
   }
  }

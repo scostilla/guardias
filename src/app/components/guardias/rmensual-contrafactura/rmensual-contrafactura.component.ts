@@ -10,8 +10,10 @@ import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-//Compoanentes
+//Componentes
 import { RmensualContrafacturaDetailComponent } from '../rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
+import { FacturaCreateComponent } from '../factura/factura-create/factura-create.component';
+import { FacturaListComponent } from '../factura/factura-list/factura-list.component';
 import { DialogConfirmRmensualComponent } from '../dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 
 
@@ -21,6 +23,7 @@ import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { DdjjService } from 'src/app/services/ddjj.service';
+import { FacturaService } from 'src/app//services/factura.service';
 
 //Models y dto
 import { Feriado } from 'src/app/models/Configuracion/Feriado';
@@ -82,8 +85,10 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   servicios: ServicioSummaryDto[] = []; 
 
   dialogRef!: MatDialogRef<RmensualContrafacturaDetailComponent>;
+  dialogRefFactura!: MatDialogRef<FacturaCreateComponent>;
 
-  selectedServicio?: number | null = null; 
+  selectedServicio?: number | null = null;
+  selectedQuincena: string = 'PRIMERA';
   selectedMonth: number = moment().month() + 1;
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
@@ -97,6 +102,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   ddjjYaExiste: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
+
+  facturaExisteMap: { [registroId: number]: boolean } = {};
 
   //Autenticación
   roles: string[] = [];
@@ -115,6 +122,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     private hospitalService: HospitalService,
     private efectorService: EfectorService,
     private ddjjService: DdjjService,
+    private facturaService: FacturaService,
     private toastr: ToastrService,
     private tokenService: TokenService,
     private sanitizer: DomSanitizer,
@@ -229,6 +237,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const idEfector = this.efectorId;
+    const quincena = this.selectedQuincena;
 
     this.tablaListaParaMostrar = false;
 
@@ -238,13 +247,18 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     }
 
     const request$ = this.selectedServicio
-      ? this.registroMensualService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio)
-      : this.registroMensualService.listCf(anio, mes, idEfector);
+      ? this.registroMensualService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena)
+      : this.registroMensualService.listCf(anio, mes, idEfector, quincena);
 
     request$.subscribe(data => {
       this.registrosMensuales = data;
       this.preprocesarActividades();
       this.updateTableDataSource();
+
+      this.registrosMensuales.forEach(registro => {
+        this.checkFacturaExistente(registro);
+      });
+
       this.tablaListaParaMostrar = true;
     });
   }
@@ -307,13 +321,29 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
+    const startOfMonth = moment()
+      .year(this.selectedYear)
+      .month(this.selectedMonth - 1)
+      .startOf('month');
+
     const endOfMonth = startOfMonth.clone().endOf('month');
-    let day = startOfMonth.clone();
+
+    let start: moment.Moment;
+    let end: moment.Moment;
+
+    if (this.selectedQuincena === 'PRIMERA') {
+      start = startOfMonth.clone();
+      end = startOfMonth.clone().date(15);
+    } else {
+      start = startOfMonth.clone().date(16);
+      end = endOfMonth.clone();
+    }
+
+    let day = start.clone();
 
     this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
 
-    while (day <= endOfMonth) {
+    while (day <= end) {
       this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
@@ -492,6 +522,30 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     );
   }
 
+  checkFacturaExistente(registro: RegistroMensualListDto): void {
+    this.facturaExisteMap[registro.id] = false; // default
+
+    const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+    const anio = this.selectedYear;
+    const quincena = this.selectedQuincena;
+
+    this.facturaService.existeFactura(
+      registro.asistencial.id,
+      this.efectorId!,
+      anio,
+      mes,
+      quincena
+    ).subscribe({
+      next: (existe) => {
+        this.facturaExisteMap[registro.id] = existe;
+      },
+      error: (err) => {
+        console.error('Error al verificar existencia de factura', err);
+        this.facturaExisteMap[registro.id] = false;
+      }
+    });
+  }
+
   //Verificaciones para permitir interacciones
 
   private estaEnRango(inicio: Date, fin: Date, today: Date = new Date()): boolean {
@@ -560,7 +614,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
     const anio = this.selectedYear;
     const efectorId = this.efectorId;
-    const tipoGuardiaId = 4;
+    const quincena = this.selectedQuincena!;
 
     if (!efectorId) {
       console.error('El ID del efector no puede ser null');
@@ -568,7 +622,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.ddjjService.existsDdjj(anio, nombreMes, efectorId, tipoGuardiaId).subscribe({
+    this.ddjjService.existsDdjjCf(anio, nombreMes, efectorId, quincena).subscribe({
       next: (existe: boolean) => {
         this.ddjjYaExiste = existe;
         const today = new Date();
@@ -576,10 +630,10 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
         if (existe) {
           this.botonDDJJIcon = 'assignment_turned_in';
-        } else if (rangos.some(r => today < r.inicio)) {
-          this.botonDDJJIcon = 'snooze'; // todavía no comienza ninguno de los rangos
         } else if (rangos.some(r => this.estaEnRango(r.inicio, r.fin, today))) {
           this.botonDDJJIcon = 'assignment_return'; // dentro de algún rango habilitado
+        } else if (rangos.some(r => today < r.inicio)) {
+          this.botonDDJJIcon = 'snooze'; // todavía no comienza ninguno de los rangos
         } else {
           this.botonDDJJIcon = 'assignment_late'; // fuera de todos los rangos
         }
@@ -632,6 +686,46 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
     this.dialogRef = this.dialog.open(RmensualContrafacturaDetailComponent, {
       width: '600px',
+      data: dataToSend
+    });
+  }
+
+  openFactura(registro: RegistroMensualListDto): void {
+    const dataToSend = {
+      asistencial: registro.asistencial,
+      idRegistrosMensuales: [registro.id],
+      idEfector: this.efectorId,
+      mes: moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase(),
+      anio: this.selectedYear,
+      quincena: this.selectedQuincena
+    };
+
+    console.log('📦 Datos enviados al FacturaCreateComponent:', dataToSend);
+
+
+    this.dialogRefFactura = this.dialog.open(FacturaCreateComponent, {
+      width: '600px',
+      data: dataToSend
+    });
+  }
+
+  openFacturaList(registro: RegistroMensualListDto): void {
+    const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+    const anio = this.selectedYear;
+    const quincena = this.selectedQuincena;
+
+    const dataToSend = {
+      asistencial: registro.asistencial,
+      idEfector: this.efectorId,
+      mes,
+      anio,
+      quincena
+    };
+
+    console.log('🔹 Datos enviados a FacturaListComponent:', dataToSend);
+
+    this.dialog.open(FacturaListComponent, {
+      width: '800px',
       data: dataToSend
     });
   }
@@ -695,6 +789,9 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       undefined,      // enPosesionDirectorDPH
       null,       //motivoDirector
       null,      //motivoDirectorDPH
+      undefined, //idObservacionesDdjj
+      undefined, //idCronogramasDefinitivos
+      this.selectedQuincena  //quincena
     );
 
     console.log('DTO a enviar creacion (DdjjDto):', ddjj);
@@ -755,8 +852,9 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const mesSeleccionado = this.getMonthName(this.selectedMonth);
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
+    const quincena = this.selectedQuincena;
 
-    worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
+    worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, `${quincena} QUINCENA`, efectorNombre]).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'FFADD8E6' }
@@ -835,7 +933,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       });
     });
 
-    const fileName = `rMensual-Contrafactura_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
+    const fileName = `rMensual-Contrafactura_${mesSeleccionado}(${quincena})_${anioSeleccionado}_${efectorNombre}.xlsx`;
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, fileName);
@@ -845,6 +943,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const mesSeleccionado = this.getMonthName(this.selectedMonth);
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
+    const quincena = this.selectedQuincena!;
 
     // Encabezados
     const headers = [
@@ -908,7 +1007,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       pageOrientation: 'landscape',
       pageMargins: [10,10,10,10],
       content: [
-        { text: `Registro Mensual - Contrafactura - ${efectorNombre} - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
+        { text: `Registro Mensual - Contrafactura - ${efectorNombre} - ${quincena} QUINCENA - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
         mainTable,
         referenciasTable
       ],
@@ -916,7 +1015,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       defaultStyle: { fontSize:7 }
     };
 
-    pdfMake.createPdf(docDefinition).download(`rMensual-Contrafactura_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.pdf`);
+    pdfMake.createPdf(docDefinition).download(`rMensual-Contrafactura_${mesSeleccionado}(${quincena})_${anioSeleccionado}_${efectorNombre}.pdf`);
   }
 
   async onExportarAExcel() {

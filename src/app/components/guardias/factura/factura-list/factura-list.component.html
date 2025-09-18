@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Facturas: {{ nombreTitular }} {{ apellidoTitular }}</h2>
+
+<mat-dialog-content>
+  <table mat-table [dataSource]="facturas" class="mat-elevation-z8" *ngIf="facturas.length > 0">
+
+    <!-- Número Factura -->
+    <ng-container matColumnDef="numeroFactura">
+      <th mat-header-cell *matHeaderCellDef class="negrita">Número</th>
+      <td mat-cell *matCellDef="let element">{{ element.numeroFactura }}</td>
+    </ng-container>
+
+    <!-- Tipo -->
+    <ng-container matColumnDef="tipo">
+      <th mat-header-cell *matHeaderCellDef class="negrita">Tipo</th>
+      <td mat-cell *matCellDef="let element">{{ element.tipo }}</td>
+    </ng-container>
+
+    <!-- Punto de Venta -->
+    <ng-container matColumnDef="puntoVenta">
+      <th mat-header-cell *matHeaderCellDef class="negrita">Punto de Venta</th>
+      <td mat-cell *matCellDef="let element">{{ element.puntoVenta }}</td>
+    </ng-container>
+
+    <!-- Fecha de Emisión -->
+    <ng-container matColumnDef="fechaEmision">
+      <th mat-header-cell *matHeaderCellDef class="negrita">Fecha Emisión</th>
+      <td mat-cell *matCellDef="let element">{{ element.fechaEmision | date:'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <!-- Monto -->
+    <ng-container matColumnDef="monto">
+      <th mat-header-cell *matHeaderCellDef class="negrita">Monto</th>
+      <td mat-cell *matCellDef="let element">{{ element.monto | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element" class="cell-actions">
+        <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(element)">
+          <mat-icon color="primary">zoom_in</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Editar factura" (click)="openEdit(element)">
+          <mat-icon class="btnEdit">edit</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Eliminar factura" (click)="openDelete(element)">
+          <mat-icon class="btnRemove">delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <p *ngIf="facturas.length === 0">No se encontraron facturas para los filtros seleccionados.</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Cerrar</button>
+</mat-dialog-actions>

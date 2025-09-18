@@ -65,7 +65,7 @@
   </div>
 
   <div class="row">
-    <div class="col-md-6 d-flex justify-content-start mt-sm-3">
+    <div class="col-md-4 d-flex justify-content-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Fecha:</span>
         <select class="select-tabla" [(ngModel)]="selectedMonthYear" (change)="onMonthYearChange()">
@@ -73,8 +73,18 @@
         </select>
       </div>
     </div>
+
+    <div class="col-md-4 d-flex justify-content-md-center justify-content-sm-start mt-sm-3">
+      <div class="contenedor-titulo-select-tabla">
+        <span class="titulo-select-tabla">Quincena:</span>
+        <select class="select-tabla" [(ngModel)]="selectedQuincena" (change)="updateDateAndLoadData()">
+          <option [ngValue]="'PRIMERA'">Primera</option>
+          <option [ngValue]="'SEGUNDA'">Segunda</option>
+        </select>
+      </div>
+    </div>
   
-    <div class="col-md-6 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
+    <div class="col-md-4 d-flex justify-content-md-end justify-content-sm-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Servicio:</span>
           <select class="select-tabla" [(ngModel)]="selectedServicio" (change)="updateDateAndLoadData()">
@@ -147,6 +157,12 @@
         <td mat-cell *matCellDef="let registro" class="cell-actions">
           <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro)">
             <mat-icon color="primary">zoom_in</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Cargar facturas" (click)="openFactura(registro)">
+            <mat-icon class="btnEdit">request_quote</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Listado de facturas" (click)="openFacturaList(registro)" *ngIf="facturaExisteMap[registro.id]">
+            <mat-icon class="btnEdit">receipt_long</mat-icon>
           </button>
         </td>
       </ng-container>

@@ -6,6 +6,9 @@ export class RegistroMensualDto {
     activo: boolean;
     idRegistroActividad: number[];
     idEfector: number;
+    idDdjjs?: number[];
+    idSumaHoras?: number;
+    quincena?: string; // QuincenaEnum
 
     constructor (
         mes: string, 
@@ -13,7 +16,10 @@ export class RegistroMensualDto {
         idAsistencial: number, 
         activo: boolean, 
         idRegistroActividad: number[], 
-        idEfector: number
+        idEfector: number,
+        idDdjjs?: number[],
+        idSumaHoras?: number,
+        quincena?: string, // QuincenaEnum
     ){
         this.mes = mes;
         this.anio= anio;
@@ -21,5 +27,8 @@ export class RegistroMensualDto {
         this.activo = activo;
         this.idRegistroActividad = idRegistroActividad;
         this.idEfector = idEfector;
+        this.idDdjjs = idDdjjs;
+        this.idSumaHoras = idSumaHoras;
+        this.quincena = quincena;
     }
 }

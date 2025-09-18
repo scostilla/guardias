@@ -107,7 +107,8 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<RmensualContrafacturaDetailComponent>;
 
-  selectedServicio?: number | null = null; 
+  selectedQuincena: string = 'PRIMERA';
+  selectedServicio?: number | null = null;
   selectedMonth: number = moment().month() + 1;
   selectedYear: number = moment().year();
   months = moment.months().map((name, value) => ({ value, name }));
@@ -285,6 +286,7 @@ loadRegistrosMensuales(): void {
   const anio = this.selectedYear;
   const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
   const idEfector = this.efectorId;
+  const quincena = this.selectedQuincena!;
 
   this.tablaListaParaMostrar = false;
 
@@ -294,8 +296,8 @@ loadRegistrosMensuales(): void {
   }
 
   const ddjj$: Observable<DdjjListDto[]> = this.selectedServicio == null
-    ? this.ddjjService.listCf(anio, mes, idEfector)
-    : this.ddjjService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio);
+    ? this.ddjjService.listCf(anio, mes, idEfector, quincena)
+    : this.ddjjService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena);
 
   ddjj$.subscribe({
     next: (ddjjs: DdjjListDto[]) => {
@@ -402,13 +404,30 @@ loadRegistrosMensuales(): void {
   }
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
-    const endOfMonth = startOfMonth.clone().endOf('month');
-    let day = startOfMonth.clone();
+    const startOfMonth = moment()
+      .year(this.selectedYear)
+      .month(this.selectedMonth - 1)
+      .startOf('month');
 
+    const endOfMonth = startOfMonth.clone().endOf('month');
+
+    let start: moment.Moment;
+    let end: moment.Moment;
+
+    if (this.selectedQuincena === 'PRIMERA') {
+      start = startOfMonth.clone();
+      end = startOfMonth.clone().date(15);
+    } else {
+      start = startOfMonth.clone().date(16);
+      end = endOfMonth.clone();
+    }
+
+    let day = start.clone();
+
+    // 🔹 Reiniciamos solo las fechas (igual que antes)
     this.columnasFechas = [];
 
-    while (day <= endOfMonth) {
+    while (day <= end) {
       this.columnasFechas.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
@@ -522,24 +541,24 @@ loadRegistrosMensuales(): void {
     const fechaActual = moment(); // hoy
     const mesesPasados = [];
 
-    for (let i = 6; i >= 1; i--) {
+    // mostrar los últimos 6 meses + el actual
+    for (let i = 6; i >= 0; i--) {
       const mesAnio = fechaActual.clone().subtract(i, 'months');
       const mes = mesAnio.month() + 1; // de 1 a 12
       const anio = mesAnio.year();
 
       mesesPasados.push({
-        value: `${mes}-${anio}`, // ej: "5-2025"
-        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
+        value: `${mes}-${anio}`, // ej: "9-2025"
+        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "SEPTIEMBRE 2025"
       });
     }
 
     this.mesesDisponibles = mesesPasados;
 
-    // Establecer por defecto el mes anterior al actual
-      const mesAnterior = fechaActual.clone().subtract(1, 'months');
-      this.selectedMonth = mesAnterior.month() + 1;
-      this.selectedYear = mesAnterior.year();
-      this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+    // Establecer por defecto el mes actual
+    this.selectedMonth = fechaActual.month() + 1;
+    this.selectedYear = fechaActual.year();
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
   }
 
   onMonthYearChange(): void {
@@ -1285,9 +1304,10 @@ loadRegistrosMensuales(): void {
     const mesSeleccionado = this.getMonthName(this.selectedMonth);
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
+    const quincena = this.selectedQuincena;
 
     // Encabezado
-    worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, efectorNombre]).fill = {
+    worksheet.addRow([`${mesSeleccionado} ${anioSeleccionado}`, `${quincena} QUINCENA`, efectorNombre]).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'FFADD8E6' } // Azul claro
@@ -1372,7 +1392,7 @@ loadRegistrosMensuales(): void {
       });
     });
 
-    const fileName = `DDJJ-Contrafactura_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}.xlsx`;
+    const fileName = `DDJJ-Contrafactura_${mesSeleccionado}(${quincena})_${anioSeleccionado}_${efectorNombre}.xlsx`;
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, fileName);
@@ -1388,6 +1408,7 @@ loadRegistrosMensuales(): void {
     const mesSeleccionado = this.getMonthName(this.selectedMonth);
     const anioSeleccionado = this.selectedYear;
     const efectorNombre = this.efectorNombre;
+    const quincena = this.selectedQuincena!;
 
     const headers = [
       'Apellido', 'Nombre', 'Cuil',
@@ -1429,7 +1450,7 @@ loadRegistrosMensuales(): void {
       pageOrientation: 'landscape',
       pageMargins: [10, 10, 10, 10],
       content: [
-        { text: `DDJJ - Contrafactura - ${mesSeleccionado} ${anioSeleccionado} - ${efectorNombre}`, style:'header' },
+        { text: `DDJJ - Contrafactura - ${efectorNombre} - ${quincena} QUINCENA - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
         {
           table: { headerRows: 1, widths: headers.map(() => 'auto'), body },
           layout: { hLineWidth:()=>0.5, vLineWidth:()=>0.5, hLineColor:()=> '#000', vLineColor:()=> '#000' }
@@ -1440,7 +1461,7 @@ loadRegistrosMensuales(): void {
     };
 
     pdfMake.createPdf(docDefinition).download(
-      `DDJJ-Contrafactura_${mesSeleccionado}_${anioSeleccionado}_${efectorNombre}_${nombreArchivo}.pdf`
+      `DDJJ-Contrafactura_${mesSeleccionado}(${quincena})_${anioSeleccionado}_${efectorNombre}_${nombreArchivo}.pdf`
     );
   }
 
