@@ -681,7 +681,7 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
     // Primera quincena: 15-20 del mes actual
     const rango1Inicio = new Date(anio, mes - 1, 15);
-    const rango1Fin = new Date(anio, mes - 1, 26, 23, 59, 59);
+    const rango1Fin = new Date(anio, mes - 1, 20, 23, 59, 59);
 
     // Segunda quincena: 1–10 del mes siguiente
     const rango2Inicio = new Date(siguienteAnio, siguienteMes - 1, 1);
@@ -1292,7 +1292,7 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
           console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
 
-          this.cronogramaDefinitivoService.saveCF(cronogramaDto).subscribe({
+          this.cronogramaDefinitivoService.save(cronogramaDto).subscribe({
             next: () => this.toastr.success('Se creó el cronograma definitivo.', 'Éxito'),
             error: () => this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención')
           });

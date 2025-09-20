@@ -373,24 +373,24 @@ getColorTipoGuardia(idTipoGuardia: number | undefined): string {
     const fechaActual = moment(); // hoy
     const mesesPasados = [];
 
-    for (let i = 6; i >= 1; i--) {
+    // mostrar los últimos 6 meses + el actual
+    for (let i = 6; i >= 0; i--) {
       const mesAnio = fechaActual.clone().subtract(i, 'months');
       const mes = mesAnio.month() + 1; // de 1 a 12
       const anio = mesAnio.year();
 
       mesesPasados.push({
-        value: `${mes}-${anio}`, // ej: "5-2025"
-        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
+        value: `${mes}-${anio}`, // ej: "9-2025"
+        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "SEPTIEMBRE 2025"
       });
     }
 
     this.mesesDisponibles = mesesPasados;
 
- // Establecer por defecto el mes anterior al actual
-  const mesAnterior = fechaActual.clone().subtract(1, 'months');
-  this.selectedMonth = mesAnterior.month() + 1;
-  this.selectedYear = mesAnterior.year();
-  this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+    // Establecer por defecto el mes actual
+    this.selectedMonth = fechaActual.month() + 1;
+    this.selectedYear = fechaActual.year();
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
   }
 
   onMonthYearChange(): void {

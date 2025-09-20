@@ -38,11 +38,6 @@ export class CronogramaDefinitivoService {
       .pipe(tap(() => this._refresh$.next()));
   }
 
-  public saveCF(dto: CronogramaDefinitivoDto): Observable<any> {
-    return this.httpClient.post<any>(this.cDefinitivoURL + 'createCF', dto)
-      .pipe(tap(() => this._refresh$.next()));
-  }
-
   public update(id: number, dto: CronogramaDefinitivoDto): Observable<any> {
     return this.httpClient.put<any>(`${this.cDefinitivoURL}update/${id}`, dto)
       .pipe(tap(() => this._refresh$.next()));
