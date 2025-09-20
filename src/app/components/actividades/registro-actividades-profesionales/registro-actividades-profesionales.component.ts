@@ -120,6 +120,7 @@ export class RegistroActividadesProfesionalesComponent {
   
       this.registroForm = this.fb.group({
         idAsistencial: ['', Validators.required],
+        asistencialDisplay: ['', Validators.required],
         idServicio: ['', Validators.required],
         idEfector: [''],
         fechaIngreso: ['', Validators.required],
@@ -131,13 +132,22 @@ export class RegistroActividadesProfesionalesComponent {
         this.initialData = data['initialData'];
         if (this.initialData) {
           this.registroForm.patchValue(this.initialData);
+          // Si initialData incluye nombre/apellido, intentar setear también la display
+          if (this.initialData.nombre || this.initialData.apellido) {
+            this.registroForm.patchValue({
+              asistencialDisplay: `${this.initialData.apellido || ''} ${this.initialData.nombre || ''}`.trim()
+            });
+            this.inputValue = this.registroForm.get('asistencialDisplay')?.value || '';
+          }
         }
       });
     }
 
   ngOnInit(): void {
+    // Asegurar que el formulario contiene ambos controles si por alguna razón fue recreado
     this.registroForm = this.fb.group({
       idAsistencial: ['', Validators.required],
+      asistencialDisplay: ['', Validators.required]
     });
     this.efectorId = this.efectorService.getCurrentEfectorId();
     // Establecer por defecto el mes y año actual ANTES de generar los meses disponibles
@@ -308,26 +318,20 @@ export class RegistroActividadesProfesionalesComponent {
         disableClose: true,
         data: {
           idEfector: this.efectorId, // Pasar el idEfector desde el sessionStorage
-          mode: AsistencialMode.INGRESO
+          mode: AsistencialMode.INGRESO,
+          useDetail: true // <-- nuevo flag para usar getAsistencialesDetailByEfector
         }
       });
   
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          // Actualizo el valor legible para mostrarlo y el id para el formulario
-          this.inputValue = `${result.apellido} ${result.nombre}`;
-          this.registroForm.patchValue({ idAsistencial: result.id });
-          this.asistencialCuil = result.cuil || null; // <-- Actualiza el CUIL
+          // Actualizo el id y la caja visible (asistencialDisplay)
+          const display = `${result.apellido || ''} ${result.nombre || ''}`.trim();
+          this.inputValue = display;
+          this.registroForm.patchValue({ idAsistencial: result.id, asistencialDisplay: display });
+          this.asistencialCuil = result.cuil || this.asistencialCuil || null; // actualizar si viene
           this.loadAsistenciaProfesional(); // <-- cargar asistencia al seleccionar profesional
-        } else {
-          this.toastr.info('No se seleccionó un profesional', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.asistencialCuil = null;
-          this.actividades = [];
-        }
+        } 
       }, error => {
         this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
           timeOut: 6000,
