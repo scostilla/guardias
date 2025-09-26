@@ -12,6 +12,7 @@ import { HomeAutoridadComponent } from './components/home-autoridad/home-autorid
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
+import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { LoginComponent } from './components/login/login.component';
 
 //Configuraciones: Generales
@@ -200,6 +201,7 @@ import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.c
 
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
 import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
+import { RmensualContrafacturaFueraTerminoComponent } from './components/guardias/rmensual-contrafactura-fuera-termino/rmensual-contrafactura-fuera-termino.component';
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 
@@ -264,6 +266,7 @@ const routes: Routes = [
   {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"home-hospital", component:HomeHospitalComponent},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'login', component:LoginComponent},
@@ -467,6 +470,8 @@ const routes: Routes = [
   {path:'rmensual-cargoyagrup',component:RmensualCargoyagrupComponent},
   {path:'rmensual-extra',component:RmensualExtraComponent},
   {path:'rmensual-contrafactura',component:RmensualContrafacturaComponent},
+  {path:'rmensual-contrafactura-fuera-termino',component:RmensualContrafacturaFueraTerminoComponent},
+
 
 
   

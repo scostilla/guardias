@@ -2,10 +2,10 @@
 <div class="container">
   <div class="row">
     <div class="col-6 col-md-7">
-      <div class="titulos">Registro mensual: <span class="titulos-second">CONTRAFACTURA</span></div>
+      <div class="titulos">Fuera de término: <span class="titulos-second">CONTRAFACTURA</span> <h2 style="margin-left: 35px;">({{ this.selectedQuincena }} QUINCENA)</h2></div>
     </div>
     <div class="col-6 col-md-2 m d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-seleccion">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-contrafactura">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
       <button *ngIf="hayDatosParaMostrar" mat-fab [matMenuTriggerFor]="downloadMenu" matTooltip="Descargar archivo" class="button-success" style="margin-left: 5px;">
@@ -31,11 +31,6 @@
               [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal()}"
               matTooltip="Crear DDJJ y enviar a Director">
         <mat-icon [ngClass]="{'flip-horizontal': botonDDJJIcon === 'assignment_return'}">{{ botonDDJJIcon }}</mat-icon>
-      </button>
-      <button *ngIf="ddjjYaExiste" mat-fab
-              class="button-delete" style="margin-left: 5px;" matTooltip="Fuera de término"
-              (click)="openFueraDeTermino()">
-        <mat-icon>pending_actions</mat-icon>
       </button>
     </div>
 
@@ -69,7 +64,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <!--<div class="row">
     <div class="col-md-4 d-flex justify-content-start mt-sm-3">
       <div class="contenedor-titulo-select-tabla">
         <span class="titulo-select-tabla">Fecha:</span>
@@ -100,12 +95,12 @@
           </select>
       </div>
     </div>  
-  </div>
+  </div>-->
 
   <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
-      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
+      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}. Al ser creada pasará a revisión por el director del hospital.
     </div>
   </div>
@@ -113,7 +108,7 @@
   <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-aprobado">
     <mat-icon class="icono-pase">lock</mat-icon>
     <div class="mensaje-pase">
-      Se finalizó la creación de la DDJJ de CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
+      Se finalizó la creación de la DDJJ de CONTRAFACTURA para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
       La misma está en proceso de revisión por el Director del hospital.<br>
       Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-contrafactura">sección de DDJJ</span>.
@@ -123,16 +118,16 @@
   <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar && isAdministrativo" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo establecido. Contactáctate con la DPH para su creación.
+      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con la DPH para su creación.
     </div>
   </div>
 
   <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar && !isAdministrativo" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo establecido.
+      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite.
     </div>
   </div>
 

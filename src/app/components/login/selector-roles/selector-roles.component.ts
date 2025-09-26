@@ -17,7 +17,8 @@ export class SelectorRolesComponent {
     'ROLE_USER': 'Usuario',
     'ROLE_DPH': 'DPH',
     'ROLE_SUPERUSER': 'Super usuario',
-    'ROLE_AUTORIDAD': 'Autoridad'
+    'ROLE_AUTORIDAD': 'Autoridad',
+    'ROLE_HOSPITAL': 'Hospital'
   };
 
   constructor(

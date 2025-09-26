@@ -18,6 +18,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showConfig: boolean = true;
+  showUser: boolean = true;
 
   pendientesCount: number = 0;
   autoridadesCount: number = 0;
@@ -121,6 +122,7 @@ ngOnInit(): void {
     // Actualiza el estado de showNavBar y showConfig basándote en la ruta actual
     this.showNavBar = !(
       url === '/home-page' ||
+      url === '/home-hospital' ||
       url === '/home-profesional' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||
@@ -128,6 +130,14 @@ ngOnInit(): void {
     );
 
     this.showConfig = !(
+      url === '/home-hospital' ||
+      url === '/home-profesional' ||
+      url === '/registro-actividades-ingreso-profesional' ||
+      url === '/registro-actividades-egreso-profesional' ||
+      url === '/not-found'
+    );
+
+    this.showUser = !(
       url === '/home-profesional' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||

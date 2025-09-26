@@ -21,10 +21,13 @@ export class HomeProfesionalComponent implements OnInit {
   showAsistencia: boolean = false;
   userId: number | null = null;
   idPersona: number | null = null;
+  nombre: string | null = null;
+  apellido: string | null = null;
   nombresEfectores: EfectorSummaryDto[] = [];
   ultimoRegistro: RegistroActividad | null = null;
   efectorId: number | null = null;
   efectorFijoId = 96
+  selectedEfector: any;
 
   constructor(
     private router: Router,
@@ -36,10 +39,22 @@ export class HomeProfesionalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-  this.efectorService.setCurrentEfectorId(this.efectorFijoId);
+    // Cargar el efector del administrativo automáticamente
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        if (response.efectores && response.efectores.length > 0) {
+          this.selectedEfector = response.efectores[0];
+          this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
+        } else {
+          console.warn('No hay efectores disponibles para este hospital');
+        }
+      }
+    );
 
   this.authService.detailPersonBasicPanel().subscribe((personDto: PersonBasicPanelDto) => {
     this.idPersona = personDto.id;
+    this.nombre = personDto.nombre;
+    this.apellido = personDto.apellido;
     console.log('ID de persona:', this.idPersona);
   });
   }
@@ -81,6 +96,11 @@ export class HomeProfesionalComponent implements OnInit {
       }
     );
   }
+
+  onLogOutProfesional(): void {
+  this.tokenService.logOutProfessional();
+  this.router.navigate(['/home-hospital']); // vuelve al hospital logueado
+}
               
   onLogOut(): void {
     this.tokenService.logOut();

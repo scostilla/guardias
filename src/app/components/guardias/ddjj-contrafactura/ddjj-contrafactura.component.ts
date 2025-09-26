@@ -80,8 +80,9 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  columnasBase: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
-  columnasMontos: string[] = ['montoTotal', 'montoLav', 'montoSdf'];
+  //columnasBase: string[] = ['apellido', 'nombre', 'acciones', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
+  columnasBase: string[] = ['apellido', 'nombre', 'totalHoras', 'weekdaysTotal', 'weekendsTotal'];
+  columnasMontos: string[] = ['cuil', 'factura', 'montoTotal', 'montoLav', 'montoSdf'];
   columnasFechas: string[] = []; // esto reemplaza el uso directo de `displayedColumns`
 
   mostrarMontos: boolean = false;
@@ -282,75 +283,75 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
   //Manejo de carga de datos en tabla
 
-loadRegistrosMensuales(): void {
-  const anio = this.selectedYear;
-  const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
-  const idEfector = this.efectorId;
-  const quincena = this.selectedQuincena!;
+  loadRegistrosMensuales(): void {
+    const anio = this.selectedYear;
+    const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+    const idEfector = this.efectorId;
+    const quincena = this.selectedQuincena!;
 
-  this.tablaListaParaMostrar = false;
+    this.tablaListaParaMostrar = false;
 
-  if (!idEfector) {
-    console.error("El ID del hospital no puede ser null");
-    return;
-  }
-
-  const ddjj$: Observable<DdjjListDto[]> = this.selectedServicio == null
-    ? this.ddjjService.listCf(anio, mes, idEfector, quincena)
-    : this.ddjjService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena);
-
-  ddjj$.subscribe({
-    next: (ddjjs: DdjjListDto[]) => {
-      if (ddjjs.length > 0) {
-        // Ordena por id para que la última sea la más nueva
-        ddjjs.sort((a, b) => a.id - b.id);
-
-        // Guarda todas para la tabla
-        this.ddjjs = ddjjs;
-
-        // Toma la última para procesos de evaluación
-        this.ddjjSeleccionada = ddjjs[ddjjs.length - 1];
-
-        // Procesos sobre la última
-        this.evaluarEstadoDdjj(this.ddjjSeleccionada);
-        this.evaluarEstadoDdjjDph(this.ddjjSeleccionada);
-        this.evaluarRespuestaDirectorDdjj(this.ddjjSeleccionada);
-        this.evaluarRespuestaDphDdjj(this.ddjjSeleccionada);
-
-        this.cargarUltimaObservacionDirector(); 
-        this.cargarUltimaObservacionDph();
-        this.validarHistorialBotones(this.ddjjSeleccionada.id!);
-      } else {
-        this.ddjjs = [];
-        this.ddjjSeleccionada = undefined;
-        this.ultimaObservacionDirector = undefined;
-      }
-
-      // Aplana todos los registrosMensuales de todas las ddjjs
-      this.registrosMensuales = ddjjs.flatMap(ddjj =>
-        (ddjj.registrosMensuales || []).map(reg => {
-          reg.idDdjj = ddjj.id;
-          return reg;
-        })
-      );
-
-      // Mapear actividades
-      this.preprocesarActividades();
-
-      // Cargar en el datasource de la tabla
-      this.updateTableDataSource();
-
-      this.tablaListaParaMostrar = true;
-    },
-    error: (err: any) => {
-      console.error('Error cargando DDJJ:', err);
-      this.ddjjs = [];
-      this.registrosMensuales = [];
-      this.updateTableDataSource();
-      this.tablaListaParaMostrar = true;
+    if (!idEfector) {
+      console.error("El ID del hospital no puede ser null");
+      return;
     }
-  });
-}
+
+    const ddjj$: Observable<DdjjListDto[]> = this.selectedServicio == null
+      ? this.ddjjService.listCf(anio, mes, idEfector, quincena)
+      : this.ddjjService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena);
+
+    ddjj$.subscribe({
+      next: (ddjjs: DdjjListDto[]) => {
+        if (ddjjs.length > 0) {
+          // Ordena por id para que la última sea la más nueva
+          ddjjs.sort((a, b) => a.id - b.id);
+
+          // Guarda todas para la tabla
+          this.ddjjs = ddjjs;
+
+          // Toma la última para procesos de evaluación
+          this.ddjjSeleccionada = ddjjs[ddjjs.length - 1];
+
+          // Procesos sobre la última
+          this.evaluarEstadoDdjj(this.ddjjSeleccionada);
+          this.evaluarEstadoDdjjDph(this.ddjjSeleccionada);
+          this.evaluarRespuestaDirectorDdjj(this.ddjjSeleccionada);
+          this.evaluarRespuestaDphDdjj(this.ddjjSeleccionada);
+
+          this.cargarUltimaObservacionDirector(); 
+          this.cargarUltimaObservacionDph();
+          this.validarHistorialBotones(this.ddjjSeleccionada.id!);
+        } else {
+          this.ddjjs = [];
+          this.ddjjSeleccionada = undefined;
+          this.ultimaObservacionDirector = undefined;
+        }
+
+        // Aplana todos los registrosMensuales de todas las ddjjs
+        this.registrosMensuales = ddjjs.flatMap(ddjj =>
+          (ddjj.registrosMensuales || []).map(reg => {
+            reg.idDdjj = ddjj.id;
+            return reg;
+          })
+        );
+
+        // Mapear actividades
+        this.preprocesarActividades();
+
+        // Cargar en el datasource de la tabla
+        this.updateTableDataSource();
+
+        this.tablaListaParaMostrar = true;
+      },
+      error: (err: any) => {
+        console.error('Error cargando DDJJ:', err);
+        this.ddjjs = [];
+        this.registrosMensuales = [];
+        this.updateTableDataSource();
+        this.tablaListaParaMostrar = true;
+      }
+    });
+  }
 
   preprocesarActividades(): void {
     this.actividadesPorRegistro.clear();
@@ -584,7 +585,7 @@ loadRegistrosMensuales(): void {
 
     this.puedeEditarCeldas = false;
 
-    this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+    this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
 
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
@@ -623,6 +624,11 @@ loadRegistrosMensuales(): void {
     } else {
       return `${formattedStartDate} - ${formattedEndDate}`;
     }
+  }
+
+  formatCuil(cuil?: string): string {
+    if (!cuil || cuil.length !== 11) return cuil || '';
+    return `${cuil.substring(0,2)}-${cuil.substring(2,10)}-${cuil.substring(10)}`;
   }
 
   //Mostrar/ocultar
@@ -665,56 +671,73 @@ loadRegistrosMensuales(): void {
     return today >= inicio && today <= fin;
   }
 
-  // Rango: 1–10 del mes siguiente al seleccionado
-  private getRangoMesSiguiente(): { inicio: Date, fin: Date } {
-    let mes = this.selectedMonth;
-    let anio = this.selectedYear;
+  private getRangoMesSiguiente(): { inicio: Date, fin: Date }[] {
+    const mes = this.selectedMonth;
+    const anio = this.selectedYear;
 
-    if (mes === 12) {
-      mes = 1;
-      anio += 1;
-    } else {
-      mes += 1;
+    // Ajuste para el mes siguiente
+    const siguienteMes = mes === 12 ? 1 : mes + 1;
+    const siguienteAnio = mes === 12 ? anio + 1 : anio;
+
+    // Primera quincena: 15-20 del mes actual
+    const rango1Inicio = new Date(anio, mes - 1, 15);
+    const rango1Fin = new Date(anio, mes - 1, 26, 23, 59, 59);
+
+    // Segunda quincena: 1–10 del mes siguiente
+    const rango2Inicio = new Date(siguienteAnio, siguienteMes - 1, 1);
+    const rango2Fin = new Date(siguienteAnio, siguienteMes - 1, 10, 23, 59, 59);
+
+    if (this.selectedQuincena === 'PRIMERA') {
+      return [{ inicio: rango1Inicio, fin: rango1Fin }];
+    } else if (this.selectedQuincena === 'SEGUNDA') {
+      return [{ inicio: rango2Inicio, fin: rango2Fin }];
     }
 
-    const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 26, 23, 59, 59);
-
-    return { inicio, fin };
+    // Por defecto, si no coincide la quincena, devolvemos vacío
+    return [];
   }
 
   verificarExistenciaDdjj(): void {
     this.verificandoDdjj = true;
 
     const today = new Date();
-    const { inicio, fin } = this.getRangoMesSiguiente();
+    // Iteramos sobre los rangos válidos
+    this.rangoPermitidoDDJJ = this.getRangoMesSiguiente().some(rango =>
+      this.estaEnRango(rango.inicio, rango.fin, today)
+    );
 
-    this.rangoPermitidoDDJJ = this.estaEnRango(inicio, fin, today);
     this.verificandoDdjj = false;
   }
 
   getMensajeContadorDdjj(): string | null {
     const today = new Date();
-    const { inicio, fin } = this.getRangoMesSiguiente();
 
-    if (this.estaEnRango(inicio, fin, today)) {
-      const diasRestantes = fin.getDate() - today.getDate() + 1;
-      return diasRestantes === 1 ? '¡Es el último día!' : `${diasRestantes} días`;
+    for (const rango of this.getRangoMesSiguiente()) {
+      if (this.estaEnRango(rango.inicio, rango.fin, today)) {
+        const diasRestantes = rango.fin.getDate() - today.getDate() + 1;
+        return diasRestantes === 1
+          ? '¡Es el último día!'
+          : `${diasRestantes} días`;
+      }
     }
 
     return null;
   }
 
-  private calcularFechaLimiteEnvio(mes: number, anio: number): Date {
-    // Ajuste mes siguiente
-    if (mes === 12) {
-      mes = 1;
-      anio += 1;
+  private calcularFechaLimiteEnvio(mes: number, anio: number, quincena: string): Date {
+    let limite: Date;
+
+    if (quincena === 'PRIMERA') {
+      // Día 20 del mes en curso
+      limite = new Date(anio, mes - 1, 26, 23, 59, 59);
     } else {
-      mes += 1;
+      // Día 10 del mes siguiente
+      let siguienteMes = mes === 12 ? 1 : mes + 1;
+      let siguienteAnio = mes === 12 ? anio + 1 : anio;
+      limite = new Date(siguienteAnio, siguienteMes - 1, 10, 23, 59, 59);
     }
 
-    return new Date(anio, mes - 1, 26, 23, 59, 59);
+    return limite;
   }
   
   //Evaluaciones y cambios de estado DDJJ
@@ -731,7 +754,7 @@ loadRegistrosMensuales(): void {
     const estado = ddjj.estadoDdjjDirector;
     const enPosesion = ddjj.enPosesionDirector;
 
-    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
     const hoy = new Date();
 
     if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
@@ -788,7 +811,7 @@ loadRegistrosMensuales(): void {
     const estadoDph = ddjj.estadoDdjjDirectorDPH;
     const enPosesionDph = ddjj.enPosesionDirectorDPH;
 
-    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
     const hoy = new Date();
 
     if (hoy > fechaLimite && estadoDph && estadoDph !== 'APROBADO') {
@@ -798,7 +821,7 @@ loadRegistrosMensuales(): void {
       this.mensajeDph = 'fuera_rango_tiempo';
       this.puedeEditarCeldas = false;
       this.evaluacionDdjjDphCargada = true;
-      return; // Salir sin seguir evaluando estados
+      return;
     }
 
     console.log('Evaluando estado DPH:', {
@@ -816,40 +839,50 @@ loadRegistrosMensuales(): void {
     }
 
     if (enPosesionDph && estadoDph === 'PENDIENTE') {
-      this.registroActividadService
+      if (this.selectedQuincena === 'SEGUNDA') {
+        // ✅ Solo en segunda quincena validamos precondiciones
+        this.registroActividadService
           .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
           .subscribe({
             next: (precondicionesCumplidas: boolean) => {
-              if (precondicionesCumplidas) {      
+              if (precondicionesCumplidas) {
                 if (ddjj.idDirectorDPH == null) {
-                console.log('DPH: En posesión DPH y pendiente');
-                this.botonDphIcon = 'assignment_late';
-                this.botonDphDeshabilitado = true;
-                this.mensajeDph = 'pendiente';
-                this.puedeEditarCeldas = false;
+                  console.log('DPH: En posesión DPH y pendiente');
+                  this.botonDphIcon = 'assignment_late';
+                  this.botonDphDeshabilitado = true;
+                  this.mensajeDph = 'pendiente';
+                  this.puedeEditarCeldas = false;
                 } else {
-                console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
-                this.botonDphIcon = 'assignment_late';
+                  console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
+                  this.botonDphIcon = 'assignment_late';
+                  this.botonDphDeshabilitado = true;
+                  this.mensajeDph = 'pendiente_devuelto';
+                  this.puedeEditarCeldas = false;
+                }
+              } else {
+                console.log('DPH: Faltan ddjj por aprobar. En posesión DPH y pendiente');
+                this.botonDphIcon = 'alarm_add';
                 this.botonDphDeshabilitado = true;
-                this.mensajeDph = 'pendiente_devuelto';
+                this.mensajeDph = 'ddjj_incompletas';
                 this.puedeEditarCeldas = false;
               }
-              } else {
-            console.log('DPH: Faltan ddjj por aprobar. En posesión DPH y pendiente');
-            this.botonDphIcon = 'alarm_add';
-            this.botonDphDeshabilitado = true;
-            this.mensajeDph = 'ddjj_incompletas';
-            this.puedeEditarCeldas = false;
-          }
-        },
-        error: () => {
-          console.warn('Error al validar precondiciones para DPH');
-          this.botonDphIcon = 'assignment_late';
-          this.botonDphDeshabilitado = true;
-          this.mensajeDph = 'ddjj_incompletas';
-          this.puedeEditarCeldas = false;
-        }
-      });
+            },
+            error: () => {
+              console.warn('Error al validar precondiciones para DPH');
+              this.botonDphIcon = 'assignment_late';
+              this.botonDphDeshabilitado = true;
+              this.mensajeDph = 'ddjj_incompletas';
+              this.puedeEditarCeldas = false;
+            }
+          });
+      } else {
+        // ✅ En primera quincena, no validamos precondiciones
+        console.log('DPH: En posesión DPH y pendiente (PRIMERA quincena, sin validar precondiciones)');
+        this.botonDphIcon = 'assignment_late';
+        this.botonDphDeshabilitado = true;
+        this.mensajeDph = ddjj.idDirectorDPH == null ? 'pendiente' : 'pendiente_devuelto';
+        this.puedeEditarCeldas = false;
+      }
     } else if (!enPosesionDph && estadoDph === 'RECHAZADO') {
       console.log('DPH: Rechazado por DPH');
       this.botonDphIcon = 'assignment_return';
@@ -878,12 +911,12 @@ loadRegistrosMensuales(): void {
     const estado = ddjj.estadoDdjjDirector;
     const enPosesion = ddjj.enPosesionDirector;
 
-    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
     const hoy = new Date();
 
     if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
       console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
-      console.log('DPH: Ya no se puede cargar, fuera del rango permitidoDirector');
+      console.log('Director: Ya no se puede cargar, fuera del rango permitido');
       this.botonDirectorAuthIcon = 'block';
       this.botonDirectorAuthDeshabilitado = true;
       this.mensajeDirectorAuth = 'fuera_rango_tiempo';
@@ -899,23 +932,30 @@ loadRegistrosMensuales(): void {
       this.botonDirectorAuthDeshabilitado = true;
       this.mensajeDirectorAuth = 'rechazado';
     } else if (!enPosesion && estado === 'APROBADO') {
-      // Validar precondiciones si fue aprobado
-      this.registroActividadService
-        .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
-        .subscribe({
-          next: (precondicionesCumplidas: boolean) => {
-            this.botonDirectorAuthIcon = 'assignment_turned_in';
-            this.botonDirectorAuthDeshabilitado = true;
-            this.mensajeDirectorAuth = precondicionesCumplidas ? 'aceptado_completo' : 'aceptado';
-          },
-          error: () => {
-            console.warn('Error al validar precondiciones del cronograma.');
-            this.botonDirectorAuthIcon = 'assignment_turned_in';
-            this.botonDirectorAuthDeshabilitado = true;
-            this.mensajeDirectorAuth = 'aceptado';
-          }
-        });
+      if (this.selectedQuincena === 'SEGUNDA') {
+        // Validar precondiciones SOLO si es la segunda quincena
+        this.registroActividadService
+          .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+          .subscribe({
+            next: (precondicionesCumplidas: boolean) => {
+              this.botonDirectorAuthIcon = 'assignment_turned_in';
+              this.botonDirectorAuthDeshabilitado = true;
+              this.mensajeDirectorAuth = precondicionesCumplidas ? 'aceptado_completo' : 'aceptado';
+            },
+            error: () => {
+              console.warn('Error al validar precondiciones del cronograma.');
+              this.botonDirectorAuthIcon = 'assignment_turned_in';
+              this.botonDirectorAuthDeshabilitado = true;
+              this.mensajeDirectorAuth = 'null';
+            }
+          });
       } else {
+        // Si es la PRIMERA, pasar directamente
+        this.botonDirectorAuthIcon = 'assignment_turned_in';
+        this.botonDirectorAuthDeshabilitado = true;
+        this.mensajeDirectorAuth = 'aceptado_completo_primera';
+      }
+    } else {
       this.botonDirectorAuthIcon = 'assignment_return';
       this.botonDirectorAuthDeshabilitado = true;
       this.mensajeDirectorAuth = null;
@@ -928,7 +968,7 @@ loadRegistrosMensuales(): void {
 
     this.estadoDphAprobado = (estado === 'APROBADO');
 
-    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear);
+    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
     const hoy = new Date();
 
     if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
@@ -940,33 +980,25 @@ loadRegistrosMensuales(): void {
       return; // Salir sin seguir evaluando estados
     }
 
-    // Validar si se cumplen las precondiciones antes de mostrar botones
+    // 👉 Si la quincena es PRIMERA, no hacemos la validación en backend
+    if (this.selectedQuincena === 'PRIMERA') {
+      this.evaluarEstadosDphDdjj(enPosesion, estado);
+      return;
+    }
+
+    // 👉 Si la quincena es SEGUNDA, sí validamos precondiciones
     this.registroActividadService
       .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
       .subscribe({
         next: (precondicionesCumplidas: boolean) => {
           if (!precondicionesCumplidas) {
-            // No cumple precondiciones, por lo tanto no habilita nada todavía
             this.botonDphAuthIcon = 'assignment_return';
             this.botonDphAuthDeshabilitado = true;
             this.mensajeDphAuth = null;
             return;
           }
-
-          // Lógica original solo si precondiciones == true
-          if (enPosesion && estado === 'PENDIENTE') {
-            this.botonDphAuthIcon = 'assignment_return';
-            this.botonDphAuthDeshabilitado = false;
-            this.mensajeDphAuth = 'revision';
-          } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
-            this.botonDphAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
-            this.botonDphAuthDeshabilitado = true;
-            this.mensajeDphAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
-          } else {
-            this.botonDphAuthIcon = 'assignment_return';
-            this.botonDphAuthDeshabilitado = true;
-            this.mensajeDphAuth = null;
-          }
+          // Lógica original si precondiciones == true
+          this.evaluarEstadosDphDdjj(enPosesion, estado);
         },
         error: () => {
           console.warn('Error al validar precondiciones del cronograma.');
@@ -975,6 +1007,23 @@ loadRegistrosMensuales(): void {
           this.mensajeDphAuth = null;
         }
       });
+  }
+
+  /*** Método lógica de asignación de iconos/estados para evaluarRespuestaDphDdjj */
+  private evaluarEstadosDphDdjj(enPosesion: boolean, estado: string | null): void {
+    if (enPosesion && estado === 'PENDIENTE') {
+      this.botonDphAuthIcon = 'assignment_return';
+      this.botonDphAuthDeshabilitado = false;
+      this.mensajeDphAuth = 'revision';
+    } else if (!enPosesion && (estado === 'RECHAZADO' || estado === 'APROBADO')) {
+      this.botonDphAuthIcon = estado === 'RECHAZADO' ? 'assignment_late' : 'assignment_turned_in';
+      this.botonDphAuthDeshabilitado = true;
+      this.mensajeDphAuth = estado === 'RECHAZADO' ? 'rechazado' : null;
+    } else {
+      this.botonDphAuthIcon = 'assignment_return';
+      this.botonDphAuthDeshabilitado = true;
+      this.mensajeDphAuth = null;
+    }
   }
 
   //Manejo de dialogs
@@ -1140,10 +1189,7 @@ loadRegistrosMensuales(): void {
 
     const dialogRef = this.dialog.open(DialogConfirmDdjjComponent, {
       width: '400px',
-      data: {
-        destino: destino,
-        title: 'Confirmar o rechazar DDJJ'
-      }
+      data: { destino, title: 'Confirmar o rechazar DDJJ' }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -1170,9 +1216,7 @@ loadRegistrosMensuales(): void {
 
         this.observacionDdjjService.save(observacion).subscribe({
           next: () => console.log('Observación guardada con éxito.'),
-          error: () => {
-            this.toastr.warning('No se pudo guardar la observación.', 'Atención');
-          }
+          error: () => this.toastr.warning('No se pudo guardar la observación.', 'Atención')
         });
       }
 
@@ -1202,48 +1246,18 @@ loadRegistrosMensuales(): void {
 
           // Solo en caso de DIRECTOR y si fue aprobado
           if (destino === 'DIRECTOR_AUTH' && aprobado) {
-            console.log('Validando precondiciones luego del cambio de estado...');
-            this.registroActividadService
-              .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
-              .subscribe({
-                next: (estaCompleto: boolean) => {
-                  console.log('Resultado de validarPrecondicionesCronograma:', estaCompleto);
-                  if (estaCompleto) {
-                    this.registroActividadService
-                      .obtenerDdjjAprobadas(this.efectorId!, this.selectedMonth, this.selectedYear)
-                      .subscribe({
-                        next: (ids: number[]) => {
-                          const mesNombre = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
-                          const cronogramaDto = new CronogramaDefinitivoDto(
-                            mesNombre,
-                            this.selectedYear,
-                            true,
-                            this.efectorId!,
-                            ids
-                          );
-
-                          console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
-
-                          this.cronogramaDefinitivoService.save(cronogramaDto).subscribe({
-                            next: () => {
-                              console.log('Cronograma definitivo creado con éxito.');
-                              this.toastr.success('Se creó el cronograma definitivo.', 'Éxito');
-                            },
-                            error: () => {
-                              this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención');
-                            }
-                          });
-                        },
-                        error: () => {
-                          console.error('Error obteniendo DDJJ aprobadas');
-                        }
-                      });
-                  }
-                },
-                error: () => {
-                  console.error('Error al validar precondiciones');
-                }
-              });
+            if (this.selectedQuincena === 'SEGUNDA') {
+              console.log('Validando precondiciones para segunda quincena...');
+              this.registroActividadService
+                .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+                .subscribe({
+                  next: (estaCompleto: boolean) => this.crearCronogramaSiCompleto(estaCompleto),
+                  error: () => console.error('Error al validar precondiciones')
+                });
+            } else {
+              // Primera quincena, pasar directo al siguiente paso
+              this.crearCronogramaSiCompleto(true);
+            }
           }
         },
         error: () => {
@@ -1255,6 +1269,36 @@ loadRegistrosMensuales(): void {
         }
       });
     });
+  }
+
+  // Método para crear cronograma si corresponde
+  private crearCronogramaSiCompleto(estaCompleto: boolean): void {
+    if (!estaCompleto) return;
+
+    this.registroActividadService
+      .obtenerDdjjAprobadas(this.efectorId!, this.selectedMonth, this.selectedYear)
+      .subscribe({
+        next: (ids: number[]) => {
+          const mesNombre = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
+          const quincena = this.selectedQuincena;
+          const cronogramaDto = new CronogramaDefinitivoDto(
+            mesNombre,
+            this.selectedYear,
+            true,
+            this.efectorId!,
+            ids,
+            quincena,
+          );
+
+          console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
+
+          this.cronogramaDefinitivoService.saveCF(cronogramaDto).subscribe({
+            next: () => this.toastr.success('Se creó el cronograma definitivo.', 'Éxito'),
+            error: () => this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención')
+          });
+        },
+        error: () => console.error('Error obteniendo DDJJ aprobadas')
+      });
   }
 
   //Exportaciones a EXCEL y PDF
@@ -1318,7 +1362,8 @@ loadRegistrosMensuales(): void {
     const dataColumnHeaders = [
       'Apellido', 'Nombre', 'Cuil',
       'Horas mes', 'Horas L-V', 'Horas S-D-F',
-      'Monto total', 'Monto L-V', 'Monto S-D-F'
+      'Monto total', 'Monto L-V', 'Monto S-D-F',
+      'Facturas'
     ];
     const formattedColumnTitles = this.displayedColumns.slice(6).map(columnTitle =>
       moment(columnTitle, 'YYYY_MM_DD').format('ddd DD')
@@ -1336,7 +1381,7 @@ loadRegistrosMensuales(): void {
       const exportData: Record<string, string | number> = {
         Apellido: registro.asistencial.apellido,
         Nombre: registro.asistencial.nombre,
-        Cuil: registro.asistencial.cuil,
+        Cuil: this.formatCuil(registro.asistencial.cuil),
       };
 
       const totalMes = (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0);
@@ -1347,6 +1392,14 @@ loadRegistrosMensuales(): void {
       exportData['Monto L-V'] = registro.totalHoras?.montoLav ?? 0;
       exportData['Monto S-D-F'] = registro.totalHoras?.montoSdf ?? 0;
 
+      // --- Facturas ---
+      if (registro.facturas && registro.facturas.length > 0) {
+        exportData['Facturas'] = registro.facturas
+          .map(f => `${f.tipo || 0}-${f.puntoVenta || 0}-${f.numeroFactura || 0}`)
+          .join('; ');
+      }
+
+      // --- Días ---
       this.displayedColumns.slice(6).forEach((fechaColumna: string, index: number) => {
         const fecha = this.getFechaFromColumnId(fechaColumna);
         const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
@@ -1371,7 +1424,7 @@ loadRegistrosMensuales(): void {
       });
 
       // Totales verdes (horas y montos)
-      ['Horas mes', 'Horas L-V', 'Horas S-D-F', 'Monto total', 'Monto L-V', 'Monto S-D-F'].forEach(headerName => {
+      ['Horas mes', 'Horas L-V', 'Horas S-D-F', 'Monto total', 'Monto L-V', 'Monto S-D-F', 'Facturas'].forEach(headerName => {
         const colIndex = combinedHeaders.indexOf(headerName) + 1;
         if (colIndex > 0) {
           const cell = row.getCell(colIndex);
@@ -1413,26 +1466,34 @@ loadRegistrosMensuales(): void {
     const headers = [
       'Apellido', 'Nombre', 'Cuil',
       'Horas mes', 'Horas L-V', 'Horas S-D-F',
+      'Factura N°', 'Monto total', 'Monto L-V', 'Monto S-D-F',
       ...this.displayedColumns.slice(6).map(col => moment(col,'YYYY_MM_DD').format('ddd DD'))
     ];
 
     const body: any[] = [headers];
 
     for (const registro of this.dataSource.data) {
+      const facturaTexto = (registro.facturas || [])
+        .map(f => `${f.tipo || 0}-${f.puntoVenta || 0}-${f.numeroFactura || 0}`)
+        .join('\n');
+
       const row: any[] = [
         registro.asistencial.apellido,
         registro.asistencial.nombre,
-        registro.asistencial.cuil,
+        this.formatCuil(registro.asistencial.cuil),
         { text: (registro.totalHoras?.horasLav ?? 0) + (registro.totalHoras?.horasSdf ?? 0), fillColor:'#E2EFDA', alignment:'center' },
         { text: registro.totalHoras?.horasLav ?? 0, fillColor:'#E2EFDA', alignment:'center' },
         { text: registro.totalHoras?.horasSdf ?? 0, fillColor:'#E2EFDA', alignment:'center' },
+        { text: facturaTexto, fillColor:'#C5E0B3', alignment:'center' }, 
+        { text: registro.totalHoras?.montoTotal ?? 0, fillColor:'#C5E0B3', alignment:'center' },
+        { text: registro.totalHoras?.montoLav ?? 0, fillColor:'#C5E0B3', alignment:'center' },
+        { text: registro.totalHoras?.montoSdf ?? 0, fillColor:'#C5E0B3', alignment:'center' },
       ];
 
       this.displayedColumns.slice(6).forEach(fechaColumna => {
         const fecha = this.getFechaFromColumnId(fechaColumna);
         const horas = this.calculateHoursForExcel(registro.registroActividad, fecha);
         const { clase } = this.getCellInfo(fecha, registro);
-
         if (clase === 'holiday') {
           row.push({ text: horas, fillColor: '#F9CACA', bold:true, alignment:'center' });
         } else if (clase === 'weekend') {
@@ -1445,17 +1506,48 @@ loadRegistrosMensuales(): void {
       body.push(row);
     }
 
+    const content: any[] = [
+      { text: `DDJJ - Contrafactura - ${efectorNombre} - ${quincena} QUINCENA - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
+      {
+        table: { headerRows: 1, widths: headers.map(() => 'auto'), body },
+        layout: { hLineWidth:()=>0.5, vLineWidth:()=>0.5, hLineColor:()=> '#000', vLineColor:()=> '#000' }
+      }
+    ];
+
+    // Sección de texto adicional, sello y firma
+    if (textoAdicional || selloBase64 || firmaBase64 || autoridadDto) { 
+      content.push({
+        alignment:'center',
+        margin:[0,20,0,0],
+        stack:[
+          { text:textoAdicional, fontSize:8 },
+          {
+            columns:[
+              {
+                width:'50%',
+                stack:[
+                  firmaBase64 ? { image:firmaBase64, width:120, alignment:'right' } : {},
+                  autoridadDto?.personaName ? { text:autoridadDto.personaName, alignment:'right', bold:true } : {},
+                  autoridadDto?.cargo ? { text:autoridadDto.cargo, alignment:'right', fontSize:8 } : {}
+                ]
+              },
+              {
+                width:'50%',
+                stack:[ selloBase64 ? { image:selloBase64, width:120, alignment:'left' } : {} ]
+              }
+            ],
+            columnGap:20,
+            margin:[0,40,0,0]
+          }
+        ]
+      });
+    }
+
     const docDefinition: any = {
-      pageSize: 'A3',
+      pageSize: 'A4',
       pageOrientation: 'landscape',
       pageMargins: [10, 10, 10, 10],
-      content: [
-        { text: `DDJJ - Contrafactura - ${efectorNombre} - ${quincena} QUINCENA - ${mesSeleccionado} ${anioSeleccionado}`, style:'header' },
-        {
-          table: { headerRows: 1, widths: headers.map(() => 'auto'), body },
-          layout: { hLineWidth:()=>0.5, vLineWidth:()=>0.5, hLineColor:()=> '#000', vLineColor:()=> '#000' }
-        }
-      ],
+      content,
       styles: { header:{ fontSize:14, bold:true, alignment:'center', margin:[0,0,0,10] } },
       defaultStyle: { fontSize:7 }
     };

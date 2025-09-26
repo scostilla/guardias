@@ -51,6 +51,7 @@
           <mat-icon [ngClass]="{'flip-horizontal': botonDphIcon === 'assignment_return'}">{{ botonDphIcon }}</mat-icon>
         </button>
       </ng-container>
+      
       <!-- Botón de respuesta del DIRECTOR -->
       <ng-container *ngIf="!verificandoDdjj && evaluacionDdjjCargada && (isAutoridad || isSuper)">
         <button *ngIf="mostrarBotonDDJJ" mat-fab
@@ -172,7 +173,7 @@
   <mat-icon class="icono-pase">lock_open</mat-icon>
   <div class="mensaje-pase">
     <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para finalizar el proceso de aprobación de la DDJJ de guardias CONTRAFACTURA para
-    {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
+    {{ this.selectedQuincena }} QUINCENA de {{ getMonthName(selectedMonth) }} {{ selectedYear }}.
   </div>
 </div>
 
@@ -193,7 +194,7 @@
 <div *ngIf="mensajeDirector === 'rechazado' && (isAdministrativo || isSuper)" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
-    El director del hospital rechazó la DDJJ de guardias CONTRAFACTURA para
+    El director del hospital rechazó la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
     {{ getMonthName(selectedMonth) }} {{ selectedYear }}. <br/>
     Realiza los cambios necesarios según las observaciones y reenvía la DDJJ al Director.<br/>
     <span *ngIf="ultimaObservacionDirector?.nombreUsuario">
@@ -246,7 +247,7 @@
 <div *ngIf="mensajeDph === 'rechazado' && (isAdministrativo || isSuper)" class="text-rechazo">
   <mat-icon class="icono-pase">block</mat-icon>
   <div class="mensaje-pase">
-    DPH rechazó la DDJJ de guardias CONTRAFACTURA para 
+    DPH rechazó la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
     {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
     Realiza los cambios necesarios según las observaciones y reenvía la DDJJ a la DPH.<br/>
         <span *ngIf="ultimaObservacionDph?.nombreUsuario">
@@ -259,7 +260,7 @@
 <div *ngIf="mensajeDph === 'aceptado'" class="text-aprobado">
   <mat-icon class="icono-pase">lock</mat-icon>
   <div class="mensaje-pase">
-    La DDJJ de guardias CONTRAFACTURA para
+    La DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
     {{ getMonthName(selectedMonth) }} {{ selectedYear }} fue aprobada por la DPH. 
     El proceso para el mes ha finalizado con éxito.
   </div>
@@ -288,7 +289,7 @@
 <div *ngIf="mensajeDirectorAuth === 'aceptado' && (isAutoridad || isSuper)" class="text-pase">
   <mat-icon class="icono-pase">lock</mat-icon>
   <div class="mensaje-pase">
-    Aprobaste la DDJJ de guardias CONTRAFACTURA para {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    Aprobaste la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de  {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
     Una vez apruebes las DDJJ existentes de otros tipo de guardia para {{ getMonthName(selectedMonth) }} se creará el cronograma definitivo y se enviará a la DPH.
   </div>
 </div>
@@ -298,6 +299,14 @@
   <div class="mensaje-pase">
     Aprobaste todas las DDJJ existentes para {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
     Las mismas fueron enviadas a la DPH junto con el cronograma definitivo.
+  </div>
+</div>
+
+<div *ngIf="mensajeDirectorAuth === 'aceptado_completo_primera' && !estadoDphAprobado && (isAutoridad || isSuper)" class="text-pase">
+  <mat-icon class="icono-pase">alarm_add</mat-icon>
+  <div class="mensaje-pase">
+    Aprobaste la DDJJ para la {{ this.selectedQuincena }} QUINCENA de {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
+    La misma fue enviada a la DPH junto con el cronograma definitivo.
   </div>
 </div>
 
@@ -324,7 +333,7 @@
   <div *ngIf="mensajeDirector === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para
+      Se ha superado el tiempo establecido para el envio de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director del hospital.<br/>
       Contactáctate con la DPH.
@@ -333,7 +342,7 @@
   <div *ngIf="mensajeDph === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director de la DPH.<br/>
       Contactáctate con la DPH.
@@ -343,7 +352,7 @@
   <div *ngIf="mensajeDirectorAuth === 'fuera_rango_tiempo' && (isAutoridad || isDph || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director del hospital.<br/>
       <span *ngIf="!isDph">Contactáctate con la DPH.</span>
@@ -353,7 +362,7 @@
   <div *ngIf="mensajeDphAuth === 'fuera_rango_tiempo' && (isAutoridad || isDph || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para
+      Se ha superado el tiempo limite para el envio de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director de la DPH.<br/>
     </div>
@@ -373,14 +382,14 @@
         <td mat-cell *matCellDef="let registro">{{registro.asistencial.nombre}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="acciones" sticky>
+      <!--<ng-container matColumnDef="acciones" sticky>
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let registro" class="cell-actions">
           <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro)">
             <mat-icon color="primary">zoom_in</mat-icon>
           </button>
         </td>
-      </ng-container>
+      </ng-container>-->
 
       <ng-container matColumnDef="totalHoras">
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #bdbdbd;">Horas mes</th>
@@ -400,6 +409,29 @@
         <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">Horas S&#8209;D&#8209;F</th>
         <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #dfdbdb;">
           {{ registro.totalHoras?.horasSdf || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cuil">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #6cb9d1;">Cuil</th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita" style="background-color: #6cb9d1; white-space: nowrap;">
+          {{ formatCuil(registro.asistencial.cuil) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="factura">
+        <th mat-header-cell *matHeaderCellDef class="linea-vertical-tabla negrita" style="background-color: #6cb9d1; white-space: nowrap;">
+          Facturas
+        </th>
+        <td mat-cell *matCellDef="let registro" class="linea-vertical-tabla negrita"  style="background-color: #6cb9d1; white-space: nowrap;">
+          <ng-container *ngIf="registro.facturas?.length > 0; else sinFactura">
+            <div *ngFor="let f of registro.facturas">
+              {{ f.tipo }} - {{ f.puntoVenta }} - {{ f.numeroFactura }}
+            </div>
+          </ng-container>
+          <ng-template #sinFactura>
+            Sin facturas
+          </ng-template>
         </td>
       </ng-container>
 

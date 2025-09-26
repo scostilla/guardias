@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 
-const TOKEN_KEY = 'AuthToken';
+const TOKEN_KEY = 'AuthToken'; // todos los roles (excepto profesional, es decir USER)
+const PROFESSIONAL_TOKEN_KEY = 'ProfessionalAuthToken'; // exclusivo de profesionales
 const USERNAME_KEY = 'AuthUserName';
 const AUTHORITIES_KEY = 'AuthAuthorities';
 
@@ -17,25 +18,43 @@ export class TokenService {
   private currentRoleSubject = new BehaviorSubject<string | null>(this.getCurrentRole());
   currentRole$ = this.currentRoleSubject.asObservable();
 
+  private isLoggedSubject = new BehaviorSubject<boolean>(this.getToken() !== null);
+  isLogged$ = this.isLoggedSubject.asObservable();
+
+  private isProfessionalLoggedSubject = new BehaviorSubject<boolean>(this.getProfessionalToken() !== null);
+  isProfessionalLogged$ = this.isProfessionalLoggedSubject.asObservable();
+
   constructor() { }
 
+  // ====== TOKEN GENERAL ======
   public setToken(token: string): void {
     window.sessionStorage.removeItem(TOKEN_KEY);
     window.sessionStorage.setItem(TOKEN_KEY, token);
+    this.isLoggedSubject.next(true);
   }
 
   public getToken(): string | null {
     return sessionStorage.getItem(TOKEN_KEY);
   }
 
-  /*  El token JWT esta compuesto por tres partes separadas por puntos (.), y el método token.split('.')[1] extraerá el payload (la segunda parte), que es el que contiene la información del usuario, incluido el ID. */
+  // ====== TOKEN PROFESIONAL ======
+  public setProfessionalToken(token: string): void {
+    window.sessionStorage.removeItem(PROFESSIONAL_TOKEN_KEY);
+    window.sessionStorage.setItem(PROFESSIONAL_TOKEN_KEY, token);
+    this.isProfessionalLoggedSubject.next(true);
+  }
+
+  public getProfessionalToken(): string | null {
+    return sessionStorage.getItem(PROFESSIONAL_TOKEN_KEY);
+  }
+
+  // ====== Métodos comunes ======
   public getUserIdFromToken(): string | null {
-    const token = this.getToken();
+    const token = this.getToken() || this.getProfessionalToken();
     if (!token) return null;
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.id;
-}
-
+  }
 
   public setUserName(userName: string): void {
     window.sessionStorage.removeItem(USERNAME_KEY);
@@ -62,7 +81,7 @@ export class TokenService {
     return this.roles;
   }
   
-  // Métodos de encriptación y desencriptación
+  // ====== Encriptación / Desencriptación ======
   encrypt(text: string): string {
     return CryptoJS.AES.encrypt(text, this.secretKey).toString();
   }
@@ -72,7 +91,7 @@ export class TokenService {
     return bytes.toString(CryptoJS.enc.Utf8);
   }
 
-  // Establecer el rol actual
+  // ====== Rol actual ======
   setCurrentRole(role: string | null): void {
     if (role !== null) {
       const encryptedRole = this.encrypt(role);
@@ -84,7 +103,6 @@ export class TokenService {
     }
   }
 
-  // Obtener el rol actual
   getCurrentRole(): string | null {
     const encryptedRole = sessionStorage.getItem('currentRole');
     if (encryptedRole) {
@@ -94,17 +112,22 @@ export class TokenService {
     return null;
   }
 
+  // ====== Logout ======
   public logOut(): void {
+    // Logout completo: hospital / roles + profesional
     window.sessionStorage.clear();
     this.currentRoleSubject.next(null);
     this.isLoggedSubject.next(false);
+    this.isProfessionalLoggedSubject.next(false);
   }
 
-private isLoggedSubject = new BehaviorSubject<boolean>(this.getToken() !== null);
-isLogged$ = this.isLoggedSubject.asObservable();
+  public logOutProfessional(): void {
+    // Logout solo del profesional
+    window.sessionStorage.removeItem(PROFESSIONAL_TOKEN_KEY);
+    this.isProfessionalLoggedSubject.next(false);
+  }
 
-setLoggedState(state: boolean) {
-  this.isLoggedSubject.next(state);
-}
-
+  setLoggedState(state: boolean) {
+    this.isLoggedSubject.next(state);
+  }
 }

@@ -105,4 +105,8 @@ import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
       `${this.registroMensualURL}getMontoTotalByQuincena/${idAsistencial}/${idEfector}/${quincena}/${mes}/${anio}`
     );
   }
+
+  getRegistrosIncompletos(idEfector: number, mes: string, anio: number, quincena: string): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}incompletos/${idEfector}/${mes}/${anio}/${quincena}`);
+  }
  }

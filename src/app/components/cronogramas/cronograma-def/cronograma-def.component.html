@@ -4,7 +4,7 @@
     <div class="col-12 col-md-7">
       <div class="titulos">Cronograma <span class="titulos-second-def">Definitivo</span></div>
     </div>
-    <div class="col-12 col-md-2 m d-flex justify-content-end">
+    <div class="col-12 col-md-3 m d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/ddjj-seleccion" style="margin-right: 5px;">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
@@ -21,14 +21,14 @@
           <mat-icon>picture_as_pdf</mat-icon>
           <span>Exportar a PDF</span>
         </button>
-      </mat-menu>
-    </div>-->
+      </mat-menu>-->
+    </div>
 
-    <div class="col-12 col-md-3 mt-3 mt-md-0">
+    <div class="col-12 col-md-2 mt-3 mt-md-0 d-flex justify-content-end">
       <mat-button-toggle-group name="tipocalendario" aria-label="tipo calendario">
         <mat-button-toggle value="tentativo" routerLink="/cronograma">Tentativo</mat-button-toggle>
         <mat-button-toggle value="definitivo" disabled>Definitivo</mat-button-toggle>
-        <mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>
+        <!--<mat-button-toggle value="regional" routerLink="/cronograma-reg">Regional</mat-button-toggle>-->
       </mat-button-toggle-group>
     </div>
   </div>

@@ -6,6 +6,7 @@ import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -45,12 +46,12 @@ import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
-  selector: 'app-rmensual-contrafactura',
-  templateUrl: './rmensual-contrafactura.component.html',
-  styleUrls: ['./rmensual-contrafactura.component.css']
+  selector: 'app-rmensual-contrafactura-fuera-termino',
+  templateUrl: './rmensual-contrafactura-fuera-termino.component.html',
+  styleUrls: ['./rmensual-contrafactura-fuera-termino.component.css']
 })
 
-export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
+export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatTable) table!: MatTable<RegistroMensualListDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -110,7 +111,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private tokenService: TokenService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
@@ -125,44 +127,56 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Obtener el ID efector
-    this.efectorId = this.efectorService.getCurrentEfectorId();
+    // Obtener query params (mes, año, quincena)
+    this.route.queryParams.subscribe(params => {
+      if (params['mes']) {
+        this.selectedMonth = +params['mes'];
+      }
+      if (params['anio']) {
+        this.selectedYear = +params['anio'];
+      }
+      if (params['quincena']) {
+        this.selectedQuincena = params['quincena'];
+      }
+
+      // Usar efector
+      this.efectorId = this.efectorService.getCurrentEfectorId();
       if (this.efectorId) {
         this.loadEfectorName();
-          moment.locale('es');
-          this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
-          this.generarMesesDisponibles();
-          this.updateDateAndLoadData();
-          this.loadHospitalDetails();
-          this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
-    
+        moment.locale('es');
+        this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
+        this.generarMesesDisponibles();
+        this.updateDateAndLoadData();
+        this.loadHospitalDetails();
+        this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+
         this.feriadoService.list().subscribe((feriados: Feriado[]) => {
           this.feriados = feriados;
-    });
-
+        });
       } else {
         this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
-        timeOut: 5000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      this.router.navigateByUrl('/home-page');
-    }
-  
-    // Obtener rol actual
-    this.tokenService.currentRole$.subscribe(role => {
-      this.currentRole = role;
-      this.UserRoles();
-
-      if (!this.currentRole) {
-        console.warn('No hay un rol seleccionado actualmente.');
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.router.navigateByUrl('/home-page');
       }
-    });
+
+      // Obtener rol actual
+      this.tokenService.currentRole$.subscribe(role => {
+        this.currentRole = role;
+        this.UserRoles();
+
+        if (!this.currentRole) {
+          console.warn('No hay un rol seleccionado actualmente.');
+        }
+      });
 
       this.selectedServicio = null;
 
-    this.suscription = this.facturaService.refresh$.subscribe(() => {
-      this.loadRegistrosMensuales();
+      this.suscription = this.facturaService.refresh$.subscribe(() => {
+        this.loadRegistrosMensuales();
+      });
     });
   }
 
@@ -236,7 +250,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
     const request$ = this.selectedServicio
       ? this.registroMensualService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena)
-      : this.registroMensualService.listCf(anio, mes, idEfector, quincena);
+      : this.registroMensualService.getRegistrosIncompletos( idEfector, mes, anio, quincena);
 
     request$.subscribe(data => {
       this.registrosMensuales = data;
@@ -708,16 +722,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     });
   }
 
-  openFueraDeTermino(): void {
-    this.router.navigate(['/rmensual-contrafactura-fuera-termino'], {
-      queryParams: {
-        mes: this.selectedMonth,
-        anio: this.selectedYear,
-        quincena: this.selectedQuincena
-      }
-    });
-  }
-  
   //Creacion de ddjj y pase a director
 
   crearDdjjDesdeRegistros(): void {

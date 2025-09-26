@@ -294,6 +294,8 @@ import { FacturaCreateComponent } from './components/guardias/factura/factura-cr
 import { FacturaListComponent } from './components/guardias/factura/factura-list/factura-list.component';
 import { FacturaEditComponent } from './components/guardias/factura/factura-edit/factura-edit.component';
 import { FacturaDetailComponent } from './components/guardias/factura/factura-detail/factura-detail.component';
+import { RmensualContrafacturaFueraTerminoComponent } from './components/guardias/rmensual-contrafactura-fuera-termino/rmensual-contrafactura-fuera-termino.component';
+import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 
 @NgModule({
   declarations: [
@@ -535,6 +537,8 @@ import { FacturaDetailComponent } from './components/guardias/factura/factura-de
     FacturaListComponent,
     FacturaEditComponent,
     FacturaDetailComponent,
+    RmensualContrafacturaFueraTerminoComponent,
+    HomeHospitalComponent,
   ],
 
   imports: [
