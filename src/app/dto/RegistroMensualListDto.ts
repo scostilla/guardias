@@ -12,7 +12,7 @@ export class RegistroMensualListDto {
     totalHoras: SumaHorasListDto;
     idDdjj: number;
     quincena?: string;
-    facturasCompletas?: boolean;
+    estadoFacturacion?: string;
     facturas?: FacturaDetailDto[];
 
     constructor (
@@ -24,7 +24,7 @@ export class RegistroMensualListDto {
         totalHoras: SumaHorasListDto,
         idDdjj: number,
         quincena?: string,
-        facturasCompletas?: boolean,
+        estadoFacturacion?: string,
         facturas?: FacturaDetailDto[],
     ){
         this.id = id;
@@ -35,7 +35,7 @@ export class RegistroMensualListDto {
         this.totalHoras = totalHoras;
         this.idDdjj = idDdjj;
         this.quincena = quincena;
-        this.facturasCompletas = facturasCompletas;
+        this.estadoFacturacion = estadoFacturacion;
         this.facturas = facturas;
     }
 }

@@ -109,4 +109,14 @@ import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
   getRegistrosIncompletos(idEfector: number, mes: string, anio: number, quincena: string): Observable<RegistroMensualListDto[]> {
     return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}incompletos/${idEfector}/${mes}/${anio}/${quincena}`);
   }
- }
+
+   listFueraDeTermino(idEfector: number, mes: string, anio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}fuera-de-termino/${idEfector}/${mes}/${anio}`
+    );
+  }
+
+  existenRegistrosFueraDeTermino(idEfector: number, fechaActual: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-fuera-de-termino/${idEfector}/${fechaActual}`
+    );
+  }
+}

@@ -88,6 +88,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   efectorNombre: string | null = null;
 
   facturaExisteMap: { [registroId: number]: boolean } = {};
+  mostrarFueraDeTerminoBtn = false;
 
   //Autenticación
   roles: string[] = [];
@@ -525,6 +526,24 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
         this.facturaExisteMap[registro.id] = false;
       }
     });
+  }
+
+  verificarFueraDeTermino(): void {
+    if (!this.efectorId) return;
+
+    const today = new Date();
+    const fechaActual = today.toISOString().split('T')[0]; // formato YYYY-MM-DD
+
+    this.registroMensualService.existenRegistrosFueraDeTermino(this.efectorId, fechaActual)
+      .subscribe({
+        next: (existen: boolean) => {
+          this.mostrarFueraDeTerminoBtn = existen;
+        },
+        error: (err) => {
+          console.error('Error verificando fuera de término:', err);
+          this.mostrarFueraDeTerminoBtn = false;
+        }
+      });
   }
 
   //Verificaciones para permitir interacciones

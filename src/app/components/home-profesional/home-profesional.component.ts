@@ -8,6 +8,8 @@ import { RegistroPendienteService } from 'src/app/services/registroPendiente.ser
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { Efector } from 'src/app/models/Configuracion/Efector';
 
 
 @Component({
@@ -26,8 +28,7 @@ export class HomeProfesionalComponent implements OnInit {
   nombresEfectores: EfectorSummaryDto[] = [];
   ultimoRegistro: RegistroActividad | null = null;
   efectorId: number | null = null;
-  efectorFijoId = 96
-  selectedEfector: any;
+  efectorNombre: string | null = null;
 
   constructor(
     private router: Router,
@@ -35,28 +36,40 @@ export class HomeProfesionalComponent implements OnInit {
     private efectorService: EfectorService,
     private tokenService: TokenService,
     private authService: AuthService,
+    private hospitalService: HospitalService,
     private registroPendienteService: RegistroPendienteService
   ) {}
 
   ngOnInit(): void {
-    // Cargar el efector del administrativo automáticamente
     this.authService.detailPersonBasicPanel().subscribe(
       (response: PersonBasicPanelDto) => {
-        if (response.efectores && response.efectores.length > 0) {
-          this.selectedEfector = response.efectores[0];
-          this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
-        } else {
-          console.warn('No hay efectores disponibles para este hospital');
-        }
+        this.idPersona = response.id;
+        this.nombre = response.nombre;
+        this.apellido = response.apellido;
+        console.log('ID de persona:', this.idPersona);
+      },
+      error => {
+        console.error('Error al cargar datos del panel', error);
       }
     );
 
-  this.authService.detailPersonBasicPanel().subscribe((personDto: PersonBasicPanelDto) => {
-    this.idPersona = personDto.id;
-    this.nombre = personDto.nombre;
-    this.apellido = personDto.apellido;
-    console.log('ID de persona:', this.idPersona);
-  });
+    // Obtener efector desde el servicio
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+    this.loadEfectorName();
+  }
+
+  loadEfectorName(): void {
+    if (this.efectorId) {
+      this.hospitalService.getById(this.efectorId).subscribe(
+        (efector: Efector) => {
+          this.efectorNombre = efector.nombre;
+        },
+        (error) => {
+          console.error('Error al obtener el efector:', error);
+          this.efectorNombre = null;
+        }
+      );
+    }
   }
 
   goToProfessionalForm() {
@@ -76,7 +89,7 @@ export class HomeProfesionalComponent implements OnInit {
     const mes = new Date().getMonth() + 1; // Mes actual
     const anio = new Date().getFullYear(); // Año actual
   
-    this.registroPendienteService.tieneRegistroPendiente(this.efectorFijoId, mes, anio, this.idPersona!)
+    this.registroPendienteService.tieneRegistroPendiente(this.efectorId!, mes, anio, this.idPersona!)
     .subscribe(
       (registro) => {
         console.log('Registro pendiente:', registro);

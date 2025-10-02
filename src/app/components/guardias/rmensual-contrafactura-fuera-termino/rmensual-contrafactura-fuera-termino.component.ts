@@ -250,7 +250,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
 
     const request$ = this.selectedServicio
       ? this.registroMensualService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena)
-      : this.registroMensualService.getRegistrosIncompletos( idEfector, mes, anio, quincena);
+      : this.registroMensualService.listFueraDeTermino( idEfector, mes, anio);
 
     request$.subscribe(data => {
       this.registrosMensuales = data;
@@ -543,50 +543,35 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
 
   //Verificaciones para permitir interacciones
 
-  private estaEnRango(inicio: Date, fin: Date, today: Date = new Date()): boolean {
-    return today >= inicio && today <= fin;
+  private estaEnRango(inicio: Date, today: Date = new Date()): boolean {
+    return today >= inicio; // solo verificamos desde esa fecha en adelante
   }
 
-  private getRangosValidos(): { inicio: Date, fin: Date }[] {
+  private getRangosValidos(): { inicio: Date, fin?: Date }[] {
     let mes = this.selectedMonth;
     let anio = this.selectedYear;
 
-    // Rango 1: 15–20 del mismo mes seleccionado
-    const rango1Inicio = new Date(anio, mes - 1, 15);
-    const rango1Fin = new Date(anio, mes - 1, 25, 23, 59, 59);
-
-    // Rango 2: 1–5 del mes siguiente
+    // Calcular mes siguiente
     let siguienteMes = mes === 12 ? 1 : mes + 1;
     let siguienteAnio = mes === 12 ? anio + 1 : anio;
-    const rango2Inicio = new Date(siguienteAnio, siguienteMes - 1, 1);
-    const rango2Fin = new Date(siguienteAnio, siguienteMes - 1, 5, 23, 59, 59);
 
-    if (this.selectedQuincena === 'PRIMERA') {
-      return [{ inicio: rango1Inicio, fin: rango1Fin }];
-    } else if (this.selectedQuincena === 'SEGUNDA') {
-      return [{ inicio: rango2Inicio, fin: rango2Fin }];
-    }
+    // Inicio válido: día 11 del mes siguiente
+    const inicioValido = new Date(siguienteAnio, siguienteMes - 1, 11);
 
-    // Por defecto, si no coincide ninguna quincena, devolvemos vacío
-    return [];
+    return [{ inicio: inicioValido }];
   }
 
   isHabilitadoBotonDdjj(): boolean {
     const today = new Date();
-    return this.getRangosValidos().some(r => this.estaEnRango(r.inicio, r.fin, today));
+    return this.getRangosValidos().some(r => this.estaEnRango(r.inicio, today));
   }
 
   getMensajeContadorDdjj(): string | null {
     const today = new Date();
-
-    for (const rango of this.getRangosValidos()) {
-      if (this.estaEnRango(rango.inicio, rango.fin, today)) {
-        const diasRestantes = rango.fin.getDate() - today.getDate() + 1;
-
-        return diasRestantes === 1
-          ? 'Es el último día'
-          : `Quedan ${diasRestantes} días`;
-      }
+    const rango = this.getRangosValidos()[0];
+    
+    if (this.estaEnRango(rango.inicio, today)) {
+      return 'Plazo abierto'; // porque desde el 11 en adelante siempre es válido
     }
 
     return null;
@@ -594,10 +579,10 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
 
   mostrarMensajeRechazoDdjj(): boolean {
     const today = new Date();
+    const rango = this.getRangosValidos()[0];
 
-    // vencieron ambos rangos
-    const rangos = this.getRangosValidos();
-    const vencieronTodos = rangos.every(r => today > r.fin);
+    // Si todavía no llegó el 11 del mes siguiente => mostrar rechazo
+    const vencieronTodos = today < rango.inicio;
 
     return !this.verificandoDdjj && !this.ddjjYaExiste && vencieronTodos;
   }
@@ -620,16 +605,14 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
       next: (existe: boolean) => {
         this.ddjjYaExiste = existe;
         const today = new Date();
-        const rangos = this.getRangosValidos();
+        const rango = this.getRangosValidos()[0]; // solo hay un inicio
 
         if (existe) {
           this.botonDDJJIcon = 'assignment_turned_in';
-        } else if (rangos.some(r => this.estaEnRango(r.inicio, r.fin, today))) {
-          this.botonDDJJIcon = 'assignment_return'; // dentro de algún rango habilitado
-        } else if (rangos.some(r => today < r.inicio)) {
-          this.botonDDJJIcon = 'snooze'; // todavía no comienza ninguno de los rangos
-        } else {
-          this.botonDDJJIcon = 'assignment_late'; // fuera de todos los rangos
+        } else if (today >= rango.inicio) {
+          this.botonDDJJIcon = 'assignment_return'; // plazo abierto desde el 11 del mes siguiente
+        } else if (today < rango.inicio) {
+          this.botonDDJJIcon = 'snooze'; // todavía no comenzó el plazo
         }
 
         this.verificandoDdjj = false;

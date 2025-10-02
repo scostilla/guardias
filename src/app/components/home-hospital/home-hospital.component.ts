@@ -58,8 +58,10 @@ onLogin(): void {
       } else {
         this.toastr.error(
           'Solo usuarios con rol profesional pueden ingresar desde este login',
-          'Acceso denegado'
-        );
+          'Acceso denegado', {
+        timeOut: 3000,
+        positionClass: 'toast-top-center'
+        });
         this.tokenService.logOutProfessional();
       }
     },

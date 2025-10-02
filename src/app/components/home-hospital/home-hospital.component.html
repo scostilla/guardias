@@ -1,6 +1,8 @@
 <app-spinner></app-spinner>
-<div id="container-title-hosp" >
-    <div class="text-title-hosp"><mat-icon>person_pin</mat-icon> &nbsp;&nbsp;{{selectedEfector.nombre}}</div>
+<div id="container-title-hosp" *ngIf="selectedEfector">
+  <div class="text-title-hosp">
+    <mat-icon>person_pin</mat-icon> &nbsp;&nbsp;{{selectedEfector.nombre}}
+  </div>
 </div>
 
 <div class="container">

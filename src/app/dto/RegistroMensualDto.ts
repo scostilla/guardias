@@ -9,6 +9,7 @@ export class RegistroMensualDto {
     idDdjjs?: number[];
     idSumaHoras?: number;
     quincena?: string; // QuincenaEnum
+    estadoFacturacion?: string; // EstadoFacturacionEnum
 
     constructor (
         mes: string, 
@@ -20,6 +21,7 @@ export class RegistroMensualDto {
         idDdjjs?: number[],
         idSumaHoras?: number,
         quincena?: string, // QuincenaEnum
+        estadoFacturacion?: string, // EstadoFacturacionEnum
     ){
         this.mes = mes;
         this.anio= anio;
@@ -30,5 +32,6 @@ export class RegistroMensualDto {
         this.idDdjjs = idDdjjs;
         this.idSumaHoras = idSumaHoras;
         this.quincena = quincena;
+        this.estadoFacturacion = estadoFacturacion;
     }
 }
