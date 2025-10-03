@@ -4,8 +4,14 @@ import * as CryptoJS from 'crypto-js';
 
 const TOKEN_KEY = 'AuthToken'; // todos los roles (excepto profesional, es decir USER)
 const PROFESSIONAL_TOKEN_KEY = 'ProfessionalAuthToken'; // exclusivo de profesionales
+
+// Keys para usuario general
 const USERNAME_KEY = 'AuthUserName';
 const AUTHORITIES_KEY = 'AuthAuthorities';
+
+// Keys para usuario profesional
+const PROFESSIONAL_USERNAME_KEY = 'ProfessionalUserName';
+const PROFESSIONAL_AUTHORITIES_KEY = 'ProfessionalAuthorities';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +20,7 @@ export class TokenService {
 
   private secretKey = 'Dph*FfLlMmNn99';
   roles: Array<string> = [];
+  professionalRoles: Array<string> = [];
 
   private currentRoleSubject = new BehaviorSubject<string | null>(this.getCurrentRole());
   currentRole$ = this.currentRoleSubject.asObservable();
@@ -48,9 +55,9 @@ export class TokenService {
     return sessionStorage.getItem(PROFESSIONAL_TOKEN_KEY);
   }
 
-  // ====== Métodos comunes ======
+  // ====== MÉTODOS COMUNES (GENERAL) ======
   public getUserIdFromToken(): string | null {
-    const token = this.getToken() || this.getProfessionalToken();
+    const token = this.getToken();
     if (!token) return null;
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.id;
@@ -72,7 +79,6 @@ export class TokenService {
 
   public getAuthorities(): string[] {
     this.roles = [];
-
     if (sessionStorage.getItem(AUTHORITIES_KEY)) {
       JSON.parse(sessionStorage.getItem(AUTHORITIES_KEY)!).forEach((authority: { authority: string; }) => {
         this.roles.push(authority.authority);
@@ -81,6 +87,38 @@ export class TokenService {
     return this.roles;
   }
   
+  // ====== MÉTODOS COMUNES (PROFESIONAL) ======
+  public getProfessionalUserIdFromToken(): string | null {
+    const token = this.getProfessionalToken();
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+  }
+
+  public setProfessionalUserName(userName: string): void {
+    window.sessionStorage.removeItem(PROFESSIONAL_USERNAME_KEY);
+    window.sessionStorage.setItem(PROFESSIONAL_USERNAME_KEY, userName);
+  }
+
+  public getProfessionalUserName(): string {
+    return sessionStorage.getItem(PROFESSIONAL_USERNAME_KEY)!;
+  }
+
+  public setProfessionalAuthorities(authorities: string[]): void {
+    window.sessionStorage.removeItem(PROFESSIONAL_AUTHORITIES_KEY);
+    window.sessionStorage.setItem(PROFESSIONAL_AUTHORITIES_KEY, JSON.stringify(authorities));
+  }
+
+  public getProfessionalAuthorities(): string[] {
+    this.professionalRoles = [];
+    if (sessionStorage.getItem(PROFESSIONAL_AUTHORITIES_KEY)) {
+      JSON.parse(sessionStorage.getItem(PROFESSIONAL_AUTHORITIES_KEY)!).forEach((authority: { authority: string; }) => {
+        this.professionalRoles.push(authority.authority);
+      });
+    }
+    return this.professionalRoles;
+  }
+
   // ====== Encriptación / Desencriptación ======
   encrypt(text: string): string {
     return CryptoJS.AES.encrypt(text, this.secretKey).toString();
@@ -124,6 +162,8 @@ export class TokenService {
   public logOutProfessional(): void {
     // Logout solo del profesional
     window.sessionStorage.removeItem(PROFESSIONAL_TOKEN_KEY);
+    window.sessionStorage.removeItem(PROFESSIONAL_USERNAME_KEY);
+    window.sessionStorage.removeItem(PROFESSIONAL_AUTHORITIES_KEY);
     this.isProfessionalLoggedSubject.next(false);
   }
 

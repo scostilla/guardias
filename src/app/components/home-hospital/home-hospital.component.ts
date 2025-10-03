@@ -46,22 +46,26 @@ onLogin(): void {
 
   this.authService.login(loginUsuario).subscribe(
     data => {
-      // Guardar token SOLO como profesional
+      // Guardar token y datos SOLO como profesional
       this.tokenService.setProfessionalToken(data.token);
-      this.tokenService.setUserName(data.nombreUsuario);
-      this.tokenService.setAuthorities(data.authorities);
+      this.tokenService.setProfessionalUserName(data.nombreUsuario);
+      this.tokenService.setProfessionalAuthorities(data.authorities);
 
-      const roles = this.tokenService.getAuthorities();
+      const roles = this.tokenService.getProfessionalAuthorities();
+
       if (roles.includes('ROLE_USER')) {
+        // Si el login es correcto y el rol es profesional
         this.tokenService.setCurrentRole('ROLE_USER');
         this.router.navigate(['/home-profesional']);
       } else {
+        // Si no es profesional, no lo dejamos pasar
         this.toastr.error(
           'Solo usuarios con rol profesional pueden ingresar desde este login',
           'Acceso denegado', {
-        timeOut: 3000,
-        positionClass: 'toast-top-center'
-        });
+            timeOut: 3000,
+            positionClass: 'toast-top-center'
+          }
+        );
         this.tokenService.logOutProfessional();
       }
     },
