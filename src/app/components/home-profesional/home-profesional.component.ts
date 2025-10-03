@@ -43,16 +43,20 @@ export class HomeProfesionalComponent implements OnInit {
   ngOnInit(): void {
     this.authService.detailPersonBasicPanelProfessional().subscribe(
       (response: PersonBasicPanelDto) => {
+        console.log('Respuesta completa del panel profesional:', response); // log completo
+
         this.idPersona = response.id;
         this.nombre = response.nombre;
         this.apellido = response.apellido;
+
         console.log('ID de persona:', this.idPersona);
+        console.log('Nombre:', this.nombre);
+        console.log('Apellido:', this.apellido);
       },
       error => {
         console.error('Error al cargar datos del panel', error);
       }
     );
-
     // Obtener efector desde el servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
