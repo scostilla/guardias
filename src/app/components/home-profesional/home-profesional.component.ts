@@ -41,7 +41,7 @@ export class HomeProfesionalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.detailPersonBasicPanelProfesional().subscribe(
+    this.authService.detailPersonBasicPanelProfessional().subscribe(
       (response: PersonBasicPanelDto) => {
         this.idPersona = response.id;
         this.nombre = response.nombre;

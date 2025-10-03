@@ -15,10 +15,26 @@ export class InterceptorService implements HttpInterceptor{
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let intReq = req;
-    const token = this.tokenService.getToken();
-    if (token != null) {
-      intReq = req.clone({ headers: req.headers.set('Authorization', 'Bearer ' + token)});
+
+    // Si la petición es al perfil del profesional → usa el professionalToken
+    if (req.url.includes('/auth/detailPersonBasicPanel/professional')) {
+      const token = this.tokenService.getProfessionalToken();
+      if (token) {
+        intReq = req.clone({
+          headers: req.headers.set('Authorization', `Bearer ${token}`)
+        });
+      }
+
+    // Para todo lo demás → usa el token general
+    } else {
+      const token = this.tokenService.getToken();
+      if (token) {
+        intReq = req.clone({
+          headers: req.headers.set('Authorization', `Bearer ${token}`)
+        });
+      }
     }
+
     return next.handle(intReq);
   }
 }

@@ -92,8 +92,8 @@ export class AuthService {
     return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel/hospital`);
   }
   
-  public detailPersonBasicPanelProfesional(): Observable<PersonBasicPanelDto> {
-    return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel/profesional`);
+  public detailPersonBasicPanelProfessional(): Observable<PersonBasicPanelDto> {
+    return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel/professional`);
   }
 
 }
