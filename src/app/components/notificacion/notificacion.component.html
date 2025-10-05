@@ -11,8 +11,8 @@
         <mat-icon>library_add</mat-icon>
       </button>
       <!-- Mostrar "Notificaciones a Publicar" solo en contexto NO-DIGESTO -->
-      <button *ngIf="!isDigesto" mat-fab color="primary" (click)="openFutureDialog()" matTooltip="Notificaciones a Publicar" style="margin-left: 5px;">
-        <mat-icon>library_add</mat-icon>
+      <button *ngIf="!isDigesto" mat-fab color="warn" (click)="openFutureDialog()" matTooltip="Notificaciones a Publicar" style="margin-left: 5px;">
+        <mat-icon>assignment</mat-icon>
       </button>
     </div>
 

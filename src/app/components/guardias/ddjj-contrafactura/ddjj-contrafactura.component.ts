@@ -1275,30 +1275,38 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   private crearCronogramaSiCompleto(estaCompleto: boolean): void {
     if (!estaCompleto) return;
 
-    this.registroActividadService
-      .obtenerDdjjAprobadas(this.efectorId!, this.selectedMonth, this.selectedYear)
-      .subscribe({
-        next: (ids: number[]) => {
-          const mesNombre = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
-          const quincena = this.selectedQuincena;
-          const cronogramaDto = new CronogramaDefinitivoDto(
-            mesNombre,
-            this.selectedYear,
-            true,
-            this.efectorId!,
-            ids,
-            quincena,
-          );
+    const mes = this.selectedMonth;
+    const anio = this.selectedYear;
+    const quincena = this.selectedQuincena;
 
-          console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
+    // Elegir servicio según la quincena
+    const obtenerDdjj$ =
+      quincena === 'PRIMERA'
+        ? this.registroActividadService.obtenerDdjjCfAprobadas(this.efectorId!, mes, anio)
+        : this.registroActividadService.obtenerDdjjAprobadas(this.efectorId!, mes, anio);
 
-          this.cronogramaDefinitivoService.save(cronogramaDto).subscribe({
-            next: () => this.toastr.success('Se creó el cronograma definitivo.', 'Éxito'),
-            error: () => this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención')
-          });
-        },
-        error: () => console.error('Error obteniendo DDJJ aprobadas')
-      });
+    obtenerDdjj$.subscribe({
+      next: (ids: number[]) => {
+        const mesNombre = moment().month(mes - 1).format('MMMM').toUpperCase();
+
+        const cronogramaDto = new CronogramaDefinitivoDto(
+          mesNombre,
+          anio,
+          true,
+          this.efectorId!,
+          ids,
+          quincena,
+        );
+
+        console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
+
+        this.cronogramaDefinitivoService.save(cronogramaDto).subscribe({
+          next: () => this.toastr.success('Se creó el cronograma definitivo.', 'Éxito'),
+          error: () => this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención')
+        });
+      },
+      error: () => console.error('Error obteniendo DDJJ aprobadas')
+    });
   }
 
   //Exportaciones a EXCEL y PDF

@@ -175,22 +175,29 @@ export class PersonalDhCreateComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
-mostrarOpcion(horas: number): boolean {
-  if (this.tipoGuardia !== 'CARGO') {
+  mostrarOpcion(horas: number): boolean {
+    if (this.tipoGuardia?.toUpperCase() !== 'CARGO') {
+      return false;
+    }
+
+    if (!this.nombreProfesion) return false;
+
+    // Normalizar la profesión (sin mayúsculas ni acentos)
+    const profesion = this.nombreProfesion
+      .toLowerCase()
+      .normalize('NFD') // separa acentos
+      .replace(/[\u0300-\u036f]/g, ''); // elimina acentos
+
+    if (profesion === 'medico') {
+      return horas === 12 || horas === 24;
+    }
+
+    if (profesion === 'bioquimico') {
+      return horas === 8 || horas === 12 || horas === 24;
+    }
+
     return false;
   }
-
-  if (this.nombreProfesion === 'Medico') {
-    return horas === 12 || horas === 24;
-  }
-
-  if (this.nombreProfesion === 'Bioquimico') {
-    return horas === 8 || horas === 12 || horas === 24;
-  }
-
-  // Por defecto, no mostrar nada
-  return false;
-}
 
 hasDatos(form: FormGroup): boolean {
   return Object.values(form.controls).some(control => {
