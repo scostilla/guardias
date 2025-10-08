@@ -84,6 +84,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
   ddjjYaExiste: boolean = false;
+  existenCompletosDdjj: boolean = false;
+  verificandoCompletos: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
@@ -161,9 +163,11 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     });
 
       this.selectedServicio = null;
+      this.verificarCompletosDdjj();
 
     this.suscription = this.facturaService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
+      this.verificarCompletosDdjj();
     });
   }
 
@@ -453,6 +457,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     this.generarDiasDelMes();
     this.loadRegistrosMensuales();
     this.verificarExistenciaDdjj();
+    this.verificarFueraDeTermino();
+    this.verificarCompletosDdjj();
   }
 
   //Dar formato
@@ -528,19 +534,29 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     });
   }
 
+
   verificarFueraDeTermino(): void {
-    if (!this.efectorId) return;
 
-    const today = new Date();
-    const fechaActual = today.toISOString().split('T')[0]; // formato YYYY-MM-DD
+  const mes = moment().month(this.selectedMonth - 1).locale('es').format('MMMM').toUpperCase();
 
-    this.registroMensualService.existenRegistrosFueraDeTermino(this.efectorId, fechaActual)
+    if (!this.efectorId) {
+      console.warn('⚠️ No se encontró idEfector. No se puede verificar fuera de término.');
+      return;
+    }
+
+
+    console.log('🕓 Verificando registros fuera de término...', {
+      efectorId: this.efectorId,
+    });
+
+    this.registroMensualService.existenRegistrosFueraDeTermino(this.efectorId, mes, this.selectedYear)
       .subscribe({
         next: (existen: boolean) => {
           this.mostrarFueraDeTerminoBtn = existen;
+          console.log(`✅ Resultado de verificación (fuera de término): ${existen ? 'Sí existen' : 'No existen'}`);
         },
         error: (err) => {
-          console.error('Error verificando fuera de término:', err);
+          console.error('❌ Error al verificar registros fuera de término:', err);
           this.mostrarFueraDeTerminoBtn = false;
         }
       });
@@ -651,7 +667,32 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   isHabilitadoBotonDdjjFinal(): boolean {
     return this.isHabilitadoBotonDdjj() && !this.ddjjYaExiste;
   }
-  
+
+  verificarCompletosDdjj(): void {
+    const mes = moment().month(this.selectedMonth - 1).locale('es').format('MMMM').toUpperCase();
+
+    if (!this.efectorId || !this.selectedMonth || !this.selectedYear || !this.selectedQuincena) {
+      this.existenCompletosDdjj = false;
+      return;
+    }
+
+    this.verificandoCompletos = true;
+
+    this.registroMensualService
+      .existenCompletos(this.efectorId, mes, this.selectedYear, this.selectedQuincena)
+      .subscribe({
+        next: (existen: boolean) => {
+          this.existenCompletosDdjj = existen;
+          this.verificandoCompletos = false;
+        },
+        error: (err) => {
+          console.error('Error verificando DDJJ completos:', err);
+          this.existenCompletosDdjj = false;
+          this.verificandoCompletos = false;
+        }
+      });
+  }
+
   //Manejo de dialogs
 
   openDetail(registro: RegistroMensualListDto): void {
@@ -728,15 +769,15 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   openFueraDeTermino(): void {
-    this.router.navigate(['/rmensual-contrafactura-fuera-termino'], {
-      queryParams: {
-        mes: this.selectedMonth,
-        anio: this.selectedYear,
-        quincena: this.selectedQuincena
-      }
+    this.registroMensualService.setFecha({
+      mes: this.selectedMonth,
+      anio: this.selectedYear,
+      quincena: this.selectedQuincena
     });
+
+    this.router.navigate(['/rmensual-contrafactura-fuera-termino']);
   }
-  
+
   //Creacion de ddjj y pase a director
 
   crearDdjjDesdeRegistros(): void {

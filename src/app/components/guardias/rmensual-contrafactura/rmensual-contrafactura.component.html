@@ -27,8 +27,8 @@
               class="button-pase"
               style="margin-left: 5px;"
               (click)="openDdjjConfirm()"
-              [disabled]="!isHabilitadoBotonDdjjFinal()"
-              [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal()}"
+              [disabled]="!isHabilitadoBotonDdjjFinal() || !existenCompletosDdjj"
+              [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal() || !existenCompletosDdjj}"
               matTooltip="Crear DDJJ y enviar a Director">
         <mat-icon [ngClass]="{'flip-horizontal': botonDDJJIcon === 'assignment_return'}">{{ botonDDJJIcon }}</mat-icon>
       </button>
@@ -114,7 +114,7 @@
     <mat-icon class="icono-pase">lock</mat-icon>
     <div class="mensaje-pase">
       Se finalizó la creación de la DDJJ de CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}, con monto de factura completado.<br>
       La misma está en proceso de revisión por el Director del hospital.<br>
       Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-contrafactura">sección de DDJJ</span>.
     </div>
