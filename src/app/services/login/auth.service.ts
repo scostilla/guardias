@@ -96,4 +96,8 @@ export class AuthService {
     return this.httpClient.get<PersonBasicPanelDto>(this.authUrl +`detailPersonBasicPanel/professional`);
   }
 
+  validatePassword(nombreUsuario: string, password: string): Observable<boolean> {
+    const body = { nombreUsuario, password };
+    return this.httpClient.post<boolean>(`${this.authUrl}validate-password`, body);
+  }
 }

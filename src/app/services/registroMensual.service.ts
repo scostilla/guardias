@@ -9,7 +9,6 @@ import { BehaviorSubject } from 'rxjs';
 export interface FechaSeleccionada {
   mes: number;
   anio: number;
-  quincena: string;
 }
 
 @Injectable({

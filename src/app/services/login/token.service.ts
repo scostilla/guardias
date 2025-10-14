@@ -25,6 +25,9 @@ export class TokenService {
   private currentRoleSubject = new BehaviorSubject<string | null>(this.getCurrentRole());
   currentRole$ = this.currentRoleSubject.asObservable();
 
+  private currentProfessionalRoleSubject = new BehaviorSubject<string | null>(this.getCurrentProfessionalRole());
+  currentProfessionalRole$ = this.currentProfessionalRoleSubject.asObservable();
+
   private isLoggedSubject = new BehaviorSubject<boolean>(this.getToken() !== null);
   isLogged$ = this.isLoggedSubject.asObservable();
 
@@ -129,7 +132,7 @@ export class TokenService {
     return bytes.toString(CryptoJS.enc.Utf8);
   }
 
-  // ====== Rol actual ======
+  // ====== Rol General ======
   setCurrentRole(role: string | null): void {
     if (role !== null) {
       const encryptedRole = this.encrypt(role);
@@ -143,6 +146,27 @@ export class TokenService {
 
   getCurrentRole(): string | null {
     const encryptedRole = sessionStorage.getItem('currentRole');
+    if (encryptedRole) {
+      const decryptedRole = this.decrypt(encryptedRole);
+      return decryptedRole;
+    }
+    return null;
+  }
+
+  // ====== Rol profesional ======
+  setCurrentProfessionalRole(role: string | null): void {
+    if (role !== null) {
+      const encryptedRole = this.encrypt(role);
+      sessionStorage.setItem('currentProfessionalRole', encryptedRole);
+      this.currentProfessionalRoleSubject.next(role);
+    } else {
+      sessionStorage.removeItem('currentProfessionalRole');
+      this.currentProfessionalRoleSubject.next(null);
+    }
+  }
+
+  getCurrentProfessionalRole(): string | null {
+    const encryptedRole = sessionStorage.getItem('currentProfessionalRole');
     if (encryptedRole) {
       const decryptedRole = this.decrypt(encryptedRole);
       return decryptedRole;

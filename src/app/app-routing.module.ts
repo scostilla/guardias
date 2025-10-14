@@ -267,7 +267,7 @@ const routes: Routes = [
   {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-  {path:"home-hospital", component:HomeHospitalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_HOSPITAL', 'ROLE_USER'] }},
+  {path:"home-hospital", component:HomeHospitalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_HOSPITAL'] }},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
   {path: 'login', component:LoginComponent},

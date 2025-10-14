@@ -131,7 +131,6 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     if (fecha) {
       this.selectedMonth = fecha.mes;
       this.selectedYear = fecha.anio;
-      this.selectedQuincena = fecha.quincena;
 
       this.inicializarDatos();
     } else {
@@ -334,29 +333,13 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   }
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment()
-      .year(this.selectedYear)
-      .month(this.selectedMonth - 1)
-      .startOf('month');
-
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
     const endOfMonth = startOfMonth.clone().endOf('month');
-
-    let start: moment.Moment;
-    let end: moment.Moment;
-
-    if (this.selectedQuincena === 'PRIMERA') {
-      start = startOfMonth.clone();
-      end = startOfMonth.clone().date(15);
-    } else {
-      start = startOfMonth.clone().date(16);
-      end = endOfMonth.clone();
-    }
-
-    let day = start.clone();
+    let day = startOfMonth.clone();
 
     this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
 
-    while (day <= end) {
+    while (day <= endOfMonth) {
       this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
@@ -563,7 +546,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
     const anio = this.selectedYear;
     const efectorId = this.efectorId;
-    const quincena = this.selectedQuincena!;
+    const quincena = 'FUERA_DE_TERMINO';
 
     if (!efectorId) {
       console.error('El ID del efector no puede ser null');

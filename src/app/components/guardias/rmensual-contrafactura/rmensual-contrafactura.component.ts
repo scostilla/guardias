@@ -772,7 +772,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     this.registroMensualService.setFecha({
       mes: this.selectedMonth,
       anio: this.selectedYear,
-      quincena: this.selectedQuincena
     });
 
     this.router.navigate(['/rmensual-contrafactura-fuera-termino']);

@@ -2,7 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-6 col-md-7">
-      <div class="titulos">Fuera de término: <span class="titulos-second">CONTRAFACTURA</span> <h2 style="margin-left: 35px;">({{ this.selectedQuincena }} QUINCENA)</h2></div>
+      <div class="titulos">Fuera de término: <span class="titulos-second">CONTRAFACTURA</span></div>
     </div>
     <div class="col-6 col-md-2 m d-flex justify-content-end">
       <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/rmensual-contrafactura">
@@ -100,8 +100,8 @@
   <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
-      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }}. Al ser creada pasará a revisión por el director del hospital.
+      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA fuera de término para
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/> Al ser creada pasará a revisión por el director del hospital.
     </div>
   </div>
 

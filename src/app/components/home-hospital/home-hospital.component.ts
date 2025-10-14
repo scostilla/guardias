@@ -55,7 +55,7 @@ onLogin(): void {
 
       if (roles.includes('ROLE_USER')) {
         // Si el login es correcto y el rol es profesional
-        this.tokenService.setCurrentRole('ROLE_USER');
+        this.tokenService.setCurrentProfessionalRole('ROLE_USER');
         this.router.navigate(['/home-profesional']);
       } else {
         // Si no es profesional, no lo dejamos pasar
