@@ -11,6 +11,7 @@ import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -75,7 +76,8 @@ export class CapsEditComponent implements OnInit {
     if (this.data?.url && this.data.url.trim() !== '') {
       console.log('📸 CAPS tiene URL de imagen:', this.data.url);
       this.capsForm.patchValue({ url: this.data.url });
-      this.fileUrl = `http://localhost:8080${this.data.url}`;
+
+      this.fileUrl = `${environment.apiUrl}${this.data.url}`;
       console.log('🖼️ URL completa construida:', this.fileUrl);
     } else {
       console.log('❌ CAPS sin URL de imagen válida');
@@ -89,7 +91,7 @@ export class CapsEditComponent implements OnInit {
             if (capsCompleto.url && capsCompleto.url.trim() !== '') {
               console.log('📸 URL encontrada en servidor:', capsCompleto.url);
               this.capsForm.patchValue({ url: capsCompleto.url });
-              this.fileUrl = `http://localhost:8080${capsCompleto.url}`;
+              this.fileUrl = `${environment.apiUrl}${capsCompleto.url}`;
               
               // 🔥 ACTUALIZAR EL DATA OBJETO
               this.data.url = capsCompleto.url;
@@ -309,7 +311,7 @@ onFileSelected(event: any): void {
     this.uploadError = `Esta imagen ya existe: ${response.existingFile}`;
 
     this.selectedFile = null;
-    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.fileUrl = `${environment.apiUrl}${response.url}`;
     this.capsForm.patchValue({ url: response.url });
     
     const fileInput = document.getElementById('archivo') as HTMLInputElement;
@@ -436,7 +438,7 @@ onFileSelected(event: any): void {
         console.log('📝 URL de la imagen:', response.url);
         
         this.isUploading = false;
-        this.fileUrl = `http://localhost:8080${response.url}`;
+        this.fileUrl = `${environment.apiUrl}${response.url}`;
         
         // 🔥 LIMPIAR INPUT FILE
         const fileInput = document.getElementById('archivo') as HTMLInputElement;
@@ -478,7 +480,7 @@ onFileSelected(event: any): void {
         console.log('✅ Imagen subida exitosamente después de actualizar CAPS:', response);
         console.log('📝 URL de la imagen:', response.url);
         
-        this.fileUrl = `http://localhost:8080${response.url}`;
+        this.fileUrl = `${environment.apiUrl}${response.url}`;
         
         // 🔥 LIMPIAR INPUT FILE
         const fileInput = document.getElementById('archivo') as HTMLInputElement;
@@ -537,7 +539,7 @@ onFileSelected(event: any): void {
                 
                 if (uploadResponse && uploadResponse.url) {
                   this.capsForm.patchValue({ url: uploadResponse.url });
-                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
                   result.url = uploadResponse.url;
                 }
                 
@@ -578,7 +580,7 @@ onFileSelected(event: any): void {
           if (uploadResponse && uploadResponse.url) {
             console.log('🎯 Actualizando formulario con URL:', uploadResponse.url);
             this.capsForm.patchValue({ url: uploadResponse.url });
-            this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+            this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
             capsCreado.url = uploadResponse.url;
             console.log('✅ URL actualizada en capsCreado:', capsCreado.url);
           } else {

@@ -15,6 +15,7 @@ import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistenci
 import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +24,7 @@ export class AsistencialService {
   private secretKey = 'Dph*FfLlMmNn99';
 
 
-  asistencialesURL = 'http://localhost:8080/asistencial/';
+  asistencialesURL = `${environment.apiUrl}/asistencial/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

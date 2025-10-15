@@ -9,6 +9,7 @@ import { Region } from 'src/app/models/Configuracion/Region';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-hospital-edit',
@@ -77,7 +78,7 @@ export class HospitalEditComponent implements OnInit {
   if (this.data?.url && this.data.url.trim() !== '') {
     console.log('📸 Hospital tiene URL de imagen:', this.data.url);
     this.hospitalForm.patchValue({ url: this.data.url });
-    this.fileUrl = `http://localhost:8080${this.data.url}`;
+    this.fileUrl = `${environment.apiUrl}${this.data.url}`;
     console.log('🖼️ URL completa construida:', this.fileUrl);
   } else {
     console.log('❌ Hospital sin URL de imagen válida');
@@ -95,7 +96,7 @@ export class HospitalEditComponent implements OnInit {
           if (hospitalCompleto.url && hospitalCompleto.url.trim() !== '') {
             console.log('📸 URL encontrada en servidor:', hospitalCompleto.url);
             this.hospitalForm.patchValue({ url: hospitalCompleto.url });
-            this.fileUrl = `http://localhost:8080${hospitalCompleto.url}`;
+            this.fileUrl = `${environment.apiUrl}${hospitalCompleto.url}`;
             
             // 🔥 ACTUALIZAR EL DATA OBJETO
             this.data.url = hospitalCompleto.url;
@@ -117,7 +118,7 @@ export class HospitalEditComponent implements OnInit {
    if (this.data?.url) {
     console.log('📸 Hospital tiene URL de imagen:', this.data.url);
     this.hospitalForm.patchValue({ url: this.data.url });
-    this.fileUrl = `http://localhost:8080${this.data.url}`;
+    this.fileUrl = `${environment.apiUrl}${this.data.url}`;
   } else {
     console.log('❌ Hospital sin URL de imagen');
   }
@@ -339,7 +340,7 @@ onMouseLeave(event: MouseEvent): void {
 
     // 🔥 LIMPIAR SELECCIÓN Y MANTENER IMAGEN EXISTENTE
     this.selectedFile = null;
-    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.fileUrl = `${environment.apiUrl}${response.url}`;
     this.hospitalForm.patchValue({ url: response.url });
     
     // 🔥 LIMPIAR INPUT FILE
@@ -375,7 +376,7 @@ onMouseLeave(event: MouseEvent): void {
           console.log('⚠️ Imagen duplicada detectada');
           
           // Mantener la imagen existente
-          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.fileUrl = `${environment.apiUrl}${response.url}`;
           this.hospitalForm.patchValue({ url: response.url });
           
           // Limpiar selección
@@ -473,7 +474,7 @@ onMouseLeave(event: MouseEvent): void {
   private handleSuccessfulUpload(response: any): void {
     console.log('✅ Respuesta completa del servidor:', response);
     
-    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.fileUrl = `${environment.apiUrl}${response.url}`;
     this.hospitalForm.patchValue({ url: response.url });
     this.hospitalForm.markAsDirty();
     
@@ -574,7 +575,7 @@ uploadImage(): void {
         this.isUploading = false;
         
         // 🔥 ACTUALIZAR LA URL LOCAL DE LA IMAGEN
-        this.fileUrl = `http://localhost:8080${response.url}`;
+        this.fileUrl = `${environment.apiUrl}${response.url}`;
         
         // Limpiar el input file
         const fileInput = document.getElementById('archivo') as HTMLInputElement;
@@ -632,7 +633,7 @@ uploadImage(): void {
               
               if (uploadResponse && uploadResponse.url) {
                 this.hospitalForm.patchValue({ url: uploadResponse.url });
-                this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
                 result.url = uploadResponse.url;
               }
               
@@ -672,7 +673,7 @@ uploadImage(): void {
               
               if (uploadResponse && uploadResponse.url) {
                 this.hospitalForm.patchValue({ url: uploadResponse.url });
-                this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
                 hospitalCreado.url = uploadResponse.url;
               }
               
@@ -712,7 +713,7 @@ private uploadImageAfterUpdate(hospitalId: number): Promise<any> {
         console.log('📝 URL de la imagen:', response.url);
         
         // 🔥 ACTUALIZAR LA URL LOCAL DE LA IMAGEN
-        this.fileUrl = `http://localhost:8080${response.url}`;
+        this.fileUrl = `${environment.apiUrl}${response.url}`;
         
         // Limpiar el input file
         const fileInput = document.getElementById('archivo') as HTMLInputElement;

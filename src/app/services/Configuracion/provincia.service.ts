@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { Provincia } from "src/app/models/Configuracion/Provincia";
 import { ProvinciaDto } from "src/app/dto/Configuracion/ProvinciaDto";
 import { tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { tap } from 'rxjs/operators';
 })
 export class ProvinciaService {
 
-  provinciasURL = 'http://localhost:8080/provincia/';
+  provinciasURL = `${environment.apiUrl}/provincia/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

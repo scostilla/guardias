@@ -4,13 +4,14 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Feriado } from "src/app/models/Configuracion/Feriado";
 import { FeriadoDto } from "src/app/dto/Configuracion/FeriadoDto";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeriadoService {
 
-  feriadosURL = 'http://localhost:8080/feriado/';
+  feriadosURL = `${environment.apiUrl}/feriado/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

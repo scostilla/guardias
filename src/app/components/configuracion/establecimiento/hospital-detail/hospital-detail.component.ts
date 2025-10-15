@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-hospital-detail',
@@ -24,7 +25,7 @@ export class HospitalDetailComponent implements OnInit {
     console.log('🔗 URL original:', this.hospital.url);
     
     if (this.hospital.url) {
-      this.imageUrl = `http://localhost:8080${this.hospital.url}`;
+      this.imageUrl = `${environment.apiUrl}${this.hospital.url}`; 
       console.log('🖼️ URL completa construida:', this.imageUrl);
     } else {
       console.log('❌ No hay URL de imagen');

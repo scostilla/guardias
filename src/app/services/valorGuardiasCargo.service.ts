@@ -5,6 +5,7 @@ import { map, tap } from 'rxjs/operators';
 import { ValorGuardiasCargo } from "src/app/models/ValorGuardiasCargo";
 import { ValorGuardias } from "src/app/models/ValorGuardias";
 import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import * as moment from 'moment';
 export class ValorGuardiasCargoService {
 
   
-    valorGuardiasCargoURL = 'http://localhost:8080/valorGuardiaCargoYagrup/';
+    valorGuardiasCargoURL = `${environment.apiUrl}/valorGuardiaCargoYagrup/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

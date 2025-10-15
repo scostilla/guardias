@@ -11,13 +11,14 @@ import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/Verifi
 import { CronogramaTentativoServicioDto } from 'src/app/dto/Cronogramas/CronogramaTentativoServicioDto';
 import { TentativoIdsResponseDto } from 'src/app/dto/Cronogramas/TentativoIdsResponseDto';
 import { TentativoSearchRequestDto } from 'src/app/dto/Cronogramas/TentativoSearchRequestDto';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CronogramaTentativoService {  
     
-      cTentativoURL = 'http://localhost:8080/cronogramaTentativo/';
+      cTentativoURL = `${environment.apiUrl}/cronogramaTentativo/`;
       private _refresh$ = new Subject<void>();
     
       constructor(private httpClient: HttpClient) { }

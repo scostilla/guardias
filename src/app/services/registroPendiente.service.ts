@@ -2,13 +2,14 @@
   import { Injectable } from "@angular/core";
   import { Observable, Subject, tap } from "rxjs";
 import { RegistrosPendientes } from "../models/RegistrosPendientes";
+import { environment } from "src/environments/environment";
 
   @Injectable({
       providedIn: 'root'
     })
     export class RegistroPendienteService {
     
-      registroPendienteURL = 'http://localhost:8080/registrosPendientes/';
+      registroPendienteURL = `${environment.apiUrl}/registrosPendientes/`;
       private _refresh$ = new Subject<void>();
     
       constructor(private httpClient: HttpClient) { }

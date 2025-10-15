@@ -6,6 +6,7 @@ import { LegajoBajaDto } from 'src/app/dto/Configuracion/LegajoBajaDto';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 import { LegajoActualDto } from 'src/app/dto/Configuracion/asistencial/LegajoActualDto';
 import { Legajo } from "src/app/models/Configuracion/Legajo";
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -13,7 +14,7 @@ import { Legajo } from "src/app/models/Configuracion/Legajo";
 })
 export class LegajoService {
 
-  legajosURL = 'http://localhost:8080/legajo/';
+  legajosURL = `${environment.apiUrl}/legajo/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
@@ -58,7 +59,7 @@ public delete(id: number, legajoBajaDto: LegajoBajaDto): Observable<any> {
 
 // Método para verificar si el asistencial es autoridad
 public verificarAutoridad(id: number): Observable<any> {
-  return this.httpClient.get<any>(`http://localhost:8080/legajo/esAutoridad/${id}`);
+  return this.httpClient.get<any>( `${environment.apiUrl}/legajo/esAutoridad/${id}`);
 }
 
 tieneTipoGuardiaPermitido(idPersona: number): Observable<boolean> {

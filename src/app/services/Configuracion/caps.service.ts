@@ -6,13 +6,14 @@ import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
 import { EfectorCapsDto } from "src/app/dto/Configuracion/efector/EfectorCapsDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { Caps } from "src/app/models/Configuracion/Caps";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CapsService {
 
-  capsURL = 'http://localhost:8080/caps/';
+  capsURL = `${environment.apiUrl}/caps/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

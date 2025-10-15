@@ -7,13 +7,15 @@ import { Usuario } from 'src/app/models/login/Usuario';
 import { JwtDTO } from 'src/app/models/login/jwt-dto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
 
+import { environment } from 'src/environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  authUrl =  'http://localhost:8080/auth/' ;
+  authUrl = `${environment.apiUrl}/auth/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

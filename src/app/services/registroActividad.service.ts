@@ -6,13 +6,14 @@ import { RegActivNombresDto } from "../dto/RegistroActividad/RegActivNombresDto"
 import { RegActivRegSalidaDto } from "../dto/RegistroActividad/RegActivRegSalidaDto";
 import { RegistroActividadDto } from "../dto/RegistroActividadDto";
 import { RegistroActividad } from "../models/RegistroActividad";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegistroActividadService {
 
-  registroActividadURL = 'http://localhost:8080/registroActividad/';
+  registroActividadURL = `${environment.apiUrl}/registroActividad/`;
   private _refresh$ = new Subject<void>();
   private registroIdSubject = new BehaviorSubject<number | null>(null);
 

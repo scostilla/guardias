@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Notificacion } from "src/app/models/Notificacion";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificacionService {
 
-  notificacionesURL = 'http://localhost:8080/notificacion/';
+  notificacionesURL = `${environment.apiUrl}/notificacion/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

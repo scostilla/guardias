@@ -54,6 +54,7 @@ import { Caps } from 'src/app/models/Configuracion/Caps';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { environment } from 'src/environments/environment';
 
 
 interface Agrup {
@@ -917,7 +918,7 @@ onFileSelected(event: any): void {
           console.log('📝 URL de la imagen:', response.url);
           
           this.isUploading = false;
-          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.fileUrl = `${environment.apiUrl}${response.url}`;
           
           const fileInput = document.getElementById('archivo') as HTMLInputElement;
           if (fileInput) {

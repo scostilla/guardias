@@ -5,6 +5,7 @@ import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class LegajoDetailComponent implements OnInit {
   console.log(' Url Original:', this.legajo.url)
 
   if (this.legajo.url) {
-      this.imageUrl = `http://localhost:8080${this.legajo.url}`;
+      this.imageUrl = `${environment.apiUrl}${this.legajo.url}`; 
       console.log('🖼️ URL completa construida:', this.imageUrl);
     } else {
       console.log('❌ No hay URL de imagen');

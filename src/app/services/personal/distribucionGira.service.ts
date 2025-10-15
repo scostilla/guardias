@@ -5,13 +5,14 @@ import { tap } from 'rxjs/operators';
 import { DistribucionGiraDto } from 'src/app/dto/personal/DistribucionGiraDto';
 import { DistribucionGira } from "src/app/models/personal/DistribucionGira";
 import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/CronogramaTentativoResquestDto";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DistribucionGiraService {
 
-  distribucionGirasURL = 'http://localhost:8080/distribucionGira/';
+  distribucionGirasURL = `${environment.apiUrl}/distribucionGira/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

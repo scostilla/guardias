@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CargaHoraria } from 'src/app/models/Configuracion/CargaHoraria';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
   })
   export class CargaHorariaService {
   
-    cargaHorariaURL = 'http://localhost:8080/cargaHoraria/';
+    cargaHorariaURL = `${environment.apiUrl}/cargaHoraria/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

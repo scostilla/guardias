@@ -4,13 +4,14 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Suspension } from "src/app/models/Configuracion/Suspension";
 import { SuspensionDto } from "src/app/dto/Configuracion/SuspensionDto";
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class SuspensionService {
-  SuspensionesURL = 'http://localhost:8080/suspencion/';
+  SuspensionesURL = `${environment.apiUrl}/suspencion/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

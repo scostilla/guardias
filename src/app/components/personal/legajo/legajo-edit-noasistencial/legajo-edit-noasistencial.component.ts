@@ -33,6 +33,7 @@ import { forkJoin } from 'rxjs';
 import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
 import { Caps } from 'src/app/models/Configuracion/Caps';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
+import { environment } from 'src/environments/environment';
 
 
 interface Agrup {
@@ -231,7 +232,7 @@ if (navigation?.extras.state) {
   ngOnInit(): void {
   
       if (this.initialData?.url) {
-            this.fileUrl = `http://localhost:8080${this.initialData.url}`;
+            this.fileUrl = `${environment.apiUrl}${this.initialData.url}`; 
           }
       
         // 🎯 VERIFICAR SI ES DIRECTOR REGIONAL
@@ -749,7 +750,7 @@ private handleDuplicateImageOnSelection(response: any): void {
     this.selectedFile = null;
     
     // 🔥 ACTUALIZAR AUTOMÁTICAMENTE LA URL SIN SUBIR ARCHIVO
-    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.fileUrl = `${environment.apiUrl}${response.url}`; 
     this.legajoForm.patchValue({ url: response.url });
     
     this.toastr.success(
@@ -768,7 +769,7 @@ private handleDuplicateImageOnSelection(response: any): void {
   this.isDuplicateImage = true;
   this.uploadError = `Esta imagen ya existe: ${response.existingFile}`;
   this.selectedFile = null;
-  this.fileUrl = `http://localhost:8080${response.url}`;
+  this.fileUrl = `${environment.apiUrl}${response.url}`;
   
   // 🔥 LIMPIAR INPUT FILE
   const fileInput = document.getElementById('archivo') as HTMLInputElement;
@@ -803,7 +804,7 @@ private handleDuplicateImageOnSelection(response: any): void {
   
   // 🔥 SI HAY IMAGEN EXISTENTE, MOSTRARLA DE NUEVO
   if (this.initialData?.url) {
-    this.fileUrl = `http://localhost:8080${this.initialData.url}`;
+    this.fileUrl = `${environment.apiUrl}${this.initialData.url}`; 
   } else {
     this.fileUrl = null;
   }
@@ -888,7 +889,7 @@ private handleDuplicateImageOnSelection(response: any): void {
           this.toastr.success('Legajo e imagen actualizados correctamente');
         }
         
-        this.fileUrl = `http://localhost:8080${response.url}`;
+        this.fileUrl = `${environment.apiUrl}${response.url}`;
         
         // 🔥 LIMPIAR INPUT FILE
         const fileInput = document.getElementById('archivo') as HTMLInputElement;

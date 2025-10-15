@@ -8,6 +8,7 @@ import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/Cronogra
 import { ValidacionCronogramaResponseDto } from "src/app/dto/Cronogramas/ValidacionCronogramaResponseDto";
 import { DistribucionCheckDto } from "src/app/dto/personal/distribucionGuardia/DistribucionCheckDto";
 import { ConsultaLicenciaCompensatorioDto } from "src/app/dto/novedades/ConsultaLicenciaCompensatorioDto";
+import { environment } from 'src/environments/environment';
 
 
 
@@ -17,7 +18,7 @@ import { ConsultaLicenciaCompensatorioDto } from "src/app/dto/novedades/Consulta
 })
 export class DistribucionGuardiaService {
 
-  distribucionGuardiasURL = 'http://localhost:8080/distribucionGuardia/';
+  distribucionGuardiasURL = `${environment.apiUrl}/distribucionGuardia/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

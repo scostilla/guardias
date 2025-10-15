@@ -4,13 +4,14 @@ import { Observable, Subject, tap } from "rxjs";
 import { RegistroMensual } from "../models/RegistroMensual";
 import { RegistroMensualDto } from "../dto/RegistroMensualDto";
 import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
   })
   export class RegistroMensualService {
   
-    registroMensualURL = 'http://localhost:8080/registroMensual/';
+    registroMensualURL = `${environment.apiUrl}/registroMensual/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

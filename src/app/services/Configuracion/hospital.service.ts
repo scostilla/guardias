@@ -8,6 +8,7 @@ import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSumm
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
 import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
 import { Hospital } from "src/app/models/Configuracion/Hospital";
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -15,7 +16,7 @@ import { Hospital } from "src/app/models/Configuracion/Hospital";
 })
 export class HospitalService {
 
-  hospitalesURL = 'http://localhost:8080/hospital/';
+  hospitalesURL = `${environment.apiUrl}/hospital/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

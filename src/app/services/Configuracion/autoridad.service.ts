@@ -4,13 +4,14 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AutoridadDto } from 'src/app/dto/Configuracion/AutoridadDto';
 import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
   })
   export class AutoridadService {
   
-    autoridadURL = 'http://localhost:8080/autoridad/';
+    autoridadURL = `${environment.apiUrl}/autoridad/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

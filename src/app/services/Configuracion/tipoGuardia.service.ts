@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TipoGuardia } from "src/app/models/Configuracion/TipoGuardia";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TipoGuardiaService {
 
-  GuardiasURL = 'http://localhost:8080/tipoGuardia/';
+  GuardiasURL = `${environment.apiUrl}/tipoGuardia/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

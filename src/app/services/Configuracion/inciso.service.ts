@@ -4,13 +4,14 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { IncisoDto } from 'src/app/dto/Configuracion/IncisoDto';
 import { Inciso } from 'src/app/models/Configuracion/Inciso';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
   })
   export class IncisoService {
   
-    incisoURL = 'http://localhost:8080/inciso/';
+    incisoURL = `${environment.apiUrl}/inciso/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }
