@@ -264,7 +264,7 @@ import { PersonalLegajoComponent } from './components/personal/personal-legajo/p
 import { PersonalNoAsistencialComponent } from './components/personal/personal-no-asistencial/personal-no-asistencial.component';
 import { PersonalSinLegajoComponent } from './components/personal/personal-sin-legajo/personal-sin-legajo.component';
 import { PersonalComponent } from './components/personal/personal/personal.component';
-import { interceptorProvider } from './interceptors/interceptor.service';
+import { InterceptorService } from './interceptors/interceptor.service';
 
 import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 
@@ -592,12 +592,16 @@ import { HomeHospitalComponent } from './components/home-hospital/home-hospital.
     ProfessionalDataServiceService,
     { provide: LOCALE_ID, useValue: 'es-AR' },
     DatePipe,
+    // Registrar InterceptorService primero (para URLs y tokens)
+    { provide: HTTP_INTERCEPTORS, 
+      useClass: InterceptorService, 
+      multi: true },
+    // Luego SpinnerInterceptor (para UI/spinner)
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SpinnerInterceptor,
       multi: true
-    },
-    interceptorProvider
+    }
   ],
   
   bootstrap: [AppComponent],
