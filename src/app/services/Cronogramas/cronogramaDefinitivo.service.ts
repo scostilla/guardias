@@ -6,7 +6,7 @@ import { tap } from 'rxjs/operators';
 import { CronogramaDefinitivo } from 'src/app/models/Cronogramas/CronogramaDefinitivo';
 import { CronogramaDefinitivoDto } from 'src/app/dto/Cronogramas/CronogramaDefinitivoDto';
 import { CronogramaDefinitivoListDto } from 'src/app/dto/CronogramaDefinitivoListDto';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

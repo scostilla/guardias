@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TipoNovedadPersonalDto } from 'src/app/dto/personal/TipoNovedadPersonalDto';
 import { TipoNovedadPersonal } from "src/app/models/personal/TipoNovedadPersonal";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

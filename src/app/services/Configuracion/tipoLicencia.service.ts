@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TipoLicenciaDto } from 'src/app/dto/Configuracion/TipoLicenciaDto';
 import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

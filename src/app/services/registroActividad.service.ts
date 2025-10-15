@@ -6,7 +6,7 @@ import { RegActivNombresDto } from "../dto/RegistroActividad/RegActivNombresDto"
 import { RegActivRegSalidaDto } from "../dto/RegistroActividad/RegActivRegSalidaDto";
 import { RegistroActividadDto } from "../dto/RegistroActividadDto";
 import { RegistroActividad } from "../models/RegistroActividad";
-import { environment } from "src/environments/environment";
+import { environment } from "src/environments/environment.prod";
 
 @Injectable({
   providedIn: 'root'

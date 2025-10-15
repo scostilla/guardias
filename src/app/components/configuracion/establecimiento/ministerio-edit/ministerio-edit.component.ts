@@ -9,7 +9,7 @@ import { Region } from 'src/app/models/Configuracion/Region';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Component({

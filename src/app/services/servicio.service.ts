@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject, tap } from "rxjs";
 import { Servicio } from "../models/Configuracion/Servicio";
 import { ServicioDto } from "../dto/ServicioDto";
-import { environment } from "src/environments/environment";
+import { environment } from "src/environments/environment.prod";
 
 @Injectable({
     providedIn: 'root'

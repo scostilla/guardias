@@ -15,7 +15,7 @@ import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistenci
 import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 @Injectable({
   providedIn: 'root'
 })

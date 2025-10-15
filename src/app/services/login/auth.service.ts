@@ -7,7 +7,7 @@ import { Usuario } from 'src/app/models/login/Usuario';
 import { JwtDTO } from 'src/app/models/login/jwt-dto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
 
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

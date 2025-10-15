@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Feriado } from "src/app/models/Configuracion/Feriado";
 import { FeriadoDto } from "src/app/dto/Configuracion/FeriadoDto";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

@@ -7,7 +7,7 @@ import { FacturaDto } from '../dto/FacturaDto';
 import { FacturaDetailDto } from '../dto/FacturaDetailDto';
 import { FacturaSummaryDto } from '../dto/FacturaSummaryDto';
 import { Factura } from '../models/Factura';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

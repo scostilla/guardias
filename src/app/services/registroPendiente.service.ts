@@ -2,7 +2,7 @@
   import { Injectable } from "@angular/core";
   import { Observable, Subject, tap } from "rxjs";
 import { RegistrosPendientes } from "../models/RegistrosPendientes";
-import { environment } from "src/environments/environment";
+import { environment } from "src/environments/environment.prod";
 
   @Injectable({
       providedIn: 'root'

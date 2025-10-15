@@ -11,7 +11,7 @@ import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Component({

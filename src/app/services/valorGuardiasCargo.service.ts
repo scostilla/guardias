@@ -5,7 +5,7 @@ import { map, tap } from 'rxjs/operators';
 import { ValorGuardiasCargo } from "src/app/models/ValorGuardiasCargo";
 import { ValorGuardias } from "src/app/models/ValorGuardias";
 import * as moment from 'moment';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

@@ -6,7 +6,7 @@ import { CapsDto } from "src/app/dto/Configuracion/CapsDto";
 import { EfectorCapsDto } from "src/app/dto/Configuracion/efector/EfectorCapsDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { Caps } from "src/app/models/Configuracion/Caps";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

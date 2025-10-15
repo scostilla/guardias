@@ -5,7 +5,7 @@ import { Especialidad } from 'src/app/models/Configuracion/Especialidad';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { Revista } from 'src/app/models/Configuracion/Revista';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Component({

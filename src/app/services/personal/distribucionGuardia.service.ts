@@ -8,7 +8,7 @@ import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/Cronogra
 import { ValidacionCronogramaResponseDto } from "src/app/dto/Cronogramas/ValidacionCronogramaResponseDto";
 import { DistribucionCheckDto } from "src/app/dto/personal/distribucionGuardia/DistribucionCheckDto";
 import { ConsultaLicenciaCompensatorioDto } from "src/app/dto/novedades/ConsultaLicenciaCompensatorioDto";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 

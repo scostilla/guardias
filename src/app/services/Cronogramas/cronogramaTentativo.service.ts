@@ -11,7 +11,7 @@ import { VerificacionTentativoResponseDto } from 'src/app/dto/Cronogramas/Verifi
 import { CronogramaTentativoServicioDto } from 'src/app/dto/Cronogramas/CronogramaTentativoServicioDto';
 import { TentativoIdsResponseDto } from 'src/app/dto/Cronogramas/TentativoIdsResponseDto';
 import { TentativoSearchRequestDto } from 'src/app/dto/Cronogramas/TentativoSearchRequestDto';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { IncisoDto } from 'src/app/dto/Configuracion/IncisoDto';
 import { Inciso } from 'src/app/models/Configuracion/Inciso';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
     providedIn: 'root'

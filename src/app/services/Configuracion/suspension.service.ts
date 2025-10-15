@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Suspension } from "src/app/models/Configuracion/Suspension";
 import { SuspensionDto } from "src/app/dto/Configuracion/SuspensionDto";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

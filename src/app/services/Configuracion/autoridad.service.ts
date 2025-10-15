@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AutoridadDto } from 'src/app/dto/Configuracion/AutoridadDto';
 import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
     providedIn: 'root'

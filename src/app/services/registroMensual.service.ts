@@ -4,7 +4,7 @@ import { Observable, Subject, tap } from "rxjs";
 import { RegistroMensual } from "../models/RegistroMensual";
 import { RegistroMensualDto } from "../dto/RegistroMensualDto";
 import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
-import { environment } from "src/environments/environment";
+import { environment } from "src/environments/environment.prod";
 
 @Injectable({
     providedIn: 'root'

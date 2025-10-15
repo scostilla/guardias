@@ -6,7 +6,7 @@ import { HabilitacionesGuardias } from "src/app/models/Configuracion/Habilitacio
 import { HabilitacionesGuardiasDto } from "src/app/dto/Configuracion/HabilitacionesGuardiasDto";
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

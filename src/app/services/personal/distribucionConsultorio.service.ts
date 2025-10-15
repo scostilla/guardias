@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import { DistribucionConsultorio } from "src/app/models/personal/DistribucionConsultorio";
 import { DistribucionConsultorioDto } from "src/app/dto/personal/DistribucionConsultorioDto";
 import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/CronogramaTentativoResquestDto";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

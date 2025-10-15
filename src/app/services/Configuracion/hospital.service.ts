@@ -8,7 +8,7 @@ import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSumm
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
 import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
 import { Hospital } from "src/app/models/Configuracion/Hospital";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

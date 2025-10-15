@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RevistaDto } from 'src/app/dto/Configuracion/RevistaDto';
 import { Revista } from "src/app/models/Configuracion/Revista";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

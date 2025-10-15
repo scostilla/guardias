@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { Provincia } from "src/app/models/Configuracion/Provincia";
 import { ProvinciaDto } from "src/app/dto/Configuracion/ProvinciaDto";
 import { tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

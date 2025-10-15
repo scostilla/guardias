@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LocalidadDto } from "src/app/dto/Configuracion/LocalidadDto";
 import { Localidad } from "src/app/models/Configuracion/Localidad";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({

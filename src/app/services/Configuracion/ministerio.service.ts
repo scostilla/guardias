@@ -6,7 +6,7 @@ import { Ministerio } from "src/app/models/Configuracion/Ministerio";
 import { MinisterioDto } from "src/app/dto/Configuracion/MinisterioDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { EfectorMinisterioDto } from "src/app/dto/Configuracion/efector/EfectorMinisterioDto";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

@@ -6,7 +6,7 @@ import { LegajoBajaDto } from 'src/app/dto/Configuracion/LegajoBajaDto';
 import { LegajoDto } from 'src/app/dto/Configuracion/LegajoDto';
 import { LegajoActualDto } from 'src/app/dto/Configuracion/asistencial/LegajoActualDto';
 import { Legajo } from "src/app/models/Configuracion/Legajo";
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
