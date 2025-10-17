@@ -59,11 +59,21 @@ export class FacturaService {
   }
 
   public logicDelete(id: number): Observable<any> {
-    return this.httpClient.put<any>(`${this.facturaURL}delete/${id}`, {});
+    return this.httpClient.put<any>(`${this.facturaURL}delete/${id}`, {})
+      .pipe(
+        tap(() => {
+          this._refresh$.next();
+        })
+      );
   }
 
   public fisicDelete(id: number): Observable<any> {
-    return this.httpClient.delete<any>(`${this.facturaURL}fisicdelete/${id}`);
+    return this.httpClient.delete<any>(`${this.facturaURL}fisicdelete/${id}`)
+      .pipe(
+        tap(() => {
+          this._refresh$.next();
+        })
+      );
   }
 
   public getMontoByQuincena(idAsistencial: number, idEfector: number, quincena: string, mes: string, anio: number): Observable<number> {
@@ -91,11 +101,13 @@ export class FacturaService {
     );
   }
 
-  // Verifica si existe factura
+  // Verifica si existe alguna factura
   existeFactura(idAsistencial: number, idEfector: number, anio: number, mes: string, quincena: string): Observable<boolean> {
-    return this.httpClient.get<boolean>(
-      `${this.facturaURL}existeFactura/${idAsistencial}/${idEfector}/${anio}/${mes}/${quincena}`
-    );
+    return this.httpClient.get<boolean>(`${this.facturaURL}existeFactura/${idAsistencial}/${idEfector}/${anio}/${mes}/${quincena}`);
+  }
+
+  existenDosFacturas(idAsistencial: number, idEfector: number, anio: number, mes: string, quincena: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.facturaURL}existenDosFacturas/${idAsistencial}/${idEfector}/${anio}/${mes}/${quincena}`);
   }
 
   /**

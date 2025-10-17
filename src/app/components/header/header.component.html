@@ -78,7 +78,7 @@
                 </button>
               </div>
             </mat-menu>
-          <button mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material" >
+          <button *ngIf="showUser" mat-fab [matMenuTriggerFor]="menu" type="submit" class="icon-material" >
             <mat-icon>account_circle</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
@@ -92,11 +92,11 @@
                   </div>
                 </div>
                 <div class="perfil-cargo">
-                  <span *ngIf="isAdministrativo" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Administrativo</span>
-                  <span *ngIf="isAutoridad" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Autoridad</span>
-                  <span *ngIf="isDph" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Dirección de Hospitales (Dph)</span>
-                  <span *ngIf="isUsuario" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Usuario</span>
-                  <span *ngIf="isSuper" matTooltip="Cambiar rol" routerLink="/" style="cursor: pointer;">Super Usuario</span>
+                  <span *ngIf="isAdministrativo">Administrativo</span>
+                  <span *ngIf="isAutoridad">Autoridad</span>
+                  <span *ngIf="isDph">Dirección de Hospitales (Dph)</span>
+                  <span *ngIf="isUsuario">Usuario</span>
+                  <span *ngIf="isSuper">Super Usuario</span>
                 </div>
               </div>
               <div class="col" type="button" (click)="onLogOut()" >

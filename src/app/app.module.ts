@@ -285,10 +285,12 @@ import { FacturaListComponent } from './components/guardias/factura/factura-list
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
 import { RmensualContrafacturaDetailComponent } from './components/guardias/rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
+import { RmensualContrafacturaFueraTerminoComponent } from './components/guardias/rmensual-contrafactura-fuera-termino/rmensual-contrafactura-fuera-termino.component';
 import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualExtraDetailComponent } from './components/guardias/rmensual-extra-detail/rmensual-extra-detail.component';
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
+import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
@@ -535,6 +537,8 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     FacturaListComponent,
     FacturaEditComponent,
     FacturaDetailComponent,
+    RmensualContrafacturaFueraTerminoComponent,
+    HomeHospitalComponent,
   ],
 
   imports: [

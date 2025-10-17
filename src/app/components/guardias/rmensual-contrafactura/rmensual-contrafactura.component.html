@@ -27,10 +27,15 @@
               class="button-pase"
               style="margin-left: 5px;"
               (click)="openDdjjConfirm()"
-              [disabled]="!isHabilitadoBotonDdjjFinal()"
-              [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal()}"
+              [disabled]="!isHabilitadoBotonDdjjFinal() || !existenCompletosDdjj"
+              [ngClass]="{'disabled-button-ddjj': !isHabilitadoBotonDdjjFinal() || !existenCompletosDdjj}"
               matTooltip="Crear DDJJ y enviar a Director">
         <mat-icon [ngClass]="{'flip-horizontal': botonDDJJIcon === 'assignment_return'}">{{ botonDDJJIcon }}</mat-icon>
+      </button>
+      <button *ngIf="mostrarFueraDeTerminoBtn" mat-fab
+              class="button-delete" style="margin-left: 5px;" matTooltip="Fuera de término"
+              (click)="openFueraDeTermino()">
+        <mat-icon>pending_actions</mat-icon>
       </button>
     </div>
 
@@ -100,7 +105,7 @@
   <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
-      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para
+      <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}. Al ser creada pasará a revisión por el director del hospital.
     </div>
   </div>
@@ -108,8 +113,8 @@
   <div *ngIf="!verificandoDdjj && ddjjYaExiste" class="text-aprobado">
     <mat-icon class="icono-pase">lock</mat-icon>
     <div class="mensaje-pase">
-      Se finalizó la creación de la DDJJ de CONTRAFACTURA para
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br>
+      Se finalizó la creación de la DDJJ de CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }}, con monto de factura completado.<br>
       La misma está en proceso de revisión por el Director del hospital.<br>
       Para revisar su resolución debes acceder a la <span class="cursor" routerLink="/ddjj-contrafactura">sección de DDJJ</span>.
     </div>
@@ -118,16 +123,16 @@
   <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar && isAdministrativo" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite. Contactáctate con la DPH para su creación.
+      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo establecido. Contactáctate con la DPH para su creación.
     </div>
   </div>
 
   <div *ngIf="mostrarMensajeRechazoDdjj() && hayDatosParaMostrar && !isAdministrativo" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para
-      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo limite.
+      No se realizó la creación de la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
+      {{ getMonthName(selectedMonth) }} {{ selectedYear }} en el tiempo establecido.
     </div>
   </div>
 
@@ -158,11 +163,33 @@
           <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(registro)">
             <mat-icon color="primary">zoom_in</mat-icon>
           </button>
-          <button mat-icon-button matTooltip="Cargar facturas" (click)="openFactura(registro)">
-            <mat-icon class="btnEdit">request_quote</mat-icon>
+
+          <span
+            [ngStyle]="{
+              'color': registro.estadoFacturacion === 'COMPLETADO' ? 'green' : 'red',
+              'font-weight': 'bold',
+              'margin-left': '4px',
+              'display': 'inline-block',
+              'width': '16px',
+              'text-align': 'center'
+            }"
+            matTooltip="{{ registro.estadoFacturacion === 'COMPLETADO' ? 'Completado' : registro.estadoFacturacion }}">
+            {{ registro.estadoFacturacion === 'COMPLETADO' ? '✔' : '!' }}
+          </span>
+
+          <button mat-icon-button matTooltip="Cargar facturas" (click)="openFactura(registro)"
+            [disabled]="ddjjYaExiste">
+            <mat-icon [ngClass]="!ddjjYaExiste ? 'btnEdit' : ''"> request_quote </mat-icon>
           </button>
-          <button mat-icon-button matTooltip="Listado de facturas" (click)="openFacturaList(registro)" *ngIf="facturaExisteMap[registro.id]">
-            <mat-icon class="btnEdit">receipt_long</mat-icon>
+          <button 
+            mat-icon-button
+            matTooltip="{{ facturaExisteMap[registro.id] ? 'Listado de facturas' : 'Aún no hay facturas' }}"
+            (click)="onOpenFacturaClick(registro)"
+            [disabled]="!facturaExisteMap[registro.id]">
+
+            <mat-icon [ngClass]="facturaExisteMap[registro.id] ? 'btnEdit' : ''">
+              receipt_long
+            </mat-icon>
           </button>
         </td>
       </ng-container>

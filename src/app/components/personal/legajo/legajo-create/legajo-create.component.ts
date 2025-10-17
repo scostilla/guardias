@@ -1105,16 +1105,22 @@ alMenosUnoRequeridoValidator(): ValidatorFn {
   }
 
 
-listProfesiones(): void {
-  this.profesionService.list().subscribe(data => {
-    this.profesiones = data;
-    this.profesionesFiltradas = this.profesiones.filter(p =>
-      p.nombre === 'Medico' || p.nombre === 'Bioquimico'
-    );
-  }, error => {
-    console.log(error);
-  });
-}
+  listProfesiones(): void {
+    this.profesionService.list().subscribe(data => {
+      this.profesiones = data;
+
+      this.profesionesFiltradas = this.profesiones.filter(p => {
+        const nombre = p.nombre
+          .toLowerCase()
+          .normalize("NFD") // separa letras y acentos
+          .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+
+        return nombre === 'medico' || nombre === 'bioquimico';
+      });
+    }, error => {
+      console.error(error);
+    });
+  }
 
   listTipoGuardia(): void {
     this.tipoGuardiaService.list().subscribe(data => {

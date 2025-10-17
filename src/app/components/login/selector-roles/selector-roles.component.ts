@@ -17,7 +17,8 @@ export class SelectorRolesComponent {
     'ROLE_USER': 'Usuario',
     'ROLE_DPH': 'DPH',
     'ROLE_SUPERUSER': 'Super usuario',
-    'ROLE_AUTORIDAD': 'Autoridad'
+    'ROLE_AUTORIDAD': 'Autoridad',
+    'ROLE_HOSPITAL': 'Hospital'
   };
 
   constructor(
@@ -36,6 +37,11 @@ export class SelectorRolesComponent {
   // Método para obtener el nombre legible de un rol
   getRoleNombres(role: string): string {
     return this.nombresRoles[role] || role;  // Si no se encuentra el rol, devuelve el rol tal cual
+  }
+
+  getRolesFiltrados(): string[] {
+    // Filtra los roles para no incluir ROLE_USER
+    return this.data.roles.filter((r: string) => r !== 'ROLE_USER');
   }
 
   cancelar(): void {

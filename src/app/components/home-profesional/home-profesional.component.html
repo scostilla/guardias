@@ -1,7 +1,8 @@
 <app-spinner></app-spinner>
 <div id="container-title-hosp" >
-    <div class="text-title-hosp"><mat-icon>person_pin</mat-icon> &nbsp;&nbsp;BIENVENIDO ({{efectorFijoId}})</div>
+    <div class="text-title-hosp"><mat-icon>person_pin</mat-icon> &nbsp;&nbsp;{{efectorNombre}}</div>
 </div>
+
 <div class="container">
   <section>
     <div class="container" >
@@ -37,4 +38,12 @@
             </div>
         </div>
   </section>
+
+    <div class="row mt-5">
+        <div class="col-4"></div>
+        <div class="col-4 m d-flex justify-content-center">
+            <button mat-raised-button color="primary" type="submit" (click)="onLogOutProfesional()"><mat-icon>exit_to_app</mat-icon>Cerrar sesión {{this.nombre}} {{this.apellido}}</button>
+        </div>
+        <div class="col-4"></div>
+    </div>
 </div>

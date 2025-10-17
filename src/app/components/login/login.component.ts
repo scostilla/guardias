@@ -35,18 +35,21 @@ export class LoginComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    // Si ya está logueado, verificamos los roles y gestionamos el flujo
-    if(this.tokenService.getToken()){
+    if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.isLoginFail = false;
       this.roles = this.tokenService.getAuthorities();
-      console.log("Roles: ", this.roles);
 
-      if (this.roles.length > 1) {
-        // Si tiene más de un rol, mostramos el diálogo para seleccionar el rol
+      const currentRole = this.tokenService.getCurrentRole();
+
+      if (currentRole) {
+        // Si ya hay un rol seleccionado: redirigir directamente
+        this.redirectUserBasedOnRole(currentRole);
+      } else if (this.roles.length > 1) {
+        // Si hay varios roles y aún no se seleccionó ninguno: abrir diálogo
         this.openRoleSelectionDialog();
       } else if (this.roles.length === 1) {
-        // Si tiene solo un rol, lo asignamos y lo redirigimos al home correspondiente
+        // Solo hay un rol, se asigna automáticamente
         const selectedRole = this.roles[0];
         this.tokenService.setCurrentRole(selectedRole);
         this.redirectUserBasedOnRole(selectedRole);
@@ -126,6 +129,8 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/home-page']);
     } else if (role === 'ROLE_USER') {
       this.router.navigate(['/home-profesional']);
+    } else if (role === 'ROLE_HOSPITAL') {
+      this.router.navigate(['/home-hospital']);
     }
   }
 

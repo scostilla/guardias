@@ -15,7 +15,7 @@ import { FacturaDetailComponent } from '../factura-detail/factura-detail.compone
 export class FacturaListComponent implements OnInit {
 
   facturas: FacturaDetailDto[] = [];
-  displayedColumns: string[] = ['numeroFactura', 'tipo', 'puntoVenta', 'fechaEmision', 'monto', 'acciones'];
+  displayedColumns: string[] = ['numeroFactura', 'fechaEmision', 'monto', 'acciones'];
   nombreTitular: string = '';
   apellidoTitular: string = '';
 
@@ -31,11 +31,19 @@ export class FacturaListComponent implements OnInit {
   ngOnInit(): void {
     console.log('🔹 Datos recibidos en el diálogo:', this.data);
 
-  if (this.data.asistencial) {
+    if (this.data.asistencial) {
       this.nombreTitular = this.data.asistencial.nombre || '';
       this.apellidoTitular = this.data.asistencial.apellido || '';
     }
-    
+
+    this.loadFacturas();
+
+    this.facturaService.refresh$.subscribe(() => {
+      this.loadFacturas();
+    });
+  }
+
+  private loadFacturas(): void {
     this.facturaService.getByFiltros(
       this.data.asistencial.id,
       this.data.idEfector,

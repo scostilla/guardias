@@ -314,7 +314,7 @@
   <div *ngIf="mensajeDirector === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Se ha superado el tiempo establecido para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director del hospital.<br/>
       Contactáctate con la DPH.
@@ -323,7 +323,7 @@
   <div *ngIf="mensajeDph === 'fuera_rango_tiempo' && (isAdministrativo || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Se ha superado el tiempo establecido para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director de la DPH.<br/>
       Contactáctate con la DPH.
@@ -333,7 +333,7 @@
   <div *ngIf="mensajeDirectorAuth === 'fuera_rango_tiempo' && (isAutoridad || isDph || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Se ha superado el tiempo establecido para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director del hospital.<br/>
       <span *ngIf="!isDph">Contactáctate con la DPH.</span>
@@ -343,7 +343,7 @@
   <div *ngIf="mensajeDphAuth === 'fuera_rango_tiempo' && (isAutoridad || isDph || isSuper)" class="text-rechazo">
     <mat-icon class="icono-pase">block</mat-icon>
     <div class="mensaje-pase">
-      Se ha superado el tiempo limite para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
+      Se ha superado el tiempo establecido para el envio de la DDJJ de guardias de CARGO y AGRUPACIÓN para
       {{ getMonthName(selectedMonth) }} {{ selectedYear }}.<br/>
       Falta aprobación del director de la DPH.<br/>
     </div>

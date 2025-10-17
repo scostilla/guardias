@@ -646,7 +646,7 @@ export class DdjjCargoyagrupComponent implements OnInit, OnDestroy {
     }
 
     const inicio = new Date(anio, mes - 1, 1);
-    const fin = new Date(anio, mes - 1, 26, 23, 59, 59);
+    const fin = new Date(anio, mes - 1, 10, 23, 59, 59);
 
     return { inicio, fin };
   }

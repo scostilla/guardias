@@ -6,6 +6,7 @@ import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -45,12 +46,12 @@ import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
 
 @Component({
-  selector: 'app-rmensual-contrafactura',
-  templateUrl: './rmensual-contrafactura.component.html',
-  styleUrls: ['./rmensual-contrafactura.component.css']
+  selector: 'app-rmensual-contrafactura-fuera-termino',
+  templateUrl: './rmensual-contrafactura-fuera-termino.component.html',
+  styleUrls: ['./rmensual-contrafactura-fuera-termino.component.css']
 })
 
-export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
+export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatTable) table!: MatTable<RegistroMensualListDto>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -72,9 +73,9 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   dialogRefFactura!: MatDialogRef<FacturaCreateComponent>;
 
   selectedServicio?: number | null = null;
-  selectedQuincena: string = 'PRIMERA';
-  selectedMonth: number = moment().month() + 1;
-  selectedYear: number = moment().year();
+  selectedQuincena!: string;
+  selectedMonth!: number;
+  selectedYear!: number;
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024, 2025];
   selectedMonthYear: string = '';
@@ -84,13 +85,10 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
   ddjjYaExiste: boolean = false;
-  existenCompletosDdjj: boolean = false;
-  verificandoCompletos: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
   facturaExisteMap: { [registroId: number]: boolean } = {};
-  mostrarFueraDeTerminoBtn = false;
 
   //Autenticación
   roles: string[] = [];
@@ -113,7 +111,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private tokenService: TokenService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
     this.paginatorIntl.nextPageLabel = "Siguiente página";
@@ -128,46 +127,66 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Obtener el ID efector
-    this.efectorId = this.efectorService.getCurrentEfectorId();
-      if (this.efectorId) {
-        this.loadEfectorName();
-          moment.locale('es');
-          this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
-          this.generarMesesDisponibles();
-          this.updateDateAndLoadData();
-          this.loadHospitalDetails();
-          this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
-    
-        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-          this.feriados = feriados;
-    });
+    const fecha = this.registroMensualService.getFecha(); // obtiene último valor
+    if (fecha) {
+      this.selectedMonth = fecha.mes;
+      this.selectedYear = fecha.anio;
 
-      } else {
-        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+      this.inicializarDatos();
+    } else {
+      // No hay datos: volver al componente anterior
+      console.warn('No hay state guardado, se vuelve al listado anterior');
+      this.toastr.warning('No se seleccionó un mes/año válido', 'Atención', {
+        timeOut: 4000,
+        positionClass: 'toast-top-center'
+      });
+      this.router.navigateByUrl('/rmensual-contrafactura');
+    }
+  }
+
+  private inicializarDatos(): void {
+    this.efectorId = this.efectorService.getCurrentEfectorId();
+
+    if (!this.efectorId) {
+      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
         timeOut: 5000,
         positionClass: 'toast-top-center',
         progressBar: true
       });
       this.router.navigateByUrl('/home-page');
+      return;
     }
-  
-    // Obtener rol actual
+
+    // Inicializar datos dependientes de efector
+    this.loadEfectorName();
+    moment.locale('es');
+    this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
+
+    // Ahora que tenemos efectorId, podemos cargar registros y hospital
+    this.generarDiasDelMes();
+    this.loadRegistrosMensuales();
+    this.verificarExistenciaDdjj();
+    this.loadHospitalDetails();
+
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+
+    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+      this.feriados = feriados;
+    });
+
+    // Roles
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();
-
       if (!this.currentRole) {
         console.warn('No hay un rol seleccionado actualmente.');
       }
     });
 
-      this.selectedServicio = null;
-      this.verificarCompletosDdjj();
+    this.selectedServicio = null;
 
     this.suscription = this.facturaService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
-      this.verificarCompletosDdjj();
     });
   }
 
@@ -230,7 +249,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const idEfector = this.efectorId;
-    const quincena = this.selectedQuincena;
+    const idServicio = this.selectedServicio!;
 
     this.tablaListaParaMostrar = false;
 
@@ -240,8 +259,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     }
 
     const request$ = this.selectedServicio
-      ? this.registroMensualService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena)
-      : this.registroMensualService.listCf(anio, mes, idEfector, quincena);
+      ? this.registroMensualService.listFueraDeTerminoPorServicio(idEfector, mes, anio, idServicio)
+      : this.registroMensualService.listFueraDeTermino( idEfector, mes, anio);
 
     request$.subscribe(data => {
       this.registrosMensuales = data;
@@ -314,29 +333,13 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment()
-      .year(this.selectedYear)
-      .month(this.selectedMonth - 1)
-      .startOf('month');
-
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
     const endOfMonth = startOfMonth.clone().endOf('month');
-
-    let start: moment.Moment;
-    let end: moment.Moment;
-
-    if (this.selectedQuincena === 'PRIMERA') {
-      start = startOfMonth.clone();
-      end = startOfMonth.clone().date(15);
-    } else {
-      start = startOfMonth.clone().date(16);
-      end = endOfMonth.clone();
-    }
-
-    let day = start.clone();
+    let day = startOfMonth.clone();
 
     this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
 
-    while (day <= end) {
+    while (day <= endOfMonth) {
       this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
@@ -418,49 +421,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
-  //Manejo fechas en select
-
-  generarMesesDisponibles(): void {
-    const fechaActual = moment(); // hoy
-    const mesesPasados = [];
-
-    for (let i = 6; i >= 0; i--) {
-      const mesAnio = fechaActual.clone().subtract(i, 'months');
-      const mes = mesAnio.month() + 1; // de 1 a 12
-      const anio = mesAnio.year();
-
-      mesesPasados.push({
-        value: `${mes}-${anio}`, // ej: "5-2025"
-        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
-      });
-    }
-
-    this.mesesDisponibles = mesesPasados;
-
-    // Establecer por defecto el mes y año actuales (en formato humano)
-    this.selectedMonth = fechaActual.month() + 1;
-    this.selectedYear = fechaActual.year();
-    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
-  }
-
-  onMonthYearChange(): void {
-  const [mesStr, anioStr] = this.selectedMonthYear.split('-');
-  this.selectedMonth = Number(mesStr);
-  this.selectedYear = Number(anioStr);
-
-  this.selectedServicio = null;
-
-  this.updateDateAndLoadData();
-  }
-
-  updateDateAndLoadData(): void {
-    this.generarDiasDelMes();
-    this.loadRegistrosMensuales();
-    this.verificarExistenciaDdjj();
-    this.verificarFueraDeTermino();
-    this.verificarCompletosDdjj();
-  }
-
   //Dar formato
   getMonthName(mes: number): string {
     const meses = [
@@ -534,80 +494,37 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  verificarFueraDeTermino(): void {
-
-  const mes = moment().month(this.selectedMonth - 1).locale('es').format('MMMM').toUpperCase();
-
-    if (!this.efectorId) {
-      console.warn('⚠️ No se encontró idEfector. No se puede verificar fuera de término.');
-      return;
-    }
-
-
-    console.log('🕓 Verificando registros fuera de término...', {
-      efectorId: this.efectorId,
-    });
-
-    this.registroMensualService.existenRegistrosFueraDeTermino(this.efectorId, mes, this.selectedYear)
-      .subscribe({
-        next: (existen: boolean) => {
-          this.mostrarFueraDeTerminoBtn = existen;
-          console.log(`✅ Resultado de verificación (fuera de término): ${existen ? 'Sí existen' : 'No existen'}`);
-        },
-        error: (err) => {
-          console.error('❌ Error al verificar registros fuera de término:', err);
-          this.mostrarFueraDeTerminoBtn = false;
-        }
-      });
-  }
-
   //Verificaciones para permitir interacciones
 
-  private estaEnRango(inicio: Date, fin: Date, today: Date = new Date()): boolean {
-    return today >= inicio && today <= fin;
+  private estaEnRango(inicio: Date, today: Date = new Date()): boolean {
+    return today >= inicio; // solo verificamos desde esa fecha en adelante
   }
 
-  private getRangosValidos(): { inicio: Date, fin: Date }[] {
+  private getRangosValidos(): { inicio: Date, fin?: Date }[] {
     let mes = this.selectedMonth;
     let anio = this.selectedYear;
 
-    // Rango 1: 15–20 del mismo mes seleccionado
-    const rango1Inicio = new Date(anio, mes - 1, 15);
-    const rango1Fin = new Date(anio, mes - 1, 25, 23, 59, 59);
-
-    // Rango 2: 1–5 del mes siguiente
+    // Calcular mes siguiente
     let siguienteMes = mes === 12 ? 1 : mes + 1;
     let siguienteAnio = mes === 12 ? anio + 1 : anio;
-    const rango2Inicio = new Date(siguienteAnio, siguienteMes - 1, 1);
-    const rango2Fin = new Date(siguienteAnio, siguienteMes - 1, 5, 23, 59, 59);
 
-    if (this.selectedQuincena === 'PRIMERA') {
-      return [{ inicio: rango1Inicio, fin: rango1Fin }];
-    } else if (this.selectedQuincena === 'SEGUNDA') {
-      return [{ inicio: rango2Inicio, fin: rango2Fin }];
-    }
+    // Inicio válido: día 11 del mes siguiente
+    const inicioValido = new Date(siguienteAnio, siguienteMes - 1, 6);
 
-    // Por defecto, si no coincide ninguna quincena, devolvemos vacío
-    return [];
+    return [{ inicio: inicioValido }];
   }
 
   isHabilitadoBotonDdjj(): boolean {
     const today = new Date();
-    return this.getRangosValidos().some(r => this.estaEnRango(r.inicio, r.fin, today));
+    return this.getRangosValidos().some(r => this.estaEnRango(r.inicio, today));
   }
 
   getMensajeContadorDdjj(): string | null {
     const today = new Date();
-
-    for (const rango of this.getRangosValidos()) {
-      if (this.estaEnRango(rango.inicio, rango.fin, today)) {
-        const diasRestantes = rango.fin.getDate() - today.getDate() + 1;
-
-        return diasRestantes === 1
-          ? 'Es el último día'
-          : `Quedan ${diasRestantes} días`;
-      }
+    const rango = this.getRangosValidos()[0];
+    
+    if (this.estaEnRango(rango.inicio, today)) {
+      return 'Plazo abierto'; // porque desde el 11 en adelante siempre es válido
     }
 
     return null;
@@ -615,10 +532,10 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
   mostrarMensajeRechazoDdjj(): boolean {
     const today = new Date();
+    const rango = this.getRangosValidos()[0];
 
-    // vencieron ambos rangos
-    const rangos = this.getRangosValidos();
-    const vencieronTodos = rangos.every(r => today > r.fin);
+    // Si todavía no llegó el 11 del mes siguiente => mostrar rechazo
+    const vencieronTodos = today < rango.inicio;
 
     return !this.verificandoDdjj && !this.ddjjYaExiste && vencieronTodos;
   }
@@ -629,7 +546,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
     const anio = this.selectedYear;
     const efectorId = this.efectorId;
-    const quincena = this.selectedQuincena!;
+    const quincena = 'FUERA_DE_TERMINO';
 
     if (!efectorId) {
       console.error('El ID del efector no puede ser null');
@@ -641,16 +558,14 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       next: (existe: boolean) => {
         this.ddjjYaExiste = existe;
         const today = new Date();
-        const rangos = this.getRangosValidos();
+        const rango = this.getRangosValidos()[0]; // solo hay un inicio
 
         if (existe) {
           this.botonDDJJIcon = 'assignment_turned_in';
-        } else if (rangos.some(r => this.estaEnRango(r.inicio, r.fin, today))) {
-          this.botonDDJJIcon = 'assignment_return'; // dentro de algún rango habilitado
-        } else if (rangos.some(r => today < r.inicio)) {
-          this.botonDDJJIcon = 'snooze'; // todavía no comienza ninguno de los rangos
-        } else {
-          this.botonDDJJIcon = 'assignment_late'; // fuera de todos los rangos
+        } else if (today >= rango.inicio) {
+          this.botonDDJJIcon = 'assignment_return'; // plazo abierto desde el 11 del mes siguiente
+        } else if (today < rango.inicio) {
+          this.botonDDJJIcon = 'snooze'; // todavía no comenzó el plazo
         }
 
         this.verificandoDdjj = false;
@@ -667,32 +582,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   isHabilitadoBotonDdjjFinal(): boolean {
     return this.isHabilitadoBotonDdjj() && !this.ddjjYaExiste;
   }
-
-  verificarCompletosDdjj(): void {
-    const mes = moment().month(this.selectedMonth - 1).locale('es').format('MMMM').toUpperCase();
-
-    if (!this.efectorId || !this.selectedMonth || !this.selectedYear || !this.selectedQuincena) {
-      this.existenCompletosDdjj = false;
-      return;
-    }
-
-    this.verificandoCompletos = true;
-
-    this.registroMensualService
-      .existenCompletos(this.efectorId, mes, this.selectedYear, this.selectedQuincena)
-      .subscribe({
-        next: (existen: boolean) => {
-          this.existenCompletosDdjj = existen;
-          this.verificandoCompletos = false;
-        },
-        error: (err) => {
-          console.error('Error verificando DDJJ completos:', err);
-          this.existenCompletosDdjj = false;
-          this.verificandoCompletos = false;
-        }
-      });
-  }
-
+  
   //Manejo de dialogs
 
   openDetail(registro: RegistroMensualListDto): void {
@@ -766,15 +656,6 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
         this.crearDdjjDesdeRegistros();
       }
     });
-  }
-
-  openFueraDeTermino(): void {
-    this.registroMensualService.setFecha({
-      mes: this.selectedMonth,
-      anio: this.selectedYear,
-    });
-
-    this.router.navigate(['/rmensual-contrafactura-fuera-termino']);
   }
 
   //Creacion de ddjj y pase a director

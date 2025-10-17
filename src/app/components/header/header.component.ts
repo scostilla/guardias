@@ -18,6 +18,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   private routerSubscription: Subscription;
   showNavBar: boolean = true;
   showConfig: boolean = true;
+  showUser: boolean = true;
 
   pendientesCount: number = 0;
   autoridadesCount: number = 0;
@@ -34,6 +35,7 @@ export class HeaderComponent implements OnDestroy, OnInit {
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
+  isHospital: boolean = false;
   currentRole: string | null = null;
 
 
@@ -105,6 +107,7 @@ ngOnInit(): void {
       this.isAutoridad = this.currentRole === 'ROLE_AUTORIDAD';
       this.isDph = this.currentRole === 'ROLE_DPH';
       this.isSuper = this.currentRole === 'ROLE_SUPERUSER';
+      this.isHospital = this.currentRole === 'ROLE_HOSPITAL';
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
@@ -112,6 +115,7 @@ ngOnInit(): void {
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;
+      this.isHospital = false;
     }
   }
 
@@ -121,6 +125,7 @@ ngOnInit(): void {
     // Actualiza el estado de showNavBar y showConfig basándote en la ruta actual
     this.showNavBar = !(
       url === '/home-page' ||
+      url === '/home-hospital' ||
       url === '/home-profesional' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||
@@ -128,6 +133,14 @@ ngOnInit(): void {
     );
 
     this.showConfig = !(
+      url === '/home-hospital' ||
+      url === '/home-profesional' ||
+      url === '/registro-actividades-ingreso-profesional' ||
+      url === '/registro-actividades-egreso-profesional' ||
+      url === '/not-found'
+    );
+
+    this.showUser = !(
       url === '/home-profesional' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||
@@ -185,17 +198,57 @@ ngOnInit(): void {
   }
 
   onLogOut(): void {
+    // Si es ROLE_HOSPITAL → pedir confirmación con contraseña
+    if (this.currentRole === 'ROLE_HOSPITAL') {
+      const password = prompt('Ingrese su contraseña para cerrar sesión:');
+
+      if (!password) {
+        this.toastr.info('Operación cancelada.');
+        return;
+      }
+
+      // 🔹 Tomar el nombre de usuario real desde el TokenService
+      const nombreUsuario = this.tokenService.getUserName();
+
+      // 🟡 LOG DE DEPURACIÓN
+      console.log('[DEBUG] Validando logout ROLE_HOSPITAL');
+      console.log('Usuario enviado (desde token):', nombreUsuario);
+      console.log('Contraseña enviada:', password);
+
+      // Validar contraseña antes de cerrar sesión
+      this.authService.validatePassword(nombreUsuario, password).subscribe({
+        next: (isValid) => {
+          console.log('[DEBUG] Respuesta del backend (isValid):', isValid);
+
+          if (isValid) {
+            this.ejecutarLogout();
+          } else {
+            this.toastr.error('Contraseña incorrecta. No se cerró la sesión.', 'Error');
+          }
+        },
+        error: (error) => {
+          console.error('[ERROR] Falló la validación de contraseña:', error);
+          this.toastr.error('Error al validar la contraseña. Intente nuevamente.', 'Error');
+        }
+      });
+
+    } else {
+      // Para todos los demás roles, logout normal
+      this.ejecutarLogout();
+    }
+  }
+
+  private ejecutarLogout(): void {
     this.tokenService.logOut();
+    this.tokenService.setCurrentRole(null);
     this.efectorService.setCurrentEfectorId(null);
+
     this.isLogged = false;
     this.nombreUsuario = '';
     this.apellidoUsuario = '';
     this.roles = [];
-    this.isAdministrativo = false;
-    this.isAutoridad = false;
-    this.isUsuario = false;
-    this.isDph = false;
-    this.isSuper = false;
+
     this.router.navigate(['/login']);
   }
+
 }

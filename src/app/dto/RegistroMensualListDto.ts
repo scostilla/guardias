@@ -1,6 +1,7 @@
 import { AsistencialListForRmensualDto } from './guardias/AsistencialListForRmensualDto';
 import { RegActivListDto } from './guardias/RegActivListDto';
 import { SumaHorasListDto } from './guardias/SumaHorasListDto';
+import { FacturaDetailDto } from './FacturaDetailDto';
 
 export class RegistroMensualListDto {
     id: number;
@@ -11,6 +12,8 @@ export class RegistroMensualListDto {
     totalHoras: SumaHorasListDto;
     idDdjj: number;
     quincena?: string;
+    estadoFacturacion?: string;
+    facturas?: FacturaDetailDto[];
 
     constructor (
         id: number,
@@ -21,6 +24,8 @@ export class RegistroMensualListDto {
         totalHoras: SumaHorasListDto,
         idDdjj: number,
         quincena?: string,
+        estadoFacturacion?: string,
+        facturas?: FacturaDetailDto[],
     ){
         this.id = id;
         this.mes = mes;
@@ -30,5 +35,7 @@ export class RegistroMensualListDto {
         this.totalHoras = totalHoras;
         this.idDdjj = idDdjj;
         this.quincena = quincena;
+        this.estadoFacturacion = estadoFacturacion;
+        this.facturas = facturas;
     }
 }
