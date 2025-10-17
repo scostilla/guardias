@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, tap, throwError } from 'rxjs';
 
 // Ajusta según tu estructura de modelos
-import { FacturaDto } from '../dto/FacturaDto';
 import { FacturaDetailDto } from '../dto/FacturaDetailDto';
+import { FacturaDto } from '../dto/FacturaDto';
 import { FacturaSummaryDto } from '../dto/FacturaSummaryDto';
 import { Factura } from '../models/Factura';
 
@@ -96,5 +96,37 @@ export class FacturaService {
     return this.httpClient.get<boolean>(
       `${this.facturaURL}existeFactura/${idAsistencial}/${idEfector}/${anio}/${mes}/${quincena}`
     );
+  }
+
+  /**
+   * Subir un PDF asociado a una factura existente.
+   * El backend espera multipart/form-data con campo 'pdf' y la ruta POST /factura/uploadPdf/{facturaId}
+   */
+  public uploadPdf(facturaId: number, file: File): Observable<any> {
+    // Validaciones básicas
+    if (facturaId === null || facturaId === undefined) {
+      return throwError(() => new Error('FacturaId inválido'));
+    }
+    if (!file) {
+      return throwError(() => new Error('No se seleccionó ningún archivo'));
+    }
+    if (file.type !== 'application/pdf') {
+      return throwError(() => new Error('El archivo debe ser un PDF'));
+    }
+    const MAX = 10 * 1024 * 1024;
+    if (file.size > MAX) {
+      return throwError(() => new Error('El archivo no puede ser mayor a 10MB'));
+    }
+
+    const formData = new FormData();
+    formData.append('pdf', file, file.name);
+
+    // DEBUG opcional
+    console.log('[UPLOAD PDF][FACTURA] facturaId:', facturaId, 'file:', file.name, file.type, file.size);
+
+    return this.httpClient.post<any>(`${this.facturaURL}uploadPdf/${facturaId}`, formData)
+      .pipe(
+        tap(() => { this._refresh$.next(); })
+      );
   }
 }

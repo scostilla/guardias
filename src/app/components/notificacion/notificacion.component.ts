@@ -1,39 +1,53 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 
-import { HttpClient } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { DataSharingService } from 'src/app/services/DataSharing/data-sharing.service';
+import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { NotificacionEditComponent } from '../notificacion/notificacion-edit/notificacion-edit.component';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { FormGroup } from '@angular/forms';
 import { NotificacionDetailComponent } from './notificacion-detail/notificacion-detail.component';
 
 
 @Component({
   selector: 'app-notificacion',
   templateUrl: './notificacion.component.html',
-  styleUrls: ['./notificacion.component.css']
+  styleUrls: [
+    './notificacion.component.css',
+    '../digesto/digesto.component.css' // reutiliza estilos de Digesto (triángulos guardia-act / guardia-pas)
+  ]
 })
 
 export class NotificacionComponent implements OnInit, OnDestroy {
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('futureDialog') futureDialogTpl!: TemplateRef<any>;
 
   dialogRef!: MatDialogRef<NotificacionDetailComponent>;
-  displayedColumns: string[] = ['tipo', 'categoria', 'fechaNotificacion', 'detalle', 'url', 'acciones'];
+  displayedColumns: string[] = [];
   dataSource!: MatTableDataSource<Notificacion>;
   suscription!: Subscription;
   
+  private readonly API_BASE = 'http://localhost:8080';
+  private allNotificaciones: Notificacion[] = [];
+  showingFuture: boolean = false;
+  private futureDialogRef?: MatDialogRef<any>;     // <-- NUEVO
+  futureData: Notificacion[] = [];                 // <-- NUEVO
   
+  @Input() title: string = 'NOTIFICACIONES';
+
+  // Nuevo: helpers para adaptar UI según contexto (DIGESTO vs NOTIFICACION)
+  public get isDigesto(): boolean {
+    return !!(this.title && String(this.title).trim().toUpperCase() === 'DIGESTO');
+  }
+  public get addLabel(): string {
+    return this.isDigesto ? 'Agregar Digesto' : 'Agregar notificación';
+  }
+
   constructor(
     private notificacionService: NotificacionService,
     public dialog: MatDialog,
@@ -52,6 +66,12 @@ export class NotificacionComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
+    // Determinar columnas según contexto (si es DIGESTO añadimos la columna 'guardia' al inicio)
+    if (this.isDigesto) {
+      this.displayedColumns = ['guardia', 'tipo', 'categoria', 'fechaNotificacion', 'detalle', 'url', 'acciones'];
+    } else {
+      this.displayedColumns = ['tipo', 'categoria', 'fechaNotificacion', 'detalle', 'url', 'acciones'];
+    }
     this.listNotificacion();
 
     this.suscription = this.notificacionService.refresh$.subscribe(() => {
@@ -59,31 +79,120 @@ export class NotificacionComponent implements OnInit, OnDestroy {
     })
   }
 
+  ngOnDestroy(): void {
+    this.suscription?.unsubscribe();
+  }
+
+  // Helper: determina el tipo a pedir al backend a partir del título del wrapper
+	private getTipoFromTitle(): string | null {
+		if (!this.title) return null;
+		const t = this.title.trim().toUpperCase();
+		if (t === 'DIGESTO') return 'DIGESTO';
+		// Normalizamos "NOTIFICACIONES" y variantes a NOTIFICACION (enum)
+		if (t === 'NOTIFICACIONES' || t === 'NOTIFICACION') return 'NOTIFICACION';
+		return null;
+	}
+
   listNotificacion(): void {
-    this.notificacionService.list().subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
+    const tipo = this.getTipoFromTitle();
+    const obs = tipo
+      ? this.notificacionService.listByTipo(tipo)
+      : this.notificacionService.list();
+
+    obs.subscribe(data => {
+      this.allNotificaciones = data || [];
+      // Vista general: excluir futuras
+      const generales = this.filterGeneral(this.allNotificaciones);
+      this.dataSource = new MatTableDataSource(generales);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      this.showingFuture = false;
     });
   }
 
-  ngOnDestroy(): void{
-    this.suscription?.unsubscribe();
+  // Alternar entre lista futura y general (queda por si lo necesitas)
+  toggleFutureList(): void {
+    if (this.showingFuture) {
+      // Volver a general
+      const generales = this.filterGeneral(this.allNotificaciones);
+      this.dataSource.data = generales;
+      this.showingFuture = false;
+      this.toastr.info('Vista general', '', { timeOut: 2000 });
+    } else {
+      // Mostrar solo futuras
+      const futuras = this.filterFuturas(this.allNotificaciones);
+      this.dataSource.data = futuras;
+      this.showingFuture = true;
+      this.toastr.info('Notificaciones a publicar (futuras)', '', { timeOut: 2000 });
+    }
+    this.dataSource._updateChangeSubscription();
   }
-  
-  accentFilter(input: string): string {
-    const acentos = "ÁÉÍÓÚáéíóú";
-    const original = "AEIOUaeiou";
-    let output = "";
-    for (let i = 0; i < input.length; i++) {
-      const index = acentos.indexOf(input[i]);
-      if (index >= 0) {
-        output += original[index];
-      } else {
-        output += input[i];
+
+  // NUEVO: abrir pop-up con la lista de notificaciones futuras
+  openFutureDialog(): void {
+    const futuras = this.filterFuturas(this.allNotificaciones);
+    if (!futuras || futuras.length === 0) {
+      this.toastr.info('No hay notificaciones futuras para mostrar', '', { timeOut: 2500 });
+      return;
+    }
+    this.futureData = futuras; // <-- usar propiedad para data reactiva
+    this.futureDialogRef = this.dialog.open(this.futureDialogTpl, {
+      width: '95vw',
+      maxWidth: '60vw',
+      maxHeight: '90vh',
+      data: null // <-- no dependemos de data para refrescar
+    });
+    this.futureDialogRef.afterClosed().subscribe(() => {
+      this.futureDialogRef = undefined;
+    });
+  }
+
+  // Helpers de fecha
+  private startOfDay(d: Date): Date {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  }
+
+  private parseFecha(value: any): Date | null {
+    if (!value) return null;
+    // Si viene en formato 'YYYY-MM-DD' parsear partes y construir Date local (evita shift UTC)
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const [y, m, day] = value.split('-').map(Number);
+      if (!isNaN(y) && !isNaN(m) && !isNaN(day)) {
+        return this.startOfDay(new Date(y, m - 1, day));
       }
     }
-    return output;
+    if (value instanceof Date) return this.startOfDay(value);
+    // Fallback: intentar crear Date desde string/ISO y normalizar
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : this.startOfDay(d);
+  }
+  private isFuture(fecha: any): boolean {
+    const d = this.parseFecha(fecha);
+    if (!d) return false;
+    const hoy = this.startOfDay(new Date());
+    return d > hoy;
+  }
+  private filterGeneral(data: Notificacion[]): Notificacion[] {
+    // General: todo lo que NO sea futuro (hoy o pasado)
+    return (data || []).filter(n => !this.isFuture(n.fechaNotificacion));
+  }
+  private filterFuturas(data: Notificacion[]): Notificacion[] {
+    // Futuras: estrictamente mayor a hoy
+    return (data || []).filter(n => this.isFuture(n.fechaNotificacion));
+  }
+
+  private accentFilter(input: string): string {
+    if (!input) return '';
+    const acentos = 'ÁÉÍÓÚÜÑáéíóúüñ';
+    const original = 'AEIOUUNaeiouun';
+    let out = '';
+    for (const ch of input) {
+      const idx = acentos.indexOf(ch);
+      out += idx >= 0 ? original[idx] : ch;
+    }
+    return out;
   }
 
   applyFilter(event: Event) {
@@ -97,35 +206,60 @@ export class NotificacionComponent implements OnInit, OnDestroy {
   } 
 
   openFormChanges(notificacion?: Notificacion): void {
-    const esEdicion = notificacion != null;
+    const esEdicion = !!notificacion;
+    // Pasamos objeto con payload + contexto para que el edit adapte textos
+    const payload = { notificacion: esEdicion ? notificacion : null, context: this.title || 'NOTIFICACION' };
     const dialogRef = this.dialog.open(NotificacionEditComponent, {
       width: '600px',
-      data: esEdicion ? notificacion : null
+      data: payload
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-      if (result) {
-        this.toastr.success(esEdicion ? 'Notificacion editada con éxito' : 'Provincia creada con éxito', 'EXITO', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        if (esEdicion) {
-          const index = this.dataSource.data.findIndex(p => p.id === result.id);
-          this.dataSource.data[index] = result;
+      if (result === undefined) return;
+
+      const upsert = (n: Notificacion) => {
+        // Buscar índice en allNotificaciones
+        const j = this.allNotificaciones.findIndex(x => x.id === n.id);
+        if (j >= 0) {
+          // Merge seguro: preservar fecha original si no viene en 'n'
+          const existente = this.allNotificaciones[j];
+          const fechaPreservada = (n.fechaNotificacion === undefined || n.fechaNotificacion === null || n.fechaNotificacion === '')
+            ? existente.fechaNotificacion
+            : n.fechaNotificacion;
+          const actualizado: Notificacion = { ...existente, ...n, fechaNotificacion: fechaPreservada };
+          this.allNotificaciones[j] = actualizado;
         } else {
-          this.dataSource.data.push(result);
+          // Nuevo: asegurar que trae fecha (si no, dejar n tal cual)
+          this.allNotificaciones.push(n);
         }
-        this.dataSource._updateChangeSubscription();
+      };
+
+      if (Array.isArray(result)) {
+        result.forEach(r => upsert(r));
+        this.toastr.success(
+          esEdicion ? 'Notificación actualizada' : `${result.length} notificaciones creadas`,
+          'Éxito',
+          { timeOut: 4000, positionClass: 'toast-top-center', progressBar: true }
+        );
+      } else if (result && typeof result === 'object') {
+        upsert(result);
+        this.toastr.success(
+          esEdicion ? 'Notificación actualizada' : 'Notificación creada',
+          'Éxito',
+          { timeOut: 4000, positionClass: 'toast-top-center', progressBar: true }
+        );
       } else {
-        this.toastr.error('Ocurrió un error al crear o editar la notificacion', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+        this.toastr.error('Respuesta desconocida del servidor', 'Error');
       }
-    }
+
+      // Recalcular vistas desde la fuente canonical allNotificaciones
+      this.dataSource.data = this.filterGeneral(this.allNotificaciones);
+      this.dataSource._updateChangeSubscription();
+
+      // Si el pop-up de futuras está abierto, recalcular su data (se actualizará automáticamente)
+      if (this.futureDialogRef) {
+        this.futureData = this.filterFuturas(this.allNotificaciones);
+      }
     });
   }
 
@@ -168,6 +302,32 @@ export class NotificacionComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  // Formatea el nombre del archivo: quita _<timestamp> y reemplaza _ por espacio
+  displayFileName(url?: string): string {
+    if (!url) return '';
+    const file = (url.split('/').pop() || url);
+    const dot = file.lastIndexOf('.');
+    const ext = dot >= 0 ? file.substring(dot) : '';
+    let base = dot >= 0 ? file.substring(0, dot) : file;
+    base = base.replace(/_\d+$/, '').replace(/_/g, ' ').trim();
+    return base + ext;
+  }
+
+  openPdf(n: Notificacion): void {
+    const url = this.getFullUrl(n.url);
+    if (!url) {
+      this.toastr.info('Sin PDF asociado');
+      return;
+    }
+    window.open(url, '_blank');
+  }
+
+  private getFullUrl(url?: string): string | null {
+    if (!url) return null;
+    if (/^https?:\/\//i.test(url)) return url;
+    return url.startsWith('/') ? `${this.API_BASE}${url}` : `${this.API_BASE}/${url}`;
   }
 
 }

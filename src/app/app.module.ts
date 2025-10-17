@@ -278,6 +278,10 @@ import { CronogramaPendienteComponent } from './components/cronogramas/cronogram
 import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 import { DialogHistorialObservacionesComponent } from './components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
+import { FacturaCreateComponent } from './components/guardias/factura/factura-create/factura-create.component';
+import { FacturaDetailComponent } from './components/guardias/factura/factura-detail/factura-detail.component';
+import { FacturaEditComponent } from './components/guardias/factura/factura-edit/factura-edit.component';
+import { FacturaListComponent } from './components/guardias/factura/factura-list/factura-list.component';
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
 import { RmensualContrafacturaDetailComponent } from './components/guardias/rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
@@ -290,10 +294,6 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
-import { FacturaCreateComponent } from './components/guardias/factura/factura-create/factura-create.component';
-import { FacturaListComponent } from './components/guardias/factura/factura-list/factura-list.component';
-import { FacturaEditComponent } from './components/guardias/factura/factura-edit/factura-edit.component';
-import { FacturaDetailComponent } from './components/guardias/factura/factura-detail/factura-detail.component';
 
 @NgModule({
   declarations: [

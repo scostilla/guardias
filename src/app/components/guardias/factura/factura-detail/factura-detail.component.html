@@ -37,7 +37,24 @@
       <tr>
         <th scope="row">Monto</th>
         <td>{{ factura.monto | number:'1.2-2' }}</td>
-      </tr>    
+      </tr>
+      <tr>
+        <th scope="row">PDF</th>
+        <td>
+          <ng-container *ngIf="pdfUrlAbs; else noPdfFactura">
+            <button mat-stroked-button color="primary" (click)="openPdf()">
+              <mat-icon style="margin-right:4px;">picture_as_pdf</mat-icon>
+              Abrir
+            </button>
+            <div class="filename" style="margin-top:8px;">
+              {{ displayFileName(factura.url) }}
+            </div>
+          </ng-container>
+          <ng-template #noPdfFactura>
+            <span class="muted">Sin PDF</span>
+          </ng-template>
+        </td>
+      </tr>
     </tbody>
   </table>
   <div mat-dialog-actions class="action mt-4">

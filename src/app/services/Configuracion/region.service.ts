@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RegionDto } from 'src/app/dto/Configuracion/RegionDto';
+import { RegionSummaryDto } from 'src/app/dto/Configuracion/RegionSummaryDto';
 import { Region } from "src/app/models/Configuracion/Region";
 
 @Injectable({
@@ -21,6 +22,11 @@ export class RegionService {
 
   public list(): Observable<Region[]> {
       return this.httpClient.get<Region[]>(this.regionesURL + 'list');
+  }
+
+  // Nuevo: obtener resumen de regiones (lista compacta desde /region/listSummary)
+  public listSummary(): Observable<RegionSummaryDto[]> {
+    return this.httpClient.get<RegionSummaryDto[]>(this.regionesURL + 'listSummary');
   }
 
   public detail(id:number): Observable<Region> {
