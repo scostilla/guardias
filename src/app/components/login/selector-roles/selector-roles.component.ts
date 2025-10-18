@@ -39,6 +39,11 @@ export class SelectorRolesComponent {
     return this.nombresRoles[role] || role;  // Si no se encuentra el rol, devuelve el rol tal cual
   }
 
+  getRolesFiltrados(): string[] {
+    // Filtra los roles para no incluir ROLE_USER
+    return this.data.roles.filter((r: string) => r !== 'ROLE_USER');
+  }
+
   cancelar(): void {
     // Cierra el diálogo y cierra la sesión
     this.dialogRef.close();

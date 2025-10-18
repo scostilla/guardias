@@ -14,14 +14,19 @@ export class RoleGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const expectedRoles: string[] = route.data['expectedRoles']; // roles permitidos
-    const currentRole = this.tokenService.getCurrentRole();      // rol del usuario actual
+    const currentRole = this.tokenService.getCurrentRole();
+    const currentProfessionalRole = this.tokenService.getCurrentProfessionalRole?.(); // si existe
 
-    if (!expectedRoles.includes(currentRole || '')) {
-      // Si el rol actual no está permitido, redirige
+    // Validación: cualquiera de los roles coincida con los permitidos
+    const hasAccess = expectedRoles.includes(currentRole || '') ||
+                      expectedRoles.includes(currentProfessionalRole || '');
+
+    if (!hasAccess) {
       this.router.navigate(['/']); // página de acceso denegado
       return false;
     }
 
     return true; // Permitido
   }
+
 }

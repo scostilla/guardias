@@ -112,7 +112,7 @@ export class RegistroActividadesIngresoProfesionalComponent implements OnInit {
       }
     });
 
-    this.authService.detailPersonBasicPanel().subscribe((personDto: PersonBasicPanelDto) => {
+    this.authService.detailPersonBasicPanelProfessional().subscribe((personDto: PersonBasicPanelDto) => {
       this.idPersona = personDto.id;
       this.nombrePersona = personDto.nombre;
       this.apellidoPersona = personDto.apellido;

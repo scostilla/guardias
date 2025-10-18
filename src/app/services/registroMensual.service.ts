@@ -4,7 +4,13 @@ import { Observable, Subject, tap } from "rxjs";
 import { RegistroMensual } from "../models/RegistroMensual";
 import { RegistroMensualDto } from "../dto/RegistroMensualDto";
 import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
+import { BehaviorSubject } from 'rxjs';
 import { environment } from "src/environments/environment.prod";
+
+export interface FechaSeleccionada {
+  mes: number;
+  anio: number;
+}
 
 @Injectable({
     providedIn: 'root'
@@ -116,8 +122,31 @@ import { environment } from "src/environments/environment.prod";
     );
   }
 
-  existenRegistrosFueraDeTermino(idEfector: number, fechaActual: string): Observable<boolean> {
-    return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-fuera-de-termino/${idEfector}/${fechaActual}`
+   listFueraDeTerminoPorServicio(idEfector: number, mes: string, anio: number, idServicio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}fuera-de-termino-por-servicio/${idEfector}/${mes}/${anio}/${idServicio}`
     );
   }
+
+  existenRegistrosFueraDeTermino(idEfector: number, mes: string, anio: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-fuera-de-termino/${idEfector}/${mes}/${anio}`
+    );
+  }
+
+  existenCompletos(idEfector: number, mes: string, anio: number, quincena: string ): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-completos/${idEfector}/${mes}/${anio}/${quincena}`);
+  }
+
+//Behaivour para manejo de fechas en fuera de termino
+  private fechaSubject = new BehaviorSubject<FechaSeleccionada | null>(null);
+
+  fecha$ = this.fechaSubject.asObservable();
+
+  setFecha(fecha: FechaSeleccionada) {
+    this.fechaSubject.next(fecha);
+  }
+
+  getFecha(): FechaSeleccionada | null {
+    return this.fechaSubject.getValue();
+  }
+
 }

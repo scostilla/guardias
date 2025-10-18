@@ -2,9 +2,9 @@
   <mat-form-field appearance="outline" style="width: 100%; margin: 0;">
     <mat-label>Rol</mat-label>
     <mat-select [(value)]="selectedRole">
-      <mat-option *ngFor="let role of data.roles" [value]="role">
+      <mat-option *ngFor="let role of getRolesFiltrados()" [value]="role">
         {{ getRoleNombres(role) }}
-      </mat-option>
+      </mat-option>    
     </mat-select>
   </mat-form-field>
 </div>

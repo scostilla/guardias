@@ -124,7 +124,7 @@ export class RegistroActividadesEgresoProfesionalComponent implements OnInit {
     });
 
     // Obtener los datos de la persona
-this.authService.detailPersonBasicPanel().subscribe((personDto: PersonBasicPanelDto) => {
+this.authService.detailPersonBasicPanelProfessional().subscribe((personDto: PersonBasicPanelDto) => {
   this.idPersona = personDto.id;
   this.nombrePersona = personDto.nombre;
   this.apellidoPersona = personDto.apellido;

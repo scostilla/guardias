@@ -73,9 +73,9 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   dialogRefFactura!: MatDialogRef<FacturaCreateComponent>;
 
   selectedServicio?: number | null = null;
-  selectedQuincena: string = 'PRIMERA';
-  selectedMonth: number = moment().month() + 1;
-  selectedYear: number = moment().year();
+  selectedQuincena!: string;
+  selectedMonth!: number;
+  selectedYear!: number;
   months = moment.months().map((name, value) => ({ value, name }));
   years: number[] = [2023, 2024, 2025];
   selectedMonthYear: string = '';
@@ -127,56 +127,66 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   }
 
   ngOnInit(): void {
-    // Obtener query params (mes, año, quincena)
-    this.route.queryParams.subscribe(params => {
-      if (params['mes']) {
-        this.selectedMonth = +params['mes'];
-      }
-      if (params['anio']) {
-        this.selectedYear = +params['anio'];
-      }
-      if (params['quincena']) {
-        this.selectedQuincena = params['quincena'];
-      }
+    const fecha = this.registroMensualService.getFecha(); // obtiene último valor
+    if (fecha) {
+      this.selectedMonth = fecha.mes;
+      this.selectedYear = fecha.anio;
 
-      // Usar efector
-      this.efectorId = this.efectorService.getCurrentEfectorId();
-      if (this.efectorId) {
-        this.loadEfectorName();
-        moment.locale('es');
-        this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
-        this.generarMesesDisponibles();
-        this.updateDateAndLoadData();
-        this.loadHospitalDetails();
-        this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
-
-        this.feriadoService.list().subscribe((feriados: Feriado[]) => {
-          this.feriados = feriados;
-        });
-      } else {
-        this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
-          timeOut: 5000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        this.router.navigateByUrl('/home-page');
-      }
-
-      // Obtener rol actual
-      this.tokenService.currentRole$.subscribe(role => {
-        this.currentRole = role;
-        this.UserRoles();
-
-        if (!this.currentRole) {
-          console.warn('No hay un rol seleccionado actualmente.');
-        }
+      this.inicializarDatos();
+    } else {
+      // No hay datos: volver al componente anterior
+      console.warn('No hay state guardado, se vuelve al listado anterior');
+      this.toastr.warning('No se seleccionó un mes/año válido', 'Atención', {
+        timeOut: 4000,
+        positionClass: 'toast-top-center'
       });
+      this.router.navigateByUrl('/rmensual-contrafactura');
+    }
+  }
 
-      this.selectedServicio = null;
+  private inicializarDatos(): void {
+    this.efectorId = this.efectorService.getCurrentEfectorId();
 
-      this.suscription = this.facturaService.refresh$.subscribe(() => {
-        this.loadRegistrosMensuales();
+    if (!this.efectorId) {
+      this.toastr.warning('No seleccionaste un efector', 'Advertencia', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
       });
+      this.router.navigateByUrl('/home-page');
+      return;
+    }
+
+    // Inicializar datos dependientes de efector
+    this.loadEfectorName();
+    moment.locale('es');
+    this.dataSource = new MatTableDataSource<RegistroMensualListDto>([]);
+
+    // Ahora que tenemos efectorId, podemos cargar registros y hospital
+    this.generarDiasDelMes();
+    this.loadRegistrosMensuales();
+    this.verificarExistenciaDdjj();
+    this.loadHospitalDetails();
+
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+
+    this.feriadoService.list().subscribe((feriados: Feriado[]) => {
+      this.feriados = feriados;
+    });
+
+    // Roles
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();
+      if (!this.currentRole) {
+        console.warn('No hay un rol seleccionado actualmente.');
+      }
+    });
+
+    this.selectedServicio = null;
+
+    this.suscription = this.facturaService.refresh$.subscribe(() => {
+      this.loadRegistrosMensuales();
     });
   }
 
@@ -239,7 +249,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     const anio = this.selectedYear;
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const idEfector = this.efectorId;
-    const quincena = this.selectedQuincena;
+    const idServicio = this.selectedServicio!;
 
     this.tablaListaParaMostrar = false;
 
@@ -249,7 +259,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     }
 
     const request$ = this.selectedServicio
-      ? this.registroMensualService.listCfAndServicio(anio, mes, idEfector, this.selectedServicio, quincena)
+      ? this.registroMensualService.listFueraDeTerminoPorServicio(idEfector, mes, anio, idServicio)
       : this.registroMensualService.listFueraDeTermino( idEfector, mes, anio);
 
     request$.subscribe(data => {
@@ -323,29 +333,13 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   }
 
   generarDiasDelMes(): void {
-    const startOfMonth = moment()
-      .year(this.selectedYear)
-      .month(this.selectedMonth - 1)
-      .startOf('month');
-
+    const startOfMonth = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month');
     const endOfMonth = startOfMonth.clone().endOf('month');
-
-    let start: moment.Moment;
-    let end: moment.Moment;
-
-    if (this.selectedQuincena === 'PRIMERA') {
-      start = startOfMonth.clone();
-      end = startOfMonth.clone().date(15);
-    } else {
-      start = startOfMonth.clone().date(16);
-      end = endOfMonth.clone();
-    }
-
-    let day = start.clone();
+    let day = startOfMonth.clone();
 
     this.displayedColumns = this.displayedColumns.filter(column => !column.includes('_'));
 
-    while (day <= end) {
+    while (day <= endOfMonth) {
       this.displayedColumns.push(day.format('YYYY_MM_DD'));
       day.add(1, 'day');
     }
@@ -426,47 +420,6 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
       };
       this.dataSource.filter = filterValue.trim().toLowerCase();
     }
-
-  //Manejo fechas en select
-
-  generarMesesDisponibles(): void {
-    const fechaActual = moment(); // hoy
-    const mesesPasados = [];
-
-    for (let i = 6; i >= 0; i--) {
-      const mesAnio = fechaActual.clone().subtract(i, 'months');
-      const mes = mesAnio.month() + 1; // de 1 a 12
-      const anio = mesAnio.year();
-
-      mesesPasados.push({
-        value: `${mes}-${anio}`, // ej: "5-2025"
-        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
-      });
-    }
-
-    this.mesesDisponibles = mesesPasados;
-
-    // Establecer por defecto el mes y año actuales (en formato humano)
-    this.selectedMonth = fechaActual.month() + 1;
-    this.selectedYear = fechaActual.year();
-    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
-  }
-
-  onMonthYearChange(): void {
-  const [mesStr, anioStr] = this.selectedMonthYear.split('-');
-  this.selectedMonth = Number(mesStr);
-  this.selectedYear = Number(anioStr);
-
-  this.selectedServicio = null;
-
-  this.updateDateAndLoadData();
-  }
-
-  updateDateAndLoadData(): void {
-    this.generarDiasDelMes();
-    this.loadRegistrosMensuales();
-    this.verificarExistenciaDdjj();
-  }
 
   //Dar formato
   getMonthName(mes: number): string {
@@ -556,7 +509,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     let siguienteAnio = mes === 12 ? anio + 1 : anio;
 
     // Inicio válido: día 11 del mes siguiente
-    const inicioValido = new Date(siguienteAnio, siguienteMes - 1, 11);
+    const inicioValido = new Date(siguienteAnio, siguienteMes - 1, 6);
 
     return [{ inicio: inicioValido }];
   }
@@ -593,7 +546,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     const nombreMes = this.convertirMesANombre(this.selectedMonth - 1);
     const anio = this.selectedYear;
     const efectorId = this.efectorId;
-    const quincena = this.selectedQuincena!;
+    const quincena = 'FUERA_DE_TERMINO';
 
     if (!efectorId) {
       console.error('El ID del efector no puede ser null');
