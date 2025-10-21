@@ -87,6 +87,7 @@ export class LegajoEditComponent implements OnInit {
 
   //Listas
   profesiones: Profesion[] = [];
+  profesionesFiltradas: Profesion[] = [];
   efectores: Efector[] = [];
   hospitales: Hospital[] = [];
   ministerios: Ministerio[] = [];
@@ -1876,8 +1877,17 @@ listMinisterios(): void {
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
       this.profesiones = data;
+
+      this.profesionesFiltradas = this.profesiones.filter(p => {
+        const nombre = p.nombre
+          .toLowerCase()
+          .normalize("NFD") // separa letras y acentos
+          .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+
+        return nombre === 'medico' || nombre === 'bioquimico';
+      });
     }, error => {
-      console.log(error);
+      console.error(error);
     });
   }
 
