@@ -19,6 +19,7 @@ export class DdjjDto {
   idTipoGuardia: number;
   idCronogramasDefinitivos?: number[];
   quincena?: string; // QuincenaEnum
+  condicionDdjj?: string; // CondicionDdjjEnum
 
       constructor(
         mes: string,               // enum
@@ -41,6 +42,7 @@ export class DdjjDto {
         idObservacionesDdjj?: number[],
         idCronogramasDefinitivos?: number[],
         quincena?: string,
+        condicionDdjj?: string,
     ) {
 
         this.mes = mes; 
@@ -63,5 +65,6 @@ export class DdjjDto {
         this.idTipoGuardia = idTipoGuardia;   
         this.idCronogramasDefinitivos = idCronogramasDefinitivos;
         this.quincena = quincena;
+        this.condicionDdjj = condicionDdjj;
     }
 }

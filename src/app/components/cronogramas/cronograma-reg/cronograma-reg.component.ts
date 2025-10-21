@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
 import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
-import { PruebaFormComponent } from '../../configuracion/territorio/prueba-form/prueba-form.component';
 import { CronogramaDetailComponent } from '../cronograma-detail/cronograma-detail.component';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service'; 
@@ -110,17 +109,6 @@ export class CronogramaRegComponent {
     });
   }
 
-EventDialog(): void {
-  const dialogRef = this.dialog.open(PruebaFormComponent, {
-    width: '600px',
-});
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.addEvent(new Date(result.startDate), new Date(result.endDate), result.title, result.color);
-    }
-  });
-}
 
   nextView(): void {
     if (this.view === CalendarView.Month) {

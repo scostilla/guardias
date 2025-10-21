@@ -69,19 +69,13 @@ export class LegajoEditNoasistencialComponent implements OnInit {
   capsList: Caps[] = [];
 
   //Autenticación
-    isLogged = false;
-    roles: string[] =[];
-    isAdministrativo: boolean = false;
-    isAutoridad: boolean = false;
-    isUsuario: boolean = false;
-    isDph: boolean = false;
-    isSuper: boolean = false;
-    userId: number | null = null;
-    nombreUsuario: string = '';
-    apellidoUsuario: string = '';
-    nombresEfectores: EfectorSummaryDto[] = [];
-    usuarioPersona: number | null = null;
-    currentRole: string | null = null;
+  currentRole: string | null = null;
+  isAdministrativo: boolean = false;
+  isUsuario: boolean = false;
+  isDph: boolean = false;
+  isSuper: boolean = false;
+  isAutoridad: boolean = false;
+  nombresEfectores: EfectorSummaryDto[] = [];
 
   //útiles
   step = 0;
@@ -301,47 +295,23 @@ if (navigation?.extras.state) {
               }
           });
             
-    //Autentificación
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
+  //Autentificación
+
+    // BehaviorSubject para obtener el rol seleccionado
+    this.tokenService.currentRole$.subscribe(role => {
+      this.currentRole = role;
+      this.UserRoles();  // Llamar a la función que determina los roles
+    });  
   
-      // BehaviorSubject para obtener el rol seleccionado
-      this.tokenService.currentRole$.subscribe(role => {
-        this.currentRole = role;
-        this.UserRoles();  // Llamar a la función que determina los roles
-       
-        // Si currentRole es false (null o vacío), redirige al login
-        if (!this.currentRole) {
-          this.router.navigateByUrl('');
-        }
-      });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-          this.nombreUsuario = response.nombre;
-          this.apellidoUsuario = response.apellido;
-          this.nombresEfectores = response.efectores; // Asignar efectores
-  
-          // Log para mostrar el usuario y los efectores
-          console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-          console.log('Efectores asociados:', this.nombresEfectores);
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
+    // Obtener detalles del usuario
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        this.nombresEfectores = response.efectores; // Asignar efectores
+      },
+      error => {
+        console.error('Error al obtener detalles del usuario:', error);
+      }
+    );
   
     
       // Inicializar el formulario

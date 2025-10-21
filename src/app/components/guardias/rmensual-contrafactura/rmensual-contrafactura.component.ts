@@ -574,7 +574,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
     // Rango 1: 15–20 del mismo mes seleccionado
     const rango1Inicio = new Date(anio, mes - 1, 15);
-    const rango1Fin = new Date(anio, mes - 1, 25, 23, 59, 59);
+    const rango1Fin = new Date(anio, mes - 1, 20, 23, 59, 59);
 
     // Rango 2: 1–5 del mes siguiente
     let siguienteMes = mes === 12 ? 1 : mes + 1;
@@ -714,7 +714,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       idEfector: this.efectorId,
       mes: moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase(),
       anio: this.selectedYear,
-      quincena: this.selectedQuincena
+      quincena: this.selectedQuincena,
+      tipo: 'quincena',
     };
 
     console.log('📦 Datos enviados al FacturaCreateComponent:', dataToSend);

@@ -112,6 +112,12 @@ export interface FechaSeleccionada {
     );
   }
 
+  getMontoTotal(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(
+      `${this.registroMensualURL}getMontoTotal/${idAsistencial}/${idEfector}/${mes}/${anio}`
+    );
+  }
+
   getRegistrosIncompletos(idEfector: number, mes: string, anio: number, quincena: string): Observable<RegistroMensualListDto[]> {
     return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}incompletos/${idEfector}/${mes}/${anio}/${quincena}`);
   }
