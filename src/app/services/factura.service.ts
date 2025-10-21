@@ -77,9 +77,11 @@ export class FacturaService {
   }
 
   public getMontoByQuincena(idAsistencial: number, idEfector: number, quincena: string, mes: string, anio: number): Observable<number> {
-    return this.httpClient.get<number>(
-      `${this.facturaURL}getMontoByQuincena/${idAsistencial}/${idEfector}/${quincena}/${mes}/${anio}`
-    );
+    return this.httpClient.get<number>(`${this.facturaURL}getMontoByQuincena/${idAsistencial}/${idEfector}/${quincena}/${mes}/${anio}`);
+  }
+
+  public getMonto(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(`${this.facturaURL}getMonto/${idAsistencial}/${idEfector}/${mes}/${anio}`);
   }
 
   // Obtener factura por asistencial
@@ -109,6 +111,15 @@ export class FacturaService {
   existenDosFacturas(idAsistencial: number, idEfector: number, anio: number, mes: string, quincena: string): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.facturaURL}existenDosFacturas/${idAsistencial}/${idEfector}/${anio}/${mes}/${quincena}`);
   }
+
+  existeFacturaSinQuincena(idAsistencial: number, idEfector: number, anio: number, mes: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.facturaURL}existeFacturaSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
+  }
+
+  existenDosFacturasSinQuincena(idAsistencial: number, idEfector: number, anio: number, mes: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.facturaURL}existeFacturaSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
+  }
+
 
   /**
    * Subir un PDF asociado a una factura existente.

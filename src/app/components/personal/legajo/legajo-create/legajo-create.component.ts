@@ -75,8 +75,8 @@ export class LegajoCreateComponent implements OnInit {
   legajoForm: FormGroup;
   initialData: Asistencial | NoAsistencial | undefined;
 
-   asistencial: Asistencial | undefined;
-    noAsistencial: NoAsistencial | undefined;
+  asistencial: Asistencial | undefined;
+  noAsistencial: NoAsistencial | undefined;
 
   //Listas
   profesiones: Profesion[] = [];
@@ -103,19 +103,13 @@ export class LegajoCreateComponent implements OnInit {
   selectedCapsGeneral: number[] = [];
 
   //Autenticación
-  isLogged = false;
-  roles: string[] =[];
+  currentRole: string | null = null;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
   isAutoridad: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
   nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
-  currentRole: string | null = null;
 
   //mostrar/ocultar
   showGuardia: boolean = false;
@@ -472,46 +466,22 @@ this.initialHabilitacionesGuardias = efectoresFiltrados;
 this.initialHabilitacionesGenerales =efectoresFiltradosGeneral;
 
   //Autentificación
-  if (this.tokenService.getToken()) {
-    this.isLogged = true;
-    this.roles = this.tokenService.getAuthorities();
 
     // BehaviorSubject para obtener el rol seleccionado
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
     });  
   
-    const userIdFromToken = this.tokenService.getUserIdFromToken();
-    this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-    console.log('ID del usuario logeado:',this.userId);
-
     // Obtener detalles del usuario
     this.authService.detailPersonBasicPanel().subscribe(
       (response: PersonBasicPanelDto) => {
-        this.usuarioPersona = response.id;
-        this.nombreUsuario = response.nombre;
-        this.apellidoUsuario = response.apellido;
         this.nombresEfectores = response.efectores; // Asignar efectores
-
-        // Log para mostrar el usuario y los efectores
-        console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        console.log('Efectores asociados:', this.nombresEfectores);
       },
       error => {
         console.error('Error al obtener detalles del usuario:', error);
       }
     );
-  } else {
-    this.isLogged = false;
-    console.log('El usuario no está logueado.');
-    this.router.navigateByUrl('');
-  }
 
   // Llamo al servicio para obtener todos los tipos de cargo
   this.cargoService.list().subscribe((cargos: Cargo[]) => {
@@ -1192,6 +1162,7 @@ alMenosUnoRequeridoValidator(): ValidatorFn {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;

@@ -178,8 +178,8 @@
           </span>
 
           <button mat-icon-button matTooltip="Cargar facturas" (click)="openFactura(registro)"
-            [disabled]="ddjjYaExiste">
-            <mat-icon [ngClass]="!ddjjYaExiste ? 'btnEdit' : ''"> request_quote </mat-icon>
+            [disabled]="ddjjYaExiste || !isHabilitadoBotonDdjj()">
+            <mat-icon [ngClass]="{'btnEdit': !ddjjYaExiste && isHabilitadoBotonDdjj()}"> request_quote </mat-icon>
           </button>
           <button 
             mat-icon-button

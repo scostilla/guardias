@@ -40,24 +40,18 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   suscription!: Subscription;
 
   //Autenticación
-  isLogged = false;
-  roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
 
   constructor(
     private autoridadService: AutoridadService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.paginatorIntl.itemsPerPageLabel = "Registros por página";
@@ -73,41 +67,13 @@ export class AutoridadComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
   
     // BehaviorSubject para obtener el rol seleccionado
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
-    });  
-    
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-  
-          // Log para mostrar el usuario y los efectores
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
+       
+    });
   
     this.listAutoridades();
     this.suscription = this.autoridadService.refresh$.subscribe(() => {
@@ -126,6 +92,7 @@ export class AutoridadComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;

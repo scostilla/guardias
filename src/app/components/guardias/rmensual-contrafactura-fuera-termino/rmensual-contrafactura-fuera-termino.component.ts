@@ -475,14 +475,12 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   checkFacturaExistente(registro: RegistroMensualListDto): void {
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const anio = this.selectedYear;
-    const quincena = this.selectedQuincena;
 
-    this.facturaService.existeFactura(
+    this.facturaService.existeFacturaSinQuincena(
       registro.asistencial.id,
       this.efectorId!,
       anio,
-      mes,
-      quincena
+      mes
     ).subscribe({
       next: (existe) => {
         this.facturaExisteMap[registro.id] = existe;
@@ -604,7 +602,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
       idEfector: this.efectorId,
       mes: moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase(),
       anio: this.selectedYear,
-      quincena: this.selectedQuincena
+      tipo: 'fuera_de_termino',
     };
 
     console.log('📦 Datos enviados al FacturaCreateComponent:', dataToSend);
