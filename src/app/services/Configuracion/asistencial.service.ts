@@ -1,20 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { AsistencialDto } from 'src/app/dto/Configuracion/AsistencialDto';
+import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
 import { AsistencialEfectorDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorDto';
 import { AsistencialEfectorRegistroActividadDto } from 'src/app/dto/Configuracion/asistencial/AsistencialEfectorRegistroActividadDto';
-import { Asistencial } from "src/app/models/Configuracion/Asistencial";
-import { Person } from "src/app/models/Configuracion/Person";
-import { forkJoin } from 'rxjs';
 import { AsistencialListDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListDto';
-import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListForLegajosDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListForLegajosDto';
+import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialTiposGuardiasDto } from 'src/app/dto/Configuracion/asistencial/AsistencialTiposGuardiasDto';
-import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
+import { Asistencial } from "src/app/models/Configuracion/Asistencial";
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
-import { BehaviorSubject } from 'rxjs';
+import { Person } from "src/app/models/Configuracion/Person";
 @Injectable({
   providedIn: 'root'
 })
@@ -47,6 +45,10 @@ export class AsistencialService {
 
   getByEfector(idEfector: number): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.asistencialesURL}listByEfector/${idEfector}`);
+  }
+
+  getAsistencialesDetailByEfector(idEfector: number): Observable<AsistencialDetailDto[]> {
+    return this.httpClient.get<AsistencialDetailDto[]>(`${this.asistencialesURL}listAsistencialDetailByEfector/${idEfector}`);
   }
 
   listAsistencialByEfector(idEfector: number): Observable<AsistencialEfectorRegistroActividadDto[]> {

@@ -48,10 +48,31 @@ export class AsistencialFiltradoSelectorComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.loadAsistenciales();
-
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    // Si el componente fue abierto con el flag useDetail, usar el endpoint de detalles
+    if (this.data?.useDetail) {
+      this.asistencialService.getAsistencialesDetailByEfector(this.data.idEfector).subscribe({
+        next: (details) => {
+          const resumen = (details || []).map(d => ({
+            id: d.id,
+            nombre: d.nombre,
+            apellido: d.apellido,
+            cuil: (d as any).cuil
+          })) as AsistencialSummaryDto[];
+          this.dataSource = new MatTableDataSource<AsistencialSummaryDto>(resumen);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          console.error('Error al cargar detalles de asistenciales por efector:', err);
+          // En caso de error, volver al comportamiento original
+          this.loadAsistenciales();
+        }
+      });
+    } else {
+      this.loadAsistenciales();
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   loadAsistenciales() {
