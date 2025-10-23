@@ -627,14 +627,12 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   openFacturaList(registro: RegistroMensualListDto): void {
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const anio = this.selectedYear;
-    const quincena = this.selectedQuincena;
 
     const dataToSend = {
       asistencial: registro.asistencial,
       idEfector: this.efectorId,
       mes,
       anio,
-      quincena
     };
 
     console.log('🔹 Datos enviados a FacturaListComponent:', dataToSend);

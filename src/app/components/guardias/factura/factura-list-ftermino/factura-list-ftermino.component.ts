@@ -8,11 +8,11 @@ import { FacturaEditComponent } from '../factura-edit/factura-edit.component';
 import { FacturaDetailComponent } from '../factura-detail/factura-detail.component';
 
 @Component({
-  selector: 'app-factura-list',
-  templateUrl: './factura-list.component.html',
-  styleUrls: ['./factura-list.component.css']
+  selector: 'app-factura-list-ftermino',
+  templateUrl: './factura-list-ftermino.component.html',
+  styleUrls: ['./factura-list-ftermino.component.css']
 })
-export class FacturaListComponent implements OnInit {
+export class FacturaListFterminoComponent implements OnInit {
 
   facturas: FacturaDetailDto[] = [];
   displayedColumns: string[] = ['numeroFactura', 'fechaEmision', 'monto', 'acciones'];
@@ -21,7 +21,7 @@ export class FacturaListComponent implements OnInit {
 
   constructor(
     private facturaService: FacturaService,
-    private dialogRef: MatDialogRef<FacturaListComponent>,
+    private dialogRef: MatDialogRef<FacturaListFterminoComponent>,
     private dialog: MatDialog,
     private toastr: ToastrService,
 

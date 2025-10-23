@@ -117,7 +117,7 @@ export class FacturaService {
   }
 
   existenDosFacturasSinQuincena(idAsistencial: number, idEfector: number, anio: number, mes: string): Observable<boolean> {
-    return this.httpClient.get<boolean>(`${this.facturaURL}existeFacturaSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
+    return this.httpClient.get<boolean>(`${this.facturaURL}existenDosFacturasSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
   }
 
 

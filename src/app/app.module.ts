@@ -240,6 +240,7 @@ import { AsistencialSelectorAllComponent } from './components/personal/personal-
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
+import { FacturaListFterminoComponent } from './components/guardias/factura/factura-list-ftermino/factura-list-ftermino.component';
 
 @NgModule({
   declarations: [
@@ -428,6 +429,7 @@ import { FacturaCreateFterminoComponent } from './components/guardias/factura/fa
     RmensualContrafacturaFueraTerminoComponent,
     HomeHospitalComponent,
     FacturaCreateFterminoComponent,
+    FacturaListFterminoComponent,
   ],
 
   imports: [
