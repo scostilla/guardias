@@ -1,0 +1,237 @@
+<app-spinner></app-spinner>
+<h2 mat-dialog-title>Cargar Factura
+<h5>Fuera de término {{ data.mes }}/{{ data.anio }}</h5>
+</h2>
+<div *ngIf="!loading">
+
+  <!-- Si el disponible es 0 -->
+  <div *ngIf="disponible === 0" 
+      class="success-message"
+      style="text-align: center; color: green; font-weight: bold; padding: 1rem;">
+    Ya se cargó el monto máximo disponible.
+  </div>
+
+  <!-- Si ya hay 2 facturas -->
+  <div *ngIf="maximoAlcanzado && disponible !== 0" class="error-message"
+      style="text-align: center; color: red; font-weight: bold; padding: 1rem;">
+    Ya se cargaron el máximo (2) de facturas permitidas para esta quincena.
+  </div>
+
+  <!-- Si todavía se puede cargar -->
+  <div *ngIf="!maximoAlcanzado && disponible !== 0">
+
+    <!-- Mostrar el disponible en pantalla -->
+    <div class="success-message" style="text-align: center;">
+      Monto disponible para facturar: <strong>{{ disponible | number:'1.2-2' }}</strong>
+    </div>
+
+      <mat-dialog-content class="dialog-form">
+        <form [formGroup]="facturaForm">
+
+          <!-- Nombre -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre Titular</mat-label>
+            <input matInput formControlName="nombreTitular">
+              <mat-error *ngIf="facturaForm.get('nombreTitular')?.errors?.['required']">El nombre es requerido.</mat-error>
+              <mat-error *ngIf="facturaForm.get('nombreTitular')?.errors?.['pattern']">El nombre debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+          </mat-form-field>
+
+          <!-- Apellido -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Apellido Titular</mat-label>
+            <input matInput formControlName="apellidoTitular">
+              <mat-error *ngIf="facturaForm.get('apellidoTitular')?.errors?.['required']">El apellido es requerido.</mat-error>
+              <mat-error *ngIf="facturaForm.get('apellidoTitular')?.errors?.['pattern']">El apellido debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
+          </mat-form-field>
+
+          <!-- DNI -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>DNI Titular</mat-label>
+            <input matInput type="number" min="0" formControlName="dniTitular">
+              <mat-error *ngIf="facturaForm.get('dniTitular')?.errors?.['required']">El DNI es requerido.</mat-error>
+              <mat-error *ngIf="facturaForm.get('dniTitular')?.errors?.['pattern']">El DNI debe tener solo números (entre 8 y 20 dígitos).</mat-error>
+          </mat-form-field>
+
+          <!-- CUIL -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>CUIL Titular</mat-label>
+            <input matInput formControlName="cuilTitular">
+              <mat-error *ngIf="facturaForm.get('cuilTitular')?.errors?.['required']">El CUIL es requerido.</mat-error>
+              <mat-error *ngIf="facturaForm.get('cuilTitular')?.errors?.['pattern']">El CUIL debe tener solo números (11 dígitos).</mat-error>
+          </mat-form-field>
+
+          <!-- Condición Fiscal -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Condición Fiscal</mat-label>
+            <mat-select formControlName="contribuyente">
+              <mat-option value="RESPONSABLE_INSCRIPTO">RESPONSABLE INSCRIPTO</mat-option>
+              <mat-option value="MONOTRIBUTISTA">MONOTRIBUTISTA</mat-option>
+              <mat-option value="CONSUMIDOR_FINAL">CONSUMIDOR FINAL</mat-option>
+              <mat-option value="EXENTO">EXENTO</mat-option>
+            </mat-select>
+              <mat-error *ngIf="facturaForm.get('contribuyente')?.errors?.['required']">La condición fiscal es requerida.</mat-error>
+          </mat-form-field>
+
+          <!-- Tipo -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Tipo de factura</mat-label>
+            <mat-select formControlName="tipo">
+              <mat-option value="A">A</mat-option>
+              <mat-option value="B">B</mat-option>
+              <mat-option value="C">C</mat-option>
+            </mat-select>
+              <mat-error *ngIf="facturaForm.get('tipo')?.errors?.['required']">El tipo de factura es requerido.</mat-error>
+          </mat-form-field>
+
+          <!-- Punto de Venta -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Punto de Venta</mat-label>
+            <input matInput type="number" min="0" formControlName="puntoVenta">
+              <mat-error *ngIf="facturaForm.get('puntoVenta')?.hasError('min')">
+              El número de punto de venta debe ser mayor a 0
+              </mat-error>
+              <mat-error *ngIf="facturaForm.get('puntoVenta')?.hasError('max')">
+              El número de punto de venta no puede superar 999
+              </mat-error>
+          </mat-form-field>
+
+          <!-- Número de Factura -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Número Factura</mat-label>
+            <input matInput type="number" min="0" formControlName="numeroFactura">
+              <mat-error *ngIf="facturaForm.get('numeroFactura')?.hasError('min')">
+              El número de factura debe ser mayor a 0
+              </mat-error>
+              <mat-error *ngIf="facturaForm.get('numeroFactura')?.hasError('max')">
+              El número de factura no puede superar 99999999
+              </mat-error>
+          </mat-form-field>
+
+          <!-- Fecha de Emisión -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Fecha Emisión</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechaEmision">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="facturaForm.get('fechaEmision')?.errors?.['required']">La fecha es requerida.</mat-error>
+          </mat-form-field>
+
+          <!-- Monto -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Monto</mat-label>
+            <input
+              matInput
+              type="text"
+              [value]="facturaForm.get('monto')?.value | number:'1.2-2':'es-AR'"
+              (input)="onMontoInput($event)"
+            />
+            <mat-error *ngIf="facturaForm.get('monto')?.hasError('excedeMonto')">
+              La factura no puede superar el monto de {{ disponible | number:'1.2-2':'es-AR' }}
+            </mat-error>
+          </mat-form-field>
+
+    <!-- Zona Drag & Drop para PDF (factura) -->
+    <div class="row" style="margin-top:10px;">
+      <div class="col">
+        <div
+          [class]="getDropAreaClasses()"
+          (dragenter)="onDragEnter($event)"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (mouseleave)="onMouseLeave($event)"
+          (click)="!selectedFile ? openFileSelector() : null"
+          style="position:relative;"
+        >
+          <ng-container *ngIf="selectedFile && !uploadError; else zonaCargaFactura">
+            <div class="drop-zone-content">
+              <div class="icon-container">
+                <mat-icon class="drop-icon success-icon" style="color:#4caf50;">check_circle</mat-icon>
+              </div>
+              <div class="drop-text">PDF seleccionado: {{ getFileInfo() }}</div>
+              <div class="drop-subtext">Se subirá al guardar la factura</div>
+              <div *ngIf="!isUploading" style="margin-top:8px;">
+                <button mat-stroked-button color="accent" (click)="$event.stopPropagation(); openFileSelector()">Cambiar PDF</button>
+                <button mat-stroked-button color="warn" style="margin-left:8px;" (click)="$event.stopPropagation(); removeSelectedFile()">Quitar</button>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #zonaCargaFactura>
+            <div class="drop-zone-content">
+              <div class="icon-container">
+                <mat-icon class="drop-icon error-icon" *ngIf="uploadError && !isDragOver" style="color:#f44336;">error</mat-icon>
+                <mat-icon class="drop-icon uploading-icon" *ngIf="isUploading && !isDragOver" style="color:#ff9800;">hourglass_empty</mat-icon>
+                <mat-icon class="drop-icon drag-icon" *ngIf="isDragOver" style="color:#1976d2;">file_upload</mat-icon>
+                <mat-icon class="drop-icon normal-icon" *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading" style="color:#666;">picture_as_pdf</mat-icon>
+              </div>
+
+              <div class="drop-text">
+                <span *ngIf="isDragOver" style="color:#1976d2; font-weight:bold;">📄 Suelta tu PDF aquí</span>
+                <span *ngIf="isUploading && !isDragOver" style="color:#ff9800;">🔄 Subiendo archivo...</span>
+                <span *ngIf="uploadError && !isUploading && !isDragOver" style="color:#f44336;">⚠ {{ uploadError }}</span>
+                <span *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading">📄 Arrastra tu PDF aquí o haz clic para seleccionar</span>
+              </div>
+
+              <div class="drop-subtext">
+                <span *ngIf="isDragOver">Solo PDF</span>
+                <span *ngIf="!selectedFile && !isUploading && !isDragOver">Formato soportado: PDF (máx. 10MB)</span>
+              </div>
+
+              <div *ngIf="!isDragOver">
+                <button
+                  mat-raised-button
+                  class="browse-button"
+                  type="button"
+                  (click)="$event.stopPropagation(); openFileSelector()"
+                  *ngIf="!selectedFile && !isUploading"
+                  [disabled]="isUploading"
+                >
+                  <mat-icon>folder_open</mat-icon>
+                  Explorar archivos
+                </button>
+
+                <button
+                  mat-raised-button
+                  color="accent"
+                  type="button"
+                  (click)="$event.stopPropagation(); openFileSelector()"
+                  *ngIf="selectedFile && !isUploading"
+                  [disabled]="isUploading"
+                  style="margin-top:10px;"
+                >
+                  <mat-icon>swap_horiz</mat-icon>
+                  Cambiar PDF
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <input type="file" id="archivo-factura" accept="application/pdf" (change)="onFileSelected($event)" style="display:none;" />
+
+        <div class="file-info" *ngIf="selectedFile && !uploadError" style="margin-top:10px;">
+          <mat-icon style="color:#4caf50;">description</mat-icon>
+          <span class="file-info-text">{{ getFileInfo() }}</span>
+          <button mat-icon-button class="remove-file-btn" color="warn" type="button" (click)="removeSelectedFile()" title="Remover archivo">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- FIN Drag & Drop -->
+
+  </form>
+</mat-dialog-content>
+
+    </div>
+
+<mat-dialog-actions class="action justify-content-end">
+  <button mat-button (click)="onCancel()" class="me-3">Cancelar</button>
+  <div *ngIf="!loading && !maximoAlcanzado && disponible !== 0">
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="facturaForm.invalid || facturaForm.get('monto')?.value > disponible!">Guardar</button>
+  </div>
+</mat-dialog-actions>
+
+</div>
+

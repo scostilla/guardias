@@ -55,6 +55,7 @@ export class LoginComponent implements OnInit {
         this.redirectUserBasedOnRole(selectedRole);
       }
     }
+    
   }
 
   onLogin(): void {
@@ -64,7 +65,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(this.loginUsuario).subscribe(
       data => {
-        // Al hacer login, se almacena el token, roles y nombre de usuario
+        // Guardamos token, usuario y roles
         this.isLogged = true;
         this.isLoginFail = false;
         this.tokenService.setToken(data.token);
@@ -74,19 +75,49 @@ export class LoginComponent implements OnInit {
 
         this.tokenService.setLoggedState(true);
 
-        // Si tiene más de un rol, mostramos el diálogo para seleccionar el rol
         if (this.roles.length > 1) {
-          this.openRoleSelectionDialog();
+          // Filtramos ROLE_USER
+          const rolesPermitidos = this.roles.filter(r => r !== 'ROLE_USER');
+
+          if (rolesPermitidos.length === 1) {
+            // Solo hay un rol permitido, asignamos automáticamente
+            const selectedRole = rolesPermitidos[0];
+            this.tokenService.setCurrentRole(selectedRole);
+
+            const permitido = this.redirectUserBasedOnRole(selectedRole);
+            if (permitido) {
+              this.toastr.success(data.nombreUsuario, 'Bienvenido', {
+                timeOut: 3000,
+                positionClass: 'toast-top-center'
+              });
+            }
+          } else if (rolesPermitidos.length > 1) {
+            // Hay varios roles permitidos, abrimos diálogo para elegir
+            this.openRoleSelectionDialog();
+          } else {
+            // Solo tenía ROLE_USER → bloqueamos login
+            this.toastr.error('Acceso no permitido para este tipo de usuario.', 'Error de acceso', {
+              timeOut: 5000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+            this.tokenService.logOut();
+            this.isLogged = false;
+            this.router.navigate(['/login']); 
+          }
         } else if (this.roles.length === 1) {
-          // Si tiene solo un rol, lo asignamos y lo redirigimos al home correspondiente
+          // Solo un rol total, verificamos si no es ROLE_USER
           const selectedRole = this.roles[0];
           this.tokenService.setCurrentRole(selectedRole);
-          this.redirectUserBasedOnRole(selectedRole);
-        }
 
-        this.toastr.success(data.nombreUsuario, 'Bienvenido', {
-          timeOut: 3000, positionClass: 'toast-top-center'
-        });
+          const permitido = this.redirectUserBasedOnRole(selectedRole);
+          if (permitido) {
+            this.toastr.success(data.nombreUsuario, 'Bienvenido', {
+              timeOut: 3000,
+              positionClass: 'toast-top-center'
+            });
+          }
+        }
       },
       err => {
         this.isLogged = false;
@@ -98,8 +129,8 @@ export class LoginComponent implements OnInit {
           progressBar: true
         });
       }
-    );        
-  } 
+    );
+  }
 
   // Función para abrir el diálogo de selección de rol
   openRoleSelectionDialog(): void {
@@ -124,13 +155,32 @@ export class LoginComponent implements OnInit {
   }
 
   // Redirigir al home según el rol
-  redirectUserBasedOnRole(role: string): void {
+  redirectUserBasedOnRole(role: string): boolean {
     if (role === 'ROLE_ADMIN' || role === 'ROLE_DPH' || role === 'ROLE_SUPERUSER' || role === 'ROLE_AUTORIDAD') {
       this.router.navigate(['/home-page']);
-    } else if (role === 'ROLE_USER') {
-      this.router.navigate(['/home-profesional']);
+      return true;
     } else if (role === 'ROLE_HOSPITAL') {
       this.router.navigate(['/home-hospital']);
+      return true;
+    } else if (role === 'ROLE_USER') {
+      this.toastr.error('Acceso no permitido para tu rol de usuario.', 'Error de acceso', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.tokenService.logOut();
+      this.isLogged = false;
+      this.router.navigate(['/login']); 
+      return false;
+    } else {
+      this.toastr.error('Rol desconocido. No se puede iniciar sesión.', 'Error', {
+        timeOut: 4000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      this.tokenService.logOut();
+      this.router.navigate(['/login']);
+      return false;
     }
   }
 
@@ -142,12 +192,4 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    this.toastr.success('Inicio de sesión exitoso', 'Bienvenido', {
-      timeOut: 6000,
-      positionClass: 'toast-top-center',
-      progressBar: true
-    });
-    this.router.navigate(['/home-page']);
-  }
 }

@@ -239,6 +239,7 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
 
 @NgModule({
   declarations: [
@@ -426,6 +427,7 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     FacturaDetailComponent,
     RmensualContrafacturaFueraTerminoComponent,
     HomeHospitalComponent,
+    FacturaCreateFterminoComponent,
   ],
 
   imports: [

@@ -14,6 +14,7 @@ import 'moment/locale/es';
 //Componentes
 import { RmensualContrafacturaDetailComponent } from '../rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
 import { FacturaCreateComponent } from '../factura/factura-create/factura-create.component';
+import { FacturaCreateFterminoComponent } from '../factura/factura-create-ftermino/factura-create-ftermino.component';
 import { FacturaListComponent } from '../factura/factura-list/factura-list.component';
 import { DialogConfirmRmensualComponent } from '../dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 
@@ -71,6 +72,8 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
 
   dialogRef!: MatDialogRef<RmensualContrafacturaDetailComponent>;
   dialogRefFactura!: MatDialogRef<FacturaCreateComponent>;
+  dialogRefFacturaFtermino!: MatDialogRef<FacturaCreateFterminoComponent>;
+
 
   selectedServicio?: number | null = null;
   selectedQuincena!: string;
@@ -608,7 +611,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     console.log('📦 Datos enviados al FacturaCreateComponent:', dataToSend);
 
 
-    this.dialogRefFactura = this.dialog.open(FacturaCreateComponent, {
+    this.dialogRefFacturaFtermino = this.dialog.open(FacturaCreateFterminoComponent, {
       width: '600px',
       data: dataToSend
     });
