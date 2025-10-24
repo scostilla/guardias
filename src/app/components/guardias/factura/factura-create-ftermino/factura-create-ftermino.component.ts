@@ -9,11 +9,12 @@ import { RegistroMensualService } from 'src/app/services/registroMensual.service
 
 
 @Component({
-  selector: 'app-factura-create',
-  templateUrl: './factura-create.component.html',
-  styleUrls: ['./factura-create.component.css']
+  selector: 'app-factura-create-ftermino',
+  templateUrl: './factura-create-ftermino.component.html',
+  styleUrls: ['./factura-create-ftermino.component.css']
 })
-export class FacturaCreateComponent  implements OnInit {
+
+export class FacturaCreateFterminoComponent  implements OnInit {
   facturaForm!: FormGroup;
   disponible: number | null = null;
   loading = true;
@@ -33,7 +34,7 @@ export class FacturaCreateComponent  implements OnInit {
     private facturaService: FacturaService,
     private registroMensualService: RegistroMensualService,
     private toastr: ToastrService,
-    private dialogRef: MatDialogRef<FacturaCreateComponent>,
+    private dialogRef: MatDialogRef<FacturaCreateFterminoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private sanitizer: DomSanitizer // <- inyectado
   ) {}
@@ -73,12 +74,11 @@ ngOnInit(): void {
   console.log('🔹 idEfector recibido:', this.data.idEfector);
 
  // 3. Verificar si ya hay 2 facturas
-  this.facturaService.existenDosFacturas(
+  this.facturaService.existenDosFacturasSinQuincena(
     this.data.asistencial?.id,
     this.data.idEfector,
     this.data.anio,
     this.data.mes,
-    this.data.quincena
   ).subscribe({
     next: (existenDos: boolean) => {
       this.maximoAlcanzado = existenDos;
@@ -88,7 +88,6 @@ ngOnInit(): void {
         this.calcularMontoDisponible(
           this.data.asistencial?.id,
           this.data.idEfector,
-          this.data.quincena,
           this.data.mes,
           this.data.anio,
           (disponible) => {
@@ -105,19 +104,17 @@ ngOnInit(): void {
         );
       } else {
         // Si todavía no son 2, chequeo si existe al menos 1 factura
-        this.facturaService.existeFactura(
+        this.facturaService.existeFacturaSinQuincena(
           this.data.asistencial?.id,
           this.data.idEfector,
           this.data.anio,
           this.data.mes,
-          this.data.quincena
         ).subscribe({
           next: (existe: boolean) => {
             // calculo disponible siempre para mostrar en la UI
             this.calcularMontoDisponible(
               this.data.asistencial?.id,
               this.data.idEfector,
-              this.data.quincena,
               this.data.mes,
               this.data.anio,
               (disponible) => {
@@ -163,17 +160,16 @@ ngOnInit(): void {
 calcularMontoDisponible(
   idAsistencial: number,
   idEfector: number,
-  quincena: string,
   mes: string,
   anio: number,
   callback?: (disponible: number) => void
 ): void {
   this.registroMensualService
-    .getMontoTotalByQuincena(idAsistencial, idEfector, quincena, mes, anio)
+    .getMontoTotalFueraTermino(idAsistencial, idEfector, mes, anio)
     .subscribe({
       next: (total) => {
         this.facturaService
-          .getMontoByQuincena(idAsistencial, idEfector, quincena, mes, anio)
+          .getMontoFueraTermino(idAsistencial, idEfector, mes, anio)
           .subscribe({
             next: (facturado) => {
               const rawDisponible = total - facturado;

@@ -1,6 +1,6 @@
 <app-spinner></app-spinner>
 <h2 mat-dialog-title>Cargar Factura
-<h5>{{ data.quincena }} Quincena de {{ data.mes }}/{{ data.anio }}</h5>
+<h5>Fuera de término {{ data.mes }}/{{ data.anio }}</h5>
 </h2>
 <div *ngIf="!loading">
 
@@ -14,7 +14,7 @@
   <!-- Si ya hay 2 facturas -->
   <div *ngIf="maximoAlcanzado && disponible !== 0" class="error-message"
       style="text-align: center; color: red; font-weight: bold; padding: 1rem;">
-    Ya se cargaron el máximo (2) de facturas permitidas para esta quincena.
+    Ya se cargaron el máximo (2) de facturas permitidas para fuera de término.
   </div>
 
   <!-- Si todavía se puede cargar -->

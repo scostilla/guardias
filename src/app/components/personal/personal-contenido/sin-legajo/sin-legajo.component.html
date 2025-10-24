@@ -95,7 +95,9 @@
             <button mat-icon-button matTooltip="Editar {{row.nombre}}" (click)="updateAsistencial(row)">
               <mat-icon class="btnEdit">edit</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Eliminar {{row.nombre}}" (click)="deleteAsistencial(row)">
+            <button mat-icon-button 
+                    matTooltip="Eliminar {{row.nombre}}" 
+                    (click)="deleteAsistencial(row, row.esAsistencial)">
               <mat-icon class="btnRemove">delete</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Agregar legajo" (click)="crearLegajo(row)">

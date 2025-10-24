@@ -308,6 +308,36 @@ loadRegistrosMensuales(): void {
           })
         );
 
+// 🔹 Agrupar contrafactura por asistencial
+const contrafacturas = this.registrosMensuales.filter(r => r.ddjjDto?.idTipoGuardia === 4);
+const otros = this.registrosMensuales.filter(r => r.ddjjDto?.idTipoGuardia !== 4);
+
+const agrupadasContrafacturas: RegistroMensualConDdjj[] = Object.values(
+  contrafacturas.reduce((acc, curr) => {
+    const key = curr.asistencial.id;
+    if (!acc[key]) {
+      acc[key] = { ...curr };
+      acc[key].registroActividad = [...curr.registroActividad];
+    } else {
+      acc[key].registroActividad.push(...curr.registroActividad);
+      // combinar totales si es necesario
+      acc[key].totalHoras.horasLav += curr.totalHoras.horasLav;
+      acc[key].totalHoras.horasSdf += curr.totalHoras.horasSdf;
+      acc[key].totalHoras.montoLav += curr.totalHoras.montoLav;
+      acc[key].totalHoras.montoSdf += curr.totalHoras.montoSdf;
+    }
+    return acc;
+  }, {} as Record<number, RegistroMensualConDdjj>)
+);
+
+// 🔹 Reunir todos los registros ya agrupados
+this.registrosMensuales = [...otros, ...agrupadasContrafacturas];
+
+// 🔹 Ordenar por tipo de guardia si hace falta
+this.registrosMensuales.sort((a, b) =>
+  (a.ddjjDto?.idTipoGuardia || 0) - (b.ddjjDto?.idTipoGuardia || 0)
+);
+
         // 🔹 Ordenamos por tipo de guardia usando la DDJJ
         this.registrosMensuales.sort((a, b) =>
           (a.ddjjDto?.idTipoGuardia || 0) - (b.ddjjDto?.idTipoGuardia || 0)
@@ -326,26 +356,54 @@ loadRegistrosMensuales(): void {
 
 // Métodos para manejar la agrupación por tipo de guardia
 shouldShowTipoGuardia(registro: RegistroMensualConDdjj, index: number): boolean {
-  if (index === 0) return true;
-  
-  const prevRegistro = this.registrosMensuales[index - 1];
-  return registro.ddjjDto?.idTipoGuardia !== prevRegistro.ddjjDto?.idTipoGuardia;
+  if (index === 0) {
+    console.log(`[shouldShowTipoGuardia] index 0 → mostrar fila:`, registro);
+    return true;
+  }
+
+  const prev = this.registrosMensuales[index - 1];
+  const tipoGuardia = registro.ddjjDto?.idTipoGuardia;
+
+  if (tipoGuardia === 4) {
+    const mostrar = !(registro.asistencial.id === prev.asistencial.id && tipoGuardia === 4);
+    console.log(`[shouldShowTipoGuardia] index ${index} CONTRAFCTURA → asistencial: ${registro.asistencial.id}, prev: ${prev.asistencial.id}, mostrar:`, mostrar);
+    return mostrar;
+  }
+
+  const mostrar = tipoGuardia !== prev.ddjjDto?.idTipoGuardia;
+  console.log(`[shouldShowTipoGuardia] index ${index} tipo: ${tipoGuardia}, prev tipo: ${prev.ddjjDto?.idTipoGuardia}, mostrar:`, mostrar);
+  return mostrar;
 }
 
 getRowspanForTipoGuardia(registro: RegistroMensualConDdjj, index: number): number {
-  if (!this.shouldShowTipoGuardia(registro, index)) return 1;
-  
-  const tipoGuardiaId = registro.ddjjDto?.idTipoGuardia;
+  if (!this.shouldShowTipoGuardia(registro, index)) {
+    console.log(`[getRowspanForTipoGuardia] index ${index} → no mostrar, rowspan = 1`);
+    return 1;
+  }
+
+  const tipoGuardia = registro.ddjjDto?.idTipoGuardia;
+  const idAsistencial = registro.asistencial.id;
   let count = 1;
-  
+
   for (let i = index + 1; i < this.registrosMensuales.length; i++) {
-    if (this.registrosMensuales[i].ddjjDto?.idTipoGuardia === tipoGuardiaId) {
-      count++;
+    const next = this.registrosMensuales[i];
+
+    if (tipoGuardia === 4) {
+      if (next.ddjjDto?.idTipoGuardia === 4 && next.asistencial.id === idAsistencial) {
+        count++;
+      } else {
+        break;
+      }
     } else {
-      break;
+      if (next.ddjjDto?.idTipoGuardia === tipoGuardia) {
+        count++;
+      } else {
+        break;
+      }
     }
   }
-  
+
+  console.log(`[getRowspanForTipoGuardia] index ${index}, tipoGuardia: ${tipoGuardia}, asistencial: ${idAsistencial}, rowspan: ${count}`);
   return count;
 }
 
@@ -373,24 +431,24 @@ getColorTipoGuardia(idTipoGuardia: number | undefined): string {
     const fechaActual = moment(); // hoy
     const mesesPasados = [];
 
-    for (let i = 6; i >= 1; i--) {
+    // mostrar los últimos 6 meses + el actual
+    for (let i = 6; i >= 0; i--) {
       const mesAnio = fechaActual.clone().subtract(i, 'months');
       const mes = mesAnio.month() + 1; // de 1 a 12
       const anio = mesAnio.year();
 
       mesesPasados.push({
-        value: `${mes}-${anio}`, // ej: "5-2025"
-        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "MAYO 2025"
+        value: `${mes}-${anio}`, // ej: "9-2025"
+        label: mesAnio.format('MMMM YYYY').toUpperCase(), // ej: "SEPTIEMBRE 2025"
       });
     }
 
     this.mesesDisponibles = mesesPasados;
 
- // Establecer por defecto el mes anterior al actual
-  const mesAnterior = fechaActual.clone().subtract(1, 'months');
-  this.selectedMonth = mesAnterior.month() + 1;
-  this.selectedYear = mesAnterior.year();
-  this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
+    // Establecer por defecto el mes actual
+    this.selectedMonth = fechaActual.month() + 1;
+    this.selectedYear = fechaActual.year();
+    this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
   }
 
   onMonthYearChange(): void {

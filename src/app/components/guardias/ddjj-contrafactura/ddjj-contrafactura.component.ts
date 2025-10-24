@@ -121,7 +121,7 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   botonDirectorIcon: 'assignment_return' | 'assignment_late' | 'block' | 'assignment_turned_in' = 'assignment_return';
   evaluacionDdjjCargada = false;
   botonDirectorDeshabilitado: boolean = false;
-  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | null = null;
+  mensajeDirector: 'pendiente' | 'pendiente_devuelto' | 'rechazado' | 'aceptado' | 'fuera_rango_tiempo' | 'aceptado_completo_primera' | null = null;
 
   botonDphIcon: 'assignment_return' | 'assignment_late' | 'assignment_turned_in' | 'block' | 'alarm_add' | 'snooze' = 'assignment_return';
   botonDphDeshabilitado: boolean = false;
@@ -667,35 +667,44 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
   //Verificaciones para permitir interacciones
 
-  private estaEnRango(inicio: Date, fin: Date, today: Date = new Date()): boolean {
-    return today >= inicio && today <= fin;
+private estaEnRango(inicio: Date, fin: Date | null, today: Date = new Date()): boolean {
+  if (!fin) {
+    // Caso FUERA_DE_TERMINO: solo comparamos que hoy >= inicio
+    return today >= inicio;
+  }
+  return today >= inicio && today <= fin;
+}
+
+private getRangoMesSiguiente(): { inicio: Date, fin: Date | null }[] {
+  const mes = this.selectedMonth;
+  const anio = this.selectedYear;
+
+  // Ajuste para el mes siguiente
+  const siguienteMes = mes === 12 ? 1 : mes + 1;
+  const siguienteAnio = mes === 12 ? anio + 1 : anio;
+
+  // Primera quincena: 15-20 del mes actual
+  const rango1Inicio = new Date(anio, mes - 1, 15);
+  const rango1Fin = new Date(anio, mes - 1, 20, 23, 59, 59);
+
+  // Segunda quincena: 1–10 del mes siguiente
+  const rango2Inicio = new Date(siguienteAnio, siguienteMes - 1, 1);
+  const rango2Fin = new Date(siguienteAnio, siguienteMes - 1, 10, 23, 59, 59);
+
+  // Fuera de término: desde el 11 del mes siguiente en adelante, sin fin
+  const rangoFueraDeTerminoInicio = new Date(siguienteAnio, siguienteMes - 1, 11);
+
+  if (this.selectedQuincena === 'PRIMERA') {
+    return [{ inicio: rango1Inicio, fin: rango1Fin }];
+  } else if (this.selectedQuincena === 'SEGUNDA') {
+    return [{ inicio: rango2Inicio, fin: rango2Fin }];
+  } else if (this.selectedQuincena === 'FUERA_DE_TERMINO') {
+    return [{ inicio: rangoFueraDeTerminoInicio, fin: null }];
   }
 
-  private getRangoMesSiguiente(): { inicio: Date, fin: Date }[] {
-    const mes = this.selectedMonth;
-    const anio = this.selectedYear;
-
-    // Ajuste para el mes siguiente
-    const siguienteMes = mes === 12 ? 1 : mes + 1;
-    const siguienteAnio = mes === 12 ? anio + 1 : anio;
-
-    // Primera quincena: 15-20 del mes actual
-    const rango1Inicio = new Date(anio, mes - 1, 15);
-    const rango1Fin = new Date(anio, mes - 1, 26, 23, 59, 59);
-
-    // Segunda quincena: 1–10 del mes siguiente
-    const rango2Inicio = new Date(siguienteAnio, siguienteMes - 1, 1);
-    const rango2Fin = new Date(siguienteAnio, siguienteMes - 1, 10, 23, 59, 59);
-
-    if (this.selectedQuincena === 'PRIMERA') {
-      return [{ inicio: rango1Inicio, fin: rango1Fin }];
-    } else if (this.selectedQuincena === 'SEGUNDA') {
-      return [{ inicio: rango2Inicio, fin: rango2Fin }];
-    }
-
-    // Por defecto, si no coincide la quincena, devolvemos vacío
-    return [];
-  }
+  // Por defecto, si no coincide la quincena, devolvemos vacío
+  return [];
+}
 
   verificarExistenciaDdjj(): void {
     this.verificandoDdjj = true;
@@ -714,6 +723,11 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
     for (const rango of this.getRangoMesSiguiente()) {
       if (this.estaEnRango(rango.inicio, rango.fin, today)) {
+        if (!rango.fin) {
+          // Caso FUERA_DE_TERMINO: no hay límite, devolvemos un mensaje genérico
+          return 'Fuera de término';
+        }
+
         const diasRestantes = rango.fin.getDate() - today.getDate() + 1;
         return diasRestantes === 1
           ? '¡Es el último día!'
@@ -724,87 +738,86 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  private calcularFechaLimiteEnvio(mes: number, anio: number, quincena: string): Date {
-    let limite: Date;
+  private calcularFechaLimiteEnvio(mes: number, anio: number, quincena: string): Date | null {
+    let limite: Date | null;
 
-    if (quincena === 'PRIMERA') {
-      // Día 20 del mes en curso
-      limite = new Date(anio, mes - 1, 26, 23, 59, 59);
-    } else {
-      // Día 10 del mes siguiente
-      let siguienteMes = mes === 12 ? 1 : mes + 1;
-      let siguienteAnio = mes === 12 ? anio + 1 : anio;
-      limite = new Date(siguienteAnio, siguienteMes - 1, 10, 23, 59, 59);
+    switch (quincena) {
+      case 'PRIMERA':
+        // Día 20 del mes en curso
+        limite = new Date(anio, mes - 1, 20, 23, 59, 59);
+        break;
+      case 'SEGUNDA':
+        // Día 10 del mes siguiente
+        const siguienteMes = mes === 12 ? 1 : mes + 1;
+        const siguienteAnio = mes === 12 ? anio + 1 : anio;
+        limite = new Date(siguienteAnio, siguienteMes - 1, 10, 23, 59, 59);
+        break;
+      case 'FUERA_DE_TERMINO':
+        // Sin límite: habilitado desde el 11 del mes siguiente en adelante
+        limite = null;
+        break;
+      default:
+        console.warn(`Quincena desconocida: ${quincena}`);
+        limite = null;
     }
 
     return limite;
   }
-  
+    
   //Evaluaciones y cambios de estado DDJJ
 
-  evaluarEstadoDdjj(ddjj: DdjjListDto): void {
-    console.log('Evaluando DDJJ:', {
-      id: ddjj.id,
-      estadoDdjjDirector: ddjj.estadoDdjjDirector,
-      enPosesionDirector: ddjj.enPosesionDirector,
-      estadoDdjjDirectorDPH: ddjj.estadoDdjjDirectorDPH,
-      enPosesionDirectorDPH: ddjj.enPosesionDirectorDPH
-    });
+evaluarEstadoDdjj(ddjj: DdjjListDto): void {
+  const estado = ddjj.estadoDdjjDirector;
+  const enPosesion = ddjj.enPosesionDirector;
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
+  const hoy = new Date();
 
-    const estado = ddjj.estadoDdjjDirector;
-    const enPosesion = ddjj.enPosesionDirector;
-
-    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
-    const hoy = new Date();
-
-    if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
-      console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
-      console.log('DPH: Ya no se puede cargar, fuera del rango permitido AdminDirector');
-      this.botonDirectorIcon = 'block';
-      this.botonDirectorDeshabilitado = true;
-      this.mensajeDirector = 'fuera_rango_tiempo';
-      this.puedeEditarCeldas = false;
-      this.evaluacionDdjjCargada = true;
-      return; // Salir sin seguir evaluando estados
-    }
-
-  if (enPosesion && estado === 'PENDIENTE') {
-    if (ddjj.idDirector == null) {
-      console.log('Caso: en posesión del director y pendiente (nunca revisada)');
-      this.botonDirectorIcon = 'assignment_late';
-      this.botonDirectorDeshabilitado = true;
-      this.mensajeDirector = 'pendiente';
-      this.puedeEditarCeldas = false;
-    } else {
-      console.log('Caso: en posesión del director y pendiente (devuelta por DPH)');
-      this.botonDirectorIcon = 'assignment_late';
-      this.botonDirectorDeshabilitado = true;
-      this.mensajeDirector = 'pendiente_devuelto';
-      this.puedeEditarCeldas = false;
-    }
-    } else if (!enPosesion && estado === 'RECHAZADO') {
-      console.log('Caso: rechazado por el director');
-      this.botonDirectorIcon = 'assignment_return';
-      this.botonDirectorDeshabilitado = false;
-      this.mensajeDirector = 'rechazado';
-      this.puedeEditarCeldas = true;
-
-    } else if (!enPosesion && estado === 'APROBADO') {
-      console.log('Caso: aprobado por el director');
-      this.botonDirectorIcon = 'assignment_turned_in';
-      this.botonDirectorDeshabilitado = true;
-      this.mensajeDirector = 'aceptado';
-      this.puedeEditarCeldas = false;
-    } else {
-      console.log('Caso: estado desconocido o no manejado explícitamente');
-      this.botonDirectorIcon = 'assignment_return';
-      this.botonDirectorDeshabilitado = false;
-      this.mensajeDirector = null;
-    }
-
+  // Fuera de plazo
+  if (fechaLimite && hoy > fechaLimite && estado && estado !== 'APROBADO') {
+    this.botonDirectorIcon = 'block';
+    this.botonDirectorDeshabilitado = true;
+    this.mensajeDirector = 'fuera_rango_tiempo';
+    this.puedeEditarCeldas = false;
     this.evaluacionDdjjCargada = true;
-    this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estado === 'APROBADO';
+    return;
   }
+
+  // Pendiente
+  if (enPosesion && estado === 'PENDIENTE') {
+    this.botonDirectorIcon = 'assignment_late';
+    this.botonDirectorDeshabilitado = true;
+    this.mensajeDirector = ddjj.idDirector == null ? 'pendiente' : 'pendiente_devuelto';
+    this.puedeEditarCeldas = false;
+  } 
+  // Rechazado
+  else if (!enPosesion && estado === 'RECHAZADO') {
+    this.botonDirectorIcon = 'assignment_return';
+    this.botonDirectorDeshabilitado = false;
+    this.mensajeDirector = 'rechazado';
+    this.puedeEditarCeldas = true;
+  } 
+  // Aprobado
+  else if (!enPosesion && estado === 'APROBADO') {
+    this.botonDirectorIcon = 'assignment_turned_in';
+    this.botonDirectorDeshabilitado = true;
+    this.puedeEditarCeldas = false;
+
+    if (this.selectedQuincena === 'PRIMERA') {
+      this.mensajeDirector = 'aceptado_completo_primera';
+    } else {
+      this.mensajeDirector = 'aceptado';
+    }
+  } 
+  // Otro estado
+  else {
+    this.botonDirectorIcon = 'assignment_return';
+    this.botonDirectorDeshabilitado = false;
+    this.mensajeDirector = null;
+  }
+
+  this.evaluacionDdjjCargada = true;
+  this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estado === 'APROBADO';
+}
 
   evaluarEstadoDdjjDph(ddjj: DdjjListDto): void {
     const estadoDirector = ddjj.estadoDdjjDirector;
@@ -814,7 +827,7 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
     const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
     const hoy = new Date();
 
-    if (hoy > fechaLimite && estadoDph && estadoDph !== 'APROBADO') {
+    if (fechaLimite && hoy > fechaLimite && estadoDph && estadoDph !== 'APROBADO') {
       console.log('DPH: Ya no se puede cargar, fuera del rango permitido AdminDPH');
       this.botonDphIcon = 'block';
       this.botonDphDeshabilitado = true;
@@ -907,60 +920,68 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
     this.mostrarBotonDDJJ = this.rangoPermitidoDDJJ || estadoDph === 'APROBADO';
   }
 
-  evaluarRespuestaDirectorDdjj(ddjj: DdjjListDto): void {
-    const estado = ddjj.estadoDdjjDirector;
-    const enPosesion = ddjj.enPosesionDirector;
+evaluarRespuestaDirectorDdjj(ddjj: DdjjListDto): void {
+  const estado = ddjj.estadoDdjjDirector;
+  const enPosesion = ddjj.enPosesionDirector;
 
-    const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
-    const hoy = new Date();
+  const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
+  const hoy = new Date();
 
-    if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
-      console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
-      console.log('Director: Ya no se puede cargar, fuera del rango permitido');
-      this.botonDirectorAuthIcon = 'block';
-      this.botonDirectorAuthDeshabilitado = true;
-      this.mensajeDirectorAuth = 'fuera_rango_tiempo';
-      return; // Salir sin seguir evaluando estados
-    }
-
-    if (enPosesion && estado === 'PENDIENTE') {
-      this.botonDirectorAuthIcon = 'assignment_return';
-      this.botonDirectorAuthDeshabilitado = false;
-      this.mensajeDirectorAuth = 'revision';
-    } else if (!enPosesion && estado === 'RECHAZADO') {
-      this.botonDirectorAuthIcon = 'assignment_late';
-      this.botonDirectorAuthDeshabilitado = true;
-      this.mensajeDirectorAuth = 'rechazado';
-    } else if (!enPosesion && estado === 'APROBADO') {
-      if (this.selectedQuincena === 'SEGUNDA') {
-        // Validar precondiciones SOLO si es la segunda quincena
-        this.registroActividadService
-          .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
-          .subscribe({
-            next: (precondicionesCumplidas: boolean) => {
-              this.botonDirectorAuthIcon = 'assignment_turned_in';
-              this.botonDirectorAuthDeshabilitado = true;
-              this.mensajeDirectorAuth = precondicionesCumplidas ? 'aceptado_completo' : 'aceptado';
-            },
-            error: () => {
-              console.warn('Error al validar precondiciones del cronograma.');
-              this.botonDirectorAuthIcon = 'assignment_turned_in';
-              this.botonDirectorAuthDeshabilitado = true;
-              this.mensajeDirectorAuth = 'null';
-            }
-          });
-      } else {
-        // Si es la PRIMERA, pasar directamente
-        this.botonDirectorAuthIcon = 'assignment_turned_in';
-        this.botonDirectorAuthDeshabilitado = true;
-        this.mensajeDirectorAuth = 'aceptado_completo_primera';
-      }
-    } else {
-      this.botonDirectorAuthIcon = 'assignment_return';
-      this.botonDirectorAuthDeshabilitado = true;
-      this.mensajeDirectorAuth = null;
-    }
+  // Caso: fuera de plazo
+  if (fechaLimite && hoy > fechaLimite && estado && estado !== 'APROBADO') {
+    console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
+    console.log('Director: Ya no se puede cargar, fuera del rango permitido');
+    this.botonDirectorAuthIcon = 'block';
+    this.botonDirectorAuthDeshabilitado = true;
+    this.mensajeDirectorAuth = 'fuera_rango_tiempo';
+    return;
   }
+
+  // Caso: pendiente
+  if (enPosesion && estado === 'PENDIENTE') {
+    this.botonDirectorAuthIcon = 'assignment_return';
+    this.botonDirectorAuthDeshabilitado = false;
+    this.mensajeDirectorAuth = 'revision';
+  } 
+  // Caso: rechazado
+  else if (!enPosesion && estado === 'RECHAZADO') {
+    this.botonDirectorAuthIcon = 'assignment_late';
+    this.botonDirectorAuthDeshabilitado = true;
+    this.mensajeDirectorAuth = 'rechazado';
+  } 
+  // Caso: aprobado
+  else if (!enPosesion && estado === 'APROBADO') {
+    if (this.selectedQuincena === 'PRIMERA') {
+      // Primera quincena: mensaje especial
+      this.botonDirectorAuthIcon = 'assignment_turned_in';
+      this.botonDirectorAuthDeshabilitado = true;
+      this.mensajeDirectorAuth = 'aceptado_completo_primera';
+    } else {
+      // Segunda quincena: validar precondiciones
+      this.registroActividadService
+        .validarPrecondicionesCronograma(this.efectorId!, this.selectedMonth, this.selectedYear)
+        .subscribe({
+          next: (precondicionesCumplidas: boolean) => {
+            this.botonDirectorAuthIcon = 'assignment_turned_in';
+            this.botonDirectorAuthDeshabilitado = true;
+            this.mensajeDirectorAuth = precondicionesCumplidas ? 'aceptado_completo' : 'aceptado';
+          },
+          error: () => {
+            console.warn('Error al validar precondiciones del cronograma.');
+            this.botonDirectorAuthIcon = 'assignment_turned_in';
+            this.botonDirectorAuthDeshabilitado = true;
+            this.mensajeDirectorAuth = null;
+          }
+        });
+    }
+  } 
+  // Otros casos
+  else {
+    this.botonDirectorAuthIcon = 'assignment_return';
+    this.botonDirectorAuthDeshabilitado = true;
+    this.mensajeDirectorAuth = null;
+  }
+}
 
   evaluarRespuestaDphDdjj(ddjj: DdjjListDto): void {
     const estado = ddjj.estadoDdjjDirectorDPH;
@@ -971,7 +992,7 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
     const fechaLimite = this.calcularFechaLimiteEnvio(this.selectedMonth, this.selectedYear, this.selectedQuincena);
     const hoy = new Date();
 
-    if (hoy > fechaLimite && estado && estado !== 'APROBADO') {
+    if (fechaLimite && hoy > fechaLimite && estado && estado !== 'APROBADO') {
       console.log('Hoy:', hoy, ' - Fecha límite:', fechaLimite);
       console.log('DPH: Ya no se puede cargar, fuera del rango permitidoDPH');
       this.botonDphAuthIcon = 'block';
@@ -1275,30 +1296,38 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   private crearCronogramaSiCompleto(estaCompleto: boolean): void {
     if (!estaCompleto) return;
 
-    this.registroActividadService
-      .obtenerDdjjAprobadas(this.efectorId!, this.selectedMonth, this.selectedYear)
-      .subscribe({
-        next: (ids: number[]) => {
-          const mesNombre = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
-          const quincena = this.selectedQuincena;
-          const cronogramaDto = new CronogramaDefinitivoDto(
-            mesNombre,
-            this.selectedYear,
-            true,
-            this.efectorId!,
-            ids,
-            quincena,
-          );
+    const mes = this.selectedMonth;
+    const anio = this.selectedYear;
+    const quincena = this.selectedQuincena;
 
-          console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
+    // Elegir servicio según la quincena
+    const obtenerDdjj$ =
+      quincena === 'PRIMERA'
+        ? this.registroActividadService.obtenerDdjjCfAprobadas(this.efectorId!, mes, anio)
+        : this.registroActividadService.obtenerDdjjAprobadas(this.efectorId!, mes, anio);
 
-          this.cronogramaDefinitivoService.saveCF(cronogramaDto).subscribe({
-            next: () => this.toastr.success('Se creó el cronograma definitivo.', 'Éxito'),
-            error: () => this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención')
-          });
-        },
-        error: () => console.error('Error obteniendo DDJJ aprobadas')
-      });
+    obtenerDdjj$.subscribe({
+      next: (ids: number[]) => {
+        const mesNombre = moment().month(mes - 1).format('MMMM').toUpperCase();
+
+        const cronogramaDto = new CronogramaDefinitivoDto(
+          mesNombre,
+          anio,
+          true,
+          this.efectorId!,
+          ids,
+          quincena,
+        );
+
+        console.log('Datos enviados a cronogramaDefinitivoService.save:', cronogramaDto);
+
+        this.cronogramaDefinitivoService.save(cronogramaDto).subscribe({
+          next: () => this.toastr.success('Se creó el cronograma definitivo.', 'Éxito'),
+          error: () => this.toastr.warning('Error al crear el cronograma definitivo.', 'Atención')
+        });
+      },
+      error: () => console.error('Error obteniendo DDJJ aprobadas')
+    });
   }
 
   //Exportaciones a EXCEL y PDF

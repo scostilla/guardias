@@ -104,17 +104,12 @@
           </div>
         </div>
         <div class="col-lg">
-          <div class="btnMenu card border-0 align-items-center" type="button"
-               [class.disabled]="currentEfectorType === 'ministerio' || currentEfectorType === 'caps'"
-               [routerLink]="currentEfectorType !== 'ministerio' && currentEfectorType !== 'caps' ? '/registro-actividades-profesionales' : null">
+          <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/registro-actividades-profesionales">
              <div class="icon6_btnMenu">
                <img class="img-fluid" src="/assets/img/i_historial.png" />
              </div>
              <div class="card-body text-center">
                <h2 class="fs-4 fw-bold"><span>REPORTES</span></h2>
-               <div class="icon">
-                 <mat-icon>assignment</mat-icon>
-               </div>
              </div>
            </div>
          </div>

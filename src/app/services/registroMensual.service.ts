@@ -118,6 +118,12 @@ export interface FechaSeleccionada {
     );
   }
 
+  getMontoTotalFueraTermino(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(
+      `${this.registroMensualURL}getMontoTotalFueraTermino/${idAsistencial}/${idEfector}/${mes}/${anio}`
+    );
+  }
+
   getRegistrosIncompletos(idEfector: number, mes: string, anio: number, quincena: string): Observable<RegistroMensualListDto[]> {
     return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}incompletos/${idEfector}/${mes}/${anio}/${quincena}`);
   }
@@ -132,6 +138,11 @@ export interface FechaSeleccionada {
     );
   }
 
+   listFueraDeTerminoAgrupado(idEfector: number, mes: string, anio: number): Observable<RegistroMensualListDto[]> {
+    return this.httpClient.get<RegistroMensualListDto[]>(`${this.registroMensualURL}fuera-de-termino-agrupados/${idEfector}/${mes}/${anio}`
+    );
+  }
+
   existenRegistrosFueraDeTermino(idEfector: number, mes: string, anio: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-fuera-de-termino/${idEfector}/${mes}/${anio}`
     );
@@ -141,6 +152,14 @@ export interface FechaSeleccionada {
     return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-completos/${idEfector}/${mes}/${anio}/${quincena}`);
   }
 
+  existenRegularizados(idEfector: number, mes: string, anio: number ): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-regularizados/${idEfector}/${mes}/${anio}`);
+  }
+
+  existenRegularizadosSinPendientes(idEfector: number, mes: string, anio: number ): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.registroMensualURL}existen-regularizados-sin-pendientes/${idEfector}/${mes}/${anio}`);
+  }
+  
 //Behaivour para manejo de fechas en fuera de termino
   private fechaSubject = new BehaviorSubject<FechaSeleccionada | null>(null);
 

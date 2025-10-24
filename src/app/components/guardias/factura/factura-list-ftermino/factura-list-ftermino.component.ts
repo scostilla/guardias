@@ -9,11 +9,11 @@ import { FacturaDetailComponent } from '../factura-detail/factura-detail.compone
 import { DdjjService } from 'src/app/services/ddjj.service';
 
 @Component({
-  selector: 'app-factura-list',
-  templateUrl: './factura-list.component.html',
-  styleUrls: ['./factura-list.component.css']
+  selector: 'app-factura-list-ftermino',
+  templateUrl: './factura-list-ftermino.component.html',
+  styleUrls: ['./factura-list-ftermino.component.css']
 })
-export class FacturaListComponent implements OnInit {
+export class FacturaListFterminoComponent implements OnInit {
 
   facturas: FacturaDetailDto[] = [];
   displayedColumns: string[] = ['numeroFactura', 'fechaEmision', 'monto', 'acciones'];
@@ -23,7 +23,7 @@ export class FacturaListComponent implements OnInit {
 
   constructor(
     private facturaService: FacturaService,
-    private dialogRef: MatDialogRef<FacturaListComponent>,
+    private dialogRef: MatDialogRef<FacturaListFterminoComponent>,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private ddjjService: DdjjService,
@@ -40,7 +40,6 @@ export class FacturaListComponent implements OnInit {
     }
 
     this.loadFacturas();
-    this.verificarExistenciaDdjj(); 
 
     this.facturaService.refresh$.subscribe(() => {
       this.loadFacturas();
@@ -48,12 +47,11 @@ export class FacturaListComponent implements OnInit {
   }
 
   private loadFacturas(): void {
-    this.facturaService.getByFiltros(
-      this.data.asistencial.id,
+    this.facturaService.listByAsistencialSinQuincena(
       this.data.idEfector,
       this.data.anio,
       this.data.mes,
-      this.data.quincena
+      this.data.asistencial.id,
     ).subscribe({
       next: (res) => {
         this.facturas = res;
@@ -103,19 +101,11 @@ export class FacturaListComponent implements OnInit {
     }
   }
 
-  convertirMesANombre(numeroMes: number): string {
-    const meses = [
-      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-      'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
-    ];
-    return meses[numeroMes];
-  }
-
   verificarExistenciaDdjj(): void {
     const nombreMes = this.data.mes;
     const anio = this.data.anio;
     const efectorId = this.data.idEfector;
-    const quincena = this.data.quincena;
+    const quincena = 'FUERA_DE_TERMINO';
 
     if (!efectorId) {
       console.error('El ID del efector no puede ser null');
