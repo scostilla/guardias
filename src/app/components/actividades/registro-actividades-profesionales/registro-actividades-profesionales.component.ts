@@ -407,10 +407,10 @@ getFilasPorFecha(fecha: string) {
   // Agrega esta función al principio de la clase
   getColorGuardia(tipoGuardia: string): string {
     switch ((tipoGuardia || '').toLowerCase()) {
-      case 'cargo': return '#91A8DA';
-      case 'extra': return '#fcc932';
-      case 'agrupacion': return '#eb7430';
-      case 'contrafactura': return '#A9D08F';
+      case 'cargo': return '#6126cfff';
+      case 'extra': return '#D91E5B';
+      case 'agrupacion': return '#FF7F0E';
+      case 'contrafactura': return '#769264';
       default: return '';
     }
   }
