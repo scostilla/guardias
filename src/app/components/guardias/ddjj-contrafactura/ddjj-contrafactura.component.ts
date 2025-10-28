@@ -418,6 +418,10 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
     if (this.selectedQuincena === 'PRIMERA') {
       start = startOfMonth.clone();
       end = startOfMonth.clone().date(15);
+    } else if (this.selectedQuincena === 'FUERA_DE_TERMINO') {
+      // 🔹 Si es fuera de término, incluir todos los días del mes
+      start = startOfMonth.clone();
+      end = endOfMonth.clone();
     } else {
       start = startOfMonth.clone().date(16);
       end = endOfMonth.clone();
@@ -425,7 +429,7 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
 
     let day = start.clone();
 
-    // 🔹 Reiniciamos solo las fechas (igual que antes)
+    // 🔹 Reiniciamos las fechas
     this.columnasFechas = [];
 
     while (day <= end) {
@@ -435,10 +439,10 @@ export class DdjjContrafacturaComponent implements OnInit, OnDestroy {
   }
 
   updateTableDataSource(): void {
-    this.dataSource.data = this.registrosMensuales;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
+      this.dataSource.data = this.registrosMensuales;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
 
   getFechaFromColumnId(columnId: string): Date {
     const [year, month, day] = columnId.split('_').map(Number);
