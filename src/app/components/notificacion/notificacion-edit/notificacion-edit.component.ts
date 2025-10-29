@@ -99,7 +99,7 @@ export class NotificacionEditComponent implements OnInit {
   }
   
   // Parsea valores de fecha: soporta 'YYYY-MM-DD', Date y otras cadenas ISO.
-  private parseDateLocal(value: any): Date | null {
+  private privateParseDateLocal(value: any): Date | null {
     if (!value) return null;
     if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
       const [y, m, day] = value.split('-').map(Number);
@@ -118,13 +118,23 @@ export class NotificacionEditComponent implements OnInit {
     return (control: AbstractControl) => {
       const v = control.value;
       if (!v) return null;
-      const d = v instanceof Date ? this.startOfDay(v) : this.parseDateLocal(v);
+      const d = v instanceof Date ? this.startOfDay(v) : this.privateParseDateLocal(v);
       if (!d) return { invalidDate: true };
       const hoy = this.startOfDay(new Date());
       const min = new Date(hoy);
       min.setDate(min.getDate() + days);
       return d < min ? { minDate: { requiredFrom: min.toISOString().split('T')[0] } } : null;
     };
+  }
+
+  // Normaliza variantes posibles de "tipo" a los valores aceptados por el backend
+  private normalizeTipoTipo(value: any): 'NOTIFICACION' | 'DIGESTO' {
+    if (!value) return 'NOTIFICACION';
+    const s = String(value).trim().toUpperCase();
+    if (s.startsWith('DIGEST')) return 'DIGESTO';
+    if (s.startsWith('NOTIFIC')) return 'NOTIFICACION';
+    // fallback seguro
+    return 'NOTIFICACION';
   }
 
   ngOnInit(): void {
@@ -735,9 +745,15 @@ export class NotificacionEditComponent implements OnInit {
     }
     const fechaBaja: string | null = null;
 
+    // Normalizar tipo antes de construir DTO
+    const tipoRaw = raw.tipo;
+    const tipoNormalized = this.normalizeTipoTipo(tipoRaw);
+    // LOG: confirmar valor normalizado
+    console.log('[SAVE] tipo raw:', tipoRaw, '=> normalizado:', tipoNormalized);
+
     // Incluir tipoGuardia sólo para DIGESTO
     const notificacionDto: NotificacionDto = {
-       tipo,
+       tipo: tipoNormalized, // <-- usar tipo normalizado
        categoria,
        detalle,
        url: url || '',
@@ -774,9 +790,16 @@ export class NotificacionEditComponent implements OnInit {
 
       this.isUploading = true;
       const efectorReferencia = idEfectores[0];
+
+      // LOG: inspeccionar lo que vamos a enviar
+      console.log('[SAVE] Subiendo PDF para efector:', efectorReferencia);
+      console.log('[SAVE] Notificacion DTO:', notificacionDto);
+      console.log('[SAVE] Archivo seleccionado:', { name: this.selectedFile.name, size: this.selectedFile.size, type: this.selectedFile.type });
+
       this.notificacionService.uploadPdf(efectorReferencia, this.selectedFile, notificacionDto).subscribe({
         next: (resp) => {
           this.isUploading = false;
+          console.log('[SAVE][UPLOAD PDF] respuesta:', resp);
           if (resp?.url) this.form?.patchValue({ url: resp.url });
           const createdId = resp?.notificacionId;
             if (createdId) {
@@ -795,9 +818,10 @@ export class NotificacionEditComponent implements OnInit {
         },
         error: (err) => {
           this.isUploading = false;
-          console.error('[SAVE][UPLOAD PDF] Error:', err);
-          const msg = err?.error?.mensaje || 'Error al subir el PDF';
-          this.toastr.error(msg, 'Error');
+          // err puede venir envuelto por el servicio: { original, mensaje }
+          console.error('[SAVE][UPLOAD PDF] Error completo:', err);
+          const mensaje = err?.mensaje || err?.error?.mensaje || err?.original?.error?.mensaje || err?.message || 'Error al subir el PDF';
+          this.toastr.error(mensaje, 'Error');
         }
       });
       return;

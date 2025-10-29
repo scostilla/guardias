@@ -84,10 +84,6 @@ export class FacturaService {
     return this.httpClient.get<number>(`${this.facturaURL}getMonto/${idAsistencial}/${idEfector}/${mes}/${anio}`);
   }
 
-  public getMontoFueraTermino(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
-    return this.httpClient.get<number>(`${this.facturaURL}getMontoFueraTermino/${idAsistencial}/${idEfector}/${mes}/${anio}`);
-  }
-
   // Obtener factura por asistencial
   getByAsistencial(idAsistencial: number): Observable<Factura> {
     return this.httpClient.get<Factura>(`${this.facturaURL}getByAsistencialAndFiltros/${idAsistencial}`);
@@ -97,18 +93,6 @@ export class FacturaService {
   listSummary(idEfector: number, anio: number, mes: string, quincena: string): Observable<FacturaSummaryDto[]> {
     return this.httpClient.get<FacturaSummaryDto[]>(
       `${this.facturaURL}listSummary/${idEfector}/${anio}/${mes}/${quincena}`
-    );
-  }
-
-  // Obtener factura por asistencial
-  listByAsistencialSinQuincena(idEfector: number, anio: number, mes: string, idAsistencial: number): Observable<FacturaDetailDto[]> {
-    return this.httpClient.get<FacturaDetailDto[]>(`${this.facturaURL}listByAsistencialSinQuincena/${idEfector}/${anio}/${mes}/${idAsistencial}`);
-  }
-
-  // Listado resumido por efector, año, mes y quincena
-  listSummarySinQuincena(idEfector: number, anio: number, mes: string): Observable<FacturaSummaryDto[]> {
-    return this.httpClient.get<FacturaSummaryDto[]>(
-      `${this.facturaURL}listSummarySinQuincena/${idEfector}/${anio}/${mes}}`
     );
   }
 
@@ -133,15 +117,15 @@ export class FacturaService {
   }
 
   existenDosFacturasSinQuincena(idAsistencial: number, idEfector: number, anio: number, mes: string): Observable<boolean> {
-    return this.httpClient.get<boolean>(`${this.facturaURL}existenDosFacturasSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
+    return this.httpClient.get<boolean>(`${this.facturaURL}existeFacturaSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
   }
 
 
   /**
    * Subir un PDF asociado a una factura existente.
-   * El backend espera multipart/form-data con campo 'pdf' y la ruta POST /factura/uploadPdf/{facturaId}
+   * Mantiene validaciones y comportamiento similar a uploadPdf de Notificacion.
    */
-  public uploadPdf(facturaId: number, file: File): Observable<any> {
+  public uploadPdf(facturaId: number, file: File, facturaDto?: any): Observable<any> {
     // Validaciones básicas
     if (facturaId === null || facturaId === undefined) {
       return throwError(() => new Error('FacturaId inválido'));
@@ -160,8 +144,27 @@ export class FacturaService {
     const formData = new FormData();
     formData.append('pdf', file, file.name);
 
-    // DEBUG opcional
-    console.log('[UPLOAD PDF][FACTURA] facturaId:', facturaId, 'file:', file.name, file.type, file.size);
+    // Normalización de fechas (si el DTO viene) - similar a notificacion
+    const isYMD = (v: any) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
+    const toYMD = (v: any) => {
+      if (!v) return null;
+      if (isYMD(v)) return v;
+      const d = v instanceof Date ? v : new Date(v);
+      return isNaN(d.getTime()) ? null : d.toISOString().split('T')[0];
+    };
+
+    if (facturaDto) {
+      const dto = { ...facturaDto };
+      // Normalizar algunas fechas posibles en Factura (por ejemplo fechaEmision)
+      if (dto.fechaEmision) dto.fechaEmision = toYMD(dto.fechaEmision);
+      if (dto.fechaBaja) dto.fechaBaja = toYMD(dto.fechaBaja);
+      formData.append('factura', JSON.stringify(dto));
+      console.log('[UPLOAD PDF][FACTURA] DTO final:', dto);
+    }
+
+    // DEBUG logs
+    console.log('[UPLOAD PDF][FACTURA] facturaId:', facturaId);
+    console.log('[UPLOAD PDF][FACTURA] Archivo -> name:', file.name, 'type:', file.type, 'size:', file.size);
 
     return this.httpClient.post<any>(`${this.facturaURL}uploadPdf/${facturaId}`, formData)
       .pipe(
