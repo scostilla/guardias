@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, Subject, throwError } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { NotificacionDto } from 'src/app/dto/NotificacionDto';
 import { Notificacion } from "src/app/models/Notificacion";
 
