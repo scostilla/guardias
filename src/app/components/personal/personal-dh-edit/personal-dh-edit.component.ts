@@ -199,7 +199,7 @@ this.fechaSeleccionada = fechaInicioParam;
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
-mostrarOpcion(horas: number, tipoGuardia: string): boolean {
+/*mostrarOpcion(horas: number, tipoGuardia: string): boolean {
   if (tipoGuardia !== 'CARGO') {
     return false;
   }
@@ -213,7 +213,7 @@ mostrarOpcion(horas: number, tipoGuardia: string): boolean {
   }
 
   return false;
-}
+}*/
 
   
 getFechaFormateada(): string {

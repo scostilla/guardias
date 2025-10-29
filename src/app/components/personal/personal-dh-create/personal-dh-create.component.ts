@@ -175,7 +175,7 @@ export class PersonalDhCreateComponent {
     this.otroForm.valueChanges.subscribe(() => this.updateHorasStatus());
   }
 
-  mostrarOpcion(horas: number): boolean {
+  /*mostrarOpcion(horas: number): boolean {
     if (this.tipoGuardia?.toUpperCase() !== 'CARGO') {
       return false;
     }
@@ -197,7 +197,7 @@ export class PersonalDhCreateComponent {
     }
 
     return false;
-  }
+  }*/
 
 hasDatos(form: FormGroup): boolean {
   return Object.values(form.controls).some(control => {
