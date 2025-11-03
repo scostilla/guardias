@@ -84,6 +84,11 @@ export class FacturaService {
     return this.httpClient.get<number>(`${this.facturaURL}getMonto/${idAsistencial}/${idEfector}/${mes}/${anio}`);
   }
 
+    // --- NUEVO: endpoint para "fuera de término" utilizado por factura-create-ftermino ---
+  public getMontoFueraTermino(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(`${this.facturaURL}getMontoFueraTermino/${idAsistencial}/${idEfector}/${mes}/${anio}`);
+  }
+  
   // Obtener factura por asistencial
   getByAsistencial(idAsistencial: number): Observable<Factura> {
     return this.httpClient.get<Factura>(`${this.facturaURL}getByAsistencialAndFiltros/${idAsistencial}`);
@@ -170,5 +175,20 @@ export class FacturaService {
       .pipe(
         tap(() => { this._refresh$.next(); })
       );
+  }
+
+  /**
+   * Obtener facturas por asistencial en el flujo "fuera de término"
+   * Uso: facturaService.listByAsistencialSinQuincena(idEfector, anio, mes, idAsistencial)
+   */
+  public listByAsistencialSinQuincena(
+    idEfector: number,
+    anio: number,
+    mes: string,
+    idAsistencial: number
+  ): Observable<FacturaDetailDto[]> {
+    return this.httpClient.get<FacturaDetailDto[]>(
+      `${this.facturaURL}listByAsistencialSinQuincena/${idEfector}/${anio}/${mes}/${idAsistencial}`
+    );
   }
 }
