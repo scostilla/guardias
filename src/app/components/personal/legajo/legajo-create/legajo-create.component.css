@@ -269,3 +269,20 @@
 .mat-option {
   padding-left: 32px !important;
 }
+
+.select-all-option {
+  font-weight: 600;
+  color: var(--mat-primary-600, #344f8d); /* fallback al azul Angular Material */
+}
+
+.select-all-option:hover {
+  background-color: rgba(63, 81, 181, 0.1); /* hover suave */
+}
+
+.text-primary {
+  color: #243c74;
+}
+
+.mr-1 {
+  margin-right: 6px;
+}

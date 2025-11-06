@@ -120,7 +120,6 @@ export class LegajoCreateComponent implements OnInit {
   showHabilitacionesGenerales: boolean = false;
   formularioValidoParaDirectorRegional: boolean = false;
 
-
   //útiles
   step = 0;
   maxDate!: Date;
@@ -152,6 +151,10 @@ export class LegajoCreateComponent implements OnInit {
   initialHabilitacionesGenerales: any[] = [];
   selectedHospitalsGenerales: number[] = [];
   selectedHospitalsGuardias: number[] = [];
+  allSelected = false;
+  selectAllValue = -1;
+  selectedHospitalesCaps: number[] = [];
+  allHospitalesCapsSelected = false;
 
 
   /* Form de revista */
@@ -696,6 +699,45 @@ this.initialHabilitacionesGenerales =efectoresFiltradosGeneral;
     this.habilitacionesGuardiasValidator()
   ]);
 
+}
+
+toggleSelectAll(): void {
+  if (this.allSelected) {
+    // Deselecciona todos
+    this.selectedHospitals = [];
+  } else {
+    // Selecciona todos los hospitales válidos
+    this.selectedHospitals = this.hospitales
+      .map((h) => h.id)
+      .filter((id): id is number => id !== undefined);
+  }
+
+  this.allSelected = !this.allSelected;
+
+  // Actualiza el formulario
+  this.legajoForm.patchValue({
+    habilitacionesGuardiasHospital: this.selectedHospitals,
+  });
+}
+
+toggleSelectAllHospitalesCaps(): void {
+  if (this.allHospitalesCapsSelected) {
+    // Deselecciona todos
+    this.selectedHospitalesCaps = [];
+  } else {
+    // Selecciona todos los hospitales disponibles
+    this.selectedHospitalesCaps = this.getEfectoresFiltrados()
+      .map((h) => h.id)
+      .filter((id): id is number => id !== undefined);
+  }
+
+  this.allHospitalesCapsSelected = !this.allHospitalesCapsSelected;
+
+  // Actualiza el form control
+  this.legajoForm.get('hospitalHabilitacionesGuardias')?.setValue(this.selectedHospitalesCaps);
+
+  // Dispara manualmente el evento de cambio para actualizar CAPS
+  this.onHospitalHabilitacionesGuardiasChange({ value: this.selectedHospitalesCaps });
 }
 
 onFileSelected(event: any): void {
@@ -1560,11 +1602,13 @@ private isHospital(id: number): boolean {
 
   // Método para cargar los CAPS correspondientes al hospital seleccionado
  onHospitalHabilitacionesGuardiasChange(event: any): void {
-  const selectedHospitalIds: number[] = event.value || [];
+  const selectedHospitalIds: number[] = (event.value || [])
+    .filter((id: any) => typeof id === 'number' && !isNaN(id));
+
   this.legajoForm.patchValue({ hospitalHabilitacionesGuardias: selectedHospitalIds });
 
   console.log('🏥 HOSPITALES SELECCIONADOS PARA CAPS (GUARDIAS):', selectedHospitalIds);
-
+  
   const previousHospitalIds = this.selectedHospitalsGuardias || [];
   const removedHospitalIds = previousHospitalIds.filter((id: number) => !selectedHospitalIds.includes(id));
   const addedHospitalIds = selectedHospitalIds.filter((id: number) => !previousHospitalIds.includes(id));

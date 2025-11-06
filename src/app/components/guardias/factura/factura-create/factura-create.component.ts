@@ -205,9 +205,15 @@ calcularMontoDisponible(
 
 /* Validador para el campo monto */
 montoValidator(control: AbstractControl): ValidationErrors | null {
-  if (this.disponible && control.value > this.disponible) {
-    return { excedeMonto: true };
+  const tolerancia = 0.10; // margen de 10 centavos
+
+  if (this.disponible && control.value !== null) {
+    const excedente = control.value - this.disponible;
+    if (excedente > tolerancia) {
+      return { excedeMonto: true };
+    }
   }
+
   return null;
 }
 

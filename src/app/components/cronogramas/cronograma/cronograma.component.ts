@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent, CalendarDayViewBeforeRenderEvent } from 'angular-calendar';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { CalendarEvent, CalendarMonthViewDay, CalendarView, CalendarModule, CalendarMonthModule, CalendarCommonModule, DateAdapter, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
 import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
 import { CronogramaCreateComponent } from '../cronograma-create/cronograma-create.component';
@@ -10,10 +10,16 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
-import { Subscription } from 'rxjs'; //no borrar, sirve para eventDeleted
+import { Subject, Subscription } from 'rxjs'; //no borrar, sirve para eventDeleted
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
+
+import html2canvas from 'html2canvas';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = (pdfFonts as any).vfs;
+
 
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
@@ -34,18 +40,31 @@ const colorMapping: Record<TipoGuardia, { primary: string, secondary: string }> 
   [TipoGuardia.CONTRAFACTURA]: { primary: '#769264', secondary: '#c3cfbbff' }
 };
 
+interface MyCalendarEvent extends CalendarEvent {
+  servicio?: string;
+  auth?: boolean;
+  motivo?: string;
+  meta?: any;
+}
 @Component({
   selector: 'app-cronograma',
   templateUrl: './cronograma.component.html',
   styleUrls: ['./cronograma.component.css']
 })
 export class CronogramaComponent {
+
+  @ViewChild('cellTemplate', { static: true }) cellTemplate!: TemplateRef<any>;
+  
   
   view: CalendarView = CalendarView.Month;
+  events: MyCalendarEvent[] = [];
+  refresh: Subject<void> = new Subject<void>();
   viewDate: Date = new Date();
-  events: any[] = [];
   CalendarView = CalendarView;
   holidays: Feriado[] = [];
+
+  hoveredEvent: MyCalendarEvent | null = null;
+  hoveredEventId: string | number | null | undefined = null;
 
   //Autenticación
   roles: string[] =[];
@@ -83,6 +102,10 @@ export class CronogramaComponent {
     return new Date(+parts[0], +parts[1] - 1, +parts[2]);
   }
 
+  isEventHovered(event: MyCalendarEvent): boolean {
+  return this.hoveredEventId === event.id;
+  }
+
   ngOnInit(): void {
     // Obtener el ID efector del servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
@@ -93,7 +116,7 @@ export class CronogramaComponent {
             ...feriado,
             fecha: moment(feriado.fecha).toDate()
           }));
-          this.refreshView();
+          this.refresh.next();
         });
 
         this.loadCronogramas();
@@ -163,13 +186,13 @@ export class CronogramaComponent {
       // Si hay un servicio seleccionado, cargar cronogramas filtrados por servicio
       this.cronogramaService.listEfectorService(this.efectorId!, this.selectedServiceId!).subscribe((cronogramas) => {
         this.events = this.mapCronogramas(cronogramas);
-        this.refreshView();
+        this.refresh.next();
       });
     } else {
       // Si no hay servicio seleccionado, cargar todos los cronogramas
       this.cronogramaService.listEfector(this.efectorId!).subscribe((cronogramas) => {
         this.events = this.mapCronogramas(cronogramas);
-        this.refreshView();
+        this.refresh.next();
       });
     }
   }
@@ -231,10 +254,6 @@ mapCronogramas(cronogramas: any[]): any[] {
   });
 }
   
-  refreshView(): void {
-    this.viewDate = new Date(this.viewDate.getTime());
-  }
-
   // Método que se llama cuando se selecciona un servicio del menú
   onServicioSelect(serviceId: number | null): void {
     this.selectedServiceId = serviceId;
@@ -307,34 +326,33 @@ mapCronogramas(cronogramas: any[]): any[] {
            date1.getDate() === date2.getDate();
   }
 
-  dayClicked(day: MonthViewDay<any>): void {
-    const dayStart = moment(day.date).startOf('day').toDate();
-  
-    const events = this.events.filter(event => {
-      const eventStart = moment(event.start).startOf('day').toDate();
-      const eventEnd = moment(event.end).startOf('day').toDate();
-      return dayStart >= eventStart && dayStart <= eventEnd;
-    });
-  
-    const holidayName = this.getHolidayName(day.date);
-  
-    const dialogRef = this.dialog.open(CronogramaDetailComponent, {
-      width: '600px',
-      data: {
-        title:'Lista profesionales',
-        events: events.map(event => ({
-          ...event,
-          color: event.color
-        })),
-        holidayName: holidayName
-      }
-    });
-  
-    // Nos suscribimos al evento emitido desde el diálogo
-    dialogRef.componentInstance.eventDeleted.subscribe(() => {
-      this.loadCronogramas();  // Refrescamos los cronogramas cuando un evento ha sido eliminado
-    });
-  }
+dayClicked(day: MonthViewDay<any>): void {
+  const dayStart = moment(day.date).startOf('day').toDate();
+
+  const events = this.events.filter(event => {
+    const eventStart = moment(event.start).startOf('day').toDate();
+    const eventEnd = moment(event.end).startOf('day').toDate();
+    return dayStart >= eventStart && dayStart <= eventEnd;
+  });
+
+  const holidayName = this.getHolidayName(day.date);
+
+  const dialogRef = this.dialog.open(CronogramaDetailComponent, {
+    width: '600px',
+    data: {
+      title:'Lista profesionales',
+      events: events.map(event => ({
+        ...event,
+        color: event.color
+      })),
+      holidayName: holidayName
+    }
+  });
+
+  dialogRef.componentInstance.eventDeleted.subscribe(() => {
+    this.loadCronogramas();
+  });
+}
   
   onEventClicked({ event }: { event: any }): void {
     const dialogRef = this.dialog.open(CronogramaDetailComponent, {
@@ -350,7 +368,71 @@ mapCronogramas(cronogramas: any[]): any[] {
       this.loadCronogramas();  // Refrescar eventos si se eliminó
     });
   }
+
+// En tu componente TypeScript, añade este método:
+getApellidoFromEvent(event: MyCalendarEvent): string {
+  // Extrae el apellido del título (formato: "Apellido, Nombre - TipoGuardia")
+  if (event.title && event.title.includes(',')) {
+    return event.title.split(',')[0].trim();
+  }
+  
+  // Si no tiene el formato esperado, intenta extraer de otra manera
+  if (event.meta?.asistencial?.apellido) {
+    return event.meta.asistencial.apellido;
+  }
+  
+  // Fallback: primera palabra del título
+  return event.title ? event.title.split(' ')[0] : 'Evento';
+}
+
+// Método para manejar clics en eventos de la vista mensual
+onMonthEventClicked(event: MyCalendarEvent): void {
+  const dialogRef = this.dialog.open(CronogramaDetailComponent, {
+    width: '600px',
+    data: {
+      title: 'Detalle evento',
+      events: [event],
+      holidayName: this.getHolidayName(event.start)
+    }
+  });
+
+  dialogRef.componentInstance.eventDeleted.subscribe(() => {
+    this.loadCronogramas();
+  });
+}   
+
+  // Método para manejar el hover sobre eventos
+  onEventMouseEnter(event: MyCalendarEvent): void {
+    this.hoveredEvent = event;
+    this.hoveredEventId = event.id;
+    this.refresh.next(); // Forzar actualización para aplicar las clases
+  }
+
+  onEventMouseLeave(event: MyCalendarEvent): void {
+    this.hoveredEvent = null;
+    this.hoveredEventId = null;
+    this.refresh.next(); // Forzar actualización para remover las clases
+  }
+
+  // Método para verificar si un día contiene el evento hovereado
+  isDayHovered(day: any): boolean {
+    if (!this.hoveredEventId) return false;
     
+    const dayStart = moment(day.date).startOf('day').toDate();
+    const eventStart = moment(this.hoveredEvent!.start).startOf('day').toDate();
+    const eventEnd = moment(this.hoveredEvent!.end).startOf('day').toDate();
+    
+    return dayStart >= eventStart && dayStart <= eventEnd;
+  }
+
+  // Método para obtener la clase CSS del evento hovereado
+  getHoveredEventClass(event: MyCalendarEvent): string {
+    if (this.hoveredEventId === event.id) {
+      return 'event-hovered';
+    }
+    return '';
+  }
+
 /*EventDialog(): void {
   const dialogRef = this.dialog.open(PruebaFormComponent, {
     width: '600px',
@@ -417,4 +499,95 @@ mapCronogramas(cronogramas: any[]): any[] {
         }
       });
     }
+
+exportandoPDF = false;
+
+async exportarCalendarioPDF(): Promise<void> {
+  if (this.exportandoPDF) return;
+  
+  this.exportandoPDF = true;
+
+  try {
+    this.toastr.info('Generando PDF...', '', { timeOut: 3000 });
+
+    const calendarioElement = document.querySelector('mwl-calendar-month-view');
+    const referenciasElement = document.querySelector('.row.d-float.justify-content-center');
+    
+    if (!calendarioElement) {
+      throw new Error('No se encontró el calendario');
+    }
+
+    // Capturar en paralelo para mayor velocidad
+    const [canvasCalendario, canvasReferencias] = await Promise.all([
+      html2canvas(calendarioElement as HTMLElement, {
+        scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
+      }),
+      referenciasElement ? html2canvas(referenciasElement as HTMLElement, {
+        scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
+      }) : Promise.resolve(null)
+    ]);
+
+    const monthName = this.viewDate.toLocaleString('es-ES', { month: 'long' });
+    const year = this.viewDate.getFullYear();
+
+    const documentDefinition: any = {
+      pageSize: 'A4',
+      pageOrientation: 'landscape',
+      pageMargins: [20, 20, 20, 20],
+      content: [
+        // Información textual
+        {
+          text: `Cronograma Tentativo - ${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`,
+          fontSize: 16,
+          bold: true,
+          alignment: 'center',
+          margin: [0, 0, 0, 10]
+        },
+        {
+          columns: [
+            { 
+              text: `Efector: ${this.efectorNombre || 'No especificado'}`,
+              fontSize: 11,
+              color: '#555555',
+              width: '60%'
+            },
+            { 
+              text: `Fecha exportación: ${new Date().toLocaleDateString('es-ES')}`,
+              fontSize: 11,
+              color: '#555555',
+              alignment: 'right',
+              width: '40%'
+            }
+          ],
+          margin: [0, 0, 0, 15]
+        },
+        
+        // Referencias (si existen)
+        ...(canvasReferencias ? [{
+          image: canvasReferencias.toDataURL('image/png'),
+          width: 550,
+          alignment: 'center',
+          margin: [0, 0, 0, 18]
+        }] : []),
+        
+        // Calendario
+        {
+          image: canvasCalendario.toDataURL('image/png'),
+          width: 750,
+          alignment: 'center'
+        }
+      ]
+    };
+
+    pdfMake.createPdf(documentDefinition).download(`cronograma_tentativo_${monthName}_${year}.pdf`);
+    
+    this.toastr.success('PDF generado exitosamente', 'Éxito', { timeOut: 3000 });
+
+} catch (error) {
+  console.error('Error al generar PDF:', error);
+  this.toastr.error('Error al generar el PDF: ' + (error as Error).message, 'Error', { timeOut: 5000 });
+  } finally {
+    this.exportandoPDF = false;
+  }
+}
 }

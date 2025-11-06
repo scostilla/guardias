@@ -459,31 +459,78 @@
             </mat-radio-group>
             <mat-error *ngIf="legajoForm.get('tipoHabilitacionesGuardias')?.errors?.['required']">Requiere seleccionar: Hospital o Caps.</mat-error>
  -->
-          <div class="form-row">
-  <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
-    <mat-label>Asignar hospitales (para Extra/Contrafactura/Pasiva)</mat-label>
-    <mat-select formControlName="habilitacionesGuardiasHospital" [(value)]="selectedHospitals" multiple (selectionChange)="onHospitalesChange($event)">
-      <mat-option *ngFor="let efector of hospitales" [value]="efector.id">{{ efector.nombre }}</mat-option>
-    </mat-select>
+            <div class="form-row">
+              <mat-form-field appearance="fill" *ngIf="showHabilitacionesGuardias">
+                <mat-label>Asignar hospitales (para Extra/Contrafactura/Pasiva)</mat-label>
+                <mat-select
+                  formControlName="habilitacionesGuardiasHospital"
+                  [(value)]="selectedHospitals"
+                  multiple
+                  (selectionChange)="onHospitalesChange($event)"
+                >
+                  <!-- Opción Seleccionar/Deseleccionar todos -->
+                  <mat-option
+                    class="select-all-option"
+                    (click)="toggleSelectAll()"
+                    [disabled]="hospitales.length === 0"
+                    disableRipple
+                  >
+                    <span class="text-primary font-medium">
+                      {{ allSelected ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+                    </span>
+                  </mat-option>
+                  <mat-divider></mat-divider>
 
-    <mat-error *ngIf="legajoForm.errors?.['habilitacionesGuardiasRequeridas'] || legajoForm.get('habilitacionesGuardiasHospital')?.errors?.['alMenosUnoHabilitacionesGuardiasRequerido']">
-      Debe seleccionar al menos un Hospital para guardias Extra/Contrafactura/Pasiva.
-    </mat-error>
-  </mat-form-field>
-</div> 
+                  <!-- Listado de hospitales -->
+                  <mat-option
+                    *ngFor="let efector of hospitales"
+                    [value]="efector.id"
+                  >
+                    {{ efector.nombre }}
+                  </mat-option>
+                </mat-select>
 
+                <mat-error
+                  *ngIf="
+                    legajoForm.errors?.['habilitacionesGuardiasRequeridas'] ||
+                    legajoForm.get('habilitacionesGuardiasHospital')?.errors?.['alMenosUnoHabilitacionesGuardiasRequerido']
+                  "
+                >
+                  Debe seleccionar al menos un Hospital para guardias Extra/Contrafactura/Pasiva.
+                </mat-error>
+              </mat-form-field>
+            </div>
 
             <div class="form-row">
-            <mat-form-field *ngIf="showHabilitacionesGuardias" appearance="fill">
-              <mat-label>Seleccionar Hospital para listar Caps</mat-label>
-              <mat-select formControlName="hospitalHabilitacionesGuardias" multiple (selectionChange)="onHospitalHabilitacionesGuardiasChange($event)">
-                <mat-option *ngFor="let hospital of getEfectoresFiltrados()" [value]="hospital.id">{{ hospital.nombre }}</mat-option>
-              </mat-select>
-            
-              <mat-error *ngIf="legajoForm.get('hospitalHabilitacionesGuardias')?.errors?.['required']">
-                El hospital es requerido para seleccionar un Caps.
-              </mat-error>
-            </mat-form-field>
+              <mat-form-field *ngIf="showHabilitacionesGuardias" appearance="fill">
+                <mat-label>Seleccionar Hospital para listar Caps</mat-label>
+                <mat-select
+                  formControlName="hospitalHabilitacionesGuardias"
+                  multiple
+                  (selectionChange)="onHospitalHabilitacionesGuardiasChange($event)"
+                  [(value)]="selectedHospitalesCaps"
+                >
+                  <!-- Opción de seleccionar/deseleccionar todos -->
+                  <mat-option
+                    class="select-all-option"
+                    (click)="toggleSelectAllHospitalesCaps()"
+                    [disabled]="getEfectoresFiltrados().length === 0"
+                    disableRipple
+                  >
+                    <span class="select-all-option-text">
+                      {{ allHospitalesCapsSelected ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+                    </span>
+                  </mat-option>
+                  <!-- Listado de hospitales -->
+                  <mat-option *ngFor="let hospital of getEfectoresFiltrados()" [value]="hospital.id">
+                    {{ hospital.nombre }}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error *ngIf="legajoForm.get('hospitalHabilitacionesGuardias')?.errors?.['required']">
+                  El hospital es requerido para seleccionar un Caps.
+                </mat-error>
+              </mat-form-field>
             </div>
 
          <div class="form-row">

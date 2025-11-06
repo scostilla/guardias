@@ -46,10 +46,16 @@
       <div class="ref-contenedor"><span class="ref-circulo circulo--contrafactura"></span>&nbsp;<span class="ref ref-contrafactura">Contrafactura</span></div>
     </div>
   </div>
+
   <div class="row">
     <div class="col-6 d-flex justify-content-start">
       <button mat-icon-button color="primary" (click)="openCronogramaDialog()" matTooltip="Añadir Profesional">
         <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-icon-button (click)="exportarCalendarioPDF()" matTooltip="Exportar PDF"
+      [disabled]="view !== CalendarView.Month"
+      [class.btn-disabled]="view !== CalendarView.Month">
+        <mat-icon [class.btnEdit]="view === CalendarView.Month">picture_as_pdf</mat-icon>
       </button>
     </div>
     <div class="col-6 d-flex justify-content-end">
@@ -74,22 +80,66 @@
     </div>
   </div>
   <div class="row"> 
-    <mwl-calendar-month-view
-      *ngIf="view === CalendarView.Month"
-      [viewDate]="viewDate"
-      [events]="events"
-      (dayClicked)="dayClicked($event.day)"
-      [weekendDays]="[0, 6]"
-      (beforeViewRender)="beforeMonthViewRender($event)">
-    </mwl-calendar-month-view>
+<!-- TU CALENDARIO DE MES -->
 
-    <mwl-calendar-week-view
-      *ngIf="view === CalendarView.Week"
-      [viewDate]="viewDate"
-      [events]="events"
-      (eventClicked)="onEventClicked($event)"
-      (beforeViewRender)="beforeWeekViewRender($event)">
-    </mwl-calendar-week-view>
+<mwl-calendar-month-view
+  *ngIf="view === CalendarView.Month"
+  [viewDate]="viewDate"
+  [events]="events"
+  [weekendDays]="[0, 6]"
+  (dayClicked)="dayClicked($event.day)"
+  (beforeViewRender)="beforeMonthViewRender($event)"
+  [refresh]="refresh"
+  [eventTitleTemplate]="eventTemplate"
+  [cellTemplate]="cellTemplate" 
+>
+</mwl-calendar-month-view>
+
+<!-- TEMPLATE PERSONALIZADO PARA LAS CELDAS DEL MES -->
+<ng-template #cellTemplate let-day="day">
+  <div class="cal-cell-top">
+    <span class="cal-day-number">{{ day.date | date:'d' }}</span>
+    <!-- Simplemente no incluir el cal-day-badge -->
+  </div>
+  
+  <div class="event-list">
+    <div
+      *ngFor="let event of day.events"
+      class="event-item"
+      [ngStyle]="{
+        'background-color': event.color?.primary || '#ccc',
+        'border-color': event.color?.secondary || '#999'
+      }"
+      [class.event-hovered]="isEventHovered(event)"
+      [matTooltip]="event.title"
+      (click)="$event.stopPropagation(); onMonthEventClicked(event)"
+      (mouseenter)="onEventMouseEnter(event)"
+      (mouseleave)="onEventMouseLeave(event)"
+    >
+      {{ getApellidoFromEvent(event) }}
+    </div>
+  </div>
+</ng-template>
+
+<!-- TEMPLATE DEL EVENTO (para otras vistas) -->
+<ng-template #eventTemplate let-event="event">
+  <div
+    class="event-bar"
+    [ngStyle]="{ 'background-color': event.color?.primary || '#ccc' }"
+    matTooltip="{{ event.title }}"
+  >
+    {{ event.title.split(',')[0] }}
+  </div>
+</ng-template>
+
+<mwl-calendar-week-view
+  *ngIf="view === CalendarView.Week"
+  [viewDate]="viewDate"
+  [events]="events"
+  (eventClicked)="onEventClicked($event)"
+  (beforeViewRender)="beforeWeekViewRender($event)">
+</mwl-calendar-week-view>
+
 
     <!--<mwl-calendar-day-view
     *ngIf="view === CalendarView.Day"
