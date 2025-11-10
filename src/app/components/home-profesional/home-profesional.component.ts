@@ -9,6 +9,7 @@ import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
 
 
@@ -29,6 +30,7 @@ export class HomeProfesionalComponent implements OnInit {
   ultimoRegistro: RegistroActividad | null = null;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
+  tieneCfActivo: boolean = false;
 
   constructor(
     private router: Router,
@@ -37,13 +39,14 @@ export class HomeProfesionalComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private hospitalService: HospitalService,
+    private asistencialService: AsistencialService,
     private registroPendienteService: RegistroPendienteService
   ) {}
 
   ngOnInit(): void {
     this.authService.detailPersonBasicPanelProfessional().subscribe(
       (response: PersonBasicPanelDto) => {
-        console.log('Respuesta completa del panel profesional:', response); // log completo
+        console.log('Respuesta completa del panel profesional:', response);
 
         this.idPersona = response.id;
         this.nombre = response.nombre;
@@ -52,11 +55,24 @@ export class HomeProfesionalComponent implements OnInit {
         console.log('ID de persona:', this.idPersona);
         console.log('Nombre:', this.nombre);
         console.log('Apellido:', this.apellido);
+
+        if (this.idPersona) {
+          this.asistencialService.tieneCf(this.idPersona).subscribe({
+            next: (resp) => {
+              this.tieneCfActivo = resp;
+            },
+            error: (err) => {
+              console.error('Error al verificar CF:', err);
+              this.tieneCfActivo = false;
+            }
+          });
+        }
       },
-      error => {
+      (error) => {
         console.error('Error al cargar datos del panel', error);
       }
     );
+
     // Obtener efector desde el servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
@@ -97,7 +113,7 @@ export class HomeProfesionalComponent implements OnInit {
     .subscribe(
       (registro) => {
         console.log('Registro pendiente:', registro);
-        console.log('Mes:', mes, 'Año:', anio, 'ID Asistencial:', this.idPersona!);
+        console.log('Mes:', mes, 'Año:', anio, 'ID Asistencial:', this.idPersona);
         
         if (registro) { // Verifico si hay un registro
           // Navegar a egreso con el ID del registro

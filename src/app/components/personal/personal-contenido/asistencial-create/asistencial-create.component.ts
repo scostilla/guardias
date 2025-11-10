@@ -30,7 +30,7 @@ export class AsistencialCreateComponent implements OnInit {
       dni: ['', [Validators.required, Validators.pattern(/^\d{7,20}$/)]],
       domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ0-9,.#/@\\-° ]{1,90}$')]],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
-      fechaNacimiento: ['', Validators.required],
+      fechaNacimiento: [''],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
       email: ['', [Validators.required, Validators.email]],

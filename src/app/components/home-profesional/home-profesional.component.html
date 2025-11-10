@@ -40,6 +40,19 @@
   </section>
 
     <div class="row mt-5">
+        <div class="col-2"></div>
+        <div *ngIf="tieneCfActivo" class="col-8 text-pase">
+        <mat-icon class="icono-pase">assignment_late</mat-icon>
+        <div class="mensaje-pase">
+            No olvides entregar la factura de tus guardias dentro del tiempo estipulado:<br/>
+            - Primer quincena: del 15 al 20 del mes en curso.<br/>
+            - Segunda quincena: del 1 al 5 del mes siguiente en que realizaste la guardia.
+        </div>
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+    <div class="row mt-5">
         <div class="col-4"></div>
         <div class="col-4 m d-flex justify-content-center">
             <button mat-raised-button color="primary" type="submit" (click)="onLogOutProfesional()"><mat-icon>exit_to_app</mat-icon>Cerrar sesión {{this.nombre}} {{this.apellido}}</button>

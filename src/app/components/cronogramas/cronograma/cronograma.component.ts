@@ -24,6 +24,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 
 enum TipoGuardia {
   CARGO = 'CARGO',
@@ -79,8 +81,13 @@ export class CronogramaComponent {
   efectorNombre: string | null = null;
   efectorNivel: number | null = null;
 
+  nombreUsuario = '';
+  apellidoUsuario = '';
+
   servicios: ServicioSummaryDto[] = [];
   selectedServiceId: number | null = null;
+
+  exportandoPDF = false;
 
   constructor(
     private feriadoService: FeriadoService,
@@ -91,6 +98,7 @@ export class CronogramaComponent {
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private toastr: ToastrService,
+    private authService: AuthService
 ) {}
 
   changeView(view: CalendarView): void {
@@ -129,7 +137,18 @@ export class CronogramaComponent {
       });
       this.router.navigateByUrl('/home-page');
     }
-  
+
+    // Verifica si el usuario está logueado
+    this.tokenService.isLogged$.subscribe(isLogged => {
+      if (isLogged) {
+        // Si está logueado, obtiene nombre y apellido del usuario
+        this.loadUserDetails();
+      } else {
+        this.nombreUsuario = '';
+        this.apellidoUsuario = '';
+      }
+    });
+
     // Obtener rol actual
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
@@ -172,6 +191,19 @@ export class CronogramaComponent {
         }
       );
     }
+  }
+
+  private loadUserDetails() {
+    // Llamo al servicio para obtener los detalles del usuario
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        this.nombreUsuario = response.nombre;
+        this.apellidoUsuario = response.apellido;
+      },
+      (error) => {
+        console.error('Error al obtener detalles del usuario:', error);
+      }
+    );
   }
 
   obtenerServicios(): void {
@@ -500,94 +532,102 @@ onMonthEventClicked(event: MyCalendarEvent): void {
       });
     }
 
-exportandoPDF = false;
+  async exportarCalendarioPDF(): Promise<void> {
+    if (this.exportandoPDF) return;
 
-async exportarCalendarioPDF(): Promise<void> {
-  if (this.exportandoPDF) return;
-  
-  this.exportandoPDF = true;
+    this.exportandoPDF = true;
 
-  try {
-    this.toastr.info('Generando PDF...', '', { timeOut: 3000 });
+    try {
+      this.toastr.info('Generando PDF...', '', { timeOut: 3000 });
 
-    const calendarioElement = document.querySelector('mwl-calendar-month-view');
-    const referenciasElement = document.querySelector('.row.d-float.justify-content-center');
-    
-    if (!calendarioElement) {
-      throw new Error('No se encontró el calendario');
+      const calendarioElement = document.querySelector('mwl-calendar-month-view');
+      const referenciasElement = document.querySelector('.row.d-float.justify-content-center');
+      
+      if (!calendarioElement) {
+        throw new Error('No se encontró el calendario');
+      }
+
+      // Capturar en paralelo para mayor velocidad
+      const [canvasCalendario, canvasReferencias] = await Promise.all([
+        html2canvas(calendarioElement as HTMLElement, {
+          scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
+        }),
+        referenciasElement ? html2canvas(referenciasElement as HTMLElement, {
+          scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
+        }) : Promise.resolve(null)
+      ]);
+
+      const monthName = this.viewDate.toLocaleString('es-ES', { month: 'long' });
+      const year = this.viewDate.getFullYear();
+
+      const documentDefinition: any = {
+        pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [20, 20, 20, 20],
+        content: [
+          // Título principal
+          {
+            text: `Cronograma Tentativo - ${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`,
+            fontSize: 16,
+            bold: true,
+            alignment: 'center',
+            margin: [0, 0, 0, 10]
+          },
+          {
+            columns: [
+              { 
+                text: `Efector: ${this.efectorNombre || 'No especificado'}`,
+                fontSize: 11,
+                color: '#555555',
+                width: '60%'
+              },
+              { 
+                text: `Fecha exportación: ${new Date().toLocaleDateString('es-ES')}`,
+                fontSize: 11,
+                color: '#555555',
+                alignment: 'right',
+                width: '40%'
+              }
+            ],
+            margin: [0, 0, 0, 15]
+          },
+
+          // Referencias (si existen)
+          ...(canvasReferencias ? [{
+            image: canvasReferencias.toDataURL('image/png'),
+            width: 550,
+            alignment: 'center',
+            margin: [0, 0, 0, 18]
+          }] : []),
+
+          // Imagen del calendario
+          {
+            image: canvasCalendario.toDataURL('image/png'),
+            width: 750,
+            alignment: 'center',
+            margin: [0, 0, 0, 25]
+          },
+
+          // 👇 Pie con el nombre del usuario
+          {
+            text: `Usuario: ${this.nombreUsuario} ${this.apellidoUsuario}`,
+            fontSize: 9,
+            color: '#666666',
+            alignment: 'right',
+            margin: [0, 10, 5, 0] // margen superior más amplio para separarlo visualmente
+          }
+        ]
+      };
+
+      pdfMake.createPdf(documentDefinition).download(`cronograma_tentativo_${monthName}_${year}.pdf`);
+      
+      this.toastr.success('PDF generado exitosamente', 'Éxito', { timeOut: 3000 });
+
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      this.toastr.error('Error al generar el PDF: ' + (error as Error).message, 'Error', { timeOut: 5000 });
+    } finally {
+      this.exportandoPDF = false;
     }
-
-    // Capturar en paralelo para mayor velocidad
-    const [canvasCalendario, canvasReferencias] = await Promise.all([
-      html2canvas(calendarioElement as HTMLElement, {
-        scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
-      }),
-      referenciasElement ? html2canvas(referenciasElement as HTMLElement, {
-        scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
-      }) : Promise.resolve(null)
-    ]);
-
-    const monthName = this.viewDate.toLocaleString('es-ES', { month: 'long' });
-    const year = this.viewDate.getFullYear();
-
-    const documentDefinition: any = {
-      pageSize: 'A4',
-      pageOrientation: 'landscape',
-      pageMargins: [20, 20, 20, 20],
-      content: [
-        // Información textual
-        {
-          text: `Cronograma Tentativo - ${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`,
-          fontSize: 16,
-          bold: true,
-          alignment: 'center',
-          margin: [0, 0, 0, 10]
-        },
-        {
-          columns: [
-            { 
-              text: `Efector: ${this.efectorNombre || 'No especificado'}`,
-              fontSize: 11,
-              color: '#555555',
-              width: '60%'
-            },
-            { 
-              text: `Fecha exportación: ${new Date().toLocaleDateString('es-ES')}`,
-              fontSize: 11,
-              color: '#555555',
-              alignment: 'right',
-              width: '40%'
-            }
-          ],
-          margin: [0, 0, 0, 15]
-        },
-        
-        // Referencias (si existen)
-        ...(canvasReferencias ? [{
-          image: canvasReferencias.toDataURL('image/png'),
-          width: 550,
-          alignment: 'center',
-          margin: [0, 0, 0, 18]
-        }] : []),
-        
-        // Calendario
-        {
-          image: canvasCalendario.toDataURL('image/png'),
-          width: 750,
-          alignment: 'center'
-        }
-      ]
-    };
-
-    pdfMake.createPdf(documentDefinition).download(`cronograma_tentativo_${monthName}_${year}.pdf`);
-    
-    this.toastr.success('PDF generado exitosamente', 'Éxito', { timeOut: 3000 });
-
-} catch (error) {
-  console.error('Error al generar PDF:', error);
-  this.toastr.error('Error al generar el PDF: ' + (error as Error).message, 'Error', { timeOut: 5000 });
-  } finally {
-    this.exportandoPDF = false;
   }
-}
 }

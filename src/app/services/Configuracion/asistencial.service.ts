@@ -172,4 +172,8 @@ getTiposGuardias(idAsistencial: number): Observable<AsistencialTiposGuardiasDto[
   return this.httpClient.get<AsistencialTiposGuardiasDto[]>(`${this.asistencialesURL}getTiposGuardias/${idAsistencial}`);
 }
 
+public tieneCf(idAsistencial: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(this.asistencialesURL + `tieneCf/${idAsistencial}`);
+}
+
 }
