@@ -119,6 +119,7 @@ export class LegajoCreateComponent implements OnInit {
   showHabilitacionesGuardias: boolean = false;
   showHabilitacionesGenerales: boolean = false;
   formularioValidoParaDirectorRegional: boolean = false;
+  asignarCapsChecked: boolean = false;
 
   //útiles
   step = 0;
@@ -155,6 +156,7 @@ export class LegajoCreateComponent implements OnInit {
   selectAllValue = -1;
   selectedHospitalesCaps: number[] = [];
   allHospitalesCapsSelected = false;
+  allCapsSelected: boolean = false;
 
 
   /* Form de revista */
@@ -246,7 +248,7 @@ export class LegajoCreateComponent implements OnInit {
       selectedHospitalsGenerales: [[]],
       selectedHospitalsGuardias: [[]],
       url: [''],
-
+      asignarCaps: [false],
     });
 
     //-----Manejo de fechas-----
@@ -273,6 +275,17 @@ export class LegajoCreateComponent implements OnInit {
           this.legajoForm.get('fechaFinal')?.setValue('');
         }
       });
+      
+      // Reseteo de check para asignar caps
+      this.legajoForm.get('asignarCaps')?.valueChanges.subscribe((checked: boolean) => {
+        if (!checked) {
+          // Si el usuario desmarca, limpiamos las selecciones
+          this.legajoForm.patchValue({
+            hospitalHabilitacionesGuardias: [],
+            habilitacionesGuardiasCaps: [],
+          });
+            }
+          });
 
     //-----Recibo el objeto para realizar posteriores verificaciones-----
 
@@ -738,6 +751,28 @@ toggleSelectAllHospitalesCaps(): void {
 
   // Dispara manualmente el evento de cambio para actualizar CAPS
   this.onHospitalHabilitacionesGuardiasChange({ value: this.selectedHospitalesCaps });
+}
+
+toggleSelectAllCaps(): void {
+  if (this.allCapsSelected) {
+    // Deseleccionar todos
+    this.selectedCaps = [];
+    this.legajoForm.patchValue({ habilitacionesGuardiasCaps: [] });
+  } else {
+    // Seleccionar todos los CAPS disponibles
+    const allIds = this.habilitacionesGuardiasCaps
+      .map(c => c.id)
+      .filter((id): id is number => id !== undefined);
+
+    this.selectedCaps = allIds;
+    this.legajoForm.patchValue({ habilitacionesGuardiasCaps: allIds });
+  }
+
+  // Alternar el estado
+  this.allCapsSelected = !this.allCapsSelected;
+
+  // Forzar actualización de validadores y vista
+  this.legajoForm.updateValueAndValidity();
 }
 
 onFileSelected(event: any): void {

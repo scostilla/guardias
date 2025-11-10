@@ -169,6 +169,12 @@ export class LegajoEditComponent implements OnInit {
   initialHabilitacionesGenerales: any[] = [];
   selectedHospitalsGenerales: number[] = [];
   selectedHospitalsGuardias: number[] = [];
+  allSelected = false;
+  selectAllValue = -1;
+  selectedHospitalesCaps: number[] = [];
+  allHospitalesCapsSelected = false;
+  allCapsSelected: boolean = false;
+
   
 
   /* Form de revista */
@@ -864,6 +870,67 @@ this.initialHabilitacionesGuardias = efectoresFiltrados;
     this.habilitacionesGuardiasValidatorEdit()
   ]);
 
+}
+
+toggleSelectAll(): void {
+  if (this.allSelected) {
+    // Deselecciona todos
+    this.selectedHospitals = [];
+  } else {
+    // Selecciona todos los hospitales válidos
+    this.selectedHospitals = this.hospitales
+      .map((h) => h.id)
+      .filter((id): id is number => id !== undefined);
+  }
+
+  this.allSelected = !this.allSelected;
+
+  // Actualiza el formulario
+  this.legajoForm.patchValue({
+    habilitacionesGuardiasHospital: this.selectedHospitals,
+  });
+}
+
+toggleSelectAllHospitalesCaps(): void {
+  if (this.allHospitalesCapsSelected) {
+    // Deselecciona todos
+    this.selectedHospitalesCaps = [];
+  } else {
+    // Selecciona todos los hospitales disponibles
+    this.selectedHospitalesCaps = this.getEfectoresFiltrados()
+      .map((h) => h.id)
+      .filter((id): id is number => id !== undefined);
+  }
+
+  this.allHospitalesCapsSelected = !this.allHospitalesCapsSelected;
+
+  // Actualiza el form control
+  this.legajoForm.get('hospitalHabilitacionesGuardias')?.setValue(this.selectedHospitalesCaps);
+
+  // Dispara manualmente el evento de cambio para actualizar CAPS
+  this.onHospitalHabilitacionesGuardiasChange({ value: this.selectedHospitalesCaps });
+}
+
+toggleSelectAllCaps(): void {
+  if (this.allCapsSelected) {
+    // Deseleccionar todos
+    this.selectedCaps = [];
+    this.legajoForm.patchValue({ habilitacionesGuardiasCaps: [] });
+  } else {
+    // Seleccionar todos los CAPS disponibles
+    const allIds = this.habilitacionesGuardiasCaps
+      .map(c => c.id)
+      .filter((id): id is number => id !== undefined);
+
+    this.selectedCaps = allIds;
+    this.legajoForm.patchValue({ habilitacionesGuardiasCaps: allIds });
+  }
+
+  // Alternar el estado
+  this.allCapsSelected = !this.allCapsSelected;
+
+  // Forzar actualización de validadores y vista
+  this.legajoForm.updateValueAndValidity();
 }
 
 // Método para verificar si se puede modificar el legajo
