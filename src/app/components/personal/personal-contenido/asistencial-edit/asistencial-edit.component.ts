@@ -85,10 +85,10 @@ export class AsistencialEditComponent implements OnInit {
         asistencialData.apellido,
         asistencialData.dni,
         asistencialData.cuil,
-        asistencialData.fechaNacimiento,
         true, // esAsistencial
         true, // activo
         asistencialData.email,
+        asistencialData.fechaNacimiento ?? null,
         asistencialData.sexo ?? null,
         asistencialData.telefono ?? null,
         asistencialData.domicilio ?? null,

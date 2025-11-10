@@ -4,7 +4,7 @@ export class PersonDto {
   apellido: string;
   dni: number;
   cuil: string;
-  fechaNacimiento: Date;
+  fechaNacimiento?: Date;
   sexo?: string;
   telefono?: string;
   email: string;
@@ -19,10 +19,10 @@ export class PersonDto {
     apellido: string,
     dni: number,
     cuil: string,
-    fechaNacimiento: Date,
     esAsistencial: boolean,
     activo: boolean,
     email: string,
+    fechaNacimiento?: Date,
     sexo?: string,
     telefono?: string,
     domicilio?: string,

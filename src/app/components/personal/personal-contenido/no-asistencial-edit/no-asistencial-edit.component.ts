@@ -31,7 +31,7 @@ export class NoAsistencialEditComponent implements OnInit {
       dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
       domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
       cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
-      fechaNacimiento: ['', Validators.required],
+      fechaNacimiento: [''],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
       email: ['' , [Validators.required, Validators.email]],
@@ -79,10 +79,10 @@ export class NoAsistencialEditComponent implements OnInit {
         noAsistencialData.apellido,
         noAsistencialData.dni,
         noAsistencialData.cuil,
-        noAsistencialData.fechaNacimiento,
         false, // esAsistencial
         true, // activo
         noAsistencialData.email,
+        noAsistencialData.fechaNacimiento ?? null,
         noAsistencialData.sexo ?? null,
         noAsistencialData.telefono ?? null,
         noAsistencialData.domicilio ?? null,
