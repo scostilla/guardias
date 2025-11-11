@@ -2,13 +2,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { HospitalDto } from 'src/app/dto/Configuracion/HospitalDto';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { Region } from 'src/app/models/Configuracion/Region';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 
 @Component({
   selector: 'app-hospital-edit',
@@ -20,6 +21,7 @@ export class HospitalEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = []; 
+  servicios: Servicio[] = [];
    selectedFile: File | null = null;
   fileUrl: string | null = null;
   isUploading: boolean = false; 
@@ -40,6 +42,7 @@ export class HospitalEditComponent implements OnInit {
     public dialogRef: MatDialogRef<HospitalEditComponent>,
     private hospitalService: HospitalService,
     private localidadService: LocalidadService, 
+    private servicioService: ServicioService,
     private regionService: RegionService,
     private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Hospital
@@ -49,6 +52,7 @@ export class HospitalEditComponent implements OnInit {
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
       localidad: ['', Validators.required],
       region: ['', Validators.required],
+      servicio: [ [], Validators.required ],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
       url: [this.data ? this.data.url : ''],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]],
@@ -59,9 +63,14 @@ export class HospitalEditComponent implements OnInit {
 
     this.listLocalidad();
     this.listRegion();
+    this.listServicio();
 
     if (data) {
       this.hospitalForm.patchValue(data);
+      // ...nuevo: si la data trae 'servicios' llenar el control 'servicio'
+      if ((data as any).servicios && Array.isArray((data as any).servicios)) {
+        this.hospitalForm.patchValue({ servicio: (data as any).servicios });
+      }
     }
   }
 
@@ -99,6 +108,10 @@ export class HospitalEditComponent implements OnInit {
             
             // 🔥 ACTUALIZAR EL DATA OBJETO
             this.data.url = hospitalCompleto.url;
+          }
+          // ...nuevo: si el detalle trae 'servicios', asignarlos al control 'servicio'
+          if (hospitalCompleto.servicios && Array.isArray(hospitalCompleto.servicios)) {
+            this.hospitalForm.patchValue({ servicio: hospitalCompleto.servicios });
           }
         },
         (error) => {
@@ -143,6 +156,17 @@ listLocalidad(): void {
   this.localidadService.list().subscribe(
     data => {
       this.localidades = data.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    },
+    error => {
+      console.log(error);
+    }
+  );
+}
+
+listServicio(): void {
+  this.servicioService.list().subscribe(
+    data => {
+      this.servicios = data.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
     },
     error => {
       console.log(error);
@@ -573,7 +597,6 @@ uploadImage(): void {
         
         this.isUploading = false;
         
-        // 🔥 ACTUALIZAR LA URL LOCAL DE LA IMAGEN
         this.fileUrl = `http://localhost:8080${response.url}`;
         
         // Limpiar el input file
@@ -597,103 +620,100 @@ uploadImage(): void {
 }
 
   saveHospital(): void {
-  if (this.hospitalForm.valid) {
-    const formValue = this.hospitalForm.value;
+    if (this.hospitalForm.valid) {
+      const formValue = this.hospitalForm.value;
 
-    const hospitalDto = new HospitalDto(
-      formValue.nombre.toUpperCase(),
-      formValue.domicilio,
-      formValue.region.id,
-      formValue.localidad.id,
-      formValue.telefono || '',
-      formValue.observacion || '',
-      '', // Para nuevos hospitales
-      formValue.esCabecera,
-      formValue.admitePasiva,
-      formValue.nivelComplejidad
-    );
+      // Extraer array de ids de servicios (soporta objetos o ids)
+      const servicioIds: number[] = (formValue.servicio || []).map((s: any) => {
+        if (s == null) return s;
+        return typeof s === 'number' ? s : (s.id ?? s);
+      }).filter((id: any) => id != null);
 
-    console.log('🚀 HospitalDto a enviar:', hospitalDto);
+      // Payload plano que espera el backend: idServicios es la lista que usa createUpdate()
+      const payload: any = {
+        nombre: (formValue.nombre || '').toUpperCase(),
+        domicilio: formValue.domicilio,
+        telefono: formValue.telefono || '',
+        observacion: formValue.observacion || '',
+        idRegion: formValue.region?.id ?? null,
+        idLocalidad: formValue.localidad?.id ?? null,
+        esCabecera: formValue.esCabecera,
+        admitePasiva: formValue.admitePasiva,
+        nivelComplejidad: formValue.nivelComplejidad,
+        // Envío obligatorio de la lista de servicios como ids
+        idServicios: servicioIds
+        // NO incluir url aquí: la url se agrega luego tras subir la imagen
+      };
 
-    if (this.data && this.data.id) {
-      // 🔥 ACTUALIZACIÓN DE HOSPITAL EXISTENTE
-      hospitalDto.url = formValue.url || '';
-      
-      this.hospitalService.update(this.data.id, hospitalDto).subscribe(
-        async (result) => {
-          console.log('✅ Hospital actualizado:', result);
-          
-          // 🔥 SUBIR IMAGEN DESPUÉS DE ACTUALIZAR SI HAY UNA SELECCIONADA
-          if (this.selectedFile) {
-            console.log('📤 Subiendo imagen después de actualizar hospital...');
-            try {
-              this.isUploading = true;
-              const uploadResponse = await this.uploadImageAfterUpdate(this.data.id!);
-              
-              if (uploadResponse && uploadResponse.url) {
-                this.hospitalForm.patchValue({ url: uploadResponse.url });
-                this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
-                result.url = uploadResponse.url;
+      console.log('🚀 Payload a enviar (create/update) con idServicios:', payload);
+
+      if (this.data && this.data.id) {
+        // UPDATE: incluir url si existe en el form
+        const updatePayload = { ...payload, url: formValue.url || '' };
+        this.hospitalService.update(this.data.id, updatePayload).subscribe(
+          async (result) => {
+            console.log('✅ Hospital actualizado:', result);
+
+            if (this.selectedFile) {
+              try {
+                this.isUploading = true;
+                const uploadResponse = await this.uploadImageAfterUpdate(this.data.id!);
+                if (uploadResponse && uploadResponse.url) {
+                  this.hospitalForm.patchValue({ url: uploadResponse.url });
+                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  (result as any).url = uploadResponse.url;
+                }
+              } catch (uploadError) {
+                console.error('❌ Error al subir imagen:', uploadError);
+                this.toastr.warning('Hospital actualizado pero hubo un error al subir la imagen');
+              } finally {
+                this.isUploading = false;
               }
-              
-            } catch (uploadError) {
-              console.error('❌ Error al subir imagen:', uploadError);
-              this.toastr.warning('Hospital actualizado pero hubo un error al subir la imagen');
-            } finally {
-              this.isUploading = false;
             }
-          } 
-          
-          // 🔥 LIMPIAR selectedFile DESPUÉS DE GUARDAR EXITOSAMENTE
-          this.selectedFile = null;
-          
-          // 🔥 ACTUALIZAR LOS DATOS INICIALES PARA FUTURAS COMPARACIONES
-          this.initialData = { ...this.hospitalForm.value };
-          
-          this.dialogRef.close({ type: 'save', data: result });
-        },
-        error => {
-          console.error('❌ Error al actualizar hospital:', error);
-          this.toastr.error('Error al actualizar el hospital');
-        }
-      );
-    } else {
-      // 🔥 CREACIÓN DE NUEVO HOSPITAL (sin cambios)
-      this.hospitalService.save(hospitalDto).subscribe(
-        async (hospitalCreado) => {
-          console.log('✅ Hospital creado exitosamente:', hospitalCreado);
-          
-          this.data = hospitalCreado;
-          
-          if (this.selectedFile && hospitalCreado.id) {
-            console.log('📤 Subiendo imagen después de crear hospital...');
-            try {
-              const uploadResponse = await this.uploadImageAfterCreation(hospitalCreado.id);
-              
-              if (uploadResponse && uploadResponse.url) {
-                this.hospitalForm.patchValue({ url: uploadResponse.url });
-                this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
-                hospitalCreado.url = uploadResponse.url;
-              }
-              
-            } catch (uploadError) {
-              console.error('❌ Error al subir imagen:', uploadError);
-              this.toastr.warning('Hospital creado pero hubo un error al subir la imagen');
-            }
-          } else {
-            this.toastr.success('Hospital creado correctamente');
+
+            this.selectedFile = null;
+            this.initialData = { ...this.hospitalForm.value };
+            this.dialogRef.close({ type: 'save', data: result });
+          },
+          error => {
+            console.error('❌ Error al actualizar hospital:', error);
+            this.toastr.error('Error al actualizar el hospital');
           }
-          
-          this.dialogRef.close({ type: 'save', data: hospitalCreado });
-        },
-        error => {
-          console.error('❌ Error al crear hospital:', error);
-          this.toastr.error('Error al crear el hospital');
-        }
-      );
+        );
+      } else {
+        // CREATE: enviar payload que incluye idServicios (NO enviar url)
+        this.hospitalService.save(payload).subscribe(
+          async (hospitalCreado: any) => {
+            console.log('✅ Hospital creado exitosamente:', hospitalCreado);
+            this.data = hospitalCreado;
+
+            // Subir imagen después de creado (si corresponde)
+            if (this.selectedFile && hospitalCreado.id) {
+              try {
+                const uploadResponse = await this.uploadImageAfterCreation(hospitalCreado.id);
+                if (uploadResponse && uploadResponse.url) {
+                  this.hospitalForm.patchValue({ url: uploadResponse.url });
+                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  (hospitalCreado as any).url = uploadResponse.url;
+                }
+              } catch (uploadError) {
+                console.error('❌ Error al subir imagen:', uploadError);
+                this.toastr.warning('Hospital creado pero hubo un error al subir la imagen');
+              }
+            } else {
+              this.toastr.success('Hospital creado correctamente');
+            }
+
+            this.dialogRef.close({ type: 'save', data: hospitalCreado });
+          },
+          error => {
+            console.error('❌ Error al crear hospital:', error);
+            this.toastr.error('Error al crear el hospital');
+          }
+        );
+      }
     }
   }
-}
 
 private uploadImageAfterUpdate(hospitalId: number): Promise<any> {
   return new Promise((resolve, reject) => {
@@ -759,13 +779,54 @@ private uploadImageAfterUpdate(hospitalId: number): Promise<any> {
   }
 }
 
-  compareLocalidad(p1: Localidad, p2: Localidad): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
+// Comparador para localidad (usado por el template)
+compareLocalidad(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
 
-  compareRegion(p1: Region, p2: Region): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+// Comparador para región (usado por el template)
+compareRegion(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
+
+// Comparador para servicio (necesario para multiselect de servicios)
+compareServicio(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
+
+// Retorna true si todos los servicios disponibles están seleccionados
+areAllServiciosSelected(): boolean {
+  if (!this.hospitalForm) return false;
+  const selected: any[] = this.hospitalForm.get('servicio')?.value || [];
+  if (!this.servicios || this.servicios.length === 0) return false;
+  return this.servicios.every(s => selected.some((sel: any) => sel && sel.id === s.id));
+}
+
+// Alterna selección de todos los servicios
+toggleAllServicios(ev: MouseEvent): void {
+  ev.stopPropagation();
+  if (!this.hospitalForm) return;
+  if (this.areAllServiciosSelected()) {
+    this.hospitalForm.patchValue({ servicio: [] });
+  } else {
+    this.hospitalForm.patchValue({ servicio: this.servicios ? this.servicios.slice() : [] });
   }
+  this.hospitalForm.get('servicio')?.markAsTouched();
+  this.hospitalForm.get('servicio')?.updateValueAndValidity();
+}
+
+// Normaliza cambios de selección (si vienen solo ids en lugar de objetos)
+onServicioChange(): void {
+  const val = this.hospitalForm.get('servicio')?.value;
+  if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'number') {
+    const mapped = (val as number[]).map(id => this.servicios.find(s => s.id === id)).filter(Boolean);
+    this.hospitalForm.patchValue({ servicio: mapped }, { emitEvent: false });
+  }
+  this.hospitalForm.get('servicio')?.updateValueAndValidity();
+}
 
   onImageError(event: Event): void {
   const target = event.target as HTMLImageElement;

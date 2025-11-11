@@ -10,10 +10,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
+import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
-import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { LoginComponent } from './components/login/login.component';
 
 //Configuraciones: Generales
@@ -24,6 +24,9 @@ import { SoporteFormComponent } from './components/configuracion/soporte-form/so
 
 
 //Configuraciones: Territorio
+import { ServicioDetailComponent } from './components/configuracion/establecimiento/servicio-detail/servicio-detail.component';
+import { ServicioEditComponent } from './components/configuracion/establecimiento/servicio-edit/servicio-edit.component';
+import { ServicioComponent } from './components/configuracion/establecimiento/servicio/servicio.component';
 import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
 import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
 import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
@@ -176,8 +179,8 @@ import { DdjjTentativoComponent } from './components/guardias/ddjj-tentativo/ddj
 import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';
 
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
-import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualContrafacturaFueraTerminoComponent } from './components/guardias/rmensual-contrafactura-fuera-termino/rmensual-contrafactura-fuera-termino.component';
+import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 
@@ -239,6 +242,9 @@ const routes: Routes = [
   {path: 'localidad', component:LocalidadComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path: 'localidad-detail/:id', component:LocalidadDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path: 'localidad-edit/:id', component:LocalidadEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio', component:ServicioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio-detail/:id', component:ServicioDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio-edit/:id', component:ServicioEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
  
   //Configuraciones: Establecimientos
   {path: 'ministerio', component:MinisterioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},

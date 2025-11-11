@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Ministerio } from "src/app/models/Configuracion/Ministerio";
 import { MinisterioDto } from "src/app/dto/Configuracion/MinisterioDto";
-import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { EfectorMinisterioDto } from "src/app/dto/Configuracion/efector/EfectorMinisterioDto";
+import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
+import { Ministerio } from "src/app/models/Configuracion/Ministerio";
 
 @Injectable({
   providedIn: 'root'

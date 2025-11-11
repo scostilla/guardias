@@ -29,6 +29,19 @@
             <td>{{hospital.localidad.nombre}}</td>
           </tr>
           <tr>
+            <th scope="row">Servicio</th>
+            <td>
+              <ng-container *ngIf="hospital?.servicios && hospital.servicios.length; else noServicios">
+                <ul class="servicios-list">
+                  <li *ngFor="let s of hospital.servicios">{{ s.descripcion }}</li>
+                </ul>
+              </ng-container>
+              <ng-template #noServicios>
+                <span class="muted">Sin servicios asociados</span>
+              </ng-template>
+            </td>
+          </tr>
+          <tr>
             <th scope="row">Es Cabecera</th>
             <td>{{hospital.esCabecera ? 'Si' : 'No'}}</td>
           </tr>

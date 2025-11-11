@@ -1,8 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, Subject, tap } from "rxjs";
-import { Servicio } from "../models/Configuracion/Servicio";
 import { ServicioDto } from "../dto/ServicioDto";
+import { Servicio } from "../models/Configuracion/Servicio";
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +25,10 @@ import { ServicioDto } from "../dto/ServicioDto";
     public detail(id:number): Observable<Servicio> {
         return this.httpClient.get<Servicio>(this.servicioURL + `detail/${id}`);
     }
+
+    public getById(id:number): Observable<Servicio> {
+      return this.httpClient.get<Servicio>(this.servicioURL + `detail/${id}`);
+  }
   
   public save(servicio:ServicioDto): Observable<any> {
     return this.httpClient.post<any>(this.servicioURL + 'create', servicio)

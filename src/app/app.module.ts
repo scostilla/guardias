@@ -90,6 +90,7 @@ import { MinisterioComponent } from './components/configuracion/establecimiento/
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail/region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { ServicioDetailComponent } from './components/configuracion/establecimiento/servicio-detail/servicio-detail.component';
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
 import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
@@ -214,6 +215,8 @@ import { interceptorProvider } from './interceptors/interceptor.service';
 import { RegistroActividadesEditComponent } from './components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
+import { ServicioEditComponent } from './components/configuracion/establecimiento/servicio-edit/servicio-edit.component';
+import { ServicioComponent } from './components/configuracion/establecimiento/servicio/servicio.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
@@ -221,9 +224,11 @@ import { CronogramaPendienteComponent } from './components/cronogramas/cronogram
 import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 import { DialogHistorialObservacionesComponent } from './components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
+import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
 import { FacturaCreateComponent } from './components/guardias/factura/factura-create/factura-create.component';
 import { FacturaDetailComponent } from './components/guardias/factura/factura-detail/factura-detail.component';
 import { FacturaEditComponent } from './components/guardias/factura/factura-edit/factura-edit.component';
+import { FacturaListFterminoComponent } from './components/guardias/factura/factura-list-ftermino/factura-list-ftermino.component';
 import { FacturaListComponent } from './components/guardias/factura/factura-list/factura-list.component';
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
@@ -239,8 +244,6 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
-import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
-import { FacturaListFterminoComponent } from './components/guardias/factura/factura-list-ftermino/factura-list-ftermino.component';
 
 @NgModule({
   declarations: [
@@ -288,6 +291,9 @@ import { FacturaListFterminoComponent } from './components/guardias/factura/fact
     LocalidadComponent,
     LocalidadEditComponent,
     LocalidadDetailComponent,
+    ServicioComponent,
+    ServicioEditComponent,
+    ServicioDetailComponent,
     MinisterioComponent,
     MinisterioDetailComponent,
     MinisterioEditComponent,

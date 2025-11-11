@@ -6,6 +6,7 @@ export class EfectorDto {
     idLocalidad: number;
     telefono: string;
     observacion: string;
+    idServicio: number;
     url :string;
   
     constructor(
@@ -15,6 +16,7 @@ export class EfectorDto {
         idLocalidad: number,
         telefono: string,
         observacion: string,
+        idServicio: number,
         url: string,
     ) {
         this.nombre = nombre;
@@ -23,6 +25,7 @@ export class EfectorDto {
         this.idLocalidad = idLocalidad;
         this.telefono = telefono;
         this.observacion = observacion;
+        this.idServicio = idServicio;
         this.url = url;
     }
   }

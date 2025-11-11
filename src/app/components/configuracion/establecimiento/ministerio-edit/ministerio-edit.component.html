@@ -55,6 +55,29 @@
           </div>
 
           <div class="row">
+    <div class="col">
+      <mat-form-field appearance="fill">
+        <mat-label>Servicio</mat-label>
+        <mat-select formControlName="servicio" multiple [compareWith]="compareServicio" (selectionChange)="onServicioChange()">
+          <!-- Opción para seleccionar/desmarcar todos DENTRO del desplegable -->
+          <mat-option
+            (click)="$event.stopPropagation(); $event.preventDefault(); toggleAllServicios($event)"
+            class="select-all-option"
+          >
+            <span>{{ areAllServiciosSelected() ? 'Desmarcar todos' : 'Seleccionar todos' }}</span>
+          </mat-option>
+
+          <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="ministerioForm?.get('servicio')?.invalid && ministerioForm?.get('servicio')?.touched">
+          El campo es obligatorio.
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+          <div class="row">
             <div class="col">
               <mat-form-field appearance="fill">
                 <mat-label>Teléfono</mat-label>

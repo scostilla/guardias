@@ -5,6 +5,7 @@ export class CapsDto extends EfectorDto {
   idCabecera: number;
   areaProgramatica: number;
   tipoCaps: string;
+  idServicios?: number[];
   
   
 
@@ -15,14 +16,17 @@ export class CapsDto extends EfectorDto {
       idLocalidad: number,
       telefono: string,
       observacion: string,
+      idServicio: number,
       url: string,
       idCabecera: number,
       areaProgramatica: number,
-      tipoCaps: string
+      tipoCaps: string,
+      idServicios?: number[] // <-- opcional
   ) {
-    super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion, url);
+    super(nombre, domicilio, idRegion, idLocalidad,  telefono, observacion, idServicio, url);
     this.idCabecera = idCabecera;
     this.areaProgramatica = areaProgramatica;
     this.tipoCaps = tipoCaps;
+    this.idServicios = idServicios || [];
   }
 }
