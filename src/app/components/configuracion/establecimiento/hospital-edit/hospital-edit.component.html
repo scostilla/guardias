@@ -11,7 +11,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="nombre" (input)="onNombreInput($event)">
-        <mat-error *ngIf="hospitalForm?.get('nombre')?.invalid && hospitalForm?.get('nombre')?.touched">
+        <mat-error *ngIf="hospitalForm.get('nombre')?.invalid && hospitalForm.get('nombre')?.touched">
           El campo es obligatorio y debe tener solo letras (entre 2 y 60 caracteres).
         </mat-error>
       </mat-form-field>
@@ -23,7 +23,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Domicilio</mat-label>
         <input matInput formControlName="domicilio">
-        <mat-error *ngIf="hospitalForm?.get('domicilio')?.invalid && hospitalForm?.get('domicilio')?.touched">
+        <mat-error *ngIf="hospitalForm.get('domicilio')?.invalid && hospitalForm.get('domicilio')?.touched">
           El campo puede contener letras y números (entre 3 y 80 caracteres).
         </mat-error>
       </mat-form-field>
@@ -37,7 +37,7 @@
         <mat-select formControlName="localidad" [compareWith]="compareLocalidad">
           <mat-option *ngFor="let localidad of localidades" [value]="localidad">{{ localidad.nombre }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="hospitalForm?.get('localidad')?.invalid && hospitalForm?.get('localidad')?.touched">
+        <mat-error *ngIf="hospitalForm.get('localidad')?.invalid && hospitalForm.get('localidad')?.touched">
           El campo es obligatorio.
         </mat-error>
       </mat-form-field>
@@ -51,7 +51,7 @@
         <mat-select formControlName="region" [compareWith]="compareRegion">
           <mat-option *ngFor="let region of regiones" [value]="region">{{ region.nombre }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="hospitalForm?.get('region')?.invalid && hospitalForm?.get('region')?.touched">
+        <mat-error *ngIf="hospitalForm.get('region')?.invalid && hospitalForm.get('region')?.touched">
           El campo es obligatorio.
         </mat-error>
       </mat-form-field>
@@ -74,7 +74,7 @@
           <mat-option *ngFor="let servicio of servicios" [value]="servicio">{{ servicio.descripcion }}</mat-option>
         </mat-select>
 
-        <mat-error *ngIf="hospitalForm?.get('servicio')?.invalid && hospitalForm?.get('servicio')?.touched">
+        <mat-error *ngIf="hospitalForm.get('servicio')?.invalid && hospitalForm.get('servicio')?.touched">
           El campo es obligatorio.
         </mat-error>
       </mat-form-field>
@@ -86,7 +86,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Teléfono</mat-label>
         <input matInput formControlName="telefono">
-        <mat-error *ngIf="hospitalForm?.get('telefono')?.invalid && hospitalForm?.get('telefono')?.touched">
+        <mat-error *ngIf="hospitalForm.get('telefono')?.invalid && hospitalForm.get('telefono')?.touched">
           El campo debe contener hasta 15 números.
         </mat-error>    
       </mat-form-field>
@@ -98,7 +98,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Observación</mat-label>
         <input matInput formControlName="observacion">
-        <mat-error *ngIf="hospitalForm?.get('observacion')?.invalid && hospitalForm?.get('observacion')?.touched">
+        <mat-error *ngIf="hospitalForm.get('observacion')?.invalid && hospitalForm.get('observacion')?.touched">
           El campo puede contener letras y números (entre 3 y 80 caracteres).
         </mat-error>
       </mat-form-field>
@@ -115,7 +115,7 @@
           <mat-option [value]=3>3</mat-option>
           <mat-option [value]=4>4</mat-option>
         </mat-select>
-        <mat-error *ngIf="hospitalForm?.get('nivelComplejidad')?.invalid && hospitalForm?.get('nivelComplejidad')?.touched">
+        <mat-error *ngIf="hospitalForm.get('nivelComplejidad')?.invalid && hospitalForm.get('nivelComplejidad')?.touched">
           El campo es obligatorio.
         </mat-error>    
       </mat-form-field>
@@ -130,7 +130,7 @@
           <mat-option [value]="true">Si</mat-option>
           <mat-option [value]="false">No</mat-option>
         </mat-select>
-        <mat-error *ngIf="hospitalForm?.get('esCabecera')?.invalid && hospitalForm?.get('esCabecera')?.touched">
+        <mat-error *ngIf="hospitalForm.get('esCabecera')?.invalid && hospitalForm.get('esCabecera')?.touched">
           El campo es obligatorio.
         </mat-error>
       </mat-form-field>
@@ -145,7 +145,7 @@
           <mat-option [value]="true">Si</mat-option>
           <mat-option [value]="false">No</mat-option>
         </mat-select>
-        <mat-error *ngIf="hospitalForm?.get('admitePasiva')?.invalid && hospitalForm?.get('admitePasiva')?.touched">
+        <mat-error *ngIf="hospitalForm.get('admitePasiva')?.invalid && hospitalForm.get('admitePasiva')?.touched">
           El campo es obligatorio.
         </mat-error>
       </mat-form-field>

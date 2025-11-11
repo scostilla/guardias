@@ -31,7 +31,7 @@
         <tr>
             <th scope="row">Servicio</th>
             <td>
-              <ng-container *ngIf="ministerio?.servicios && ministerio.servicios.length; else noServicios">
+              <ng-container *ngIf="ministerio.servicios && ministerio.servicios.length; else noServicios">
                 <ul class="servicios-list">
                   <li *ngFor="let s of ministerio.servicios">{{ s.descripcion }}</li>
                 </ul>
