@@ -65,9 +65,6 @@ export class CronogramaComponent {
   CalendarView = CalendarView;
   holidays: Feriado[] = [];
 
-  hoveredEvent: MyCalendarEvent | null = null;
-  hoveredEventId: string | number | null | undefined = null;
-
   //Autenticación
   roles: string[] =[];
   isAutoridad: boolean = false;
@@ -108,10 +105,6 @@ export class CronogramaComponent {
   parseDate(dateString: string): Date {
     const parts = dateString.split('-');
     return new Date(+parts[0], +parts[1] - 1, +parts[2]);
-  }
-
-  isEventHovered(event: MyCalendarEvent): boolean {
-  return this.hoveredEventId === event.id;
   }
 
   ngOnInit(): void {
@@ -230,62 +223,52 @@ export class CronogramaComponent {
   }
 
   // Mapeo de los cronogramas al formato adecuado
-mapCronogramas(cronogramas: any[]): any[] {
-  return cronogramas.map((cronograma) => {
-    const tipoGuardia = cronograma.tipoGuardia?.nombre;
-    const observacion = cronograma.observacion;
-    const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
-    const id = cronograma.id;
-    const auth = cronograma.autorizado;
-    const authfor = `${cronograma.autoridad?.persona?.apellido}, ${cronograma.autoridad?.persona?.nombre}`;
-    const motivo = cronograma.motivoAutorizacion;
+  mapCronogramas(cronogramas: any[]): any[] {
+    return cronogramas.map((cronograma) => {
+      const tipoGuardia = cronograma.tipoGuardia?.nombre;
+      const observacion = cronograma.observacion;
+      const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
+      const id = cronograma.id;
+      const auth = cronograma.autorizado;
+      const authfor = `${cronograma.autoridad?.persona?.apellido}, ${cronograma.autoridad?.persona?.nombre}`;
+      const motivo = cronograma.motivoAutorizacion;
 
-    const fechaHoraIngreso = moment(cronograma.fechaIngreso).set({
-      hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
-      minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
-      second: 0
+      const fechaHoraIngreso = moment(cronograma.fechaIngreso).set({
+        hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
+        minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
+        second: 0
+      });
+
+      const fechaHoraEgreso = moment(cronograma.fechaEgreso).set({
+        hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
+        minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
+        second: 0
+      });
+
+      const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
+
+      return {
+        start: fechaHoraIngreso.toDate(),
+        end: fechaHoraIngreso.toDate(),
+        title: `${cronograma.asistencial?.apellido}, ${cronograma.asistencial?.nombre} - ${tipoGuardia}`,
+        servicio: servicio,
+        obs: observacion,
+        auth: auth,
+        authfor: authfor,
+        motivo: motivo,
+        id: id,
+        color: color,
+
+        // Info con end completa para el dialog:
+        meta: {
+          ...cronograma,
+          fechaHoraRealInicio: fechaHoraIngreso.toDate(),
+          fechaHoraRealFin: fechaHoraEgreso.toDate()
+        }
+      };
     });
-
-    const fechaHoraEgreso = moment(cronograma.fechaEgreso).set({
-      hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
-      minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
-      second: 0
-    });
-
-    const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
-
-    const result = {
-      start: fechaHoraIngreso.toDate(),
-      end: fechaHoraEgreso.toDate(),
-      title: `${cronograma.asistencial?.apellido}, ${cronograma.asistencial?.nombre} - ${tipoGuardia}`,
-      servicio: servicio,
-      obs: observacion,
-      auth: auth,
-      authfor: authfor,
-      motivo: motivo,
-      id: id,
-      color: color,
-      meta: cronograma
-    };
-
-    console.log('📝 Cronograma procesado:', {
-      id: id,
-      tipoGuardia,
-      servicio,
-      observacion,
-      auth,
-      authfor,
-      motivo,
-      fechaHoraIngreso: fechaHoraIngreso.toISOString(),
-      fechaHoraEgreso: fechaHoraEgreso.toISOString(),
-      title: result.title,
-      color
-    });
-
-    return result;
-  });
-}
-  
+  }
+    
   // Método que se llama cuando se selecciona un servicio del menú
   onServicioSelect(serviceId: number | null): void {
     this.selectedServiceId = serviceId;
@@ -358,111 +341,75 @@ mapCronogramas(cronogramas: any[]): any[] {
            date1.getDate() === date2.getDate();
   }
 
-dayClicked(day: MonthViewDay<any>): void {
-  const dayStart = moment(day.date).startOf('day').toDate();
+  dayClicked(day: MonthViewDay<any>): void {
+    const dayStart = moment(day.date).startOf('day').toDate();
 
-  const events = this.events.filter(event => {
-    const eventStart = moment(event.start).startOf('day').toDate();
-    const eventEnd = moment(event.end).startOf('day').toDate();
-    return dayStart >= eventStart && dayStart <= eventEnd;
-  });
+    const events = this.events.filter(event => {
+      const eventStart = moment(event.meta.fechaHoraRealInicio).startOf('day').toDate();
+      return dayStart.getTime() === eventStart.getTime();
+    });
 
-  const holidayName = this.getHolidayName(day.date);
+    const holidayName = this.getHolidayName(day.date);
 
-  const dialogRef = this.dialog.open(CronogramaDetailComponent, {
-    width: '600px',
-    data: {
-      title:'Lista profesionales',
-      events: events.map(event => ({
-        ...event,
-        color: event.color
-      })),
-      holidayName: holidayName
-    }
-  });
+    const dialogRef = this.dialog.open(CronogramaDetailComponent, {
+      width: '600px',
+      data: {
+        title: 'Lista profesionales',
+        events,
+        holidayName
+      }
+    });
 
-  dialogRef.componentInstance.eventDeleted.subscribe(() => {
-    this.loadCronogramas();
-  });
-}
+    dialogRef.componentInstance.eventDeleted.subscribe(() => {
+      this.loadCronogramas();
+    });
+  }
   
   onEventClicked({ event }: { event: any }): void {
     const dialogRef = this.dialog.open(CronogramaDetailComponent, {
       width: '600px',
       data: {
-        title:'Detalle evento',
-        events: [event],  // Solo ese evento
-        holidayName: this.getHolidayName(event.start)
+        title: 'Detalle evento',
+        events: [event],
+        holidayName: this.getHolidayName(event.meta?.fechaHoraRealInicio)
       }
     });
-  
+
     dialogRef.componentInstance.eventDeleted.subscribe(() => {
-      this.loadCronogramas();  // Refrescar eventos si se eliminó
+      this.loadCronogramas();
     });
   }
 
-// En tu componente TypeScript, añade este método:
-getApellidoFromEvent(event: MyCalendarEvent): string {
-  // Extrae el apellido del título (formato: "Apellido, Nombre - TipoGuardia")
-  if (event.title && event.title.includes(',')) {
-    return event.title.split(',')[0].trim();
-  }
-  
-  // Si no tiene el formato esperado, intenta extraer de otra manera
-  if (event.meta?.asistencial?.apellido) {
-    return event.meta.asistencial.apellido;
-  }
-  
-  // Fallback: primera palabra del título
-  return event.title ? event.title.split(' ')[0] : 'Evento';
-}
-
-// Método para manejar clics en eventos de la vista mensual
-onMonthEventClicked(event: MyCalendarEvent): void {
-  const dialogRef = this.dialog.open(CronogramaDetailComponent, {
-    width: '600px',
-    data: {
-      title: 'Detalle evento',
-      events: [event],
-      holidayName: this.getHolidayName(event.start)
+  // En tu componente TypeScript, añade este método:
+  getApellidoFromEvent(event: MyCalendarEvent): string {
+    // Extrae el apellido del título (formato: "Apellido, Nombre - TipoGuardia")
+    if (event.title && event.title.includes(',')) {
+      return event.title.split(',')[0].trim();
     }
-  });
-
-  dialogRef.componentInstance.eventDeleted.subscribe(() => {
-    this.loadCronogramas();
-  });
-}   
-
-  // Método para manejar el hover sobre eventos
-  onEventMouseEnter(event: MyCalendarEvent): void {
-    this.hoveredEvent = event;
-    this.hoveredEventId = event.id;
-    this.refresh.next(); // Forzar actualización para aplicar las clases
-  }
-
-  onEventMouseLeave(event: MyCalendarEvent): void {
-    this.hoveredEvent = null;
-    this.hoveredEventId = null;
-    this.refresh.next(); // Forzar actualización para remover las clases
-  }
-
-  // Método para verificar si un día contiene el evento hovereado
-  isDayHovered(day: any): boolean {
-    if (!this.hoveredEventId) return false;
     
-    const dayStart = moment(day.date).startOf('day').toDate();
-    const eventStart = moment(this.hoveredEvent!.start).startOf('day').toDate();
-    const eventEnd = moment(this.hoveredEvent!.end).startOf('day').toDate();
-    
-    return dayStart >= eventStart && dayStart <= eventEnd;
-  }
-
-  // Método para obtener la clase CSS del evento hovereado
-  getHoveredEventClass(event: MyCalendarEvent): string {
-    if (this.hoveredEventId === event.id) {
-      return 'event-hovered';
+    // Si no tiene el formato esperado, intenta extraer de otra manera
+    if (event.meta?.asistencial?.apellido) {
+      return event.meta.asistencial.apellido;
     }
-    return '';
+    
+    // Fallback: primera palabra del título
+    return event.title ? event.title.split(' ')[0] : 'Evento';
+  }
+
+  // Método para manejar clics en eventos de la vista mensual
+  onMonthEventClicked(event: MyCalendarEvent): void {
+    const dialogRef = this.dialog.open(CronogramaDetailComponent, {
+      width: '600px',
+      data: {
+        title: 'Detalle evento',
+        events: [event],
+        holidayName: this.getHolidayName(event.meta?.fechaHoraRealInicio)
+      }
+    });
+
+    dialogRef.componentInstance.eventDeleted.subscribe(() => {
+      this.loadCronogramas();
+    });
   }
 
 /*EventDialog(): void {
@@ -559,6 +506,9 @@ onMonthEventClicked(event: MyCalendarEvent): void {
 
       const monthName = this.viewDate.toLocaleString('es-ES', { month: 'long' });
       const year = this.viewDate.getFullYear();
+      const ahora = new Date();
+      const fecha = ahora.toLocaleDateString('es-ES');
+      const hora = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
       const documentDefinition: any = {
         pageSize: 'A4',
@@ -582,7 +532,7 @@ onMonthEventClicked(event: MyCalendarEvent): void {
                 width: '60%'
               },
               { 
-                text: `Fecha exportación: ${new Date().toLocaleDateString('es-ES')}`,
+                text: `Fecha exportación: ${fecha} ${hora} hs`,
                 fontSize: 11,
                 color: '#555555',
                 alignment: 'right',

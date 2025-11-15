@@ -21,8 +21,8 @@ export class CronogramaDetailComponent {
   ) {}
 
   deleteEvent(event: any): void {
-    const fechaInicio = new Date(event.start);
-
+    const fechaInicio = new Date(event.meta?.fechaHoraRealInicio);
+    
     if (new Date() >= fechaInicio) {
       this.toastr.warning('No se puede eliminar una guardia anterior o igual a la fecha y hora actual.', 'Aviso', {
         timeOut: 5000,
