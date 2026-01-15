@@ -6,6 +6,8 @@ import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
+import { MatDialog } from '@angular/material/dialog';
+import { CambiarPasswordComponent } from '../login/cambiar-password/cambiar-password.component';
 
 @Component({
   selector: 'app-home-hospital',
@@ -24,7 +26,8 @@ export class HomeHospitalComponent implements OnInit {
     private tokenService: TokenService,
     private efectorService: EfectorService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -53,28 +56,61 @@ onLogin(): void {
 
       const roles = this.tokenService.getProfessionalAuthorities();
 
-      if (roles.includes('ROLE_USER')) {
-        // Si el login es correcto y el rol es profesional
-        this.tokenService.setCurrentProfessionalRole('ROLE_USER');
-        this.router.navigate(['/home-profesional']);
-      } else {
-        // Si no es profesional, no lo dejamos pasar
+      if (!roles.includes('ROLE_USER')) {
         this.toastr.error(
           'Solo usuarios con rol profesional pueden ingresar desde este login',
-          'Acceso denegado', {
+          'Acceso denegado',
+          {
             timeOut: 3000,
             positionClass: 'toast-top-center'
           }
         );
         this.tokenService.logOutProfessional();
+        return;
       }
+
+      if (data.primerLogueo === true) {
+        this.openCambiarPasswordDialog();
+        return;
+      }
+
+      this.tokenService.setCurrentProfessionalRole('ROLE_USER');
+      this.router.navigate(['/home-profesional']);
     },
-    err => {
-      this.toastr.error('Usuario o contraseña incorrectos', 'Error', {
-        timeOut: 3000,
-        positionClass: 'toast-top-center'
-      });
+    () => {
+      this.toastr.error(
+        'Usuario o contraseña incorrectos',
+        'Error',
+        {
+          timeOut: 3000,
+          positionClass: 'toast-top-center'
+        }
+      );
     }
   );
+}
+
+openCambiarPasswordDialog(): void {
+  const dialogRef = this.dialog.open(CambiarPasswordComponent, {
+    width: '400px',
+    disableClose: true,
+    data: {
+      modo: 'PROFESIONAL',
+      redirectTo: '/home-hospital'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    // 🔥 siempre borrar password al cerrar
+    this.password = '';
+
+    if (result === true) {
+      this.toastr.success(
+          'Contraseña modificada, ingresa con la nueva contraseña.',
+          'Éxito',
+        { timeOut: 3000, positionClass: 'toast-top-center' }
+      );
+    }
+  });
 }
 }

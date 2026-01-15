@@ -1,12 +1,17 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { map, catchError, of } from 'rxjs';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CambiarPassword } from 'src/app/dto/usuario/cambiar-password';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
 import { Router } from '@angular/router';
+import { Inject } from '@angular/core';
 
+export interface CambiarPasswordDialogData {
+  modo: 'GENERAL' | 'PROFESIONAL';
+  redirectTo: string;
+}
 @Component({
   selector: 'app-cambiar-password',
   templateUrl: './cambiar-password.component.html',
@@ -22,43 +27,41 @@ export class CambiarPasswordComponent {
   loading = true;
   nombreUsuario!: string;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private tokenService: TokenService,
-    private router: Router,
-    private dialogRef: MatDialogRef<CambiarPasswordComponent>
-  ) {
-this.form = this.fb.group(
-  {
-    passwordActual: [
-      '',
-      Validators.required,
-      [this.passwordActualValidator()],
-      { updateOn: 'blur' } // 🔥 recomendado
-    ],
-    nuevaPassword: [
-      '',
-      [Validators.required, Validators.minLength(8)]
-    ],
-    confirmarPassword: ['', Validators.required]
-  },
-  {
-    validators: this.passwordsIguales
-  }
-);
-  }
+constructor(
+  private fb: FormBuilder,
+  private authService: AuthService,
+  private tokenService: TokenService,
+  private dialogRef: MatDialogRef<CambiarPasswordComponent>,
+  @Inject(MAT_DIALOG_DATA) public data: CambiarPasswordDialogData
+) {
+  this.form = this.fb.group(
+    {
+      passwordActual: [
+        '',
+        {
+          validators: [Validators.required],
+          asyncValidators: [this.passwordActualValidator()],
+          updateOn: 'blur'
+        }
+      ],
+      nuevaPassword: ['', [Validators.required, Validators.minLength(8)]],
+      confirmarPassword: ['', Validators.required]
+    },
+    { validators: this.passwordsIguales }
+  );
+}
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
+    if (this.data.modo === 'GENERAL') {
       this.nombreUsuario = this.tokenService.getUserName();
-    } else if (this.tokenService.getProfessionalToken()) {
+    } else {
       this.nombreUsuario = this.tokenService.getProfessionalUserName();
     }
   }
 
   passwordActualValidator(): AsyncValidatorFn {
     return (control: AbstractControl) => {
+      // Si no hay valor o nombre de usuario no hace la validación
       if (!control.value || !this.nombreUsuario) {
         return of(null);
       }
@@ -114,12 +117,12 @@ this.form = this.fb.group(
   }
 
 cancelar(): void {
-  this.tokenService.logOut();
   this.dialogRef.close(false);
-  this.router.navigate(['/login']);
 }
 
 guardar(): void {
+   console.log('Token general:', this.tokenService.getToken());
+  console.log('Token profesional:', this.tokenService.getProfessionalToken());
   if (this.form.invalid) {
     this.form.markAllAsTouched();
     return;
@@ -131,23 +134,19 @@ guardar(): void {
     this.form.value.confirmarPassword
   );
 
-  this.loading = true;
+   console.log('=== DTO CAMBIAR PASSWORD ===');
+  console.log(dto);
+  console.log('modo:', this.data.modo);
+  console.log('usuario:', this.nombreUsuario);
 
-  this.authService.cambiarPassword(dto).subscribe({
-    next: () => {
-      this.loading = false;
-      this.dialogRef.close(true);
+  const request$ =
+    this.data.modo === 'PROFESIONAL'
+      ? this.authService.cambiarPasswordProfesional(dto)
+      : this.authService.cambiarPassword(dto);
 
-      // cerrar sesión
-      this.tokenService.logOut();
-
-      // redirigir al login
-      this.router.navigate(['/login']);
-          },
-    error: err => {
-      console.error('Error cambiar password:', err);
-      this.loading = false;
-    }
+  request$.subscribe({
+    next: () => this.dialogRef.close(true),
+    error: () => this.form.setErrors({ errorServidor: true })
   });
 }
 }

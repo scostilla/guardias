@@ -9,6 +9,7 @@ import { LoginUsuario } from 'src/app/models/login/login-usuario';
 import { LoginResponseDto } from 'src/app/dto/usuario/login-response-dto';
 import { CambiarPassword } from 'src/app/dto/usuario/cambiar-password';
 import { ResetPassword } from 'src/app/dto/usuario/reset-password';
+import { TokenService } from './token.service';
 
 
 @Injectable({
@@ -19,7 +20,7 @@ export class AuthService {
   authUrl =  'http://localhost:8080/auth/' ;
   private _refresh$ = new Subject<void>();
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private tokenService: TokenService) { }
 
   get refresh$(){
     return this._refresh$;
@@ -111,6 +112,31 @@ public login(loginUsuario: LoginUsuario): Observable<LoginResponseDto> {
         passwordActual: dto.passwordActual,
         nuevaPassword: dto.nuevaPassword,
         confirmacionPassword: dto.confirmarPassword
+      }
+    );
+  }
+
+  public cambiarPasswordProfesional(dto: CambiarPassword): Observable<any> {
+    const token = this.tokenService.getProfessionalToken();
+
+    console.log('=== CAMBIAR PASSWORD PROFESIONAL ===');
+    console.log('TOKEN PROFESIONAL:', token);
+
+    const body = {
+      passwordActual: dto.passwordActual,
+      nuevaPassword: dto.nuevaPassword,
+      confirmacionPassword: dto.confirmarPassword
+    };
+
+    console.log('BODY:', body);
+
+    return this.httpClient.post<any>(
+      this.authUrl + 'cambiar-password',
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
     );
   }

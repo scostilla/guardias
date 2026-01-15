@@ -54,7 +54,7 @@ onLogin(): void {
       this.tokenService.setAuthorities(data.jwt.authorities);
       this.tokenService.setPrimerLogueo(data.primerLogueo);
 
-      // ✅ marcar sesión iniciada (una sola vez)
+      // marcar sesión iniciada (una sola vez)
       this.tokenService.setLoggedState(true);
 
       if (data.primerLogueo === true) {
@@ -68,7 +68,7 @@ onLogin(): void {
       err => {
         this.isLoginFail = true;
 
-        this.resetPasswordOnly(); // ✅ solo password
+        this.resetPasswordOnly();
 
         this.toastr.error(
           'Usuario o contraseña incorrectos',
@@ -100,9 +100,26 @@ onLogin(): void {
   }
 
   openCambiarPasswordDialog(): void {
-    this.dialog.open(CambiarPasswordComponent, {
+    const dialogRef = this.dialog.open(CambiarPasswordComponent, {
       width: '400px',
-      disableClose: true
+      disableClose: true,
+      data: {
+        modo: 'GENERAL',
+        redirectTo: '/login'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.toastr.success(
+          'Contraseña modificada, ingresa con la nueva contraseña.',
+          'Éxito',
+          { timeOut: 3000, positionClass: 'toast-top-center' }
+        );
+      }
+
+      this.tokenService.logOut();
+      this.router.navigate(['/login']);
     });
   }
 
