@@ -241,6 +241,7 @@ import { PersonalDhCreateComponent } from './components/personal/personal-dh-cre
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
 import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
 import { FacturaListFterminoComponent } from './components/guardias/factura/factura-list-ftermino/factura-list-ftermino.component';
+import { CambiarPasswordComponent } from './components/login/cambiar-password/cambiar-password.component';
 
 @NgModule({
   declarations: [
@@ -430,6 +431,7 @@ import { FacturaListFterminoComponent } from './components/guardias/factura/fact
     HomeHospitalComponent,
     FacturaCreateFterminoComponent,
     FacturaListFterminoComponent,
+    CambiarPasswordComponent,
   ],
 
   imports: [

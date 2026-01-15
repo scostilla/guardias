@@ -49,8 +49,7 @@ export class UsuarioEditComponent implements OnInit {
     this.usuarioForm = this.fb.group({
       nombreUsuario: ['', [Validators.required, Validators.pattern('^[a-z0-9]+$')]],
       roles: ['', Validators.required],
-      idPerson: ['', Validators.required],
-      resetPassword: [false]
+      idPerson: ['', Validators.required]
     });
 
     this.loadUsuarioes();
@@ -130,7 +129,7 @@ export class UsuarioEditComponent implements OnInit {
     }
   }
 
-  // Método para abrir el diálogo de confirmación cuando se cambia el estado del checkbox
+  /*/ Método para abrir el diálogo de confirmación cuando se cambia el estado del checkbox
   onResetPasswordChange(event: any): void {
     const currentStatus = event.checked;
 
@@ -152,7 +151,7 @@ export class UsuarioEditComponent implements OnInit {
         this.usuarioForm.patchValue({ resetPassword: false });
       }
     });
-  }
+  }*/
 
   openAsistencialDialog(): void {
     const dialogRef = this.dialog.open(AsistencialSelectorAllComponent, {

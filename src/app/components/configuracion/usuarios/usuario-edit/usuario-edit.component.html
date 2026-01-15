@@ -7,7 +7,8 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Profesional</mat-label>
-      <input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required>
+      <!--<input matInput [value]="inputValue" (click)="openAsistencialDialog()" readonly required>-->
+      <input matInput [value]="inputValue" readonly required>
       <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
       <mat-error *ngIf="usuarioForm.get('idPerson')?.hasError('required')">
           El campo profesional es requerido.
@@ -41,8 +42,6 @@
     <div *ngIf="!data" class="negrita">
       La contraseña inicial asignada será igual al nombre de usuario.
     </div>
-
-    <mat-checkbox *ngIf="data" (change)="onResetPasswordChange($event)" formControlName="resetPassword">Resetear contraseña</mat-checkbox>
       
       <div mat-dialog-actions class="action mt-4">
           <button mat-raised-button color="primary" type="submit" [disabled]="!usuarioForm.valid || !isModified()">

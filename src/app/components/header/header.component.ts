@@ -238,17 +238,11 @@ ngOnInit(): void {
     }
   }
 
-  private ejecutarLogout(): void {
-    this.tokenService.logOut();
-    this.tokenService.setCurrentRole(null);
-    this.efectorService.setCurrentEfectorId(null);
+private ejecutarLogout(): void {
+  this.tokenService.logOut();
+  this.tokenService.setCurrentRole(null);
+  this.efectorService.setCurrentEfectorId(null);
 
-    this.isLogged = false;
-    this.nombreUsuario = '';
-    this.apellidoUsuario = '';
-    this.roles = [];
-
-    this.router.navigate(['/login']);
-  }
-
+  this.router.navigateByUrl('/login', { replaceUrl: true });
+}
 }

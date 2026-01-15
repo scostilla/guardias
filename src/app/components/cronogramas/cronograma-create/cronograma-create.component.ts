@@ -528,7 +528,7 @@ saveCronograma(): void {
   }
 }
 
-private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): void {
+/*private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): void {
   const cronogramaDto = new CronogramaTentativoDto(
     formData.fechaIngreso,
     formData.fechaEgreso,
@@ -617,6 +617,93 @@ private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): v
           error => this.handleError('verificar efectores con cronograma', error)
         );
       }
+    },
+    error => this.handleError('verificar la existencia del cronograma', error)
+  );
+}*/
+
+private validarExistenciaYSuperposicion(formData: any, tipoGuardiaId: number): void {
+
+  const cronogramaDto = new CronogramaTentativoDto(
+    formData.fechaIngreso,
+    formData.fechaEgreso,
+    formData.horaIngreso,
+    formData.horaEgreso,
+    true,
+    false,
+    'PENDIENTE',
+    tipoGuardiaId,
+    formData.asistencial,
+    formData.idServicio,
+    this.efectorId!,
+    formData.observacion,
+    undefined,
+    'Coincide con la guardia existente en D.H.'
+  );
+
+  // Primero: verificar si existe guardia en este mismo efector
+  this.cronoService.existCronograma(cronogramaDto).subscribe(
+    existeEnMismoEfector => {
+
+      if (existeEnMismoEfector) {
+        // Si coincide en el MISMO efector NO permitir cargar
+        this.toastr.error(
+          'El profesional ya está cargado en este efector en la misma fecha y hora.',
+          'Superposición detectada',
+          {
+            timeOut: 9000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          }
+        );
+        return; // Detener proceso
+      }
+
+      // Segundo: verificar si está cargado en OTROS efectores
+      this.cronoService.efectoresConCronograma(cronogramaDto).subscribe(
+        efectores => {
+
+          if (efectores && efectores.length > 0) {
+            // SI HAY COINCIDENCIA EN OTROS EFECTORES NO cargar
+            const nombres: string[] = [];
+            let completadas = 0;
+
+            efectores.forEach(id => {
+              this.efectorService.getEfectorNombre(id).subscribe(
+                (efector: any) => {
+                  nombres.push(efector.nombre);
+                  completadas++;
+
+                  if (completadas === efectores.length) {
+                    const lista = nombres.join(', ');
+
+                    this.toastr.warning(
+                      `El profesional ya está cargado en el hospital. Comuníquese con ${lista} en caso de querer solicitar dicha guardia.`,
+                      'Superposición detectada',
+                      {
+                        timeOut: 9000,
+                        positionClass: 'toast-top-center',
+                        progressBar: true
+                      }
+                    );
+                  }
+                },
+                error => {
+                  completadas++;
+                  console.error('Error obteniendo nombre del efector:', error);
+                }
+              );
+            });
+
+            return; // No permitir guardar
+          }
+
+          // Si no hay ninguna superposición permitir carga
+          this.guardarCronogramaConVerificaciones(cronogramaDto);
+        },
+        error => this.handleError('verificar efectores con cronograma', error)
+      );
+
     },
     error => this.handleError('verificar la existencia del cronograma', error)
   );

@@ -47,9 +47,9 @@ onLogin(): void {
   this.authService.login(loginUsuario).subscribe(
     data => {
       // Guardar token y datos SOLO como profesional
-      this.tokenService.setProfessionalToken(data.token);
-      this.tokenService.setProfessionalUserName(data.nombreUsuario);
-      this.tokenService.setProfessionalAuthorities(data.authorities);
+      this.tokenService.setProfessionalToken(data.jwt.token);
+      this.tokenService.setProfessionalUserName(data.jwt.nombreUsuario);
+      this.tokenService.setProfessionalAuthorities(data.jwt.authorities);
 
       const roles = this.tokenService.getProfessionalAuthorities();
 

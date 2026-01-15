@@ -1260,7 +1260,7 @@ alMenosUnoRequeridoValidator(): ValidatorFn {
     const selectedDate = event.value;
   }
 
-  //en caso sea rol administrativo solo deja cargar su efector
+  /*/en caso sea rol administrativo solo deja cargar su efector
   getEfectoresFiltrados(): any[] {
     // Si el usuario es administrativo, solo mostrar los efectores cuyo id esté en idEfectorUser
     if (this.isAdministrativo) {
@@ -1270,6 +1270,10 @@ alMenosUnoRequeridoValidator(): ValidatorFn {
   
     // Si no es administrativo, devuelve todos los efectores
     return this.hospitales;
+  }*/
+
+  getEfectoresFiltrados(): any[] {
+    return this.hospitales;  // Siempre devolver todos los hospitales
   }
 
   onHospitalesChange(event: any): void {

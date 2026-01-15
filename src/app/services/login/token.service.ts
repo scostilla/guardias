@@ -13,6 +13,8 @@ const AUTHORITIES_KEY = 'AuthAuthorities';
 const PROFESSIONAL_USERNAME_KEY = 'ProfessionalUserName';
 const PROFESSIONAL_AUTHORITIES_KEY = 'ProfessionalAuthorities';
 
+//Key primer logueo
+const FIRST_LOGIN_KEY = 'FirstLogin';
 @Injectable({
   providedIn: 'root'
 })
@@ -194,4 +196,18 @@ export class TokenService {
   setLoggedState(state: boolean) {
     this.isLoggedSubject.next(state);
   }
+
+  //Para primer logueo
+  setPrimerLogueo(value: boolean): void {
+    sessionStorage.setItem(FIRST_LOGIN_KEY, JSON.stringify(value));
+  }
+
+  isPrimerLogueo(): boolean {
+    return JSON.parse(sessionStorage.getItem(FIRST_LOGIN_KEY) || 'false');
+  }
+
+  clearPrimerLogueo(): void {
+    sessionStorage.removeItem(FIRST_LOGIN_KEY);
+  }
+
 }

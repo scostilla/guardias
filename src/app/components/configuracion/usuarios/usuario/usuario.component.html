@@ -48,7 +48,14 @@
             <button mat-icon-button matTooltip="Editar" (click)="openFormChanges(usuario)">
               <mat-icon class="btnEdit">edit</mat-icon>
             </button>
-            <!--<button mat-icon-button matTooltip="Dar de baja" (click)="deleteUsuario(usuario)">
+            <button
+              mat-icon-button
+              matTooltip="Resetear contraseña"
+              (click)="resetPassword(usuario)"
+            >
+              <mat-icon color="warn">lock_reset</mat-icon>
+            </button>
+              <!--<button mat-icon-button matTooltip="Dar de baja" (click)="deleteUsuario(usuario)">
               <mat-icon class="btnRemove">delete</mat-icon>
             </button>-->
           </td>
