@@ -109,34 +109,10 @@ public login(loginUsuario: LoginUsuario): Observable<LoginResponseDto> {
   public cambiarPassword(dto: CambiarPassword): Observable<any> {
     return this.httpClient.post<any>(this.authUrl + 'cambiar-password',
       {
+        nombreUsuario: dto.nombreUsuario,
         passwordActual: dto.passwordActual,
         nuevaPassword: dto.nuevaPassword,
         confirmacionPassword: dto.confirmarPassword
-      }
-    );
-  }
-
-  public cambiarPasswordProfesional(dto: CambiarPassword): Observable<any> {
-    const token = this.tokenService.getProfessionalToken();
-
-    console.log('=== CAMBIAR PASSWORD PROFESIONAL ===');
-    console.log('TOKEN PROFESIONAL:', token);
-
-    const body = {
-      passwordActual: dto.passwordActual,
-      nuevaPassword: dto.nuevaPassword,
-      confirmacionPassword: dto.confirmarPassword
-    };
-
-    console.log('BODY:', body);
-
-    return this.httpClient.post<any>(
-      this.authUrl + 'cambiar-password',
-      body,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
       }
     );
   }

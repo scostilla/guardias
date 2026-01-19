@@ -101,7 +101,6 @@ openCambiarPasswordDialog(): void {
   });
 
   dialogRef.afterClosed().subscribe(result => {
-    // 🔥 siempre borrar password al cerrar
     this.password = '';
 
     if (result === true) {

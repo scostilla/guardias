@@ -121,30 +121,19 @@ cancelar(): void {
 }
 
 guardar(): void {
-   console.log('Token general:', this.tokenService.getToken());
-  console.log('Token profesional:', this.tokenService.getProfessionalToken());
   if (this.form.invalid) {
     this.form.markAllAsTouched();
     return;
   }
 
   const dto = new CambiarPassword(
+    this.nombreUsuario,
     this.form.value.passwordActual,
     this.form.value.nuevaPassword,
     this.form.value.confirmarPassword
   );
 
-   console.log('=== DTO CAMBIAR PASSWORD ===');
-  console.log(dto);
-  console.log('modo:', this.data.modo);
-  console.log('usuario:', this.nombreUsuario);
-
-  const request$ =
-    this.data.modo === 'PROFESIONAL'
-      ? this.authService.cambiarPasswordProfesional(dto)
-      : this.authService.cambiarPassword(dto);
-
-  request$.subscribe({
+  this.authService.cambiarPassword(dto).subscribe({
     next: () => this.dialogRef.close(true),
     error: () => this.form.setErrors({ errorServidor: true })
   });
