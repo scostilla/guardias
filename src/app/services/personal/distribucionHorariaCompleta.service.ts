@@ -10,7 +10,7 @@ import { DistribucionesConCronogramasDto } from "src/app/dto/personal/Distribuci
 })
 export class DistribucionHorariaCompletaService {
 
-  distribucionDiariaCompletaURL = 'http://localhost:8080/distribucionConsultorio/';
+  distribucionDiariaCompletaURL = 'http://localhost:8080/distribuciones-completas/';
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
@@ -20,7 +20,7 @@ export class DistribucionHorariaCompletaService {
   }
 
   public save(distribucionCompleta:DistribucionesConCronogramasDto): Observable<any> {
-    return this.httpClient.post<any>(this.distribucionDiariaCompletaURL + 'create', distribucionCompleta)
+    return this.httpClient.post<any>(this.distribucionDiariaCompletaURL + 'crear', distribucionCompleta)
     .pipe(
       tap(() => {
       this._refresh$.next(); 

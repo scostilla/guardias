@@ -1,21 +1,27 @@
+import { DistribucionGuardiaDto } from './DistribucionGuardiaDto';
+import { DistribucionConsultorioDto } from './DistribucionConsultorioDto';
+import { DistribucionGiraDto } from './DistribucionGiraDto';
+import { DistribucionOtroDto } from './DistribucionOtroDto';
+
 export class DistribucionesConCronogramasDto {
-    tipoGuardia: string;
-    idServicio: number;
+
+  guardias: DistribucionGuardiaDto[];
+  consultorios: DistribucionConsultorioDto[];
+  giras: DistribucionGiraDto[];
+  otras: DistribucionOtroDto[];
+  crearCronogramasParaGuardias: boolean;
 
   constructor(
-
-    dia: string,
-    cantidadHoras: number,
-    idPersona: number,
-    idEfector: number,
-    fechaInicio: Date,
-    fechaFinalizacion: Date,
-    horaIngreso: Date,
-    tipoGuardia: string,
-    idServicio: number
+    guardias: DistribucionGuardiaDto[] = [],
+    consultorios: DistribucionConsultorioDto[] = [],
+    giras: DistribucionGiraDto[] = [],
+    otras: DistribucionOtroDto[] = [],
+    crearCronogramasParaGuardias: boolean = true
   ) {
-    this.tipoGuardia = tipoGuardia;
-    this.idServicio = idServicio;
+    this.guardias = guardias;
+    this.consultorios = consultorios;
+    this.giras = giras;
+    this.otras = otras;
+    this.crearCronogramasParaGuardias = crearCronogramasParaGuardias;
   }
-
 }
