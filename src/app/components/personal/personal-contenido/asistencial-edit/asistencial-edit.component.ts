@@ -32,13 +32,17 @@ export class AsistencialEditComponent implements OnInit {
     this.asistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
-      dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
+      dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
       domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
-      cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
+
+      cuilPrefijo: ['', [Validators.required, Validators.pattern(/^(20|23|27)$/)]],
+      cuilDni: [{ value: '', disabled: true }],
+      cuilSufijo: ['', [Validators.required, Validators.pattern(/^\d$/)]],
+
       fechaNacimiento: [''],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
-      email: ['' , [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
     });
 
 
@@ -52,19 +56,20 @@ export class AsistencialEditComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.initialData) {
-      console.log("asistencial a modificar", this.initialData);
-      console.log("nombreUsuario", this.initialData.usuario?.nombreUsuario);
       this.idAsistencial = this.initialData.id ?? 0;
+
       this.asistencialForm.patchValue({
         ...this.initialData,
       });
 
-          // Formatear el CUIL después de cargar los datos
-    const formattedCuil = this.formatCuilValue(this.initialData.cuil);
-    this.asistencialForm.get('cuil')?.setValue(formattedCuil, { emitEvent: false });
-
-      console.log("id asis a modificar", this.idAsistencial);
+      // dividir CUIL de BD
+      this.dividirCuil(this.initialData.cuil);
     }
+
+    // mantener cuilDni sincronizado si cambian DNI
+    this.asistencialForm.get('dni')?.valueChanges.subscribe(dni => {
+      this.asistencialForm.get('cuilDni')?.setValue(dni || '', { emitEvent: false });
+    });
   }
 
   isModified(): boolean {
@@ -78,13 +83,17 @@ export class AsistencialEditComponent implements OnInit {
       asistencialData.nombre = this.capitalizeWords(asistencialData.nombre);
       asistencialData.apellido = this.capitalizeWords(asistencialData.apellido);
 
-      asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
+      const prefijo = this.asistencialForm.get('cuilPrefijo')?.value;
+      const dni = this.asistencialForm.get('dni')?.value;
+      const sufijo = this.asistencialForm.get('cuilSufijo')?.value;
+
+      const cuilCompleto = `${prefijo}${dni}${sufijo}`;
 
       const asistencialDto = new AsistencialDto(
         asistencialData.nombre,
         asistencialData.apellido,
         asistencialData.dni,
-        asistencialData.cuil,
+        cuilCompleto,
         true, // esAsistencial
         true, // activo
         asistencialData.email,
@@ -134,30 +143,23 @@ export class AsistencialEditComponent implements OnInit {
     this.asistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
   }
 
-  formatCuilValue(cuil: string): string {
-    let value = cuil.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
-    if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
-    }
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
-    }
-    return value;
+  private dividirCuil(cuil: string): void {
+  if (!cuil || cuil.length < 11) return;
+
+  const limpio = cuil.replace(/\D/g, '');
+
+  const prefijo = limpio.substring(0, 2);
+  const dni = limpio.substring(2, limpio.length - 1);
+  const sufijo = limpio.substring(limpio.length - 1);
+
+  this.asistencialForm.patchValue({
+    cuilPrefijo: prefijo,
+    cuilSufijo: sufijo,
+  }, { emitEvent: false });
+
+  this.asistencialForm.get('cuilDni')?.setValue(dni, { emitEvent: false });
   }
   
-
-  formatCuil(event: any): void {
-    let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
-    if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
-    }
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
-    }
-    event.target.value = value;
-    this.asistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
-  }
-
   compareFn(o1: any, o2: any): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
   }

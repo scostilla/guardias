@@ -28,9 +28,11 @@ export class NoAsistencialEditComponent implements OnInit {
     this.noAsistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
-      dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
+      dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
       domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
-      cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
+      cuilPrefijo: ['', [Validators.required, Validators.pattern(/^(20|23|27)$/)]],
+      cuilDni: [{ value: '', disabled: true }],
+      cuilSufijo: ['', [Validators.required, Validators.pattern(/^\d$/)]],
       fechaNacimiento: [''],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
@@ -46,19 +48,19 @@ export class NoAsistencialEditComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.initialData) {
-      console.log("noAsistencial a modificar", this.initialData);
-      console.log("nombreUsuario", this.initialData.usuario?.nombreUsuario);
       this.idNoAsistencial = this.initialData.id ?? 0;
       this.noAsistencialForm.patchValue({
         ...this.initialData
       });
 
-    // Formatear el CUIL después de cargar los datos
-    const formattedCuil = this.formatCuilValue(this.initialData.cuil);
-    this.noAsistencialForm.get('cuil')?.setValue(formattedCuil, { emitEvent: false });
-
-      console.log("id noAsis a modificar", this.idNoAsistencial);
+      // dividir CUIL de BD
+      this.dividirCuil(this.initialData.cuil);
     }
+
+    // mantener cuilDni sincronizado si cambian DNI
+    this.noAsistencialForm.get('dni')?.valueChanges.subscribe(dni => {
+      this.noAsistencialForm.get('cuilDni')?.setValue(dni || '', { emitEvent: false });
+    });
   }
 
   isModified(): boolean {
@@ -72,13 +74,17 @@ export class NoAsistencialEditComponent implements OnInit {
       noAsistencialData.nombre = this.capitalizeWords(noAsistencialData.nombre);
       noAsistencialData.apellido = this.capitalizeWords(noAsistencialData.apellido);
 
-      noAsistencialData.cuil = noAsistencialData.cuil.replace(/-/g, '');
+      const prefijo = this.noAsistencialForm.get('cuilPrefijo')?.value;
+      const dni = this.noAsistencialForm.get('dni')?.value;
+      const sufijo = this.noAsistencialForm.get('cuilSufijo')?.value;
+
+      const cuilCompleto = `${prefijo}${dni}${sufijo}`;
 
       const noAsistencialDto = new NoAsistencialDto(
         noAsistencialData.nombre,
         noAsistencialData.apellido,
         noAsistencialData.dni,
-        noAsistencialData.cuil,
+        cuilCompleto,
         false, // esAsistencial
         true, // activo
         noAsistencialData.email,
@@ -129,28 +135,21 @@ export class NoAsistencialEditComponent implements OnInit {
     this.noAsistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
   }
 
-  formatCuilValue(cuil: string): string {
-    let value = cuil.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
-    if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
-    }
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
-    }
-    return value;
-  }
-  
+  private dividirCuil(cuil: string): void {
+  if (!cuil || cuil.length < 11) return;
 
-  formatCuil(event: any): void {
-    let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
-    if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
-    }
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
-    }
-    event.target.value = value;
-    this.noAsistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
+  const limpio = cuil.replace(/\D/g, '');
+
+  const prefijo = limpio.substring(0, 2);
+  const dni = limpio.substring(2, limpio.length - 1);
+  const sufijo = limpio.substring(limpio.length - 1);
+
+  this.noAsistencialForm.patchValue({
+    cuilPrefijo: prefijo,
+    cuilSufijo: sufijo,
+  }, { emitEvent: false });
+
+  this.noAsistencialForm.get('cuilDni')?.setValue(dni, { emitEvent: false });
   }
 
   compareFn(o1: any, o2: any): boolean {
