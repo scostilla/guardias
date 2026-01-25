@@ -20,10 +20,11 @@
               <mat-label>Profesional</mat-label>
               <!-- Visible: muestra nombre/apellido -->
               <input matInput formControlName="asistencialDisplay"
-                     (click)="openAsistencialDialog()" readonly required>
+                    (click)="!asistencialLocked && openAsistencialDialog()" readonly required>
               <!-- Oculto: almacena el id real que se envía en el form -->
               <input type="hidden" formControlName="idAsistencial">
-              <mat-icon matSuffix (click)="openAsistencialDialog()">person</mat-icon>
+              <!-- ocultar icono si viene preseleccionado -->
+              <mat-icon matSuffix *ngIf="!asistencialLocked" (click)="openAsistencialDialog()">person</mat-icon>
               <mat-error *ngIf="registroForm.get('idAsistencial')?.errors?.['required']">
                 El profesional es requerido.
               </mat-error>
@@ -32,18 +33,25 @@
         </div>
         <div class="d-flex align-items-center">
           <span class="titulo-select-tabla">Efector:</span>
-          <span class="negrita ps-1">{{efectorNombre}}</span>
+          <ng-container *ngIf="mostrarSelectorEfector; else efectorTexto">
+            <select class="select-tabla ps-1" [(ngModel)]="selectedEfectorId" (change)="onEfectorChange()">
+              <option *ngFor="let e of efectoresDisponibles" [ngValue]="e.id">{{ e.nombre }}</option>
+            </select>
+          </ng-container>
+          <ng-template #efectorTexto>
+            <span class="negrita ps-1">{{efectorNombre}}</span>
+          </ng-template>
         </div>
         <div class="d-flex align-items-center">
           <span class="titulo-select-tabla">Mes:</span>
           <select class="select-tabla ps-1" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
-            <option *ngFor="let mes of mesesDisponibles" [value]="mes.value">{{ mes.label }}</option>
+             <option *ngFor="let mes of mesesDisponibles" [ngValue]="mes.value">{{ mes.label }}</option>
           </select>
         </div>
         <div class="d-flex align-items-center">
           <span class="titulo-select-tabla">Año:</span>
           <select class="select-tabla ps-1" [(ngModel)]="selectedYear" (change)="onYearChange()">
-            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
           </select>
         </div>
         <div class="d-flex align-items-center">

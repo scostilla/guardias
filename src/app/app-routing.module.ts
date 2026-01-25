@@ -10,10 +10,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
+import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
-import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { LoginComponent } from './components/login/login.component';
 
 //Configuraciones: Generales
@@ -176,8 +176,8 @@ import { DdjjTentativoComponent } from './components/guardias/ddjj-tentativo/ddj
 import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';
 
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
-import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualContrafacturaFueraTerminoComponent } from './components/guardias/rmensual-contrafactura-fuera-termino/rmensual-contrafactura-fuera-termino.component';
+import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 
@@ -316,7 +316,7 @@ const routes: Routes = [
 
   {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-  {path:"registro-actividades-profesionales", component: RegistroActividadesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+   {path:"registro-actividades-profesionales", component: RegistroActividadesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER', 'ROLE_HOSPITAL', 'ROLE_SUPERUSER'] }},
 
   //Sección: Personal
   {path: 'personal', component:PersonalComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
