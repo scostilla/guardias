@@ -27,11 +27,13 @@ export class UsuarioEditComponent implements OnInit {
   roles: Rol[] = [];
   hide = true;
   nombreUsuarioError: string | null = null;
+  private generandoUsuario = false;
   private nombreUsuarioInicial: string | null = null;
 
   nombresRoles: { [key: string]: string } = {
     'ROLE_ADMIN': 'Administrativo',
-    'ROLE_USER': 'Usuario',
+    'ROLE_USER': 'Profesional de salud',
+    'ROLE_HOSPITAL': 'Acceso Login Hospital',
     'ROLE_DPH': 'DPH',
     'ROLE_SUPERUSER': 'Super usuario',
     'ROLE_AUTORIDAD': 'Autoridad'
@@ -47,7 +49,7 @@ export class UsuarioEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Usuario
   ){
     this.usuarioForm = this.fb.group({
-      nombreUsuario: ['', [Validators.required, Validators.pattern('^[a-z0-9]+$')]],
+      nombreUsuario: ['', [Validators.required, Validators.pattern('^[a-z0-9.]+$')]],
       roles: ['', Validators.required],
       idPerson: ['', Validators.required]
     });
@@ -69,7 +71,13 @@ export class UsuarioEditComponent implements OnInit {
 }
 
   ngOnInit(): void {
-    this.initialData = this.usuarioForm.value;
+    const control = this.usuarioForm.get('nombreUsuario');
+
+    control?.valueChanges.subscribe(value => {
+      if (value) {
+        this.verificarUsuarioExistente();
+      }
+    });
   }
 
   isModified(): boolean {
@@ -98,37 +106,47 @@ export class UsuarioEditComponent implements OnInit {
     return nombreUsuario !== this.nombreUsuarioInicial;
   }
 
-  // Método para verificar si el nombre de usuario ya existe
+  // Método para verificar y generar un nombre de usuario único
   verificarUsuarioExistente() {
-    const nombreUsuario = this.usuarioForm.get('nombreUsuario')?.value;
+    if (this.generandoUsuario) return;
 
-    if (nombreUsuario && this.isNombreUsuarioChanged()) {
-      this.authService.checkUsername(nombreUsuario).subscribe(
-        (exists) => {
-          if (exists) {
-            // Si el nombre de usuario ya existe, establecemos el error
-            this.nombreUsuarioError = 'El nombre de usuario ya existe. Por favor elige otro.';
-            // Opcional: también podemos marcar el control como inválido si lo deseas
-            this.usuarioForm.get('nombreUsuario')?.setErrors({ 'usuarioExiste': true });
-          } else {
-            // Si el nombre de usuario no existe, limpiamos el error
-            this.nombreUsuarioError = null;
-            this.usuarioForm.get('nombreUsuario')?.setErrors(null);  // Limpiar los errores
-          }
-        },
-        (error) => {
-          console.error('Error al verificar el nombre de usuario', error);
-          this.nombreUsuarioError = 'Hubo un problema al verificar el nombre de usuario. Intenta nuevamente.';
-          this.usuarioForm.get('nombreUsuario')?.setErrors({ 'checkError': true });
-        }
-      );
-    } else {
-      // Si el nombre de usuario no ha cambiado, no realizamos la verificación
+    const control = this.usuarioForm.get('nombreUsuario');
+    const nombreBase = control?.value;
+
+    if (!nombreBase || !this.isNombreUsuarioChanged()) {
       this.nombreUsuarioError = null;
-      this.usuarioForm.get('nombreUsuario')?.setErrors(null);  // Limpiar cualquier error
+      control?.setErrors(null);
+      return;
     }
+
+    this.generandoUsuario = true;
+    this.buscarNombreDisponible(nombreBase, 0);
   }
 
+  private buscarNombreDisponible(nombreBase: string, intento: number) {
+    const nombrePropuesto = intento === 0 ? nombreBase : `${nombreBase}${intento}`;
+
+    this.authService.checkUsername(nombrePropuesto).subscribe(
+      exists => {
+        if (exists) {
+          this.buscarNombreDisponible(nombreBase, intento + 1);
+        } else {
+          const control = this.usuarioForm.get('nombreUsuario');
+          control?.setValue(nombrePropuesto, { emitEvent: false }); // 👈 clave
+          control?.markAsDirty();
+          control?.markAsTouched();
+          control?.updateValueAndValidity();
+
+          this.nombreUsuarioError = null;
+          this.generandoUsuario = false;
+        }
+      },
+      error => {
+        this.generandoUsuario = false;
+        this.usuarioForm.get('nombreUsuario')?.setErrors({ checkError: true });
+      }
+    );
+  }
   /*/ Método para abrir el diálogo de confirmación cuando se cambia el estado del checkbox
   onResetPasswordChange(event: any): void {
     const currentStatus = event.checked;
@@ -175,6 +193,7 @@ export class UsuarioEditComponent implements OnInit {
           nombreUsuario: nombreUsuarioGenerado,
           idPerson: result.id
         });
+        this.initialData = this.usuarioForm.value;
       } else {
         this.toastr.info('No se seleccionó un profesional', 'Información', {
           timeOut: 6000,
@@ -192,22 +211,20 @@ export class UsuarioEditComponent implements OnInit {
     });
   }
     
-  // Método para generar el nombre de usuario automáticamente, normalizando caracteres especiales
-  generarNombreUsuario(nombre: string, apellido: string): string {
-    // Divide el nombre por espacio para obtener las palabras del nombre
-    const nombres = nombre.split(' ');
-  
-    // Toma la primera letra de cada nombre
-    const iniciales = nombres.map(n => this.normalizarTexto(n.charAt(0).toLowerCase())).join('');
-  
-    // Normaliza el apellido y concatena la primera letra de cada nombre con el apellido
-    const apellidoNormalizado = this.normalizarTexto(apellido.toLowerCase());
-  
-    // Une la primera letra de cada nombre + el apellido completo (normalizado)
-    return iniciales + apellidoNormalizado;
-  }
-  
-  normalizarTexto(texto: string): string {
+// Método para generar el nombre de usuario: primerNombre.apellido
+generarNombreUsuario(nombre: string, apellido: string): string {
+  // Tomar solo el primer nombre (antes del primer espacio)
+  const primerNombre = nombre.split(' ')[0].toLowerCase();
+
+  // Normalizar primer nombre y apellido
+  const primerNombreNormalizado = this.normalizarTexto(primerNombre);
+  const apellidoNormalizado = this.normalizarTexto(apellido.toLowerCase());
+
+  // Unir con punto
+  return `${primerNombreNormalizado}.${apellidoNormalizado}`;
+}
+
+normalizarTexto(texto: string): string {
     // Convertir a minúsculas, eliminar acentos y símbolos
     return texto
       .normalize('NFD')
