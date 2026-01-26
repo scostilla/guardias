@@ -1,8 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ValorGmi } from 'src/app/models/ValorGmi';
-import { ValorGmiService } from 'src/app/services/valorGmi.service';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ValorGuardiasCargoService } from 'src/app/services/valorGuardiasCargo.service';
+import { ValorGuardiaManualDto } from 'src/app/dto/Configuracion/ValorGuardiaManualDto';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
 
 @Component({
   selector: 'app-valores-guardias-create',
@@ -12,99 +14,67 @@ import { ValorGmiService } from 'src/app/services/valorGmi.service';
 export class ValoresGuardiasCreateComponent implements OnInit {
 
   form?: FormGroup;
+  hospitales: Hospital[] = [];
+  minDate!: Date;
 
   constructor(
     private fb: FormBuilder,
-    private valorGmiService: ValorGmiService,
+    private valorGuardiasCargoService: ValorGuardiasCargoService,
+    private hospitalService: HospitalService,
     private dialogRef: MatDialogRef<ValoresGuardiasCreateComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: ValorGmi 
   ) {
+    this.minDate = new Date();
     this.form = this.fb.group({
-      monto: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-      documentoLegal: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. °]{2,60}$')]],
-      fechaInicio: ['', Validators.required],
-      tipoGuardia: [[], [Validators.required]]
+      tipoGuardia: ['', Validators.required],
+      nivelComplejidad: [null, [Validators.required]],
+      totalLav: [0, [Validators.required, Validators.min(0)]],
+      totalSdf: [0, [Validators.required, Validators.min(0)]],
+      fechaInicio: [null, Validators.required],
+      idsHospitales: [[], Validators.required]
     });
   }
 
   ngOnInit(): void {
+    this.listHospitales();
   }
 
-  saveGMI(): void {
+  listHospitales(): void {
+    this.hospitalService.list().subscribe(data => {
+      this.hospitales = data;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  saveValorManual(): void {
     if (this.form?.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
-    const tipoGuardiaValue = this.form?.get('tipoGuardia')?.value;
-    const nuevaFechaInicio = new Date(this.form?.get('fechaInicio')?.value);
+    // Tomamos los valores del formulario
+    const formValues = this.form!.value;
 
-    this.valorGmiService.list().subscribe(
-      valorGmis => {
-        valorGmis.forEach(gmi => {
-          if (typeof gmi.fechaInicio === 'string') {
-            gmi.fechaInicio = new Date(gmi.fechaInicio);
-          }
-          if (gmi.fechaFin && typeof gmi.fechaFin === 'string') {
-            gmi.fechaFin = new Date(gmi.fechaFin);
-          }
-        });
-
-        const filteredRecords = valorGmis.filter(gmi => gmi.tipoGuardia === tipoGuardiaValue);
-        const lastRecord = filteredRecords.sort((a, b) => b.fechaInicio.getTime() - a.fechaInicio.getTime())[0];
-
-        if (lastRecord) {
-          const updatedLastRecord = { ...lastRecord, fechaFin: nuevaFechaInicio };
-
-          this.valorGmiService.update(lastRecord.id!, updatedLastRecord).subscribe(
-            () => {
-              const valorGmi: ValorGmi = {
-                fechaInicio: nuevaFechaInicio,
-                fechaFin: null,
-                monto: parseFloat(this.form?.get('monto')?.value),
-                tipoGuardia: tipoGuardiaValue,
-                documentoLegal: this.form?.get('documentoLegal')?.value
-              };
-
-              this.valorGmiService.save(valorGmi).subscribe(
-                response => {
-                  console.log('ValorGmi guardado exitosamente', response);
-                  this.dialogRef.close(true);
-                },
-                error => {
-                  console.error('Error al guardar ValorGmi', error);
-                }
-              );
-            },
-            error => {
-              console.error('Error al actualizar el último ValorGmi', error);
-            }
-          );
-        } else {
-          const valorGmi: ValorGmi = {
-            fechaInicio: nuevaFechaInicio,
-            fechaFin: null,
-            monto: parseFloat(this.form?.get('monto')?.value),
-            tipoGuardia: tipoGuardiaValue,
-            documentoLegal: this.form?.get('documentoLegal')?.value
-          };
-
-          console.log('Datos enviados para guardar ValorGmi:', valorGmi);
-
-          this.valorGmiService.save(valorGmi).subscribe(
-            response => {
-              console.log('ValorGmi guardado exitosamente', response);
-              this.dialogRef.close(true);
-            },
-            error => {
-              console.error('Error al guardar ValorGmi', error);
-            }
-          );
-        }
-      },
-      error => {
-        console.error('Error al obtener el último ValorGmi', error);
-      }
+    // Creamos el DTO
+    const nuevoValor = new ValorGuardiaManualDto(
+      formValues.tipoGuardia,
+      formValues.nivelComplejidad,
+      formValues.totalLav,
+      formValues.totalSdf,
+      formValues.fechaInicio,
+      formValues.idsHospitales
     );
+
+    // Llamamos al servicio
+    this.valorGuardiasCargoService.cargarValoresManual([nuevoValor]).subscribe({
+      next: (res) => {
+        console.log('Valor guardado exitosamente', res);
+        this.dialogRef.close(true); // cerramos el diálogo indicando éxito
+      },
+      error: (err) => {
+        console.error('Error al guardar el valor', err);
+      }
+    });
   }
   
   cancelar(): void {

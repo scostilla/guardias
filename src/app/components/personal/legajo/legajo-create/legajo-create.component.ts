@@ -2673,7 +2673,7 @@ if (legajoData.tipoGuardias &&
     async (legajoCreado) => {
       console.log('✅ Legajo creado exitosamente:', legajoCreado);
       
-      // 🔥 SI ES AUTORIDAD Y HAY IMAGEN SELECCIONADA, SUBIRLA
+      // SI ES AUTORIDAD Y HAY IMAGEN SELECCIONADA, SUBIRLA
       if (esAutoridad && this.selectedFile && legajoCreado.id) {
         console.log('📤 Subiendo imagen para legajo de autoridad...');
         try {
@@ -2709,7 +2709,7 @@ if (legajoData.tipoGuardias &&
       });
       }
 
-      // 🔥 NAVEGAR SEGÚN EL TIPO DE LEGAJO
+      // NAVEGAR SEGÚN EL TIPO DE LEGAJO
       if (this.fromAsistencial) {
         this.router.navigate(['/personal']);
       } else if (this.fromNoAsistencial) {

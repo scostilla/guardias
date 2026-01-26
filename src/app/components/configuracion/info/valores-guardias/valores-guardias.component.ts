@@ -20,11 +20,11 @@ moment.locale('es');
   styleUrls: ['./valores-guardias.component.css']
 })
 export class ValoresGuardiasComponent implements OnInit, OnDestroy {
-  valoresPorNivel: { [nivel: number]: ValorGuardiasCargo[] } = {};
+/*  valoresPorNivel: { [nivel: number]: ValorGuardiasCargo[] } = {};
   valoresNivel2Uro: ValorGuardiasCargo[] = [];
   valoresNivel2Otros: ValorGuardiasCargo[] = [];
   valoresNivel1Susques: ValorGuardiasCargo[] = [];
-  valoresNivel1Otros: ValorGuardiasCargo[] = [];
+  valoresNivel1Otros: ValorGuardiasCargo[] = [];*/
   
   dialogRef!: MatDialogRef<ValoresGuardiasCreateComponent>;
   suscription!: Subscription;
@@ -38,15 +38,15 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit(): void {
-    this.listCargo();
+    /*this.listCargo();
 
     this.suscription = this.valorGuardiasCargoService.refresh$.subscribe(() => {
       this.listCargo();
-    })
+    })*/
 
   }
 
-  listCargo(): void {
+  /*listCargo(): void {
     this.suscription = this.valorGuardiasCargoService.obtenerValorGuardiaCargo().subscribe(
       (data: { [nivel: number]: ValorGuardiasCargo[] }) => {
 
@@ -68,7 +68,7 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
         console.error('Error al obtener el valor de guardia cargo', error);
       }
     );
-  }
+  }*/
   
   openCreateGMI(): void {
     const dialogRef = this.dialog.open(ValoresGuardiasCreateComponent, {
@@ -84,7 +84,7 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
             positionClass: 'toast-top-center',
             progressBar: true
           });
-          this.listCargo();
+          //this.listCargo();
         } else {
           this.toastr.error('Ocurrió un error al intentar agregar el valor GMI', 'Error', {
             timeOut: 6000,
@@ -96,7 +96,7 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
     });
   }
 
-  openCreateUTI(): void {
+  /*openCreateUTI(): void {
     const dialogRef = this.dialog.open(ValoresBonoUtiCreateComponent, {
       width: '600px',
       data: null
@@ -120,7 +120,7 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
+  }*/
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();

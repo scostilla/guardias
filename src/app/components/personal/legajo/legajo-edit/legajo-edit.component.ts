@@ -3733,9 +3733,9 @@ if (idRevistaActual !== idRevistaNueva) {
           async (result) => {
             console.log('✅ Nuevo legajo creado exitosamente:', result);
             
-            // 🔥 MANEJAR IMAGEN SEGÚN EL CASO
+            // MANEJAR IMAGEN SEGÚN EL CASO
             if (esAutoridad && this.selectedFile && result.id) {
-              // 🔥 CASO 1: HAY IMAGEN NUEVA PARA SUBIR
+              // CASO 1: HAY IMAGEN NUEVA PARA SUBIR
               console.log('📤 Subiendo nueva imagen para legajo de autoridad...');
               try {
                 const uploadResponse = await this.uploadImageAfterUpdate(result.id);
@@ -3743,7 +3743,7 @@ if (idRevistaActual !== idRevistaNueva) {
                 if (uploadResponse && uploadResponse.url) {
                   console.log('✅ Nueva imagen subida correctamente:', uploadResponse.url);
                   
-                  // 🔥 ACTUALIZAR LA URL EN EL LEGAJO RECIÉN CREADO
+                  // ACTUALIZAR LA URL EN EL LEGAJO RECIÉN CREADO
                   const legajoActualizado = { ...result, url: uploadResponse.url };
                   
                   this.toastr.success('Legajo actualizado con nueva imagen correctamente', 'ÉXITO', {
@@ -3765,21 +3765,21 @@ if (idRevistaActual !== idRevistaNueva) {
               }
               
             } else if (esAutoridad && urlParaNuevoLegajo) {
-              // 🔥 CASO 2: SE MANTIENE LA IMAGEN EXISTENTE
+              // CASO 2: SE MANTIENE LA IMAGEN EXISTENTE
               console.log('🔄 Imagen existente mantenida:', urlParaNuevoLegajo);
               this.toastr.success('Legajo actualizado manteniendo la imagen existente', 'ÉXITO');
               
             } else if (esAutoridad && !urlParaNuevoLegajo && !this.selectedFile) {
-              // 🔥 CASO 3: LEGAJO SIN IMAGEN
+              // CASO 3: LEGAJO SIN IMAGEN
               console.log('📝 Legajo actualizado sin imagen');
               this.toastr.success('Legajo actualizado sin imagen', 'ÉXITO');
               
             } else {
-              // 🔥 CASO 4: LEGAJO NO ES AUTORIDAD
+              // CASO 4: LEGAJO NO ES AUTORIDAD
               this.toastr.success('Legajo actualizado con éxito', 'ÉXITO');
             }
 
-            // 🔥 NAVEGACIÓN
+            // NAVEGACIÓN
             this.navigateAfterUpdate();
           },
           (error) => {
@@ -3794,7 +3794,7 @@ if (idRevistaActual !== idRevistaNueva) {
       }
     );
   } else {
-    // 🔥 NO HAY CAMBIOS, SOLO NAVEGAR
+    // NO HAY CAMBIOS, SOLO NAVEGAR
     console.log('ℹ️ No hay cambios en el legajo, navegando sin modificar');
     this.toastr.info('No se detectaron cambios en el legajo', 'Sin cambios');
     this.navigateAfterUpdate();
