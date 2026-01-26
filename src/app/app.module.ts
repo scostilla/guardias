@@ -178,6 +178,7 @@ import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/le
 import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
 import { MotivoBajaDialogComponent } from './components/personal/legajo/motivo-baja-dialog/motivo-baja-dialog.component';
+import { MotivoModificacionDialogComponent } from './components/personal/legajo/motivo-modificacion-dialog/motivo-modificacion-dialog.component';
 import { NovedadesPersonDetailComponent } from './components/personal/novedades/novedades-person-detail/novedades-person-detail.component';
 import { PersonalAutoridadListComponent } from './components/personal/personal-autoridad-list/personal-autoridad-list.component';
 import { PersonalAutoridadComponent } from './components/personal/personal-autoridad/personal-autoridad.component';
@@ -221,9 +222,11 @@ import { CronogramaPendienteComponent } from './components/cronogramas/cronogram
 import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DialogConfirmRmensualComponent } from './components/guardias/dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 import { DialogHistorialObservacionesComponent } from './components/guardias/dialog-historial-observaciones/dialog-historial-observaciones.component';
+import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
 import { FacturaCreateComponent } from './components/guardias/factura/factura-create/factura-create.component';
 import { FacturaDetailComponent } from './components/guardias/factura/factura-detail/factura-detail.component';
 import { FacturaEditComponent } from './components/guardias/factura/factura-edit/factura-edit.component';
+import { FacturaListFterminoComponent } from './components/guardias/factura/factura-list-ftermino/factura-list-ftermino.component';
 import { FacturaListComponent } from './components/guardias/factura/factura-list/factura-list.component';
 import { RmensualCargoyagrupDetailComponent } from './components/guardias/rmensual-cargoyagrup-detail/rmensual-cargoyagrup-detail.component';
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
@@ -234,14 +237,12 @@ import { RmensualExtraDetailComponent } from './components/guardias/rmensual-ext
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
+import { CambiarPasswordComponent } from './components/login/cambiar-password/cambiar-password.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
-import { FacturaCreateFterminoComponent } from './components/guardias/factura/factura-create-ftermino/factura-create-ftermino.component';
-import { FacturaListFterminoComponent } from './components/guardias/factura/factura-list-ftermino/factura-list-ftermino.component';
-import { CambiarPasswordComponent } from './components/login/cambiar-password/cambiar-password.component';
 
 @NgModule({
   declarations: [
@@ -386,6 +387,7 @@ import { CambiarPasswordComponent } from './components/login/cambiar-password/ca
     LegajoEditNoasistencialComponent,
     SinLegajoComponent,
     MotivoBajaDialogComponent,
+    MotivoModificacionDialogComponent,
     PersonalSinLegajoComponent,
     ExternoComponent,
     PersonalExternoComponent,

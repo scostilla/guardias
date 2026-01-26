@@ -731,9 +731,13 @@
     mat-raised-button 
     color="primary" 
     type="submit" 
-    [disabled]="!puedeModificarLegajo"
+    [disabled]="!puedeModificarLegajo || !tieneCambios || isUploading"
     class="me-2"
-    [title]="isDuplicateImage ? 'No se puede modificar: imagen duplicada detectada' : 'Modificar legajo'"
+    [title]="isDuplicateImage
+      ? 'No se puede modificar: imagen duplicada detectada'
+      : (!tieneCambios
+        ? 'No hay cambios para guardar'
+        : (isUploading ? 'Procesando imagen...' : 'Modificar legajo'))"
   >
     <mat-icon *ngIf="isDuplicateImage" style="margin-right: 5px;">block</mat-icon>
     <mat-icon *ngIf="!isDuplicateImage" style="margin-right: 5px;">save</mat-icon>

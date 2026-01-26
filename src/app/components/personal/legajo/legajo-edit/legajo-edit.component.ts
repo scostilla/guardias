@@ -48,7 +48,7 @@ import { Region } from 'src/app/models/Configuracion/Region';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
 import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -56,6 +56,7 @@ import { Caps } from 'src/app/models/Configuracion/Caps';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { MotivoModificacionDialogComponent } from '../motivo-modificacion-dialog/motivo-modificacion-dialog.component';
 
 
 interface Agrup {
@@ -199,6 +200,30 @@ export class LegajoEditComponent implements OnInit {
   isDuplicateDialogOpen: boolean = false;
   isDuplicateImage: boolean = false;
   dragCounter: number = 0;
+
+  // 🔥 Control de cambios: habilitar/deshabilitar guardado y motivo de modificación
+  private initialComparableState: string | null = null;
+  tieneCambios: boolean = false;
+
+  private bloquearCamposProfesionales(): void {
+    this.legajoForm.get('idPersona')?.disable({ emitEvent: false });
+    this.legajoForm.get('profesion')?.disable({ emitEvent: false });
+    this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
+    this.legajoForm.get('matriculaNacional')?.disable({ emitEvent: false });
+    this.legajoForm.get('matriculaProvincial')?.disable({ emitEvent: false });
+  }
+
+  private async solicitarMotivoModificacion(): Promise<string | null> {
+    const dialogRef = this.dialog.open(MotivoModificacionDialogComponent, {
+      width: '520px',
+      disableClose: true,
+      data: { title: 'Motivo de modificación de Legajo' }
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+    const motivo = typeof result === 'string' ? result.trim() : '';
+    return motivo.length > 0 ? motivo : null;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -552,6 +577,11 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
       tipoEfectorEx: [null],
     }, { validator: this.validarFechas });
 
+    // 🔥 Recalcular si hay cambios (la imagen se sincroniza en processNewImage/removeSelectedFile)
+    this.legajoForm.valueChanges.subscribe(() => {
+      this.syncTieneCambios();
+    });
+
 
  // Inicializar udoOptions al principio del formulario
  this.habilitacionesGeneralesOptions = [];
@@ -870,6 +900,9 @@ this.initialHabilitacionesGuardias = efectoresFiltrados;
     this.habilitacionesGuardiasValidatorEdit()
   ]);
 
+  // 🔒 En edición no se deben modificar estos campos
+  this.bloquearCamposProfesionales();
+
 }
 
 toggleSelectAll(): void {
@@ -1075,6 +1108,9 @@ private processNewImage(file: File): void {
   // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO PARA HABILITAR BOTÓN
   this.legajoForm.updateValueAndValidity();
 
+  // 🔥 La imagen cuenta como cambio aunque no exista control en el form
+  this.syncTieneCambios();
+
   this.toastr.success('Imagen seleccionada. Se subirá cuando se actualice el legajo.', 'Imagen nueva');
 }
 
@@ -1173,8 +1209,11 @@ private handleDuplicateImageOnSelection(response: any): void {
   
   // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO
   this.legajoForm.updateValueAndValidity();
+
+  // 🔥 Volver a recalcular cambios (por si la única diferencia era la imagen)
+  this.syncTieneCambios();
   
-  this.toastr.info('Archivo removido. Botón de modificar habilitado.');
+  this.toastr.info(this.tieneCambios ? 'Archivo removido.' : 'Archivo removido. No hay cambios para guardar.');
 }
 
   getFileInfo(): string {
@@ -1795,6 +1834,9 @@ const esContrafactura = selectedGuardia.includes(this.idContraFactura);
       this.onTipoUdoChange({ value: tipoUdoInicial });
       this.onTipoEfectorChange({ value: tipoEfectorInicial });
       this.onTipoEfectorCargoChange({ value: tipoEfectorCargoInicial });
+
+      // ✅ Tomar snapshot inicial una vez finalizado el patch de datos
+      this.captureInitialState();
     },
     (error) => {
       console.error('Error al cargar los datos iniciales:', error);
@@ -2087,6 +2129,9 @@ listMinisterios(): void {
   this.legajoForm.get('habilitacionesGuardiasHospital')?.updateValueAndValidity();
   this.legajoForm.get('habilitacionesGuardiasCaps')?.updateValueAndValidity();
   this.legajoForm.updateValueAndValidity();
+
+  // 🔥 La imagen cuenta como cambio aunque no exista control en el form
+  this.syncTieneCambios();
 }
 
    onHospitalesChangeGeneral(event: any): void {
@@ -2227,7 +2272,6 @@ private updateCapsBySelectedHospitalsGeneral(): void {
   this.updateCombinedValuesGeneral();
    this.legajoForm.updateValueAndValidity();
 }
-
 
 
 private updateCombinedValues(): void {
@@ -2898,15 +2942,16 @@ private isHospital(id: number): boolean {
       this.especialidades = data.filter(especialidad => especialidad.profesion.id === profesionId);
   
       if (this.especialidades.length > 0) {
-        this.legajoForm.get('especialidades')?.enable();
+        // En el componente de edición, especialidades no se pueden modificar
+        this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
         this.noEspecialidadesMessage = '';
       } else {
-        this.legajoForm.get('especialidades')?.disable();
+        this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
         this.noEspecialidadesMessage = 'La profesión seleccionada no posee especialidades.';
       }
     }, error => {
 
-      this.legajoForm.get('especialidades')?.disable();
+      this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
       this.noEspecialidadesMessage = 'Error al cargar las especialidades. Intente nuevamente.';
     });
   }
@@ -3165,8 +3210,78 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
   }
 
   //-----Save-----
-    
+  
+  private captureInitialState(): void {
+    this.initialComparableState = this.buildComparableStateJson();
+    this.legajoForm.markAsPristine();
+    this.legajoForm.markAsUntouched();
+    this.syncTieneCambios();
+  }
+
+  private syncTieneCambios(): void {
+    if (!this.initialComparableState) {
+      this.tieneCambios = false;
+      return;
+    }
+    this.tieneCambios = this.buildComparableStateJson() !== this.initialComparableState;
+  }
+
+  private buildComparableStateJson(): string {
+    return JSON.stringify(this.buildComparableState());
+  }
+
+  private buildComparableState(): any {
+    const raw = this.legajoForm?.getRawValue ? this.legajoForm.getRawValue() : {};
+    const normalized: any = {};
+    for (const key of Object.keys(raw).sort()) {
+      normalized[key] = this.normalizeComparableValue((raw as any)[key]);
+    }
+
+    normalized.__image = this.selectedFile
+      ? `${this.selectedFile.name}|${this.selectedFile.size}|${this.selectedFile.lastModified}`
+      : null;
+
+    return normalized;
+  }
+
+  private normalizeComparableValue(value: any): any {
+    if (value === undefined || value === null) return null;
+
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? null : value.toISOString().split('T')[0];
+    }
+
+    if (Array.isArray(value)) {
+      const normalizedArray = value.map(v => this.normalizeComparableValue(v));
+      return normalizedArray.sort((a, b) => String(a).localeCompare(String(b)));
+    }
+
+    if (typeof value === 'object') {
+      if ('id' in value) {
+        return this.normalizeComparableValue((value as any).id);
+      }
+      const obj: any = {};
+      for (const key of Object.keys(value).sort()) {
+        obj[key] = this.normalizeComparableValue((value as any)[key]);
+      }
+      return obj;
+    }
+
+    if (typeof value === 'string') return value.trim();
+    return value;
+  }
+
   async updateLegajo(): Promise<void> {
+
+  // 🔒 Si no hay cambios, no habilitar guardado (el botón debería estar deshabilitado igualmente)
+  if (!this.tieneCambios) {
+    this.toastr.info('No se detectaron cambios para guardar.', 'Sin cambios', {
+      timeOut: 4000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+    return;
+  }
 
   // 🎯 VALIDACIÓN ESPECÍFICA PARA HABILITACIONES DE GUARDIAS EN EDIT
   if (this.showHabilitacionesGuardias) {
@@ -3221,7 +3336,15 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
     return;
   }
 
-    const legajoData = this.legajoForm.value;
+    // NOTA: algunos campos pueden estar deshabilitados (read-only) y no salen en .value
+    const legajoData = {
+      ...this.legajoForm.value,
+      idPersona: this.legajoForm.get('idPersona')?.value,
+      profesion: this.legajoForm.get('profesion')?.value,
+      especialidades: this.legajoForm.get('especialidades')?.value,
+      matriculaNacional: this.legajoForm.get('matriculaNacional')?.value,
+      matriculaProvincial: this.legajoForm.get('matriculaProvincial')?.value,
+    };
    
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || [];
@@ -3527,6 +3650,16 @@ if (idRevistaActual !== idRevistaNueva) {
 
   if (!sonDatosLegajoIguales || huboCambiosEnHabilitacion ||huboCambiosHabilitacionGeneral ) {
 
+    // 📝 Si hay cambios, exigir motivo antes de guardar
+    const motivoActual = String(legajoData?.motivoModificacion ?? '').trim();
+    if (!motivoActual) {
+      const motivo = await this.solicitarMotivoModificacion();
+      if (!motivo) {
+        return; // Cancelado o vacío
+      }
+      legajoData.motivoModificacion = motivo;
+    }
+
      // 🔥 DETERMINAR QUÉ URL USAR PARA EL NUEVO LEGAJO
     let urlParaNuevoLegajo: string | null = null;
     
@@ -3552,7 +3685,7 @@ if (idRevistaActual !== idRevistaNueva) {
       legajoExistente.matriculaNacional ?? null,
       legajoExistente.matriculaProvincial ?? null,
       null, // idSuspencion
-      null, // motivoBaja
+      legajoExistente.motivoBaja ?? null, // motivoBaja
       legajoExistente.revista?.id ?? null,
       legajoExistente.udo?.id ?? null,
       legajoExistente.efectores?.map((e: any) => e.id).filter((id: any): id is number => id !== undefined) ?? [],
@@ -3566,7 +3699,9 @@ if (idRevistaActual !== idRevistaNueva) {
       legajoExistente.fechaResolucion ?? undefined,
       legajoExistente.tipoEfector ?? undefined,
       legajoExistente.tipoEfectorCargo ?? undefined,
-      legajoExistente.tipoUdo ?? undefined
+      legajoExistente.tipoUdo ?? undefined,
+      legajoData.motivoModificacion ?? undefined,
+      legajoExistente.fechaBajaSistema ?? undefined
     );
 
     // 🎯 VERIFICAR HABILITACIONES ANTES DE CREAR EL NUEVO LEGAJO
@@ -3620,7 +3755,9 @@ if (idRevistaActual !== idRevistaNueva) {
           // 🎯 CAMPOS TIPO EFECTOR - LIMPIOS PARA DIRECTOR REGIONAL
           esRegionalActual ? null : (legajoData.tipoEfector ?? null), // NULL si es Director Regional
           esRegionalActual ? null : (legajoData.tipoEfectorCargo ?? null), // 🔥 NULL si es Director Regional (CAMPO PRINCIPAL)
-          esRegionalActual ? null : (legajoData.tipoUdo ?? null) // NULL si es Director Regional
+          esRegionalActual ? null : (legajoData.tipoUdo ?? null), // NULL si es Director Regional
+          undefined,
+          undefined
         );
 
         // 🎯 PROCESAR HABILITACIONES DE GUARDIA SOLO SI NO ES DIRECTOR REGIONAL
