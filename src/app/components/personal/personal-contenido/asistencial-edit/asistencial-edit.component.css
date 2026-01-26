@@ -1,0 +1,45 @@
+.cuil-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cuil-container mat-form-field {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+.cuil-container mat-form-field {
+  margin: 0;
+}
+
+/* Texto CUIL: */
+.cuil-label {
+  font-weight: 600;
+  margin-right: 8px;
+  margin-top: 22px; /* alinea con mat-label */
+  white-space: nowrap;
+}
+
+/* PARTES DEL CUIL */
+.cuil-prefijo {
+  flex: 0 0 15%;
+}
+
+.cuil-dni {
+  flex: 0 0 55%;
+}
+
+.cuil-sufijo {
+  flex: 0 0 15%;
+}
+
+/* Guiones */
+.cuil-separator {
+  margin: 0 6px;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 56px; /* misma altura que mat-form-field */
+}

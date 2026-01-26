@@ -207,7 +207,7 @@ export class LegajoCreateComponent implements OnInit {
   ) {
 
     this.legajoForm = this.fb.group({
-      agrupacion: ['', Validators.required],
+      agrupacion: ['PROFESIONALES', Validators.required],
       categoria: ['', Validators.required],
       adicional: ['', Validators.required],
       cargaHoraria: ['', Validators.required],
@@ -2119,7 +2119,7 @@ private isHospital(id: number): boolean {
   // Actualiza la validez de los campos
   this.legajoForm.get('idRegion')?.updateValueAndValidity();
   this.evaluarEstadoDirectorRegional();
-}
+  }
 
   // Form Datos profesional: Manejo de la seleccion de profesiones y especialidades
   filterEspecialidadesByProfesion(profesionId: number): void {
@@ -2236,31 +2236,59 @@ private isHospital(id: number): boolean {
   this.legajoForm.get('habilitacionesGuardiasCaps')?.updateValueAndValidity();
 }
 
-alMenosUnoHabilitacionesGuardiasValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!this.showHabilitacionesGuardias) {
-      return null; // No validar si no se muestran las habilitaciones
-    }
+  alMenosUnoHabilitacionesGuardiasValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!this.showHabilitacionesGuardias) {
+        return null; // No validar si no se muestran las habilitaciones
+      }
 
-    const habilitacionesHospital = this.legajoForm?.get('habilitacionesGuardiasHospital')?.value;
-    const habilitacionesCaps = this.legajoForm?.get('habilitacionesGuardiasCaps')?.value;
+      const habilitacionesHospital = this.legajoForm?.get('habilitacionesGuardiasHospital')?.value;
+      const habilitacionesCaps = this.legajoForm?.get('habilitacionesGuardiasCaps')?.value;
 
-    const tieneHospital = Array.isArray(habilitacionesHospital) && habilitacionesHospital.length > 0;
-    const tieneCaps = Array.isArray(habilitacionesCaps) && habilitacionesCaps.length > 0;
+      const tieneHospital = Array.isArray(habilitacionesHospital) && habilitacionesHospital.length > 0;
+      const tieneCaps = Array.isArray(habilitacionesCaps) && habilitacionesCaps.length > 0;
 
-    // Si no hay ni hospitales ni caps seleccionados
-    if (!tieneHospital && !tieneCaps) {
-      return { alMenosUnoHabilitacionesGuardiasRequerido: true };
-    }
+      // Si no hay ni hospitales ni caps seleccionados
+      if (!tieneHospital && !tieneCaps) {
+        return { alMenosUnoHabilitacionesGuardiasRequerido: true };
+      }
 
-    return null;
-  };
-}
+      return null;
+    };
+  }
 
   onSelectionChange(event: any): void {
+    // lógica tipo guardia
     this.onTipoGuardiaSelectionChange(event);
-  
     this.onGuardiaCfExtra(event.value);
+
+    // si selecciono CARGO, limpiar J1
+    this.limpiarAdicionalSiCargo();
+
+    // Reaplicar filtros dependientes
+    const categoriaNombre = this.categorias.find(
+      c => c.id === this.legajoForm.get('categoria')?.value
+    )?.nombre;
+
+    if (categoriaNombre) {
+      this.updateCargaHorarias(categoriaNombre);
+    }
+
+    // Revalidar adicional según carga horaria
+    this.onCargaHorariaChange();
+
+    this.legajoForm.updateValueAndValidity();
+  }
+
+  private limpiarAdicionalSiCargo(): void {
+    if (!this.isGuardiaCargoSeleccionada()) return;
+
+    const adicionalId = this.legajoForm.get('adicional')?.value;
+    const adicionalSeleccionado = this.adicionales.find(a => a.id === adicionalId);
+
+    if (adicionalSeleccionado?.nombre === 'J1') {
+      this.legajoForm.get('adicional')?.setValue(null);
+    }
   }
 
   //aqui oculto o muestro situacion de revista según la guardia seleccionada
@@ -2306,6 +2334,17 @@ alMenosUnoHabilitacionesGuardiasValidator(): ValidatorFn {
     this.legajoForm.get('tipoEfectorCargo')?.enable();
 
   }
+
+  // Filtro de horas y adicional segun el tipo de guardia CARGO
+  isGuardiaCargoSeleccionada(): boolean {
+    const tiposSeleccionados: number[] = this.legajoForm.get('tipoGuardias')?.value || [];
+
+    if (this.idGuardiaCargo == null) {
+      return false;
+    }
+
+    return tiposSeleccionados.includes(this.idGuardiaCargo);
+  }
     
   // Form Revista: Función llamada cuando cambia la categoría seleccionada
   onCategoriaChange(): void {
@@ -2337,44 +2376,63 @@ alMenosUnoHabilitacionesGuardiasValidator(): ValidatorFn {
       this.legajoForm.updateValueAndValidity(); 
     }
 
-  // Form Revista: Función llamada cuando cambia la carga horaria seleccionada
+  // Form Revista: Función llamada cuando cambia la carga horaria seleccionada y el tipoGuardia
   onCargaHorariaChange(): void {
     const cargaHorariaId = this.legajoForm.get('cargaHoraria')?.value;
-
-    // Buscar la carga horaria seleccionada en el array de cargasHorarias
     const cargaHorariaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaHorariaId);
 
-    // Verificar si la cantidad de horas es 40
     if (cargaHorariaSeleccionada?.cantidad === 40) {
-      // Habilitar el campo 'adicional' si la carga horaria es 40
       this.legajoForm.get('adicional')?.enable();
-
-      // Hacer obligatorio el campo adicional
       this.legajoForm.get('adicional')?.setValidators([Validators.required]);
     } else {
-      // Deshabilitar el campo 'adicional' si la carga horaria no es 40
       this.legajoForm.get('adicional')?.disable();
-      
-      // Resetear el valor de 'adicional' a null si se deshabilita
       this.legajoForm.get('adicional')?.setValue(null);
-
-      // Eliminar validación obligatoria
       this.legajoForm.get('adicional')?.clearValidators();
     }
 
-    // Actualizar la validez de 'adicional' después de modificar los validadores
-    this.legajoForm.get('adicional')?.updateValueAndValidity();
+    // Regla CARGO + J1
+    const adicionalId = this.legajoForm.get('adicional')?.value;
+    const adicionalSeleccionado = this.adicionales.find(a => a.id === adicionalId);
 
-      // Aseguro que el formulario se revalide al cambiar la carga horaria
-    this.legajoForm.updateValueAndValidity(); 
+    if (
+      this.isGuardiaCargoSeleccionada() &&
+      adicionalSeleccionado?.nombre === 'J1'
+    ) {
+      this.legajoForm.get('adicional')?.setValue(null);
+    }
+
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+    this.legajoForm.updateValueAndValidity();
   }
 
-  // Form Revista: Función para actualizar las opciones de cargaHoraria según la categoría seleccionada
+  // Form Revista: Función para actualizar las opciones de cargaHoraria según la categoría seleccionada o el tipoGuardia
   updateCargaHorarias(categoriaNombre: string): void {
+    let cargasFiltradas = [...this.cargasHorarias];
+
+    // Filtro por categoría
     if (categoriaNombre === "24 HS") {
-      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+      cargasFiltradas = cargasFiltradas.filter(ch => ch.cantidad === 24);
     } else {
-      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+      cargasFiltradas = cargasFiltradas.filter(ch => ch.cantidad !== 24);
+    }
+
+    // Si es CARGO, no permitir 30
+    if (this.isGuardiaCargoSeleccionada()) {
+      cargasFiltradas = cargasFiltradas.filter(ch => ch.cantidad !== 30);
+    }
+
+    this.filteredCargasHorarias = cargasFiltradas;
+
+    // Limpieza si quedó algo inválido seleccionado
+    const cargaId = this.legajoForm.get('cargaHoraria')?.value;
+    const cargaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaId);
+
+    if (
+      cargaSeleccionada &&
+      !this.filteredCargasHorarias.some(ch => ch.id === cargaSeleccionada.id)
+    ) {
+      this.legajoForm.get('cargaHoraria')?.setValue(null);
+      this.onCargaHorariaChange();
     }
   }
 
@@ -2615,7 +2673,7 @@ if (legajoData.tipoGuardias &&
     async (legajoCreado) => {
       console.log('✅ Legajo creado exitosamente:', legajoCreado);
       
-      // 🔥 SI ES AUTORIDAD Y HAY IMAGEN SELECCIONADA, SUBIRLA
+      // SI ES AUTORIDAD Y HAY IMAGEN SELECCIONADA, SUBIRLA
       if (esAutoridad && this.selectedFile && legajoCreado.id) {
         console.log('📤 Subiendo imagen para legajo de autoridad...');
         try {
@@ -2628,17 +2686,30 @@ if (legajoData.tipoGuardias &&
           
         } catch (uploadError) {
           console.error('❌ Error al subir imagen:', uploadError);
-          this.toastr.warning('Legajo creado pero hubo un error al subir la imagen');
+          this.toastr.warning('Legajo creado pero hubo un error al subir la firma', 'Atención', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      }
+      );
         }
       } else if (esAutoridad && !this.selectedFile) {
         console.log('ℹ️ Legajo de autoridad creado sin imagen');
-        this.toastr.success('Legajo de autoridad creado correctamente');
+        this.toastr.success('Legajo de autoridad creado correctamente', 'Exito', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
       } else {
         console.log('ℹ️ Legajo general creado (sin imagen)');
-        this.toastr.success('Legajo creado con éxito');
+        this.toastr.success('Legajo creado con éxito', 'Exito', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
       }
 
-      // 🔥 NAVEGAR SEGÚN EL TIPO DE LEGAJO
+      // NAVEGAR SEGÚN EL TIPO DE LEGAJO
       if (this.fromAsistencial) {
         this.router.navigate(['/personal']);
       } else if (this.fromNoAsistencial) {

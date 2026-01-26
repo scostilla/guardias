@@ -38,7 +38,8 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
   nombresRoles: { [key: string]: string } = {
     'ROLE_ADMIN': 'Administrativo',
-    'ROLE_USER': 'Usuario',
+    'ROLE_HOSPITAL': 'Acceso Login Hospital',
+    'ROLE_USER': 'Profesional de salud',
     'ROLE_DPH': 'DPH',
     'ROLE_SUPERUSER': 'Super usuario',
     'ROLE_AUTORIDAD': 'Autoridad'

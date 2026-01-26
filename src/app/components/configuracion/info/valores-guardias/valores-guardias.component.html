@@ -8,7 +8,8 @@
       <button mat-fab class="button-success" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
         <mat-icon>library_add</mat-icon>
       </button>
-      <button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
+      <!--<button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">-->
+      <button mat-fab color="accent" style="margin-left: 5px;" matTooltip="Agregar nuevo Bono Uti">
         <mat-icon>library_add</mat-icon>
       </button>
       <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/configuracion">
@@ -18,17 +19,18 @@
     </div>
   </div>
   <div class="row mt-5 contenedor-montos">
-    <ng-container *ngFor="let valor of valoresPorNivel[4]">
-      <span class="fondo-monto-cargo" matTooltip="{{ valor.valorGmi.documentoLegal  }} | {{ valor.fechaInicio | date:'d \'de\' MMMM \'de\' y' }}" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ {{ valor.valorGmi.monto | number:'1.2-2' }}</span>
+    <!--<ng-container *ngFor="let valor of valoresPorNivel[4]">-->
+    <ng-container>
+      <span class="fondo-monto-cargo" matTooltip="doc legal | fecha" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ </span>
       <span class="fondo-monto-extra" matTooltip="Fecha: " matTooltipPosition="right">VALOR GMI EXTRA/CONTRAFACTURA = $ </span>
-      <span class="titulo-select-tabla">bono uti (+9%)-D = $ {{ valor.bonoUti.monto | number:'1.2-2' }}</span>
+      <span class="titulo-select-tabla">bono uti (+9%)-D = $ </span>
     </ng-container>
 </div>
   
   <div class="row mt-3">
     <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
         <mat-tab label="Servicios críticos + Same">
-          <ng-container *ngFor="let valor of valoresPorNivel[4]">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
                 <thead class="thead-gris">
                 <tr>
@@ -46,18 +48,18 @@
                 <tr>
                   <td rowspan="3" class="no-hover">CARGO O AGRUPACIÓN DE HS</td>
                   <td>S/DECRETO N° 1178</td>
-                  <td>$ {{ valor.decreto1178Lav | number:'1.2-2' }}</td>
-                  <td>$ {{ valor.decreto1178Sdf | number:'1.2-2' }}</td>
+                  <td>$ </td>
+                  <td>$ </td>
                 </tr>
                 <tr>
                   <td>BONO DECRETO N° 1580 </td>
-                  <td>$ {{ valor.bono1580Lav | number:'1.2-2' }}</td>
-                  <td>$ {{ valor.bono1580Sdf | number:'1.2-2' }}</td>
+                  <td>$ </td>
+                  <td>$ </td>
                 </tr>
                 <tr class="negrita">
                   <td>TOTAL</td>
-                  <td>$ {{ valor.totalLav | number:'1.2-2' }}</td>
-                  <td>$ {{ valor.totalSdf | number:'1.2-2' }}</td>
+                  <td>$ </td>
+                  <td>$ </td>
                 </tr>
 
                 <tr style="background-color: #f5f4f4;">
@@ -81,7 +83,7 @@
             </ng-container>
         </mat-tab>
         <mat-tab label="Tercer Nivel">
-          <ng-container *ngFor="let valor of valoresPorNivel[3]">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
               <thead>
               <tr>
@@ -102,18 +104,18 @@
               <tr>
                 <td rowspan="3">CARGO O AGRUPACIÓN DE HS</td>
                 <td>S/DECRETO N° 1178</td>
-                <td>$ {{ valor.decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valor.decreto1178Sdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
             </tr>
               <tr>
                 <td>BONO GUARDIA COVID DECRETO N°1657</td>
-                <td>$ {{ valor.decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valor.decreto1657Sdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
               </tr>
               <tr class="negrita">
                 <td>TOTAL</td>
-                <td>$ {{ valor.totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valor.totalSdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
             </tr>
 
               <tr style="background-color: #f5f4f4;">
@@ -133,7 +135,7 @@
         </mat-tab>
 
         <mat-tab label="Segundo Nivel">
-          <ng-container *ngIf="valoresPorNivel[2] && (valoresNivel2Uro.length > 0 || valoresNivel2Otros.length > 0)">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
               <thead>
               <tr>
@@ -158,24 +160,24 @@
               <tr>
                 <td rowspan="3">CARGO O AGRUPACIÓN DE HS</td>
                 <td>S/DECRETO N° 1178</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1178Sdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1178Sdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
               </tr>
               <tr>
                 <td>BONO GUARDIA COVID DECRETO N°1657</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1657Sdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1657Sdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
               </tr>
               <tr class="negrita">
                 <td>TOTAL</td>
-                <td>$ {{ valoresNivel2Otros[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Otros[0].totalSdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].totalSdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
               </tr>
         
               <tr style="background-color: #f5f4f4;">
@@ -199,7 +201,7 @@
         </mat-tab>
         
         <mat-tab label="Primer Nivel">
-          <ng-container *ngIf="valoresPorNivel[2] && (valoresNivel2Uro.length > 0 || valoresNivel2Otros.length > 0)">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
               <thead>
               <tr>
@@ -228,30 +230,30 @@
               <tr>
                 <td rowspan="3">CARGO O AGRUPACIÓN DE HS</td>
                 <td>S/DECRETO N° 1178</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1178Sdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].decreto1178Sdf | number:'1.2-2' }}</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1178Sdf | number:'1.2-2' }}</td>
+                <td >$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td >$ </td>
+                <td>$ </td>
               </tr>
               <tr>
                 <td>BONO GUARDIA COVID DECRETO N°1657</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1657Sdf | number:'1.2-2' }}</td>
-                <td >$ {{ valoresNivel1Susques[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].decreto1657Sdf | number:'1.2-2' }}</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1657Sdf | number:'1.2-2' }}</td>
+                <td >$ </td>
+                <td>$ </td>
+                <td >$ </td>
+                <td>$ </td>
+                <td >$ </td>
+                <td>$ </td>
               </tr>
               <tr class="negrita">
                 <td>TOTAL</td>
-                <td>$ {{ valoresNivel1Otros[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].totalSdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].totalSdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].totalSdf | number:'1.2-2' }}</td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
+                <td>$ </td>
               </tr>
 
               <tr style="background-color: #f5f4f4;">

@@ -2,39 +2,60 @@
     <h5 class="requiredField">*Campos Obligatorios</h5>
   </h2>
   
-  <form [formGroup]="form!" (ngSubmit)="saveGMI()">
-    <mat-dialog-content>
-        <div class="row" style="margin-top: 20px">
+  <form [formGroup]="form!" (ngSubmit)="saveValorManual()">
+        <mat-dialog-content>
+          <div class="row" style="margin-top: 20px">
             <div class="col">
-                <mat-form-field appearance="fill" class="form-field">
-                    <mat-label>monto</mat-label>
-                    <input matInput formControlName="monto">
-                    <mat-error *ngIf="form?.get('monto')?.errors?.['required']">El monto es requerido.</mat-error>
-                    <mat-error *ngIf="form?.get('monto')?.errors?.['pattern']">El monto debe tener solo numeros e ir separado por un "." (decimal).</mat-error>
-                </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Total LAV</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="totalLav"
+                  step="0.01"
+                  min="0"
+                  inputmode="decimal"
+                >
+                <mat-error *ngIf="form?.get('totalLav')?.hasError('required')">
+                  El total de LAV es requerido.
+                </mat-error>
+                <mat-error *ngIf="form?.get('totalLav')?.hasError('min')">
+                  El valor debe ser mayor o igual a 0.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Total SDF</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="totalSdf"
+                  step="0.01"
+                  min="0"
+                  inputmode="decimal"
+                >
+                <mat-error *ngIf="form?.get('totalSdf')?.hasError('required')">
+                  El total de SDF es requerido.
+                </mat-error>
+                <mat-error *ngIf="form?.get('totalSdf')?.hasError('min')">
+                  El valor debe ser mayor o igual a 0.
+                </mat-error>
+              </mat-form-field>
             </div>
-        </div>
+          </div>
+
         <div class="row">
             <div class="col">
                 <mat-form-field appearance="fill">
                 <mat-label>Fecha de Inicio</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="fechaInicio">
+                <input matInput [matDatepicker]="picker" formControlName="fechaInicio" [min]="minDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
                 <mat-error *ngIf="form?.get('fechaInicio')?.errors?.['required']">La fecha de nacimiento es requerida.</mat-error>
                 </mat-form-field>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>Documento legal</mat-label>
-                    <input matInput formControlName="documentoLegal">
-                    <mat-error *ngIf="form?.get('documentoLegal')?.errors?.['required']">El documento legal es requerido.</mat-error>
-                    <mat-error *ngIf="form?.get('documentoLegal')?.errors?.['pattern']">El documento legal debe tener solo letras (entre 2 y 60 caracteres).</mat-error>
-                  </mat-form-field>
-            </div>                
-        </div>
+
         <div class="row">
             <div class="col">
                 <mat-form-field appearance="fill">
@@ -49,6 +70,43 @@
             </div>
           </div>    
 
+        <div class="row">
+            <div class="col">
+              <mat-form-field appearance="fill">
+                <mat-label>Hospitales</mat-label>
+                <mat-select formControlName="idsHospitales" multiple>
+                  <mat-option *ngFor="let hospital of hospitales" [value]="hospital.id">
+                    {{ hospital.nombre }}
+                  </mat-option>
+                </mat-select>
+                  <mat-error *ngIf="form?.get('idsHospitales')?.errors?.['required']">Debe seleccionar al menos un hospital.</mat-error>              </mat-form-field>
+            </div>
+        </div>   
+
+
+        <div class="row">
+          <div class="col">
+            <mat-form-field appearance="fill">
+              <mat-label>Nivel de Complejidad</mat-label>
+
+              <mat-select formControlName="nivelComplejidad">
+                <mat-option [value]="null" disabled>
+                  Seleccionar un nivel
+                </mat-option>
+
+                <mat-option [value]="1">Primer nivel</mat-option>
+                <mat-option [value]="2">Segundo nivel</mat-option>
+                <mat-option [value]="3">Tercer nivel</mat-option>
+                <mat-option [value]="4">Servicios críticos + SAME</mat-option>
+              </mat-select>
+
+              <mat-error *ngIf="form?.get('nivelComplejidad')?.hasError('required')">
+                El nivel de complejidad es requerido.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
         <div mat-dialog-actions class="action mt-4">
             <button mat-raised-button color="primary" type="submit" [disabled]="form?.invalid">
             Agregar nuevo valor
@@ -59,3 +117,6 @@
         </div>
     </mat-dialog-content>
   </form>
+
+
+

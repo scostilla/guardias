@@ -4,6 +4,7 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ValorGuardiasCargo } from "src/app/models/ValorGuardiasCargo";
 import { ValorGuardias } from "src/app/models/ValorGuardias";
+import { ValorGuardiaManualDto } from "src/app/dto/Configuracion/ValorGuardiaManualDto";
 import * as moment from 'moment';
 
 @Injectable({
@@ -84,6 +85,11 @@ export class ValorGuardiasCargoService {
         return valoresPorNivel;
       })
     );
+  }
+
+  // Cargar valores manualmente
+  cargarValoresManual(listaValores: ValorGuardiaManualDto[]): Observable<any> {
+    return this.httpClient.post<any>(`${this.valorGuardiasCargoURL}cargar-manual`, listaValores);
   }
 }
   

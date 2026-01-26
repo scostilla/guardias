@@ -27,9 +27,11 @@ export class NoAsistencialCreateComponent implements OnInit {
     this.noAsistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ. ]{1,60}$')]],
-      dni: ['', [Validators.required, Validators.pattern(/^\d{8,20}$/)]],
+      dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
       domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.#/@\\-° ]{1,90}$')]],
-      cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
+      cuilPrefijo: ['', [Validators.required, Validators.pattern(/^(20|23|27)$/)]],
+      cuilDni: [{ value: '', disabled: true }],
+      cuilSufijo: ['', [Validators.required, Validators.pattern(/^\d$/)]],
       fechaNacimiento: [''],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
@@ -39,7 +41,14 @@ export class NoAsistencialCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+    this.noAsistencialForm.get('dni')?.valueChanges.subscribe(dni => {
+      if (!dni) {
+        this.noAsistencialForm.get('cuilDni')?.setValue('', { emitEvent: false });
+        return;
+      }
+
+      this.noAsistencialForm.get('cuilDni')?.setValue(dni, { emitEvent: false });
+    });
   }
 
 
@@ -47,13 +56,17 @@ export class NoAsistencialCreateComponent implements OnInit {
     if (this.noAsistencialForm.valid) {
       const noAsistencialData = this.noAsistencialForm.value;
 
-    noAsistencialData.cuil = noAsistencialData.cuil.replace(/-/g, '');
+    const prefijo = this.noAsistencialForm.get('cuilPrefijo')?.value;
+    const dni = this.noAsistencialForm.get('dni')?.value;
+    const sufijo = this.noAsistencialForm.get('cuilSufijo')?.value;
+
+    const cuilCompleto = `${prefijo}${dni}${sufijo}`;
 
     const noAsistencialDto = new NoAsistencialDto(
       noAsistencialData.nombre,
       noAsistencialData.apellido,
       noAsistencialData.dni,
-      noAsistencialData.cuil,
+      cuilCompleto,
       false, // esAsistencial
       true, // activo
       noAsistencialData.email,
@@ -101,18 +114,6 @@ export class NoAsistencialCreateComponent implements OnInit {
   onApellidoInput(event: any): void {
     const formattedValue = this.capitalizeWords(event.target.value);
     this.noAsistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
-  }
-
-  formatCuil(event: any): void {
-    let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
-    if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
-    }
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
-    }
-    event.target.value = value;
-    this.noAsistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
   }
 
   cancel(): void {

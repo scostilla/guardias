@@ -632,11 +632,22 @@
             <mat-form-field appearance="fill">
               <mat-label>Adicional</mat-label>
               <mat-select formControlName="adicional">
-                <mat-option *ngFor="let adicional of adicionales" [value]="adicional.id">{{ adicional.nombre }}</mat-option>
+                <mat-option
+                  *ngFor="let adicional of adicionales"
+                  [value]="adicional.id"
+                  [disabled]="isGuardiaCargoSeleccionada() && adicional.nombre === 'J1'"
+                >
+                  {{ adicional.nombre }}
+                  <small
+                    *ngIf="isGuardiaCargoSeleccionada() && adicional.nombre === 'J1'"
+                    style="opacity: 0.6; margin-left: 4px;"
+                  >
+                    (se deshabilita con guardia CARGO)
+                  </small>
+                </mat-option>
               </mat-select>
               <mat-error *ngIf="legajoForm.get('adicional')?.errors?.['required']">Adicional es requerido.</mat-error>
             </mat-form-field>
-
       
             <mat-form-field appearance="fill">
               <mat-label>Tipo de revista</mat-label>
