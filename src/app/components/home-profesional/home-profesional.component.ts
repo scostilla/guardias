@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
-import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
-import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
-import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
+import { RegistroActividad } from 'src/app/models/RegistroActividad';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
+import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
 
 
 @Component({
@@ -30,6 +30,7 @@ export class HomeProfesionalComponent implements OnInit {
   ultimoRegistro: RegistroActividad | null = null;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
+  cuil: string | null = null;
   tieneCfActivo: boolean = false;
 
   constructor(
@@ -39,8 +40,9 @@ export class HomeProfesionalComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private hospitalService: HospitalService,
-    private asistencialService: AsistencialService,
-    private registroPendienteService: RegistroPendienteService
+    private registroPendienteService: RegistroPendienteService,
+    private asistencialService: AsistencialService
+    
   ) {}
 
   ngOnInit(): void {
@@ -51,10 +53,23 @@ export class HomeProfesionalComponent implements OnInit {
         this.idPersona = response.id;
         this.nombre = response.nombre;
         this.apellido = response.apellido;
+        // solicitar CUIL desde el servicio del backend si tenemos idPersona
+        if (this.idPersona) {
+          this.asistencialService.getPersonCuil(this.idPersona).subscribe({
+            next: (cuil) => {
+              this.cuil = cuil;
+              console.log('CUIL obtenido desde backend:', this.cuil);
+            },
+            error: (err) => {
+              console.warn('No se pudo obtener CUIL desde backend:', err);
+            }
+          });
+        }
 
         console.log('ID de persona:', this.idPersona);
         console.log('Nombre:', this.nombre);
         console.log('Apellido:', this.apellido);
+        console.log('CUIL:', this.cuil);
 
         if (this.idPersona) {
           this.asistencialService.tieneCf(this.idPersona).subscribe({
@@ -128,6 +143,22 @@ export class HomeProfesionalComponent implements OnInit {
         this.router.navigate(['/registro-actividades-ingreso']);
       }
     );
+  }
+
+  openMiAsistencia() {
+    // Navegar pasando state con efector y asistencial
+    const asistencial = {
+      id: this.idPersona,
+      nombre: this.nombre,
+      apellido: this.apellido,
+      cuil: this.cuil
+    };
+    this.router.navigate(['/registro-actividades-profesionales'], {
+      state: {
+        idEfector: this.efectorId,
+        asistencial
+      }
+    });
   }
 
   onLogOutProfesional(): void {

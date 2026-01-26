@@ -137,6 +137,14 @@ export class AsistencialService {
   setCurrentAsistencialId(id: number): void {
     this.currentAsistencialIdSubject.next(id);
   }
+
+  // Nuevo: base para endpoints relacionados con person
+  //private personBaseUrl = 'http://localhost:8080/person/';
+
+  // Nuevo: obtiene el CUIL de la persona (endpoint devuelve texto) usando asistencialesURL
+  public getPersonCuil(id: number): Observable<string> {
+    return this.httpClient.get(`${this.asistencialesURL}getPersonCuil/${id}`, { responseType: 'text' });
+  }
   
   /*/lo uso para enviar id sin usar la url
   private currentAsistencialSubject = new BehaviorSubject<Asistencial | null>(null);
