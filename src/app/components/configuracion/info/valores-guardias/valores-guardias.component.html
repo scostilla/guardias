@@ -5,25 +5,25 @@
       <div class="titulos">VALORES DE GUARDIAS <span class="titulos-second">Contaduría de la provincia</span></div>
     </div>
     <div class="col-12 col-md-2 m d-flex justify-content-end">
-      <button mat-fab class="button-success" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
+      <!--<button mat-fab class="button-success" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
         <mat-icon>library_add</mat-icon>
       </button>
-      <!--<button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">-->
+      <button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
       <button mat-fab color="accent" style="margin-left: 5px;" matTooltip="Agregar nuevo Bono Uti">
         <mat-icon>library_add</mat-icon>
-      </button>
+      </button>-->
       <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/configuracion">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-
     </div>
   </div>
   <div class="row mt-5 contenedor-montos">
     <!--<ng-container *ngFor="let valor of valoresPorNivel[4]">-->
     <ng-container>
-      <span class="fondo-monto-cargo" matTooltip="doc legal | fecha" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ </span>
+      <span class="fondo-monto-cargo" matTooltipPosition="right">Montos</span>
+      <!--<span class="fondo-monto-cargo" matTooltip="doc legal | fecha" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ </span>
       <span class="fondo-monto-extra" matTooltip="Fecha: " matTooltipPosition="right">VALOR GMI EXTRA/CONTRAFACTURA = $ </span>
-      <span class="titulo-select-tabla">bono uti (+9%)-D = $ </span>
+      <span class="titulo-select-tabla">bono uti (+9%)-D = $ </span>-->
     </ng-container>
 </div>
   
@@ -36,7 +36,24 @@
                 <tr>
                   <th rowspan="2">Tipo de guardia</th>
                   <th rowspan="2">Concepto</th>
-                  <th colspan="2">Monto</th>
+                  <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"1
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 4,
+                        idsHospitales: [151, 152, 153,154, 163],
+                        titulo: 'Servicios críticos + SAME',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.BONO_1580
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                  </th>
                 </tr>
                 <tr>
                   <th>L-V</th>
@@ -92,7 +109,24 @@
               <tr>
                 <th rowspan="2">Tipo de guardia</th>
                 <th rowspan="2">Concepto</th>
-                <th colspan="2">Monto</th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 3,
+                        idsHospitales: [153,154, 157],
+                        titulo: 'Tercer Nivel',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
               </tr>
               <tr>
                 <th>L-V</th>
@@ -145,8 +179,42 @@
                 <th colspan="2">URO</th>
               </tr>
               <tr>
-                <th colspan="2">Monto</th>
-                <th colspan="2">Monto</th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 2,
+                        idsHospitales: [155, 163],
+                        titulo: 'Segundo Nivel: Orias y Paterson',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 2,
+                        idsHospitales: [152],
+                        titulo: 'Segundo Nivel: Uro',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
               </tr>
               <tr>
                 <th>L-V</th>
@@ -212,9 +280,60 @@
                 <th colspan="2">ROSARIO, EL AGUILAR, <br/>YUTO, TALAR Y P. SOLA</th>
               </tr>  
               <tr>
-                <th colspan="2">Monto</th>
-                <th colspan="2">Monto</th>
-                <th colspan="2">Monto</th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 1,
+                        idsHospitales: [172, 159, 158, 161, 160, 162, 165, 169, 167, 170],
+                        titulo: 'Primer Nivel: Resto',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 1,
+                        idsHospitales: [150],
+                        titulo: 'Primer Nivel: Susques',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 1,
+                        idsHospitales: [171, 170, 156, 164, 98],
+                        titulo: 'Primer Nivel: Rosario, El Aguilar, Yuto, Talar y P. Sola',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
               </tr>
               <tr>
                 <th>L-V</th>
