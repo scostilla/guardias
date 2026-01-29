@@ -1,0 +1,81 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-7">
+      <div class="titulos_extra">
+        Guardias solicitadas
+        <span class="titulos-second" style="cursor: pointer;" [matMenuTriggerFor]="menu" matTooltip="Selecciona estado">
+          {{estadoSeleccionado | titlecase}}s
+          <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
+        </span>
+
+        <!-- Mat Menu -->
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngIf="estadoSeleccionado !== 'PENDIENTE'" (click)="filtrarPorEstado('PENDIENTE')">Pendientes</button>
+          <button mat-menu-item *ngIf="estadoSeleccionado !== 'CONFIRMADO'" (click)="filtrarPorEstado('CONFIRMADO')">Confirmadas</button>
+          <button mat-menu-item (click)="filtrarPorEstado('RECHAZADO')">Rechazadas</button>
+        </mat-menu>
+      </div>
+    </div>
+    <div class="col-12 col-md-1 m d-flex justify-content-end">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" (click)="goBack()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0" *ngIf="!mensajeSinDatos">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por tipo de guardia" #input>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <mat-card *ngIf="mensajeSinDatos" class="mt-3 text-center">
+    {{ mensajeSinDatos }}
+  </mat-card>
+  
+  <div class="row" *ngIf="!mensajeSinDatos">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+
+        <ng-container matColumnDef="idEfector">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Efector </th>
+          <td mat-cell *matCellDef="let cronograma">
+            {{ efectoresMap.get(cronograma.idEfector) || 'Cargando…' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoGuardia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header  class="negrita"> Guardia </th> 
+            <td mat-cell *matCellDef="let cronograma" style="white-space: nowrap;"> {{cronograma.tipoGuardia}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaIngreso">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Fecha solicitada (desde-hasta) </th>
+            <td mat-cell *matCellDef="let cronograma" style="white-space: nowrap;"> {{cronograma.fechaIngreso | date: 'dd/MM/yyyy':'':'es-AR'}} - {{cronograma.fechaEgreso | date: 'dd/MM/yyyy':'':'es-AR'}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef class="negrita"></th>
+            <td mat-cell *matCellDef="let cronograma" class="cell-actions">
+              <!-- Botón para ver detalle -->
+              <button mat-icon-button matTooltip="Ver detalle" (click)="openDetail(cronograma)">
+                <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+              </button>
+
+              <!-- Botón para abrir el menú de cambio de estado -->
+              <button mat-icon-button matTooltip="Confirmar/rechazar" (click)="openFormChanges(cronograma)" *ngIf="isUsuario">
+                <mat-icon class="btnEdit">how_to_reg</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  <div class="row mt-3" *ngIf="!mensajeSinDatos">
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+</div>

@@ -37,13 +37,11 @@
           <mat-label>{{ labelsCampos[campo] }}</mat-label>
 
           <input
-            matInput
-            type="text"
-            [value]="form?.get(campo)?.value | number:'1.2-2':'es-AR'"
+            [value]="getControl(campo)?.value | number:'1.2-2':'es-AR'"
             (input)="onMontoInput($event, campo)"
           />
 
-          <mat-error *ngIf="form?.get(campo)?.hasError('required')">
+          <mat-error *ngIf="getControl(campo)?.hasError('required')">
             Campo obligatorio
           </mat-error>
         </mat-form-field>

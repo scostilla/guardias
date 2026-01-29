@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Autorizar cronogramas pendientes
+<h2 mat-dialog-title>Confirmación de guardia pendiente
     <h5 class="['required']Field">*Campos Obligatorios</h5>
 </h2>
 <mat-dialog-content class="mat-typography">
@@ -7,19 +7,18 @@
 
 
         <mat-form-field appearance="fill">
-            <mat-label>Confirmar</mat-label>
+            <mat-label>Confirmar/Rechazar</mat-label>
             <mat-select formControlName="autorizado">
-                <mat-option value="RECHAZADO">Rechazado</mat-option>
-                <mat-option value="CONFIRMADO">Confirmado</mat-option>
-                <mat-option value="PENDIENTE">Pendiente</mat-option>
+                <mat-option value="RECHAZADO">Rechazar</mat-option>
+                <mat-option value="CONFIRMADO">Confirmar</mat-option>
             </mat-select>
             <mat-error *ngIf="form.get('autorizado')?.hasError('required')">
-                Debe confirmar o rechazar la asignación de autoridad.
+                Debe confirmar o rechazar la guardia asignada.
             </mat-error>
         </mat-form-field> 
 
         <mat-form-field appearance="fill">
-            <mat-label>Motivo</mat-label>
+            <mat-label>Motivo (opcional)</mat-label>
             <input matInput formControlName="motivoAutorizacion" />
             <mat-error *ngIf="form.get('motivo')?.hasError('required')">El campo es obligatorio.</mat-error>
             <mat-error *ngIf="form.get('motivo')?.hasError('maxlength')">Máximo 200 caracteres.</mat-error>

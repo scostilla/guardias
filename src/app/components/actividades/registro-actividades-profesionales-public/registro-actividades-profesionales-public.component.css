@@ -1,0 +1,90 @@
+.ref-cargo {
+  color: #6126cfff !important;
+  font-weight: bold;
+}
+
+.ref-extra {
+  color:  #D91E5B !important;
+  font-weight: bold;
+}
+
+.ref-agrupacion {
+  color: #FF7F0E !important;
+  font-weight: bold;
+}
+
+.ref-contrafactura {
+  color: #769264 !important;
+  font-weight: bold;
+}
+
+.btn-ver-detalles {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px; /* más espacio entre ícono y texto */
+  padding: 0 12px; /* más espacio horizontal */
+  min-width: 220px; /* ancho mínimo mayor */
+  height: 30px; /* altura estándar de botón material */
+}
+
+.btn-ver-detalles-text {
+  white-space: nowrap;
+  font-size: 1.15em;
+  font-weight: 500;
+}
+
+.center-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  flex: 1 1 0%;
+}
+
+.fila-ovalada {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  min-height: 38px;
+  margin: 2px 0;
+  box-shadow: 0 1px 4px rgba(36, 60, 116, 0.08);
+}
+
+/* Ovalos por tipo de guardia */
+.fila-ovalada.ref-cargo {
+  background: #6126cfff !important;
+}
+.fila-ovalada.ref-extra {
+  background:  #D91E5B !important;
+}
+.fila-ovalada.ref-agrupacion {
+  background: #FF7F0E !important;
+}
+.fila-ovalada.ref-contrafactura {
+  background: #769264 !important;
+}
+
+/* Horas en blanco dentro del óvalo */
+.fila-ovalada .celda-entrada,
+.fila-ovalada .celda-salida {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 6px 0;
+  font-weight: bold;
+  font-size: 1em;
+  border: none;
+  background: transparent;
+  color: #fff !important;
+}
+
+.text-center {
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+
+
+
+

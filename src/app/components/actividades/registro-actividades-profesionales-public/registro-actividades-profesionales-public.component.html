@@ -5,7 +5,7 @@
       <div class="titulos_extra">Registro de Asistencia</div>
     </div>
     <div class="col-6 m mt-3 d-flex justify-content-end">
-      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/home-profesional">
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" routerLink="/home-profesional-public">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
     </div>
@@ -31,23 +31,41 @@
             </mat-form-field>
           </form>
         </div>
-        <div class="d-flex align-items-center">
-          <span class="titulo-select-tabla">Efector:</span>
-          <ng-container *ngIf="mostrarSelectorEfector; else efectorTexto">
-            <select class="select-tabla ps-1" [(ngModel)]="selectedEfectorId" (change)="onEfectorChange()">
-              <option *ngFor="let e of efectoresDisponibles" [ngValue]="e.id">{{ e.nombre }}</option>
+
+        <div class="d-flex align-items-center mb-2">
+        <span class="titulo-select-tabla me-2">Efector:</span>
+
+        <!-- SELECT si hay más de uno -->
+        <ng-container *ngIf="mostrarSelectorEfector; else efectorTexto">
+            <select
+            class="select-tabla ps-1"
+            [(ngModel)]="selectedEfectorId"
+            (ngModelChange)="onEfectorChange($event)"
+            >
+            <option
+                *ngFor="let e of efectoresDisponibles"
+                [value]="e.id"
+            >
+                {{ e.nombre }}
+            </option>
             </select>
-          </ng-container>
-          <ng-template #efectorTexto>
-            <span class="negrita ps-1">{{efectorNombre}}</span>
-          </ng-template>
+        </ng-container>
+
+        <!-- TEXTO si hay uno solo -->
+        <ng-template #efectorTexto>
+            <span class="negrita ps-1">
+            {{ efectorNombre || '—' }}
+            </span>
+        </ng-template>
         </div>
+        
         <div class="d-flex align-items-center">
           <span class="titulo-select-tabla">Mes:</span>
           <select class="select-tabla ps-1" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
              <option *ngFor="let mes of mesesDisponibles" [ngValue]="mes.value">{{ mes.label }}</option>
           </select>
-        </div>
+        </div>      cuil: this.cuil
+
         <div class="d-flex align-items-center">
           <span class="titulo-select-tabla">Año:</span>
           <select class="select-tabla ps-1" [(ngModel)]="selectedYear" (change)="onYearChange()">

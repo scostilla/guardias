@@ -83,7 +83,7 @@ onLogin(): void {
     );
 }
 
-  private procesarRoles(): void {
+ /* private procesarRoles(): void {
     if (this.roles.length > 1) {
       const rolesPermitidos = this.roles.filter(r => r !== 'ROLE_USER');
 
@@ -93,6 +93,15 @@ onLogin(): void {
       } else {
         this.openRoleSelectionDialog();
       }
+    } else if (this.roles.length === 1) {
+      this.tokenService.setCurrentRole(this.roles[0]);
+      this.redirectUserBasedOnRole(this.roles[0]);
+    }
+  }*/
+
+  private procesarRoles(): void {
+    if (this.roles.length > 1) {
+      this.openRoleSelectionDialog(); // deja que el usuario elija entre todos los roles
     } else if (this.roles.length === 1) {
       this.tokenService.setCurrentRole(this.roles[0]);
       this.redirectUserBasedOnRole(this.roles[0]);
@@ -147,31 +156,31 @@ onLogin(): void {
 
   // Redirigir al home según el rol
   redirectUserBasedOnRole(role: string): boolean {
-    if (role === 'ROLE_ADMIN' || role === 'ROLE_DPH' || role === 'ROLE_SUPERUSER' || role === 'ROLE_AUTORIDAD') {
-      this.router.navigate(['/home-page']);
-      return true;
-    } else if (role === 'ROLE_HOSPITAL') {
-      this.router.navigate(['/home-hospital']);
-      return true;
-    } else if (role === 'ROLE_USER') {
-      this.toastr.error('Acceso no permitido para tu rol de usuario.', 'Error de acceso', {
-        timeOut: 5000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      this.tokenService.logOut();
-      this.isLogged = false;
-      this.router.navigate(['/login']); 
-      return false;
-    } else {
-      this.toastr.error('Rol desconocido. No se puede iniciar sesión.', 'Error', {
-        timeOut: 4000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      this.tokenService.logOut();
-      this.router.navigate(['/login']);
-      return false;
+    switch(role) {
+      case 'ROLE_ADMIN':
+      case 'ROLE_DPH':
+      case 'ROLE_SUPERUSER':
+      case 'ROLE_AUTORIDAD':
+        this.router.navigate(['/home-page']);
+        return true;
+
+      case 'ROLE_HOSPITAL':
+        this.router.navigate(['/home-hospital']);
+        return true;
+
+      case 'ROLE_USER':
+        this.router.navigate(['/home-profesional-public']);
+        return true;
+
+      default:
+        this.toastr.error('Rol desconocido. No se puede iniciar sesión.', 'Error', {
+          timeOut: 4000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.tokenService.logOut();
+        this.router.navigate(['/login']);
+        return false;
     }
   }
 

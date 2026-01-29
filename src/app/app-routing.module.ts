@@ -14,6 +14,8 @@ import { HomeHospitalComponent } from './components/home-hospital/home-hospital.
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
+import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
+import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
 import { LoginComponent } from './components/login/login.component';
 
 //Configuraciones: Generales
@@ -104,6 +106,7 @@ import { RegistroActividadesEgresoComponent } from './components/actividades/reg
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
 import { RegistroActividadesProfesionalesComponent } from './components/actividades/registro-actividades-profesionales/registro-actividades-profesionales.component';
+import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 
@@ -214,6 +217,8 @@ const routes: Routes = [
   {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"home-profesional-public", component:HomeProfesionalPublicComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"guardias-pendientes-profesionales", component:GuardiasPendientesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"home-hospital", component:HomeHospitalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_HOSPITAL'] }},
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
@@ -314,9 +319,10 @@ const routes: Routes = [
   {path:'registro-actividades-ingreso',component: RegistroActividadesIngresoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path:'registro-actividades-egreso', component: RegistroActividadesEgresoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
-  {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-  {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-   {path:"registro-actividades-profesionales", component: RegistroActividadesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER', 'ROLE_HOSPITAL', 'ROLE_SUPERUSER'] }},
+  {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-profesionales", component: RegistroActividadesProfesionalesComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-profesionales-public", component: RegistroActividadesProfesionalesPublicComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
 
   //Sección: Personal
   {path: 'personal', component:PersonalComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},

@@ -84,6 +84,10 @@ export class ValoresGuardiasCreateComponent implements OnInit {
 
   /* ========= CAMPOS VISIBLES SEGÚN BOTONES ========= */
 
+  getControl(campo: string) {
+  return this.form.get(campo);
+  }
+
   esPasiva(): boolean {
     return this.form?.get('tipoGuardia')?.value === 'PASIVA';
   }

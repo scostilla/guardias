@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
@@ -18,7 +19,7 @@ import { RegistroPendienteService } from 'src/app/services/registroPendiente.ser
   templateUrl: './home-profesional.component.html',
   styleUrls: ['./home-profesional.component.css']
 })
-export class HomeProfesionalComponent implements OnInit {
+export class HomeProfesionalComponent implements OnInit, OnDestroy {
 
   showRegistro: boolean = false;
   showAsistencia: boolean = false;
@@ -33,6 +34,8 @@ export class HomeProfesionalComponent implements OnInit {
   cuil: string | null = null;
   tieneCfActivo: boolean = false;
 
+  private popStateSubscription: any; 
+
   constructor(
     private router: Router,
     public dialogReg: MatDialog,
@@ -41,6 +44,7 @@ export class HomeProfesionalComponent implements OnInit {
     private authService: AuthService,
     private hospitalService: HospitalService,
     private registroPendienteService: RegistroPendienteService,
+    private location: Location,
     private asistencialService: AsistencialService
     
   ) {}
@@ -65,7 +69,6 @@ export class HomeProfesionalComponent implements OnInit {
             }
           });
         }
-
         console.log('ID de persona:', this.idPersona);
         console.log('Nombre:', this.nombre);
         console.log('Apellido:', this.apellido);
@@ -91,7 +94,12 @@ export class HomeProfesionalComponent implements OnInit {
     // Obtener efector desde el servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
-  }
+
+   // Escuchar el "atrás" del navegador
+    this.popStateSubscription = this.location.subscribe(() => {
+      this.onLogOutProfesional();
+    });
+    }
 
   loadEfectorName(): void {
     if (this.efectorId) {
@@ -160,6 +168,12 @@ export class HomeProfesionalComponent implements OnInit {
       }
     });
   }
+
+  ngOnDestroy(): void {
+      if (this.popStateSubscription) {
+        this.popStateSubscription.unsubscribe?.();
+      }
+    }
 
   onLogOutProfesional(): void {
   this.tokenService.logOutProfessional();

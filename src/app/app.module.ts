@@ -243,6 +243,9 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
+import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
+import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
 
 @NgModule({
   declarations: [
@@ -434,6 +437,9 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     FacturaCreateFterminoComponent,
     FacturaListFterminoComponent,
     CambiarPasswordComponent,
+    HomeProfesionalPublicComponent,
+    RegistroActividadesProfesionalesPublicComponent,
+    GuardiasPendientesProfesionalesComponent,
   ],
 
   imports: [
