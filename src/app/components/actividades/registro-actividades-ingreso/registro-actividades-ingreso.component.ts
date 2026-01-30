@@ -124,7 +124,7 @@ export class RegistroActividadesIngresoComponent implements OnInit {
 
   const hoy = moment();
   this.maxFechaIngreso = hoy.format('YYYY-MM-DD');
-  this.minFechaIngreso = hoy.clone().subtract(14, 'days').format('YYYY-MM-DD');
+  this.minFechaIngreso = hoy.clone().subtract(60, 'days').format('YYYY-MM-DD');
   this.registroForm.get('fechaIngreso')?.valueChanges.subscribe((fechaSeleccionada: string | Date) => {
     const fecha = moment(fechaSeleccionada);
     const hoy = moment();

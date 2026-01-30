@@ -166,6 +166,8 @@ ngOnInit(): void {
     this.cronoForm.get('fechaEgreso')?.reset();
     this.cronoForm.get('horaEgreso')?.reset();
 
+    this.inputValue = '';
+
     // Actualizar el tipo de guardia en el formulario
     this.cronoForm.get('tipoGuardia')?.setValue(nuevoTipoGuardia);
 
@@ -343,38 +345,60 @@ private obtenerFeriados(): void {
     return count;
   }
 
-  openAsistencialDialog(): void {
-    const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
-      width: '800px',
-      disableClose: true,
-      data: {
-        idEfector: this.efectorId,
-        tipoGuardia: this.cronoForm.get('tipoGuardia')?.value.nombre,
-      },
-    });
+openAsistencialDialog(): void {
+  const dialogRef = this.dialog.open(AsistencialSelectorComponent, {
+    width: '800px',
+    disableClose: true,
+    data: {
+      idEfector: this.efectorId,
+      tipoGuardia: this.cronoForm.get('tipoGuardia')?.value?.nombre,
+    },
+  });
 
-    dialogRef.afterClosed().subscribe(result => {
+  dialogRef.afterClosed().subscribe({
+    next: (result) => {
       if (result) {
-        // Actualizo el valor legible para mostrarlo y el id para el formulario
+        // 🔹 Siempre pisa el valor anterior (re-selección OK)
         this.inputValue = `${result.apellido} ${result.nombre}`;
         this.efectorAsistencial = result.idEfector;
-        this.cronoForm.patchValue({ asistencial: result.id });
+
+        this.cronoForm.patchValue({
+          asistencial: result.id
+        });
+
+        // Opcional pero prolijo: marcar como tocado
+        this.cronoForm.get('asistencial')?.markAsTouched();
       } else {
-        this.toastr.info('No se seleccionó un profesional', 'Información', {
+        // 🔸 Canceló: NO borramos lo anterior
+        // (el usuario puede haber querido solo mirar)
+        this.toastr.info(
+          'No se seleccionó un profesional',
+          'Información',
+          {
+            timeOut: 6000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          }
+        );
+      }
+    },
+    error: (error) => {
+      this.toastr.error(
+        'Ocurrió un error al abrir el diálogo de Asistencial',
+        'Error',
+        {
           timeOut: 6000,
           positionClass: 'toast-top-center',
           progressBar: true
-        });
-      }
-    }, error => {
-      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
-        timeOut: 6000,
-        positionClass: 'toast-top-center',
-        progressBar: true
-      });
-      console.error('Error al abrir el diálogo de carga de profesional:', error);
-    });
-  }
+        }
+      );
+      console.error(
+        'Error al abrir el diálogo de carga de profesional:',
+        error
+      );
+    }
+  });
+}
 
   /*saveCronograma(): void {
     if (this.cronoForm.valid) {
