@@ -17,6 +17,7 @@ import { HomeProfesionalComponent } from './components/home-profesional/home-pro
 import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
 import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
 import { LoginComponent } from './components/login/login.component';
+import { ReportesComponent } from './components/reportes/reportes.component';
 
 //Configuraciones: Generales
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
@@ -223,6 +224,7 @@ const routes: Routes = [
   {path:"home-autoridad", component:HomeAutoridadComponent},
   {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path: 'login', component:LoginComponent},
+  {path: 'reportes', component:ReportesComponent},
 
   //Configuraciones: Generales
   {path: 'valores-guardias', component:ValoresGuardiasComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},

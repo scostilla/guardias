@@ -31,22 +31,23 @@
     </div>
 
     <!-- CAMPOS DINÁMICOS -->
-    <div class="row" *ngFor="let campo of getCamposVisibles()">
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>{{ labelsCampos[campo] }}</mat-label>
+  <div class="row" *ngFor="let campo of getCamposVisibles()">
+    <div class="col">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>{{ labelsCampos[campo] }}</mat-label>
 
-          <input
-            [value]="getControl(campo)?.value | number:'1.2-2':'es-AR'"
-            (input)="onMontoInput($event, campo)"
-          />
+        <input
+          matInput
+          [formControlName]="campo"
+          (input)="onMontoInput($event, campo)"
+        />
 
-          <mat-error *ngIf="getControl(campo)?.hasError('required')">
-            Campo obligatorio
-          </mat-error>
-        </mat-form-field>
-      </div>
+        <mat-error *ngIf="getControl(campo)?.hasError('required')">
+          Campo obligatorio
+        </mat-error>
+      </mat-form-field>
     </div>
+  </div>
 
     <!-- MENSAJE PASIVA -->
     <div class="row mt-3" *ngIf="esPasiva()">
