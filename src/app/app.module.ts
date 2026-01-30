@@ -246,14 +246,15 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
 import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
 import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
 import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
+import { ReportesComponent } from './components/reportes/reportes.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    CalendarComponent,
-    TimePickerComponent,
+    CalendarComponent,    TimePickerComponent,
     HomePageComponent,
     RegistroDiarioComponent,
     LoginComponent,
@@ -440,6 +441,7 @@ import { GuardiasPendientesProfesionalesComponent } from './components/home-prof
     HomeProfesionalPublicComponent,
     RegistroActividadesProfesionalesPublicComponent,
     GuardiasPendientesProfesionalesComponent,
+    ReportesComponent,
   ],
 
   imports: [
@@ -484,7 +486,7 @@ import { GuardiasPendientesProfesionalesComponent } from './components/home-prof
     CalendarCommonModule,
     CalendarMonthModule,
     ToastrModule.forRoot(),
-    
+    NgChartsModule,
   ],
   
 
