@@ -69,13 +69,3 @@ mat-card h3 {
   margin-bottom: 12px;
   font-weight: 500;
 }
-
-.pie-card {
-  display: flex;
-  flex-direction: column;
-}
-
-.pie-wrapper {
-  position: relative;
-  height: 280px;
-}
