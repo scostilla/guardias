@@ -64,7 +64,7 @@
               </button>
 
               <!-- Botón para abrir el menú de cambio de estado -->
-              <button mat-icon-button matTooltip="Confirmar/rechazar" (click)="openFormChanges(cronograma)" *ngIf="isUsuario">
+              <button mat-icon-button matTooltip="Confirmar/rechazar" (click)="openFormChanges(cronograma)" *ngIf="isUsuario && estadoSeleccionado === 'PENDIENTE'">
                 <mat-icon class="btnEdit">how_to_reg</mat-icon>
               </button>
             </td>

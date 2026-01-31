@@ -214,6 +214,7 @@ import { PersonalSinLegajoComponent } from './components/personal/personal-sin-l
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
 
+import { NgChartsModule } from 'ng2-charts';
 import { RegistroActividadesEditComponent } from './components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
@@ -250,13 +251,14 @@ import { AsistencialFiltradoSelectorComponent } from './components/personal/pers
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
+import { ReportesComponent } from './components/reportes/reportes.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    CalendarComponent,
+    CalendarComponent,    
     TimePickerComponent,
     HomePageComponent,
     RegistroDiarioComponent,
@@ -448,6 +450,7 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     HomeProfesionalPublicComponent,
     RegistroActividadesProfesionalesPublicComponent,
     GuardiasPendientesProfesionalesComponent,
+    ReportesComponent,
   ],
 
   imports: [
@@ -492,7 +495,7 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     CalendarCommonModule,
     CalendarMonthModule,
     ToastrModule.forRoot(),
-    
+    NgChartsModule,
   ],
   
 

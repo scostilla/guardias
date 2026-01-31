@@ -32,7 +32,7 @@ export class AsistencialCreateComponent implements OnInit {
       cuilPrefijo: ['', [Validators.required, Validators.pattern(/^(20|23|27)$/)]],
       cuilDni: [{ value: '', disabled: true }],
       cuilSufijo: ['', [Validators.required, Validators.pattern(/^\d$/)]],
-      fechaNacimiento: [''],
+      fechaNacimiento: ['', Validators.required],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
       email: ['', [Validators.required, Validators.email]],

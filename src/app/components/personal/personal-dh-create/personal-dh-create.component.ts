@@ -668,6 +668,9 @@ private async verificarMesesDisponibles(): Promise<void> {
   }
 
   await Promise.all(mesesVerificaciones);
+  mesesVerificar.sort((a, b) =>
+  a.fecha.isBefore(b.fecha) ? -1 : 1
+  );
   this.meses = mesesVerificar;
 
   // Mensajes Toastr

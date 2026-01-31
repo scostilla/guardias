@@ -8,6 +8,7 @@ import { ValorGuardiasCargo } from 'src/app/models/ValorGuardiasCargo';
 import { ValorGuardiasCargoService } from 'src/app/services/valorGuardiasCargo.service';
 import { ValoresGuardiasCreateComponent } from '../valores-guardias-create/valores-guardias-create.component';
 import { ValoresBonoUtiCreateComponent } from '../valores-bono-uti-create/valores-bono-uti-create.component';
+import { GrillaValorGuardiaCompletaDto } from 'src/app/dto/Configuracion/GrillaValorGuardiaCompletaDto';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, forkJoin } from 'rxjs';
 import * as moment from 'moment';
@@ -39,6 +40,10 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   dialogRef!: MatDialogRef<ValoresGuardiasCreateComponent>;
   suscription!: Subscription;
   readonly CONCEPTOS_GUARDIA = CONCEPTOS_GUARDIA;
+  grilla: GrillaValorGuardiaCompletaDto[] = [];
+  grillaPorNivel: { [nivel: number]: GrillaValorGuardiaCompletaDto } = {};
+  loading = false;
+
 
   constructor(
     private valorGmiService: ValorGmiService,
@@ -49,6 +54,8 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit(): void {
+
+    this.cargarGrilla();
     /*this.listCargo();
 
     this.suscription = this.valorGuardiasCargoService.refresh$.subscribe(() => {
@@ -80,6 +87,30 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
       }
     );
   }*/
+
+  cargarGrilla(): void {
+    this.loading = true;
+
+    // fecha actual (YYYY-MM-DD)
+    const fecha = new Date().toISOString().split('T')[0];
+
+    this.valorGuardiasCargoService.getGrillaCompleta(fecha).subscribe({
+      next: data => {
+        this.grilla = data;
+
+        this.grillaPorNivel = {};
+        data.forEach(nivel => {
+          this.grillaPorNivel[nivel.numeroNivel] = nivel;
+        });
+
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Error al cargar grilla', err);
+        this.loading = false;
+      }
+    });
+  }
   
   openCreateGMI(config: {nivelComplejidad: number; idsHospitales: number[]; titulo: string;  conceptos: ConceptoGuardia[];}): void {
     const dialogRef = this.dialog.open(ValoresGuardiasCreateComponent, {

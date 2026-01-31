@@ -48,6 +48,9 @@ interface MyCalendarEvent extends CalendarEvent {
   motivo?: string;
   meta?: any;
 }
+
+type AutorizadoStatus = 'PENDIENTE' | 'CONFIRMADO' | 'RECHAZADO';
+
 @Component({
   selector: 'app-cronograma',
   templateUrl: './cronograma.component.html',
@@ -225,11 +228,13 @@ export class CronogramaComponent {
   // Mapeo de los cronogramas al formato adecuado
   mapCronogramas(cronogramas: any[]): any[] {
     return cronogramas.map((cronograma) => {
+      console.log('Autorizado raw:', cronograma.autorizado);
+
       const tipoGuardia = cronograma.tipoGuardia?.nombre;
       const observacion = cronograma.observacion;
       const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
       const id = cronograma.id;
-      const auth = cronograma.autorizado;
+      const auth: AutorizadoStatus = cronograma.autorizado;
       const authfor = `${cronograma.autoridad?.persona?.apellido}, ${cronograma.autoridad?.persona?.nombre}`;
       const motivo = cronograma.motivoAutorizacion;
 
@@ -267,6 +272,15 @@ export class CronogramaComponent {
         }
       };
     });
+  }
+
+  //MAnejo de iconos para autorizaciones en calendario
+  getIconoAutorizacion(auth: AutorizadoStatus): string {
+    switch(auth) {
+      case 'PENDIENTE': return '?';
+      case 'RECHAZADO': return 'x';
+      default: return '';
+    }
   }
     
   // Método que se llama cuando se selecciona un servicio del menú

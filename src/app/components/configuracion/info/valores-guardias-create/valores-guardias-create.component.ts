@@ -125,6 +125,24 @@ export class ValoresGuardiasCreateComponent implements OnInit {
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 
+  private calcularTotales(campos: string[], valores: any): { totalLav: number; totalSdf: number } {
+  let totalLav = 0;
+  let totalSdf = 0;
+
+  campos.forEach(campo => {
+    if (campo.endsWith('Lav')) {
+      totalLav += Number(valores[campo] ?? 0);
+    }
+
+    if (campo.endsWith('Sdf')) {
+      totalSdf += Number(valores[campo] ?? 0);
+    }
+  });
+
+  return { totalLav, totalSdf };
+  }
+
+
   /* ========= INPUT TIPO BANCO ========= */
 
   onMontoInput(event: Event, campo: string): void {
@@ -159,33 +177,42 @@ export class ValoresGuardiasCreateComponent implements OnInit {
 
 /* ========= SAVE SIMPLE ========= */
 
-  saveValorManual(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const v = this.form.value;
-
-    const nuevoValor: any = {
-      tipoGuardia: v.tipoGuardia,
-      nivelComplejidad: this.data.nivelComplejidad,
-      fechaInicio: v.fechaInicio,
-      idsHospitales: this.data.idsHospitales
-    };
-
-    // solo guarda los campos visibles (según botón + tipo guardia)
-    this.getCamposVisibles().forEach(campo => {
-      nuevoValor[campo] = v[campo]; // ya es number
-    });
-
-    this.valorGuardiasCargoService
-      .cargarValoresManual([nuevoValor])
-      .subscribe({
-        next: () => this.dialogRef.close(true),
-        error: err => console.error('Error al guardar', err)
-      });
+saveValorManual(): void {
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
   }
+
+  const v = this.form.value;
+
+  const camposVisibles = this.getCamposVisibles();
+
+  // 🔢 calculamos totales
+  const { totalLav, totalSdf } = this.calcularTotales(camposVisibles, v);
+
+  const nuevoValor: any = {
+    tipoGuardia: v.tipoGuardia,
+    nivelComplejidad: this.data.nivelComplejidad,
+    fechaInicio: v.fechaInicio,
+    idsHospitales: this.data.idsHospitales,
+
+    // 👇 TOTAL calculado en front
+    totalLav,
+    totalSdf
+  };
+
+  // solo guarda los campos visibles
+  camposVisibles.forEach(campo => {
+    nuevoValor[campo] = v[campo]; // ya es number
+  });
+
+  this.valorGuardiasCargoService
+    .cargarValoresManual([nuevoValor])
+    .subscribe({
+      next: () => this.dialogRef.close(true),
+      error: err => console.error('Error al guardar', err)
+    });
+}
 
   cancelar(): void {
     this.dialogRef.close();

@@ -112,10 +112,28 @@
           [matTooltip]="event.title"
           (click)="$event.stopPropagation(); onMonthEventClicked(event)"
         >
-          {{ getApellidoFromEvent(event) }}
+          <!-- Apellido del profesional con tachado si es rechazado -->
+          <span [ngStyle]="{
+            textDecoration: event.auth === 'RECHAZADO' ? 'line-through' : 'none'
+          }">
+            {{ getApellidoFromEvent(event) }}
+          </span>
+
+          <!-- Icono según el estado usando tu método -->
+          <span
+            *ngIf="event.auth === 'PENDIENTE' || event.auth === 'RECHAZADO'"
+            [ngStyle]="{
+              color: event.auth === 'PENDIENTE' ? 'orange' : 'red',
+              fontWeight: 'bold',
+              marginLeft: '4px'
+            }"
+          >
+            {{ getIconoAutorizacion(event.auth) }}
+          </span>
         </div>
       </div>
     </ng-template>
+
 
     <!-- CALENDARIO DE SEMANA -->
     <ng-template #eventTemplate let-event="event">
