@@ -11,9 +11,11 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
 import { LegajoService } from 'src/app/services/Configuracion/legajo.service';
 import { NoAsistencialService } from 'src/app/services/Configuracion/no-asistencial.service';
 import { LegajoDetailComponent } from '../legajo-detail/legajo-detail.component';
+import { LegajoListDialogComponent } from '../legajo-list-dialog/legajo-list-dialog.component';
 import { MotivoBajaDialogComponent } from '../motivo-baja-dialog/motivo-baja-dialog.component';
 
 @Component({
@@ -44,6 +46,7 @@ export class LegajoPersonComponent implements OnInit, OnDestroy, AfterViewInit {
     private legajoService: LegajoService,
     private asistencialService: AsistencialService,
     private noAsistencialService: NoAsistencialService,
+    private efectorService: EfectorService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private paginatorIntl: MatPaginatorIntl,
@@ -230,6 +233,41 @@ ngOnInit(): void {
     } else {
       this.router.navigate(['/legajo-create']);
     }
+  }
+
+  loadLegajos(): void {
+    if (!this.personId) {
+      this.toastr.error('No se encontró la persona para listar legajos', 'ERROR', { timeOut: 3000 });
+      return;
+    }
+
+    const efectorId = this.efectorService.getCurrentEfectorId();
+    if (!efectorId) {
+      this.toastr.error('No se encontró el efector seleccionado', 'ERROR', { timeOut: 3000 });
+      return;
+    }
+
+    const personId = this.personId;
+
+    this.legajoService.listAllByActivoFalseByPersonAndEfector(personId, efectorId).subscribe({
+      next: (data) => {
+        this.dialog.open(LegajoListDialogComponent, {
+          width: '1200px',
+          maxWidth: '98vw',
+          maxHeight: '90vh',
+          data: {
+            legajos: data,
+            nombreCompleto: this.nombreCompleto,
+            titulo: 'Lista de Legajos Inactivos',
+            fromAsistencial: this.fromAsistencial,
+            fromNoAsistencial: this.fromNoAsistencial,
+          },
+        });
+      },
+      error: () => {
+        this.toastr.error('Error al cargar legajos inactivos', 'ERROR', { timeOut: 3000 });
+      },
+    });
   }
     
   updateLegajo(legajo: Legajo): void { 
