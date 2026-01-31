@@ -90,6 +90,7 @@ import { MinisterioComponent } from './components/configuracion/establecimiento/
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail/region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { ServicioDetailComponent } from './components/configuracion/establecimiento/servicio-detail/servicio-detail.component';
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
 import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
@@ -217,6 +218,8 @@ import { RegistroActividadesEditComponent } from './components/actividades/regis
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
+import { ServicioEditComponent } from './components/configuracion/establecimiento/servicio-edit/servicio-edit.component';
+import { ServicioComponent } from './components/configuracion/establecimiento/servicio/servicio.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
@@ -294,6 +297,9 @@ import { PersonalDhDetailComponent } from './components/personal/personal-dh-det
     LocalidadComponent,
     LocalidadEditComponent,
     LocalidadDetailComponent,
+    ServicioComponent,
+    ServicioEditComponent,
+    ServicioDetailComponent,
     MinisterioComponent,
     MinisterioDetailComponent,
     MinisterioEditComponent,

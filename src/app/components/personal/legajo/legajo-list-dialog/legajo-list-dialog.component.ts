@@ -32,7 +32,10 @@ export class LegajoListDialogComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private legajoService: LegajoService,
     @Inject(MAT_DIALOG_DATA) public data: LegajoListDialogData
-  ) {}
+  ) {
+    // ✅ evita "Blocked aria-hidden..." cuando el foco queda en el botón que abrió el dialog
+    this.blurActiveElementIfInAppRoot();
+  }
 
   ngOnInit(): void {
     const fromAsistencial = !!this.data?.fromAsistencial;
@@ -116,5 +119,15 @@ export class LegajoListDialogComponent implements OnInit, AfterViewInit {
         this.accentFilter(motivoModificacion).includes(this.accentFilter(filter))
       );
     };
+  }
+
+  private blurActiveElementIfInAppRoot(): void {
+    const active = document.activeElement as HTMLElement | null;
+    if (!active) return;
+
+    const appRoot = document.querySelector('app-root');
+    if (appRoot && appRoot.contains(active)) {
+      active.blur();
+    }
   }
 }

@@ -1,7 +1,7 @@
-import { RegistroActividad } from "../RegistroActividad";
 import { Efector } from "../Configuracion/Efector";
-import { DistribucionGuardia } from "../personal/DistribucionGuardia";
 import { DistribucionConsultorio } from "../personal/DistribucionConsultorio";
+import { DistribucionGuardia } from "../personal/DistribucionGuardia";
+import { RegistroActividad } from "../RegistroActividad";
 
 export class Servicio {
     id?: number;

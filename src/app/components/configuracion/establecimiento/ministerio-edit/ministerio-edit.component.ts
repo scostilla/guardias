@@ -2,13 +2,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { MinisterioDto } from 'src/app/dto/Configuracion/MinisterioDto';
 import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
 import { Region } from 'src/app/models/Configuracion/Region';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class MinisterioEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = []; 
+  servicios: Servicio[] = [];
   
   // 🔥 NUEVAS PROPIEDADES PARA MANEJO DE IMÁGENES
   selectedFile: File | null = null;
@@ -39,7 +41,8 @@ export class MinisterioEditComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<MinisterioEditComponent>,
     private ministerioService: MinisterioService,
-    private localidadService: LocalidadService, 
+    private localidadService: LocalidadService,
+    private servicioService: ServicioService,
     private regionService: RegionService,
     private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: Ministerio
@@ -49,6 +52,7 @@ export class MinisterioEditComponent implements OnInit {
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
       localidad: ['', Validators.required],
       region: ['', Validators.required],
+      servicio: [[ ], Validators.required],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9., ]{3,80}$')]],
       url: [this.data ? this.data.url : ''],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]]
@@ -56,15 +60,23 @@ export class MinisterioEditComponent implements OnInit {
 
     this.listLocalidad();
     this.listRegion();
+    this.listServicio();
 
     if (data) {
       this.ministerioForm.patchValue(data);
-    }
+
+      if ((data as any).servicios && Array.isArray((data as any).servicios)){
+        this.ministerioForm.patchValue({ servicio: (data as any).servicios });
+      }
   }
+}
 
   ngOnInit(): void {
     console.log('🔍 Inicializando componente con data:', this.data);
     console.log('🔍 Verificando URL en data:', this.data?.url);
+    console.log('🔍 Tipo de URL:', typeof this.data?.url);
+  console.log('🔍 URL es null/undefined?:', this.data?.url == null);
+  console.log('🔍 URL es string vacío?:', this.data?.url === '');
 
     // 🔥 VERIFICAR SI HAY URL Y NO ES VACÍA
     if (this.data?.url && this.data.url.trim() !== '') {
@@ -74,6 +86,10 @@ export class MinisterioEditComponent implements OnInit {
       console.log('🖼️ URL completa construida:', this.fileUrl);
     } else {
       console.log('❌ Ministerio sin URL de imagen válida');
+      console.log('- URL original:', this.data?.url);
+    console.log('- Es undefined:', this.data?.url === undefined);
+    console.log('- Es null:', this.data?.url === null);
+    console.log('- Es string vacío:', this.data?.url === '');
       
       // 🔥 SI NO HAY URL EN DATA, INTENTAR OBTENERLA DEL SERVIDOR
       if (this.data?.id) {
@@ -89,6 +105,9 @@ export class MinisterioEditComponent implements OnInit {
               // 🔥 ACTUALIZAR EL DATA OBJETO
               this.data.url = ministerioCompleto.url;
             }
+            if (ministerioCompleto.servicios && Array.isArray(ministerioCompleto.servicios)){
+              this.ministerioForm.patchValue({ servicio: ministerioCompleto.servicios });
+            }
           },
           (error) => {
             console.error('❌ Error al obtener ministerio desde servidor:', error);
@@ -99,7 +118,20 @@ export class MinisterioEditComponent implements OnInit {
     
     this.initialData = this.ministerioForm.value;
     console.log('💾 Datos iniciales del formulario:', this.ministerioForm.value);
+  
+    console.log('🔍 Inicializando componente con data:', this.data);
+
+   if (this.data?.url) {
+    console.log('📸 Ministerio tiene URL de imagen:', this.data.url);
+    this.ministerioForm.patchValue({ url: this.data.url });
+    this.fileUrl = `http://localhost:8080${this.data.url}`;
+  } else {
+    console.log('❌ Ministerio sin URL de imagen');
   }
+
+  this.initialData = this.ministerioForm.value;
+  console.log('💾 Datos iniciales del formulario:', this.ministerioForm.value);
+}
 
   isModified(): boolean {
     if (!this.data) {
@@ -120,6 +152,17 @@ export class MinisterioEditComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  listServicio(): void {
+    this.servicioService.list().subscribe(
+      data => {
+        this.servicios = data.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   listRegion(): void {
@@ -314,6 +357,150 @@ export class MinisterioEditComponent implements OnInit {
     );
   }
 
+  uploadImageWithDuplicateCheck(): void {
+    if (!this.selectedFile) {
+      this.toastr.warning('No se seleccionó ningún archivo');
+      return;
+    }
+
+    if (!this.data || !this.data.id) {
+      this.toastr.error('Debe guardar el ministerio antes de subir la imagen');
+      return;
+    }
+
+    console.log('🔄 Iniciando subida con verificación de duplicados:', this.data.nombre, 'ID:', this.data.id);
+    
+    this.isUploading = true;
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+
+    this.ministerioService.uploadImage(this.data.id, formData).subscribe(
+      (response: any) => {
+        this.isUploading = false;
+        
+        // 🔥 MANEJAR RESPUESTA DE DUPLICADO
+        if (response.isDuplicate) {
+          console.log('⚠️ Imagen duplicada detectada');
+          
+          // Mantener la imagen existente
+          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.ministerioForm.patchValue({ url: response.url });
+          
+          // Limpiar selección
+          this.selectedFile = null;
+          const fileInput = document.getElementById('archivo') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          
+          return;
+        }
+
+        // 🔥 MANEJAR CONFLICTO DE NOMBRE (409)
+        if (response.isDuplicateName) {
+          this.handleDuplicateNameConflict(response);
+          return;
+        }
+
+        // 🔥 SUBIDA EXITOSA
+        this.handleSuccessfulUpload(response);
+      },
+      (error) => {
+        this.isUploading = false;
+        
+        // 🔥 MANEJAR ERROR 409 (CONFLICTO)
+        if (error.status === 409 && error.error.isDuplicateName) {
+          this.handleDuplicateNameConflict(error.error);
+          return;
+        }
+
+        // 🔥 MANEJAR OTROS ERRORES
+        console.error('❌ Error al subir la imagen:', error);
+        
+        let errorMessage = 'Error al subir la imagen';
+        if (error.error && error.error.mensaje) {
+          errorMessage = error.error.mensaje;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        this.toastr.error(errorMessage);
+        this.selectedFile = null;
+      }
+    );
+  }
+
+  private handleDuplicateNameConflict(response: any): void {
+    this.pendingFile = this.selectedFile;
+    this.isDuplicateDialogOpen = true;
+    
+    const message = `${response.mensaje}\n\nArchivo existente: ${response.existingFile}\nArchivo nuevo: ${response.originalName}`;
+    
+    if (confirm(message)) {
+      // Usuario eligió reemplazar
+      this.forceUploadImage();
+    } else {
+      // Usuario eligió cancelar
+      this.toastr.info('Subida cancelada por el usuario');
+      this.selectedFile = null;
+      this.pendingFile = null;
+      this.isDuplicateDialogOpen = false;
+      
+      const fileInput = document.getElementById('archivo') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    }
+  }
+
+  private forceUploadImage(): void {
+    // Implementar endpoint especial para forzar reemplazo
+    if (!this.pendingFile || !this.data?.id) return;
+
+    this.isUploading = true;
+    const formData = new FormData();
+    formData.append('image', this.pendingFile);
+    formData.append('forceReplace', 'true'); // Flag para forzar reemplazo
+
+    this.ministerioService.uploadImage(this.data.id, formData).subscribe(
+      (response: any) => {
+        this.handleSuccessfulUpload(response);
+        this.pendingFile = null;
+        this.isDuplicateDialogOpen = false;
+      },
+      (error) => {
+        this.isUploading = false;
+        console.error('❌ Error al forzar subida:', error);
+        this.toastr.error('Error al reemplazar la imagen');
+        this.pendingFile = null;
+        this.isDuplicateDialogOpen = false;
+      }
+    );
+  }
+
+  private handleSuccessfulUpload(response: any): void {
+    console.log('✅ Respuesta completa del servidor:', response);
+    
+    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.ministerioForm.patchValue({ url: response.url });
+    this.ministerioForm.markAsDirty();
+    
+    this.isUploading = false;
+    
+    const successMessage = response.isDuplicate ? 
+      `Imagen ya existente utilizada: ${response.filename}` :
+      `${response.mensaje}. Guardada en: ${response.folderName}`;
+    
+    this.toastr.success(successMessage, 'Imagen procesada', { timeOut: 5000 });
+    
+    // Limpiar selección
+    this.selectedFile = null;
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
   openFileSelector(): void {
     const fileInput = document.getElementById('archivo') as HTMLInputElement;
     if (fileInput) {
@@ -481,25 +668,30 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
       const regionId = formValue.region ? formValue.region.id : null;
       const localidadId = formValue.localidad ? formValue.localidad.id : null;
       const cabeceraId = formValue.cabecera ? formValue.cabecera.id : null;
-      
-      const ministerioDto = new MinisterioDto(
-        formValue.nombre.toUpperCase(),
-        formValue.domicilio,
-        regionId,
-        localidadId,
-        formValue.telefono,
-        formValue.observacion,
-        '', // Para nuevos ministerios
-        cabeceraId,
-      );
+      const servicioIds: number[] = (formValue.servicio || []).map((s: any) => {
+        if (s == null) return s;
+        return typeof s === 'number' ? s : (s.id ?? s);
+      }).filter((id: any) => id != null);
 
-      console.log('🚀 MinisterioDto a enviar:', ministerioDto);
+      const payload: any = {
+        nombre:(formValue.nombre || '').toUpperCase(),
+        domicilio: formValue.domicilio,
+        idRegion: regionId,
+        idLocalidad: localidadId,
+        telefono: formValue.telefono,
+        observacion: formValue.observacion,
+        idCabecera: cabeceraId,
+        idServicios: servicioIds
+        // NO incluir url aquí: la url se agrega luego tras subir la imagen
+      };
+
+      console.log('🚀 MinisterioDto a enviar:', payload);
 
       if (this.data && this.data.id) {
         // 🔥 ACTUALIZACIÓN DE MINISTERIO EXISTENTE
-        ministerioDto.url = formValue.url || '';
-        
-        this.ministerioService.update(this.data.id, ministerioDto).subscribe(
+        const updatePayload = { ...payload, url: formValue.url || '' };
+
+        this.ministerioService.update(this.data.id, updatePayload).subscribe(
           async (result) => {
             console.log('✅ Ministerio actualizado:', result);
             
@@ -513,7 +705,7 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
                 if (uploadResponse && uploadResponse.url) {
                   this.ministerioForm.patchValue({ url: uploadResponse.url });
                   this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
-                  result.url = uploadResponse.url;
+                  (result as any).url = uploadResponse.url;
                 }
                 
               } catch (uploadError) {
@@ -536,9 +728,8 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
         );
       } else {
         // 🔥 CREACIÓN DE NUEVO MINISTERIO
-        this.ministerioService.save(ministerioDto).subscribe(
-          async (ministerioCreado) => {
-            console.log('✅ Ministerio creado exitosamente:', ministerioCreado);
+        this.ministerioService.save(payload).subscribe(
+          async (ministerioCreado: any) => {
             
             this.data = ministerioCreado;
             
@@ -550,7 +741,7 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
                 if (uploadResponse && uploadResponse.url) {
                   this.ministerioForm.patchValue({ url: uploadResponse.url });
                   this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
-                  ministerioCreado.url = uploadResponse.url;
+                  (ministerioCreado as any).url = uploadResponse.url;
                 }
                 
               } catch (uploadError) {
@@ -572,14 +763,52 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
     }
   }
       
-  compareLocalidad(p1: Localidad, p2: Localidad): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  compareLocalidad(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
+
+  compareRegion(a: any, b: any): boolean {
+    if (!a || !b) return false;
+    return a.id === b.id;
   }
 
-  compareRegion(p1: Region, p2: Region): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
+  // Comparador para servicio (necesario para multiselect de servicios)
+compareServicio(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
 
+// Retorna true si todos los servicios disponibles están seleccionados
+areAllServiciosSelected(): boolean {
+  if (!this.ministerioForm) return false;
+  const selected: any[] = this.ministerioForm.get('servicio')?.value || [];
+  if (!this.servicios || this.servicios.length === 0) return false;
+  return this.servicios.every(s => selected.some((sel: any) => sel && sel.id === s.id));
+}
+
+// Alterna selección de todos los servicios
+toggleAllServicios(ev: MouseEvent): void {
+  ev.stopPropagation();
+  if (!this.ministerioForm) return;
+  if (this.areAllServiciosSelected()) {
+    this.ministerioForm.patchValue({ servicio: [] });
+  } else {
+    this.ministerioForm.patchValue({ servicio: this.servicios ? this.servicios.slice() : [] });
+  }
+  this.ministerioForm.get('servicio')?.markAsTouched();
+  this.ministerioForm.get('servicio')?.updateValueAndValidity();
+}
+
+// Normaliza cambios de selección (si vienen solo ids en lugar de objetos)
+onServicioChange(): void {
+  const val = this.ministerioForm.get('servicio')?.value;
+  if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'number') {
+    const mapped = (val as number[]).map(id => this.servicios.find(s => s.id === id)).filter(Boolean);
+    this.ministerioForm.patchValue({ servicio: mapped }, { emitEvent: false });
+  }
+  this.ministerioForm.get('servicio')?.updateValueAndValidity();
+}
 
   cancel(): void {
     this.toastr.info('No se guardaron los datos.', 'Cancelado', {

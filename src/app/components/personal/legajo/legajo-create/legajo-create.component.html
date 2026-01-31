@@ -64,13 +64,13 @@
                           
             <mat-form-field appearance="fill">
               <mat-label>Matrícula Nacional</mat-label>
-              <input matInput formControlName="matriculaNacional">
+              <input matInput formControlName="matriculaNacional" [readonly]="professionalFieldsLocked">
               <mat-error *ngIf="legajoForm.get('matriculaNacional')?.errors?.['pattern']">El n° de matrícula puede tener solo números (entre 5 y 10 digitos).</mat-error>
             </mat-form-field>
         
             <mat-form-field appearance="fill">
               <mat-label>Matrícula Provincial</mat-label>
-              <input matInput formControlName="matriculaProvincial">
+              <input matInput formControlName="matriculaProvincial" [readonly]="professionalFieldsLocked">
               <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['required']">El n° de matrícula es requerido.</mat-error>
               <mat-error *ngIf="legajoForm.get('matriculaProvincial')?.errors?.['pattern']">El n° de matrícula puede tener solo números (entre 5 y 10 digitos).</mat-error>
             </mat-form-field>

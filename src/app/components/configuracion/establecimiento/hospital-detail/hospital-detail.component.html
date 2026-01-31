@@ -33,9 +33,9 @@
             <td>{{hospital.esCabecera ? 'Si' : 'No'}}</td>
           </tr>
           <tr>
-  <th scope="row">Sello</th>
-  <td>
-    <img 
+            <th scope="row">Sello</th>
+            <td>
+              <img 
                 *ngIf="hospital.url" 
                 [src]="imageUrl" 
                 alt="Imagen del Hospital" 
@@ -43,9 +43,24 @@
                 (load)="onImageLoad($event)"
                 (error)="onImageError($event)"
               >
-    <span *ngIf="!hospital.url" style="color: #666; font-style: italic;">Sin imagen</span>
-  </td>
-</tr>
+              <span *ngIf="!hospital.url" style="color: #666; font-style: italic;">Sin imagen</span>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Servicios</th>
+            <td>
+              <ng-container *ngIf="$any(hospital).servicios?.length; else sinServicios">
+                <ul style="margin: 0; padding-left: 18px;">
+                  <li *ngFor="let s of $any(hospital).servicios">
+                    {{ s?.descripcion || s?.nombre || ('ID ' + s?.id) }}
+                  </li>
+                </ul>
+              </ng-container>
+              <ng-template #sinServicios>
+                <span style="color: #666; font-style: italic;">Sin servicios</span>
+              </ng-template>
+            </td>
+          </tr>
         </tbody>
       </table>
     <div mat-dialog-actions class="action mt-4">

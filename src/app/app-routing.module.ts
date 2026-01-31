@@ -13,9 +13,9 @@ import { HomeAutoridadComponent } from './components/home-autoridad/home-autorid
 import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
-import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
-import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
 import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
+import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
+import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
 import { LoginComponent } from './components/login/login.component';
 
 //Configuraciones: Generales
@@ -26,6 +26,9 @@ import { SoporteFormComponent } from './components/configuracion/soporte-form/so
 
 
 //Configuraciones: Territorio
+import { ServicioDetailComponent } from './components/configuracion/establecimiento/servicio-detail/servicio-detail.component';
+import { ServicioEditComponent } from './components/configuracion/establecimiento/servicio-edit/servicio-edit.component';
+import { ServicioComponent } from './components/configuracion/establecimiento/servicio/servicio.component';
 import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
 import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
 import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
@@ -105,8 +108,8 @@ import { RegistroActividadesEgresoProfesionalComponent } from './components/acti
 import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
-import { RegistroActividadesProfesionalesComponent } from './components/actividades/registro-actividades-profesionales/registro-actividades-profesionales.component';
 import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
+import { RegistroActividadesProfesionalesComponent } from './components/actividades/registro-actividades-profesionales/registro-actividades-profesionales.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
 
@@ -244,6 +247,9 @@ const routes: Routes = [
   {path: 'localidad', component:LocalidadComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path: 'localidad-detail/:id', component:LocalidadDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path: 'localidad-edit/:id', component:LocalidadEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio', component:ServicioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio-detail/:id', component:ServicioDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio-edit/:id', component:ServicioEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
  
   //Configuraciones: Establecimientos
   {path: 'ministerio', component:MinisterioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},

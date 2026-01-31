@@ -2,6 +2,7 @@ import { EfectorDto } from "./EfectorDto";
 
 export class MinisterioDto extends EfectorDto {
   idCabecera: number;
+  idServicios?: number[];
   
   
 
@@ -14,8 +15,10 @@ export class MinisterioDto extends EfectorDto {
       observacion: string,
       url: string,
       idCabecera: number,
+      idServicios?: number[] 
   ) {
     super(nombre, domicilio, idRegion, idLocalidad, telefono, observacion, url);
     this.idCabecera = idCabecera;
+    this.idServicios = idServicios || [];
   }
 }
