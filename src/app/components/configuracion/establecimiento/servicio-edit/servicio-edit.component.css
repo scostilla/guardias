@@ -1,0 +1,4 @@
+.servicio-edit { padding: 12px; max-width: 600px; }
+.servicio-edit form div { margin-bottom: 8px; }
+.servicio-edit label { display: block; font-weight: 600; margin-bottom: 4px; }
+.servicio-edit input[type="text"], .servicio-edit input[type="number"] { width: 100%; padding: 6px; box-sizing: border-box; }

@@ -1,0 +1,70 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-7">
+      <div class="titulos">SERVICIOS</div>
+    </div>
+    <div class="col-12 col-md-1 m d-flex justify-content-end">
+      <button mat-fab class="button-success" (click)="openFormChanges()" matTooltip="Agregar Servicio">
+        <mat-icon>library_add</mat-icon>
+      </button>
+      <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/configuracion">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+    <div class="col-12 col-md-4 mt-3 mt-md-0">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por palabra clave" #input>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort #empTbSort="matSort" class="mat-elevation-z6"> 
+
+        <!-- Descripción -->
+        <ng-container matColumnDef="descripcion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Descripción </th>
+          <td mat-cell *matCellDef="let servicio"> {{ servicio.descripcion }} </td>
+        </ng-container>
+
+        <!-- Nivel -->
+        <ng-container matColumnDef="nivel">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Nivel </th>
+          <td mat-cell *matCellDef="let servicio"> {{ servicio.nivel }} </td>
+        </ng-container>
+
+        <!-- Crítico -->
+        <ng-container matColumnDef="critico">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="negrita"> Crítico </th>
+          <td mat-cell *matCellDef="let servicio"> {{ servicio.critico ? 'Sí' : 'No' }} </td>
+        </ng-container>
+
+        <!-- Acciones -->
+        <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef class="negrita"> Acciones </th>
+    <td mat-cell *matCellDef="let servicio" class="cell-actions">
+        <button mat-icon-button matTooltip="Ver {{servicio.descripcion}}" (click)="openDetail(servicio)">
+            <mat-icon class="btnDetail" style="transform: rotate(90deg)">zoom_in</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Editar {{servicio.descripcion}}" (click)="openFormChanges(servicio)">
+            <mat-icon class="btnEdit">edit</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Eliminar {{servicio.descripcion}}" (click)="deleteServicio(servicio)">
+            <mat-icon class="btnRemove">delete</mat-icon>
+        </button>
+    </td>
+</ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <div class="row mt-3">
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

@@ -53,6 +53,7 @@ import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { Caps } from 'src/app/models/Configuracion/Caps';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
+import { Legajo } from 'src/app/models/Configuracion/Legajo';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 
 
@@ -157,6 +158,9 @@ export class LegajoCreateComponent implements OnInit {
   selectedHospitalesCaps: number[] = [];
   allHospitalesCapsSelected = false;
   allCapsSelected: boolean = false;
+
+  // Bloqueo de campos profesionales cuando existe otro legajo activo
+  professionalFieldsLocked: boolean = false;
 
 
   /* Form de revista */
@@ -540,7 +544,7 @@ this.initialHabilitacionesGenerales =efectoresFiltradosGeneral;
     if (personaId !== undefined && personaId !== null) {
       
     // Obtener todos los legajos y filtrar los activos
-    this.legajoService.list().subscribe(legajos => {
+    this.legajoService.list().subscribe((legajos: Legajo[]) => {
       const legajosActivos = legajos.filter(legajo => 
       legajo.persona?.id === personaId && legajo.activo
     );
@@ -565,6 +569,9 @@ this.initialHabilitacionesGenerales =efectoresFiltradosGeneral;
           // Si tiene un solo legajo activo, verifica el valor de 'esAutoridad' en legajo para saber si es un legajo General o de autoridad
           const legajoActivo = legajosActivos[0];
           const asignadoAutoridadActivo = legajoActivo.esAutoridad;
+
+          // Precargar datos profesionales desde el legajo activo existente y bloquear campos
+          this.prefillAndLockProfessionalFieldsFromActiveLegajo(legajoActivo);
         
           // Aqui se establece el valor contrario de esAutoridad para el nuevo legajo
           if (asignadoAutoridadActivo) {
@@ -713,6 +720,56 @@ this.initialHabilitacionesGenerales =efectoresFiltradosGeneral;
   ]);
 
 }
+
+  private prefillAndLockProfessionalFieldsFromActiveLegajo(legajoActivo: Legajo): void {
+    const profesionId = legajoActivo.profesion?.id ?? null;
+    const especialidadIds: number[] = (legajoActivo.especialidades ?? [])
+      .map(e => e?.id)
+      .filter((id): id is number => typeof id === 'number');
+
+    const matriculaNacional = legajoActivo.matriculaNacional ?? '';
+    const matriculaProvincial = legajoActivo.matriculaProvincial ?? '';
+
+    // Setear valores sin disparar listeners
+    this.legajoForm.get('profesion')?.setValue(profesionId, { emitEvent: false });
+    this.legajoForm.get('matriculaNacional')?.setValue(matriculaNacional, { emitEvent: false });
+    this.legajoForm.get('matriculaProvincial')?.setValue(matriculaProvincial, { emitEvent: false });
+
+    // Cargar opciones de especialidades para que el mat-select muestre los nombres
+    if (typeof profesionId === 'number') {
+      this.especialidadService.list().subscribe(
+        data => {
+          this.especialidades = data.filter(especialidad => especialidad.profesion.id === profesionId);
+
+          this.noEspecialidadesMessage = this.especialidades.length > 0
+            ? ''
+            : 'La profesión seleccionada no posee especialidades.';
+
+          this.legajoForm.get('especialidades')?.setValue(especialidadIds, { emitEvent: false });
+        },
+        error => {
+          console.log('Error al cargar las especialidades:', error);
+          this.especialidades = [];
+          this.legajoForm.get('especialidades')?.setValue([], { emitEvent: false });
+          this.noEspecialidadesMessage = 'Error al cargar las especialidades. Intente nuevamente.';
+        }
+      );
+    } else {
+      this.especialidades = [];
+      this.legajoForm.get('especialidades')?.setValue([], { emitEvent: false });
+    }
+
+    // Bloquear campos
+    this.professionalFieldsLocked = true;
+    this.legajoForm.get('profesion')?.disable({ emitEvent: false });
+    this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
+
+    this.toastr.info(
+      'Se detectó un legajo activo: se copiaron y bloquearon los datos de profesión, especialidades y matrículas.',
+      'Datos pre-cargados',
+      { timeOut: 7000, positionClass: 'toast-top-center', progressBar: true }
+    );
+  }
 
 toggleSelectAll(): void {
   if (this.allSelected) {
@@ -2477,7 +2534,13 @@ private isHospital(id: number): boolean {
 
   if (this.formularioValidoCompleto) {
     console.log('✅ FORMULARIO VÁLIDO - PROCEDIENDO A GUARDAR');
-    const legajoData = this.legajoForm.value;
+    const legajoData = {
+      ...this.legajoForm.value,
+      profesion: this.legajoForm.get('profesion')?.value,
+      especialidades: this.legajoForm.get('especialidades')?.value,
+      matriculaNacional: this.legajoForm.get('matriculaNacional')?.value,
+      matriculaProvincial: this.legajoForm.get('matriculaProvincial')?.value,
+    };
     
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || [];

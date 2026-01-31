@@ -90,6 +90,7 @@ import { MinisterioComponent } from './components/configuracion/establecimiento/
 import { RegionDetailComponent } from './components/configuracion/establecimiento/region-detail/region-detail.component';
 import { RegionEditComponent } from './components/configuracion/establecimiento/region-edit/region-edit.component';
 import { RegionComponent } from './components/configuracion/establecimiento/region/region.component';
+import { ServicioDetailComponent } from './components/configuracion/establecimiento/servicio-detail/servicio-detail.component';
 import { EspecialidadDetailComponent } from './components/configuracion/profesionales/especialidad-detail/especialidad-detail.component';
 import { EspecialidadEditComponent } from './components/configuracion/profesionales/especialidad-edit/especialidad-edit.component';
 import { EspecialidadComponent } from './components/configuracion/profesionales/especialidad/especialidad.component';
@@ -175,6 +176,7 @@ import { LegajoCreateComponent } from './components/personal/legajo/legajo-creat
 import { LegajoDetailComponent } from './components/personal/legajo/legajo-detail/legajo-detail.component';
 import { LegajoEditNoasistencialComponent } from './components/personal/legajo/legajo-edit-noasistencial/legajo-edit-noasistencial.component';
 import { LegajoEditComponent } from './components/personal/legajo/legajo-edit/legajo-edit.component';
+import { LegajoListDialogComponent } from './components/personal/legajo/legajo-list-dialog/legajo-list-dialog.component';
 import { LegajoNoAsistencialComponent } from './components/personal/legajo/legajo-no-asistencial/legajo-no-asistencial.component';
 import { LegajoPersonComponent } from './components/personal/legajo/legajo-person/legajo-person.component';
 import { MotivoBajaDialogComponent } from './components/personal/legajo/motivo-baja-dialog/motivo-baja-dialog.component';
@@ -212,9 +214,13 @@ import { PersonalSinLegajoComponent } from './components/personal/personal-sin-l
 import { PersonalComponent } from './components/personal/personal/personal.component';
 import { interceptorProvider } from './interceptors/interceptor.service';
 
+import { NgChartsModule } from 'ng2-charts';
 import { RegistroActividadesEditComponent } from './components/actividades/registro-actividades-edit/registro-actividades-edit.component';
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
+import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
+import { ServicioEditComponent } from './components/configuracion/establecimiento/servicio-edit/servicio-edit.component';
+import { ServicioComponent } from './components/configuracion/establecimiento/servicio/servicio.component';
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
 import { CronogramaPendienteDetailComponent } from './components/cronogramas/cronograma-pendiente-detail/cronograma-pendiente-detail.component';
 import { CronogramaPendienteEditComponent } from './components/cronogramas/cronograma-pendiente-edit/cronograma-pendiente-edit.component';
@@ -237,17 +243,15 @@ import { RmensualExtraDetailComponent } from './components/guardias/rmensual-ext
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
 import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
+import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
+import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
 import { CambiarPasswordComponent } from './components/login/cambiar-password/cambiar-password.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { AsistencialSelectorAllComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { PersonalDhCreateComponent } from './components/personal/personal-dh-create/personal-dh-create.component';
 import { PersonalDhDetailComponent } from './components/personal/personal-dh-detail/personal-dh-detail.component';
-import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
-import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
-import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
 import { ReportesComponent } from './components/reportes/reportes.component';
-import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -295,6 +299,9 @@ import { NgChartsModule } from 'ng2-charts';
     LocalidadComponent,
     LocalidadEditComponent,
     LocalidadDetailComponent,
+    ServicioComponent,
+    ServicioEditComponent,
+    ServicioDetailComponent,
     MinisterioComponent,
     MinisterioDetailComponent,
     MinisterioEditComponent,
@@ -340,6 +347,7 @@ import { NgChartsModule } from 'ng2-charts';
     EfectorEditComponent,
     EfectorDetailComponent,
     LegajoPersonComponent,
+    LegajoListDialogComponent,
     CargoComponent,
     CargoEditComponent,
     CargoDetailComponent,

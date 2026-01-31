@@ -29,6 +29,19 @@
           <td>{{ministerio.localidad.nombre}}</td>
         </tr>
         <tr>
+            <th scope="row">Servicio</th>
+            <td>
+              <ng-container *ngIf="ministerio?.servicios && ministerio.servicios.length; else noServicios">
+                <ul class="servicios-list">
+                  <li *ngFor="let s of ministerio.servicios">{{ s.descripcion }}</li>
+                </ul>
+              </ng-container>
+              <ng-template #noServicios>
+                <span class="muted">Sin servicios asociados</span>
+              </ng-template>
+            </td>
+          </tr>
+        <tr>
           <th scope="row">Cabecera</th>
           <td>{{ministerio.idCabecera}}</td>
         </tr>

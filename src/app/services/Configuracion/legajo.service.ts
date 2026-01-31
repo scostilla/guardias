@@ -70,6 +70,12 @@ listByAsistencial(idAsistencial: number): Observable<LegajoActualDto[]> {
   return this.httpClient.get<LegajoActualDto[]>(url);
 }
 
+  public listAllByActivoFalseByPersonAndEfector(idPersona: number, idEfector: number): Observable<Legajo[]> {
+    return this.httpClient.get<Legajo[]>(
+      `${this.legajosURL}listAllByActivoFalseByPersonAndEfector/${idPersona}/${idEfector}`
+    );
+  }
+
 uploadImage(legajoId: number, file: FormData): Observable<any> {
   console.log('📤 Subiendo imagen para legajo ID:', legajoId);
   return this.httpClient.post<any>(`${this.legajosURL}uploadImage/${legajoId}`, file)

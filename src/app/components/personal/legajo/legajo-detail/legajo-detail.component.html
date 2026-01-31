@@ -24,6 +24,11 @@
             <td>{{ legajo.fechaFinal ? (legajo.fechaFinal | date: 'dd/MM/yyyy') : 'Aún en vigencia.' }}</td>
           </tr>
 
+          <tr>
+            <th scope="row">Motivo modificación</th>
+            <td>{{ legajo.motivoModificacion ? legajo.motivoModificacion : '-' }}</td>
+          </tr>
+
           <tr *ngIf="legajo.matriculaNacional">
             <th scope="row">Matricula Nacional</th>
             <td>{{legajo.matriculaNacional || 'No posee'}}</td>
@@ -48,7 +53,7 @@
           </td>
         </tr>
 
-        <tr *ngIf="legajo?.tipoGuardias?.length">
+        <tr *ngIf="legajo.tipoGuardias.length">
           <th scope="row">Tipo de guardia</th>
           <td>
             <ng-container *ngFor="let tipoGuardias of legajo.tipoGuardias; let i = index">
@@ -62,7 +67,7 @@
           <td>{{legajo.cargo?.nombre || 'No posee'}}</td>
         </tr>
 
-        <tr *ngIf="legajo?.efectores?.length && legajo.esAutoridad">
+        <tr *ngIf="legajo.efectores.length && legajo.esAutoridad">
           <th scope="row">Efector cargo</th>
             <td>
                 <ng-container *ngFor="let efector of legajo.efectores; let i = index">
@@ -76,7 +81,7 @@
           <td>{{legajo.udo.nombre}}</td>
         </tr>
         
-        <tr *ngIf="legajo?.efectores?.length && !legajo.esAutoridad">
+        <tr *ngIf="legajo.efectores.length && !legajo.esAutoridad">
           <th scope="row">Efector</th>
             <td>
                 <ng-container *ngFor="let efector of legajo.efectores; let i = index">
