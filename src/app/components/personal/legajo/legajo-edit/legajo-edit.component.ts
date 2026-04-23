@@ -56,6 +56,7 @@ import { Caps } from 'src/app/models/Configuracion/Caps';
 import { HabilitacionesGenerales } from 'src/app/models/Configuracion/HabilitacionesGenerales';
 import { HabilitacionesGuardias } from 'src/app/models/Configuracion/HabilitacionesGuardias';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
+import { MotivoModificacionDialogComponent } from '../motivo-modificacion-dialog/motivo-modificacion-dialog.component';
 import { environment } from 'src/environments/environment.prod';
 
 

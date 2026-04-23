@@ -14,6 +14,7 @@ import { environment } from "src/environments/environment.prod";
 export class RegistroActividadService {
 
   registroActividadURL = `${environment.apiUrl}/registroActividad/`;
+  private habilitacionesGuardiasURL = `${environment.apiUrl}/habilitacionesGuardias/`
   private _refresh$ = new Subject<void>();
   private registroIdSubject = new BehaviorSubject<number | null>(null);
 

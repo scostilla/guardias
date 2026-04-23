@@ -9,6 +9,7 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
+import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
 import { environment } from 'src/environments/environment.prod';
 
 
