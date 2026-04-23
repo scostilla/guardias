@@ -34,6 +34,7 @@ import { Region } from 'src/app/models/Configuracion/Region';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
 import { NoAsistencial } from 'src/app/models/Configuracion/No-asistencial';
 import { HabilitacionesGeneralesService } from 'src/app/services/Configuracion/habilitacionesGenerales.service';
+import { environment } from 'src/environments/environment.prod';
 
 interface Agrup {
   value: string;
@@ -1603,7 +1604,7 @@ onTipoEfectorCargoChange(event: any): void {
         (response: any) => {
           console.log('✅ Imagen subida exitosamente:', response);
           this.isUploading = false;
-          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.fileUrl = `${environment.apiUrl}${response.url}`; 
           
           const fileInput = document.getElementById('archivo') as HTMLInputElement;
           if (fileInput) {

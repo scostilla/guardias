@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Adicional } from 'src/app/models/Configuracion/Adicional';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
     providedIn: 'root'
   })
   export class AdicionalService {
   
-    adicionalURL = 'http://localhost:8080/adicional/';
+    adicionalURL = `${environment.apiUrl}/adicional/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

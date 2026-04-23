@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Pais } from "src/app/models/Configuracion/Pais";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Pais } from "src/app/models/Configuracion/Pais";
 export class PaisService {
 
   
-    paisesURL = 'http://localhost:8080/pais/';
+    paisesURL = `${environment.apiUrl}/pais/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

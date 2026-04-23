@@ -11,13 +11,15 @@ import { CambiarPassword } from 'src/app/dto/usuario/cambiar-password';
 import { ResetPassword } from 'src/app/dto/usuario/reset-password';
 import { TokenService } from './token.service';
 
+import { environment } from 'src/environments/environment.prod';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  authUrl =  'http://localhost:8080/auth/' ;
+  authUrl = `${environment.apiUrl}/auth/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient, private tokenService: TokenService) { }

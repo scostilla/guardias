@@ -8,13 +8,14 @@ import { NoAsistencial } from "src/app/models/Configuracion/No-asistencial";
 import { NoAsistencialListDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialListDto';
 import { NoAsistencialSummaryDto } from 'src/app/dto/Configuracion/no-asistencial/NoAsistencialSummaryDto';
 import * as CryptoJS from 'crypto-js';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NoAsistencialService {
   
-  noasistencialesURL = 'http://localhost:8080/noasistencial/';
+  noasistencialesURL = `${environment.apiUrl}/noasistencial/`;
   private _refresh$ = new Subject<void>();
   private currentEfectorIdSubject = new BehaviorSubject<number | null>(null);
   currentEfectorId$ = this.currentEfectorIdSubject.asObservable();

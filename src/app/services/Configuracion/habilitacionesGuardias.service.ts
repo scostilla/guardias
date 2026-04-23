@@ -6,6 +6,7 @@ import { HabilitacionesGuardias } from "src/app/models/Configuracion/Habilitacio
 import { HabilitacionesGuardiasDto } from "src/app/dto/Configuracion/HabilitacionesGuardiasDto";
 import { AsistencialSummaryDto } from 'src/app/dto/Configuracion/asistencial/AsistencialSummaryDto';
 import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencial/AsistencialListNombreTgDto';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -14,7 +15,7 @@ import { AsistencialListNombreTgDto } from 'src/app/dto/Configuracion/asistencia
 export class HabilitacionesGuardiasService {
 
   
-  permisosURL = 'http://localhost:8080/habilitacionesGuardias/';
+  permisosURL = `${environment.apiUrl}/habilitacionesGuardias/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

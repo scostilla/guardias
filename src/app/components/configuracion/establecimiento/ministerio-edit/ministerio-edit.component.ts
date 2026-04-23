@@ -9,7 +9,7 @@ import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
 import { MinisterioService } from 'src/app/services/Configuracion/ministerio.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
-import { ServicioService } from 'src/app/services/Configuracion/servicio.service';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Component({
@@ -82,7 +82,7 @@ export class MinisterioEditComponent implements OnInit {
     if (this.data?.url && this.data.url.trim() !== '') {
       console.log('📸 Ministerio tiene URL de imagen:', this.data.url);
       this.ministerioForm.patchValue({ url: this.data.url });
-      this.fileUrl = `http://localhost:8080${this.data.url}`;
+      this.fileUrl = `${environment.apiUrl}${this.data.url}`; 
       console.log('🖼️ URL completa construida:', this.fileUrl);
     } else {
       console.log('❌ Ministerio sin URL de imagen válida');
@@ -100,7 +100,7 @@ export class MinisterioEditComponent implements OnInit {
             if (ministerioCompleto.url && ministerioCompleto.url.trim() !== '') {
               console.log('📸 URL encontrada en servidor:', ministerioCompleto.url);
               this.ministerioForm.patchValue({ url: ministerioCompleto.url });
-              this.fileUrl = `http://localhost:8080${ministerioCompleto.url}`;
+              this.fileUrl = `${environment.apiUrl}${ministerioCompleto.url}`;
               
               // 🔥 ACTUALIZAR EL DATA OBJETO
               this.data.url = ministerioCompleto.url;
@@ -338,7 +338,7 @@ export class MinisterioEditComponent implements OnInit {
     this.uploadError = `Esta imagen ya existe: ${response.existingFile}`;
 
     this.selectedFile = null;
-    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.fileUrl = `${environment.apiUrl}${response.url}`; 
     this.ministerioForm.patchValue({ url: response.url });
     
     const fileInput = document.getElementById('archivo') as HTMLInputElement;
@@ -606,7 +606,7 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
           console.log('📝 URL de la imagen:', response.url);
           
           this.isUploading = false;
-          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.fileUrl = `${environment.apiUrl}${response.url}`;
           
           const fileInput = document.getElementById('archivo') as HTMLInputElement;
           if (fileInput) {
@@ -642,7 +642,7 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
           console.log('✅ Imagen subida exitosamente después de actualizar ministerio:', response);
           console.log('📝 URL de la imagen:', response.url);
           
-          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.fileUrl = `${environment.apiUrl}${response.url}`;
           
           const fileInput = document.getElementById('archivo') as HTMLInputElement;
           if (fileInput) {
@@ -704,8 +704,8 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
                 
                 if (uploadResponse && uploadResponse.url) {
                   this.ministerioForm.patchValue({ url: uploadResponse.url });
-                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
-                  (result as any).url = uploadResponse.url;
+                  this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
+                  result.url = uploadResponse.url;
                 }
                 
               } catch (uploadError) {
@@ -740,8 +740,8 @@ private uploadImageAfterCreation(ministerioId: number): Promise<any> {
                 
                 if (uploadResponse && uploadResponse.url) {
                   this.ministerioForm.patchValue({ url: uploadResponse.url });
-                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
-                  (ministerioCreado as any).url = uploadResponse.url;
+                  this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
+                  ministerioCreado.url = uploadResponse.url;
                 }
                 
               } catch (uploadError) {

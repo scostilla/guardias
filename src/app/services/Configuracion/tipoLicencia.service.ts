@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TipoLicenciaDto } from 'src/app/dto/Configuracion/TipoLicenciaDto';
 import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { TipoLicencia } from 'src/app/models/Configuracion/TipoLicencia';
     })
     export class TipoLicenciaService {
 
-    tipoLicenciaURL = 'http://localhost:8080/tipoLicencia/';
+    tipoLicenciaURL = `${environment.apiUrl}/tipoLicencia/`;
     private _refresh$ = new Subject<void>();
 
     constructor (private httpClient: HttpClient) { }

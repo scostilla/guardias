@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -14,7 +15,7 @@ export class EfectorService {
   private currentEfectorIdSubject = new BehaviorSubject<number | null>(this.getCurrentEfectorId());
   currentEfectorId$ = this.currentEfectorIdSubject.asObservable();
 
-  efectoresURL = 'http://localhost:8080/efector/';
+  efectoresURL = `${environment.apiUrl}/efector/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

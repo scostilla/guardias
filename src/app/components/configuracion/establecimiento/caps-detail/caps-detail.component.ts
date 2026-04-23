@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Caps } from 'src/app/models/Configuracion/Caps';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-caps-detail',
@@ -30,7 +31,7 @@ export class CapsDetailComponent implements OnInit {
     console.log('🔗 URL original:', this.caps.url);
 
     if (this.caps.url) {
-      this.imageUrl = `http://localhost:8080${this.caps.url}`;
+      this.imageUrl = `${environment.apiUrl}${this.caps.url}`;
       console.log('🖼️ URL completa construida:', this.imageUrl);
     } else {
       console.log('❌ No hay URL de imagen');

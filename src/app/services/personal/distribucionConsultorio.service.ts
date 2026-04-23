@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { DistribucionConsultorio } from "src/app/models/personal/DistribucionConsultorio";
 import { DistribucionConsultorioDto } from "src/app/dto/personal/DistribucionConsultorioDto";
 import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/CronogramaTentativoResquestDto";
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -12,7 +13,7 @@ import { CronogramaTentativoResquestDto } from "src/app/dto/Cronogramas/Cronogra
 })
 export class DistribucionConsultorioService {
 
-  distribucionConsultoriosURL = 'http://localhost:8080/distribucionConsultorio/';
+  distribucionConsultoriosURL = `${environment.apiUrl}/distribucionConsultorio/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

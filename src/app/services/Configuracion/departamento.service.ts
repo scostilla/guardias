@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DepartamentoDto } from 'src/app/dto/Configuracion/DepartamentoDto';
 import { Departamento } from "src/app/models/Configuracion/Departamento";
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { Departamento } from "src/app/models/Configuracion/Departamento";
 })
 export class DepartamentoService {
 
-  departamentosURL = 'http://localhost:8080/departamento/';
+  departamentosURL = `${environment.apiUrl}/departamento/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

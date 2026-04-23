@@ -22,7 +22,7 @@
   display: inline;
 }
 
-.nav > .nav-header > {
+.nav > .nav-header {
   display: inline-block;
   font-size: 1.2em;
   color: #fff;

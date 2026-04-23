@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LocalidadDto } from "src/app/dto/Configuracion/LocalidadDto";
 import { Localidad } from "src/app/models/Configuracion/Localidad";
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { Localidad } from "src/app/models/Configuracion/Localidad";
 })
 export class LocalidadService {
 
-  localidadesURL = 'http://localhost:8080/localidad/';
+  localidadesURL = `${environment.apiUrl}/localidad/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

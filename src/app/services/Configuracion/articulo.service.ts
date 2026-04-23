@@ -4,13 +4,14 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ArticuloDto } from 'src/app/dto/Configuracion/ArticuloDto';
 import { Articulo } from 'src/app/models/Configuracion/Articulo';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
     providedIn: 'root'
   })
   export class ArticuloService {
   
-    articuloURL = 'http://localhost:8080/articulo/';
+    articuloURL = `${environment.apiUrl}/articulo/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

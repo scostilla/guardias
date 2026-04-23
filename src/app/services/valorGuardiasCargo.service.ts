@@ -7,6 +7,7 @@ import { ValorGuardias } from "src/app/models/ValorGuardias";
 import { ValorGuardiaManualDto } from "src/app/dto/Configuracion/ValorGuardiaManualDto";
 import { GrillaValorGuardiaCompletaDto } from "src/app/dto/Configuracion/GrillaValorGuardiaCompletaDto";
 import * as moment from 'moment';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ import * as moment from 'moment';
 export class ValorGuardiasCargoService {
 
   
-    valorGuardiasCargoURL = 'http://localhost:8080/valorGuardiaCargoYagrup/';
+    valorGuardiasCargoURL = `${environment.apiUrl}/valorGuardiaCargoYagrup/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

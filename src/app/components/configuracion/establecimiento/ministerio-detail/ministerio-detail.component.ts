@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Ministerio } from 'src/app/models/Configuracion/Ministerio';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-ministerio-detail',
@@ -21,7 +22,7 @@ export class MinisterioDetailComponent implements OnInit {
     this.ministerio = this.data;
 
     if (this.ministerio.url) {
-      this.imageUrl = `http://localhost:8080${this.ministerio.url}`;
+      this.imageUrl = `${environment.apiUrl}${this.ministerio.url}`;
       console.log('🖼️ URL completa construida:', this.imageUrl);
     } else {
       console.log('❌ No hay URL de imagen');

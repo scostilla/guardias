@@ -5,6 +5,7 @@ import { RegistroMensual } from "../models/RegistroMensual";
 import { RegistroMensualDto } from "../dto/RegistroMensualDto";
 import { RegistroMensualListDto } from "../dto/RegistroMensualListDto";
 import { BehaviorSubject } from 'rxjs';
+import { environment } from "src/environments/environment.prod";
 
 export interface FechaSeleccionada {
   mes: number;
@@ -16,7 +17,7 @@ export interface FechaSeleccionada {
   })
   export class RegistroMensualService {
   
-    registroMensualURL = 'http://localhost:8080/registroMensual/';
+    registroMensualURL = `${environment.apiUrl}/registroMensual/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }

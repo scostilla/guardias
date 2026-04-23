@@ -4,13 +4,14 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { EspecialidadDto } from 'src/app/dto/Configuracion/EspecialidadDto';
 import { Especialidad } from "src/app/models/Configuracion/Especialidad";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EspecialidadService {
 
-  especialidadesURL = 'http://localhost:8080/especialidad/';
+  especialidadesURL = `${environment.apiUrl}/especialidad/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

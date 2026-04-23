@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TipoRevista } from "src/app/models/Configuracion/TipoRevista";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TipoRevistaService {
 
-  revistasURL = 'http://localhost:8080/tipoRevista/';
+  revistasURL = `${environment.apiUrl}/tipoRevista/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }
