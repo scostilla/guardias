@@ -14,7 +14,7 @@
             'auth-rechazado': event.auth === 'RECHAZADO',
             'auth-anulado': event.auth === 'ANULADO'
           }">{{event.auth}}</span></span><br/> 
-          Del <span class="negrita"> {{ event.start | date:'short' }} hs</span> al <span class="negrita"> {{ event.end | date:'short' }} hs</span><br/>
+          Del <span class="negrita"> {{ event.meta.fechaHoraRealInicio | date:'short' }} hs</span> al <span class="negrita"> {{ event.meta.fechaHoraRealFin | date:'short' }} hs</span><br/>
           <span>Servicio: {{ event.servicio }}</span><br/>
           <span *ngIf="event.obs"> {{ event.obs }} </span>
         </div>

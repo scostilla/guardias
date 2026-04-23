@@ -1,0 +1,97 @@
+:host {
+  /* usa el primary del theme si existe (Material/MDC), con fallback */
+  --legajo-primary: var(--mdc-theme-primary, #1976d2);
+  --legajo-primary-contrast: #fff;
+  --legajo-surface: #ffffff;
+  --legajo-surface-2: #f6f9ff;
+  --legajo-divider: #e5e5e5;
+  --legajo-text: #1f2937;
+  --legajo-muted: #6b7280;
+}
+
+.dialog-header.legajo-header {
+  background: var(--legajo-surface);
+  border-bottom: 3px solid var(--legajo-primary);
+}
+
+.title h2.legajo-title {
+  margin: 0;
+  color: var(--legajo-primary);
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.subtitle.legajo-subtitle {
+  margin-top: 4px;
+  color: var(--legajo-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.dialog-body {
+  padding: 12px 16px;
+  max-height: 72vh;
+  overflow: auto;
+  background: var(--legajo-surface);
+}
+
+.table-responsive {
+  overflow: auto;
+}
+
+table.legajo-table {
+  width: 100%;
+  min-width: 1150px;
+  table-layout: auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+td.mat-cell, th.mat-header-cell {
+  vertical-align: middle;
+}
+
+.mat-column-motivoModificacion {
+  min-width: 360px;
+  max-width: 520px;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+th.mat-header-cell.mat-column-motivoModificacion {
+  white-space: normal;
+}
+
+.mat-column-acciones {
+  width: 90px;
+  text-align: center;
+}
+
+.paginator {
+  margin-top: 12px;
+}
+
+.empty {
+  padding: 16px;
+  text-align: center;
+  color: #666;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid var(--legajo-divider);
+  background: var(--legajo-surface);
+}
+
+.cell-actions {
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* IMPORTANTE:
+   Se eliminan los estilos locales de ribbons para NO pisar los colores
+   que ya están definidos para Legajo Persona (global/compartido). */
+/* (antes había aquí .ribbon-autoridad/.ribbon-general) */

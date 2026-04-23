@@ -21,7 +21,6 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 //Models y Dto
 import { CronogramaTentativoListAtorizadoDto } from 'src/app/dto/Cronogramas/CronogramaTentativoListAtorizadoDto';
 import { EfectorHospitalDto } from 'src/app/dto/Configuracion/efector/EfectorHospitalDto';
-import { AsistencialDetailDto } from 'src/app/dto/Configuracion/asistencial/AsistencialDetailDto';
 
 //Componentes
 import { CronogramaPendienteDetailComponent } from '../cronograma-pendiente-detail/cronograma-pendiente-detail.component';
@@ -49,23 +48,17 @@ export class CronogramaPendienteComponent implements OnInit, OnDestroy {
   efectorNivel: number | null = null;
 
   //Autenticación
-  isLogged = false;
-  roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
 
   constructor(
     private dialog: MatDialog,
-    private toastr: ToastrService,
     private router: Router,
     private tokenService: TokenService,
-    private authService: AuthService,
     private cronogramaTentativoService: CronogramaTentativoService,
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
@@ -85,9 +78,6 @@ export class CronogramaPendienteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
   
     // BehaviorSubject para obtener el rol seleccionado
     this.tokenService.currentRole$.subscribe(role => {
@@ -95,27 +85,6 @@ export class CronogramaPendienteComponent implements OnInit, OnDestroy {
       this.UserRoles();  // Llamar a la función que determina los roles
     });
   
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-      // Obtener detalles del usuario
-      this.authService.detailPersonBasicPanel().subscribe(
-        (response: PersonBasicPanelDto) => {
-          this.usuarioPersona = response.id;
-  
-          // Log para mostrar el usuario y los efectores
-        },
-        error => {
-          console.error('Error al obtener detalles del usuario:', error);
-        }
-      );
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
 
@@ -137,6 +106,7 @@ export class CronogramaPendienteComponent implements OnInit, OnDestroy {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isAutoridad = false;
       this.isDph = false;

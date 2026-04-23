@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ValorGmi } from 'src/app/models/ValorGmi';
-import { ValorGmiService } from 'src/app/services/valorGmi.service';
+import { ValorGuardiasCargoService } from 'src/app/services/valorGuardiasCargo.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { Hospital } from 'src/app/models/Configuracion/Hospital';
 
 @Component({
   selector: 'app-valores-guardias-create',
@@ -11,102 +12,208 @@ import { ValorGmiService } from 'src/app/services/valorGmi.service';
 })
 export class ValoresGuardiasCreateComponent implements OnInit {
 
-  form?: FormGroup;
+  form!: FormGroup;
+  hospitales: Hospital[] = [];
+  minDate!: Date;
+
+  readonly decimal6_2 = Validators.pattern(/^\d{6}\.\d{2}$/);
+
+  readonly labelsCampos: Record<string, string> = {
+    decreto1178Lav: 'Decreto 1178 LAV',
+    decreto1178Sdf: 'Decreto 1178 SDF',
+    decreto1657Lav: 'Decreto 1657 LAV',
+    decreto1657Sdf: 'Decreto 1657 SDF',
+    resolucion2575Lav: 'Resolución 2575 LAV',
+    resolucion2575Sdf: 'Resolución 2575 SDF',
+    bono1580Lav: 'Bono Decreto 1580 LAV',
+    bono1580Sdf: 'Bono Decreto 1580 SDF',
+  };
+
+  readonly conceptosConfig: Record<string, string[]> = {
+    DECRETO_1178: ['decreto1178Lav', 'decreto1178Sdf'],
+    DECRETO_1657: ['decreto1657Lav', 'decreto1657Sdf'],
+    RESOLUCION_2575: ['resolucion2575Lav', 'resolucion2575Sdf'],
+    BONO_1580: ['bono1580Lav', 'bono1580Sdf'],
+  };
 
   constructor(
     private fb: FormBuilder,
-    private valorGmiService: ValorGmiService,
+    private valorGuardiasCargoService: ValorGuardiasCargoService,
+    private hospitalService: HospitalService,
     private dialogRef: MatDialogRef<ValoresGuardiasCreateComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: ValorGmi 
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      nivelComplejidad: number;
+      idsHospitales: number[];
+      titulo: string;
+      conceptos: string[];
+    }
   ) {
+    const hoy = new Date();
+    this.minDate = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
+
     this.form = this.fb.group({
-      monto: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-      documentoLegal: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9. °]{2,60}$')]],
-      fechaInicio: ['', Validators.required],
-      tipoGuardia: [[], [Validators.required]]
+      tipoGuardia: ['', Validators.required],
+      fechaInicio: [null, Validators.required],
+
+      decreto1178Lav: [0],
+      decreto1178Sdf: [0],
+      decreto1657Lav: [0],
+      decreto1657Sdf: [0],
+      resolucion2575Lav: [0],
+      resolucion2575Sdf: [0],
+      bono1580Lav: [0],
+      bono1580Sdf: [0],
     });
   }
 
   ngOnInit(): void {
+    this.listHospitales();
+
+    this.form.get('tipoGuardia')?.valueChanges.subscribe(() => {
+      this.actualizarValidaciones();
+    });
   }
 
-  saveGMI(): void {
-    if (this.form?.invalid) {
+  listHospitales(): void {
+    this.hospitalService.list().subscribe({
+      next: data => this.hospitales = data,
+      error: err => console.error(err)
+    });
+  }
+
+  /* ========= CAMPOS VISIBLES SEGÚN BOTONES ========= */
+
+  getControl(campo: string) {
+  return this.form.get(campo);
+  }
+
+  esPasiva(): boolean {
+    return this.form?.get('tipoGuardia')?.value === 'PASIVA';
+  }
+
+  getCamposVisibles(): string[] {
+    const tipo = this.form?.get('tipoGuardia')?.value;
+
+    if (!tipo || tipo === 'PASIVA') {
+      return [];
+    }
+
+    return this.data.conceptos.flatMap(concepto => {
+      if (tipo === 'CARGO' && concepto === 'RESOLUCION_2575') return [];
+      if (tipo === 'EXTRA' && concepto.startsWith('DECRETO')) return [];
+      return this.conceptosConfig[concepto];
+    });
+  }
+
+  actualizarValidaciones(): void {
+    Object.keys(this.form.controls).forEach(campo => {
+      this.form.get(campo)?.clearValidators();
+    });
+
+    this.form.get('tipoGuardia')?.setValidators(Validators.required);
+    this.form.get('fechaInicio')?.setValidators(Validators.required);
+
+    this.getCamposVisibles().forEach(campo => {
+      this.form!.get(campo)?.setValidators([
+        Validators.required,
+        Validators.max(999999.99),
+        Validators.min(0)
+      ]);
+    });
+
+    this.form.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private calcularTotales(campos: string[], valores: any): { totalLav: number; totalSdf: number } {
+  let totalLav = 0;
+  let totalSdf = 0;
+
+  campos.forEach(campo => {
+    if (campo.endsWith('Lav')) {
+      totalLav += Number(valores[campo] ?? 0);
+    }
+
+    if (campo.endsWith('Sdf')) {
+      totalSdf += Number(valores[campo] ?? 0);
+    }
+  });
+
+  return { totalLav, totalSdf };
+  }
+
+
+  /* ========= INPUT TIPO BANCO ========= */
+
+  onMontoInput(event: Event, campo: string): void {
+    const input = event.target as HTMLInputElement;
+
+    // Solo dígitos
+    let raw = input.value.replace(/\D/g, '');
+
+    // límite: 8 dígitos (6 enteros + 2 decimales)
+    if (raw.length > 8) {
+      raw = raw.slice(0, 8);
+    }
+
+    if (!raw) {
+      this.form.patchValue({ [campo]: 0 }, { emitEvent: false });
+      input.value = '0,00';
       return;
     }
 
-    const tipoGuardiaValue = this.form?.get('tipoGuardia')?.value;
-    const nuevaFechaInicio = new Date(this.form?.get('fechaInicio')?.value);
+    // mover decimales
+    const value = Number(raw) / 100;
 
-    this.valorGmiService.list().subscribe(
-      valorGmis => {
-        valorGmis.forEach(gmi => {
-          if (typeof gmi.fechaInicio === 'string') {
-            gmi.fechaInicio = new Date(gmi.fechaInicio);
-          }
-          if (gmi.fechaFin && typeof gmi.fechaFin === 'string') {
-            gmi.fechaFin = new Date(gmi.fechaFin);
-          }
-        });
+    // guardamos number
+    this.form.patchValue({ [campo]: value }, { emitEvent: false });
 
-        const filteredRecords = valorGmis.filter(gmi => gmi.tipoGuardia === tipoGuardiaValue);
-        const lastRecord = filteredRecords.sort((a, b) => b.fechaInicio.getTime() - a.fechaInicio.getTime())[0];
-
-        if (lastRecord) {
-          const updatedLastRecord = { ...lastRecord, fechaFin: nuevaFechaInicio };
-
-          this.valorGmiService.update(lastRecord.id!, updatedLastRecord).subscribe(
-            () => {
-              const valorGmi: ValorGmi = {
-                fechaInicio: nuevaFechaInicio,
-                fechaFin: null,
-                monto: parseFloat(this.form?.get('monto')?.value),
-                tipoGuardia: tipoGuardiaValue,
-                documentoLegal: this.form?.get('documentoLegal')?.value
-              };
-
-              this.valorGmiService.save(valorGmi).subscribe(
-                response => {
-                  console.log('ValorGmi guardado exitosamente', response);
-                  this.dialogRef.close(true);
-                },
-                error => {
-                  console.error('Error al guardar ValorGmi', error);
-                }
-              );
-            },
-            error => {
-              console.error('Error al actualizar el último ValorGmi', error);
-            }
-          );
-        } else {
-          const valorGmi: ValorGmi = {
-            fechaInicio: nuevaFechaInicio,
-            fechaFin: null,
-            monto: parseFloat(this.form?.get('monto')?.value),
-            tipoGuardia: tipoGuardiaValue,
-            documentoLegal: this.form?.get('documentoLegal')?.value
-          };
-
-          console.log('Datos enviados para guardar ValorGmi:', valorGmi);
-
-          this.valorGmiService.save(valorGmi).subscribe(
-            response => {
-              console.log('ValorGmi guardado exitosamente', response);
-              this.dialogRef.close(true);
-            },
-            error => {
-              console.error('Error al guardar ValorGmi', error);
-            }
-          );
-        }
-      },
-      error => {
-        console.error('Error al obtener el último ValorGmi', error);
-      }
-    );
+    // mostrar formato AR
+    input.value = value.toLocaleString('es-AR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
-  
+
+/* ========= SAVE SIMPLE ========= */
+
+saveValorManual(): void {
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
+  }
+
+  const v = this.form.value;
+
+  const camposVisibles = this.getCamposVisibles();
+
+  // 🔢 calculamos totales
+  const { totalLav, totalSdf } = this.calcularTotales(camposVisibles, v);
+
+  const nuevoValor: any = {
+    tipoGuardia: v.tipoGuardia,
+    nivelComplejidad: this.data.nivelComplejidad,
+    fechaInicio: v.fechaInicio,
+    idsHospitales: this.data.idsHospitales,
+
+    // 👇 TOTAL calculado en front
+    totalLav,
+    totalSdf
+  };
+
+  // solo guarda los campos visibles
+  camposVisibles.forEach(campo => {
+    nuevoValor[campo] = v[campo]; // ya es number
+  });
+
+  this.valorGuardiasCargoService
+    .cargarValoresManual([nuevoValor])
+    .subscribe({
+      next: () => this.dialogRef.close(true),
+      error: err => console.error('Error al guardar', err)
+    });
+}
+
   cancelar(): void {
     this.dialogRef.close();
   }

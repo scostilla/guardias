@@ -8,11 +8,22 @@ import { ValorGuardiasCargo } from 'src/app/models/ValorGuardiasCargo';
 import { ValorGuardiasCargoService } from 'src/app/services/valorGuardiasCargo.service';
 import { ValoresGuardiasCreateComponent } from '../valores-guardias-create/valores-guardias-create.component';
 import { ValoresBonoUtiCreateComponent } from '../valores-bono-uti-create/valores-bono-uti-create.component';
+import { GrillaValorGuardiaCompletaDto } from 'src/app/dto/Configuracion/GrillaValorGuardiaCompletaDto';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, forkJoin } from 'rxjs';
 import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
+
+const CONCEPTOS_GUARDIA = {
+  DECRETO_1178: 'DECRETO_1178',
+  DECRETO_1657: 'DECRETO_1657',
+  RESOLUCION_2575: 'RESOLUCION_2575',
+  BONO_1580: 'BONO_1580'
+} as const;
+
+type ConceptoGuardia =
+  typeof CONCEPTOS_GUARDIA[keyof typeof CONCEPTOS_GUARDIA];
 
 @Component({
   selector: 'app-valores-guardias',
@@ -20,14 +31,19 @@ moment.locale('es');
   styleUrls: ['./valores-guardias.component.css']
 })
 export class ValoresGuardiasComponent implements OnInit, OnDestroy {
-  valoresPorNivel: { [nivel: number]: ValorGuardiasCargo[] } = {};
+/*  valoresPorNivel: { [nivel: number]: ValorGuardiasCargo[] } = {};
   valoresNivel2Uro: ValorGuardiasCargo[] = [];
   valoresNivel2Otros: ValorGuardiasCargo[] = [];
   valoresNivel1Susques: ValorGuardiasCargo[] = [];
-  valoresNivel1Otros: ValorGuardiasCargo[] = [];
+  valoresNivel1Otros: ValorGuardiasCargo[] = [];*/
   
   dialogRef!: MatDialogRef<ValoresGuardiasCreateComponent>;
   suscription!: Subscription;
+  readonly CONCEPTOS_GUARDIA = CONCEPTOS_GUARDIA;
+  grilla: GrillaValorGuardiaCompletaDto[] = [];
+  grillaPorNivel: { [nivel: number]: GrillaValorGuardiaCompletaDto } = {};
+  loading = false;
+
 
   constructor(
     private valorGmiService: ValorGmiService,
@@ -38,15 +54,17 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit(): void {
-    this.listCargo();
+
+    this.cargarGrilla();
+    /*this.listCargo();
 
     this.suscription = this.valorGuardiasCargoService.refresh$.subscribe(() => {
       this.listCargo();
-    })
+    })*/
 
   }
 
-  listCargo(): void {
+  /*listCargo(): void {
     this.suscription = this.valorGuardiasCargoService.obtenerValorGuardiaCargo().subscribe(
       (data: { [nivel: number]: ValorGuardiasCargo[] }) => {
 
@@ -68,25 +86,49 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
         console.error('Error al obtener el valor de guardia cargo', error);
       }
     );
+  }*/
+
+  cargarGrilla(): void {
+    this.loading = true;
+
+    // fecha actual (YYYY-MM-DD)
+    const fecha = new Date().toISOString().split('T')[0];
+
+    this.valorGuardiasCargoService.getGrillaCompleta(fecha).subscribe({
+      next: data => {
+        this.grilla = data;
+
+        this.grillaPorNivel = {};
+        data.forEach(nivel => {
+          this.grillaPorNivel[nivel.numeroNivel] = nivel;
+        });
+
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Error al cargar grilla', err);
+        this.loading = false;
+      }
+    });
   }
   
-  openCreateGMI(): void {
+  openCreateGMI(config: {nivelComplejidad: number; idsHospitales: number[]; titulo: string;  conceptos: ConceptoGuardia[];}): void {
     const dialogRef = this.dialog.open(ValoresGuardiasCreateComponent, {
       width: '600px',
-      data: null
+      data: config
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result) {
-          this.toastr.success('Valor GMI agregado con éxito', 'ÉXITO', {
+          this.toastr.success('Valor agregado con éxito', 'ÉXITO', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
           });
-          this.listCargo();
+          //this.listCargo();
         } else {
-          this.toastr.error('Ocurrió un error al intentar agregar el valor GMI', 'Error', {
+          this.toastr.error('Ocurrió un error al intentar agregar el valor', 'Error', {
             timeOut: 6000,
             positionClass: 'toast-top-center',
             progressBar: true
@@ -96,7 +138,7 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
     });
   }
 
-  openCreateUTI(): void {
+  /*openCreateUTI(): void {
     const dialogRef = this.dialog.open(ValoresBonoUtiCreateComponent, {
       width: '600px',
       data: null
@@ -120,7 +162,7 @@ export class ValoresGuardiasComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
+  }*/
 
   ngOnDestroy(): void {
     this.suscription?.unsubscribe();

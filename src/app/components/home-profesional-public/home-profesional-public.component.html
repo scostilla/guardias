@@ -1,0 +1,80 @@
+<app-spinner></app-spinner>
+<div id="container-title-hosp" >
+    <div class="text-title-hosp"><mat-icon>dashboard</mat-icon> &nbsp;&nbsp;Panel de consultas</div>
+</div>
+
+<div class="container">
+  <section>
+    <div class="container" >
+        <div class="row mb-4 ">
+            <div class="col-lg-2"></div>
+                <div class="col-lg-4 badge-outside-wrapper">
+
+                <!-- CARD -->
+                <div
+                    class="btnMenu card border-0 align-items-center"
+                    type="button"
+                    (click)="openRegistro()"
+                    (mouseenter)="toggleRegistro()"
+                    (mouseleave)="toggleRegistro()">
+
+                    <div class="icon2_btnMenu">
+                    <img class="img-fluid" src="/assets/img/i_profesionales.png" />
+                    </div>
+
+                    <div class="card-body text-center">
+                    <h2 class="fs-4 fw-bold">
+                        <span>MIS GUARDIAS</span>
+                    </h2>
+                    </div>
+
+                    <div *ngIf="showRegistro">
+                    Confirmá las guardias asignadas (Extra y CF).
+                    </div>
+                </div>
+
+                    <!-- BADGE centrado -->
+                    <div class="outside-badge" *ngIf="misGuardiasPendientesCount > 0">
+                    Pendientes: {{ misGuardiasPendientesCount }}
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                <div class="btnMenu card border-0 align-items-center" type="button" (click)="openMiAsistencia()" (mouseenter)="toggleAsistencia()" (mouseleave)="toggleAsistencia()">
+                    <div class="icon3_btnMenu">
+                    <img class="img-fluid" src="/assets/img/i_cronogramas.png" />
+                    </div>
+                    <div class="card-body text-center">
+                    <h2 class="fs-4 fw-bold"><span>MI ASISTENCIA</span></h2>
+                    </div>
+                    <div *ngIf="showAsistencia">
+                        Revisa tu historial de asistencia.
+                    </div>
+                </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+  </section>
+
+    <div class="row mt-5">
+        <div class="col-2"></div>
+        <div *ngIf="tieneCfActivo" class="col-8 text-pase">
+        <mat-icon class="icono-pase">assignment_late</mat-icon>
+        <div class="mensaje-pase">
+            No olvides entregar la factura de tus guardias dentro del tiempo estipulado:<br/>
+            - Primer quincena: del 15 al 20 del mes en curso.<br/>
+            - Segunda quincena: del 1 al 5 del mes siguiente en que realizaste la guardia.
+        </div>
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+    <!--<div class="row mt-5">
+        <div class="col-4"></div>
+        <div class="col-4 m d-flex justify-content-center">
+            <button mat-raised-button color="primary" type="submit" (click)="onLogOutProfesional()"><mat-icon>exit_to_app</mat-icon>Cerrar sesión {{this.nombre}} {{this.apellido}}</button>
+        </div>
+        <div class="col-4"></div>
+    </div>-->
+</div>

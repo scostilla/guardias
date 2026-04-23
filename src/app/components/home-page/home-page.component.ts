@@ -173,63 +173,63 @@ loadEfectoresForDphOrSuper(): void {
 }
 
   // Carga los efectores para un rol específico utilizando habilitaciones generales para un asistencial
-loadEfectoresForAutoridades(idPersona: number): void {
-  // Primero, intentamos recuperar el id previamente seleccionado desde el servicio
-  const previouslySelectedId = this.efectorService.getCurrentEfectorId();
-  if (previouslySelectedId) {
-    this.selectedListEfectores = previouslySelectedId;
-    console.log('Efector previamente seleccionado:', this.selectedListEfectores);
-  } else {
-    this.selectedListEfectores = null; // Si no hay id guardado, inicializamos como null
+  loadEfectoresForAutoridades(idPersona: number): void {
+    // Primero, intentamos recuperar el id previamente seleccionado desde el servicio
+    const previouslySelectedId = this.efectorService.getCurrentEfectorId();
+    if (previouslySelectedId) {
+      this.selectedListEfectores = previouslySelectedId;
+      console.log('Efector previamente seleccionado:', this.selectedListEfectores);
+    } else {
+      this.selectedListEfectores = null; // Si no hay id guardado, inicializamos como null
+    }
+
+    // Luego, obtenemos las habilitaciones generales para la persona (idPersona)
+    this.habilitacionesGeneralesService.getPermisoByPersona(idPersona).subscribe(
+      (habilitaciones: HabilitacionesGenerales) => {
+        console.log('Habilitaciones obtenidas para la persona:', habilitaciones);
+        
+        // Extraemos la lista de efectores del objeto HabilitacionesGenerales
+        this.efectores = habilitaciones.efectores; // Lista de efectores asociada a la persona
+
+        // Si no hay un id guardado y la lista no está vacía, aseguramos que el valor de selectedListEfectores sea null
+        if (!previouslySelectedId) {
+          this.selectedListEfectores = null;
+        }
+
+        // Si la lista de efectores tiene datos y el id es válido, lo podemos guardar en el servicio
+        if (this.efectores.length > 0 && this.selectedListEfectores !== null) {
+          this.efectorService.setCurrentEfectorId(this.selectedListEfectores);
+          console.log('ID del efector seleccionado para DPH o Super:', this.selectedListEfectores);
+        } else {
+          // Si no hay efectores o si selectedListEfectores es null, limpiamos el valor
+          console.warn('No hay efectores disponibles o el id es indefinido');
+          this.selectedListEfectores = null;
+        }
+      },
+      error => {
+        console.error('Error al obtener las habilitaciones para la persona:', error);
+        this.selectedListEfectores = null;  // En caso de error, aseguramos que se borre el id
+      }
+    );
   }
-
-  // Luego, obtenemos las habilitaciones generales para la persona (idPersona)
-  this.habilitacionesGeneralesService.getPermisoByPersona(idPersona).subscribe(
-    (habilitaciones: HabilitacionesGenerales) => {
-      console.log('Habilitaciones obtenidas para la persona:', habilitaciones);
-      
-      // Extraemos la lista de efectores del objeto HabilitacionesGenerales
-      this.efectores = habilitaciones.efectores; // Lista de efectores asociada a la persona
-
-      // Si no hay un id guardado y la lista no está vacía, aseguramos que el valor de selectedListEfectores sea null
-      if (!previouslySelectedId) {
-        this.selectedListEfectores = null;
+    
+  // Carga el efector para el rol 'Administrativo'
+  loadEfectorForAdministrativo(): void {
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        if (response.efectores && response.efectores.length > 0) {
+          this.selectedEfector = response.efectores[0];  // Solo tomamos el primer efector
+          this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
+        } else {
+          console.warn('No hay efectores disponibles para el Administrativo');
+          this.selectedEfector = null;
+        }
+      },
+      error => {
+        console.error('Error al obtener detalles del usuario para Administrativo:', error);
       }
-
-      // Si la lista de efectores tiene datos y el id es válido, lo podemos guardar en el servicio
-      if (this.efectores.length > 0 && this.selectedListEfectores !== null) {
-        this.efectorService.setCurrentEfectorId(this.selectedListEfectores);
-        console.log('ID del efector seleccionado para DPH o Super:', this.selectedListEfectores);
-      } else {
-        // Si no hay efectores o si selectedListEfectores es null, limpiamos el valor
-        console.warn('No hay efectores disponibles o el id es indefinido');
-        this.selectedListEfectores = null;
-      }
-    },
-    error => {
-      console.error('Error al obtener las habilitaciones para la persona:', error);
-      this.selectedListEfectores = null;  // En caso de error, aseguramos que se borre el id
-    }
-  );
-}
-  
-// Carga el efector para el rol 'Administrativo'
-loadEfectorForAdministrativo(): void {
-  this.authService.detailPersonBasicPanel().subscribe(
-    (response: PersonBasicPanelDto) => {
-      if (response.efectores && response.efectores.length > 0) {
-        this.selectedEfector = response.efectores[0];  // Solo tomamos el primer efector
-        this.efectorService.setCurrentEfectorId(this.selectedEfector.id);
-      } else {
-        console.warn('No hay efectores disponibles para el Administrativo');
-        this.selectedEfector = null;
-      }
-    },
-    error => {
-      console.error('Error al obtener detalles del usuario para Administrativo:', error);
-    }
-  );
-}
+    );
+  }
 
   // Método para cuando se cambia el efector (DPH o Super)
   onEfectorChange(event: Event): void {

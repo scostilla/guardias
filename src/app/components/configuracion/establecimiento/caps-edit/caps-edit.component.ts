@@ -2,11 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { Caps } from 'src/app/models/Configuracion/Caps';
 import { Hospital } from 'src/app/models/Configuracion/Hospital';
 import { Localidad } from 'src/app/models/Configuracion/Localidad';
 import { Region } from 'src/app/models/Configuracion/Region';
+import { Servicio } from 'src/app/models/Configuracion/Servicio';
 import { CapsService } from 'src/app/services/Configuracion/caps.service';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { LocalidadService } from 'src/app/services/Configuracion/localidad.service';
@@ -24,6 +24,7 @@ export class CapsEditComponent implements OnInit {
   initialData: any;
   localidades: Localidad[] = [];
   regiones: Region[] = [];
+  servicios: Servicio[] = [];
   hospitales: Hospital[] = [];
 
   // 🔥 NUEVAS PROPIEDADES PARA MANEJO DE IMÁGENES
@@ -41,7 +42,8 @@ export class CapsEditComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CapsEditComponent>,
     private capsService: CapsService,
-    private localidadService: LocalidadService, 
+    private localidadService: LocalidadService,
+    private servicioService: ServicioService,
     private regionService: RegionService,
     private hospitalService: HospitalService,
     private toastr: ToastrService,
@@ -52,6 +54,7 @@ export class CapsEditComponent implements OnInit {
       domicilio: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
       localidad: ['', Validators.required],
       region: ['', Validators.required],
+      servicio: [ [], Validators.required ],
       observacion: [this.data ? this.data.observacion : '', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9.,()° ]{3,80}$')]],
       url: [this.data ? this.data.url : ''],
       telefono: [this.data ? this.data.telefono : '', [Validators.pattern('^[0-9]{9,15}$')]],
@@ -62,9 +65,14 @@ export class CapsEditComponent implements OnInit {
     this.listLocalidad();
     this.listRegion();
     this.listHospital();
+    this.listServicios();
 
     if (data) {
       this.capsForm.patchValue(data);
+      // ...nuevo: si la data trae 'servicios' llenar el control 'servicio'
+      if ((data as any).servicios && Array.isArray((data as any).servicios)) {
+        this.capsForm.patchValue({ servicio: (data as any).servicios });
+      }
     }
   }
 
@@ -96,6 +104,10 @@ export class CapsEditComponent implements OnInit {
               // 🔥 ACTUALIZAR EL DATA OBJETO
               this.data.url = capsCompleto.url;
             }
+            // ...nuevo: si el detalle trae 'servicios', asignarlos al control 'servicio'
+          if (capsCompleto.servicios && Array.isArray(capsCompleto.servicios)) {
+            this.capsForm.patchValue({ servicio: capsCompleto.servicios });
+          }
           },
           (error) => {
             console.error('❌ Error al obtener CAPS desde servidor:', error);
@@ -129,6 +141,16 @@ export class CapsEditComponent implements OnInit {
       console.log(error);
     });
   }
+  listServicios(): void {
+  this.servicioService.list().subscribe(
+    data => {
+      this.servicios = data.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+    },
+    error => {
+      console.log(error);
+    }
+  );
+}
 
   listRegion(): void {
     this.regionService.list().subscribe(data => {
@@ -377,6 +399,16 @@ onFileSelected(event: any): void {
     return classes;
   }
 
+  // Normaliza cambios de selección (si vienen solo ids en lugar de objetos)
+onServicioChange(): void {
+  const val = this.capsForm.get('servicio')?.value;
+  if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'number') {
+    const mapped = (val as number[]).map(id => this.servicios.find(s => s.id === id)).filter(Boolean);
+    this.capsForm.patchValue({ servicio: mapped }, { emitEvent: false });
+  }
+  this.capsForm.get('servicio')?.updateValueAndValidity();
+}
+
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     if (target) {
@@ -507,35 +539,42 @@ onFileSelected(event: any): void {
     if (this.capsForm.valid) {
       const formValue = this.capsForm.value;
 
-      const capsDto = new CapsDto(
-        formValue.nombre.toUpperCase(),
-        formValue.domicilio,
-        formValue.region.id,
-        formValue.localidad.id,
-        formValue.telefono,
-        formValue.observacion,
-        '', // Para nuevos CAPS
-        formValue.cabecera.id,
-        this.data ? this.data.areaProgramatica : 1,
-        formValue.tipoCaps
-      );
+       // Extraer array de ids de servicios (soporta objetos o ids)
+      const servicioIds: number[] = (formValue.servicio || []).map((s: any) => {
+        if (s == null) return s;
+        return typeof s === 'number' ? s : (s.id ?? s);
+      }).filter((id: any) => id != null);
 
-      console.log('🚀 CapsDto a enviar:', capsDto);
+      // Payload plano (como en hospital-edit): enviar lista de servicios por ids y campos necesarios
+      const payload: any = {
+        nombre: (formValue.nombre || '').toUpperCase(),
+        domicilio: formValue.domicilio,
+        telefono: formValue.telefono || '',
+        observacion: formValue.observacion || '',
+        idRegion: formValue.region?.id ?? null,
+        idLocalidad: formValue.localidad?.id ?? null,
+        idCabecera: formValue.cabecera?.id ?? null,
+        tipoCaps: formValue.tipoCaps,
+        areaProgramatica: this.data ? this.data.areaProgramatica : 1,
+        idServicios: servicioIds
+        // NO incluir url aquí: la url se agrega luego tras subir la imagen
+      };
 
+      console.log('🚀 Payload a enviar (create/update) para CAPS con idServicios:', payload);
+ 
       if (this.data && this.data.id) {
-        // 🔥 ACTUALIZACIÓN DE CAPS EXISTENTE
-        capsDto.url = formValue.url || '';
-        
-        this.capsService.update(this.data.id, capsDto).subscribe(
-          async (result) => {
-            console.log('✅ CAPS actualizado:', result);
-            
-            // 🔥 SUBIR IMAGEN DESPUÉS DE ACTUALIZAR SI HAY UNA SELECCIONADA
-            if (this.selectedFile) {
-              console.log('📤 Subiendo imagen después de actualizar CAPS...');
-              try {
-                this.isUploading = true;
-                const uploadResponse = await this.uploadImageAfterUpdate(this.data.id!);
+        // 🔥 ACTUALIZACIÓN DE CAPS EXISTENTE (usar payload + url)
+        const updatePayload = { ...payload, url: formValue.url || '' };
+        this.capsService.update(this.data.id, updatePayload).subscribe(
+           async (result) => {
+             console.log('✅ CAPS actualizado:', result);
+             
+             // 🔥 SUBIR IMAGEN DESPUÉS DE ACTUALIZAR SI HAY UNA SELECCIONADA
+             if (this.selectedFile) {
+               console.log('📤 Subiendo imagen después de actualizar CAPS...');
+               try {
+                 this.isUploading = true;
+                 const uploadResponse = await this.uploadImageAfterUpdate(this.data.id!);
                 
                 if (uploadResponse && uploadResponse.url) {
                   this.capsForm.patchValue({ url: uploadResponse.url });
@@ -543,78 +582,109 @@ onFileSelected(event: any): void {
                   result.url = uploadResponse.url;
                 }
                 
-              } catch (uploadError) {
-                console.error('❌ Error al subir imagen:', uploadError);
-                this.toastr.warning('CAPS actualizado pero hubo un error al subir la imagen');
-              } finally {
-                this.isUploading = false;
-              }
-            }
-            
-            this.selectedFile = null;
-            this.initialData = { ...this.capsForm.value };
-            
-            this.dialogRef.close({ type: 'save', data: result });
-          },
-          error => {
-            console.error('❌ Error al actualizar CAPS:', error);
-            this.dialogRef.close({ type: 'error', data: error });
-          }
-        );
-      } else {
-  // 🔥 CREACIÓN DE NUEVO CAPS
-  this.capsService.save(capsDto).subscribe(
-    async (capsCreado) => {
-      console.log('✅ CAPS creado exitosamente:', capsCreado);
+               } catch (uploadError) {
+                 console.error('❌ Error al subir imagen:', uploadError);
+                 this.toastr.warning('CAPS actualizado pero hubo un error al subir la imagen');
+               } finally {
+                 this.isUploading = false;
+               }
+             }
+             
+             this.selectedFile = null;
+             this.initialData = { ...this.capsForm.value };
+             
+             this.dialogRef.close({ type: 'save', data: result });
+           },
+           error => {
+             console.error('❌ Error al actualizar CAPS:', error);
+             this.dialogRef.close({ type: 'error', data: error });
+           }
+         );
+       } else {
+  // 🔥 CREACIÓN DE NUEVO CAPS (usar payload plano)
+  this.capsService.save(payload).subscribe(
+     async (capsCreado) => {
+       console.log('✅ CAPS creado exitosamente:', capsCreado);
       console.log('🔍 ID del CAPS creado:', capsCreado.id);
       console.log('🔍 ¿Hay archivo seleccionado?:', !!this.selectedFile);
       console.log('🔍 Nombre del archivo:', this.selectedFile?.name);
-      
-      this.data = capsCreado;
-      
-      if (this.selectedFile && capsCreado.id) {
-        console.log('📤 Subiendo imagen después de crear CAPS...');
-        try {
-          const uploadResponse = await this.uploadImageAfterCreation(capsCreado.id);
-          
-          if (uploadResponse && uploadResponse.url) {
-            console.log('🎯 Actualizando formulario con URL:', uploadResponse.url);
-            this.capsForm.patchValue({ url: uploadResponse.url });
-            this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
-            capsCreado.url = uploadResponse.url;
-            console.log('✅ URL actualizada en capsCreado:', capsCreado.url);
-          } else {
-            console.log('⚠️ No se recibió URL en uploadResponse');
-          }
-          
-        } catch (uploadError) {
-          console.error('❌ Error al subir imagen:', uploadError);
-          this.toastr.warning('CAPS creado pero hubo un error al subir la imagen');
-        }
-      } else {
-        console.log('ℹ️ No hay imagen seleccionada para subir o no hay ID');
-        this.toastr.success('CAPS creado correctamente');
-      }
-      
-      console.log('🏁 Cerrando diálogo con datos:', capsCreado);
-      this.dialogRef.close({ type: 'save', data: capsCreado });
-    },
-    error => {
-      console.error('❌ Error al crear CAPS:', error);
-      this.dialogRef.close({ type: 'error', data: error });
+       
+       this.data = capsCreado;
+       
+       if (this.selectedFile && capsCreado.id) {
+         console.log('📤 Subiendo imagen después de crear CAPS...');
+         try {
+           const uploadResponse = await this.uploadImageAfterCreation(capsCreado.id);
+           
+           if (uploadResponse && uploadResponse.url) {
+             console.log('🎯 Actualizando formulario con URL:', uploadResponse.url);
+             this.capsForm.patchValue({ url: uploadResponse.url });
+             this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+             capsCreado.url = uploadResponse.url;
+             console.log('✅ URL actualizada en capsCreado:', capsCreado.url);
+           } else {
+             console.log('⚠️ No se recibió URL en uploadResponse');
+           }
+           
+         } catch (uploadError) {
+           console.error('❌ Error al subir imagen:', uploadError);
+           this.toastr.warning('CAPS creado pero hubo un error al subir la imagen');
+         }
+       } else {
+         console.log('ℹ️ No hay imagen seleccionada para subir o no hay ID');
+         this.toastr.success('CAPS creado correctamente');
+       }
+       
+       console.log('🏁 Cerrando diálogo con datos:', capsCreado);
+       this.dialogRef.close({ type: 'save', data: capsCreado });
+     },
+     error => {
+       console.error('❌ Error al crear CAPS:', error);
+       this.dialogRef.close({ type: 'error', data: error });
+     }
+   );
+ }
     }
-  );
+  }
+  
+  // Comparador para localidad (usado por el template)
+compareLocalidad(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
 }
-    }
-  }
-      
-  compareLocalidad(p1: Localidad, p2: Localidad): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
 
-  compareRegion(p1: Region, p2: Region): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+// Comparador para región (usado por el template)
+compareRegion(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
+
+// Comparador para servicio (necesario para multiselect de servicios)
+compareServicio(a: any, b: any): boolean {
+  if (!a || !b) return false;
+  return a.id === b.id;
+}
+
+// Retorna true si todos los servicios disponibles están seleccionados
+areAllServiciosSelected(): boolean {
+  if (!this.capsForm) return false;
+  const selected: any[] = this.capsForm.get('servicio')?.value || [];
+  if (!this.servicios || this.servicios.length === 0) return false;
+  return this.servicios.every(s => selected.some((sel: any) => sel && sel.id === s.id));
+}
+
+// Alterna selección de todos los servicios
+toggleAllServicios(ev: MouseEvent): void {
+  ev.stopPropagation();
+  if (!this.capsForm) return;
+  if (this.areAllServiciosSelected()) {
+    this.capsForm.patchValue({ servicio: [] });
+  } else {
+    this.capsForm.patchValue({ servicio: this.servicios ? this.servicios.slice() : [] });
   }
+  this.capsForm.get('servicio')?.markAsTouched();
+  this.capsForm.get('servicio')?.updateValueAndValidity();
+}
 
 compareHospital(p1: Hospital, p2: Hospital): boolean {
   return p1 && p2 ? p1.id === p2.id : p1 === p2;

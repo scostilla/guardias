@@ -1,1 +1,61 @@
-<p>notificacion-detail works!</p>
+<h1 mat-dialog-title>
+  DETALLE
+  <h5>{{ (notificacion.tipo.toUpperCase() === 'DIGESTO') ? 'DIGESTO' : 'NOTIFICACIÓN' }}</h5>
+</h1>
+<mat-dialog-content>
+  <table class="table">
+    <tbody>
+     
+      <tr *ngIf="notificacion.tipo.toUpperCase() === 'DIGESTO'">
+        <th scope="row">Tipo Guardia</th>
+        <td>{{ notificacion.tipoGuardia ? (notificacion.tipoGuardia | uppercase) : '—' }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ (notificacion.tipo.toUpperCase() === 'DIGESTO') ? 'Referencia' : 'Categoría' }}</th>
+        <td>{{ notificacion.categoria }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ (notificacion.tipo.toUpperCase() === 'DIGESTO') ? 'Fecha Publicación' : 'Fecha Notificación' }}</th>
+        <td>{{ notificacion.fechaNotificacion | date:'yyyy-MM-dd' }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Detalle</th>
+        <td>{{ notificacion.detalle }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Efectores</th>
+        <td>
+          <ng-container *ngIf="notificacion.efectores?.length; else sinEf">
+            <ul class="efectores-list">
+              <li *ngFor="let e of notificacion.efectores">{{ e.nombre }}</li>
+            </ul>
+          </ng-container>
+          <ng-template #sinEf>
+            <span class="muted">Sin efectores asociados</span>
+          </ng-template>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">PDF</th>
+        <td>
+          <ng-container *ngIf="pdfUrlAbs; else noPdf">
+            <button mat-stroked-button color="primary" (click)="openPdf()">
+              <mat-icon style="margin-right:4px;">picture_as_pdf</mat-icon>
+              Abrir
+            </button>
+            <div class="filename">
+              {{ displayFileName(notificacion.url) }}
+            </div>
+          </ng-container>
+          <ng-template #noPdf>
+            <span class="muted">Sin PDF</span>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div mat-dialog-actions class="action mt-4">
+    <button mat-raised-button color="primary" type="button" (click)="cerrar()">Cerrar</button>
+  </div>
+</mat-dialog-content>

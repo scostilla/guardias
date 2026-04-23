@@ -14,14 +14,21 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
+
     const isAuthenticated = !!this.tokenService.getToken();
-    
+
+    // No logueado
     if (!isAuthenticated) {
-      // Si no está autenticado, redirigir al login
       this.router.navigate(['/login']);
       return false;
     }
 
-    return true; // Si está autenticado, permite la navegación
+    // Impedir ingreso directo a cambio de login
+    if (this.tokenService.isPrimerLogueo()) {
+      this.router.navigate(['/cambiar-password']);
+      return false;
+    }
+
+    return true;
   }
 }

@@ -266,7 +266,7 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
     }
   }
   
-  deleteAsistencial(row: Asistencial | NoAsistencial): void {
+  deleteAsistencial(row: Asistencial | NoAsistencial, esAsistencial: boolean): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         message: 'Confirma la eliminación de ' + row.nombre,
@@ -276,22 +276,30 @@ export class SinLegajoComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.asistencialService.delete(row.id!).subscribe(data => {
-          this.toastr.success('Eliminado con éxito', 'ELIMINADO', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
+        const service = esAsistencial ? this.asistencialService : this.noAsistencialService;
+        
+        service.delete(row.id!).subscribe({
+          next: () => {
+            this.toastr.success('Eliminado con éxito', 'ELIMINADO', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
 
-          const index = this.dataSource.data.findIndex(p => p.id === row.id);
-          this.dataSource.data.splice(index, 1);
-          this.dataSource._updateChangeSubscription();
-        }, err => {
-          this.toastr.error(err.message, 'Error, no se pudo eliminar el asistencial', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
+            const index = this.dataSource.data.findIndex(p => p.id === row.id);
+            if (index !== -1) {
+              this.dataSource.data.splice(index, 1);
+              this.dataSource._updateChangeSubscription();
+            }
+          },
+          error: err => {
+            console.error('[deleteAsistencial] Error eliminando:', err);
+            this.toastr.error(err.message, 'Error al eliminar', {
+              timeOut: 6000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            });
+          }
         });
       }
     });

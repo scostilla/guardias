@@ -48,7 +48,7 @@ import { Region } from 'src/app/models/Configuracion/Region';
 import { TipoGuardia } from 'src/app/models/Configuracion/TipoGuardia';
 import { TipoRevista } from 'src/app/models/Configuracion/TipoRevista';
 
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { HabilitacionesGeneralesDto } from 'src/app/dto/Configuracion/HabilitacionesGeneralesDto';
 import { HabilitacionesGuardiasDto } from 'src/app/dto/Configuracion/HabilitacionesGuardiasDto';
 import { Asistencial } from 'src/app/models/Configuracion/Asistencial';
@@ -89,6 +89,7 @@ export class LegajoEditComponent implements OnInit {
 
   //Listas
   profesiones: Profesion[] = [];
+  profesionesFiltradas: Profesion[] = [];
   efectores: Efector[] = [];
   hospitales: Hospital[] = [];
   ministerios: Ministerio[] = [];
@@ -115,19 +116,13 @@ export class LegajoEditComponent implements OnInit {
 
 
   //Autenticación
-  isLogged = false;
-  roles: string[] =[];
+  currentRole: string | null = null;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
   isAutoridad: boolean = false;
-  userId: number | null = null;
-  nombreUsuario: string = '';
-  apellidoUsuario: string = '';
   nombresEfectores: EfectorSummaryDto[] = [];
-  usuarioPersona: number | null = null;
-  currentRole: string | null = null;
 
   //mostrar/ocultar
   showGuardia: boolean = false;
@@ -150,6 +145,7 @@ export class LegajoEditComponent implements OnInit {
   nroDecreto?: string;
   idAgrupacion?: number;
   idContraFactura?: number;
+  idGuardiaCargo?: number;
   idPasiva?: number;
   idExtra?: number;
   esAutoridadValor: boolean = false;
@@ -176,6 +172,12 @@ export class LegajoEditComponent implements OnInit {
   initialHabilitacionesGenerales: any[] = [];
   selectedHospitalsGenerales: number[] = [];
   selectedHospitalsGuardias: number[] = [];
+  allSelected = false;
+  selectAllValue = -1;
+  selectedHospitalesCaps: number[] = [];
+  allHospitalesCapsSelected = false;
+  allCapsSelected: boolean = false;
+
   
 
   /* Form de revista */
@@ -200,6 +202,30 @@ export class LegajoEditComponent implements OnInit {
   isDuplicateDialogOpen: boolean = false;
   isDuplicateImage: boolean = false;
   dragCounter: number = 0;
+
+  // 🔥 Control de cambios: habilitar/deshabilitar guardado y motivo de modificación
+  private initialComparableState: string | null = null;
+  tieneCambios: boolean = false;
+
+  private bloquearCamposProfesionales(): void {
+    this.legajoForm.get('idPersona')?.disable({ emitEvent: false });
+    this.legajoForm.get('profesion')?.disable({ emitEvent: false });
+    this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
+    this.legajoForm.get('matriculaNacional')?.disable({ emitEvent: false });
+    this.legajoForm.get('matriculaProvincial')?.disable({ emitEvent: false });
+  }
+
+  private async solicitarMotivoModificacion(): Promise<string | null> {
+    const dialogRef = this.dialog.open(MotivoModificacionDialogComponent, {
+      width: '520px',
+      disableClose: true,
+      data: { title: 'Motivo de modificación de Legajo' }
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+    const motivo = typeof result === 'string' ? result.trim() : '';
+    return motivo.length > 0 ? motivo : null;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -494,47 +520,22 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
         });
           
   //Autentificación
-  if (this.tokenService.getToken()) {
-    this.isLogged = true;
-    this.roles = this.tokenService.getAuthorities();
 
     // BehaviorSubject para obtener el rol seleccionado
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
     });  
   
-    const userIdFromToken = this.tokenService.getUserIdFromToken();
-    this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-    console.log('ID del usuario logeado:',this.userId);
-
     // Obtener detalles del usuario
     this.authService.detailPersonBasicPanel().subscribe(
       (response: PersonBasicPanelDto) => {
-        this.usuarioPersona = response.id;
-        this.nombreUsuario = response.nombre;
-        this.apellidoUsuario = response.apellido;
         this.nombresEfectores = response.efectores; // Asignar efectores
-
-        // Log para mostrar el usuario y los efectores
-        console.log('Usuario logueado:', this.nombreUsuario, this.apellidoUsuario, this.usuarioPersona);
-        console.log('Efectores asociados:', this.nombresEfectores);
       },
       error => {
         console.error('Error al obtener detalles del usuario:', error);
       }
     );
-  } else {
-    this.isLogged = false;
-    console.log('El usuario no está logueado.');
-    this.router.navigateByUrl('');
-  }
-
   
     // Inicializar el formulario
     this.legajoForm = this.fb.group({
@@ -577,6 +578,11 @@ const tieneHabilitaciones = (this.asistencial?.habilitacionesGuardias?.length ??
       habilitacionesGenerales: [[]],
       tipoEfectorEx: [null],
     }, { validator: this.validarFechas });
+
+    // 🔥 Recalcular si hay cambios (la imagen se sincroniza en processNewImage/removeSelectedFile)
+    this.legajoForm.valueChanges.subscribe(() => {
+      this.syncTieneCambios();
+    });
 
 
  // Inicializar udoOptions al principio del formulario
@@ -662,6 +668,7 @@ if (efectorControl) {
     this.idExtra = this.tipoGuardias.find(t => t.nombre === 'EXTRA')?.id;
     this.idCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
     this.idAgrupacion = this.tipoGuardias.find(t => t.nombre === 'AGRUPACION')?.id;
+    this.idGuardiaCargo = this.tipoGuardias.find(t => t.nombre === 'CARGO')?.id;
 
   });
 
@@ -896,6 +903,39 @@ this.initialHabilitacionesGuardias = efectoresFiltrados;
     this.habilitacionesGuardiasValidatorEdit()
   ]);
 
+  // 🔒 En edición no se deben modificar estos campos
+  this.bloquearCamposProfesionales();
+
+}
+
+toggleSelectAll(): void {
+  this.allSelected = !this.allSelected;
+  this.selectedHospitals = this.allSelected
+    ? this.hospitales.map(h => h.id!).filter((id): id is number => id !== undefined)
+    : [];
+  this.legajoForm.patchValue({ habilitacionesGuardiasHospital: this.selectedHospitals });
+}
+
+toggleSelectAllHospitalesCaps(): void {
+  this.allHospitalesCapsSelected = !this.allHospitalesCapsSelected;
+  this.selectedHospitalesCaps = this.allHospitalesCapsSelected
+    ? this.getEfectoresFiltrados()
+        .map(h => h.id!)
+        .filter((id): id is number => id !== undefined)
+    : [];
+  this.legajoForm.patchValue({
+    hospitalHabilitacionesGuardias: this.selectedHospitalesCaps
+  });
+}
+
+toggleSelectAllCaps(): void {
+  this.allCapsSelected = !this.allCapsSelected;
+  this.selectedCaps = this.allCapsSelected
+    ? this.habilitacionesGuardiasCaps
+        .map(c => c.id!)
+        .filter((id): id is number => id !== undefined)
+    : [];
+  this.legajoForm.patchValue({ habilitacionesGuardiasCaps: this.selectedCaps });
 }
 
 // Método para verificar si se puede modificar el legajo
@@ -1071,6 +1111,9 @@ private processNewImage(file: File): void {
   // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO PARA HABILITAR BOTÓN
   this.legajoForm.updateValueAndValidity();
 
+  // 🔥 La imagen cuenta como cambio aunque no exista control en el form
+  this.syncTieneCambios();
+
   this.toastr.success('Imagen seleccionada. Se subirá cuando se actualice el legajo.', 'Imagen nueva');
 }
 
@@ -1169,8 +1212,11 @@ private handleDuplicateImageOnSelection(response: any): void {
   
   // 🔥 FORZAR ACTUALIZACIÓN DEL FORMULARIO
   this.legajoForm.updateValueAndValidity();
+
+  // 🔥 Volver a recalcular cambios (por si la única diferencia era la imagen)
+  this.syncTieneCambios();
   
-  this.toastr.info('Archivo removido. Botón de modificar habilitado.');
+  this.toastr.info(this.tieneCambios ? 'Archivo removido.' : 'Archivo removido. No hay cambios para guardar.');
 }
 
   getFileInfo(): string {
@@ -1791,6 +1837,9 @@ const esContrafactura = selectedGuardia.includes(this.idContraFactura);
       this.onTipoUdoChange({ value: tipoUdoInicial });
       this.onTipoEfectorChange({ value: tipoEfectorInicial });
       this.onTipoEfectorCargoChange({ value: tipoEfectorCargoInicial });
+
+      // ✅ Tomar snapshot inicial una vez finalizado el patch de datos
+      this.captureInitialState();
     },
     (error) => {
       console.error('Error al cargar los datos iniciales:', error);
@@ -1878,8 +1927,17 @@ listMinisterios(): void {
   listProfesiones(): void {
     this.profesionService.list().subscribe(data => {
       this.profesiones = data;
+
+      this.profesionesFiltradas = this.profesiones.filter(p => {
+        const nombre = p.nombre
+          .toLowerCase()
+          .normalize("NFD") // separa letras y acentos
+          .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+
+        return nombre === 'medico' || nombre === 'bioquimico';
+      });
     }, error => {
-      console.log(error);
+      console.error(error);
     });
   }
 
@@ -2002,7 +2060,7 @@ listMinisterios(): void {
     this.noEspecialidadesMessage = '';
   }
 
-  //en caso sea rol administrativo solo deja cargar su efector
+  /*/en caso sea rol administrativo solo deja cargar su efector
   getEfectoresFiltrados(): any[] {
     // Si el usuario es administrativo, solo mostrar los efectores cuyo id esté en idEfectorUser
     if (this.isAdministrativo) {
@@ -2012,6 +2070,10 @@ listMinisterios(): void {
   
     // Si no es administrativo, devuelve todos los efectores
     return this.hospitales;
+  }*/
+
+  getEfectoresFiltrados(): any[] {
+    return this.hospitales;  // Siempre devolver todos los hospitales
   }
 
   updateAdicionalState(cargaHorariaId: number | null): void {
@@ -2070,6 +2132,9 @@ listMinisterios(): void {
   this.legajoForm.get('habilitacionesGuardiasHospital')?.updateValueAndValidity();
   this.legajoForm.get('habilitacionesGuardiasCaps')?.updateValueAndValidity();
   this.legajoForm.updateValueAndValidity();
+
+  // 🔥 La imagen cuenta como cambio aunque no exista control en el form
+  this.syncTieneCambios();
 }
 
    onHospitalesChangeGeneral(event: any): void {
@@ -2210,7 +2275,6 @@ private updateCapsBySelectedHospitalsGeneral(): void {
   this.updateCombinedValuesGeneral();
    this.legajoForm.updateValueAndValidity();
 }
-
 
 
 private updateCombinedValues(): void {
@@ -2881,15 +2945,16 @@ private isHospital(id: number): boolean {
       this.especialidades = data.filter(especialidad => especialidad.profesion.id === profesionId);
   
       if (this.especialidades.length > 0) {
-        this.legajoForm.get('especialidades')?.enable();
+        // En el componente de edición, especialidades no se pueden modificar
+        this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
         this.noEspecialidadesMessage = '';
       } else {
-        this.legajoForm.get('especialidades')?.disable();
+        this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
         this.noEspecialidadesMessage = 'La profesión seleccionada no posee especialidades.';
       }
     }, error => {
 
-      this.legajoForm.get('especialidades')?.disable();
+      this.legajoForm.get('especialidades')?.disable({ emitEvent: false });
       this.noEspecialidadesMessage = 'Error al cargar las especialidades. Intente nuevamente.';
     });
   }
@@ -3008,9 +3073,37 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
 
 
   onSelectionChange(event: any): void {
+    // lógica tipo guardia
     this.onTipoGuardiaSelectionChange(event);
-  
     this.onGuardiaCfExtra(event.value);
+
+    // si selecciono CARGO, limpiar J1
+    this.limpiarAdicionalSiCargo();
+
+    // Reaplicar filtros dependientes
+    const categoriaNombre = this.categorias.find(
+      c => c.id === this.legajoForm.get('categoria')?.value
+    )?.nombre;
+
+    if (categoriaNombre) {
+      this.updateCargaHorarias(categoriaNombre);
+    }
+
+    // Revalidar adicional según carga horaria
+    this.onCargaHorariaChange();
+
+    this.legajoForm.updateValueAndValidity();
+  }
+
+  private limpiarAdicionalSiCargo(): void {
+    if (!this.isGuardiaCargoSeleccionada()) return;
+
+    const adicionalId = this.legajoForm.get('adicional')?.value;
+    const adicionalSeleccionado = this.adicionales.find(a => a.id === adicionalId);
+
+    if (adicionalSeleccionado?.nombre === 'J1') {
+      this.legajoForm.get('adicional')?.setValue(null);
+    }
   }
 
   //aqui oculto o muestro situacion de revista según la guardia seleccionada
@@ -3065,7 +3158,18 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
     this.legajoForm.get('hospitalEfectores')?.enable();
 
   }
-    
+
+  // Filtro de horas y adicional segun el tipo de guardia CARGO
+  isGuardiaCargoSeleccionada(): boolean {
+    const tiposSeleccionados: number[] = this.legajoForm.get('tipoGuardias')?.value || [];
+
+    if (this.idGuardiaCargo == null) {
+      return false;
+    }
+
+    return tiposSeleccionados.includes(this.idGuardiaCargo);
+  }
+        
   // Form Revista: Función llamada cuando cambia la categoría seleccionada
   onCategoriaChange(): void {
     const categoriaId = this.legajoForm.get('categoria')?.value;
@@ -3121,19 +3225,49 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
       this.legajoForm.get('adicional')?.clearValidators();
     }
 
-    // Actualizar la validez de 'adicional' después de modificar los validadores
-    this.legajoForm.get('adicional')?.updateValueAndValidity();
+    // Regla CARGO + J1
+    const adicionalId = this.legajoForm.get('adicional')?.value;
+    const adicionalSeleccionado = this.adicionales.find(a => a.id === adicionalId);
 
-      // Aseguro que el formulario se revalide al cambiar la carga horaria
-    this.legajoForm.updateValueAndValidity(); 
+    if (
+      this.isGuardiaCargoSeleccionada() &&
+      adicionalSeleccionado?.nombre === 'J1'
+    ) {
+      this.legajoForm.get('adicional')?.setValue(null);
+    }
+
+    this.legajoForm.get('adicional')?.updateValueAndValidity();
+    this.legajoForm.updateValueAndValidity();
   }
 
   // Form Revista: Función para actualizar las opciones de cargaHoraria según la categoría seleccionada
   updateCargaHorarias(categoriaNombre: string): void {
+    let cargasFiltradas = [...this.cargasHorarias];
+
+    // Filtro por categoría
     if (categoriaNombre === "24 HS") {
-      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad === 24);
+      cargasFiltradas = cargasFiltradas.filter(ch => ch.cantidad === 24);
     } else {
-      this.filteredCargasHorarias = this.cargasHorarias.filter(ch => ch.cantidad !== 24);
+      cargasFiltradas = cargasFiltradas.filter(ch => ch.cantidad !== 24);
+    }
+
+    // Si es CARGO, no permitir 30
+    if (this.isGuardiaCargoSeleccionada()) {
+      cargasFiltradas = cargasFiltradas.filter(ch => ch.cantidad !== 30);
+    }
+
+    this.filteredCargasHorarias = cargasFiltradas;
+
+    // Limpieza si quedó algo inválido seleccionado
+    const cargaId = this.legajoForm.get('cargaHoraria')?.value;
+    const cargaSeleccionada = this.cargasHorarias.find(ch => ch.id === cargaId);
+
+    if (
+      cargaSeleccionada &&
+      !this.filteredCargasHorarias.some(ch => ch.id === cargaSeleccionada.id)
+    ) {
+      this.legajoForm.get('cargaHoraria')?.setValue(null);
+      this.onCargaHorariaChange();
     }
   }
 
@@ -3148,8 +3282,78 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
   }
 
   //-----Save-----
-    
+  
+  private captureInitialState(): void {
+    this.initialComparableState = this.buildComparableStateJson();
+    this.legajoForm.markAsPristine();
+    this.legajoForm.markAsUntouched();
+    this.syncTieneCambios();
+  }
+
+  private syncTieneCambios(): void {
+    if (!this.initialComparableState) {
+      this.tieneCambios = false;
+      return;
+    }
+    this.tieneCambios = this.buildComparableStateJson() !== this.initialComparableState;
+  }
+
+  private buildComparableStateJson(): string {
+    return JSON.stringify(this.buildComparableState());
+  }
+
+  private buildComparableState(): any {
+    const raw = this.legajoForm?.getRawValue ? this.legajoForm.getRawValue() : {};
+    const normalized: any = {};
+    for (const key of Object.keys(raw).sort()) {
+      normalized[key] = this.normalizeComparableValue((raw as any)[key]);
+    }
+
+    normalized.__image = this.selectedFile
+      ? `${this.selectedFile.name}|${this.selectedFile.size}|${this.selectedFile.lastModified}`
+      : null;
+
+    return normalized;
+  }
+
+  private normalizeComparableValue(value: any): any {
+    if (value === undefined || value === null) return null;
+
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? null : value.toISOString().split('T')[0];
+    }
+
+    if (Array.isArray(value)) {
+      const normalizedArray = value.map(v => this.normalizeComparableValue(v));
+      return normalizedArray.sort((a, b) => String(a).localeCompare(String(b)));
+    }
+
+    if (typeof value === 'object') {
+      if ('id' in value) {
+        return this.normalizeComparableValue((value as any).id);
+      }
+      const obj: any = {};
+      for (const key of Object.keys(value).sort()) {
+        obj[key] = this.normalizeComparableValue((value as any)[key]);
+      }
+      return obj;
+    }
+
+    if (typeof value === 'string') return value.trim();
+    return value;
+  }
+
   async updateLegajo(): Promise<void> {
+
+  // 🔒 Si no hay cambios, no habilitar guardado (el botón debería estar deshabilitado igualmente)
+  if (!this.tieneCambios) {
+    this.toastr.info('No se detectaron cambios para guardar.', 'Sin cambios', {
+      timeOut: 4000,
+      positionClass: 'toast-top-center',
+      progressBar: true
+    });
+    return;
+  }
 
   // 🎯 VALIDACIÓN ESPECÍFICA PARA HABILITACIONES DE GUARDIAS EN EDIT
   if (this.showHabilitacionesGuardias) {
@@ -3204,7 +3408,15 @@ alMenosUnoHabilitacionesGuardiasValidatorEdit(): ValidatorFn {
     return;
   }
 
-    const legajoData = this.legajoForm.value;
+    // NOTA: algunos campos pueden estar deshabilitados (read-only) y no salen en .value
+    const legajoData = {
+      ...this.legajoForm.value,
+      idPersona: this.legajoForm.get('idPersona')?.value,
+      profesion: this.legajoForm.get('profesion')?.value,
+      especialidades: this.legajoForm.get('especialidades')?.value,
+      matriculaNacional: this.legajoForm.get('matriculaNacional')?.value,
+      matriculaProvincial: this.legajoForm.get('matriculaProvincial')?.value,
+    };
    
     // Asegura que tipoGuardias sea un array no vacío
     const tiposGuardiasSeleccionados = legajoData.tipoGuardias || [];
@@ -3510,6 +3722,16 @@ if (idRevistaActual !== idRevistaNueva) {
 
   if (!sonDatosLegajoIguales || huboCambiosEnHabilitacion ||huboCambiosHabilitacionGeneral ) {
 
+    // 📝 Si hay cambios, exigir motivo antes de guardar
+    const motivoActual = String(legajoData?.motivoModificacion ?? '').trim();
+    if (!motivoActual) {
+      const motivo = await this.solicitarMotivoModificacion();
+      if (!motivo) {
+        return; // Cancelado o vacío
+      }
+      legajoData.motivoModificacion = motivo;
+    }
+
      // 🔥 DETERMINAR QUÉ URL USAR PARA EL NUEVO LEGAJO
     let urlParaNuevoLegajo: string | null = null;
     
@@ -3535,7 +3757,7 @@ if (idRevistaActual !== idRevistaNueva) {
       legajoExistente.matriculaNacional ?? null,
       legajoExistente.matriculaProvincial ?? null,
       null, // idSuspencion
-      null, // motivoBaja
+      legajoExistente.motivoBaja ?? null, // motivoBaja
       legajoExistente.revista?.id ?? null,
       legajoExistente.udo?.id ?? null,
       legajoExistente.efectores?.map((e: any) => e.id).filter((id: any): id is number => id !== undefined) ?? [],
@@ -3549,7 +3771,9 @@ if (idRevistaActual !== idRevistaNueva) {
       legajoExistente.fechaResolucion ?? undefined,
       legajoExistente.tipoEfector ?? undefined,
       legajoExistente.tipoEfectorCargo ?? undefined,
-      legajoExistente.tipoUdo ?? undefined
+      legajoExistente.tipoUdo ?? undefined,
+      legajoData.motivoModificacion ?? undefined,
+      legajoExistente.fechaBajaSistema ?? undefined
     );
 
     // 🎯 VERIFICAR HABILITACIONES ANTES DE CREAR EL NUEVO LEGAJO
@@ -3603,7 +3827,9 @@ if (idRevistaActual !== idRevistaNueva) {
           // 🎯 CAMPOS TIPO EFECTOR - LIMPIOS PARA DIRECTOR REGIONAL
           esRegionalActual ? null : (legajoData.tipoEfector ?? null), // NULL si es Director Regional
           esRegionalActual ? null : (legajoData.tipoEfectorCargo ?? null), // 🔥 NULL si es Director Regional (CAMPO PRINCIPAL)
-          esRegionalActual ? null : (legajoData.tipoUdo ?? null) // NULL si es Director Regional
+          esRegionalActual ? null : (legajoData.tipoUdo ?? null), // NULL si es Director Regional
+          undefined,
+          undefined
         );
 
         // 🎯 PROCESAR HABILITACIONES DE GUARDIA SOLO SI NO ES DIRECTOR REGIONAL
@@ -3645,9 +3871,9 @@ if (idRevistaActual !== idRevistaNueva) {
           async (result) => {
             console.log('✅ Nuevo legajo creado exitosamente:', result);
             
-            // 🔥 MANEJAR IMAGEN SEGÚN EL CASO
+            // MANEJAR IMAGEN SEGÚN EL CASO
             if (esAutoridad && this.selectedFile && result.id) {
-              // 🔥 CASO 1: HAY IMAGEN NUEVA PARA SUBIR
+              // CASO 1: HAY IMAGEN NUEVA PARA SUBIR
               console.log('📤 Subiendo nueva imagen para legajo de autoridad...');
               try {
                 const uploadResponse = await this.uploadImageAfterUpdate(result.id);
@@ -3655,12 +3881,20 @@ if (idRevistaActual !== idRevistaNueva) {
                 if (uploadResponse && uploadResponse.url) {
                   console.log('✅ Nueva imagen subida correctamente:', uploadResponse.url);
                   
-                  // 🔥 ACTUALIZAR LA URL EN EL LEGAJO RECIÉN CREADO
+                  // ACTUALIZAR LA URL EN EL LEGAJO RECIÉN CREADO
                   const legajoActualizado = { ...result, url: uploadResponse.url };
                   
-                  this.toastr.success('Legajo actualizado con nueva imagen correctamente', 'ÉXITO');
+                  this.toastr.success('Legajo actualizado con nueva imagen correctamente', 'ÉXITO', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  });
                 } else {
-                  this.toastr.success('Legajo actualizado. Error al subir nueva imagen.', 'Parcialmente exitoso');
+                  this.toastr.success('Legajo actualizado. Error al subir imagen de la firma.', 'Atención', {
+                    timeOut: 6000,
+                    positionClass: 'toast-top-center',
+                    progressBar: true
+                  });
                 }
                 
               } catch (uploadError) {
@@ -3669,21 +3903,21 @@ if (idRevistaActual !== idRevistaNueva) {
               }
               
             } else if (esAutoridad && urlParaNuevoLegajo) {
-              // 🔥 CASO 2: SE MANTIENE LA IMAGEN EXISTENTE
+              // CASO 2: SE MANTIENE LA IMAGEN EXISTENTE
               console.log('🔄 Imagen existente mantenida:', urlParaNuevoLegajo);
               this.toastr.success('Legajo actualizado manteniendo la imagen existente', 'ÉXITO');
               
             } else if (esAutoridad && !urlParaNuevoLegajo && !this.selectedFile) {
-              // 🔥 CASO 3: LEGAJO SIN IMAGEN
+              // CASO 3: LEGAJO SIN IMAGEN
               console.log('📝 Legajo actualizado sin imagen');
               this.toastr.success('Legajo actualizado sin imagen', 'ÉXITO');
               
             } else {
-              // 🔥 CASO 4: LEGAJO NO ES AUTORIDAD
+              // CASO 4: LEGAJO NO ES AUTORIDAD
               this.toastr.success('Legajo actualizado con éxito', 'ÉXITO');
             }
 
-            // 🔥 NAVEGACIÓN
+            // NAVEGACIÓN
             this.navigateAfterUpdate();
           },
           (error) => {
@@ -3698,7 +3932,7 @@ if (idRevistaActual !== idRevistaNueva) {
       }
     );
   } else {
-    // 🔥 NO HAY CAMBIOS, SOLO NAVEGAR
+    // NO HAY CAMBIOS, SOLO NAVEGAR
     console.log('ℹ️ No hay cambios en el legajo, navegando sin modificar');
     this.toastr.info('No se detectaron cambios en el legajo', 'Sin cambios');
     this.navigateAfterUpdate();

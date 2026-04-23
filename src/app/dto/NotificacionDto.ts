@@ -2,11 +2,12 @@ export class NotificacionDto {
     id?: number;
     tipo: string;
     categoria: string;
-     detalle: string;
-       url: string;
+    detalle: string;
+    url: string;
     fechaNotificacion: Date;
     fechaBaja: Date;
     activo: boolean;
+    tipoGuardia: String;
     idEfectores: number[];
 
     constructor(
@@ -17,7 +18,8 @@ export class NotificacionDto {
         fechaNotificacion: Date,
         fechaBaja: Date,
         activo: boolean,
-        idEfectores: number[]
+        tipoGuardia: String,
+        idEfectores: number[],
     ) {
         this.tipo = tipo;
         this.categoria = categoria;
@@ -26,6 +28,7 @@ export class NotificacionDto {
         this.fechaNotificacion = fechaNotificacion;
         this.fechaBaja = fechaBaja;
         this.activo = activo;
+        this.tipoGuardia = tipoGuardia;
         this.idEfectores = idEfectores;
     }
 

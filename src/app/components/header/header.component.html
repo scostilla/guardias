@@ -69,7 +69,8 @@
                   </span>
                 </button>
                 <button mat-menu-item routerLink="/notificacion">
-                  <mat-icon matBadge="{{notificacionesCount}}" matBadgeColor="warn">mail</mat-icon>
+                  <!--<mat-icon matBadge="{{notificacionesCount}}" matBadgeColor="warn">mail</mat-icon>-->
+                  <mat-icon>mail</mat-icon>
                   <span>Notificaciones</span>
                 </button>
                 <button mat-menu-item routerLink="/digesto">
@@ -95,7 +96,7 @@
                   <span *ngIf="isAdministrativo">Administrativo</span>
                   <span *ngIf="isAutoridad">Autoridad</span>
                   <span *ngIf="isDph">Dirección de Hospitales (Dph)</span>
-                  <span *ngIf="isUsuario">Usuario</span>
+                  <span *ngIf="isUsuario">Profesional de la Salud</span>
                   <span *ngIf="isSuper">Super Usuario</span>
                 </div>
               </div>

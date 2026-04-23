@@ -102,7 +102,7 @@
     </div>  
   </div>
 
-  <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal()" class="text-aviso">
+  <div *ngIf="!verificandoDdjj && isHabilitadoBotonDdjjFinal() && hayDatosParaMostrar" class="text-aviso">
     <mat-icon class="icono-pase">lock_open</mat-icon>
     <div class="mensaje-pase">
       <span class="contador-rojo">{{ getMensajeContadorDdjj() }}</span> para crear la DDJJ de guardias CONTRAFACTURA para la {{ this.selectedQuincena }} QUINCENA de 
@@ -166,20 +166,39 @@
 
           <span
             [ngStyle]="{
-              'color': registro.estadoFacturacion === 'COMPLETADO' ? 'green' : 'red',
+              'color': registro.estadoFacturacion === 'COMPLETADO'
+                ? 'green'
+                : registro.estadoFacturacion === 'REGULARIZADO'
+                  ? 'blue'
+                  : 'red',
               'font-weight': 'bold',
               'margin-left': '4px',
               'display': 'inline-block',
               'width': '16px',
-              'text-align': 'center'
+              'text-align': 'center',
+              'cursor': 'default'
             }"
-            matTooltip="{{ registro.estadoFacturacion === 'COMPLETADO' ? 'Completado' : registro.estadoFacturacion }}">
-            {{ registro.estadoFacturacion === 'COMPLETADO' ? '✔' : '!' }}
+            matTooltip="
+              {{
+                registro.estadoFacturacion === 'COMPLETADO'
+                  ? 'Completado'
+                  : registro.estadoFacturacion === 'REGULARIZADO'
+                    ? 'Regularizado'
+                    : 'Pendiente'
+              }}"
+          >
+            {{
+              registro.estadoFacturacion === 'COMPLETADO'
+                    ? '✔'
+                    : registro.estadoFacturacion === 'REGULARIZADO'
+                      ? '↻'
+                      : '!'            
+            }}
           </span>
 
           <button mat-icon-button matTooltip="Cargar facturas" (click)="openFactura(registro)"
-            [disabled]="ddjjYaExiste">
-            <mat-icon [ngClass]="!ddjjYaExiste ? 'btnEdit' : ''"> request_quote </mat-icon>
+            [disabled]="ddjjYaExiste || !isHabilitadoBotonDdjj()">
+            <mat-icon [ngClass]="{'btnEdit': !ddjjYaExiste && isHabilitadoBotonDdjj()}"> request_quote </mat-icon>
           </button>
           <button 
             mat-icon-button

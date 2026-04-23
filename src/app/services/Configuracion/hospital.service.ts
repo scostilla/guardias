@@ -4,6 +4,7 @@ import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { CapsDto } from 'src/app/dto/Configuracion/CapsDto';
 import { EfectorHospitalDto } from "src/app/dto/Configuracion/efector/EfectorHospitalDto";
+import { EfectorRegionDto } from 'src/app/dto/Configuracion/efector/EfectorRegionDto';
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { HospitalDto } from "src/app/dto/Configuracion/HospitalDto";
 import { ServicioSummaryDto } from "src/app/dto/Configuracion/ServicioSummaryDto";
@@ -35,6 +36,11 @@ export class HospitalService {
 
   public listSelection(): Observable<EfectorSummaryDto[]> {
     return this.httpClient.get<EfectorSummaryDto[]>(this.hospitalesURL + 'listSelection');
+  }
+
+  // Nuevo: hospitales por región (endpoint backend /hospital/region/{regionId})
+  public listByRegion(regionId: number): Observable<EfectorRegionDto[]> {
+    return this.httpClient.get<EfectorRegionDto[]>(`${this.hospitalesURL}region/${regionId}`);
   }
 
   // Listar hospitales x pasivas
@@ -147,5 +153,4 @@ listImages(hospitalId: number): Observable<any> {
       })
     );
 }
-
 }

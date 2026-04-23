@@ -10,11 +10,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { HomeAutoridadComponent } from './components/home-autoridad/home-autoridad.component';
+import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { EfectorSelectorComponent } from './components/home-page/efector-selector/efector-selector.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { GuardiasPendientesProfesionalesComponent } from './components/home-profesional-public/guardias-pendientes-profesionales/guardias-pendientes-profesionales.component';
+import { HomeProfesionalPublicComponent } from './components/home-profesional-public/home-profesional-public.component';
 import { HomeProfesionalComponent } from './components/home-profesional/home-profesional.component';
-import { HomeHospitalComponent } from './components/home-hospital/home-hospital.component';
 import { LoginComponent } from './components/login/login.component';
+import { ReportesComponent } from './components/reportes/reportes.component';
 
 //Configuraciones: Generales
 import { ValoresBonoUtiCreateComponent } from './components/configuracion/info/valores-bono-uti-create/valores-bono-uti-create.component';
@@ -24,6 +27,9 @@ import { SoporteFormComponent } from './components/configuracion/soporte-form/so
 
 
 //Configuraciones: Territorio
+import { ServicioDetailComponent } from './components/configuracion/establecimiento/servicio-detail/servicio-detail.component';
+import { ServicioEditComponent } from './components/configuracion/establecimiento/servicio-edit/servicio-edit.component';
+import { ServicioComponent } from './components/configuracion/establecimiento/servicio/servicio.component';
 import { DepartamentoDetailComponent } from './components/configuracion/territorio/departamento-detail/departamento-detail.component';
 import { DepartamentoEditComponent } from './components/configuracion/territorio/departamento-edit/departamento-edit.component';
 import { DepartamentoComponent } from './components/configuracion/territorio/departamento/departamento.component';
@@ -99,20 +105,14 @@ import { NotificacionComponent } from './components/notificacion/notificacion.co
 
 
 //Sección: Actividades
-import { DistHorariaConsComponent } from './components/actividades/dist-horaria-cons/dist-horaria-cons.component';
-import { DistHorariaGirasComponent } from './components/actividades/dist-horaria-giras/dist-horaria-giras.component';
-import { DistHorariaGuardiaComponent } from './components/actividades/dist-horaria-guardia/dist-horaria-guardia.component';
-import { DistHorariaOtrasComponent } from './components/actividades/dist-horaria-otras/dist-horaria-otras.component';
-import { RegistroActividadesEComponent } from './components/actividades/registro-actividades-e/registro-actividades-e.component';
 import { RegistroActividadesEgresoProfesionalComponent } from './components/actividades/registro-actividades-egreso-profesional/registro-actividades-egreso-profesional.component';
 import { RegistroActividadesEgresoComponent } from './components/actividades/registro-actividades-egreso/registro-actividades-egreso.component';
 import { RegistroActividadesIngresoProfesionalComponent } from './components/actividades/registro-actividades-ingreso-profesional/registro-actividades-ingreso-profesional.component';
 import { RegistroActividadesIngresoComponent } from './components/actividades/registro-actividades-ingreso/registro-actividades-ingreso.component';
+import { RegistroActividadesProfesionalesPublicComponent } from './components/actividades/registro-actividades-profesionales-public/registro-actividades-profesionales-public.component';
 import { RegistroActividadesProfesionalesComponent } from './components/actividades/registro-actividades-profesionales/registro-actividades-profesionales.component';
 import { RegistroActividadesComponent } from './components/actividades/registro-actividades/registro-actividades.component';
-import { RegistroDiarioProfesionalComponent } from './components/actividades/registro-diario-profesional/registro-diario-profesional.component';
 import { RegistroDiarioComponent } from './components/actividades/registro-diario/registro-diario.component';
-import { DistHorariaComponent } from './components/personal/dist-horaria/dist-horaria.component';
 
 
 //Sección: Personal
@@ -160,12 +160,8 @@ import { PersonalDhComponent } from './components/personal/personal-dh/personal-
 
 //Sección: Cronograma
 import { CronogramaCreateComponent } from './components/cronogramas/cronograma-create/cronograma-create.component';
-import { CronogramaDefMaternoComponent } from './components/cronogramas/cronograma-def-materno/cronograma-def-materno.component';
-import { CronogramaDefSroqueComponent } from './components/cronogramas/cronograma-def-sroque/cronograma-def-sroque.component';
 import { CronogramaDefComponent } from './components/cronogramas/cronograma-def/cronograma-def.component';
 import { CronogramaDetailComponent } from './components/cronogramas/cronograma-detail/cronograma-detail.component';
-import { CronogramaFormAgregarComponent } from './components/cronogramas/cronograma-form-agregar/cronograma-form-agregar.component';
-import { CronogramaPDefTotComponent } from './components/cronogramas/cronograma-p-def-tot/cronograma-p-def-tot.component';
 import { CronogramaPDefComponent } from './components/cronogramas/cronograma-p-def/cronograma-p-def.component';
 import { CronogramaPHosComponent } from './components/cronogramas/cronograma-p-hos/cronograma-p-hos.component';
 import { CronogramaPComponent } from './components/cronogramas/cronograma-p/cronograma-p.component';
@@ -178,39 +174,19 @@ import { CronogramaComponent } from './components/cronogramas/cronograma/cronogr
 
 //Sección: Guardias
 import { DdjjCargoyagrupDetailComponent } from './components/guardias/ddjj-cargoyagrup-detail/ddjj-cargoyagrup-detail.component';
-import { DdjjCargoyagrupTotComponent } from './components/guardias/ddjj-cargoyagrup-tot/ddjj-cargoyagrup-tot.component';
-import { DdjjCargoyagrupTotalApComponent } from './components/guardias/ddjj-cargoyagrup-total-ap/ddjj-cargoyagrup-total-ap.component';
-import { DdjjCargoyagrupTotalRecComponent } from './components/guardias/ddjj-cargoyagrup-total-rec/ddjj-cargoyagrup-total-rec.component';
 import { DdjjCargoyagrupComponent } from './components/guardias/ddjj-cargoyagrup/ddjj-cargoyagrup.component';
-import { DdjjContrafacturaTotApComponent } from './components/guardias/ddjj-contrafactura-tot-ap/ddjj-contrafactura-tot-ap.component';
-import { DdjjContrafacturaTotRecComponent } from './components/guardias/ddjj-contrafactura-tot-rec/ddjj-contrafactura-tot-rec.component';
-import { DdjjContrafacturaTotComponent } from './components/guardias/ddjj-contrafactura-tot/ddjj-contrafactura-tot.component';
 import { DdjjContrafacturaComponent } from './components/guardias/ddjj-contrafactura/ddjj-contrafactura.component';
 import { DdjjExtraDetailComponent } from './components/guardias/ddjj-extra-detail/ddjj-extra-detail.component';
-import { DdjjExtraTotApComponent } from './components/guardias/ddjj-extra-tot-ap/ddjj-extra-tot-ap.component';
-import { DdjjExtraTotRecComponent } from './components/guardias/ddjj-extra-tot-rec/ddjj-extra-tot-rec.component';
-import { DdjjExtraTotComponent } from './components/guardias/ddjj-extra-tot/ddjj-extra-tot.component';
 import { DdjjExtraComponent } from './components/guardias/ddjj-extra/ddjj-extra.component';
 import { DdjjSeleccionComponent } from './components/guardias/ddjj-seleccion/ddjj-seleccion.component';
 import { DdjjTentativoComponent } from './components/guardias/ddjj-tentativo/ddjj-tentativo.component';
-import { GuardiaActivaComponent } from './components/guardias/guardia-activa/guardia-activa.component';
-import { GuardiaPasivaComponent } from './components/guardias/guardia-pasiva/guardia-pasiva.component';
-import { GuardiasViewPComponent } from './components/guardias/guardias-view-p/guardias-view-p.component';
 import { GuardiasViewComponent } from './components/guardias/guardias-view/guardias-view.component';
-import { PopupDdjjCfEditComponent } from './components/popup-ddjj-cf-edit/popup-ddjj-cf-edit.component';
-import { PopupDdjjCfComponent } from './components/popup-ddjj-cf/popup-ddjj-cf.component';
 
 import { RmensualCargoyagrupComponent } from './components/guardias/rmensual-cargoyagrup/rmensual-cargoyagrup.component';
-import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualContrafacturaFueraTerminoComponent } from './components/guardias/rmensual-contrafactura-fuera-termino/rmensual-contrafactura-fuera-termino.component';
+import { RmensualContrafacturaComponent } from './components/guardias/rmensual-contrafactura/rmensual-contrafactura.component';
 import { RmensualExtraComponent } from './components/guardias/rmensual-extra/rmensual-extra.component';
 import { RmensualSeleccionComponent } from './components/guardias/rmensual-seleccion/rmensual-seleccion.component';
-
-
-//Sección: Disponibilidad
-import { DisponibilidadRamal2Component } from './components/disponibilidad-ramal2/disponibilidad-ramal2.component';
-import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
-
 
 
 //Sección: Historial
@@ -218,30 +194,12 @@ import { HistorialComponent } from './components/historial/historial.component';
 
 
 
-import { DailyScheduleComponent } from './components/daily-schedule/daily-schedule.component';
 import { DigestoComponent } from './components/digesto/digesto.component';
-import { MonthTableComponent } from './components/month-table/month-table.component';
 import { NovedadesComponent } from './components/novedades/novedades.component';
 import { NovedadesPersonCreateComponent } from './components/personal/novedades/novedades-person-create/novedades-person-create.component';
 import { NovedadesPersonEditComponent } from './components/personal/novedades/novedades-person-edit/novedades-person-edit.component';
 import { NovedadesPersonComponent } from './components/personal/novedades/novedades-person/novedades-person.component';
-import { PopupCalendarioDispComponent } from './components/popup-calendario-disp/popup-calendario-disp.component';
-import { PopupCalendarioComponent } from './components/popup-calendario/popup-calendario.component';
 import { PopupNovedadAgregarComponent } from './components/popup-novedad-agregar/popup-novedad-agregar.component';
-import { ProfessionalDetailComponent } from './components/professional-detail/professional-detail.component';
-import { ProfessionalDhHistComponent } from './components/professional-dh-hist/professional-dh-hist.component';
-import { ProfessionalDhJunioAsisComponent } from './components/professional-dh-junio-asis/professional-dh-junio-asis.component';
-import { ProfessionalDhJunioComponent } from './components/professional-dh-junio/professional-dh-junio.component';
-import { ProfessionalDhComponent } from './components/professional-dh/professional-dh.component';
-import { ProfessionalFormDeletComponent } from './components/professional-form-delet/professional-form-delet.component';
-import { ProfessionalFormEditComponent } from './components/professional-form-edit/professional-form-edit.component';
-import { ProfessionalFormComponent } from './components/professional-form/professional-form.component';
-import { ProfessionalListComponent } from './components/professional-list/professional-list.component';
-import { ProfessionalNewsComponent } from './components/professional-news/professional-news.component';
-import { ProfessionalPlantillaDhComponent } from './components/professional-plantilla-dh/professional-plantilla-dh.component';
-import { ScheduleDistributionComponent } from './components/schedule-distribution/schedule-distribution.component';
-
-import { CronogramaNewComponent } from './components/cronogramas/cronograma-new/cronograma-new.component';
 
 
 //Redirecciona cuando no existe la direccion ingresada
@@ -249,10 +207,6 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 
 
 
-import { PruebaDetailComponent } from './components/configuracion/territorio/prueba-detail/prueba-detail.component';
-import { PruebaFormComponent } from './components/configuracion/territorio/prueba-form/prueba-form.component';
-import { PruebaForm2Component } from './components/configuracion/territorio/prueba-form2/prueba-form2.component';
-import { PruebaTerritorioComponent } from './components/configuracion/territorio/prueba-territorio/prueba-territorio.component';
 import { AsistencialFiltradoSelectorComponent } from './components/personal/personal-contenido/asistencial-selector/asistencial-filtrado-selector/asistencial-filtrado-selector.component';
 import { AutoridadDetailComponent } from './components/personal/personal-contenido/autoridad-detail/autoridad-detail.component';
 import { AutoridadEditComponent } from './components/personal/personal-contenido/autoridad-edit/autoridad-edit.component';
@@ -264,269 +218,213 @@ const routes: Routes = [
   
   //Principales
   {path: '', redirectTo: 'login', pathMatch: 'full' },
-  {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
+  {path:"home-page", component:HomePageComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path:"efector-selector", component:EfectorSelectorComponent},
   {path:"home-profesional", component:HomeProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"home-profesional-public", component:HomeProfesionalPublicComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"guardias-pendientes-profesionales", component:GuardiasPendientesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
   {path:"home-hospital", component:HomeHospitalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_HOSPITAL'] }},
   {path:"home-autoridad", component:HomeAutoridadComponent},
-  {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
+  {path: 'configuracion', component:ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
   {path: 'login', component:LoginComponent},
+  {path: 'reportes', component:ReportesComponent},
 
   //Configuraciones: Generales
-  {path: 'valores-guardias', component:ValoresGuardiasComponent},
-  {path: 'valores-guardias-create', component:ValoresGuardiasCreateComponent},
-  {path: 'valores-bono-uti-create', component:ValoresBonoUtiCreateComponent},
-  {path: 'soporte-form', component:SoporteFormComponent},
+  {path: 'valores-guardias', component:ValoresGuardiasComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'valores-guardias-create', component:ValoresGuardiasCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'valores-bono-uti-create', component:ValoresBonoUtiCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'soporte-form', component:SoporteFormComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
 
   //Configuraciones: Territorio
-  {path: 'pais', component:PaisComponent},
-  {path: 'pais-detail/:id', component:PaisDetailComponent},
-  {path: 'pais-edit/:id', component:PaisEditComponent},
-  {path: 'provincia', component:ProvinciaComponent},
-  {path: 'provincia-detail/:id', component:ProvinciaDetailComponent},
-  {path: 'provincia-edit/:id', component:ProvinciaEditComponent},
-  {path: 'departamento', component:DepartamentoComponent},
-  {path: 'departamento-detail/:id', component:DepartamentoDetailComponent},
-  {path: 'departamento-edit/:id', component:DepartamentoEditComponent},
-  {path: 'localidad', component:LocalidadComponent},
-  {path: 'localidad-detail/:id', component:LocalidadDetailComponent},
-  {path: 'localidad-edit/:id', component:LocalidadEditComponent},
+  {path: 'pais', component:PaisComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'pais-detail/:id', component:PaisDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'pais-edit/:id', component:PaisEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'provincia', component:ProvinciaComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'provincia-detail/:id', component:ProvinciaDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'provincia-edit/:id', component:ProvinciaEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'departamento', component:DepartamentoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'departamento-detail/:id', component:DepartamentoDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'departamento-edit/:id', component:DepartamentoEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'localidad', component:LocalidadComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'localidad-detail/:id', component:LocalidadDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'localidad-edit/:id', component:LocalidadEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio', component:ServicioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio-detail/:id', component:ServicioDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'servicio-edit/:id', component:ServicioEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
  
   //Configuraciones: Establecimientos
-  {path: 'ministerio', component:MinisterioComponent},
-  {path: 'ministerio-detail/:id', component:MinisterioDetailComponent},
-  {path: 'ministerio-edit/:id', component:MinisterioEditComponent},
-  {path: 'hospital', component:HospitalComponent},
-  {path: 'hospital-detail/:id', component:HospitalDetailComponent},
-  {path: 'hospital-edit/:id', component:HospitalEditComponent},
-  {path: 'caps', component:CapsComponent},
-  {path: 'caps-detail/:id', component:CapsDetailComponent},
-  {path: 'caps-edit/:id', component:CapsEditComponent},
-  {path: 'region', component:RegionComponent},
-  {path: 'region-detail/:id', component:RegionDetailComponent},
-  {path: 'region-edit/:id', component:RegionEditComponent},
-  {path: 'permisos-efectores', component:PermisosEfectoresComponent},
+  {path: 'ministerio', component:MinisterioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'ministerio-detail/:id', component:MinisterioDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'ministerio-edit/:id', component:MinisterioEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'hospital', component:HospitalComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'hospital-detail/:id', component:HospitalDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'hospital-edit/:id', component:HospitalEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'caps', component:CapsComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'caps-detail/:id', component:CapsDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'caps-edit/:id', component:CapsEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'region', component:RegionComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'region-detail/:id', component:RegionDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'region-edit/:id', component:RegionEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'permisos-efectores', component:PermisosEfectoresComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
  
   //Configuraciones: Profesionales
-  {path: 'profesion', component:ProfesionComponent},
-  {path: 'profesion-detail/:id', component:ProfesionDetailComponent},
-  {path: 'profesion-edit/:id', component:ProfesionEditComponent},
-  {path: 'especialidad', component:EspecialidadComponent},
-  {path: 'especialidad-detail/:id', component:EspecialidadDetailComponent},
-  {path: 'especialidad-edit/:id', component:EspecialidadEditComponent},
+  {path: 'profesion', component:ProfesionComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'profesion-detail/:id', component:ProfesionDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'profesion-edit/:id', component:ProfesionEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'especialidad', component:EspecialidadComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'especialidad-detail/:id', component:EspecialidadDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'especialidad-edit/:id', component:EspecialidadEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
  
   //Configuraciones: Personas
-  {path: 'person', component:PersonComponent},
-  {path: 'person-detail/:id', component:PersonDetailComponent},
-  {path: 'person-edit/:id', component:PersonEditComponent},
-  {path: 'person-edit', component: PersonEditComponent },
-  {path: 'revista', component: RevistaComponent},
-  {path: 'revista-edit/:id', component: RegionEditComponent},
-  {path: 'usuario', component:UsuarioComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
-  {path: 'usuario-detail/:id', component:UsuarioDetailComponent},
-  {path: 'usuario-edit/:id', component:UsuarioEditComponent},
+  {path: 'person', component:PersonComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'person-detail/:id', component:PersonDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'person-edit/:id', component:PersonEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'person-edit', component: PersonEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'revista', component: RevistaComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'revista-edit/:id', component: RegionEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+
+  {path: 'usuario', component:UsuarioComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_SUPERUSER'] } },
+  {path: 'usuario-detail/:id', component:UsuarioDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_SUPERUSER'] } },
+  {path: 'usuario-edit/:id', component:UsuarioEditComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_SUPERUSER'] } },
   
   //Configuraciones: Leyes y novedades
-  {path: 'articulo', component:ArticuloComponent},
-  {path: 'articulo-detail/:id', component:ArticuloDetailComponent},
-  {path: 'articulo-edit/:id', component:ArticuloEditComponent},
-  {path: 'inciso', component:IncisoComponent},
-  {path: 'inciso-detail/:id', component:IncisoDetailComponent},
-  {path: 'inciso-edit/:id', component:IncisoEditComponent},
-  {path: 'tipo-ley', component:TipoLeyComponent},
-  {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent},
-  {path: 'tipo-licencia', component:TipoLicenciaComponent},
-  {path: 'tipo-licencia/:id', component:TipoLicenciaDetailComponent},
-  {path: 'tipo-licencia/:id', component:TipoLicenciaEditComponent},
-
-
+  {path: 'articulo', component:ArticuloComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'articulo-detail/:id', component:ArticuloDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'articulo-edit/:id', component:ArticuloEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'inciso', component:IncisoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'inciso-detail/:id', component:IncisoDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'inciso-edit/:id', component:IncisoEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'tipo-ley', component:TipoLeyComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'tipo-ley-edit/:id', component:TipoLeyEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'tipo-licencia', component:TipoLicenciaComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'tipo-licencia/:id', component:TipoLicenciaDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'tipo-licencia/:id', component:TipoLicenciaEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
   
   //Autoridad
-  {path: 'autoridad', component:AutoridadComponent},
-  {path: 'autoridad-detail/:id', component:AutoridadDetailComponent},
-  {path: 'autoridad-edit/:id', component:AutoridadEditComponent},
+  {path: 'autoridad', component:AutoridadComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'autoridad-detail/:id', component:AutoridadDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'autoridad-edit/:id', component:AutoridadEditComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_SUPERUSER', 'ROLE_DPH'] } },
 
 
   //Configuraciones: Calendario
-  {path: 'feriado', component:FeriadoComponent},
-  {path: 'feriado-detail/:id', component:FeriadoDetailComponent},
-  {path: 'feriado-edit/:id', component:FeriadoEditComponent},
+  {path: 'feriado', component:FeriadoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'feriado-detail/:id', component:FeriadoDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'feriado-edit/:id', component:FeriadoEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
   
   //Notificacion
-  {path: 'notificacion', component:NotificacionComponent}, 
-  {path: 'notificacion-detail', component:NotificacionDetailComponent}, 
-  {path: 'notificacion-edit', component:NotificacionEditComponent}, 
+  {path: 'notificacion', component:NotificacionComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }}, 
+  {path: 'notificacion-detail', component:NotificacionDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }}, 
+  {path: 'notificacion-edit', component:NotificacionEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }}, 
 
 
   //Sección: Actividades
-  {path:"registro-diario",component: RegistroDiarioComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:"registro-actividades",component: RegistroActividadesComponent},
-  {path:"registro-actividades-ingreso",component: RegistroActividadesIngresoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:"registro-actividades-egreso", component: RegistroActividadesEgresoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
+  {path:'registro-diario',component: RegistroDiarioComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'registro-actividades',component: RegistroActividadesComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'registro-actividades-ingreso',component: RegistroActividadesIngresoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'registro-actividades-egreso', component: RegistroActividadesEgresoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
-  {path:"registro-diario-profesional",component: RegistroDiarioProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-  {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-  {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
-  {path: 'registro-actividades-profesionales', component: RegistroActividadesProfesionalesComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
-
-  {path:"registro-actividades-e", component: RegistroActividadesEComponent },
-  {path:'dist-horaria', component:DistHorariaComponent},
-  {path:'dist-horaria-guardias', component:DistHorariaGuardiaComponent},
-  {path:'dist-horaria-cons', component:DistHorariaConsComponent},
-  {path:'dist-horaria-giras', component:DistHorariaGirasComponent},
-  {path:'dist-horaria-otras', component:DistHorariaOtrasComponent},
+  {path:"registro-actividades-ingreso-profesional",component: RegistroActividadesIngresoProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-egreso-profesional", component: RegistroActividadesEgresoProfesionalComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-profesionales", component: RegistroActividadesProfesionalesComponent, canActivate: [ProfessionalAuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
+  {path:"registro-actividades-profesionales-public", component: RegistroActividadesProfesionalesPublicComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_USER'] }},
 
   //Sección: Personal
-  {path: 'personal', component:PersonalComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-externo', component:PersonalExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-legajo', component:PersonalLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'personal-legajo-no-asistencial', component:PersonalLegajoNoAsistencialComponent},
-  {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent},
-  {path: 'asist-profesional', component:AsistProfesionalComponent},
-  {path: 'personal-autoridad', component:PersonalAutoridadComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'asistencial-selector', component:AsistencialSelectorComponent},
-  {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent},
-  {path: 'asistencial-filtrado-selector', component:AsistencialFiltradoSelectorComponent},
-  {path: 'asistencial-create', component:AsistencialCreateComponent},
-  {path: 'asistencial', component:AsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'asistencial-detail/:id', component:AsistencialDetailComponent},
-  {path: 'asistencial-edit', component:AsistencialEditComponent},
-  {path: 'no-asistencial', component:NoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'no-asistencial-create', component:NoAsistencialCreateComponent},
-  {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent},
-  {path: 'no-asistencial-edit', component:NoAsistencialEditComponent},
-  {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] } },
-  {path: 'externo', component:ExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
+  {path: 'personal', component:PersonalComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-no-asistencial', component:PersonalNoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-autoridad-list', component:PersonalAutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-sin-legajo', component:PersonalSinLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-externo', component:PersonalExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-legajo', component:PersonalLegajoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-legajo-no-asistencial', component:PersonalLegajoNoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-legajo-select', component:PersonalLegajoSelectComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asist-profesional', component:AsistProfesionalComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-autoridad', component:PersonalAutoridadComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial-selector', component:AsistencialSelectorComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial-selector-all', component:AsistencialSelectorAllComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial-filtrado-selector', component:AsistencialFiltradoSelectorComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial-create', component:AsistencialCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial', component:AsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial-detail/:id', component:AsistencialDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'asistencial-edit', component:AsistencialEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'no-asistencial', component:NoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'no-asistencial-create', component:NoAsistencialCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'no-asistencial-detail/:id', component:NoAsistencialDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'no-asistencial-edit', component:NoAsistencialEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'autoridad-list', component:AutoridadListComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'externo', component:ExternoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
-  {path: 'personal-dh', component:PersonalDhComponent},
-  {path: 'personal-dh-edit', component:PersonalDhEditComponent},
-  {path: 'personal-dh-detail', component:PersonalDhDetailComponent},
-  {path: 'personal-dh-create', component:PersonalDhCreateComponent},
-  {path: 'personal-dh-historial', component:PersonalDhHistorialComponent},
-  {path: 'cargo', component:CargoComponent},
-  {path: 'cargo-detail/:id', component:CargoDetailComponent},
-  {path: 'cargo-edit/:id', component:CargoEditComponent},
+  {path: 'personal-dh', component:PersonalDhComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-dh-edit', component:PersonalDhEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-dh-detail', component:PersonalDhDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-dh-create', component:PersonalDhCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'personal-dh-historial', component:PersonalDhHistorialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cargo', component:CargoComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cargo-detail/:id', component:CargoDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cargo-edit/:id', component:CargoEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
-  {path: 'legajo-create', component: LegajoCreateComponent},
-  {path: 'legajo-detail/:id', component:LegajoDetailComponent},
-  {path: 'legajo-edit/:id', component:LegajoEditComponent},
-  {path: 'legajo-edit', component:LegajoEditComponent},
-  {path: 'legajo-no-asistencial', component:LegajoNoAsistencialComponent},
-  {path: 'legajo-create-noasistencial', component: LegajoCreateNoasistencialComponent},
-  {path: 'legajo-edit-noasistencial/:id', component:LegajoEditNoasistencialComponent},
-  {path: 'legajo-edit-noasistencial', component:LegajoEditNoasistencialComponent},
-  {path: 'legajo-person', component:LegajoPersonComponent},
+  {path: 'legajo-create', component: LegajoCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-detail/:id', component:LegajoDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-edit/:id', component:LegajoEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-edit', component:LegajoEditComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-no-asistencial', component:LegajoNoAsistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-create-noasistencial', component: LegajoCreateNoasistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-edit-noasistencial/:id', component:LegajoEditNoasistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-edit-noasistencial', component:LegajoEditNoasistencialComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'legajo-person', component:LegajoPersonComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
 
   //Sección: Cronograma
-  {path: 'cronograma', component:CronogramaComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path: 'cronograma-pendiente', component:CronogramaPendienteComponent},
-  {path: 'cronograma-pendiente-detail', component:CronogramaPendienteDetailComponent},
-  {path: 'cronograma-create', component:CronogramaCreateComponent},
-  {path: 'cronograma-detail', component:CronogramaDetailComponent},
-  {path: 'cronograma-def', component:CronogramaDefComponent},
-  {path: 'cronograma-def-materno', component:CronogramaDefMaternoComponent},
-  {path: 'cronograma-def-sroque', component:CronogramaDefSroqueComponent},
-  {path: 'cronograma-reg', component:CronogramaRegComponent},
-  {path: 'cronograma-p', component:CronogramaPComponent},
-  {path: 'cronograma-p-def', component:CronogramaPDefComponent},
-  {path: 'cronograma-p-def-tot', component:CronogramaPDefTotComponent},
-  {path: 'cronograma-p-hos', component:CronogramaPHosComponent},
-  {path: 'cronograma-form-agregar', component:CronogramaFormAgregarComponent},
- 
+  {path: 'cronograma', component:CronogramaComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-pendiente', component:CronogramaPendienteComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-pendiente-detail', component:CronogramaPendienteDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-create', component:CronogramaCreateComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-detail', component:CronogramaDetailComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-def', component:CronogramaDefComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-reg', component:CronogramaRegComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-p', component:CronogramaPComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-p-def', component:CronogramaPDefComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path: 'cronograma-p-hos', component:CronogramaPHosComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
 
   //Sección: Guardias
-  {path:'guardias-view', component: GuardiasViewComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:'guardias-view-p', component: GuardiasViewPComponent},
-  {path:'guardia-activa',component:GuardiaActivaComponent},
-  {path:'guardia-pasiva', component:GuardiaPasivaComponent},
-  {path:'ddjj-seleccion',component:DdjjSeleccionComponent},
-  {path:'ddjj-extra',component:DdjjExtraComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:'ddjj-extra-detail',component:DdjjExtraDetailComponent},
-  {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRoles: ['ROLE_ADMIN', 'ROLE_AUTORIDAD', 'ROLE_DPH', 'ROLE_SUPERUSER'] }},
-  {path:'ddjj-cargoyagrup-detail',component:DdjjCargoyagrupDetailComponent},
-  {path:'ddjj-extra-tot',component:DdjjExtraTotComponent},
-  {path:'ddjj-extra-tot-rec',component:DdjjExtraTotRecComponent},
-  {path:'ddjj-extra-tot-ap',component:DdjjExtraTotApComponent},
-  {path:'ddjj-contrafactura-tot',component:DdjjContrafacturaTotComponent},
-  {path:'ddjj-contrafactura-tot-ap',component:DdjjContrafacturaTotApComponent},
-  {path:'ddjj-contrafactura-tot-rec',component:DdjjContrafacturaTotRecComponent},
-  {path:'ddjj-cargoyagrup-tot',component:DdjjCargoyagrupTotComponent},
-  {path:'ddjj-cargoyagrup-total-ap',component:DdjjCargoyagrupTotalApComponent},
-  {path:'ddjj-cargoyagrup-total-rec',component:DdjjCargoyagrupTotalRecComponent},
-  {path:'ddjj-tentativo',component:DdjjTentativoComponent},
-  {path: 'popup-ddjj-cf', component:PopupDdjjCfComponent},
-  {path: 'popup-ddjj-cf-edit', component:PopupDdjjCfEditComponent},
+  {path:'guardias-view', component: GuardiasViewComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-seleccion',component:DdjjSeleccionComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-extra',component:DdjjExtraComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-extra-detail',component:DdjjExtraDetailComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-contrafactura',component:DdjjContrafacturaComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-cargoyagrup',component:DdjjCargoyagrupComponent, canActivate: [AuthGuard, RoleGuard], data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-cargoyagrup-detail',component:DdjjCargoyagrupDetailComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'ddjj-tentativo',component:DdjjTentativoComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
-  {path:'rmensual-seleccion',component:RmensualSeleccionComponent},
-  {path:'rmensual-cargoyagrup',component:RmensualCargoyagrupComponent},
-  {path:'rmensual-extra',component:RmensualExtraComponent},
-  {path:'rmensual-contrafactura',component:RmensualContrafacturaComponent},
-  {path:'rmensual-contrafactura-fuera-termino',component:RmensualContrafacturaFueraTerminoComponent},
-
-
-
-  
- 
-
-  //Sección: Disponibilidad
-  {path: 'disponibilidad', component:DisponibilidadComponent},
-  {path: 'disponibilidad-ramal2', component:DisponibilidadRamal2Component},
+  {path:'rmensual-seleccion',component:RmensualSeleccionComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'rmensual-cargoyagrup',component:RmensualCargoyagrupComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'rmensual-extra',component:RmensualExtraComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'rmensual-contrafactura',component:RmensualContrafacturaComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  {path:'rmensual-contrafactura-fuera-termino',component:RmensualContrafacturaFueraTerminoComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
  
 
   //Sección: Historial
-  {path: 'historial', component:HistorialComponent},
+  {path: 'historial', component:HistorialComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
 
 
-  { path: 'professional-form', component: ProfessionalFormComponent },
-  { path: 'professional-form-edit', component: ProfessionalFormEditComponent },
-  { path: 'professional-form-delet', component: ProfessionalFormDeletComponent },
-  { path: 'daily-schedule', component: DailyScheduleComponent},
-  { path: 'professional-list', component: ProfessionalListComponent},
-  { path: 'professinal-news', component: ProfessionalNewsComponent},
-  { path: 'schedule-distribution', component: ScheduleDistributionComponent},
-  { path: 'novedades-person-edit', component: NovedadesPersonEditComponent},
-  { path: 'novedades-person-create', component: NovedadesPersonCreateComponent},
-  { path: 'novedades-person', component: NovedadesPersonComponent},
-  { path: 'professional-detail/:id', component: ProfessionalDetailComponent },
-  { path: 'professional-dh/:id', component: ProfessionalDhComponent },
-  { path: 'professional-dh-hist/:id', component: ProfessionalDhHistComponent },
-  { path: 'professional-dh-junio/:id', component: ProfessionalDhJunioComponent },
-  { path: 'professional-dh-junio-asis/:id', component: ProfessionalDhJunioAsisComponent },
-  { path: 'professional-plantilla-dh/:id', component: ProfessionalPlantillaDhComponent },
+  { path: 'novedades-person-edit', component: NovedadesPersonEditComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  { path: 'novedades-person-create', component: NovedadesPersonCreateComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  { path: 'novedades-person', component: NovedadesPersonComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+
   /*  {path:'api', component:ApiComponent} */
-  { path:'MonthTableComponent',component:MonthTableComponent},
-  { path: 'popup-calendario', component:PopupCalendarioComponent},
-  { path: 'digesto', component:DigestoComponent},
-  { path: 'novedades', component:NovedadesComponent}, 
-  { path: 'popup-calendario-disp', component:PopupCalendarioDispComponent},
-  { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent},
+  { path: 'digesto', component:DigestoComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
+  { path: 'novedades', component:NovedadesComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }}, 
+  { path: 'popup-novedad-agregar', component:PopupNovedadAgregarComponent, data: { deniedRoles: ['ROLE_USER', 'ROLE_HOSPITAL'] }},
 
- { path: 'cronograma-new', component:CronogramaNewComponent},
 
   //Pagina no encontrada
 { path: 'not-found', component: NotFoundComponent, canActivate: [AuthGuard] },
 { path: '**', redirectTo: 'not-found' },
-
-
-
- {path: 'prueba-territorio', component:PruebaTerritorioComponent},
- {path: 'prueba-form', component:PruebaFormComponent},
- {path: 'prueba-form2', component:PruebaForm2Component},
- {path: 'prueba-detail', component:PruebaDetailComponent},
-
-
-
 
 ];
 

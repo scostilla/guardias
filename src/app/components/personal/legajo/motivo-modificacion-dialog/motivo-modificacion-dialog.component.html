@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>{{ data?.title || 'Motivo de modificación de Legajo' }}</h1>
+
+<div mat-dialog-content>
+  <form [formGroup]="motivoForm">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Motivo de modificación</mat-label>
+      <textarea matInput formControlName="motivoModificacion" rows="4"></textarea>
+      <mat-hint>Ingrese un motivo (mínimo 5 caracteres).</mat-hint>
+      <mat-error *ngIf="motivoForm.controls['motivoModificacion'].hasError('required')">
+        El motivo es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="motivoForm.controls['motivoModificacion'].hasError('minlength')">
+        El motivo debe tener al menos 5 caracteres.
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-raised-button color="secondary" type="button" (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" type="button" (click)="confirmar()" [disabled]="motivoForm.invalid">Confirmar</button>
+</div>

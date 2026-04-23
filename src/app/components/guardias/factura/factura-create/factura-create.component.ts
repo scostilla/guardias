@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FacturaService } from 'src/app//services/factura.service';
 import { FacturaDto } from 'src/app/dto/FacturaDto';
@@ -18,13 +19,23 @@ export class FacturaCreateComponent  implements OnInit {
   loading = true;
   maximoAlcanzado = false; 
 
+  // --- NUEVO: manejo de PDF ---
+  selectedFile: File | null = null;
+  fileUrl: string | null = null;
+  sanitizedPdfUrl?: SafeResourceUrl;
+  isDragOver: boolean = false;
+  isUploading: boolean = false;
+  uploadError: string | null = null;
+  // --- FIN NUEVO ---
+
   constructor(
     private fb: FormBuilder,
     private facturaService: FacturaService,
     private registroMensualService: RegistroMensualService,
     private toastr: ToastrService,
     private dialogRef: MatDialogRef<FacturaCreateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private sanitizer: DomSanitizer // <- inyectado
   ) {}
 
 // ngOnInit()
@@ -54,7 +65,7 @@ ngOnInit(): void {
     puntoVenta: [0, [Validators.required, Validators.min(1), Validators.max(999)]],
     numeroFactura: [0, [Validators.required, Validators.min(1), Validators.max(99999999)]],
     fechaEmision: ['', Validators.required],
-    monto: [0, [Validators.required, Validators.min(0), this.montoValidator.bind(this)]],
+    monto: [0, [Validators.required, Validators.min(0.01), this.montoValidator.bind(this)]],
     activo: [true]
   });
 
@@ -194,9 +205,15 @@ calcularMontoDisponible(
 
 /* Validador para el campo monto */
 montoValidator(control: AbstractControl): ValidationErrors | null {
-  if (this.disponible && control.value > this.disponible) {
-    return { excedeMonto: true };
+  const tolerancia = 0.10; // margen de 10 centavos
+
+  if (this.disponible && control.value !== null) {
+    const excedente = control.value - this.disponible;
+    if (excedente > tolerancia) {
+      return { excedeMonto: true };
+    }
   }
+
   return null;
 }
 
@@ -237,14 +254,52 @@ onSave(): void {
     return;
   }
 
-  // Clona los valores del formulario
   const dto: FacturaDto = { ...this.facturaForm.value };
 
-  // Quito los guiones del CUIL
   if (dto.cuilTitular) {
     dto.cuilTitular = dto.cuilTitular.replace(/-/g, '');
   }
 
+  // Si hay archivo seleccionado: crear factura y luego subir PDF asociado
+  if (this.selectedFile) {
+    this.isUploading = true;
+    this.facturaService.create(dto).subscribe({
+      next: (resp) => {
+        // Intento robusto de obtener el id creado
+        const createdId = resp && (resp.id || resp.facturaId || resp.notificacionId || resp.data?.id) ? (resp.id || resp.facturaId || resp.notificacionId || resp.data?.id) : (typeof resp === 'number' ? resp : undefined);
+        const id = createdId || resp?.id;
+        if (id) {
+          this.facturaService.uploadPdf(id, this.selectedFile!).subscribe({
+            next: (uploadResp) => {
+              this.isUploading = false;
+              this.toastr.success('Factura creada y PDF subido', 'Éxito');
+              this.dialogRef.close(true);
+            },
+            error: (err) => {
+              this.isUploading = false;
+              console.error('[UPLOAD PDF] Error:', err);
+              this.toastr.error('Factura creada pero no se pudo subir el PDF', 'Error');
+              // opcional: cerrar igualmente o dejar abierto -> aquí cerramos para mantener el flujo
+              this.dialogRef.close(true);
+            }
+          });
+        } else {
+          // Si no se pudo obtener id, informar pero cerrar
+          this.isUploading = false;
+          this.toastr.success('Factura creada', 'Éxito');
+          this.dialogRef.close(true);
+        }
+      },
+      error: (err) => {
+        this.isUploading = false;
+        console.error(err);
+        this.toastr.error('No se pudo crear la factura', 'Error');
+      }
+    });
+    return;
+  }
+
+  // Sin archivo: comportamiento original
   this.facturaService.create(dto).subscribe({
     next: () => {
       this.toastr.success('Factura creada correctamente', 'Éxito');
@@ -260,4 +315,61 @@ onSave(): void {
 onCancel(): void {
     this.dialogRef.close(false);
   }
+
+  // --- NUEVO: helpers para archivo ---
+  private updateSanitized(): void {
+    this.sanitizedPdfUrl = this.fileUrl ? this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl) : undefined;
+  }
+
+  onFileSelected(event: any): void {
+    const file: File | undefined = event.target.files?.[0];
+    if (!file) { this.selectedFile = null; this.uploadError = 'No se seleccionó ningún archivo'; return; }
+    if (file.type !== 'application/pdf') { this.toastr.warning('Solo se permiten archivos PDF', 'Archivo no válido'); event.target.value = ''; this.selectedFile = null; this.uploadError = 'Formato no válido'; return; }
+    if (file.size > 10 * 1024 * 1024) { this.toastr.warning('El archivo supera los 10MB', 'Archivo muy grande'); event.target.value = ''; this.selectedFile = null; this.uploadError = 'Archivo muy grande'; return; }
+    this.selectedFile = file;
+    try {
+      this.fileUrl = URL.createObjectURL(file);
+      this.updateSanitized();
+    } catch (e) {
+      this.fileUrl = null;
+      this.sanitizedPdfUrl = undefined;
+    }
+    this.uploadError = null;
+  }
+
+  onDragEnter(event: DragEvent): void { event.preventDefault(); event.stopPropagation(); if (event.dataTransfer?.types.includes('Files')) { this.isDragOver = true; this.uploadError = null; } }
+  onDragOver(event: DragEvent): void { event.preventDefault(); event.stopPropagation(); if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy'; this.isDragOver = true; }
+  onDragLeave(event: DragEvent): void { event.preventDefault(); event.stopPropagation(); this.isDragOver = false; }
+  onDrop(event: DragEvent): void { event.preventDefault(); event.stopPropagation(); this.isDragOver = false; const files = event.dataTransfer?.files; if (files && files.length > 0) { const fakeEvent = { target: { files } } as any; this.onFileSelected(fakeEvent); } }
+  onMouseLeave(_: MouseEvent): void { this.isDragOver = false; }
+
+  openFileSelector(): void { const fileInput = document.getElementById('archivo-factura') as HTMLInputElement; if (fileInput) fileInput.click(); }
+
+  removeSelectedFile(): void {
+    if (this.fileUrl) {
+      try { URL.revokeObjectURL(this.fileUrl); } catch { /* ignore */ }
+    }
+    this.selectedFile = null;
+    this.fileUrl = null;
+    this.sanitizedPdfUrl = undefined;
+    this.uploadError = null;
+    const fileInput = document.getElementById('archivo-factura') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  }
+
+  getFileInfo(): string {
+    if (!this.selectedFile) return '';
+    const sizeInMB = (this.selectedFile.size / (1024 * 1024)).toFixed(2);
+    return `${this.selectedFile.name} (${sizeInMB} MB)`;
+  }
+
+  getDropAreaClasses(): string {
+    let classes = 'file-drop-area';
+    if (this.isUploading) classes += ' uploading';
+    else if (this.isDragOver) classes += ' drag-over';
+    else if (this.selectedFile && !this.uploadError) classes += ' has-file';
+    else if (this.uploadError) classes += ' error';
+    return classes;
+  }
+  // --- FIN NUEVO ---
 }

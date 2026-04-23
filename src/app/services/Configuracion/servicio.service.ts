@@ -34,6 +34,10 @@ public getServiciosByNivel(nivel:number): Observable<Servicio> {
   return this.httpClient.get<Servicio>(this.serviciosURL + `detailnivel/${nivel}`);
 }
 
+public getById(id:number): Observable<Servicio> {
+      return this.httpClient.get<Servicio>(this.serviciosURL + `detail/${id}`);
+}
+
 public save(servicios:Servicio): Observable<any> {
   return this.httpClient.post<any>(this.serviciosURL + 'create', servicios)
   .pipe(

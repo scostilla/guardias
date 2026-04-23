@@ -1,0 +1,64 @@
+<app-spinner></app-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-11">
+      <div class="titulos"> REPORTES </div>
+    </div>
+
+    <div class="col-1 m d-flex justify-content-end">
+        <button mat-fab class="button-primary" style="margin-left: 5px;" matTooltip="Volver atrás" routerLink="/home-page">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>  
+    </div>
+  </div>
+
+    <div class="dashboard-container">
+
+    <!-- KPIs -->
+    <div class="kpi-container">
+        <mat-card class="kpi-card">
+        <h3>Hospitales</h3>
+        <h1>{{ hospitales }}</h1>
+        </mat-card>
+
+        <mat-card class="kpi-card">
+        <h3>Médicos</h3>
+        <h1>{{ medicos }}</h1>
+        </mat-card>
+
+        <mat-card class="kpi-card">
+        <h3>Guardias Impagas</h3>
+        <h1>{{ guardiasImpagas }}</h1>
+        </mat-card>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts-container">
+
+<mat-card>
+  <h3>Guardias por hospital</h3>
+  <canvas
+    baseChart
+    [data]="barChartData"
+    [options]="barChartOptions"
+    [type]="'bar'">
+  </canvas>
+</mat-card>
+
+<!-- Pie chart -->
+<mat-card class="pie-card">
+  <h3>Horas realizadas por tipo de guardia</h3>
+  <div class="pie-wrapper">
+    <canvas
+      baseChart
+      [data]="pieChartData"
+      [options]="pieChartOptions"
+      [type]="'pie'">
+    </canvas>
+  </div>
+</mat-card>
+
+    </div>
+
+    </div>
+</div>

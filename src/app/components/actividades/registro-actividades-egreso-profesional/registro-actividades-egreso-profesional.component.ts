@@ -500,7 +500,7 @@ saveRegistro(): void {
           positionClass: 'toast-top-center',
           progressBar: true
         });
-        this.router.navigate(['/registro-diario']);
+        this.router.navigate(['/home-profesional']);
       },
       error: (err) => {
         console.error('Error en la petición:', err);
@@ -532,6 +532,6 @@ saveRegistro(): void {
       positionClass: 'toast-top-center',
       progressBar: true
     });
-    this.router.navigate(['/registro-diario']);
+    this.router.navigate(['/home-profesional']);
   }
 }

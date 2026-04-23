@@ -3,6 +3,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
@@ -37,7 +38,8 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
   nombresRoles: { [key: string]: string } = {
     'ROLE_ADMIN': 'Administrativo',
-    'ROLE_USER': 'Usuario',
+    'ROLE_HOSPITAL': 'Acceso Login Hospital',
+    'ROLE_USER': 'Profesional de salud',
     'ROLE_DPH': 'DPH',
     'ROLE_SUPERUSER': 'Super usuario',
     'ROLE_AUTORIDAD': 'Autoridad'
@@ -154,6 +156,64 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     });
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef.close();
+    });
+  }
+
+  resetPassword(usuario: Usuario): void {
+    if (!usuario?.nombreUsuario) {
+      this.toastr.error('Usuario inválido');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: 'Resetear contraseña',
+        message: `
+          ¿Estás seguro de que deseas resetear la contraseña del usuario
+          <b>${usuario.nombreUsuario}</b>?<br><br>
+          La nueva contraseña será <b>igual al nombre de usuario</b>
+          y deberá cambiarla en el próximo inicio de sesión.
+        `
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmado: boolean) => {
+      if (!confirmado) return;
+
+      // 🔐 contraseña = nombre de usuario
+      const dto = {
+        nombreUsuario: usuario.nombreUsuario,
+        nuevaPassword: usuario.nombreUsuario
+      };
+
+      this.authService.resetPassword(dto).subscribe({
+        next: () => {
+          this.toastr.success(
+            `Contraseña reseteada correctamente.<br>
+            Para el usuario: <b>${usuario.nombreUsuario}</b>`,
+            'Reset exitoso',
+            {
+              enableHtml: true,
+              timeOut: 7000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            }
+          );
+        },
+        error: () => {
+          this.toastr.error(
+            'No se pudo resetear la contraseña',
+            'Error',
+            {
+              timeOut: 5000,
+              positionClass: 'toast-top-center',
+              progressBar: true
+            }
+          );
+        }
+      });
     });
   }
 

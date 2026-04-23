@@ -6,6 +6,10 @@ import { NuevoUsuario } from 'src/app/dto/usuario/NuevoUsuario';
 import { Usuario } from 'src/app/models/login/Usuario';
 import { JwtDTO } from 'src/app/models/login/jwt-dto';
 import { LoginUsuario } from 'src/app/models/login/login-usuario';
+import { LoginResponseDto } from 'src/app/dto/usuario/login-response-dto';
+import { CambiarPassword } from 'src/app/dto/usuario/cambiar-password';
+import { ResetPassword } from 'src/app/dto/usuario/reset-password';
+import { TokenService } from './token.service';
 
 import { environment } from 'src/environments/environment.prod';
 
@@ -18,7 +22,7 @@ export class AuthService {
   authUrl = `${environment.apiUrl}/auth/`;
   private _refresh$ = new Subject<void>();
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private tokenService: TokenService) { }
 
   get refresh$(){
     return this._refresh$;
@@ -63,12 +67,12 @@ export class AuthService {
     return this.httpClient.get<Usuario[]>(this.authUrl + 'list');
 }
 
-  public login(loginUsuario : LoginUsuario): Observable<JwtDTO>{
-    /* console.log("console de auth login "+ loginUsuario.nombreUsuario);
-    console.log("console de auth login "+ (this.httpClient.post<JwtDTO>(this.authURl + 'login',loginUsuario))); */
-    return this.httpClient.post<JwtDTO>(this.authUrl + 'login',loginUsuario);
-
-  }
+public login(loginUsuario: LoginUsuario): Observable<LoginResponseDto> {
+  return this.httpClient.post<LoginResponseDto>(
+    this.authUrl + 'login',
+    loginUsuario
+  );
+}
 
   public detail(nombreUsuario: string): Observable<Usuario| null> {
     return this.httpClient.get<Usuario>(this.authUrl +`detail/${nombreUsuario}`).pipe(
@@ -101,5 +105,26 @@ export class AuthService {
   validatePassword(nombreUsuario: string, password: string): Observable<boolean> {
     const body = { nombreUsuario, password };
     return this.httpClient.post<boolean>(`${this.authUrl}validate-password`, body);
+  }
+
+  // Cambiar contraseña (primer logueo)
+  public cambiarPassword(dto: CambiarPassword): Observable<any> {
+    return this.httpClient.post<any>(this.authUrl + 'cambiar-password',
+      {
+        nombreUsuario: dto.nombreUsuario,
+        passwordActual: dto.passwordActual,
+        nuevaPassword: dto.nuevaPassword,
+        confirmacionPassword: dto.confirmarPassword
+      }
+    );
+  }
+
+  resetPassword(dto: ResetPassword): Observable<any> {
+    return this.httpClient.post<any>(`${this.authUrl}reset-password`,dto).pipe(
+      catchError(err => {
+        console.error('Error en resetPassword:', err);
+        return throwError(() => err);
+      })
+    );
   }
 }

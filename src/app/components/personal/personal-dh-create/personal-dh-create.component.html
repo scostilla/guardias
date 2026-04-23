@@ -108,7 +108,7 @@
                   <mat-error *ngIf="guardia?.get('tipoGuardia')?.errors?.['required']">El tipo de guardia es requerido.</mat-error>
                 </mat-form-field>
 
-                <!-- OPCIÓN RADIO -->
+                <!-- OPCIÓN RADIO 
                 <div *ngIf="tipoGuardia === 'CARGO'">
                   <mat-label>Cantidad de horas</mat-label>
                   <mat-radio-group formControlName="cantidadHoras">
@@ -120,11 +120,10 @@
                     El campo es obligatorio.
                   </mat-error>
                   <br/>
-                </div>
+                </div>-->
 
                 <!-- INPUT LIBRE -->
-                <div *ngIf="tipoGuardia === 'AGRUPACION'">
-                  <mat-form-field>
+                  <mat-form-field appearance="fill">
                     <mat-label>Cantidad de horas</mat-label>
                     <input matInput formControlName="cantidadHoras" type="number" />
                     <mat-error *ngIf="guardia.get('cantidadHoras')?.hasError('required')">
@@ -137,7 +136,6 @@
                       Solo puedes ingresar números enteros.
                     </mat-error>
                   </mat-form-field>
-                </div>
 
                 <button mat-button color="warn" class="mt-3" (click)="removeGuardia(i)">Eliminar guardia</button>
                 <mat-divider></mat-divider>

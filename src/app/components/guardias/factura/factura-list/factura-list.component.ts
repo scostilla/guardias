@@ -6,6 +6,7 @@ import { FacturaService } from 'src/app/services/factura.service';
 import { FacturaDetailDto } from 'src/app/dto/FacturaDetailDto';
 import { FacturaEditComponent } from '../factura-edit/factura-edit.component';
 import { FacturaDetailComponent } from '../factura-detail/factura-detail.component';
+import { DdjjService } from 'src/app/services/ddjj.service';
 
 @Component({
   selector: 'app-factura-list',
@@ -18,12 +19,14 @@ export class FacturaListComponent implements OnInit {
   displayedColumns: string[] = ['numeroFactura', 'fechaEmision', 'monto', 'acciones'];
   nombreTitular: string = '';
   apellidoTitular: string = '';
+  ddjjYaExiste: boolean | null = null;
 
   constructor(
     private facturaService: FacturaService,
     private dialogRef: MatDialogRef<FacturaListComponent>,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private ddjjService: DdjjService,
 
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
@@ -37,6 +40,7 @@ export class FacturaListComponent implements OnInit {
     }
 
     this.loadFacturas();
+    this.verificarExistenciaDdjj(); 
 
     this.facturaService.refresh$.subscribe(() => {
       this.loadFacturas();
@@ -81,7 +85,6 @@ export class FacturaListComponent implements OnInit {
 
         dialogRefEdit.afterClosed().subscribe(updated => {
           if (updated) {
-            // recargar listado si querés
           }
         });
       },
@@ -98,6 +101,42 @@ export class FacturaListComponent implements OnInit {
         error: (err) => console.error('Error al eliminar factura', err)
       });
     }
+  }
+
+  convertirMesANombre(numeroMes: number): string {
+    const meses = [
+      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+      'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
+    ];
+    return meses[numeroMes];
+  }
+
+  verificarExistenciaDdjj(): void {
+    const nombreMes = this.data.mes;
+    const anio = this.data.anio;
+    const efectorId = this.data.idEfector;
+    const quincena = this.data.quincena;
+
+    if (!efectorId) {
+      console.error('El ID del efector no puede ser null');
+      return;
+    }
+
+    this.ddjjService.existsDdjjCf(anio, nombreMes, efectorId, quincena).subscribe({
+      next: (existe: boolean) => {
+        this.ddjjYaExiste = existe;
+
+        if (existe) {
+          console.log('Ya existe una DDJJ para estos filtros.');
+        } else {
+          console.log('No existe DDJJ previa, se puede eliminar facturas.');
+        }
+      },
+      error: (err) => {
+        console.error('Error verificando existencia de DDJJ:', err);
+        this.ddjjYaExiste = false;
+      }
+    });
   }
 
   onClose(): void {

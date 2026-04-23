@@ -144,6 +144,7 @@
         <select class="select-tabla" [(ngModel)]="selectedQuincena" (change)="updateDateAndLoadData()">
           <option [ngValue]="'PRIMERA'">Primera</option>
           <option [ngValue]="'SEGUNDA'">Segunda</option>
+          <option [ngValue]="'FUERA_DE_TERMINO'">Fuera de término</option>
         </select>
       </div>
     </div>
@@ -487,7 +488,7 @@
   </ng-container>
 
   <div class="row mt-3">
-    <div *ngIf="mensajeDirector === 'aceptado'" class="col-12 col-md-6">
+    <div *ngIf="mensajeDirector === 'aceptado' || mensajeDirectorAuth === 'aceptado_completo_primera'" class="col-12 col-md-6">
       <button mat-fab extended class="button-pase-director" (click)="onExportarConHospital()" matTooltip="Descarga DDJJ con firma director hospital">
         <mat-icon>assignment_turned_in</mat-icon>
         APROBADO HOSPITAL

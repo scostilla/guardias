@@ -1,0 +1,71 @@
+/* ===== CONTENEDOR GENERAL ===== */
+.dashboard-container {
+  margin-top: 20px;
+}
+
+/* ===== KPIs ===== */
+.kpi-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* Colores pastel */
+.kpi-card:nth-child(1) {
+  background: linear-gradient(135deg, #7986cb, #5c6bc0); /* azul pastel */
+}
+
+.kpi-card:nth-child(2) {
+  background: linear-gradient(135deg, #4db6ac, #26a69a); /* verde pastel */
+}
+
+.kpi-card:nth-child(3) {
+  background: linear-gradient(135deg, #ffb74d, #ffa726); /* naranja pastel */
+}
+
+.kpi-card h1 {
+  font-size: 2.6rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.kpi-card h3 {
+  margin-bottom: 6px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* ===== GRÁFICOS ===== */
+.charts-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+mat-card {
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.kpi-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
+mat-card h3 {
+  margin-bottom: 12px;
+  font-weight: 500;
+}

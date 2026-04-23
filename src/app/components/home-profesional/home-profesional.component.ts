@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
-import { RegistroActividad } from 'src/app/models/RegistroActividad';
-import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
-import { EfectorService } from 'src/app/services/Configuracion/efector.service';
-import { AuthService } from 'src/app/services/login/auth.service';
 import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
-import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { Efector } from 'src/app/models/Configuracion/Efector';
+import { RegistroActividad } from 'src/app/models/RegistroActividad';
+import { AsistencialService } from 'src/app/services/Configuracion/asistencial.service';
+import { EfectorService } from 'src/app/services/Configuracion/efector.service';
+import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { TokenService } from 'src/app/services/login/token.service';
+import { RegistroPendienteService } from 'src/app/services/registroPendiente.service';
 
 
 @Component({
@@ -17,7 +19,7 @@ import { Efector } from 'src/app/models/Configuracion/Efector';
   templateUrl: './home-profesional.component.html',
   styleUrls: ['./home-profesional.component.css']
 })
-export class HomeProfesionalComponent implements OnInit {
+export class HomeProfesionalComponent implements OnInit, OnDestroy {
 
   showRegistro: boolean = false;
   showAsistencia: boolean = false;
@@ -29,6 +31,10 @@ export class HomeProfesionalComponent implements OnInit {
   ultimoRegistro: RegistroActividad | null = null;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
+  cuil: string | null = null;
+  tieneCfActivo: boolean = false;
+
+  private popStateSubscription: any; 
 
   constructor(
     private router: Router,
@@ -37,30 +43,63 @@ export class HomeProfesionalComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private hospitalService: HospitalService,
-    private registroPendienteService: RegistroPendienteService
+    private registroPendienteService: RegistroPendienteService,
+    private location: Location,
+    private asistencialService: AsistencialService
+    
   ) {}
 
   ngOnInit(): void {
     this.authService.detailPersonBasicPanelProfessional().subscribe(
       (response: PersonBasicPanelDto) => {
-        console.log('Respuesta completa del panel profesional:', response); // log completo
+        console.log('Respuesta completa del panel profesional:', response);
 
         this.idPersona = response.id;
         this.nombre = response.nombre;
         this.apellido = response.apellido;
-
+        // solicitar CUIL desde el servicio del backend si tenemos idPersona
+        if (this.idPersona) {
+          this.asistencialService.getPersonCuil(this.idPersona).subscribe({
+            next: (cuil) => {
+              this.cuil = cuil;
+              console.log('CUIL obtenido desde backend:', this.cuil);
+            },
+            error: (err) => {
+              console.warn('No se pudo obtener CUIL desde backend:', err);
+            }
+          });
+        }
         console.log('ID de persona:', this.idPersona);
         console.log('Nombre:', this.nombre);
         console.log('Apellido:', this.apellido);
+        console.log('CUIL:', this.cuil);
+
+        if (this.idPersona) {
+          this.asistencialService.tieneCf(this.idPersona).subscribe({
+            next: (resp) => {
+              this.tieneCfActivo = resp;
+            },
+            error: (err) => {
+              console.error('Error al verificar CF:', err);
+              this.tieneCfActivo = false;
+            }
+          });
+        }
       },
-      error => {
+      (error) => {
         console.error('Error al cargar datos del panel', error);
       }
     );
+
     // Obtener efector desde el servicio
     this.efectorId = this.efectorService.getCurrentEfectorId();
     this.loadEfectorName();
-  }
+
+   // Escuchar el "atrás" del navegador
+    this.popStateSubscription = this.location.subscribe(() => {
+      this.onLogOutProfesional();
+    });
+    }
 
   loadEfectorName(): void {
     if (this.efectorId) {
@@ -97,7 +136,7 @@ export class HomeProfesionalComponent implements OnInit {
     .subscribe(
       (registro) => {
         console.log('Registro pendiente:', registro);
-        console.log('Mes:', mes, 'Año:', anio, 'ID Asistencial:', this.idPersona!);
+        console.log('Mes:', mes, 'Año:', anio, 'ID Asistencial:', this.idPersona);
         
         if (registro) { // Verifico si hay un registro
           // Navegar a egreso con el ID del registro
@@ -113,6 +152,28 @@ export class HomeProfesionalComponent implements OnInit {
       }
     );
   }
+
+  openMiAsistencia() {
+    // Navegar pasando state con efector y asistencial
+    const asistencial = {
+      id: this.idPersona,
+      nombre: this.nombre,
+      apellido: this.apellido,
+      cuil: this.cuil
+    };
+    this.router.navigate(['/registro-actividades-profesionales'], {
+      state: {
+        idEfector: this.efectorId,
+        asistencial
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+      if (this.popStateSubscription) {
+        this.popStateSubscription.unsubscribe?.();
+      }
+    }
 
   onLogOutProfesional(): void {
   this.tokenService.logOutProfessional();

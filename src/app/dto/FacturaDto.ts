@@ -12,6 +12,7 @@ export class FacturaDto {
   fechaEmision: string;
   monto: number;
   activo: boolean;
+  url: string;
 
     constructor(
         idAsistencial: number,
@@ -27,6 +28,7 @@ export class FacturaDto {
         fechaEmision: string,
         monto: number,
         activo: boolean,
+        url: string
     ) {
         this.idAsistencial = idAsistencial;
         this.idRegistrosMensuales = idRegistrosMensuales;
@@ -41,5 +43,6 @@ export class FacturaDto {
         this.fechaEmision = fechaEmision;
         this.monto = monto;
         this.activo = activo;
+        this.url = url;
     }
 }

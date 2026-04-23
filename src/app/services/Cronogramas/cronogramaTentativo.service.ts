@@ -43,6 +43,10 @@ export class CronogramaTentativoService {
         return this.httpClient.get<CronogramaTentativoListAtorizadoDto[]>(this.cTentativoURL + `listByEfectorAndAutorizado/${idEfector}/${autorizado}`)
       }
 
+      public listByAsistencialAndAutorizado(idAsistencial: number, autorizado: string): Observable<CronogramaTentativoListAtorizadoDto[]> {
+        return this.httpClient.get<CronogramaTentativoListAtorizadoDto[]>(this.cTentativoURL + `listByAsistencialAndAutorizado/${idAsistencial}/${autorizado}`)
+      }
+
       public listAll(): Observable<CronogramaTentativo[]> {
         return this.httpClient.get<CronogramaTentativo[]>(this.cTentativoURL + 'listAll')
       }  
@@ -104,6 +108,10 @@ export class CronogramaTentativoService {
          this._refresh$.next(); 
         })
       )
+    }
+
+    countPendientesByAsistencial(idAsistencial: number): Observable<number> {
+      return this.httpClient.get<number>(this.cTentativoURL + `countPendientesByAsistencial/${idAsistencial}`)
     }
   
     countPendientesByEfector(idEfector: number): Observable<number> {

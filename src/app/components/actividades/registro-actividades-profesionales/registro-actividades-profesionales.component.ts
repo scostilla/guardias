@@ -34,7 +34,6 @@ import { AsistencialFiltradoSelectorComponent } from '../../personal/personal-co
     styleUrls: ['./registro-actividades-profesionales.component.css']
 })
 export class RegistroActividadesProfesionalesComponent {
-
     efectorId: number | null = null;
     efectorNombre: string | null = null;
     initialData: any;
@@ -93,13 +92,19 @@ export class RegistroActividadesProfesionalesComponent {
       selectedServicio?: number | null = null; 
         selectedMonth: number = moment().month() + 1;
         selectedYear: number = moment().year();
-        years: number[] = [2023, 2024, 2025];
+        years: number[] = [];
         mesesDisponibles: { value: number, label: string }[] = [];
         selectedMonthYear: string = '';
         // mesesDisponibles: { value: string, label: string }[] = [];
       
 
     asistencialCuil: string | null = null;
+    asistencialLocked: boolean = false; // nuevo flag para bloquear selector
+
+    // NUEVO: selector de efector por asistencial
+    efectoresDisponibles: { id: number; nombre: string }[] = [];
+    mostrarSelectorEfector = false;
+    selectedEfectorId: number | null = null;
 
     constructor(
         private fb: FormBuilder,
@@ -120,6 +125,7 @@ export class RegistroActividadesProfesionalesComponent {
   
       this.registroForm = this.fb.group({
         idAsistencial: ['', Validators.required],
+        asistencialDisplay: ['', Validators.required],
         idServicio: ['', Validators.required],
         idEfector: [''],
         fechaIngreso: ['', Validators.required],
@@ -131,18 +137,32 @@ export class RegistroActividadesProfesionalesComponent {
         this.initialData = data['initialData'];
         if (this.initialData) {
           this.registroForm.patchValue(this.initialData);
+          // Si initialData incluye nombre/apellido, intentar setear también la display
+          if (this.initialData.nombre || this.initialData.apellido) {
+            this.registroForm.patchValue({
+              asistencialDisplay: `${this.initialData.apellido || ''} ${this.initialData.nombre || ''}`.trim()
+            });
+            this.inputValue = this.registroForm.get('asistencialDisplay')?.value || '';
+          }
         }
       });
     }
 
   ngOnInit(): void {
+    // Asegurar que el formulario contiene ambos controles si por alguna razón fue recreado
     this.registroForm = this.fb.group({
       idAsistencial: ['', Validators.required],
+      asistencialDisplay: ['', Validators.required]
     });
     this.efectorId = this.efectorService.getCurrentEfectorId();
     // Establecer por defecto el mes y año actual ANTES de generar los meses disponibles
     this.selectedMonth = moment().month() + 1;
     this.selectedYear = moment().year();
+    // Asegurar que el año actual exista en el select
+    const currentYear = moment().year();
+    const startYear = 2025;
+    const totalYears = Math.max(1, currentYear - startYear + 1);
+    this.years = Array.from({ length: totalYears }, (_, i) => startYear + i);
     if (this.efectorId) {
             this.loadEfectorName();
               moment.locale('es');
@@ -170,6 +190,32 @@ export class RegistroActividadesProfesionalesComponent {
         console.warn('No hay un rol seleccionado actualmente.');
       }
     });
+    
+    // Restaurar state enviado por navegación (si existe)
+    const navState = (this.router.getCurrentNavigation && this.router.getCurrentNavigation()?.extras?.state) || (window as any).history.state || {};
+    if (navState && (navState.idEfector || navState.asistencial)) {
+      // Si viene idEfector en el state, lo usamos
+      if (navState.idEfector) {
+        this.efectorId = navState.idEfector;
+        // cargar nombre del efector si es necesario
+        this.loadEfectorName();
+      }
+      if (navState.asistencial) {
+        const a = navState.asistencial;
+        const display = `${a.apellido || ''} ${a.nombre || ''}`.trim();
+        // Setear valores en el formulario sin permitir cambios posteriores
+        this.registroForm.patchValue({
+          idAsistencial: a.id,
+          asistencialDisplay: display
+        });
+        this.inputValue = display;
+        this.asistencialCuil = a.cuil || this.asistencialCuil;
+        this.asistencialLocked = true; // bloquear selector para evitar cambiar asistencial
+        // NUEVO: cargar efectores asociados al asistencial
+        this.cargarEfectoresPorAsistencial(a.id);
+        this.loadAsistenciaProfesional();
+      }
+    }
   }
 
   UserRoles(): void {
@@ -299,44 +345,81 @@ export class RegistroActividadesProfesionalesComponent {
   }
 
   openAsistencialDialog(): void {
-      console.log("Datos enviados al diálogo:", {
-        idEfector: this.efectorId,
-        mode: AsistencialMode.INGRESO
-      });
-      const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
-        width: '800px',
-        disableClose: true,
-        data: {
-          idEfector: this.efectorId, // Pasar el idEfector desde el sessionStorage
-          mode: AsistencialMode.INGRESO
-        }
-      });
-  
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          // Actualizo el valor legible para mostrarlo y el id para el formulario
-          this.inputValue = `${result.apellido} ${result.nombre}`;
-          this.registroForm.patchValue({ idAsistencial: result.id });
-          this.asistencialCuil = result.cuil || null; // <-- Actualiza el CUIL
-          this.loadAsistenciaProfesional(); // <-- cargar asistencia al seleccionar profesional
-        } else {
-          this.toastr.info('No se seleccionó un profesional', 'Información', {
-            timeOut: 6000,
-            positionClass: 'toast-top-center',
-            progressBar: true
-          });
-          this.asistencialCuil = null;
-          this.actividades = [];
-        }
-      }, error => {
-        this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
-        console.error('Error al abrir el diálogo de carga de profesional:', error);
-      });
+      if (this.asistencialLocked) {
+      // Bloqueado: no permitir abrir selector
+      return;
     }
+    console.log("Datos enviados al diálogo:", {
+      idEfector: this.efectorId,
+      mode: AsistencialMode.INGRESO
+    });
+    const dialogRef = this.dialog.open(AsistencialFiltradoSelectorComponent, {
+      width: '800px',
+      disableClose: true,
+      data: {
+        idEfector: this.efectorId,
+        mode: AsistencialMode.INGRESO,
+        useDetail: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const display = `${result.apellido || ''} ${result.nombre || ''}`.trim();
+        this.inputValue = display;
+        this.registroForm.patchValue({ idAsistencial: result.id, asistencialDisplay: display });
+        this.asistencialCuil = result.cuil || this.asistencialCuil || null;
+        this.loadAsistenciaProfesional();
+      }
+    }, error => {
+      this.toastr.error('Ocurrió un error al abrir el diálogo de Asistencial', 'Error', {
+        timeOut: 6000,
+        positionClass: 'toast-top-center',
+        progressBar: true
+      });
+      console.error('Error al abrir el diálogo de carga de profesional:', error);
+    });
+  }
+
+  private setEfectorSelection(id: number | null): void {
+    if (!id) return;
+    this.efectorId = id;
+    this.selectedEfectorId = id;
+    const match = this.efectoresDisponibles.find(e => e.id === id);
+    if (match) {
+      this.efectorNombre = match.nombre;
+    } else {
+      this.loadEfectorName();
+    }
+  }
+
+  cargarEfectoresPorAsistencial(idAsistencial: number): void {
+    this.registroActividadService.detailAsistencial(idAsistencial).subscribe({
+      next: (resp) => {
+        const efectores = resp?.efectores ?? [];
+        this.efectoresDisponibles = efectores.map((e: any) => ({ id: e.id, nombre: e.nombre }));
+        if (this.efectoresDisponibles.length > 1) {
+          this.mostrarSelectorEfector = true;
+          const preferido = this.efectoresDisponibles.find(e => e.id === this.efectorId) || this.efectoresDisponibles[0];
+          this.setEfectorSelection(preferido?.id ?? null);
+        } else {
+          this.mostrarSelectorEfector = false;
+          if (this.efectoresDisponibles.length === 1) {
+            this.setEfectorSelection(this.efectoresDisponibles[0].id);
+          }
+        }
+      },
+      error: () => {
+        this.mostrarSelectorEfector = false;
+        this.efectoresDisponibles = [];
+      }
+    });
+  }
+
+  onEfectorChange(): void {
+    this.setEfectorSelection(this.selectedEfectorId);
+    this.loadAsistenciaProfesional();
+  }
 
   //Manejo fechas en select
   
@@ -349,34 +432,31 @@ export class RegistroActividadesProfesionalesComponent {
           label: fecha.format('MMMM').toUpperCase()
         });
       }
-      // Por defecto: mes y año actual
-      this.selectedMonth = moment().month() + 1;
-      this.selectedYear = moment().year();
+    
     }
 
   onYearChange(): void {
-  const mesActual = this.selectedMonth;
-  this.generarMesesDisponibles();
-  // Si el mes seleccionado existe en el nuevo año, lo mantiene; si no, selecciona enero
-  if (this.mesesDisponibles.some(m => m.value === mesActual)) {
-    this.selectedMonth = mesActual;
-  } else {
-    this.selectedMonth = 1;
+  const mesActual = Number(this.selectedMonth);
+    this.selectedYear = Number(this.selectedYear);
+    this.generarMesesDisponibles();
+    if (this.mesesDisponibles.some(m => m.value === mesActual)) {
+      this.selectedMonth = mesActual;
+    } else {
+      this.selectedMonth = 1;
+    }
+    this.loadAsistenciaProfesional();
   }
-  // Aquí puedes cargar los datos correspondientes al mes/año
-  this.loadAsistenciaProfesional(); // <-- cargar asistencia al cambiar año
-}
 
 onMonthChange(): void {
-  // Aquí puedes cargar los datos correspondientes al mes/año
-  this.loadAsistenciaProfesional(); // <-- cargar asistencia al cambiar mes
-}
+    this.selectedMonth = Number(this.selectedMonth);
+    this.loadAsistenciaProfesional();
+  }
 
 getFilasPorFecha(fecha: string) {
-  return this.tablaFilas.filter(f => f.fecha === fecha);
+    return this.tablaFilas.filter(f => f.fecha === fecha);
 }
 
- toggleAllDetails(): void {
+toggleAllDetails(): void {
     this.showDetails = !this.showDetails; // Alterna la visibilidad de los detalles
   }
   
@@ -403,10 +483,10 @@ getFilasPorFecha(fecha: string) {
   // Agrega esta función al principio de la clase
   getColorGuardia(tipoGuardia: string): string {
     switch ((tipoGuardia || '').toLowerCase()) {
-      case 'cargo': return '#91A8DA';
-      case 'extra': return '#fcc932';
-      case 'agrupacion': return '#eb7430';
-      case 'contrafactura': return '#A9D08F';
+      case 'cargo': return '#6126cfff';
+      case 'extra': return '#D91E5B';
+      case 'agrupacion': return '#FF7F0E';
+      case 'contrafactura': return '#769264';
       default: return '';
     }
   }

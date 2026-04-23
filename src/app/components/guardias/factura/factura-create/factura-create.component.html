@@ -128,10 +128,104 @@
             <mat-error *ngIf="facturaForm.get('monto')?.hasError('excedeMonto')">
               La factura no puede superar el monto de {{ disponible | number:'1.2-2':'es-AR' }}
             </mat-error>
+            <mat-error *ngIf="facturaForm.get('monto')?.hasError('min')">
+              El monto debe ser mayor que 0.
+            </mat-error>
           </mat-form-field>
 
-        </form>
-      </mat-dialog-content>
+    <!-- Zona Drag & Drop para PDF (factura) -->
+    <div class="row" style="margin-top:10px;">
+      <div class="col">
+        <div
+          [class]="getDropAreaClasses()"
+          (dragenter)="onDragEnter($event)"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (mouseleave)="onMouseLeave($event)"
+          (click)="!selectedFile ? openFileSelector() : null"
+          style="position:relative;"
+        >
+          <ng-container *ngIf="selectedFile && !uploadError; else zonaCargaFactura">
+            <div class="drop-zone-content">
+              <div class="icon-container">
+                <mat-icon class="drop-icon success-icon" style="color:#4caf50;">check_circle</mat-icon>
+              </div>
+              <div class="drop-text">PDF seleccionado: {{ getFileInfo() }}</div>
+              <div class="drop-subtext">Se subirá al guardar la factura</div>
+              <div *ngIf="!isUploading" style="margin-top:8px;">
+                <button mat-stroked-button color="accent" (click)="$event.stopPropagation(); openFileSelector()">Cambiar PDF</button>
+                <button mat-stroked-button color="warn" style="margin-left:8px;" (click)="$event.stopPropagation(); removeSelectedFile()">Quitar</button>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #zonaCargaFactura>
+            <div class="drop-zone-content">
+              <div class="icon-container">
+                <mat-icon class="drop-icon error-icon" *ngIf="uploadError && !isDragOver" style="color:#f44336;">error</mat-icon>
+                <mat-icon class="drop-icon uploading-icon" *ngIf="isUploading && !isDragOver" style="color:#ff9800;">hourglass_empty</mat-icon>
+                <mat-icon class="drop-icon drag-icon" *ngIf="isDragOver" style="color:#1976d2;">file_upload</mat-icon>
+                <mat-icon class="drop-icon normal-icon" *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading" style="color:#666;">picture_as_pdf</mat-icon>
+              </div>
+
+              <div class="drop-text">
+                <span *ngIf="isDragOver" style="color:#1976d2; font-weight:bold;">📄 Suelta tu PDF aquí</span>
+                <span *ngIf="isUploading && !isDragOver" style="color:#ff9800;">🔄 Subiendo archivo...</span>
+                <span *ngIf="uploadError && !isUploading && !isDragOver" style="color:#f44336;">⚠ {{ uploadError }}</span>
+                <span *ngIf="!selectedFile && !uploadError && !isDragOver && !isUploading">📄 Arrastra tu PDF aquí o haz clic para seleccionar</span>
+              </div>
+
+              <div class="drop-subtext">
+                <span *ngIf="isDragOver">Solo PDF</span>
+                <span *ngIf="!selectedFile && !isUploading && !isDragOver">Formato soportado: PDF (máx. 10MB)</span>
+              </div>
+
+              <div *ngIf="!isDragOver">
+                <button
+                  mat-raised-button
+                  class="browse-button"
+                  type="button"
+                  (click)="$event.stopPropagation(); openFileSelector()"
+                  *ngIf="!selectedFile && !isUploading"
+                  [disabled]="isUploading"
+                >
+                  <mat-icon>folder_open</mat-icon>
+                  Explorar archivos
+                </button>
+
+                <button
+                  mat-raised-button
+                  color="accent"
+                  type="button"
+                  (click)="$event.stopPropagation(); openFileSelector()"
+                  *ngIf="selectedFile && !isUploading"
+                  [disabled]="isUploading"
+                  style="margin-top:10px;"
+                >
+                  <mat-icon>swap_horiz</mat-icon>
+                  Cambiar PDF
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <input type="file" id="archivo-factura" accept="application/pdf" (change)="onFileSelected($event)" style="display:none;" />
+
+        <div class="file-info" *ngIf="selectedFile && !uploadError" style="margin-top:10px;">
+          <mat-icon style="color:#4caf50;">description</mat-icon>
+          <span class="file-info-text">{{ getFileInfo() }}</span>
+          <button mat-icon-button class="remove-file-btn" color="warn" type="button" (click)="removeSelectedFile()" title="Remover archivo">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- FIN Drag & Drop -->
+
+  </form>
+</mat-dialog-content>
 
     </div>
 

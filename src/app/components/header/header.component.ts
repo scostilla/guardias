@@ -127,6 +127,10 @@ ngOnInit(): void {
       url === '/home-page' ||
       url === '/home-hospital' ||
       url === '/home-profesional' ||
+      url === '/home-profesional-public' ||
+      url === '/guardias-pendientes-profesionales' ||
+      url === '/registro-actividades-profesionales' ||
+      url === '/registro-actividades-profesionales-public' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
@@ -135,6 +139,10 @@ ngOnInit(): void {
     this.showConfig = !(
       url === '/home-hospital' ||
       url === '/home-profesional' ||
+      url === '/home-profesional-public' ||
+      url === '/guardias-pendientes-profesionales' ||
+      url === '/registro-actividades-profesionales' ||
+      url === '/registro-actividades-profesionales-public' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
@@ -142,6 +150,7 @@ ngOnInit(): void {
 
     this.showUser = !(
       url === '/home-profesional' ||
+      url === '/registro-actividades-profesionales' ||
       url === '/registro-actividades-ingreso-profesional' ||
       url === '/registro-actividades-egreso-profesional' ||
       url === '/not-found'
@@ -238,17 +247,11 @@ ngOnInit(): void {
     }
   }
 
-  private ejecutarLogout(): void {
-    this.tokenService.logOut();
-    this.tokenService.setCurrentRole(null);
-    this.efectorService.setCurrentEfectorId(null);
+private ejecutarLogout(): void {
+  this.tokenService.logOut();
+  this.tokenService.setCurrentRole(null);
+  this.efectorService.setCurrentEfectorId(null);
 
-    this.isLogged = false;
-    this.nombreUsuario = '';
-    this.apellidoUsuario = '';
-    this.roles = [];
-
-    this.router.navigate(['/login']);
-  }
-
+  this.router.navigateByUrl('/login', { replaceUrl: true });
+}
 }

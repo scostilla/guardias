@@ -22,7 +22,7 @@
                 </div>
                 </div>
                 <div class="col-lg-4">
-                <div class="btnMenu card border-0 align-items-center" type="button" routerLink="/asist-profesional" (mouseenter)="toggleAsistencia()" (mouseleave)="toggleAsistencia()">
+                <div class="btnMenu card border-0 align-items-center" type="button" (click)="openMiAsistencia()" (mouseenter)="toggleAsistencia()" (mouseleave)="toggleAsistencia()">
                     <div class="icon3_btnMenu">
                     <img class="img-fluid" src="/assets/img/i_cronogramas.png" />
                     </div>
@@ -38,6 +38,19 @@
             </div>
         </div>
   </section>
+
+    <div class="row mt-5">
+        <div class="col-2"></div>
+        <div *ngIf="tieneCfActivo" class="col-8 text-pase">
+        <mat-icon class="icono-pase">assignment_late</mat-icon>
+        <div class="mensaje-pase">
+            No olvides entregar la factura de tus guardias dentro del tiempo estipulado:<br/>
+            - Primer quincena: del 15 al 20 del mes en curso.<br/>
+            - Segunda quincena: del 1 al 5 del mes siguiente en que realizaste la guardia.
+        </div>
+        </div>
+        <div class="col-2"></div>
+    </div>
 
     <div class="row mt-5">
         <div class="col-4"></div>

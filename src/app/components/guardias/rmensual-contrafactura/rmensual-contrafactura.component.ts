@@ -535,32 +535,55 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
   }
 
 
-  verificarFueraDeTermino(): void {
+verificarFueraDeTermino(): void {
+  const mes = moment()
+    .month(this.selectedMonth - 1)
+    .locale('es')
+    .format('MMMM')
+    .toUpperCase();
 
-  const mes = moment().month(this.selectedMonth - 1).locale('es').format('MMMM').toUpperCase();
-
-    if (!this.efectorId) {
-      console.warn('⚠️ No se encontró idEfector. No se puede verificar fuera de término.');
-      return;
-    }
-
-
-    console.log('🕓 Verificando registros fuera de término...', {
-      efectorId: this.efectorId,
-    });
-
-    this.registroMensualService.existenRegistrosFueraDeTermino(this.efectorId, mes, this.selectedYear)
-      .subscribe({
-        next: (existen: boolean) => {
-          this.mostrarFueraDeTerminoBtn = existen;
-          console.log(`✅ Resultado de verificación (fuera de término): ${existen ? 'Sí existen' : 'No existen'}`);
-        },
-        error: (err) => {
-          console.error('❌ Error al verificar registros fuera de término:', err);
-          this.mostrarFueraDeTerminoBtn = false;
-        }
-      });
+  if (!this.efectorId) {
+    console.warn('⚠️ No se encontró idEfector. No se puede verificar fuera de término.');
+    return;
   }
+
+  console.log('🕓 Verificando registros fuera de término...', {
+    efectorId: this.efectorId,
+    mesSeleccionado: this.selectedMonth,
+    anioSeleccionado: this.selectedYear,
+  });
+
+  // 🔹 Calcular si la fecha actual ya está fuera de término
+  const siguienteMes = this.selectedMonth === 12 ? 1 : this.selectedMonth + 1;
+  const siguienteAnio = this.selectedMonth === 12 ? this.selectedYear + 1 : this.selectedYear;
+  const fechaLimiteFueraTermino = new Date(siguienteAnio, siguienteMes - 1, 11, 0, 0, 0);
+  const hoy = new Date();
+  const fechaActualMayorA11 = hoy >= fechaLimiteFueraTermino;
+
+  // 🔹 Consultar backend y combinar condición local
+  this.registroMensualService
+    .existenRegistrosFueraDeTermino(this.efectorId, mes, this.selectedYear)
+    .subscribe({
+      next: (existen: boolean) => {
+        // Se muestra si existen registros o si la fecha actual está fuera de término
+        this.mostrarFueraDeTerminoBtn = existen && fechaActualMayorA11;
+
+        console.log(
+          `✅ Resultado de verificación (fuera de término): ${
+            this.mostrarFueraDeTerminoBtn ? 'Sí (visible)' : 'No (oculto)'
+          }`
+        );
+        console.log(
+          `🗓 Fecha actual: ${hoy.toLocaleDateString()} — Límite de fuera de término: ${fechaLimiteFueraTermino.toLocaleDateString()}`
+        );
+      },
+      error: (err) => {
+        console.error('❌ Error al verificar registros fuera de término:', err);
+        // Si hay error, al menos aplicar la lógica de fecha local
+        this.mostrarFueraDeTerminoBtn = fechaActualMayorA11;
+      },
+    });
+}
 
   //Verificaciones para permitir interacciones
 
@@ -574,7 +597,7 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
 
     // Rango 1: 15–20 del mismo mes seleccionado
     const rango1Inicio = new Date(anio, mes - 1, 15);
-    const rango1Fin = new Date(anio, mes - 1, 25, 23, 59, 59);
+    const rango1Fin = new Date(anio, mes - 1, 20, 23, 59, 59);
 
     // Rango 2: 1–5 del mes siguiente
     let siguienteMes = mes === 12 ? 1 : mes + 1;
@@ -714,7 +737,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
       idEfector: this.efectorId,
       mes: moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase(),
       anio: this.selectedYear,
-      quincena: this.selectedQuincena
+      quincena: this.selectedQuincena,
+      tipo: 'quincena',
     };
 
     console.log('📦 Datos enviados al FacturaCreateComponent:', dataToSend);
@@ -801,8 +825,8 @@ export class RmensualContrafacturaComponent implements OnInit, OnDestroy {
     .map(reg => reg.id as number);
 
     const totalHoras = this.registrosMensuales[0].totalHoras;
-    const subtotal = totalHoras?.horasLav ?? 0;
-    const total = (totalHoras?.horasLav ?? 0) + (totalHoras?.horasSdf ?? 0);
+    const subtotal = totalHoras?.montoLav ?? 0;
+    const total = totalHoras?.montoTotal ?? 0;
 
     const ddjj = new DdjjDto(
       mes,

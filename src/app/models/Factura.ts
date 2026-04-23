@@ -15,7 +15,8 @@ export class Factura {
   numeroFactura: number;
   fechaEmision: string;
   monto: number;
-  activo: boolean;  
+  activo: boolean;
+  url: string;
   
 
   constructor(
@@ -31,8 +32,9 @@ export class Factura {
     numeroFactura: number,
     fechaEmision: string,
     monto: number,
-    activo: boolean) 
-    {
+    activo: boolean,
+    url: string
+  ) {
     this.asistencial = asistencial;
     this.registrosMensuales = registrosMensuales;
     this.nombreTitular = nombreTitular;
@@ -46,5 +48,6 @@ export class Factura {
     this.fechaEmision = fechaEmision;
     this.monto = monto;
     this.activo = activo;
+    this.url = url;
   }
 }

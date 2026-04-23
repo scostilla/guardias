@@ -24,6 +24,7 @@ export class LegajoDto {
   tipoEfector?: string;
   tipoEfectorCargo?: string; // nuevo campo para tipo de efector en cargo
   tipoUdo?: string;
+  motivoModificacion?: String;
   fechaBajaSistema?: string;  // esto lo carga el back
   
 
@@ -55,6 +56,7 @@ export class LegajoDto {
     tipoEfector?: string,
     tipoEfectorCargo?: string, // nuevo campo para tipo de efector en cargo
     tipoUdo?: string,
+    motivoModificacion?: String,
     fechaBajaSistema?: string,  // esto lo carga el back  
   
   ) {
@@ -82,7 +84,8 @@ export class LegajoDto {
     this.fechaResolucion = fechaResolucion ?? undefined;
     this.tipoEfector = tipoEfector ?? undefined;
     this.tipoEfectorCargo = tipoEfectorCargo ?? undefined; // nuevo campo para tipo de efector en cargo
-    this.tipoUdo = tipoUdo ?? undefined
+    this.tipoUdo = tipoUdo ?? undefined;
+    this.motivoModificacion = motivoModificacion ?? undefined;
     this.fechaBajaSistema = fechaBajaSistema ?? undefined;
     
   }

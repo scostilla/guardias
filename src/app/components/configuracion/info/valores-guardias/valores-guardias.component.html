@@ -5,36 +5,55 @@
       <div class="titulos">VALORES DE GUARDIAS <span class="titulos-second">Contaduría de la provincia</span></div>
     </div>
     <div class="col-12 col-md-2 m d-flex justify-content-end">
-      <button mat-fab class="button-success" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
+      <!--<button mat-fab class="button-success" (click)="openCreateGMI()" matTooltip="Agregar nuevo GMI">
         <mat-icon>library_add</mat-icon>
       </button>
       <button mat-fab color="accent" style="margin-left: 5px;" (click)="openCreateUTI()" matTooltip="Agregar nuevo Bono Uti">
+      <button mat-fab color="accent" style="margin-left: 5px;" matTooltip="Agregar nuevo Bono Uti">
         <mat-icon>library_add</mat-icon>
-      </button>
+      </button>-->
       <button mat-fab class="button-primary" matTooltip="Volver atrás" style="margin-left: 5px;" routerLink="/configuracion">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
-
     </div>
   </div>
   <div class="row mt-5 contenedor-montos">
-    <ng-container *ngFor="let valor of valoresPorNivel[4]">
-      <span class="fondo-monto-cargo" matTooltip="{{ valor.valorGmi.documentoLegal  }} | {{ valor.fechaInicio | date:'d \'de\' MMMM \'de\' y' }}" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ {{ valor.valorGmi.monto | number:'1.2-2' }}</span>
+    <!--<ng-container *ngFor="let valor of valoresPorNivel[4]">-->
+    <ng-container>
+      <span class="fondo-monto-cargo" matTooltipPosition="right">Montos</span>
+      <!--<span class="fondo-monto-cargo" matTooltip="doc legal | fecha" matTooltipPosition="right">VALOR GMI CARGO/AGRUPACION = $ </span>
       <span class="fondo-monto-extra" matTooltip="Fecha: " matTooltipPosition="right">VALOR GMI EXTRA/CONTRAFACTURA = $ </span>
-      <span class="titulo-select-tabla">bono uti (+9%)-D = $ {{ valor.bonoUti.monto | number:'1.2-2' }}</span>
+      <span class="titulo-select-tabla">bono uti (+9%)-D = $ </span>-->
     </ng-container>
 </div>
   
   <div class="row mt-3">
     <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
         <mat-tab label="Servicios críticos + Same">
-          <ng-container *ngFor="let valor of valoresPorNivel[4]">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
                 <thead class="thead-gris">
                 <tr>
                   <th rowspan="2">Tipo de guardia</th>
                   <th rowspan="2">Concepto</th>
-                  <th colspan="2">Monto</th>
+                  <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"1
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 4,
+                        idsHospitales: [151, 152, 153,154, 163],
+                        titulo: 'Servicios críticos + SAME',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.BONO_1580
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                  </th>
                 </tr>
                 <tr>
                   <th>L-V</th>
@@ -46,42 +65,70 @@
                 <tr>
                   <td rowspan="3" class="no-hover">CARGO O AGRUPACIÓN DE HS</td>
                   <td>S/DECRETO N° 1178</td>
-                  <td>$ {{ valor.decreto1178Lav | number:'1.2-2' }}</td>
-                  <td>$ {{ valor.decreto1178Sdf | number:'1.2-2' }}</td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
                 </tr>
                 <tr>
                   <td>BONO DECRETO N° 1580 </td>
-                  <td>$ {{ valor.bono1580Lav | number:'1.2-2' }}</td>
-                  <td>$ {{ valor.bono1580Sdf | number:'1.2-2' }}</td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.bono1580?.lav != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.bono1580?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.bono1580?.sdf != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.bono1580?.sdf | number:'1.2-2'}}
+                  </td>
                 </tr>
                 <tr class="negrita">
                   <td>TOTAL</td>
-                  <td>$ {{ valor.totalLav | number:'1.2-2' }}</td>
-                  <td>$ {{ valor.totalSdf | number:'1.2-2' }}</td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.total?.lav != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.total?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.total?.sdf != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.cargo?.total?.sdf | number:'1.2-2'}}
+                  </td>
                 </tr>
 
                 <tr style="background-color: #f5f4f4;">
                   <td rowspan="3">EXTRA Y CONTRA FACTURA</td>
                   <td>RESOLUCIÓN N° 2575</td>
-                  <td>$ </td>
-                  <td>$ </td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.resolucion2575?.lav != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.resolucion2575?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.resolucion2575?.sdf != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.resolucion2575?.sdf | number:'1.2-2'}}
+                  </td>
                 </tr>
                 <tr style="background-color: #f5f4f4;">
                   <td>BONO DECRETO N° 1580 </td>
-                  <td>$ </td>
-                  <td>$ </td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.bono1580?.lav != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.bono1580?.lav | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.bono1580?.sdf != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.bono1580?.sdf | number:'1.2-2'}}
+                  </td>
                 </tr>
                 <tr style="background-color: #f5f4f4;" class="negrita">
                   <td>TOTAL</td>
-                  <td>$ </td>
-                  <td>$ </td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.total?.lav != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.total?.lav | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.total?.sdf != null">
+                    $ {{ grillaPorNivel[4]?.columnas?.[0]?.valores?.extra?.total?.sdf | number:'1.2-2'}}
+                  </td>
                 </tr>
                 </tbody>
               </table>
             </ng-container>
         </mat-tab>
         <mat-tab label="Tercer Nivel">
-          <ng-container *ngFor="let valor of valoresPorNivel[3]">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
               <thead>
               <tr>
@@ -90,7 +137,24 @@
               <tr>
                 <th rowspan="2">Tipo de guardia</th>
                 <th rowspan="2">Concepto</th>
-                <th colspan="2">Monto</th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 3,
+                        idsHospitales: [153,154, 157],
+                        titulo: 'Tercer Nivel',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
               </tr>
               <tr>
                 <th>L-V</th>
@@ -102,30 +166,52 @@
               <tr>
                 <td rowspan="3">CARGO O AGRUPACIÓN DE HS</td>
                 <td>S/DECRETO N° 1178</td>
-                <td>$ {{ valor.decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valor.decreto1178Sdf | number:'1.2-2' }}</td>
+                  <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
             </tr>
               <tr>
                 <td>BONO GUARDIA COVID DECRETO N°1657</td>
-                <td>$ {{ valor.decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valor.decreto1657Sdf | number:'1.2-2' }}</td>
+                <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1657?.lav != null">
+                  $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1657?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1657?.sdf != null">
+                  $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.decreto1657?.sdf | number:'1.2-2'}}
+                </td>
               </tr>
               <tr class="negrita">
                 <td>TOTAL</td>
-                <td>$ {{ valor.totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valor.totalSdf | number:'1.2-2' }}</td>
+                <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.total?.lav != null">
+                  $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.total?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.total?.sdf != null">
+                  $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.cargo?.total?.sdf | number:'1.2-2'}}
+                </td>
             </tr>
 
               <tr style="background-color: #f5f4f4;">
                 <td rowspan="2">EXTRA Y CONTRA FACTURA</td>
                 <td>RESOLUCIÓN N° 2575</td>
-                <td>$ </td>
-                <td>$ </td>
+                  <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.resolucion2575?.lav != null">
+                    $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.resolucion2575?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.resolucion2575?.sdf != null">
+                    $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.resolucion2575?.sdf | number:'1.2-2'}}
+                  </td>
               </tr>
               <tr style="background-color: #f5f4f4;" class="negrita">
                 <td>TOTAL</td>
-                <td>$ </td>
-                <td>$ </td>
+                  <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.total?.lav != null">
+                    $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.total?.lav | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.total?.sdf != null">
+                    $ {{ grillaPorNivel[3]?.columnas?.[0]?.valores?.extra?.total?.sdf | number:'1.2-2'}}
+                  </td>
               </tr>
               </tbody>
             </table>
@@ -133,7 +219,7 @@
         </mat-tab>
 
         <mat-tab label="Segundo Nivel">
-          <ng-container *ngIf="valoresPorNivel[2] && (valoresNivel2Uro.length > 0 || valoresNivel2Otros.length > 0)">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
               <thead>
               <tr>
@@ -143,8 +229,42 @@
                 <th colspan="2">URO</th>
               </tr>
               <tr>
-                <th colspan="2">Monto</th>
-                <th colspan="2">Monto</th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 2,
+                        idsHospitales: [155, 163],
+                        titulo: 'Segundo Nivel: Orias y Paterson',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 2,
+                        idsHospitales: [152],
+                        titulo: 'Segundo Nivel: Uro',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
               </tr>
               <tr>
                 <th>L-V</th>
@@ -158,40 +278,68 @@
               <tr>
                 <td rowspan="3">CARGO O AGRUPACIÓN DE HS</td>
                 <td>S/DECRETO N° 1178</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1178Sdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1178Sdf | number:'1.2-2' }}</td>
+                  <td *ngIf="grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
               </tr>
               <tr>
                 <td>BONO GUARDIA COVID DECRETO N°1657</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Otros[0].decreto1657Sdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].decreto1657Sdf | number:'1.2-2' }}</td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1657?.lav != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1657?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1657?.sdf != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.decreto1657?.sdf | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1657?.lav != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1657?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1657?.sdf != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.decreto1657?.sdf | number:'1.2-2'}}
+                </td>
               </tr>
               <tr class="negrita">
                 <td>TOTAL</td>
-                <td>$ {{ valoresNivel2Otros[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Otros[0].totalSdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel2Uro[0].totalSdf | number:'1.2-2' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.cargo?.total?.sdf ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.cargo?.total?.sdf ?? '-' }}</td>
               </tr>
         
               <tr style="background-color: #f5f4f4;">
                 <td rowspan="2">EXTRA Y CONTRA FACTURA</td>
                 <td>RESOLUCIÓN N° 2575</td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[0]?.valores?.extra?.resolucion2575?.lav != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.extra?.resolucion2575?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[0]?.valores?.extra?.resolucion2575?.sdf != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.extra?.resolucion2575?.sdf | number:'1.2-2'}}
+                </td>
+
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[1]?.valores?.extra?.resolucion2575?.lav != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.extra?.resolucion2575?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[2]?.columnas?.[1]?.valores?.extra?.resolucion2575?.sdf != null">
+                  $ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.extra?.resolucion2575?.sdf | number:'1.2-2'}}
+                </td>
               </tr>
               <tr style="background-color: #f5f4f4;" class="negrita">
                 <td>TOTAL</td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.extra?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[0]?.valores?.extra?.total?.sdf ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.extra?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[2]?.columnas?.[1]?.valores?.extra?.total?.sdf ?? '-' }}</td>
               </tr>
               </tbody>
             </table>
@@ -199,7 +347,7 @@
         </mat-tab>
         
         <mat-tab label="Primer Nivel">
-          <ng-container *ngIf="valoresPorNivel[2] && (valoresNivel2Uro.length > 0 || valoresNivel2Otros.length > 0)">
+          <ng-container>
             <table class="table table-hover table-bordered table-sm caption-top">
               <thead>
               <tr>
@@ -210,9 +358,60 @@
                 <th colspan="2">ROSARIO, EL AGUILAR, <br/>YUTO, TALAR Y P. SOLA</th>
               </tr>  
               <tr>
-                <th colspan="2">Monto</th>
-                <th colspan="2">Monto</th>
-                <th colspan="2">Monto</th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 1,
+                        idsHospitales: [172, 159, 158, 161, 160, 162, 165, 169, 167, 170],
+                        titulo: 'Primer Nivel: Resto',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 1,
+                        idsHospitales: [150],
+                        titulo: 'Primer Nivel: Susques',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
+                <th colspan="2">Monto
+                    <mat-icon
+                      class="icon-edit"
+                      matTooltip="Actualizar monto"
+                      matTooltipPosition="above"
+                      (click)="openCreateGMI({
+                        nivelComplejidad: 1,
+                        idsHospitales: [171, 170, 156, 164, 98],
+                        titulo: 'Primer Nivel: Rosario, El Aguilar, Yuto, Talar y P. Sola',
+                        conceptos: [
+                              CONCEPTOS_GUARDIA.DECRETO_1178,
+                              CONCEPTOS_GUARDIA.RESOLUCION_2575,
+                              CONCEPTOS_GUARDIA.DECRETO_1657
+                            ]
+                          })">
+                      edit
+                    </mat-icon>                  
+                </th>
               </tr>
               <tr>
                 <th>L-V</th>
@@ -228,50 +427,92 @@
               <tr>
                 <td rowspan="3">CARGO O AGRUPACIÓN DE HS</td>
                 <td>S/DECRETO N° 1178</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1178Sdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].decreto1178Sdf | number:'1.2-2' }}</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1178Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1178Sdf | number:'1.2-2' }}</td>
+                  <td *ngIf="grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
+
+                  <td *ngIf="grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1178?.lav != null">
+                    $ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1178?.lav | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1178?.sdf != null">
+                    $ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1178?.sdf | number:'1.2-2'}}
+                  </td>
               </tr>
               <tr>
                 <td>BONO GUARDIA COVID DECRETO N°1657</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1657Sdf | number:'1.2-2' }}</td>
-                <td >$ {{ valoresNivel1Susques[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].decreto1657Sdf | number:'1.2-2' }}</td>
-                <td >$ {{ valoresNivel1Otros[0].decreto1657Lav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].decreto1657Sdf | number:'1.2-2' }}</td>
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1657?.lav != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1657?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1657?.sdf != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.decreto1657?.sdf | number:'1.2-2'}}
+                </td>
+
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1657?.lav != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1657?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1657?.sdf != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.decreto1657?.sdf | number:'1.2-2'}}
+                </td>
+
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1657?.lav != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1657?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1657?.sdf != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.decreto1657?.sdf | number:'1.2-2'}}
+                </td>
               </tr>
               <tr class="negrita">
                 <td>TOTAL</td>
-                <td>$ {{ valoresNivel1Otros[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].totalSdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Susques[0].totalSdf | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].totalLav | number:'1.2-2' }}</td>
-                <td>$ {{ valoresNivel1Otros[0].totalSdf | number:'1.2-2' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.cargo?.total?.sdf ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.cargo?.total?.sdf ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.cargo?.total?.sdf ?? '-' }}</td>
               </tr>
 
               <tr style="background-color: #f5f4f4;">
                 <td rowspan="2">EXTRA Y CONTRA FACTURA</td>
                 <td>RESOLUCIÓN N° 2575</td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
+                <td>
+                  $ -
+                </td>
+                <td>
+                  $ -
+                </td>
+
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[1]?.valores?.extra?.resolucion2575?.lav != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.extra?.resolucion2575?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[1]?.valores?.extra?.resolucion2575?.sdf != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.extra?.resolucion2575?.sdf | number:'1.2-2'}}
+                </td>
+
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[2]?.valores?.extra?.resolucion2575?.lav != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.extra?.resolucion2575?.lav | number:'1.2-2'}}
+                </td>
+                <td *ngIf="grillaPorNivel[1]?.columnas?.[2]?.valores?.extra?.resolucion2575?.sdf != null">
+                  $ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.extra?.resolucion2575?.sdf | number:'1.2-2'}}
+                </td>
               </tr>
               <tr style="background-color: #f5f4f4;" class="negrita">
                 <td>TOTAL</td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
-                <td>$ </td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.extra?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[0]?.valores?.extra?.total?.sdf ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.extra?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[1]?.valores?.extra?.total?.sdf ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.extra?.total?.lav ?? '-' }}</td>
+                <td>$ {{ grillaPorNivel[1]?.columnas?.[2]?.valores?.extra?.total?.sdf ?? '-' }}</td>
               </tr>
               </tbody>
             </table>

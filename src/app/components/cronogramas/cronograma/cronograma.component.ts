@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CalendarMonthViewDay, CalendarView, CalendarWeekViewBeforeRenderEvent, CalendarDayViewBeforeRenderEvent } from 'angular-calendar';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { CalendarEvent, CalendarMonthViewDay, CalendarView, CalendarModule, CalendarMonthModule, CalendarCommonModule, DateAdapter, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
 import { MonthViewDay } from 'calendar-utils';
 import { MatDialog } from '@angular/material/dialog';
 import { CronogramaCreateComponent } from '../cronograma-create/cronograma-create.component';
@@ -10,14 +10,22 @@ import { HospitalService } from 'src/app/services/Configuracion/hospital.service
 import { ServicioSummaryDto } from 'src/app/dto/Configuracion/ServicioSummaryDto';
 import { Feriado } from 'src/app/models/Configuracion/Feriado'; 
 import { FeriadoService } from 'src/app/services/Configuracion/feriado.service';
-import { Subscription } from 'rxjs'; //no borrar, sirve para eventDeleted
+import { Subject, Subscription } from 'rxjs'; //no borrar, sirve para eventDeleted
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 
+import html2canvas from 'html2canvas';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = (pdfFonts as any).vfs;
+
+
 //Autenticación
 import { TokenService } from 'src/app/services/login/token.service';
 import { EfectorSummaryDto } from 'src/app/dto/efector/EfectorSummaryDto';
+import { AuthService } from 'src/app/services/login/auth.service';
+import { PersonBasicPanelDto } from 'src/app/dto/person/PersonBasicPanelDto';
 
 enum TipoGuardia {
   CARGO = 'CARGO',
@@ -34,16 +42,29 @@ const colorMapping: Record<TipoGuardia, { primary: string, secondary: string }> 
   [TipoGuardia.CONTRAFACTURA]: { primary: '#769264', secondary: '#c3cfbbff' }
 };
 
+interface MyCalendarEvent extends CalendarEvent {
+  servicio?: string;
+  auth?: boolean;
+  motivo?: string;
+  meta?: any;
+}
+
+type AutorizadoStatus = 'PENDIENTE' | 'CONFIRMADO' | 'RECHAZADO';
+
 @Component({
   selector: 'app-cronograma',
   templateUrl: './cronograma.component.html',
   styleUrls: ['./cronograma.component.css']
 })
 export class CronogramaComponent {
+
+  @ViewChild('cellTemplate', { static: true }) cellTemplate!: TemplateRef<any>;
+  
   
   view: CalendarView = CalendarView.Month;
+  events: MyCalendarEvent[] = [];
+  refresh: Subject<void> = new Subject<void>();
   viewDate: Date = new Date();
-  events: any[] = [];
   CalendarView = CalendarView;
   holidays: Feriado[] = [];
 
@@ -60,8 +81,13 @@ export class CronogramaComponent {
   efectorNombre: string | null = null;
   efectorNivel: number | null = null;
 
+  nombreUsuario = '';
+  apellidoUsuario = '';
+
   servicios: ServicioSummaryDto[] = [];
   selectedServiceId: number | null = null;
+
+  exportandoPDF = false;
 
   constructor(
     private feriadoService: FeriadoService,
@@ -72,6 +98,7 @@ export class CronogramaComponent {
     private efectorService: EfectorService,
     private hospitalService: HospitalService,
     private toastr: ToastrService,
+    private authService: AuthService
 ) {}
 
   changeView(view: CalendarView): void {
@@ -93,7 +120,7 @@ export class CronogramaComponent {
             ...feriado,
             fecha: moment(feriado.fecha).toDate()
           }));
-          this.refreshView();
+          this.refresh.next();
         });
 
         this.loadCronogramas();
@@ -106,7 +133,18 @@ export class CronogramaComponent {
       });
       this.router.navigateByUrl('/home-page');
     }
-  
+
+    // Verifica si el usuario está logueado
+    this.tokenService.isLogged$.subscribe(isLogged => {
+      if (isLogged) {
+        // Si está logueado, obtiene nombre y apellido del usuario
+        this.loadUserDetails();
+      } else {
+        this.nombreUsuario = '';
+        this.apellidoUsuario = '';
+      }
+    });
+
     // Obtener rol actual
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
@@ -151,6 +189,19 @@ export class CronogramaComponent {
     }
   }
 
+  private loadUserDetails() {
+    // Llamo al servicio para obtener los detalles del usuario
+    this.authService.detailPersonBasicPanel().subscribe(
+      (response: PersonBasicPanelDto) => {
+        this.nombreUsuario = response.nombre;
+        this.apellidoUsuario = response.apellido;
+      },
+      (error) => {
+        console.error('Error al obtener detalles del usuario:', error);
+      }
+    );
+  }
+
   obtenerServicios(): void {
     this.hospitalService.getActiveServicesByHospital(this.efectorId!).subscribe((data: ServicioSummaryDto[]) => {
       this.servicios = data;
@@ -163,78 +214,75 @@ export class CronogramaComponent {
       // Si hay un servicio seleccionado, cargar cronogramas filtrados por servicio
       this.cronogramaService.listEfectorService(this.efectorId!, this.selectedServiceId!).subscribe((cronogramas) => {
         this.events = this.mapCronogramas(cronogramas);
-        this.refreshView();
+        this.refresh.next();
       });
     } else {
       // Si no hay servicio seleccionado, cargar todos los cronogramas
       this.cronogramaService.listEfector(this.efectorId!).subscribe((cronogramas) => {
         this.events = this.mapCronogramas(cronogramas);
-        this.refreshView();
+        this.refresh.next();
       });
     }
   }
 
   // Mapeo de los cronogramas al formato adecuado
-mapCronogramas(cronogramas: any[]): any[] {
-  return cronogramas.map((cronograma) => {
-    const tipoGuardia = cronograma.tipoGuardia?.nombre;
-    const observacion = cronograma.observacion;
-    const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
-    const id = cronograma.id;
-    const auth = cronograma.autorizado;
-    const authfor = `${cronograma.autoridad?.persona?.apellido}, ${cronograma.autoridad?.persona?.nombre}`;
-    const motivo = cronograma.motivoAutorizacion;
+  mapCronogramas(cronogramas: any[]): any[] {
+    return cronogramas.map((cronograma) => {
+      console.log('Autorizado raw:', cronograma.autorizado);
 
-    const fechaHoraIngreso = moment(cronograma.fechaIngreso).set({
-      hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
-      minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
-      second: 0
+      const tipoGuardia = cronograma.tipoGuardia?.nombre;
+      const observacion = cronograma.observacion;
+      const servicio = cronograma.servicio ? cronograma.servicio.descripcion : 'Sin servicio';
+      const id = cronograma.id;
+      const auth: AutorizadoStatus = cronograma.autorizado;
+      const authfor = `${cronograma.autoridad?.persona?.apellido}, ${cronograma.autoridad?.persona?.nombre}`;
+      const motivo = cronograma.motivoAutorizacion;
+
+      const fechaHoraIngreso = moment(cronograma.fechaIngreso).set({
+        hour: parseInt(cronograma.horaIngreso.split(':')[0], 10),
+        minute: parseInt(cronograma.horaIngreso.split(':')[1], 10),
+        second: 0
+      });
+
+      const fechaHoraEgreso = moment(cronograma.fechaEgreso).set({
+        hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
+        minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
+        second: 0
+      });
+
+      const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
+
+      return {
+        start: fechaHoraIngreso.toDate(),
+        end: fechaHoraIngreso.toDate(),
+        title: `${cronograma.asistencial?.apellido}, ${cronograma.asistencial?.nombre} - ${tipoGuardia}`,
+        servicio: servicio,
+        obs: observacion,
+        auth: auth,
+        authfor: authfor,
+        motivo: motivo,
+        id: id,
+        color: color,
+
+        // Info con end completa para el dialog:
+        meta: {
+          ...cronograma,
+          fechaHoraRealInicio: fechaHoraIngreso.toDate(),
+          fechaHoraRealFin: fechaHoraEgreso.toDate()
+        }
+      };
     });
-
-    const fechaHoraEgreso = moment(cronograma.fechaEgreso).set({
-      hour: parseInt(cronograma.horaEgreso.split(':')[0], 10),
-      minute: parseInt(cronograma.horaEgreso.split(':')[1], 10),
-      second: 0
-    });
-
-    const color = colorMapping[tipoGuardia as TipoGuardia] || { primary: '#cccccc', secondary: '#e0e0e0' };
-
-    const result = {
-      start: fechaHoraIngreso.toDate(),
-      end: fechaHoraEgreso.toDate(),
-      title: `${cronograma.asistencial?.apellido}, ${cronograma.asistencial?.nombre} - ${tipoGuardia}`,
-      servicio: servicio,
-      obs: observacion,
-      auth: auth,
-      authfor: authfor,
-      motivo: motivo,
-      id: id,
-      color: color,
-      meta: cronograma
-    };
-
-    console.log('📝 Cronograma procesado:', {
-      id: id,
-      tipoGuardia,
-      servicio,
-      observacion,
-      auth,
-      authfor,
-      motivo,
-      fechaHoraIngreso: fechaHoraIngreso.toISOString(),
-      fechaHoraEgreso: fechaHoraEgreso.toISOString(),
-      title: result.title,
-      color
-    });
-
-    return result;
-  });
-}
-  
-  refreshView(): void {
-    this.viewDate = new Date(this.viewDate.getTime());
   }
 
+  //MAnejo de iconos para autorizaciones en calendario
+  getIconoAutorizacion(auth: AutorizadoStatus): string {
+    switch(auth) {
+      case 'PENDIENTE': return '?';
+      case 'RECHAZADO': return 'x';
+      default: return '';
+    }
+  }
+    
   // Método que se llama cuando se selecciona un servicio del menú
   onServicioSelect(serviceId: number | null): void {
     this.selectedServiceId = serviceId;
@@ -309,30 +357,25 @@ mapCronogramas(cronogramas: any[]): any[] {
 
   dayClicked(day: MonthViewDay<any>): void {
     const dayStart = moment(day.date).startOf('day').toDate();
-  
+
     const events = this.events.filter(event => {
-      const eventStart = moment(event.start).startOf('day').toDate();
-      const eventEnd = moment(event.end).startOf('day').toDate();
-      return dayStart >= eventStart && dayStart <= eventEnd;
+      const eventStart = moment(event.meta.fechaHoraRealInicio).startOf('day').toDate();
+      return dayStart.getTime() === eventStart.getTime();
     });
-  
+
     const holidayName = this.getHolidayName(day.date);
-  
+
     const dialogRef = this.dialog.open(CronogramaDetailComponent, {
       width: '600px',
       data: {
-        title:'Lista profesionales',
-        events: events.map(event => ({
-          ...event,
-          color: event.color
-        })),
-        holidayName: holidayName
+        title: 'Lista profesionales',
+        events,
+        holidayName
       }
     });
-  
-    // Nos suscribimos al evento emitido desde el diálogo
+
     dialogRef.componentInstance.eventDeleted.subscribe(() => {
-      this.loadCronogramas();  // Refrescamos los cronogramas cuando un evento ha sido eliminado
+      this.loadCronogramas();
     });
   }
   
@@ -340,17 +383,49 @@ mapCronogramas(cronogramas: any[]): any[] {
     const dialogRef = this.dialog.open(CronogramaDetailComponent, {
       width: '600px',
       data: {
-        title:'Detalle evento',
-        events: [event],  // Solo ese evento
-        holidayName: this.getHolidayName(event.start)
+        title: 'Detalle evento',
+        events: [event],
+        holidayName: this.getHolidayName(event.meta?.fechaHoraRealInicio)
       }
     });
-  
+
     dialogRef.componentInstance.eventDeleted.subscribe(() => {
-      this.loadCronogramas();  // Refrescar eventos si se eliminó
+      this.loadCronogramas();
     });
   }
+
+  // En tu componente TypeScript, añade este método:
+  getApellidoFromEvent(event: MyCalendarEvent): string {
+    // Extrae el apellido del título (formato: "Apellido, Nombre - TipoGuardia")
+    if (event.title && event.title.includes(',')) {
+      return event.title.split(',')[0].trim();
+    }
     
+    // Si no tiene el formato esperado, intenta extraer de otra manera
+    if (event.meta?.asistencial?.apellido) {
+      return event.meta.asistencial.apellido;
+    }
+    
+    // Fallback: primera palabra del título
+    return event.title ? event.title.split(' ')[0] : 'Evento';
+  }
+
+  // Método para manejar clics en eventos de la vista mensual
+  onMonthEventClicked(event: MyCalendarEvent): void {
+    const dialogRef = this.dialog.open(CronogramaDetailComponent, {
+      width: '600px',
+      data: {
+        title: 'Detalle evento',
+        events: [event],
+        holidayName: this.getHolidayName(event.meta?.fechaHoraRealInicio)
+      }
+    });
+
+    dialogRef.componentInstance.eventDeleted.subscribe(() => {
+      this.loadCronogramas();
+    });
+  }
+
 /*EventDialog(): void {
   const dialogRef = this.dialog.open(PruebaFormComponent, {
     width: '600px',
@@ -417,4 +492,106 @@ mapCronogramas(cronogramas: any[]): any[] {
         }
       });
     }
+
+  async exportarCalendarioPDF(): Promise<void> {
+    if (this.exportandoPDF) return;
+
+    this.exportandoPDF = true;
+
+    try {
+      this.toastr.info('Generando PDF...', '', { timeOut: 3000 });
+
+      const calendarioElement = document.querySelector('mwl-calendar-month-view');
+      const referenciasElement = document.querySelector('.row.d-float.justify-content-center');
+      
+      if (!calendarioElement) {
+        throw new Error('No se encontró el calendario');
+      }
+
+      // Capturar en paralelo para mayor velocidad
+      const [canvasCalendario, canvasReferencias] = await Promise.all([
+        html2canvas(calendarioElement as HTMLElement, {
+          scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
+        }),
+        referenciasElement ? html2canvas(referenciasElement as HTMLElement, {
+          scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
+        }) : Promise.resolve(null)
+      ]);
+
+      const monthName = this.viewDate.toLocaleString('es-ES', { month: 'long' });
+      const year = this.viewDate.getFullYear();
+      const ahora = new Date();
+      const fecha = ahora.toLocaleDateString('es-ES');
+      const hora = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+      const documentDefinition: any = {
+        pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [20, 20, 20, 20],
+        content: [
+          // Título principal
+          {
+            text: `Cronograma Tentativo - ${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`,
+            fontSize: 16,
+            bold: true,
+            alignment: 'center',
+            margin: [0, 0, 0, 10]
+          },
+          {
+            columns: [
+              { 
+                text: `Efector: ${this.efectorNombre || 'No especificado'}`,
+                fontSize: 11,
+                color: '#555555',
+                width: '60%'
+              },
+              { 
+                text: `Fecha exportación: ${fecha} ${hora} hs`,
+                fontSize: 11,
+                color: '#555555',
+                alignment: 'right',
+                width: '40%'
+              }
+            ],
+            margin: [0, 0, 0, 15]
+          },
+
+          // Referencias (si existen)
+          ...(canvasReferencias ? [{
+            image: canvasReferencias.toDataURL('image/png'),
+            width: 550,
+            alignment: 'center',
+            margin: [0, 0, 0, 18]
+          }] : []),
+
+          // Imagen del calendario
+          {
+            image: canvasCalendario.toDataURL('image/png'),
+            width: 750,
+            alignment: 'center',
+            margin: [0, 0, 0, 25]
+          },
+
+          // 👇 Pie con el nombre del usuario
+          {
+            text: `Usuario: ${this.nombreUsuario} ${this.apellidoUsuario}`,
+            fontSize: 9,
+            color: '#666666',
+            alignment: 'right',
+            margin: [0, 10, 5, 0] // margen superior más amplio para separarlo visualmente
+          }
+        ]
+      };
+
+      pdfMake.createPdf(documentDefinition).download(`cronograma_tentativo_${monthName}_${year}.pdf`);
+      
+      this.toastr.success('PDF generado exitosamente', 'Éxito', { timeOut: 3000 });
+
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      this.toastr.error('Error al generar el PDF: ' + (error as Error).message, 'Error', { timeOut: 5000 });
+    } finally {
+      this.exportandoPDF = false;
+    }
+  }
 }

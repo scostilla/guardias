@@ -7,7 +7,7 @@ import { LoginUsuario } from 'src/app/models/login/login-usuario';
 import { SelectorRolesComponent } from './selector-roles/selector-roles.component';
 import { AuthService } from 'src/app/services/login/auth.service';
 import { TokenService } from 'src/app/services/login/token.service';
-
+import { CambiarPasswordComponent } from './cambiar-password/cambiar-password.component';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -34,72 +34,103 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
   ) {}
   
-  ngOnInit(): void {
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.isLoginFail = false;
-      this.roles = this.tokenService.getAuthorities();
+ngOnInit(): void {
+  this.tokenService.isLogged$.subscribe(isLogged => {
+    this.isLogged = isLogged;
 
-      const currentRole = this.tokenService.getCurrentRole();
+    if (!isLogged) {
+      this.resetLoginForm();
+    }
+  });
+}
 
-      if (currentRole) {
-        // Si ya hay un rol seleccionado: redirigir directamente
-        this.redirectUserBasedOnRole(currentRole);
-      } else if (this.roles.length > 1) {
-        // Si hay varios roles y aún no se seleccionó ninguno: abrir diálogo
-        this.openRoleSelectionDialog();
-      } else if (this.roles.length === 1) {
-        // Solo hay un rol, se asigna automáticamente
-        const selectedRole = this.roles[0];
-        this.tokenService.setCurrentRole(selectedRole);
-        this.redirectUserBasedOnRole(selectedRole);
+onLogin(): void {
+  this.loginUsuario = new LoginUsuario(this.nombreUsuario!, this.password!);
+
+  this.authService.login(this.loginUsuario).subscribe(
+    data => {
+      this.tokenService.setToken(data.jwt.token);
+      this.tokenService.setUserName(data.jwt.nombreUsuario);
+      this.tokenService.setAuthorities(data.jwt.authorities);
+      this.tokenService.setPrimerLogueo(data.primerLogueo);
+
+      // marcar sesión iniciada (una sola vez)
+      this.tokenService.setLoggedState(true);
+
+      if (data.primerLogueo === true) {
+        this.openCambiarPasswordDialog();
+        return;
       }
+
+      this.roles = this.tokenService.getAuthorities();
+      this.procesarRoles();
+    },
+      err => {
+        this.isLoginFail = true;
+
+        this.resetPasswordOnly();
+
+        this.toastr.error(
+          'Usuario o contraseña incorrectos',
+          'Error de autenticación',
+          {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+            progressBar: true
+          }
+        ); 
+      }
+    );
+}
+
+ /* private procesarRoles(): void {
+    if (this.roles.length > 1) {
+      const rolesPermitidos = this.roles.filter(r => r !== 'ROLE_USER');
+
+      if (rolesPermitidos.length === 1) {
+        this.tokenService.setCurrentRole(rolesPermitidos[0]);
+        this.redirectUserBasedOnRole(rolesPermitidos[0]);
+      } else {
+        this.openRoleSelectionDialog();
+      }
+    } else if (this.roles.length === 1) {
+      this.tokenService.setCurrentRole(this.roles[0]);
+      this.redirectUserBasedOnRole(this.roles[0]);
+    }
+  }*/
+
+  private procesarRoles(): void {
+    if (this.roles.length > 1) {
+      this.openRoleSelectionDialog(); // deja que el usuario elija entre todos los roles
+    } else if (this.roles.length === 1) {
+      this.tokenService.setCurrentRole(this.roles[0]);
+      this.redirectUserBasedOnRole(this.roles[0]);
     }
   }
 
-  onLogin(): void {
-    this.loginUsuario = new LoginUsuario(this.nombreUsuario!, this.password!);
-    console.log("Usuario " + this.nombreUsuario);
-    console.log("pass " + this.password);
-
-    this.authService.login(this.loginUsuario).subscribe(
-      data => {
-        // Al hacer login, se almacena el token, roles y nombre de usuario
-        this.isLogged = true;
-        this.isLoginFail = false;
-        this.tokenService.setToken(data.token);
-        this.tokenService.setUserName(data.nombreUsuario);
-        this.tokenService.setAuthorities(data.authorities);
-        this.roles = this.tokenService.getAuthorities();
-
-        this.tokenService.setLoggedState(true);
-
-        // Si tiene más de un rol, mostramos el diálogo para seleccionar el rol
-        if (this.roles.length > 1) {
-          this.openRoleSelectionDialog();
-        } else if (this.roles.length === 1) {
-          // Si tiene solo un rol, lo asignamos y lo redirigimos al home correspondiente
-          const selectedRole = this.roles[0];
-          this.tokenService.setCurrentRole(selectedRole);
-          this.redirectUserBasedOnRole(selectedRole);
-        }
-
-        this.toastr.success(data.nombreUsuario, 'Bienvenido', {
-          timeOut: 3000, positionClass: 'toast-top-center'
-        });
-      },
-      err => {
-        this.isLogged = false;
-        this.isLoginFail = true;
-        this.errMsj = err.error.message;
-        this.toastr.error(err.message, 'Error, usuario y/o contraseña incorrecto.', {
-          timeOut: 6000,
-          positionClass: 'toast-top-center',
-          progressBar: true
-        });
+  openCambiarPasswordDialog(): void {
+    const dialogRef = this.dialog.open(CambiarPasswordComponent, {
+      width: '400px',
+      disableClose: true,
+      data: {
+        modo: 'GENERAL',
+        redirectTo: '/login'
       }
-    );        
-  } 
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.toastr.success(
+          'Contraseña modificada, ingresa con la nueva contraseña.',
+          'Éxito',
+          { timeOut: 3000, positionClass: 'toast-top-center' }
+        );
+      }
+
+      this.tokenService.logOut();
+      this.router.navigate(['/login']);
+    });
+  }
 
   // Función para abrir el diálogo de selección de rol
   openRoleSelectionDialog(): void {
@@ -124,13 +155,32 @@ export class LoginComponent implements OnInit {
   }
 
   // Redirigir al home según el rol
-  redirectUserBasedOnRole(role: string): void {
-    if (role === 'ROLE_ADMIN' || role === 'ROLE_DPH' || role === 'ROLE_SUPERUSER' || role === 'ROLE_AUTORIDAD') {
-      this.router.navigate(['/home-page']);
-    } else if (role === 'ROLE_USER') {
-      this.router.navigate(['/home-profesional']);
-    } else if (role === 'ROLE_HOSPITAL') {
-      this.router.navigate(['/home-hospital']);
+  redirectUserBasedOnRole(role: string): boolean {
+    switch(role) {
+      case 'ROLE_ADMIN':
+      case 'ROLE_DPH':
+      case 'ROLE_SUPERUSER':
+      case 'ROLE_AUTORIDAD':
+        this.router.navigate(['/home-page']);
+        return true;
+
+      case 'ROLE_HOSPITAL':
+        this.router.navigate(['/home-hospital']);
+        return true;
+
+      case 'ROLE_USER':
+        this.router.navigate(['/home-profesional-public']);
+        return true;
+
+      default:
+        this.toastr.error('Rol desconocido. No se puede iniciar sesión.', 'Error', {
+          timeOut: 4000,
+          positionClass: 'toast-top-center',
+          progressBar: true
+        });
+        this.tokenService.logOut();
+        this.router.navigate(['/login']);
+        return false;
     }
   }
 
@@ -142,12 +192,15 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    this.toastr.success('Inicio de sesión exitoso', 'Bienvenido', {
-      timeOut: 6000,
-      positionClass: 'toast-top-center',
-      progressBar: true
-    });
-    this.router.navigate(['/home-page']);
+  resetPasswordOnly(): void {
+    this.password = '';
   }
+
+  resetLoginForm(): void {
+    this.nombreUsuario = '';
+    this.password = '';
+    this.isLoginFail = false;
+    this.errMsj = undefined;
+  }
+
 }

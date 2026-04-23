@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { TipoGuardiaListDto } from 'src/app/dto/guardias/TipoGuardiaListDto';
 import { TipoGuardia } from "src/app/models/Configuracion/TipoGuardia";
 import { environment } from 'src/environments/environment.prod';
 
@@ -21,6 +22,10 @@ export class TipoGuardiaService {
 
   public list(): Observable<TipoGuardia[]> {
       return this.httpClient.get<TipoGuardia[]>(this.GuardiasURL + 'list');
+  }
+
+  public listTipoGuardiaAll(): Observable<TipoGuardiaListDto[]> {
+    return this.httpClient.get<TipoGuardiaListDto[]>(this.GuardiasURL + 'listActive');
   }
 
   public detail(id:number): Observable<TipoGuardia> {

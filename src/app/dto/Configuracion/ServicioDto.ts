@@ -6,7 +6,7 @@ export class ServicioDto {
     idRegistrosActividades: number[];
     idEfectores: number[];
 
-    constructor(descripcion: string, nivel: number, critico: boolean, idRegistrosActividades: number[], idEfectores: number[]) {
+    constructor(descripcion: string, nivel: number, critico: boolean, idRegistrosActividades: number[], idEfectores: number[] = []) {
         this.descripcion = descripcion;
         this.nivel = nivel;
         this.critico = critico;

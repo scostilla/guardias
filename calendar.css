@@ -1,16 +1,70 @@
-  .cal-month-view .cal-day-cell:not(.holiday-class).cal-weekend {
-    background-color: #f8f6f6;  
-  }
+/* Estilos para los eventos personalizados en vista mensual */
+.cal-month-view .cal-day-cell:not(.holiday-class).cal-weekend {
+  background-color: #f8f6f6;  
+}
 
-  .cal-month-view .cal-day-cell.cal-weekend:hover {
-    background-color: #ececec; 
-  }
+.cal-month-view .cal-day-cell.cal-weekend:hover {
+  background-color: #ececec; 
+}
 
-  .cal-month-view .cal-day-number {
-    font-weight: bold;
-  }
+.cal-month-view .cal-day-number {
+  font-weight: bold;
+}
 
-  .holiday-class {
-    background-color: #dbafc9;
-  }
+.holiday-class {
+  background-color: #dbafc9;
+}
 
+/* Contenedor de eventos personalizado */
+.event-list {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Estilos base de los eventos */
+.event-item {
+  color: white;
+  font-size: 11px;
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 6px;
+  border-left: 3px solid;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+  border: 1px solid transparent;
+  text-align: center;
+  line-height: normal;
+}
+
+.event-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  filter: brightness(1.1);
+  z-index: 1;
+}
+
+/* Scrollbar personalizado para la lista de eventos */
+.event-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.event-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.event-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.event-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

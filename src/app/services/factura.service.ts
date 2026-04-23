@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, tap, throwError } from 'rxjs';
 
 // Ajusta según tu estructura de modelos
-import { FacturaDto } from '../dto/FacturaDto';
 import { FacturaDetailDto } from '../dto/FacturaDetailDto';
+import { FacturaDto } from '../dto/FacturaDto';
 import { FacturaSummaryDto } from '../dto/FacturaSummaryDto';
 import { Factura } from '../models/Factura';
 import { environment } from 'src/environments/environment.prod';
@@ -78,9 +78,15 @@ export class FacturaService {
   }
 
   public getMontoByQuincena(idAsistencial: number, idEfector: number, quincena: string, mes: string, anio: number): Observable<number> {
-    return this.httpClient.get<number>(
-      `${this.facturaURL}getMontoByQuincena/${idAsistencial}/${idEfector}/${quincena}/${mes}/${anio}`
-    );
+    return this.httpClient.get<number>(`${this.facturaURL}getMontoByQuincena/${idAsistencial}/${idEfector}/${quincena}/${mes}/${anio}`);
+  }
+
+  public getMonto(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(`${this.facturaURL}getMonto/${idAsistencial}/${idEfector}/${mes}/${anio}`);
+  }
+
+  public getMontoFueraTermino(idAsistencial: number, idEfector: number, mes: string, anio: number): Observable<number> {
+    return this.httpClient.get<number>(`${this.facturaURL}getMontoFueraTermino/${idAsistencial}/${idEfector}/${mes}/${anio}`);
   }
 
   // Obtener factura por asistencial
@@ -92,6 +98,18 @@ export class FacturaService {
   listSummary(idEfector: number, anio: number, mes: string, quincena: string): Observable<FacturaSummaryDto[]> {
     return this.httpClient.get<FacturaSummaryDto[]>(
       `${this.facturaURL}listSummary/${idEfector}/${anio}/${mes}/${quincena}`
+    );
+  }
+
+  // Obtener factura por asistencial
+  listByAsistencialSinQuincena(idEfector: number, anio: number, mes: string, idAsistencial: number): Observable<FacturaDetailDto[]> {
+    return this.httpClient.get<FacturaDetailDto[]>(`${this.facturaURL}listByAsistencialSinQuincena/${idEfector}/${anio}/${mes}/${idAsistencial}`);
+  }
+
+  // Listado resumido por efector, año, mes y quincena
+  listSummarySinQuincena(idEfector: number, anio: number, mes: string): Observable<FacturaSummaryDto[]> {
+    return this.httpClient.get<FacturaSummaryDto[]>(
+      `${this.facturaURL}listSummarySinQuincena/${idEfector}/${anio}/${mes}}`
     );
   }
 
@@ -109,5 +127,46 @@ export class FacturaService {
 
   existenDosFacturas(idAsistencial: number, idEfector: number, anio: number, mes: string, quincena: string): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.facturaURL}existenDosFacturas/${idAsistencial}/${idEfector}/${anio}/${mes}/${quincena}`);
+  }
+
+  existeFacturaSinQuincena(idAsistencial: number, idEfector: number, anio: number, mes: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.facturaURL}existeFacturaSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
+  }
+
+  existenDosFacturasSinQuincena(idAsistencial: number, idEfector: number, anio: number, mes: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.facturaURL}existenDosFacturasSinQuincena/${idAsistencial}/${idEfector}/${anio}/${mes}`);
+  }
+
+
+  /**
+   * Subir un PDF asociado a una factura existente.
+   * El backend espera multipart/form-data con campo 'pdf' y la ruta POST /factura/uploadPdf/{facturaId}
+   */
+  public uploadPdf(facturaId: number, file: File): Observable<any> {
+    // Validaciones básicas
+    if (facturaId === null || facturaId === undefined) {
+      return throwError(() => new Error('FacturaId inválido'));
+    }
+    if (!file) {
+      return throwError(() => new Error('No se seleccionó ningún archivo'));
+    }
+    if (file.type !== 'application/pdf') {
+      return throwError(() => new Error('El archivo debe ser un PDF'));
+    }
+    const MAX = 10 * 1024 * 1024;
+    if (file.size > MAX) {
+      return throwError(() => new Error('El archivo no puede ser mayor a 10MB'));
+    }
+
+    const formData = new FormData();
+    formData.append('pdf', file, file.name);
+
+    // DEBUG opcional
+    console.log('[UPLOAD PDF][FACTURA] facturaId:', facturaId, 'file:', file.name, file.type, file.size);
+
+    return this.httpClient.post<any>(`${this.facturaURL}uploadPdf/${facturaId}`, formData)
+      .pipe(
+        tap(() => { this._refresh$.next(); })
+      );
   }
 }

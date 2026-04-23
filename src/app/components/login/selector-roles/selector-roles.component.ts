@@ -14,11 +14,11 @@ export class SelectorRolesComponent {
 
   nombresRoles: { [key: string]: string } = {
     'ROLE_ADMIN': 'Administrativo',
-    'ROLE_USER': 'Usuario',
+    'ROLE_USER': 'Profesional de la salud',
     'ROLE_DPH': 'DPH',
     'ROLE_SUPERUSER': 'Super usuario',
     'ROLE_AUTORIDAD': 'Autoridad',
-    'ROLE_HOSPITAL': 'Hospital'
+    'ROLE_HOSPITAL': 'Panel Login Hospital'
   };
 
   constructor(
@@ -39,9 +39,14 @@ export class SelectorRolesComponent {
     return this.nombresRoles[role] || role;  // Si no se encuentra el rol, devuelve el rol tal cual
   }
 
-  getRolesFiltrados(): string[] {
+  /*getRolesFiltrados(): string[] {
     // Filtra los roles para no incluir ROLE_USER
     return this.data.roles.filter((r: string) => r !== 'ROLE_USER');
+  }*/
+
+  getRolesFiltrados(): string[] {
+    // Ahora permito que ROLE_USER aparezca (manejo temporal)
+    return this.data.roles;
   }
 
   cancelar(): void {

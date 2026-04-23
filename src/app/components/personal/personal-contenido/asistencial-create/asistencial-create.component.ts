@@ -27,9 +27,11 @@ export class AsistencialCreateComponent implements OnInit {
     this.asistencialForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ. ]{1,60}$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ. ]{1,60}$')]],
-      dni: ['', [Validators.required, Validators.pattern(/^\d{7,20}$/)]],
+      dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
       domicilio: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚäëïöüÄËÏÖÜñÑ0-9,.#/@\\-° ]{1,90}$')]],
-      cuil: ['', [Validators.required, Validators.pattern(/^\d{2}-\d{8}-\d{1}$/)]],
+      cuilPrefijo: ['', [Validators.required, Validators.pattern(/^(20|23|27)$/)]],
+      cuilDni: [{ value: '', disabled: true }],
+      cuilSufijo: ['', [Validators.required, Validators.pattern(/^\d$/)]],
       fechaNacimiento: ['', Validators.required],
       sexo: [''],
       telefono: ['', [Validators.pattern(/^\d{9,30}$/)]],
@@ -39,24 +41,35 @@ export class AsistencialCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+    this.asistencialForm.get('dni')?.valueChanges.subscribe(dni => {
+      if (!dni) {
+        this.asistencialForm.get('cuilDni')?.setValue('', { emitEvent: false });
+        return;
+      }
+
+      this.asistencialForm.get('cuilDni')?.setValue(dni, { emitEvent: false });
+    });
   }
 
   saveAsistencial(): void {
     if (this.asistencialForm.valid) {
       const asistencialData = this.asistencialForm.value;
 
-      asistencialData.cuil = asistencialData.cuil.replace(/-/g, '');
+    const prefijo = this.asistencialForm.get('cuilPrefijo')?.value;
+    const dni = this.asistencialForm.get('dni')?.value;
+    const sufijo = this.asistencialForm.get('cuilSufijo')?.value;
+
+    const cuilCompleto = `${prefijo}${dni}${sufijo}`;
 
     const asistencialDto = new AsistencialDto(
       asistencialData.nombre,
       asistencialData.apellido,
       asistencialData.dni,
-      asistencialData.cuil,
-      asistencialData.fechaNacimiento,
+      cuilCompleto,
       true, // esAsistencial
       true, // activo
       asistencialData.email,
+      asistencialData.fechaNacimiento ?? null,
       asistencialData.sexo ?? null,
       asistencialData.telefono ?? null,
       asistencialData.domicilio ?? null,
@@ -99,18 +112,6 @@ export class AsistencialCreateComponent implements OnInit {
   onApellidoInput(event: any): void {
     const formattedValue = this.capitalizeWords(event.target.value);
     this.asistencialForm.get('apellido')?.setValue(formattedValue, { emitEvent: false });
-  }
-
-  formatCuil(event: any): void {
-    let value = event.target.value.replace(/\D/g, ''); // Elimina todos los caracteres que no son dígitos
-    if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d+)/, '$1-$2'); // Añade un guion después de los primeros 2 dígitos
-    }
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})-(\d{8})(\d+)/, '$1-$2-$3'); // Añade otro guion después de los siguientes 8 dígitos
-    }
-    event.target.value = value;
-    this.asistencialForm.get('cuil')?.setValue(value, { emitEvent: false });
   }
 
   cancel(): void {

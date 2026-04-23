@@ -38,24 +38,44 @@
                     </mat-form-field>
                 </div>
 
-                <div class="form-row">
-                    <mat-form-field appearance="fill" class="form-field">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <mat-form-field appearance="fill" class="form-field w-100">
                         <mat-label>DNI</mat-label>
                         <input matInput formControlName="dni">
-                        <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['required']">El DNI es
-                            requerido.</mat-error>
-                        <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['pattern']">El DNI debe tener solo
-                            números (entre 8 y 20 dígitos).</mat-error>
-                    </mat-form-field>
+                        <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['required']">
+                            El DNI es requerido.
+                        </mat-error>
+                        <mat-error *ngIf="asistencialForm.get('dni')?.errors?.['pattern']">
+                            El DNI debe tener solo números (7 u 8 dígitos).
+                        </mat-error>
+                        </mat-form-field>
+                    </div>
 
-                    <mat-form-field appearance="fill" class="form-field">
-                        <mat-label>CUIL</mat-label>
-                        <input matInput formControlName="cuil" (input)="formatCuil($event)">
-                        <mat-error *ngIf="asistencialForm.get('cuil')?.errors?.['required']">El CUIL es
-                            requerido.</mat-error>
-                        <mat-error *ngIf="asistencialForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener solo
-                            números (11 dígitos).</mat-error>
-                    </mat-form-field>
+                    <div class="col-12 col-md-6">
+                        <div class="cuil-container">
+                        <span class="cuil-label">CUIL:</span>
+
+                        <mat-form-field appearance="fill" class="cuil-prefijo">
+                            <input matInput formControlName="cuilPrefijo" maxlength="2" inputmode="numeric">
+                        </mat-form-field>
+
+                        <span class="cuil-separator">-</span>
+
+                        <mat-form-field appearance="fill" class="cuil-dni">
+                            <input matInput formControlName="cuilDni" readonly>
+                        </mat-form-field>
+
+                        <span class="cuil-separator">-</span>
+
+                        <mat-form-field appearance="fill" class="cuil-sufijo">
+                            <input matInput formControlName="cuilSufijo" maxlength="1" inputmode="numeric">
+                        </mat-form-field>
+                        </div>
+                        <mat-error *ngIf="asistencialForm.get('cuilPrefijo')?.invalid || asistencialForm.get('cuilSufijo')?.invalid">
+                            CUIL incompleto o inválido
+                        </mat-error>          
+                    </div>
                 </div>
 
                 <div class="form-row">
@@ -64,8 +84,8 @@
                         <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
-                        <mat-error *ngIf="asistencialForm.get('fechaNacimiento')?.errors?.['required']">La fecha de
-                            nacimiento es requerida.</mat-error>
+                        <!--<mat-error *ngIf="asistencialForm.get('fechaNacimiento')?.errors?.['required']">La fecha de
+                            nacimiento es requerida.</mat-error>-->
                     </mat-form-field>
 
                     <mat-form-field appearance="fill" class="form-field">

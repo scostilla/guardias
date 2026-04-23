@@ -14,7 +14,8 @@ import 'moment/locale/es';
 //Componentes
 import { RmensualContrafacturaDetailComponent } from '../rmensual-contrafactura-detail/rmensual-contrafactura-detail.component';
 import { FacturaCreateComponent } from '../factura/factura-create/factura-create.component';
-import { FacturaListComponent } from '../factura/factura-list/factura-list.component';
+import { FacturaCreateFterminoComponent } from '../factura/factura-create-ftermino/factura-create-ftermino.component';
+import { FacturaListFterminoComponent } from '../factura/factura-list-ftermino/factura-list-ftermino.component';
 import { DialogConfirmRmensualComponent } from '../dialog-confirm-rmensual/dialog-confirm-rmensual.component';
 
 
@@ -71,6 +72,8 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
 
   dialogRef!: MatDialogRef<RmensualContrafacturaDetailComponent>;
   dialogRefFactura!: MatDialogRef<FacturaCreateComponent>;
+  dialogRefFacturaFtermino!: MatDialogRef<FacturaCreateFterminoComponent>;
+
 
   selectedServicio?: number | null = null;
   selectedQuincena!: string;
@@ -85,6 +88,8 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   creacionDDJJ: boolean = false;
   verificandoDdjj: boolean = false;
   ddjjYaExiste: boolean = false;
+  existenCompletosDdjj: boolean = false;
+  verificandoCompletos: boolean = false;
   efectorId: number | null = null;
   efectorNombre: string | null = null;
 
@@ -167,6 +172,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     this.loadRegistrosMensuales();
     this.verificarExistenciaDdjj();
     this.loadHospitalDetails();
+    this.verificarCompletosDdjj()
 
     this.selectedMonthYear = `${this.selectedMonth}-${this.selectedYear}`;
 
@@ -187,6 +193,7 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
 
     this.suscription = this.facturaService.refresh$.subscribe(() => {
       this.loadRegistrosMensuales();
+      this.verificarCompletosDdjj();
     });
   }
 
@@ -259,8 +266,8 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     }
 
     const request$ = this.selectedServicio
-      ? this.registroMensualService.listFueraDeTerminoPorServicio(idEfector, mes, anio, idServicio)
-      : this.registroMensualService.listFueraDeTermino( idEfector, mes, anio);
+      ? this.registroMensualService.listFueraDeTerminoAgrupadoServicio(idEfector, mes, anio, idServicio)
+      : this.registroMensualService.listFueraDeTerminoAgrupado( idEfector, mes, anio);
 
     request$.subscribe(data => {
       this.registrosMensuales = data;
@@ -475,14 +482,12 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   checkFacturaExistente(registro: RegistroMensualListDto): void {
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const anio = this.selectedYear;
-    const quincena = this.selectedQuincena;
 
-    this.facturaService.existeFactura(
+    this.facturaService.existeFacturaSinQuincena(
       registro.asistencial.id,
       this.efectorId!,
       anio,
-      mes,
-      quincena
+      mes
     ).subscribe({
       next: (existe) => {
         this.facturaExisteMap[registro.id] = existe;
@@ -579,6 +584,48 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
     });
   }
 
+verificarCompletosDdjj(): void {
+  const mes = moment()
+    .month(this.selectedMonth - 1)
+    .locale('es')
+    .format('MMMM')
+    .toUpperCase();
+
+  console.log('🟡 [verificarCompletosDdjj] Iniciando verificación de DDJJ...');
+  console.log(`➡ Parámetros: efectorId=${this.efectorId}, mes=${mes}, año=${this.selectedYear}`);
+
+  if (!this.efectorId || !this.selectedMonth || !this.selectedYear) {
+    console.warn('⚠️ Falta alguno de los parámetros requeridos (efectorId, mes o año).');
+    this.existenCompletosDdjj = false;
+    return;
+  }
+
+  this.verificandoCompletos = true;
+  console.log('⏳ Consultando servicio existenRegularizadosSinPendientes...');
+
+  this.registroMensualService
+    .existenRegularizadosSinPendientes(this.efectorId, mes, this.selectedYear)
+    .subscribe({
+      next: (existen: boolean) => {
+        console.log('✅ Respuesta recibida del backend:', existen);
+        this.existenCompletosDdjj = existen;
+        this.verificandoCompletos = false;
+        console.log(
+          `🟢 Resultado final -> existenCompletosDdjj=${this.existenCompletosDdjj}`
+        );
+      },
+      error: (err) => {
+        console.error('❌ Error verificando DDJJ completos:', err);
+        this.existenCompletosDdjj = false;
+        this.verificandoCompletos = false;
+      },
+      complete: () => {
+        console.log('🔚 [verificarCompletosDdjj] Finalizó la verificación.');
+      },
+    });
+}
+
+
   isHabilitadoBotonDdjjFinal(): boolean {
     return this.isHabilitadoBotonDdjj() && !this.ddjjYaExiste;
   }
@@ -604,13 +651,13 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
       idEfector: this.efectorId,
       mes: moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase(),
       anio: this.selectedYear,
-      quincena: this.selectedQuincena
+      tipo: 'fuera_de_termino',
     };
 
     console.log('📦 Datos enviados al FacturaCreateComponent:', dataToSend);
 
 
-    this.dialogRefFactura = this.dialog.open(FacturaCreateComponent, {
+    this.dialogRefFacturaFtermino = this.dialog.open(FacturaCreateFterminoComponent, {
       width: '600px',
       data: dataToSend
     });
@@ -626,19 +673,17 @@ export class RmensualContrafacturaFueraTerminoComponent implements OnInit, OnDes
   openFacturaList(registro: RegistroMensualListDto): void {
     const mes = moment().month(this.selectedMonth - 1).format('MMMM').toUpperCase();
     const anio = this.selectedYear;
-    const quincena = this.selectedQuincena;
 
     const dataToSend = {
       asistencial: registro.asistencial,
       idEfector: this.efectorId,
       mes,
       anio,
-      quincena
     };
 
-    console.log('🔹 Datos enviados a FacturaListComponent:', dataToSend);
+    console.log('🔹 Datos enviados a FacturaListFterminoComponent:', dataToSend);
 
-    this.dialog.open(FacturaListComponent, {
+    this.dialog.open(FacturaListFterminoComponent, {
       width: '800px',
       data: dataToSend
     });

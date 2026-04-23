@@ -6,7 +6,6 @@ import { Autoridad } from 'src/app/models/Configuracion/Autoridad';
 import { AutoridadService } from 'src/app/services/Configuracion/autoridad.service';
 import { AsistencialSelectorAllComponent } from 'src/app/components/personal/personal-contenido/asistencial-selector/asistencial-selector-all/asistencial-selector-all.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 //Autenticación
@@ -25,15 +24,11 @@ export class AutoridadEditComponent implements OnInit {
   autoridades: Autoridad[] = []; 
 
   //Autenticación
-  isLogged = false;
-  roles: string[] =[];
   isAutoridad: boolean = false;
   isAdministrativo: boolean = false;
   isUsuario: boolean = false;
   isDph: boolean = false;
   isSuper: boolean = false;
-  userId: number | null = null;
-  usuarioPersona: number | null = null;
   currentRole: string | null = null;
 
 
@@ -43,7 +38,6 @@ export class AutoridadEditComponent implements OnInit {
     private autoridadService: AutoridadService,
     public dialog: MatDialog,
     private toastr: ToastrService,
-    private router: Router,
     private tokenService: TokenService,
     @Inject(MAT_DIALOG_DATA) public data: Autoridad
   ){
@@ -81,32 +75,13 @@ export class AutoridadEditComponent implements OnInit {
 }
 
   ngOnInit(): void {
-
-    if (this.tokenService.getToken()) {
-      this.isLogged = true;
-      this.roles = this.tokenService.getAuthorities();
   
     // BehaviorSubject para obtener el rol seleccionado
     this.tokenService.currentRole$.subscribe(role => {
       this.currentRole = role;
       this.UserRoles();  // Llamar a la función que determina los roles
-     
-      // Si currentRole es false (null o vacío), redirige al login
-      if (!this.currentRole) {
-        this.router.navigateByUrl('');
-      }
     });  
     
-      const userIdFromToken = this.tokenService.getUserIdFromToken();
-      this.userId = userIdFromToken !== null ? Number(userIdFromToken) : null;
-      console.log('ID del usuario logeado:',this.userId);
-  
-    } else {
-      this.isLogged = false;
-      console.log('El usuario no está logueado.');
-      this.router.navigateByUrl('');
-    }
-
     this.initialData = this.autoridadForm.value;
   }
 
@@ -121,6 +96,7 @@ export class AutoridadEditComponent implements OnInit {
     } else {
       // Si no hay rol seleccionado, todos como false
       this.isAdministrativo = false;
+      this.isAutoridad = false;
       this.isUsuario = false;
       this.isDph = false;
       this.isSuper = false;

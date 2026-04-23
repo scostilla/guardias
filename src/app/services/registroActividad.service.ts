@@ -80,8 +80,14 @@ export class RegistroActividadService {
   }
 
   listAsistenciaByProfesionalEfectorMesAnio(idAsistencial:number, idEfector:number, mes:number, anio:number): Observable<RegActivAsistenciaDto[]> {
+    console.log('listAsistenciaByProfesionalEfectorMesAnio params:', { idAsistencial, idEfector, mes, anio });
     const url = `${this.registroActividadURL}listAsistenciaByProfesionalEfectorMesAnio/${idAsistencial}/${idEfector}/${mes}/${anio}`;
     return this.httpClient.get<RegActivAsistenciaDto[]>(url);
+  }
+
+  public detailAsistencial(idAsistencial: number): Observable<{ efectores: { id: number; nombre: string; url?: string | null }[] }> {
+    const url = `${this.habilitacionesGuardiasURL}detailAsistencial/${idAsistencial}`;
+    return this.httpClient.get<{ efectores: { id: number; nombre: string; url?: string | null }[] }>(url);
   }
   
   public delete(id: number): Observable<any> {
@@ -94,5 +100,9 @@ export class RegistroActividadService {
 
   public obtenerDdjjAprobadas(idEfector: number, mes: number, anio: number): Observable<number[]> {
     return this.httpClient.get<number[]>(`${this.registroActividadURL}obtener-ddjj-aprobadas/${idEfector}/${mes}/${anio}`);
+  }
+
+  public obtenerDdjjCfAprobadas(idEfector: number, mes: number, anio: number): Observable<number[]> {
+    return this.httpClient.get<number[]>(`${this.registroActividadURL}obtener-ddjjCf-primeraQ-aprobada/${idEfector}/${mes}/${anio}`);
   }
 }

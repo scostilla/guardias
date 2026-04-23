@@ -4,6 +4,8 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ValorGuardiasCargo } from "src/app/models/ValorGuardiasCargo";
 import { ValorGuardias } from "src/app/models/ValorGuardias";
+import { ValorGuardiaManualDto } from "src/app/dto/Configuracion/ValorGuardiaManualDto";
+import { GrillaValorGuardiaCompletaDto } from "src/app/dto/Configuracion/GrillaValorGuardiaCompletaDto";
 import * as moment from 'moment';
 import { environment } from 'src/environments/environment.prod';
 
@@ -84,6 +86,17 @@ export class ValorGuardiasCargoService {
 
         return valoresPorNivel;
       })
+    );
+  }
+
+  // Cargar valores manualmente
+  cargarValoresManual(listaValores: ValorGuardiaManualDto[]): Observable<any> {
+    return this.httpClient.post<any>(`${this.valorGuardiasCargoURL}cargar-manual`, listaValores);
+  }
+
+  getGrillaCompleta(fecha: string): Observable<GrillaValorGuardiaCompletaDto[]> {
+    return this.httpClient.get<GrillaValorGuardiaCompletaDto[]>(
+      `${this.valorGuardiasCargoURL}grilla-completa/${fecha}`
     );
   }
 }
