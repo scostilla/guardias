@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { HabilitacionesGenerales } from "src/app/models/Configuracion/HabilitacionesGenerales";
 import { HabilitacionesGeneralesDto } from "src/app/dto/Configuracion/HabilitacionesGeneralesDto";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { HabilitacionesGeneralesDto } from "src/app/dto/Configuracion/Habilitaci
 export class HabilitacionesGeneralesService {
 
   
-  permisosURL = 'http://localhost:8080/habilitacionesGenerales/';
+  permisosURL = `${environment.apiUrl}/habilitacionesGenerales/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

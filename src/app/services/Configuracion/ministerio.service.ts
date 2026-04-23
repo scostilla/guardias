@@ -6,13 +6,14 @@ import { Ministerio } from "src/app/models/Configuracion/Ministerio";
 import { MinisterioDto } from "src/app/dto/Configuracion/MinisterioDto";
 import { EfectorSummaryDto } from "src/app/dto/Configuracion/efector/EfectorSummaryDto";
 import { EfectorMinisterioDto } from "src/app/dto/Configuracion/efector/EfectorMinisterioDto";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MinisterioService {
 
-  ministeriosURL = 'http://localhost:8080/ministerio/';
+  ministeriosURL = `${environment.apiUrl}/ministerio/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

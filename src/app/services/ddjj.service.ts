@@ -6,13 +6,14 @@ import { EstadoDdjjDto } from 'src/app/dto/EstadoDdjjDto';
 import { AutoridadImagenDto } from 'src/app/dto/AutoridadImagenDto';
 import { DdjjListDto } from 'src/app/dto/DdjjListDto';
 import { Ddjj } from 'src/app/models/Configuracion/Ddjj';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DdjjService {
 
-  private readonly baseUrl = 'http://localhost:8080/ddjj/';
+  private readonly baseUrl = `${environment.apiUrl}/ddjj/`;
   private _refresh$ = new Subject<void>();
 
 

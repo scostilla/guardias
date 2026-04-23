@@ -4,13 +4,14 @@ import { forkJoin, Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { NotificacionDto } from 'src/app/dto/NotificacionDto';
 import { Notificacion } from "src/app/models/Notificacion";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificacionService {
 
-  notificacionesURL = 'http://localhost:8080/notificacion/';
+  notificacionesURL = `${environment.apiUrl}/notificacion/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

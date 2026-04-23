@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TipoLey } from "src/app/models/Configuracion/TipoLey";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TipoLeyService {
 
-  tipoLeyURL = 'http://localhost:8080/tipoLey/';
+  tipoLeyURL = `${environment.apiUrl}/tipoLey/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

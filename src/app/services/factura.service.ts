@@ -7,13 +7,14 @@ import { FacturaDetailDto } from '../dto/FacturaDetailDto';
 import { FacturaDto } from '../dto/FacturaDto';
 import { FacturaSummaryDto } from '../dto/FacturaSummaryDto';
 import { Factura } from '../models/Factura';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FacturaService {
 
-  private facturaURL = 'http://localhost:8080/factura/';
+  private facturaURL = `${environment.apiUrl}/factura/`;
     private _refresh$ = new Subject<void>();
 
 

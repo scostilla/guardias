@@ -5,13 +5,14 @@ import { tap } from 'rxjs/operators';
 import { RegionDto } from 'src/app/dto/Configuracion/RegionDto';
 import { RegionSummaryDto } from 'src/app/dto/Configuracion/RegionSummaryDto';
 import { Region } from "src/app/models/Configuracion/Region";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegionService {
 
-  regionesURL = 'http://localhost:8080/region/';
+  regionesURL = `${environment.apiUrl}/region/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

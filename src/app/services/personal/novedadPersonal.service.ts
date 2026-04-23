@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { NovedadPersonalDto } from 'src/app/dto/personal/NovedadPersonalDto';
 import { NovedadPersonal } from "src/app/models/personal/NovedadPersonal";
 import { ConsultaLicenciaCompensatorioDto } from 'src/app/dto/personal/ConsultaLicenciaCompensatorioDto';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -12,7 +13,7 @@ import { ConsultaLicenciaCompensatorioDto } from 'src/app/dto/personal/ConsultaL
 })
 export class NovedadPersonalService {
 
-  novedadesPersonalesURL = 'http://localhost:8080/novedadPersonal/';
+  novedadesPersonalesURL = `${environment.apiUrl}/novedadPersonal/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { ObservacionDdjj } from '../models/ObservacionDdjj';
 import { ObservacionDdjjDto } from '../dto/ObservacionDdjjDto';
 import { ObservacionDdjjUltimoDto } from '../dto/ObservacionDdjjUltimoDto';
+import { environment } from "src/environments/environment.prod";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ObservacionDdjjService {
-  private baseUrl = 'http://localhost:8080/observacionDdjj/';
+  private baseUrl = `${environment.apiUrl}/observacionDdjj/`;
 
   constructor(private httpClient: HttpClient) {}
 

@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ValorGmi } from "src/app/models/ValorGmi";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValorGmiService {
 
-  valorGmiesURL = 'http://localhost:8080/valorGmi/';
+  valorGmiesURL = `${environment.apiUrl}/valorGmi/`;
   private _refresh$ = new Subject<void>();
 
   constructor(private httpClient: HttpClient) { }

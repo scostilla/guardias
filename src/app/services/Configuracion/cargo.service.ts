@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Cargo } from "src/app/models/Configuracion/Cargo";
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Cargo } from "src/app/models/Configuracion/Cargo";
 export class CargoService {
 
   
-    cargosURL = 'http://localhost:8080/cargo/';
+    cargosURL = `${environment.apiUrl}/cargo/`;
     private _refresh$ = new Subject<void>();
   
     constructor(private httpClient: HttpClient) { }
