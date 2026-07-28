@@ -125,7 +125,7 @@ export class MinisterioEditComponent implements OnInit {
    if (this.data?.url) {
     console.log('📸 Ministerio tiene URL de imagen:', this.data.url);
     this.ministerioForm.patchValue({ url: this.data.url });
-    this.fileUrl = `http://localhost:8080${this.data.url}`;
+    this.fileUrl = `${environment.apiUrl}${this.data.url}`;
   } else {
     console.log('❌ Ministerio sin URL de imagen');
   }
@@ -384,7 +384,7 @@ export class MinisterioEditComponent implements OnInit {
           console.log('⚠️ Imagen duplicada detectada');
           
           // Mantener la imagen existente
-          this.fileUrl = `http://localhost:8080${response.url}`;
+          this.fileUrl = `${environment.apiUrl}${response.url}`;
           this.ministerioForm.patchValue({ url: response.url });
           
           // Limpiar selección
@@ -482,7 +482,7 @@ export class MinisterioEditComponent implements OnInit {
   private handleSuccessfulUpload(response: any): void {
     console.log('✅ Respuesta completa del servidor:', response);
     
-    this.fileUrl = `http://localhost:8080${response.url}`;
+    this.fileUrl = `${environment.apiUrl}${response.url}`;
     this.ministerioForm.patchValue({ url: response.url });
     this.ministerioForm.markAsDirty();
     

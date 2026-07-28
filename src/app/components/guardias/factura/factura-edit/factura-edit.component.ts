@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FacturaDto } from 'src/app/dto/FacturaDto';
 import { FacturaService } from 'src/app/services/factura.service';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-factura-edit',
@@ -29,7 +30,7 @@ export class FacturaEditComponent implements OnInit {
   // --- FIN NUEVO ---
 
   // --- NUEVO: base API para construir URL absoluta (ajustar si corresponde) ---
-  private readonly API_BASE = 'http://localhost:8080';
+  private readonly API_BASE =  environment.apiUrl;
   // --- FIN NUEVO ---
 
   constructor(

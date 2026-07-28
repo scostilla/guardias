@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Factura } from 'src/app/models/Factura';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-factura-detail',
@@ -11,7 +12,7 @@ export class FacturaDetailComponent {
 
   factura: Factura;
   pdfUrlAbs: string | null = null;
-  readonly API_BASE = 'http://localhost:8080';
+  readonly API_BASE = environment.apiUrl;
 
   constructor(
     private dialogRef: MatDialogRef<FacturaDetailComponent>,

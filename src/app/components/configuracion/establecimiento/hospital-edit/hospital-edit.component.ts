@@ -662,7 +662,7 @@ uploadImage(): void {
                 const uploadResponse = await this.uploadImageAfterUpdate(this.data.id!);
                 if (uploadResponse && uploadResponse.url) {
                   this.hospitalForm.patchValue({ url: uploadResponse.url });
-                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
                   (result as any).url = uploadResponse.url;
                 }
               } catch (uploadError) {
@@ -695,7 +695,7 @@ uploadImage(): void {
                 const uploadResponse = await this.uploadImageAfterCreation(hospitalCreado.id);
                 if (uploadResponse && uploadResponse.url) {
                   this.hospitalForm.patchValue({ url: uploadResponse.url });
-                  this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+                  this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
                   (hospitalCreado as any).url = uploadResponse.url;
                 }
               } catch (uploadError) {

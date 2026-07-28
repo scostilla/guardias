@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { NotificacionEditComponent } from '../notificacion/notificacion-edit/notificacion-edit.component';
 import { NotificacionDetailComponent } from './notificacion-detail/notificacion-detail.component';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class NotificacionComponent implements OnInit, OnDestroy {
   dataSource!: MatTableDataSource<Notificacion>;
   suscription!: Subscription;
   
-  private readonly API_BASE = 'http://localhost:8080';
+  private readonly API_BASE = environment.apiUrl;
   private allNotificaciones: Notificacion[] = [];
   showingFuture: boolean = false;
   private futureDialogRef?: MatDialogRef<any>;     // <-- NUEVO

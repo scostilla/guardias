@@ -620,7 +620,7 @@ onServicioChange(): void {
            if (uploadResponse && uploadResponse.url) {
              console.log('🎯 Actualizando formulario con URL:', uploadResponse.url);
              this.capsForm.patchValue({ url: uploadResponse.url });
-             this.fileUrl = `http://localhost:8080${uploadResponse.url}`;
+             this.fileUrl = `${environment.apiUrl}${uploadResponse.url}`;
              capsCreado.url = uploadResponse.url;
              console.log('✅ URL actualizada en capsCreado:', capsCreado.url);
            } else {

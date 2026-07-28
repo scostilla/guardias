@@ -10,6 +10,7 @@ import { NotificacionDto } from 'src/app/dto/NotificacionDto';
 import { HospitalService } from 'src/app/services/Configuracion/hospital.service';
 import { RegionService } from 'src/app/services/Configuracion/region.service';
 import { NotificacionService } from 'src/app/services/notificacion.service';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-notificacion-edit',
@@ -40,7 +41,7 @@ export class NotificacionEditComponent implements OnInit {
   uploadError: string | null = null;
   private originalIds: number[] = [];
   private listasCargadas = { regiones: false, hospitales: false };
-  private readonly API_BASE = 'http://localhost:8080'; // para construir URL absoluta
+  private readonly API_BASE = environment.apiUrl; // para construir URL absoluta
   sanitizedPdfUrl?: SafeResourceUrl;
 
   private regionHospitalCache: Map<number, EfectorSummaryDto[]> = new Map();

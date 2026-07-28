@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Notificacion } from 'src/app/models/Notificacion';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-notificacion-detail',
@@ -11,7 +12,7 @@ export class NotificacionDetailComponent implements OnInit {
 
   notificacion!: Notificacion;
   pdfUrlAbs: string | null = null;
-  readonly API_BASE = 'http://localhost:8080';
+  readonly API_BASE = environment.apiUrl;
 
   constructor(
     private dialogRef: MatDialogRef<NotificacionDetailComponent>,
